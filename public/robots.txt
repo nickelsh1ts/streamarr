@@ -1,0 +1,25 @@
+# Notice: Collection of data on NickflixTV through automated means is prohibited unless explicitly authorized
+
+User-agent: Applebot
+User-agent: baiduspider
+User-agent: Bingbot
+User-agent: Discordbot
+User-agent: facebookexternalhit
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: LinkedInBot
+User-agent: Twitterbot
+User-agent: Yandex
+User-agent: Yeti
+User-agent: Applebot
+User-agent: baiduspider
+User-agent: Bingbot
+Allow: /
+Disallow: /img
+Disallow: /inc
+Disallow: /assets
+
+User-agent: *
+Disallow: /
+Disallow: /assets
+Disallow: /inc
