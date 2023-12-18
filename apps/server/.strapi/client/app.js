@@ -3,7 +3,6 @@
  * Any modifications made will be discarded.
  */
 import contentVersioning from "@notum-cz/strapi-plugin-content-versioning/strapi-admin";
-import strapiCloud from "@strapi/plugin-cloud/strapi-admin";
 import colorPicker from "@strapi/plugin-color-picker/strapi-admin";
 import documentation from "@strapi/plugin-documentation/strapi-admin";
 import graphql from "@strapi/plugin-graphql/strapi-admin";
@@ -23,7 +22,6 @@ import { renderAdmin } from "@strapi/strapi/admin";
 renderAdmin(document.getElementById("strapi"), {
   plugins: {
     "content-versioning": contentVersioning,
-    "strapi-cloud": strapiCloud,
     "color-picker": colorPicker,
     documentation: documentation,
     graphql: graphql,

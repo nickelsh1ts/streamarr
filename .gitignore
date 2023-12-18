@@ -27,7 +27,8 @@ coverage
 out/
 build
 dist
-.tmp
+.tm
+*.db
 
 # Debug
 npm-debug.log*

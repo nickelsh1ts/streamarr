@@ -76,7 +76,7 @@ export default ({ env }) => {
           __dirname,
           '..',
           '..',
-          env('DATABASE_FILENAME', './config/db/sqlite.db')
+          env('DATABASE_FILENAME', '../../config/db/sqlite.db')
         ),
       },
       useNullAsDefault: true,

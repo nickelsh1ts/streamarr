@@ -2274,16 +2274,6 @@
     qs "6.11.1"
     sift "16.0.1"
 
-"@strapi/plugin-cloud@4.15.5":
-  version "4.15.5"
-  resolved "https://registry.yarnpkg.com/@strapi/plugin-cloud/-/plugin-cloud-4.15.5.tgz#45e4b762b55bfc40d9aea74f771aaadc67a2f207"
-  integrity sha512-MCEsdGTzPCCnS4IMTz6o8bIKFZ+FPSok/lBuoJh8y3u8lzJpdXBrpnPzMq2Fxf80gbXL/aauByQGE3yTGJK7Lw==
-  dependencies:
-    "@strapi/design-system" "1.13.0"
-    "@strapi/helper-plugin" "4.15.5"
-    "@strapi/icons" "1.13.0"
-    react-intl "6.4.1"
-
 "@strapi/plugin-color-picker@^4.15.5":
   version "4.15.5"
   resolved "https://registry.yarnpkg.com/@strapi/plugin-color-picker/-/plugin-color-picker-4.15.5.tgz#c6b78c1cc9f08adadfe5ceaee0a90e49ff8b0caa"

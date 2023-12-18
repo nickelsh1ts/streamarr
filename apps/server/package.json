@@ -12,7 +12,6 @@
   "devDependencies": {},
   "dependencies": {
     "@notum-cz/strapi-plugin-content-versioning": "^1.2.6",
-    "@strapi/plugin-cloud": "4.15.5",
     "@strapi/plugin-color-picker": "^4.15.5",
     "@strapi/plugin-documentation": "^4.15.5",
     "@strapi/plugin-graphql": "^4.15.5",
