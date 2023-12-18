@@ -1,23 +1,23 @@
 /// <reference types="cypress" />
 
-context('Spies, Stubs, and Clock', () => {
-  it('cy.spy() - wrap a method in a spy', () => {
+context("Spies, Stubs, and Clock", () => {
+  it("cy.spy() - wrap a method in a spy", () => {
     // https://on.cypress.io/spy
-    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks');
+    cy.visit("https://example.cypress.io/commands/spies-stubs-clocks");
 
     const obj = {
       foo() {},
     };
 
-    const spy = cy.spy(obj, 'foo').as('anyArgs');
+    const spy = cy.spy(obj, "foo").as("anyArgs");
 
     obj.foo();
 
     expect(spy).to.be.called;
   });
 
-  it('cy.spy() retries until assertions pass', () => {
-    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks');
+  it("cy.spy() retries until assertions pass", () => {
+    cy.visit("https://example.cypress.io/commands/spies-stubs-clocks");
 
     const obj = {
       /**
@@ -25,26 +25,26 @@ context('Spies, Stubs, and Clock', () => {
        * @param x {any}
        */
       foo(x) {
-        console.log('obj.foo called with', x);
+        console.log("obj.foo called with", x);
       },
     };
 
-    cy.spy(obj, 'foo').as('foo');
+    cy.spy(obj, "foo").as("foo");
 
     setTimeout(() => {
-      obj.foo('first');
+      obj.foo("first");
     }, 500);
 
     setTimeout(() => {
-      obj.foo('second');
+      obj.foo("second");
     }, 2500);
 
-    cy.get('@foo').should('have.been.calledTwice');
+    cy.get("@foo").should("have.been.calledTwice");
   });
 
-  it('cy.stub() - create a stub and/or replace a function with stub', () => {
+  it("cy.stub() - create a stub and/or replace a function with stub", () => {
     // https://on.cypress.io/stub
-    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks');
+    cy.visit("https://example.cypress.io/commands/spies-stubs-clocks");
 
     const obj = {
       /**
@@ -53,18 +53,18 @@ context('Spies, Stubs, and Clock', () => {
        * @param b {string}
        */
       foo(a, b) {
-        console.log('a', a, 'b', b);
+        console.log("a", a, "b", b);
       },
     };
 
-    const stub = cy.stub(obj, 'foo').as('foo');
+    const stub = cy.stub(obj, "foo").as("foo");
 
-    obj.foo('foo', 'bar');
+    obj.foo("foo", "bar");
 
     expect(stub).to.be.called;
   });
 
-  it('cy.clock() - control time in the browser', () => {
+  it("cy.clock() - control time in the browser", () => {
     // https://on.cypress.io/clock
 
     // create the date in UTC so its always the same
@@ -72,11 +72,11 @@ context('Spies, Stubs, and Clock', () => {
     const now = new Date(Date.UTC(2017, 2, 14)).getTime();
 
     cy.clock(now);
-    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks');
-    cy.get('#clock-div').click().should('have.text', '1489449600');
+    cy.visit("https://example.cypress.io/commands/spies-stubs-clocks");
+    cy.get("#clock-div").click().should("have.text", "1489449600");
   });
 
-  it('cy.tick() - move time in the browser', () => {
+  it("cy.tick() - move time in the browser", () => {
     // https://on.cypress.io/tick
 
     // create the date in UTC so its always the same
@@ -84,14 +84,14 @@ context('Spies, Stubs, and Clock', () => {
     const now = new Date(Date.UTC(2017, 2, 14)).getTime();
 
     cy.clock(now);
-    cy.visit('https://example.cypress.io/commands/spies-stubs-clocks');
-    cy.get('#tick-div').click().should('have.text', '1489449600');
+    cy.visit("https://example.cypress.io/commands/spies-stubs-clocks");
+    cy.get("#tick-div").click().should("have.text", "1489449600");
 
     cy.tick(10000); // 10 seconds passed
-    cy.get('#tick-div').click().should('have.text', '1489449610');
+    cy.get("#tick-div").click().should("have.text", "1489449610");
   });
 
-  it('cy.stub() matches depending on arguments', () => {
+  it("cy.stub() matches depending on arguments", () => {
     // see all possible matchers at
     // https://sinonjs.org/releases/latest/matchers/
     const greeter = {
@@ -104,22 +104,22 @@ context('Spies, Stubs, and Clock', () => {
       },
     };
 
-    cy.stub(greeter, 'greet')
+    cy.stub(greeter, "greet")
       .callThrough() // if you want non-matched calls to call the real method
       .withArgs(Cypress.sinon.match.string)
-      .returns('Hi')
+      .returns("Hi")
       .withArgs(Cypress.sinon.match.number)
-      .throws(new Error('Invalid name'));
+      .throws(new Error("Invalid name"));
 
-    expect(greeter.greet('World')).to.equal('Hi');
-    expect(() => greeter.greet(42)).to.throw('Invalid name');
+    expect(greeter.greet("World")).to.equal("Hi");
+    expect(() => greeter.greet(42)).to.throw("Invalid name");
     expect(greeter.greet).to.have.been.calledTwice;
 
     // non-matched calls goes the actual method
-    expect(greeter.greet()).to.equal('Hello, undefined!');
+    expect(greeter.greet()).to.equal("Hello, undefined!");
   });
 
-  it('matches call arguments using Sinon matchers', () => {
+  it("matches call arguments using Sinon matchers", () => {
     // see all possible matchers at
     // https://sinonjs.org/releases/latest/matchers/
     const calculator = {
@@ -133,7 +133,7 @@ context('Spies, Stubs, and Clock', () => {
       },
     };
 
-    const spy = cy.spy(calculator, 'add').as('add');
+    const spy = cy.spy(calculator, "add").as("add");
 
     expect(calculator.add(2, 3)).to.equal(5);
 
@@ -143,13 +143,13 @@ context('Spies, Stubs, and Clock', () => {
     // let's confirm "add" method was called with two numbers
     expect(spy).to.be.calledWith(
       Cypress.sinon.match.number,
-      Cypress.sinon.match.number
+      Cypress.sinon.match.number,
     );
 
     // alternatively, provide the value to match
     expect(spy).to.be.calledWith(
       Cypress.sinon.match(2),
-      Cypress.sinon.match(3)
+      Cypress.sinon.match(3),
     );
 
     // match any value
@@ -167,7 +167,7 @@ context('Spies, Stubs, and Clock', () => {
     // expect the value to pass a custom predicate function
     // the second argument to "sinon.match(predicate, message)" is
     // shown if the predicate does not pass and assertion fails
-    expect(spy).to.be.calledWith(Cypress.sinon.match(isEven, 'isEven'), 3);
+    expect(spy).to.be.calledWith(Cypress.sinon.match(isEven, "isEven"), 3);
 
     /**
      * Returns a function that checks if a given number is larger than the limit
@@ -187,27 +187,27 @@ context('Spies, Stubs, and Clock', () => {
     expect(spy).to.be.calledWith(
       Cypress.sinon.match.number,
       Cypress.sinon
-        .match(isGreaterThan(2), '> 2')
-        .and(Cypress.sinon.match(isLessThan(4), '< 4'))
+        .match(isGreaterThan(2), "> 2")
+        .and(Cypress.sinon.match(isLessThan(4), "< 4")),
     );
 
     expect(spy).to.be.calledWith(
       Cypress.sinon.match.number,
       Cypress.sinon
-        .match(isGreaterThan(200), '> 200')
-        .or(Cypress.sinon.match(3))
+        .match(isGreaterThan(200), "> 200")
+        .or(Cypress.sinon.match(3)),
     );
 
     // matchers can be used from BDD assertions
-    cy.get('@add').should(
-      'have.been.calledWith',
+    cy.get("@add").should(
+      "have.been.calledWith",
       Cypress.sinon.match.number,
-      Cypress.sinon.match(3)
+      Cypress.sinon.match(3),
     );
 
     // you can alias matchers for shorter test code
     const { match: M } = Cypress.sinon;
 
-    cy.get('@add').should('have.been.calledWith', M.number, M(3));
+    cy.get("@add").should("have.been.calledWith", M.number, M(3));
   });
 });

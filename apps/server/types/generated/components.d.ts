@@ -1,10 +1,10 @@
-import type { Schema, Attribute } from '@strapi/strapi';
+import type { Schema, Attribute } from "@strapi/strapi";
 
 export interface SharedLogoFull extends Schema.Component {
-  collectionName: 'components_shared_logo_fulls';
+  collectionName: "components_shared_logo_fulls";
   info: {
-    displayName: 'Logo_Full';
-    icon: 'play';
+    displayName: "Logo_Full";
+    icon: "play";
   };
   attributes: {
     Logo_Full: Attribute.Media & Attribute.Required;
@@ -12,13 +12,13 @@ export interface SharedLogoFull extends Schema.Component {
 }
 
 export interface SharedMetaSocial extends Schema.Component {
-  collectionName: 'components_shared_meta_socials';
+  collectionName: "components_shared_meta_socials";
   info: {
-    displayName: 'metaSocial';
-    icon: 'project-diagram';
+    displayName: "metaSocial";
+    icon: "project-diagram";
   };
   attributes: {
-    socialNetwork: Attribute.Enumeration<['Facebook', 'Twitter']> &
+    socialNetwork: Attribute.Enumeration<["Facebook", "Twitter"]> &
       Attribute.Required;
     title: Attribute.String &
       Attribute.Required &
@@ -35,10 +35,10 @@ export interface SharedMetaSocial extends Schema.Component {
 }
 
 export interface SharedSeo extends Schema.Component {
-  collectionName: 'components_shared_seos';
+  collectionName: "components_shared_seos";
   info: {
-    displayName: 'seo';
-    icon: 'search';
+    displayName: "seo";
+    icon: "search";
   };
   attributes: {
     metaTitle: Attribute.String &
@@ -53,7 +53,7 @@ export interface SharedSeo extends Schema.Component {
         maxLength: 160;
       }>;
     metaImage: Attribute.Media;
-    metaSocial: Attribute.Component<'shared.meta-social', true>;
+    metaSocial: Attribute.Component<"shared.meta-social", true>;
     keywords: Attribute.Text;
     metaRobots: Attribute.String;
     structuredData: Attribute.JSON;
@@ -62,12 +62,12 @@ export interface SharedSeo extends Schema.Component {
   };
 }
 
-declare module '@strapi/types' {
+declare module "@strapi/types" {
   export module Shared {
     export interface Components {
-      'shared.logo-full': SharedLogoFull;
-      'shared.meta-social': SharedMetaSocial;
-      'shared.seo': SharedSeo;
+      "shared.logo-full": SharedLogoFull;
+      "shared.meta-social": SharedMetaSocial;
+      "shared.seo": SharedSeo;
     }
   }
 }

@@ -1,60 +1,60 @@
 /// <reference types="cypress" />
 
-context('Connectors', () => {
+context("Connectors", () => {
   beforeEach(() => {
-    cy.visit('https://example.cypress.io/commands/connectors');
+    cy.visit("https://example.cypress.io/commands/connectors");
   });
 
-  it('.each() - iterate over an array of elements', () => {
+  it(".each() - iterate over an array of elements", () => {
     // https://on.cypress.io/each
-    cy.get('.connectors-each-ul>li').each(($el, index, $list) => {
+    cy.get(".connectors-each-ul>li").each(($el, index, $list) => {
       console.log($el, index, $list);
     });
   });
 
-  it('.its() - get properties on the current subject', () => {
+  it(".its() - get properties on the current subject", () => {
     // https://on.cypress.io/its
-    cy.get('.connectors-its-ul>li')
+    cy.get(".connectors-its-ul>li")
       // calls the 'length' property yielding that value
-      .its('length')
-      .should('be.gt', 2);
+      .its("length")
+      .should("be.gt", 2);
   });
 
-  it('.invoke() - invoke a function on the current subject', () => {
+  it(".invoke() - invoke a function on the current subject", () => {
     // our div is hidden in our script.js
     // $('.connectors-div').hide()
-    cy.get('.connectors-div').should('be.hidden');
+    cy.get(".connectors-div").should("be.hidden");
 
     // https://on.cypress.io/invoke
     // call the jquery method 'show' on the 'div.container'
-    cy.get('.connectors-div').invoke('show');
+    cy.get(".connectors-div").invoke("show");
 
-    cy.get('.connectors-div').should('be.visible');
+    cy.get(".connectors-div").should("be.visible");
   });
 
-  it('.spread() - spread an array as individual args to callback function', () => {
+  it(".spread() - spread an array as individual args to callback function", () => {
     // https://on.cypress.io/spread
-    const arr = ['foo', 'bar', 'baz'];
+    const arr = ["foo", "bar", "baz"];
 
     cy.wrap(arr).spread((foo, bar, baz) => {
-      expect(foo).to.eq('foo');
-      expect(bar).to.eq('bar');
-      expect(baz).to.eq('baz');
+      expect(foo).to.eq("foo");
+      expect(bar).to.eq("bar");
+      expect(baz).to.eq("baz");
     });
   });
 
-  describe('.then()', () => {
-    it('invokes a callback function with the current subject', () => {
+  describe(".then()", () => {
+    it("invokes a callback function with the current subject", () => {
       // https://on.cypress.io/then
-      cy.get('.connectors-list > li').then(($lis) => {
-        expect($lis, '3 items').to.have.length(3);
-        expect($lis.eq(0), 'first item').to.contain('Walk the dog');
-        expect($lis.eq(1), 'second item').to.contain('Feed the cat');
-        expect($lis.eq(2), 'third item').to.contain('Write JavaScript');
+      cy.get(".connectors-list > li").then(($lis) => {
+        expect($lis, "3 items").to.have.length(3);
+        expect($lis.eq(0), "first item").to.contain("Walk the dog");
+        expect($lis.eq(1), "second item").to.contain("Feed the cat");
+        expect($lis.eq(2), "third item").to.contain("Write JavaScript");
       });
     });
 
-    it('yields the returned value to the next command', () => {
+    it("yields the returned value to the next command", () => {
       cy.wrap(1)
         .then((num) => {
           expect(num).to.equal(1);
@@ -66,7 +66,7 @@ context('Connectors', () => {
         });
     });
 
-    it('yields the original subject without return', () => {
+    it("yields the original subject without return", () => {
       cy.wrap(1)
         .then((num) => {
           expect(num).to.equal(1);
@@ -78,7 +78,7 @@ context('Connectors', () => {
         });
     });
 
-    it('yields the value yielded by the last Cypress command inside', () => {
+    it("yields the value yielded by the last Cypress command inside", () => {
       cy.wrap(1)
         .then((num) => {
           expect(num).to.equal(1);

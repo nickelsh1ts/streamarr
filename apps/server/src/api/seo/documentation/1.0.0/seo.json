@@ -63,9 +63,7 @@
           }
         }
       },
-      "tags": [
-        "Seo"
-      ],
+      "tags": ["Seo"],
       "parameters": [
         {
           "name": "sort",
@@ -234,9 +232,7 @@
           }
         }
       },
-      "tags": [
-        "Seo"
-      ],
+      "tags": ["Seo"],
       "parameters": [],
       "operationId": "put/seo",
       "requestBody": {
@@ -314,9 +310,7 @@
           }
         }
       },
-      "tags": [
-        "Seo"
-      ],
+      "tags": ["Seo"],
       "parameters": [],
       "operationId": "delete/seo"
     }
@@ -385,9 +379,7 @@
           }
         }
       },
-      "tags": [
-        "Seo"
-      ],
+      "tags": ["Seo"],
       "parameters": [],
       "operationId": "post/seo/localizations",
       "requestBody": {

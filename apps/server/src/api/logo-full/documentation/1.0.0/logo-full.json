@@ -63,9 +63,7 @@
           }
         }
       },
-      "tags": [
-        "Logo-full"
-      ],
+      "tags": ["Logo-full"],
       "parameters": [
         {
           "name": "sort",
@@ -234,9 +232,7 @@
           }
         }
       },
-      "tags": [
-        "Logo-full"
-      ],
+      "tags": ["Logo-full"],
       "parameters": [],
       "operationId": "put/logo-full",
       "requestBody": {
@@ -314,9 +310,7 @@
           }
         }
       },
-      "tags": [
-        "Logo-full"
-      ],
+      "tags": ["Logo-full"],
       "parameters": [],
       "operationId": "delete/logo-full"
     }
