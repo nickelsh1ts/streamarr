@@ -1,5 +1,5 @@
 {
-  "name": "test-app",
+  "name": "nickflixtv",
   "private": true,
   "scripts": {
     "build": "turbo build",
