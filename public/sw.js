@@ -16,7 +16,7 @@ self.addEventListener("install", (event) => {
       // response isn't fulfilled from the HTTP cache; i.e., it will be from
       // the network.
       await cache.add(new Request(OFFLINE_URL, { cache: "reload" }));
-    })()
+    })(),
   );
   // Force the waiting service worker to become the active service worker.
   self.skipWaiting();
@@ -30,7 +30,7 @@ self.addEventListener("activate", (event) => {
       if ("navigationPreload" in self.registration) {
         await self.registration.navigationPreload.enable();
       }
-    })()
+    })(),
   );
 
   // Tell the active service worker to take control of the page immediately.
@@ -65,7 +65,7 @@ self.addEventListener("fetch", (event) => {
           const cachedResponse = await cache.match(OFFLINE_URL);
           return cachedResponse;
         }
-      })()
+      })(),
     );
   }
 });

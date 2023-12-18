@@ -1,0 +1,30 @@
+{
+  "name": "nickflixtv",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --parallel --continue",
+    "lint": "turbo lint",
+    "format": "prettier --loglevel warn --write --cache .",
+    "format:check": "prettier --check --cache .",
+    "typecheck": "yarn typecheck:server && yarn typecheck:client",
+    "typecheck:server": "tsc --project apps/server/tsconfig.json --noEmit",
+    "typecheck:client": "tsc --project apps/web/tsconfig.json --noEmit",
+    "start": "turbo start"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "cypress": "^13.6.1",
+    "prettier": "^3.1.0",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "yarn@1.22.21",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
