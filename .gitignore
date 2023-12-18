@@ -27,7 +27,7 @@ coverage
 out/
 build
 dist
-.tm
+.tmp
 *.db
 
 # Debug
