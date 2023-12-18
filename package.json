@@ -9,11 +9,13 @@
     "format:check": "prettier --check --cache .",
     "typecheck": "yarn typecheck:server && yarn typecheck:client",
     "typecheck:server": "tsc --project apps/server/tsconfig.json --noEmit",
-    "typecheck:client": "tsc --project apps/web/tsconfig.json --noEmit"
+    "typecheck:client": "tsc --project apps/web/tsconfig.json --noEmit",
+    "start": "turbo start"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "cypress": "^13.6.1",
     "prettier": "^3.1.0",
     "turbo": "latest"
   },

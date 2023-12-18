@@ -13,6 +13,9 @@
       "cache": true,
       "persistent": true,
       "outputs": ["dist/*", ".next/**", "!.next/cache/**"]
+    },
+    "start": {
+      "dependsOn": ["build", "lint"]
     }
   }
 }
