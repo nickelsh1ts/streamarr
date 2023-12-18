@@ -9,23 +9,23 @@ export default ({ env }) => ({
       },
     },
     options: {
-      expiresIn: '7d',
+      expiresIn: "7d",
     },
-    secret: env('ADMIN_JWT_SECRET'),
+    secret: env("ADMIN_JWT_SECRET"),
   },
-  url: env('PUBLIC_ADMIN_URL', '/admin'),
+  url: env("PUBLIC_ADMIN_URL", "/admin"),
   autoOpen: false,
   apiToken: {
-    salt: env('API_TOKEN_SALT'),
+    salt: env("API_TOKEN_SALT"),
   },
   transfer: {
     token: {
-      salt: env('TRANSFER_TOKEN_SALT'),
+      salt: env("TRANSFER_TOKEN_SALT"),
     },
   },
   flags: {
-    nps: env.bool('FLAG_NPS', true),
-    promoteEE: env.bool('FLAG_PROMOTE_EE', true),
+    nps: env.bool("FLAG_NPS", true),
+    promoteEE: env.bool("FLAG_PROMOTE_EE", true),
   },
-  serveAdminPanel: env.bool('SERVE_ADMIN', true),
+  serveAdminPanel: env.bool("SERVE_ADMIN", true),
 });

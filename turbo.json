@@ -11,7 +11,8 @@
     },
     "dev": {
       "cache": true,
-      "persistent": true
+      "persistent": true,
+      "outputs": ["dist/*", ".next/**", "!.next/cache/**"]
     }
   }
 }

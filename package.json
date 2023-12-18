@@ -5,7 +5,11 @@
     "build": "turbo build",
     "dev": "turbo dev --parallel --continue",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --loglevel warn --write --cache .",
+    "format:check": "prettier --check --cache .",
+    "typecheck": "yarn typecheck:server && yarn typecheck:client",
+    "typecheck:server": "tsc --project apps/server/tsconfig.json --noEmit",
+    "typecheck:client": "tsc --project apps/web/tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

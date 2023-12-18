@@ -1,25 +1,25 @@
 export default ({ env }) => [
-  'strapi::errors',
+  "strapi::errors",
   {
-    name: 'strapi::security',
+    name: "strapi::security",
     config: {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          'connect-src': ["'self'", 'https:'],
-          'img-src': [
+          "connect-src": ["'self'", "https:"],
+          "img-src": [
             "'self'",
-            'data:',
-            'blob:',
-            'market-assets.strapi.io',
-            env.array('ORIGINS_ARRAY'),
+            "data:",
+            "blob:",
+            "market-assets.strapi.io",
+            env.array("ORIGINS_ARRAY"),
           ],
-          'media-src': [
+          "media-src": [
             "'self'",
-            'data:',
-            'blob:',
-            'market-assets.strapi.io',
-            env.array('ORIGINS_ARRAY'),
+            "data:",
+            "blob:",
+            "market-assets.strapi.io",
+            env.array("ORIGINS_ARRAY"),
           ],
           upgradeInsecureRequests: null,
         },
@@ -27,44 +27,52 @@ export default ({ env }) => [
     },
   },
   {
-    name: 'strapi::cors',
+    name: "strapi::cors",
     config: {
-      origin: env.array('ORIGINS_ARRAY', ['*']),
-      methods: env.array('METHODS_ARRAY', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']),
-      headers: env.array('HEADERS_ARRAY',),
+      origin: env.array("ORIGINS_ARRAY", ["*"]),
+      methods: env.array("METHODS_ARRAY", [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
+        "OPTIONS",
+      ]),
+      headers: env.array("HEADERS_ARRAY"),
       keepHeaderOnError: true,
     },
   },
   {
-    name: 'strapi::poweredBy',
+    name: "strapi::poweredBy",
     config: {
-      poweredBy: env.bool('POWERED_BY')
+      poweredBy: env.bool("POWERED_BY"),
     },
   },
-  'strapi::logger',
-  'strapi::query',
-  'strapi::body',
+  "strapi::logger",
+  "strapi::query",
+  "strapi::body",
   {
-    name: 'strapi::session',
+    name: "strapi::session",
     config: {
       rolling: true,
       renew: true,
       secure: true,
-      maxAge: 86400000
+      maxAge: 86400000,
     },
   },
   {
-    name: 'strapi::public',
+    name: "strapi::public",
     config: {
       defer: true,
-      index: env('INDEX_PATH', 'index-dev.html')
+      index: env("INDEX_PATH", "index-dev.html"),
     },
   },
   {
-    name: 'strapi::favicon',
+    name: "strapi::favicon",
     config: {
-      path: 'favicon.ico'
+      path: "favicon.ico",
     },
   },
-  { resolve: '../src/middlewares/admin-redirect' },
+  { resolve: "../src/middlewares/admin-redirect" },
 ];

@@ -7,9 +7,7 @@
   "options": {},
   "attributes": {
     "Logo_Full": {
-      "allowedTypes": [
-        "images"
-      ],
+      "allowedTypes": ["images"],
       "type": "media",
       "multiple": false,
       "required": true
