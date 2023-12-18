@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<link rel="manifest" href="ntv.webmanifest" crossorigin="use-credentials">
+<title>Offline | NickflixTV</title>
+<meta name="description" content="Offline">
+<link href="https://static.wixstatic.com/media/b58370_f2343fcd6333432eae9de41d60d2f168~mv2.png" rel="shortcut icon" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="apple-touch-icon" href="https://static.wixstatic.com/media/b58370_f2343fcd6333432eae9de41d60d2f168~mv2.png">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://kit.fontawesome.com/df88830f61.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+<script  src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<style>
+@charset "UTF-8";
+/*------scroll bar---------------------*/
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 7px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #525965;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #525965;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #525965;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+body {
+background: url("https://img.freepik.com/free-vector/gradient-galaxy-background_23-2148983655.jpg") no-repeat center center fixed;
+background-size: cover;
+background-position: top;
+background-repeat: no-repeat;
+background-color: rgba(8,0,17,1);
+}
+
+.minutes {
+animation-name: five;
+animation-duration: 120s;
+animation-iteration-count: 1;
+animation-fill-mode: forwards;
+}
+
+@keyframes five {
+  0%   {width:0%;background-color: #dc3545;}
+  60%  {width: 40%;background-color: #dc3545;}
+  70%  {width: 70%;background-color: #ffc107}
+  85%  {width: 85%;background-color: #ffc107}
+  100%  {width:100%; background-color: #198754}
+}
+	
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-20px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+	
+.planet {
+	overflow: hidden;
+	transform: translatey(0px);
+	animation: float 6s ease-in-out infinite;
+}
+	
+@keyframes visable {
+  to   { visibility: visible; }
+}
+	
+.refresh {
+  animation: visable 1s infinite 120s;
+  visibility: hidden;
+}
+	
+.btn-purple {
+color: #fff!important;
+background-color: #974ede!important;
+border-color: #974ede!important;
+}
+.btn-purple:hover {
+  color: #fff!important;
+  background-color: #2b0b53!important;
+  border-color: #2b0b53!important;
+}
+.btn-check:focus + .btn-purple, .btn-purple:focus {
+  color: #fff!important;
+  background-color: #2b0b53!important;
+  border-color: #2b0b53!important;
+  box-shadow: 0 0 0 0.25rem rgba(137, 123, 175, 0.5)!important;
+}
+.btn-check:checked + .btn-purple, .btn-check:active + .btn-purple, .btn-purple:active, .btn-purple.active, .show > .btn-purple.dropdown-toggle {
+  color: #fff!important;
+  background-color: #2b0b53!important;
+  border-color: #574b79!important;
+}
+.btn-check:checked + .btn-purple:focus, .btn-check:active + .btn-purple:focus, .btn-purple:active:focus, .btn-purple.active:focus, .show > .btn-purple.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.25rem rgba(137, 123, 175, 0.5)!important;
+}
+.btn-purple:disabled, .btn-purple.disabled {
+  color: #fff!important;
+  background-color: #974ede!important;
+  border-color: #974ede!important;
+}
+.btn-outline-purple {
+  color: #974ede!important;
+  background-color: transparent!important;
+  border-color: #974ede!important;
+}
+.btn-outline-purple:hover {
+  color: #fff!important;
+  background-color: #974ede!important;
+  border-color: #2b0b53!important;
+}
+.btn-check:focus + .btn-outline-purple, .btn-outline-purple:focus {
+  color: #fff!important;
+  background-color: #974ede!important;
+  border-color: #2b0b53!important;
+  box-shadow: 0 0 0 0.25rem rgba(137, 123, 175, 0.5)!important;
+}
+.btn-check:checked + .btn-outline-purple, .btn-check:active + .btn-outline-purple, .btn-outline-purple:active, .btn-outline-purple.active, .show > .btn-outline-purple.dropdown-toggle {
+  color: #fff!important;
+  background-color: #974ede!important;
+  border-color: #574b79!important;
+}
+.btn-check:checked + .btn-outline-purple:focus, .btn-check:active + .btn-outline-purple:focus, .btn-outline-purple:active:focus, .btn-outline-purple.active:focus, .show > .btn-outline-purple.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.25rem rgba(137, 123, 175, 0.5)!important;
+}
+.btn-outline-purple:disabled, .btn-outline-purple.disabled {
+  color: #974ede!important;
+  background-color: transparent!important;
+  border-color: #974ede!important;
+}
+
+.link-purple {
+	color: #974ede;
+}
+.link-purple:focus,.link-purple:hover {
+	color: #574b79;
+}
+
+.border-purple {
+	border-color:#974ede!important;
+}
+
+.text-purple {
+	color:#974ede!important
+}
+.text-muted {
+	color: #6c757d!important;
+}
+</style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+	
+  <header id="top" class="">
+	<div class="navbar navbar-expand-md navbar-dark" style="background: rgba(8,0,17,1); z-index: 1005">
+	  <div class="container-fluid px-4 py-1">
+		  <img alt="logo" class="img img-fluid nacbar-brand" style="width: 9rem; height: auto" src="https://static.wixstatic.com/media/b58370_cbb3a3b97d764829b8f0cd8c1065458a~mv2.png">
+	  </div>
+	</div>
+  </header>
+	
+  <div id="main" class="min-vh-100 w-100">
+	  <div class="text-light row min-vh-100 m-0 p-0" style="background: linear-gradient(180deg, rgba(8,0,17,1) 0%, rgba(43,11,83,0.8) 50%, rgba(43,11,83,0.8) 65%, rgba(8,0,17,1) 100%);">
+		  <div class="row col-lg-11 col-xl-8 align-items-center text-center m-auto py-5">	 
+			  <div class="container">
+				<i class="float-end text-warning fs-1 p-3 fas fa-exclamation-triangle"></i>
+			  </div>
+			  <div class="row col-lg-5 g-0">
+				<div class="h-100 px-5 text-white">
+				  <h1 class="text-uppercase m-0" style="font-size: 4rem">oops!</h1>
+				  <p class="text-uppercase fs-5 mb-5">Currently offline.</p>
+				  <div class="container text-start">
+					<p>Looks like something went wrong and we can't reach that page right now!</p><p>This usually fixes itself within a few minutes. Try again shortly.
+					<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated minutes" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="minutes"></div></div></p><p class="text-center refresh">Try refreshing now.</p><p>NickflixTV currently has planned server maintenance every Monday and Friday from 3:00 to 3:10am EST.</p>
+				  </div>
+				  <a target="_blank" class="" href="https://discord.com/channels/816109052853354517/816115310540357653"><button class="btn btn-purple text-light mb-4" type="button">Reach out on Discord</button></a>
+				</div>
+			  </div>
+		  
+			  <div class="col m-auto planet">
+				  <img alt="offline" src="https://static.wixstatic.com/media/b58370_dee09d7ad2664077bfe80e58129e55ab~mv2.png" class="img-fluid" style="height: auto">
+			  </div>
+		  </div>
+	  </div>
+  </div>
+	
+	<footer id="footer" class="footer mt-auto py-3 no-print" style="background: rgba(8,0,17,1)">
+		<div class="container mb-5">
+		  <button id="scrollToTopBtn" type="button" class="btn btn-outline-purple m-auto d-none">Back up top <i class="fas fa-level-up-alt"></i></button>
+		</div>
+		<div class="container text-white-50"><h3><a class="link-secondary" target="_blank" href="https://discord.gg/ZSTrRJMcDS"><i class="fab fa-discord me-2 mb-1"></i></a><a class="link-secondary" target="_blank" href="https://www.youtube.com/channel/UCV6I_2eeiaq1R6aiwRvHWKA"><i class="fab fa-youtube mx-2"></i></a></h3></div>
+		<div class="container text-muted text-white-50">
+		  <div class="row">
+		    <div class="col-lg-3">
+        	<a class="d-inline-flex align-items-center link-secondary text-decoration-none fw-bold" target="_blank" href="https://www.nickelsh1ts.com">
+			  <img style="width: 3rem" alt="logo" class="me-2" src="https://static.wixstatic.com/media/b58370_0bc4b44da2844ab78f239dc721b6b6d0~mv2.png"> Nickelsh1ts.com
+        	</a>
+        	<ul class="list-unstyled small text-muted">Built and designed by Nickelshits with <a class="d-inline-flex align-items-center link-secondary text-decoration-none" target="_blank" href="https://getbootstrap.com" aria-label="Bootstrap">
+          	<i class="fab fa-bootstrap me-2 d-block align-content-center fs-4"></i> 
+          	<span class="fs-6">Bootstrap</span></a> and <a target="_blank" href="https://fontawesome.com/" class="d-inline-flex align-items-center link-secondary text-decoration-none"><i class="fab fa-font-awesome me-2 d-block align-content-center fs-4"></i><span class="fs-6">Font Awesome</span></a>
+        	</ul>
+      		</div>
+		    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 col-lg-8 offset-lg-1">
+        	  <ul class="list-unstyled">
+          		<li class="mb-3"><a class="link-secondary text-decoration-none" href="/help/termsofuse">Terms of Use</a></li>
+          		<li class="mb-3"><a class="link-secondary text-decoration-none" href="/help/privacy">Privacy Policy</a></li>
+          		<!--<li class="mb-3"><a class="link-secondary text-decoration-none" href="/help/cookies">Cookie Preferences</a></li>-->
+        	  </ul>
+			  <ul class="list-unstyled">
+				<li class="mb-3"><a class="link-secondary text-decoration-none" href="/help/">Help Centre</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" href="//status.nickflixtv.com/status/services">Status</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" href="mailto:info@nickflixtv.com">Contact Us</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" href="/admin">Admin Centre</a></li>
+			  </ul>
+			  <ul class="list-unstyled lh-1">
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://overseerr.dev">overseerr.dev</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://sonarr.tv">sonarr.tv</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://radarr.video">radarr.video</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://prowlarr.com/">Prowlarr</a></li>
+			  </ul>
+			  <ul class="list-unstyled lh-1">
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://www.bazarr.media/">Bazarr.media</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://home.tdarr.io/">Tdarr.io</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://tautulli.com/">Tautulli</a></li>
+				<li class="mb-3"><a class="link-secondary text-decoration-none" target="_blank" href="https://app.plex.tv">app.plex</a></li>
+			  </ul>
+			</div>
+		  </div>
+		  <p style="font-size: 0.8rem">© 2023 Nickelsh1ts</p>
+		</div>
+</footer>
+
+
+</body>
+</html>

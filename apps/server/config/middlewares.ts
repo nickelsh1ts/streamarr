@@ -53,11 +53,18 @@ export default ({ env }) => [
       maxAge: 86400000
     },
   },
-  'strapi::public',
+  {
+    name: 'strapi::public',
+    config: {
+      defer: true,
+      index: env('INDEX_PATH', 'index-dev.html')
+    },
+  },
   {
     name: 'strapi::favicon',
     config: {
       path: 'favicon.ico'
     },
   },
+  { resolve: '../src/middlewares/admin-redirect' },
 ];
