@@ -1,47 +1,29 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
-node_modules
-.pnp
-.pnp.js
+# dependencies
+/node_modules
 
-# Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.example
+# production
+/build
 
-# Testing
-coverage
+# misc
+.DS_Store
+*.pem
 
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
-.next
-out/
-build
-dist
-.tmp
-*.db
-
-# Debug
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Misc
-.DS_Store
-*.pem
+# local env files
+*.env*.local
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# dist files
+dist
 
 # Cypress
 cypress.env.json
@@ -62,4 +44,4 @@ config/logs/*-audit.json
 tsconfig.tsbuildinfo
 
 # Config Cache Directory
-cache
+config/cache

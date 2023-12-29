@@ -32,51 +32,38 @@
   "display": "standalone",
   "background_color": "#2b0b53",
   "theme_color": "#1f1f1f",
-  "shortcuts": [
-    {
+  "shortcuts": [{
       "name": "Home",
       "url": "./index",
       "description": "Index",
-      "icons": [
-        {
+	  "icons": [{
           "src": "/home-icon-192x192.png",
           "sizes": "192x192",
           "type": "image/png"
-        }
-      ]
-    },
-    {
+        }]
+    },{
       "name": "Watch",
       "url": "./watch",
-      "icons": [
-        {
+	  "icons": [{
           "src": "/watch-icon-192x192.png",
           "sizes": "192x192",
           "type": "image/png"
-        }
-      ]
-    },
-    {
+        }]
+    },{
       "name": "Request",
       "url": "./request",
-      "icons": [
-        {
+	  "icons": [{
           "src": "/request-icon-192x192.png",
           "sizes": "192x192",
           "type": "image/png"
-        }
-      ]
-    },
-    {
+        }]
+    },{
       "name": "Invite",
       "url": "./invite",
-      "icons": [
-        {
+	  "icons": [{
           "src": "/invite-icon-192x192.png",
           "sizes": "192x192",
           "type": "image/png"
-        }
-      ]
-    }
-  ]
+        }]
+    }]
 }
