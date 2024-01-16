@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import Image from 'next/image';
 import styles from '@app/styles/css/nextjs.module.css';
+import Image from 'next/image';
+import { useEffect } from 'react';
 
 export default function Home() {
   useEffect(() => {

@@ -1,13 +1,13 @@
 import PageTitle from '@app/components/Common/PageTitle';
+import CookiesBanner from '@app/components/CookiesBanner';
+import Footer from '@app/components/Footer';
+import DevicesSection from '@app/components/Home/DevicesSection';
+import FAQSection from '@app/components/Home/FAQSection';
 import HomeNavbar from '@app/components/Home/HomeNavbar';
 import PromoSection from '@app/components/Home/PromoSection';
 import RequestSection from '@app/components/Home/RequestSection';
-import WatchingSection from '@app/components/Home/WatchingSection';
 import ServicesSection from '@app/components/Home/ServicesSection';
-import DevicesSection from '@app/components/Home/DevicesSection';
-import FAQSection from '@app/components/Home/FAQSection';
-import Footer from '@app/components/Footer';
-import CookiesBanner from '@app/components/CookiesBanner';
+import WatchingSection from '@app/components/Home/WatchingSection';
 
 const messages = {
   home: 'Stream the greatest Movies, Series, Classics and more',

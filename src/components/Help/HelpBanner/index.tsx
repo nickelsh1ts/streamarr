@@ -13,14 +13,14 @@ const HelpBanner = () => {
         }}
       >
         <div
-          className="p-0 m-0"
+          className="m-0 p-0"
           style={{
             background:
               'linear-gradient(0deg, rgba(8,0,17,0.9) 0%, rgba(43,11,83,0.7) 100%)',
           }}
         >
           <div className="container p-3">
-            <div className="d-flex flex-wrap flex-column flex-sm-row align-items-center justify-content-center justify-content-sm-start">
+            <div className="d-flex flex-column flex-sm-row align-items-center justify-content-center justify-content-sm-start flex-wrap">
               <a
                 href="/"
                 className="d-flex link-dark text-decoration-none navbar-brand align-items-center mx-0"
@@ -36,7 +36,7 @@ const HelpBanner = () => {
                 <LoginButton />
               </ul>
             </div>
-            <h2 className="container-fluid text-center text-white fw-bold my-4 my-sm-0 ms-auto">
+            <h2 className="container-fluid fw-bold my-sm-0 ms-auto my-4 text-center text-white">
               <a href="/help" className="text-decoration-none link-light">
                 Help Centre
               </a>

@@ -1,6 +1,13 @@
-/** @type {import('next').NextConfig} */
-
+/**
+ * @type {import('next').NextConfig}
+ */
 module.exports = {
+  env: {
+    commitTag: process.env.COMMIT_TAG || 'local',
+  },
+  images: {
+    domains: ['image.tmdb.org'],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -12,5 +19,6 @@ module.exports = {
   },
   experimental: {
     scrollRestoration: true,
+    largePageDataBytes: 256000,
   },
 };

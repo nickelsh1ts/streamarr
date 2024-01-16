@@ -1,9 +1,9 @@
-import ScrollToTopBtn from '@app/components/ScrollToTopBtn';
 import FooterAbout from '@app/components/Footer/FooterAbout';
-import FooterHelp from '@app/components/Footer/FooterHelp';
-import FooterThanks from '@app/components/Footer/FooterThanks';
 import FooterBrand from '@app/components/Footer/FooterBrand';
+import FooterHelp from '@app/components/Footer/FooterHelp';
 import FooterSocials from '@app/components/Footer/FooterSocials';
+import FooterThanks from '@app/components/Footer/FooterThanks';
+import ScrollToTopBtn from '@app/components/ScrollToTopBtn';
 import useSettings from '@app/hooks/useSettings';
 
 const dateYear = new Date().getFullYear();
@@ -18,12 +18,12 @@ const Footer = () => {
     <>
       <footer
         id="footer"
-        className="footer mt-auto py-3 d-print-none"
+        className="footer d-print-none mt-auto py-3"
         style={{ background: 'rgba(8,0,17,1)' }}
       >
         <ScrollToTopBtn />
         <FooterSocials />
-        <div className="container text-muted text-white-50">
+        <div className="text-muted text-white-50 container">
           <div className="row">
             <FooterBrand />
             <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 col-lg-8 offset-lg-1">

@@ -9,7 +9,7 @@ const ServicesSection = () => {
   return (
     <>
       <section id="favs" className="min-vh-100 pt-5">
-        <div className="container-fluid p-3 p-lg-5 text-center text-light">
+        <div className="container-fluid p-lg-5 text-light p-3 text-center">
           <h1 className="p-2">
             <span className="text-purple">{messages.AppTitle}</span> has all
             your favourites in one place

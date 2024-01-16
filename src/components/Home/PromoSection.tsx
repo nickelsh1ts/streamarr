@@ -1,5 +1,5 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const PromoSection = () => {
   return (
@@ -25,7 +25,7 @@ const PromoSection = () => {
               src="/img/sm-logo_full.png"
               alt="logo"
               style={{ width: '20em', height: 'auto' }}
-              className="mb-4 img-fluid mt-5"
+              className="img-fluid mb-4 mt-5"
             ></img>
             <h1 className="h2 fw-bold lh-1 mb-2">
               Unlimited movies and TV shows
@@ -33,19 +33,19 @@ const PromoSection = () => {
             <p className="lead mb-5">
               Watch anywhere, anytime for free. The future is now.
             </p>
-            <div className="mb-5 pb-3 mb-md-0 pb-md-0 col">
+            <div className="mb-md-0 pb-md-0 col mb-5 pb-3">
               <span className="form-label">
                 Currently by invite only. Enter an invite code to join us!
               </span>
               <div
-                className="col mx-auto mx-md-0"
+                className="col mx-md-0 mx-auto"
                 style={{ maxWidth: '24rem' }}
               >
-                <div className="input-group needs-validation my-2 mx-auto mx-md-0 px-4 px-md-0">
+                <div className="input-group needs-validation mx-md-0 px-md-0 my-2 mx-auto px-4">
                   <input
                     id="icode"
                     type="text"
-                    className="form-control border-0 bg-dark text-light text-uppercase validate"
+                    className="form-control bg-dark text-light text-uppercase validate border-0"
                     maxLength={6}
                     placeholder="Invite Code"
                     aria-label="Invite Code"
@@ -61,7 +61,7 @@ const PromoSection = () => {
                 </div>
               </div>
             </div>
-            <div className="lead p-0 mt-3 mt-md-5 mb-3">
+            <div className="lead mt-md-5 mt-3 mb-3 p-0">
               <div className="col">
                 <div className="col">
                   <strong>Movies: </strong>200{' '}

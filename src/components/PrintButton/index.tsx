@@ -8,7 +8,7 @@ const PrintButton = () => {
     <button
       onClick={print}
       type="button"
-      className="btn rounded-0 border-2 btn-outline-secondary text-decoration-none text-uppercase me-4 me-md-5 ms-auto d-print-none"
+      className="btn rounded-0 btn-outline-secondary text-decoration-none text-uppercase me-4 me-md-5 ms-auto d-print-none border-2"
     >
       <FontAwesomeIcon icon={faPrint} /> Print
     </button>

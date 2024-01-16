@@ -1,9 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link rel="manifest" href="site.webmanifest" crossorigin="use-credentials" />
+    <link
+      rel="manifest"
+      href="site.webmanifest"
+      crossorigin="use-credentials"
+    />
     <title>Offline | Streamarr</title>
     <meta name="description" content="Offline" />
     <link
@@ -270,11 +274,11 @@
         "
       >
         <div
-          class="row col-lg-11 col-xl-8 align-items-center text-center m-auto py-5"
+          class="row col-lg-11 col-xl-8 align-items-center m-auto py-5 text-center"
         >
           <div class="container">
             <i
-              class="float-end text-warning fs-1 p-3 fas fa-exclamation-triangle"
+              class="float-end text-warning fs-1 fas fa-exclamation-triangle p-3"
             ></i>
           </div>
           <div class="row col-lg-5 g-0">
@@ -300,7 +304,7 @@
                     id="minutes"
                   ></div>
                 </div>
-                <p class="text-center refresh">Try refreshing now.</p>
+                <p class="refresh text-center">Try refreshing now.</p>
                 <p>
                   Streamarr currently has planned server maintenance every
                   Monday and Friday from 3:00 to 3:10am EST.
@@ -314,10 +318,11 @@
                   Reach out on Discord
                 </button></a
               >
+              <button type="button">↻ Reload</button>
             </div>
           </div>
 
-          <div class="col m-auto planet">
+          <div class="col planet m-auto">
             <img
               alt="offline"
               src="https://static.wixstatic.com/media/b58370_dee09d7ad2664077bfe80e58129e55ab~mv2.png"
@@ -331,19 +336,19 @@
 
     <footer
       id="footer"
-      class="footer mt-auto py-3 no-print"
+      class="footer no-print mt-auto py-3"
       style="background: rgba(8, 0, 17, 1)"
     >
       <div class="container mb-5">
         <button
           id="scrollToTopBtn"
           type="button"
-          class="btn btn-outline-purple m-auto d-none"
+          class="btn btn-outline-purple d-none m-auto"
         >
           Back up top <i class="fas fa-level-up-alt"></i>
         </button>
       </div>
-      <div class="container text-white-50">
+      <div class="text-white-50 container">
         <h3>
           <a
             class="link-secondary"
@@ -358,7 +363,7 @@
           ></a>
         </h3>
       </div>
-      <div class="container text-muted text-white-50">
+      <div class="text-muted text-white-50 container">
         <div class="row">
           <div class="col-lg-3">
             <a
@@ -518,5 +523,37 @@
         <p style="font-size: 0.8rem">© 2023 Nickelsh1ts</p>
       </div>
     </footer>
+    <!-- Inline the page's JavaScript file. -->
+    <script>
+      // Manual reload feature.
+      document.querySelector('button').addEventListener('click', () => {
+        window.location.reload();
+      });
+
+      // Listen to changes in the network state, reload when online.
+      // This handles the case when the device is completely offline.
+      window.addEventListener('online', () => {
+        window.location.reload();
+      });
+
+      // Check if the server is responding and reload the page if it is.
+      // This handles the case when the device is online, but the server
+      // is offline or misbehaving.
+      async function checkNetworkAndReload() {
+        try {
+          const response = await fetch('.');
+          // Verify we get a valid response from the server
+          if (response.status >= 200 && response.status < 500) {
+            window.location.reload();
+            return;
+          }
+        } catch {
+          // Unable to connect to the server, ignore.
+        }
+        window.setTimeout(checkNetworkAndReload, 2500);
+      }
+
+      checkNetworkAndReload();
+    </script>
   </body>
 </html>

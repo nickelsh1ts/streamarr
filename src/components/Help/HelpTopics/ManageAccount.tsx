@@ -8,7 +8,7 @@ const ManageAccount = () => {
 
   return (
     <>
-      <div className="col mt-4 text-dark">
+      <div className="col text-dark mt-4">
         <h5 className="fw-bold mb-4">Manage Account</h5>
         <a
           href="/watch/web/index.html#!/settings/account"

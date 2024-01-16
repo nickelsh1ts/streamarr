@@ -58,14 +58,14 @@ class PlexOAuth {
     const browser = Bowser.getParser(window.navigator.userAgent);
     this.plexHeaders = {
       Accept: 'application/json',
-      'X-Plex-Product': 'Overseerr',
+      'X-Plex-Product': 'Streamarr',
       'X-Plex-Version': 'Plex OAuth',
       'X-Plex-Client-Identifier': clientId,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
       'X-Plex-Device': browser.getOSName(),
-      'X-Plex-Device-Name': `${browser.getBrowserName()} (Overseerr)`,
+      'X-Plex-Device-Name': `${browser.getBrowserName()} (Streamarr)`,
       'X-Plex-Device-Screen-Resolution':
         window.screen.width + 'x' + window.screen.height,
       'X-Plex-Language': 'en',
@@ -186,13 +186,13 @@ class PlexOAuth {
     const width = window.innerWidth
       ? window.innerWidth
       : document.documentElement.clientWidth
-        ? document.documentElement.clientWidth
-        : screen.width;
+      ? document.documentElement.clientWidth
+      : screen.width;
     const height = window.innerHeight
       ? window.innerHeight
       : document.documentElement.clientHeight
-        ? document.documentElement.clientHeight
-        : screen.height;
+      ? document.documentElement.clientHeight
+      : screen.height;
     const left = width / 2 - w / 2 + dualScreenLeft;
     const top = height / 2 - h / 2 + dualScreenTop;
 

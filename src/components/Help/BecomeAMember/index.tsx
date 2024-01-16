@@ -13,8 +13,8 @@ const BecomeAMember = () => {
       <PageTitle title={messages.becomeamember} />
       <HelpPages>
         <main className="mx-md-5">
-          <div className="row m-2 mb-5 p-2 align-items-center rounded-3 border shadow-lg bg-dark text-light">
-            <div className="col-lg-7 p-3 p-lg-5 pt-lg-3">
+          <div className="row align-items-center rounded-3 bg-dark text-light m-2 mb-5 border p-2 shadow-lg">
+            <div className="col-lg-7 p-lg-5 pt-lg-3 p-3">
               <h1 className="display-4 fw-bold lh-1">
                 How to become a member of{' '}
                 <span className="text-purple">
@@ -52,7 +52,7 @@ const BecomeAMember = () => {
                 </a>
               </p>
             </div>
-            <div className="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+            <div className="col-lg-4 offset-lg-1 overflow-hidden p-0 shadow-lg">
               <img
                 className="rounded-lg-3"
                 src="/img/app-home.png"

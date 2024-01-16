@@ -2,6 +2,8 @@ import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
 import { getRepository } from '@server/datasource';
+import Media from '@server/entity/Media';
+import { MediaRequest } from '@server/entity/MediaRequest';
 import { User } from '@server/entity/User';
 import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
 import type {
@@ -9,25 +11,37 @@ import type {
   LogsResultsResponse,
   SettingsAboutResponse,
 } from '@server/interfaces/api/settingsInterfaces';
+import { scheduledJobs } from '@server/job/schedule';
 import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
 import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
-import type { MainSettings } from '@server/lib/settings';
+import { plexFullScanner } from '@server/lib/scanners/plex';
+import type { JobId, MainSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import discoverSettingRoutes from '@server/routes/settings/discover';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
+import { rescheduleJob } from 'node-schedule';
 import path from 'path';
 import semver from 'semver';
 import { URL } from 'url';
+import notificationRoutes from './notifications';
+import radarrRoutes from './radarr';
+import sonarrRoutes from './sonarr';
 
 const settingsRoutes = Router();
+
+settingsRoutes.use('/notifications', notificationRoutes);
+settingsRoutes.use('/radarr', radarrRoutes);
+settingsRoutes.use('/sonarr', sonarrRoutes);
+settingsRoutes.use('/discover', discoverSettingRoutes);
 
 const filteredMainSettings = (
   user: User,
@@ -214,6 +228,19 @@ settingsRoutes.get('/plex/library', async (req, res) => {
   }));
   settings.save();
   return res.status(200).json(settings.plex.libraries);
+});
+
+settingsRoutes.get('/plex/sync', (_req, res) => {
+  return res.status(200).json(plexFullScanner.status());
+});
+
+settingsRoutes.post('/plex/sync', (req, res) => {
+  if (req.body.cancel) {
+    plexFullScanner.cancel();
+  } else if (req.body.start) {
+    plexFullScanner.run();
+  }
+  return res.status(200).json(plexFullScanner.status());
 });
 
 settingsRoutes.get('/tautulli', (_req, res) => {
@@ -435,6 +462,102 @@ settingsRoutes.get(
   }
 );
 
+settingsRoutes.get('/jobs', (_req, res) => {
+  return res.status(200).json(
+    scheduledJobs.map((job) => ({
+      id: job.id,
+      name: job.name,
+      type: job.type,
+      interval: job.interval,
+      cronSchedule: job.cronSchedule,
+      nextExecutionTime: job.job.nextInvocation(),
+      running: job.running ? job.running() : false,
+    }))
+  );
+});
+
+settingsRoutes.post<{ jobId: string }>('/jobs/:jobId/run', (req, res, next) => {
+  const scheduledJob = scheduledJobs.find((job) => job.id === req.params.jobId);
+
+  if (!scheduledJob) {
+    return next({ status: 404, message: 'Job not found.' });
+  }
+
+  scheduledJob.job.invoke();
+
+  return res.status(200).json({
+    id: scheduledJob.id,
+    name: scheduledJob.name,
+    type: scheduledJob.type,
+    interval: scheduledJob.interval,
+    cronSchedule: scheduledJob.cronSchedule,
+    nextExecutionTime: scheduledJob.job.nextInvocation(),
+    running: scheduledJob.running ? scheduledJob.running() : false,
+  });
+});
+
+settingsRoutes.post<{ jobId: JobId }>(
+  '/jobs/:jobId/cancel',
+  (req, res, next) => {
+    const scheduledJob = scheduledJobs.find(
+      (job) => job.id === req.params.jobId
+    );
+
+    if (!scheduledJob) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
+    if (scheduledJob.cancelFn) {
+      scheduledJob.cancelFn();
+    }
+
+    return res.status(200).json({
+      id: scheduledJob.id,
+      name: scheduledJob.name,
+      type: scheduledJob.type,
+      interval: scheduledJob.interval,
+      cronSchedule: scheduledJob.cronSchedule,
+      nextExecutionTime: scheduledJob.job.nextInvocation(),
+      running: scheduledJob.running ? scheduledJob.running() : false,
+    });
+  }
+);
+
+settingsRoutes.post<{ jobId: JobId }>(
+  '/jobs/:jobId/schedule',
+  (req, res, next) => {
+    const scheduledJob = scheduledJobs.find(
+      (job) => job.id === req.params.jobId
+    );
+
+    if (!scheduledJob) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
+    const result = rescheduleJob(scheduledJob.job, req.body.schedule);
+    const settings = getSettings();
+
+    if (result) {
+      settings.jobs[scheduledJob.id].schedule = req.body.schedule;
+      settings.save();
+
+      scheduledJob.cronSchedule = req.body.schedule;
+
+      return res.status(200).json({
+        id: scheduledJob.id,
+        name: scheduledJob.name,
+        type: scheduledJob.type,
+        interval: scheduledJob.interval,
+        cronSchedule: scheduledJob.cronSchedule,
+        nextExecutionTime: scheduledJob.job.nextInvocation(),
+        running: scheduledJob.running ? scheduledJob.running() : false,
+      });
+    } else {
+      return next({ status: 400, message: 'Invalid job schedule.' });
+    }
+  }
+);
+
 settingsRoutes.get('/cache', async (_req, res) => {
   const cacheManagerCaches = cacheManager.getAllCaches();
 
@@ -482,9 +605,16 @@ settingsRoutes.post(
 );
 
 settingsRoutes.get('/about', async (req, res) => {
+  const mediaRepository = getRepository(Media);
+  const mediaRequestRepository = getRepository(MediaRequest);
+
+  const totalMediaItems = await mediaRepository.count();
+  const totalRequests = await mediaRequestRepository.count();
 
   return res.status(200).json({
     version: getAppVersion(),
+    totalMediaItems,
+    totalRequests,
     tz: process.env.TZ,
     appDataPath: appDataPath(),
   } as SettingsAboutResponse);

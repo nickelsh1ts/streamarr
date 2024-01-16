@@ -1,7 +1,6 @@
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import React from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 
 type TBreadCrumbProps = {
   separator: ReactNode;
@@ -9,6 +8,7 @@ type TBreadCrumbProps = {
   listClasses?: string;
   activeClasses?: string;
   capitalizeLinks?: boolean;
+  pages: string;
 };
 
 const BreadCrumbs = ({
@@ -16,8 +16,9 @@ const BreadCrumbs = ({
   listClasses,
   activeClasses,
   capitalizeLinks,
+  pages,
 }: TBreadCrumbProps) => {
-  const paths = usePathname();
+  const paths = pages;
   const pathNames = paths.split('/').filter((path) => path);
 
   return (

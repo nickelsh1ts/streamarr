@@ -14,6 +14,8 @@ export interface LogsResultsResponse extends PaginatedResponse {
 
 export interface SettingsAboutResponse {
   version: string;
+  totalRequests: number;
+  totalMediaItems: number;
   tz?: string;
   appDataPath: string;
 }
@@ -22,14 +24,20 @@ export interface PublicSettingsResponse {
   initialized: boolean;
   applicationTitle: string;
   applicationUrl: string;
-  companyTitle: string;
+  hideAvailable: boolean;
   localLogin: boolean;
+  movie4kEnabled: boolean;
+  series4kEnabled: boolean;
   region: string;
   originalLanguage: string;
+  partialRequestsEnabled: boolean;
   cacheImages: boolean;
+  vapidPublic: string;
+  enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  companyTitle: string;
   discord: string;
   supportEmail: string;
 }

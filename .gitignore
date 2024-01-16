@@ -1,10 +1,7 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
-.yarn/install-state.gz
 
 # testing
 /coverage
@@ -26,17 +23,36 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-*.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# database
+config/db/*.sqlite3*
+config/settings.json
+
+# logs
+config/logs/*.log*
+config/logs/*.json
+config/logs/*.log.gz
+config/logs/*.json.gz
+config/logs/*-audit.json
+
+# anidb mapping file
+config/anime-list.xml
 
 # dist files
 dist
+
+# sqlite journal
+config/db/db.sqlite3-journal
+
+# VS Code
+.vscode/launch.json
 
 # Cypress
 cypress.env.json
@@ -45,13 +61,6 @@ cypress/screenshots
 
 # ESLint
 .eslintcache
-
-# logs
-config/logs/*.log*
-config/logs/*.json
-config/logs/*.log.gz
-config/logs/*.json.gz
-config/logs/*-audit.json
 
 # TS Build Info
 tsconfig.tsbuildinfo

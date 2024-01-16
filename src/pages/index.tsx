@@ -1,8 +1,8 @@
 import Home from '@app/components/Home';
 import type { NextPage } from 'next';
 
-const HomePage: NextPage = () => {
+const Index: NextPage = () => {
   return <Home />;
 };
 
-export default HomePage;
+export default Index;

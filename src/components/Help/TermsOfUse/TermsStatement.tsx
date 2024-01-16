@@ -7,7 +7,7 @@ const TermsStatement = () => {
   };
 
   return (
-    <div className="container mb-5 text-dark">
+    <div className="text-dark container mb-5">
       <h1 className="text-dark mb-5">{messages.AppTitle} Terms of Use</h1>
       <div>
         <p>

@@ -4,7 +4,7 @@ import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
 // Migrate away from old log
-const OLD_LOG_FILE = path.join(__dirname, '../config/logs/overseerr.log');
+const OLD_LOG_FILE = path.join(__dirname, '../config/logs/streamarr.log');
 if (fs.existsSync(OLD_LOG_FILE)) {
   const file = fs.lstatSync(OLD_LOG_FILE);
 
@@ -43,14 +43,14 @@ const logger = winston.createLogger({
     }),
     new winston.transports.DailyRotateFile({
       filename: process.env.CONFIG_DIRECTORY
-        ? `${process.env.CONFIG_DIRECTORY}/logs/overseerr-%DATE%.log`
-        : path.join(__dirname, '../config/logs/overseerr-%DATE%.log'),
+        ? `${process.env.CONFIG_DIRECTORY}/logs/streamarr-%DATE%.log`
+        : path.join(__dirname, '../config/logs/streamarr-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '7d',
       createSymlink: true,
-      symlinkName: 'overseerr.log',
+      symlinkName: 'streamarr.log',
     }),
     new winston.transports.DailyRotateFile({
       filename: process.env.CONFIG_DIRECTORY

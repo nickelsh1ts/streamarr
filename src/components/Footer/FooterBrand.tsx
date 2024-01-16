@@ -1,6 +1,6 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBootstrap, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
 import useSettings from '@app/hooks/useSettings';
+import { faBootstrap, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FooterBrand = () => {
   const settings = useSettings();
@@ -26,7 +26,7 @@ const FooterBrand = () => {
           {messages.CompanyTitle}.com
         </a>
         <ul className="list-unstyled small text-secondary">
-          <p className="align-middle justify-content-center">
+          <p className="justify-content-center align-middle">
             Built and designed by {messages.CompanyTitle} with{' '}
             <a
               rel="noreferrer"

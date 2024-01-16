@@ -12,8 +12,8 @@ const ReportingIssues = () => {
     <>
       <PageTitle title={messages.reportingissues} />
       <HelpPages>
-        <main className="mx-2 mx-md-5 my-4 text-dark">
-          <div className="container p-5 border border-1 border-purple shadow shadow-lg rounded-3 col col-xl-7">
+        <main className="mx-md-5 text-dark mx-2 my-4">
+          <div className="border-1 border-purple rounded-3 col col-xl-7 container border p-5 shadow shadow-lg">
             <h3>
               How can I report an issue with{' '}
               {settings.currentSettings.applicationTitle} content?

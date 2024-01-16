@@ -2,8 +2,8 @@ const DevicesSection = () => {
   return (
     <>
       <section id="devices" className="min-vh-100">
-        <div className="container-fluid col-xxl-11 px-4 min-vh-100">
-          <div className="row align-items-center text-center text-light pt-5 min-vh-100">
+        <div className="container-fluid col-xxl-11 min-vh-100 px-4">
+          <div className="row align-items-center text-light min-vh-100 pt-5 text-center">
             <div className="container">
               <div className="row pb-5">
                 <h1>Available on all your favourite devices</h1>

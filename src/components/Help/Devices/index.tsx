@@ -23,17 +23,17 @@ const Devices = () => {
         <main className="mt-2">
           <div className="bg-dark">
             <div
-              className="text-center text-light p-0"
+              className="text-light p-0 text-center"
               style={{ background: "url('/img/promo-card.png')" }}
             >
               <div
-                className="p-0 m-0"
+                className="m-0 p-0"
                 style={{
                   background:
                     'linear-gradient(0deg, rgba(8,0,17,0.9) 0%, rgba(43,11,83,0.7) 100%)',
                 }}
               >
-                <div className="container col-lg-6 py-5">
+                <div className="col-lg-6 container py-5">
                   <h1 className="display-5 fw-bold">
                     Connect to{' '}
                     <span className="text-purple">
@@ -149,7 +149,7 @@ const Devices = () => {
                 <div className="container-fluid col-md-8">
                   <div className="row">
                     <div className="col-md-6 mt-4">
-                      <p className="fa-2x text-uppercase border-start border-2 border-purple ps-3">
+                      <p className="fa-2x text-uppercase border-start border-purple ps-3 border-2">
                         Plug and Play
                       </p>
                       <p>
@@ -162,13 +162,13 @@ const Devices = () => {
                         <span className="link-warning">x</span>&trade; app.
                       </p>
                     </div>
-                    <div className="col-md-6 text-center align-content-center mb-4 mb-md-0">
-                      <div className="container col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end">
+                    <div className="col-md-6 align-content-center mb-md-0 mb-4 text-center">
+                      <div className="col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end container">
                         <div
                           className="row row-cols-2"
                           style={{ minHeight: '25rem' }}
                         >
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/media_players/appletv_rev.png"
@@ -176,7 +176,7 @@ const Devices = () => {
                               alt="appletv"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/uploads/g-chromecast.png"
@@ -184,7 +184,7 @@ const Devices = () => {
                               alt="chromecast"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/uploads/firetv.png"
@@ -192,7 +192,7 @@ const Devices = () => {
                               alt="firetv"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/uploads/roku-logo-white.png"
@@ -200,7 +200,7 @@ const Devices = () => {
                               alt="roku"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://logos-download.com/wp-content/uploads/2022/12/Android_TV_Logo.png"
@@ -209,7 +209,7 @@ const Devices = () => {
                             />
                           </div>
                           <div
-                            className="col p-4 bg-dark border-1 border border-secondary"
+                            className="col bg-dark border-1 border-secondary border p-4"
                             style={{ opacity: '0.6' }}
                           ></div>
                         </div>
@@ -227,7 +227,7 @@ const Devices = () => {
                 <div className="container-fluid col-md-8">
                   <div className="row">
                     <div className="col-md-6 mt-4">
-                      <p className="fa-2x text-uppercase border-start border-2 border-purple ps-3">
+                      <p className="fa-2x text-uppercase border-start border-purple ps-3 border-2">
                         Built-in App connection
                       </p>
                       <p>
@@ -242,13 +242,13 @@ const Devices = () => {
                         directly on-screen.
                       </p>
                     </div>
-                    <div className="col-md-6 text-center align-content-center mb-4 mb-md-0">
-                      <div className="container col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end">
+                    <div className="col-md-6 align-content-center mb-md-0 mb-4 text-center">
+                      <div className="col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end container">
                         <div
                           className="row row-cols-2"
                           style={{ minHeight: '25rem' }}
                         >
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/hdtvs/lg-logo-3d-tagline-white.png"
@@ -256,7 +256,7 @@ const Devices = () => {
                               alt="lg"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary text-center position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4 text-center">
                             <img
                               className="position-absolute top-50 start-50 translate-middle img-fluid"
                               width="100"
@@ -264,7 +264,7 @@ const Devices = () => {
                               alt="samsung"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://www.digitaltveurope.com/files/2020/01/vidaa-500x154.jpg"
@@ -272,7 +272,7 @@ const Devices = () => {
                               alt="firetv"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://www.vizio.com/content/dam/vizio/2021/about-vizio/VIZIO_HEADER_LOCKUP.svg"
@@ -280,7 +280,7 @@ const Devices = () => {
                               alt="panasonic"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               width="100"
@@ -289,7 +289,7 @@ const Devices = () => {
                             />
                           </div>
                           <div
-                            className="col p-4 bg-dark border-1 border border-secondary"
+                            className="col bg-dark border-1 border-secondary border p-4"
                             style={{ opacity: '0.6' }}
                           ></div>
                         </div>
@@ -307,7 +307,7 @@ const Devices = () => {
                 <div className="container-fluid col-md-8">
                   <div className="row">
                     <div className="col-md-6 mt-4">
-                      <p className="fa-2x text-uppercase border-start border-2 border-purple ps-3 lh-1">
+                      <p className="fa-2x text-uppercase border-start border-purple ps-3 lh-1 border-2">
                         Play Games
                         <br />
                         Watch Movies
@@ -321,13 +321,13 @@ const Devices = () => {
                         <span className="link-warning">x</span>&trade; app.
                       </p>
                     </div>
-                    <div className="col-md-6 text-center align-content-center mb-4 mb-md-0">
-                      <div className="container col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end">
+                    <div className="col-md-6 align-content-center mb-md-0 mb-4 text-center">
+                      <div className="col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end container">
                         <div
                           className="row row-cols-2"
                           style={{ minHeight: '25rem' }}
                         >
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/game-consoles/xboxone_stacked_wht_rgb.png"
@@ -335,7 +335,7 @@ const Devices = () => {
                               alt="xboxone"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary text-center position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4 text-center">
                             <img
                               className="position-absolute top-50 start-50 translate-middle img-fluid"
                               width="100"
@@ -343,7 +343,7 @@ const Devices = () => {
                               alt="xboxseries"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/game-consoles/ps3.png"
@@ -351,7 +351,7 @@ const Devices = () => {
                               alt="playstation3"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/game-consoles/ps4.png"
@@ -359,7 +359,7 @@ const Devices = () => {
                               alt="playstation4"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               width="100"
@@ -367,7 +367,7 @@ const Devices = () => {
                               alt="Playstation5"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               width="100"
@@ -390,7 +390,7 @@ const Devices = () => {
                 <div className="container-fluid col-md-8">
                   <div className="row">
                     <div className="col-md-6 mt-4">
-                      <p className="fa-2x text-uppercase border-start border-2 border-purple ps-3 lh-1">
+                      <p className="fa-2x text-uppercase border-start border-purple ps-3 lh-1 border-2">
                         Take{' '}
                         <span className="text-purple">
                           {settings.currentSettings.applicationTitle}
@@ -420,13 +420,13 @@ const Devices = () => {
                         .com app.
                       </p>
                     </div>
-                    <div className="col-md-6 text-center align-content-center mb-4 mb-md-0">
-                      <div className="container col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end">
+                    <div className="col-md-6 align-content-center mb-md-0 mb-4 text-center">
+                      <div className="col-xl-8 col-lg-9 col-9 col-sm-6 col-md-12 float-md-end container">
                         <div
                           className="row row-cols-2"
                           style={{ minHeight: '25rem' }}
                         >
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/phones-and-tablets/android.png"
@@ -434,7 +434,7 @@ const Devices = () => {
                               alt="android"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary text-center position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4 text-center">
                             <img
                               className="position-absolute top-50 start-50 translate-middle img-fluid"
                               width="100"
@@ -442,7 +442,7 @@ const Devices = () => {
                               alt="apple"
                             />
                           </div>
-                          <div className="col p-4 bg-dark border-1 border border-secondary position-relative">
+                          <div className="col bg-dark border-1 border-secondary position-relative border p-4">
                             <img
                               className="img-fluid position-absolute top-50 start-50 translate-middle"
                               src="https://devices.netflix.com/images/phones-and-tablets/windows-phone.png"
@@ -451,7 +451,7 @@ const Devices = () => {
                             />
                           </div>
                           <div
-                            className="col p-4 bg-dark border-1 border border-secondary position-relative"
+                            className="col bg-dark border-1 border-secondary position-relative border p-4"
                             style={{ opacity: '0.6' }}
                           ></div>
                         </div>
@@ -469,7 +469,7 @@ const Devices = () => {
                 <div className="container-fluid col-sm-8">
                   <div className="row">
                     <div className="col-md-6 mt-4">
-                      <p className="fa-2x text-uppercase border-start border-2 border-purple ps-3 lh-1">
+                      <p className="fa-2x text-uppercase border-start border-purple ps-3 lh-1 border-2">
                         Watch on what you have
                       </p>
                       <p>
@@ -485,7 +485,7 @@ const Devices = () => {
               </div>
             </div>
           </div>
-          <div className="container-fluid text-center my-5 text-dark">
+          <div className="container-fluid text-dark my-5 text-center">
             <span className="text-purple">
               {settings.currentSettings.applicationTitle}
             </span>{' '}

@@ -69,3 +69,67 @@ self.addEventListener('fetch', (event) => {
     );
   }
 });
+
+self.addEventListener('push', (event) => {
+  const payload = event.data ? event.data.json() : {};
+
+  const options = {
+    body: payload.message,
+    badge: 'badge-128x128.png',
+    icon: payload.image ? payload.image : 'android-chrome-192x192.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: '2',
+      actionUrl: payload.actionUrl,
+      requestId: payload.requestId,
+    },
+    actions: [],
+  };
+
+  if (payload.actionUrl) {
+    options.actions.push({
+      action: 'view',
+      title: payload.actionUrlTitle ?? 'View',
+    });
+  }
+
+  if (payload.notificationType === 'MEDIA_PENDING') {
+    options.actions.push(
+      {
+        action: 'approve',
+        title: 'Approve',
+      },
+      {
+        action: 'decline',
+        title: 'Decline',
+      }
+    );
+  }
+
+  event.waitUntil(self.registration.showNotification(payload.subject, options));
+});
+
+self.addEventListener(
+  'notificationclick',
+  (event) => {
+    const notificationData = event.notification.data;
+
+    event.notification.close();
+
+    if (event.action === 'approve') {
+      fetch(`/api/v1/request/${notificationData.requestId}/approve`, {
+        method: 'POST',
+      });
+    } else if (event.action === 'decline') {
+      fetch(`/api/v1/request/${notificationData.requestId}/decline`, {
+        method: 'POST',
+      });
+    }
+
+    if (notificationData.actionUrl) {
+      clients.openWindow(notificationData.actionUrl);
+    }
+  },
+  false
+);

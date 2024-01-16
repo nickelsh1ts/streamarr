@@ -16,9 +16,9 @@ const Requesting = () => {
       <PageTitle title={messages.requesting} />
       <HelpPages>
         <main className="mx-md-5 mt-3">
-          <div className="row mx-1 mx-md-4 mb-5 px-2 px-md-4 rounded-3 border-md shadow-lg bg-dark text-light overflow-hidden">
+          <div className="row mx-md-4 px-md-4 rounded-3 border-md bg-dark text-light mx-1 mb-5 overflow-hidden px-2 shadow-lg">
             <div className="container px-4 pt-5" id="overseerr">
-              <h2 className="pb-2 border-bottom align-middle">
+              <h2 className="border-bottom pb-2 align-middle">
                 Request new media with{' '}
                 <img
                   className="img-fluid pb-2"
@@ -30,12 +30,12 @@ const Requesting = () => {
               <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 pt-5">
                 <div className="col d-flex align-items-start">
                   <span
-                    className="rounded me-3 position-relative p-4"
+                    className="me-3 position-relative rounded p-4"
                     style={{ backgroundColor: '#974ede' }}
                   >
                     <FontAwesomeIcon
                       icon={faStar}
-                      className="me-3 fs-4 rounded position-absolute top-50 start-50 translate-middle"
+                      className="me-3 fs-4 position-absolute top-50 start-50 translate-middle rounded"
                     />
                   </span>
                   <div>
@@ -52,12 +52,12 @@ const Requesting = () => {
                 </div>
                 <div className="col d-flex align-items-start">
                   <span
-                    className="rounded me-3 position-relative p-4"
+                    className="me-3 position-relative rounded p-4"
                     style={{ backgroundColor: '#974ede' }}
                   >
                     <FontAwesomeIcon
                       icon={faClock}
-                      className="me-3 fs-4 rounded position-absolute top-50 start-50 translate-middle"
+                      className="me-3 fs-4 position-absolute top-50 start-50 translate-middle rounded"
                     />
                   </span>
                   <div>
@@ -73,12 +73,12 @@ const Requesting = () => {
                 </div>
                 <div className="col d-flex align-items-start">
                   <span
-                    className="rounded me-3 position-relative p-4"
+                    className="me-3 position-relative rounded p-4"
                     style={{ backgroundColor: '#974ede' }}
                   >
                     <FontAwesomeIcon
                       icon={faBell}
-                      className="me-3 fs-4 rounded position-absolute top-50 start-50 translate-middle"
+                      className="me-3 fs-4 position-absolute top-50 start-50 translate-middle rounded"
                     />
                   </span>
                   <div>
@@ -91,12 +91,12 @@ const Requesting = () => {
                 </div>
                 <div className="col d-flex align-items-start">
                   <span
-                    className="rounded me-3 position-relative p-4"
+                    className="me-3 position-relative rounded p-4"
                     style={{ backgroundColor: '#974ede' }}
                   >
                     <FontAwesomeIcon
                       icon={faMobile}
-                      className="fs-4 rounded position-absolute top-50 start-50 translate-middle"
+                      className="fs-4 position-absolute top-50 start-50 translate-middle rounded"
                     />
                   </span>
                   <div>
@@ -111,13 +111,13 @@ const Requesting = () => {
               </div>
             </div>
 
-            <div className="row row-cols-1 mx-auto row-cols-md-2 row-cols-xl-3 align-items-stretch g-2 pb-4">
+            <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 align-items-stretch g-2 mx-auto pb-4">
               <div className="col">
                 <div
-                  className="card card-cover h-100 overflow-hidden text-light rounded-5 shadow-lg border"
+                  className="card card-cover h-100 text-light rounded-5 overflow-hidden border shadow-lg"
                   style={{ backgroundColor: '#974ede' }}
                 >
-                  <div className="d-flex flex-column h-100 p-5 pb-3 text-light text-shadow-1">
+                  <div className="d-flex flex-column h-100 text-light text-shadow-1 p-5 pb-3">
                     <h2 className="display-6 lh-1 fw-bold">
                       Login to {settings.currentSettings.applicationTitle}
                     </h2>
@@ -149,16 +149,16 @@ const Requesting = () => {
 
               <div className="col">
                 <div
-                  className="card card-cover h-100 overflow-hidden text-white rounded-5 shadow-lg border"
+                  className="card card-cover h-100 rounded-5 overflow-hidden border text-white shadow-lg"
                   style={{ backgroundColor: '#974ede' }}
                 >
-                  <div className="d-flex flex-column h-100 p-0 pb-3 text-white text-shadow-1">
+                  <div className="d-flex flex-column h-100 text-shadow-1 p-0 pb-3 text-white">
                     <h2 className="display-6 lh-1 fw-bold px-5 pt-5">
                       Discover new media
                     </h2>
                     <p className="px-5">or search for your favourites.</p>
                     <div
-                      className="overflow-hidden border-bottom border-2 text-center mb-4"
+                      className="border-bottom mb-4 overflow-hidden border-2 text-center"
                       style={{ maxHeight: '15rem' }}
                     >
                       <div className="container p-0"></div>
@@ -176,10 +176,10 @@ const Requesting = () => {
 
               <div className="col">
                 <div
-                  className="card card-cover h-100 overflow-hidden text-white rounded-5 shadow-lg border"
+                  className="card card-cover h-100 rounded-5 overflow-hidden border text-white shadow-lg"
                   style={{ backgroundColor: '#974ede' }}
                 >
-                  <div className="d-flex flex-column h-100 pb-3 text-shadow-1">
+                  <div className="d-flex flex-column h-100 text-shadow-1 pb-3">
                     <h2 className="display-6 lh-1 fw-bold px-5 pt-5">
                       Request a movie or TV show
                     </h2>
@@ -187,7 +187,7 @@ const Requesting = () => {
                       individually or by collection/season.
                     </p>
                     <div
-                      className="overflow-hidden text-center border-bottom mb-4 border-2"
+                      className="border-bottom mb-4 overflow-hidden border-2 text-center"
                       style={{ maxHeight: '15rem' }}
                     >
                       <div className="container p-0"></div>
@@ -204,9 +204,9 @@ const Requesting = () => {
               </div>
             </div>
 
-            <div className="row row-cols-1 g-2 mx-auto row-cols-md-2 row-cols-lg-3 mb-4 border-top pt-4 text-center">
+            <div className="row row-cols-1 g-2 row-cols-md-2 row-cols-lg-3 border-top mx-auto mb-4 pt-4 text-center">
               <div className="">
-                <div className="card border border-1 rounded-3 shadow-sm p-2">
+                <div className="card border-1 rounded-3 border p-2 shadow-sm">
                   <a
                     className="card-header py-3 text-white"
                     style={{ backgroundColor: '#974ede' }}
@@ -221,7 +221,7 @@ const Requesting = () => {
                     </h4>
                   </a>
                   <div
-                    className="card-body text-start bg-dark text-light collapse mt-3 px-2"
+                    className="card-body bg-dark text-light collapse mt-3 px-2 text-start"
                     id="howlong"
                   >
                     <p>
@@ -245,7 +245,7 @@ const Requesting = () => {
                 </div>
               </div>
               <div className="col">
-                <div className="card border border-1 rounded-3 shadow-sm p-2">
+                <div className="card border-1 rounded-3 border p-2 shadow-sm">
                   <a
                     className="card-header py-3 text-white"
                     style={{ backgroundColor: '#974ede' }}
@@ -255,13 +255,13 @@ const Requesting = () => {
                     aria-expanded="false"
                     aria-controls="avail"
                   >
-                    <h4 className="my-0 fw-normal">
+                    <h4 className="fw-normal my-0">
                       How will I know once my request has been approved or made
                       available?
                     </h4>
                   </a>
                   <div
-                    className="card-body text-start bg-dark text-light collapse mt-3 px-2"
+                    className="card-body bg-dark text-light collapse mt-3 px-2 text-start"
                     id="avail"
                   >
                     <p>
@@ -278,7 +278,7 @@ const Requesting = () => {
                 </div>
               </div>
               <div className="col">
-                <div className="card border border-1 rounded-3 shadow-sm p-2">
+                <div className="card border-1 rounded-3 border p-2 shadow-sm">
                   <a
                     className="card-header py-3 text-white"
                     style={{ backgroundColor: '#974ede' }}
@@ -288,12 +288,12 @@ const Requesting = () => {
                     aria-expanded="false"
                     aria-controls="howmany"
                   >
-                    <h4 className="my-0 fw-normal">
+                    <h4 className="fw-normal my-0">
                       How many Requests can I make?
                     </h4>
                   </a>
                   <div
-                    className="card-body text-start bg-dark text-light collapse mt-3 px-2"
+                    className="card-body bg-dark text-light collapse mt-3 px-2 text-start"
                     id="howmany"
                   >
                     <p>
@@ -330,7 +330,7 @@ const Requesting = () => {
               </div>
             </div>
           </div>
-          <div className="container-fluid text-center text-dark my-5">
+          <div className="container-fluid text-dark my-5 text-center">
             Access to overseerr is automatically granted with a{' '}
             {settings.currentSettings.applicationTitle} membership.
           </div>

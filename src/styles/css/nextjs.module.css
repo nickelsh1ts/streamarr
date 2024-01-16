@@ -15,12 +15,12 @@
   width: 100%;
   max-width: var(--max-width);
   font-family: var(--font-mono);
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
 .description a {
   display: flex;
-  gap: .5rem;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
 }
@@ -29,8 +29,8 @@
   position: relative;
   padding: 1rem;
   margin: 0;
-  background-color: rgba(var(--callout-rgb), .5);
-  border: 1px solid rgba(var(--callout-border-rgb), .3);
+  background-color: rgba(var(--callout-rgb), 0.5);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
   border-radius: var(--border-radius);
 }
 
@@ -60,16 +60,16 @@
 }
 
 .card h2 {
-  margin-bottom: .7rem;
+  margin-bottom: 0.7rem;
   font-weight: 600;
 }
 
 .card p {
   max-width: 30ch;
   margin: 0;
-  font-size: .9rem;
+  font-size: 0.9rem;
   line-height: 1.5;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .center {
@@ -99,7 +99,7 @@
 .center::after {
   position: absolute;
   left: 50%;
-  content: "";
+  content: '';
   filter: blur(45px);
   transform: translateZ(0);
 }
@@ -111,8 +111,8 @@
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
-    background: rgba(var(--card-rgb), .1);
-    border: 1px solid rgba(var(--card-border-rgb), .15);
+    background: rgba(var(--card-rgb), 0.1);
+    border: 1px solid rgba(var(--card-border-rgb), 0.15);
   }
 
   .card:hover span {
@@ -144,7 +144,7 @@
   }
 
   .card h2 {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 
   .center {
@@ -157,7 +157,7 @@
   }
 
   .description {
-    font-size: .8rem;
+    font-size: 0.8rem;
   }
 
   .description a {
@@ -176,16 +176,15 @@
     inset: 0 0 auto;
     align-items: center;
     padding: 2rem 1rem 1.4rem;
-    background:
-      linear-gradient(
-        to bottom,
-        rgba(var(--background-start-rgb), 1),
-        rgba(var(--callout-rgb), .5)
-      );
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--background-start-rgb), 1),
+      rgba(var(--callout-rgb), 0.5)
+    );
     background-clip: padding-box;
     backdrop-filter: blur(24px);
     border: none;
-    border-bottom: 1px solid rgba(var(--callout-border-rgb), .25);
+    border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
     border-radius: 0;
   }
 
@@ -196,12 +195,11 @@
     height: 200px;
     padding: 2rem;
     pointer-events: none;
-    background:
-      linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgb(var(--background-end-rgb)) 40%
-      );
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgb(var(--background-end-rgb)) 40%
+    );
   }
 }
 
@@ -218,7 +216,7 @@
   }
 
   .logo {
-    filter: invert(1) drop-shadow(0 0 .3rem #ffffff70);
+    filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
   }
 }
 

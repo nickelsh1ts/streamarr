@@ -16,12 +16,13 @@ const Privacy = () => {
     <>
       <PageTitle title={messages.privacy} />
       <ThinNav />
-      <div className="d-flex flex-wrap mb-5 d-print-none">
+      <div className="d-flex d-print-none mb-5 flex-wrap">
         <BreadCrumbs
           separator={<FontAwesomeIcon icon={faChevronRight} />}
           activeClasses="link-secondary"
           listClasses="nav-link link-purple"
           capitalizeLinks
+          pages="Help/Legal/Privacy Statement"
         />
         <PrintButton />
       </div>

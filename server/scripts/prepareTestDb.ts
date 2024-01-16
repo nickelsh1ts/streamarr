@@ -36,17 +36,20 @@ const prepareDb = async () => {
   // Create the admin user
   const user =
     (await userRepository.findOne({
-      where: { email: 'admin@streamarr.dev' },
+      where: { email: 'admin@Streamarr.dev' },
     })) ?? new User();
   user.plexId = admin?.plexId ?? 1;
   user.plexToken = '1234';
   user.plexUsername = 'admin';
   user.username = 'admin';
-  user.email = 'admin@streamarr.dev';
+  user.email = 'admin@Streamarr.dev';
   user.userType = UserType.PLEX;
   await user.setPassword('test1234');
   user.permissions = 2;
-  user.avatar = gravatarUrl('admin@streamarr.dev', { default: 'mm', size: 200 });
+  user.avatar = gravatarUrl('admin@Streamarr.dev', {
+    default: 'mm',
+    size: 200,
+  });
   await userRepository.save(user);
 
   // Create the other user

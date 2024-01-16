@@ -9,20 +9,20 @@ const WatchingSection = () => {
   return (
     <>
       <section id="watching" className="min-vh-100">
-        <div className="container-fluid col-xxl-11 px-4 pt-4 min-vh-100">
-          <div className="row flex-lg-row align-items-center pt-5 min-vh-100">
+        <div className="container-fluid col-xxl-11 min-vh-100 px-4 pt-4">
+          <div className="row flex-lg-row align-items-center min-vh-100 pt-5">
             <div className="col-12 col-lg mx-auto p-1">
               <img
                 src="/img/devices-to-watch.png"
-                className="d-block mx-auto img-fluid"
+                className="d-block img-fluid mx-auto"
                 alt="Bootstrap Themes"
                 width="100%"
                 height="auto"
                 loading="lazy"
               ></img>
             </div>
-            <div className="col-12 col-lg mx-auto text-light text-lg-start">
-              <h1 className="fw-bold lh-1 mb-3 mt-2 text-center text-lg-start">
+            <div className="col-12 col-lg text-light text-lg-start mx-auto">
+              <h1 className="fw-bold lh-1 text-lg-start mb-3 mt-2 text-center">
                 Watch the way you want
               </h1>
               <div className="col">

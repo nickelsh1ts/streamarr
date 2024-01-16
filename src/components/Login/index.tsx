@@ -1,124 +1,172 @@
+import Accordion from '@app/components/Common/Accordion';
+import ImageFader from '@app/components/Common/ImageFader';
 import PageTitle from '@app/components/Common/PageTitle';
-import ThinNav from '@app/components/ThinNav';
-import Footer from '@app/components/Footer';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import LocalLogin from '@app/components/Login/LocalLogin';
+import PlexLoginButton from '@app/components/PlexLoginButton';
 import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
+import { Transition } from '@headlessui/react';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
+import { useRouter } from 'next/dist/client/router';
+import { useEffect, useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import useSWR from 'swr';
+
+const messages = defineMessages({
+  signin: 'Sign In',
+  signinheader: 'Sign in to continue',
+  signinwithplex: 'Use your Plex account',
+  signinwithstreamarr: 'Use your {applicationTitle} account',
+});
 
 const Login = () => {
+  const intl = useIntl();
+  const [error, setError] = useState('');
+  const [isProcessing, setProcessing] = useState(false);
+  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const { user, revalidate } = useUser();
+  const router = useRouter();
   const settings = useSettings();
-  const messages = {
-    AppTitle: `${settings.currentSettings.applicationTitle}`,
-    signin: 'Sign In',
-    signinheader: 'Sign in to continue',
-    signinwithplex: 'Use your Plex account',
-    signinwithoverseerr: 'Use your {applicationTitle} account',
-  };
+
+  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
+  // We take the token and attempt to sign in. If we get a success message, we will
+  // ask swr to revalidate the user which _should_ come back with a valid user.
+  useEffect(() => {
+    const login = async () => {
+      setProcessing(true);
+      try {
+        const response = await axios.post('/api/v1/auth/plex', { authToken });
+
+        if (response.data?.id) {
+          revalidate();
+        }
+      } catch (e) {
+        setError(e.response.data.message);
+        setAuthToken(undefined);
+        setProcessing(false);
+      }
+    };
+    if (authToken) {
+      login();
+    }
+  }, [authToken, revalidate]);
+
+  // Effect that is triggered whenever `useUser`'s user changes. If we get a new
+  // valid user, we redirect the user to the home page as the login was successful.
+  useEffect(() => {
+    if (user) {
+      router.push('/watch');
+    }
+  }, [user, router]);
+
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
 
   return (
-    <>
-      <PageTitle title={messages.signin} />
-      <div
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(8,0,17,1) 50px, rgba(43,11,83,1) 200px, rgba(43,11,83,1) 250px, rgba(8,0,17,1) 75%)!important',
-        }}
-      >
-        <ThinNav />
-        <main
-          className="form-signin text-light m-auto pt-4"
-          style={{ maxWidth: '380px', minHeight: '90vh' }}
-        >
-          <div className="container text-start ps-0">
-            <h4>
-              Log in with Ple<span className="plex-orange">x</span>&trade;
-            </h4>
-            <p className="small">
-              You will use this account to log into{' '}
-              <span className="text-purple">{messages.AppTitle}</span> to watch your
-              favourite movies and TV Shows.
-            </p>
-          </div>
-          <form method="post" noValidate>
-            <div className="form-floating text-dark mb-2">
-              <input
-                id="email"
-                name="PlexEmail"
-                type="email"
-                className="form-control validate text-dark"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Use your Plex credentials"
-                placeholder="name@example.com"
-                style={{ cursor: 'auto' }}
-                required
-              />
-              <label htmlFor="email" className="text-dark">
-                Email address
-              </label>
-              <div className="invalid-feedback">
-                Please provide a valid email address.
-              </div>
-            </div>
-            <div className="form-floating text-dark">
-              <input
-                id="password"
-                name="PlexPassword"
-                type="password"
-                className="validate form-control text-dark"
-                placeholder="Password"
-                style={{ cursor: 'auto' }}
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Use your plex credentials"
-                required
-              />
-              <label htmlFor="password" className="text-dark">
-                Password
-              </label>
-              <div className="invalid-feedback">
-                Please enter your password.
-              </div>
-            </div>
-            <div className="checkbox my-3">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="indeterminate-checkbox"
-                name="rememberme"
-                value="true"
-                defaultChecked
-              />
-              <label htmlFor="indeterminate-checkbox">Remember me</label>
-            </div>
-            <button
-              className="w-100 btn btn-lg btn-purple"
-              type="submit"
-              name="action"
-            >
-              Login
-            </button>
-            <p className="mt-2 text-center" style={{ fontSize: '.8rem' }}>
-              <a
-                target="new"
-                href="https://app.plex.tv/auth#?resetPassword"
-                className="text-decoration-none link-warning"
-              >
-                Wait, I forgot my password
-              </a>
-            </p>
-            <p className="mt-4 text-start text-light small">
-              New to <span className="text-purple">{messages.AppTitle}</span>?{' '}
-              <a
-                href="/join"
-                className="link-light text-decoration-none fw-bold"
-              >
-                Sign up
-              </a>
-            </p>
-          </form>
-        </main>
+    <div className="relative flex min-h-screen flex-col bg-purple-900 py-14">
+      <PageTitle title={intl.formatMessage(messages.signin)} />
+      <ImageFader
+        backgroundImages={
+          backdrops?.map(
+            (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+          ) ?? []
+        }
+      />
+      <div className="absolute top-4 right-4 z-50">
+        <LanguagePicker />
       </div>
-      <Footer />
-    </>
+      <div className="relative z-40 mt-10 flex flex-col items-center px-4 sm:mx-auto sm:w-full sm:max-w-md">
+        <img src="/logo_full.png" className="mb-10 max-w-full" alt="Logo" />
+        <h2 className="mt-2 text-center text-3xl font-extrabold leading-9 text-purple-100">
+          {intl.formatMessage(messages.signinheader)}
+        </h2>
+      </div>
+      <div className="relative z-50 mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div
+          className="bg-purple-800 bg-opacity-50 shadow sm:rounded-lg"
+          style={{ backdropFilter: 'blur(5px)' }}
+        >
+          <>
+            <Transition
+              as="div"
+              show={!!error}
+              enter="transition-opacity duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="mb-4 rounded-md bg-red-600 p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <XCircleIcon className="h-5 w-5 text-red-300" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-300">
+                      {error}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+            <Accordion single atLeastOne>
+              {({ openIndexes, handleClick, AccordionContent }) => (
+                <>
+                  <button
+                    className={`w-full cursor-default bg-purple-800 bg-opacity-70 py-2 text-center text-sm font-bold text-purple-400 transition-colors duration-200 focus:outline-none sm:rounded-t-lg ${
+                      openIndexes.includes(0) && 'text-purple-500'
+                    } ${
+                      settings.currentSettings.localLogin &&
+                      'hover:cursor-pointer hover:bg-purple-700'
+                    }`}
+                    onClick={() => handleClick(0)}
+                    disabled={!settings.currentSettings.localLogin}
+                  >
+                    {intl.formatMessage(messages.signinwithplex)}
+                  </button>
+                  <AccordionContent isOpen={openIndexes.includes(0)}>
+                    <div className="px-10 py-8">
+                      <PlexLoginButton
+                        isProcessing={isProcessing}
+                        onAuthToken={(authToken) => setAuthToken(authToken)}
+                      />
+                    </div>
+                  </AccordionContent>
+                  {settings.currentSettings.localLogin && (
+                    <div>
+                      <button
+                        className={`w-full cursor-default bg-purple-800 bg-opacity-70 py-2 text-center text-sm font-bold text-purple-400 transition-colors duration-200 hover:cursor-pointer hover:bg-purple-700 focus:outline-none ${
+                          openIndexes.includes(1)
+                            ? 'text-purple-500'
+                            : 'sm:rounded-b-lg'
+                        }`}
+                        onClick={() => handleClick(1)}
+                      >
+                        {intl.formatMessage(messages.signinwithstreamarr, {
+                          applicationTitle:
+                            settings.currentSettings.applicationTitle,
+                        })}
+                      </button>
+                      <AccordionContent isOpen={openIndexes.includes(1)}>
+                        <div className="px-10 py-8">
+                          <LocalLogin revalidate={revalidate} />
+                        </div>
+                      </AccordionContent>
+                    </div>
+                  )}
+                </>
+              )}
+            </Accordion>
+          </>
+        </div>
+      </div>
+    </div>
   );
 };
 

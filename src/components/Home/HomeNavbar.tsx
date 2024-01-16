@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import LoginButton from '@app/components/LoginButton';
 import JoinButton from '@app/components/JoinButton';
+import LoginButton from '@app/components/LoginButton';
+import { useEffect, useState } from 'react';
 
 const HomeNavbar = () => {
   const [navTop, setShow] = useState(false);
@@ -28,7 +28,7 @@ const HomeNavbar = () => {
     <>
       <nav
         id="pre-sticky"
-        className={`navbar navbar-dark bg-transparent fixed-top pre-sticky ${
+        className={`navbar navbar-dark fixed-top pre-sticky bg-transparent ${
           navTop && 'show-top-nav'
         }`}
       >

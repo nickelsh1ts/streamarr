@@ -1,10 +1,10 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  projectId: 'ip2fwk',
+  projectId: '',
   e2e: {
-    baseUrl: 'http://localhost:3000',
-    // experimentalSessionAndOrigin: true,
+    baseUrl: 'http://localhost:6064',
+    experimentalSessionAndOrigin: true,
   },
   env: {
     ADMIN_EMAIL: 'admin@streamarr.dev',

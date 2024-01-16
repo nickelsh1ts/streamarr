@@ -124,9 +124,9 @@ class PlexAPI {
       // },
       options: {
         identifier: settings.clientId,
-        product: 'Overseerr',
-        deviceName: 'Overseerr',
-        platform: 'Overseerr',
+        product: 'Streamarr',
+        deviceName: 'Streamarr',
+        platform: 'Streamarr',
       },
     });
   }
@@ -136,8 +136,9 @@ class PlexAPI {
   }
 
   public async getLibraries(): Promise<PlexLibrary[]> {
-    const response =
-      await this.plexClient.query<PlexLibrariesResponse>('/library/sections');
+    const response = await this.plexClient.query<PlexLibrariesResponse>(
+      '/library/sections'
+    );
 
     return response.MediaContainer.Directory;
   }

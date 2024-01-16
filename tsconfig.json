@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -16,6 +14,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "useUnknownInCatchVariables": false,
     "incremental": true,
     "baseUrl": "src",

@@ -9,9 +9,9 @@ const RequestSection = () => {
   return (
     <>
       <section id="requesting" className="min-vh-100">
-        <div className="container-fluid col-xxl-11 px-4 pt-4 min-vh-100">
-          <div className="row flex-lg-row-reverse align-items-center pt-5 min-vh-100">
-            <div className="col-12 col-lg mx-auto text-light text-center text-lg-start">
+        <div className="container-fluid col-xxl-11 min-vh-100 px-4 pt-4">
+          <div className="row flex-lg-row-reverse align-items-center min-vh-100 pt-5">
+            <div className="col-12 col-lg text-light text-lg-start mx-auto text-center">
               <h1 className="fw-bold lh-1 mb-3 mt-2">
                 Introducing{' '}
                 <img
@@ -41,7 +41,7 @@ const RequestSection = () => {
             <div className="col-12 col-lg mx-auto p-5">
               <img
                 src="/img/request-promo.png"
-                className="d-block mx-auto img-fluid"
+                className="d-block img-fluid mx-auto"
                 alt="overseer promo"
                 width="100%"
                 height="auto"

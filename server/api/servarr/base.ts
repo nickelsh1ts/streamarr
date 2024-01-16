@@ -43,12 +43,42 @@ export interface RootFolder {
   }[];
 }
 
+export interface QualityProfile {
+  id: number;
+  name: string;
+}
+
+interface QueueItem {
+  size: number;
+  title: string;
+  sizeleft: number;
+  timeleft: string;
+  estimatedCompletionTime: string;
+  status: string;
+  trackedDownloadStatus: string;
+  trackedDownloadState: string;
+  downloadId: string;
+  protocol: string;
+  downloadClient: string;
+  indexer: string;
+  id: number;
+}
+
 export interface Tag {
   id: number;
   label: string;
 }
 
-class ServarrBase extends ExternalAPI {
+interface QueueResponse<QueueItemAppendT> {
+  page: number;
+  pageSize: number;
+  sortKey: string;
+  sortDirection: string;
+  totalRecords: number;
+  records: (QueueItem & QueueItemAppendT)[];
+}
+
+class ServarrBase<QueueItemAppendT> extends ExternalAPI {
   static buildUrl(settings: DVRSettings, path?: string): string {
     return `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${
       settings.port
@@ -93,6 +123,22 @@ class ServarrBase extends ExternalAPI {
     }
   };
 
+  public getProfiles = async (): Promise<QualityProfile[]> => {
+    try {
+      const data = await this.getRolling<QualityProfile[]>(
+        `/qualityProfile`,
+        undefined,
+        3600
+      );
+
+      return data;
+    } catch (e) {
+      throw new Error(
+        `[${this.apiName}] Failed to retrieve profiles: ${e.message}`
+      );
+    }
+  };
+
   public getRootFolders = async (): Promise<RootFolder[]> => {
     try {
       const data = await this.getRolling<RootFolder[]>(
@@ -105,6 +151,25 @@ class ServarrBase extends ExternalAPI {
     } catch (e) {
       throw new Error(
         `[${this.apiName}] Failed to retrieve root folders: ${e.message}`
+      );
+    }
+  };
+
+  public getQueue = async (): Promise<(QueueItem & QueueItemAppendT)[]> => {
+    try {
+      const response = await this.axios.get<QueueResponse<QueueItemAppendT>>(
+        `/queue`,
+        {
+          params: {
+            includeEpisode: true,
+          },
+        }
+      );
+
+      return response.data.records;
+    } catch (e) {
+      throw new Error(
+        `[${this.apiName}] Failed to retrieve queue: ${e.message}`
       );
     }
   };

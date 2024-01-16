@@ -13,10 +13,10 @@ const GettingStarted = () => {
       <PageTitle title={messages.gettingstarted} />
       <HelpPages>
         <main className="mx-md-5">
-          <div className="row m-1 m-md-4 mb-5 p-xl-4 rounded-3 border shadow-lg justify-content-center bg-dark text-light">
-            <div className="row flex-lg-row-reverse p-2 align-items-center justify-content-center">
-              <div className="col-10 col-sm-8 col-lg-6 my-4 my-lg-0">
-                <div className="col m-auto planet">
+          <div className="row m-md-4 p-xl-4 rounded-3 justify-content-center bg-dark text-light m-1 mb-5 border shadow-lg">
+            <div className="row flex-lg-row-reverse align-items-center justify-content-center p-2">
+              <div className="col-10 col-sm-8 col-lg-6 my-lg-0 my-4">
+                <div className="col planet m-auto">
                   <img
                     alt="astro-earth"
                     src="/img/astro-hug-earth.png"
@@ -35,12 +35,12 @@ const GettingStarted = () => {
                   . Please take a look below for some common questions when
                   setting up your account for the first time.
                 </p>
-                <div className="row align-text-bottom text-start">
+                <div className="row text-start align-text-bottom">
                   <div
                     className="accordion accordion-flush text-white"
                     id="gettingstarted"
                   >
-                    <div className="accordion-item mb-2 bg-dark text-white">
+                    <div className="accordion-item bg-dark mb-2 text-white">
                       <h2 className="accordion-header" id="streamarrHeading">
                         <button
                           className="btn-purple accordion-button collapsed fw-bold"

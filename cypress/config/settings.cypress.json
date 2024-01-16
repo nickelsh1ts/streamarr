@@ -1,0 +1,36 @@
+{
+  "clientId": "6919275e-142a-48d8-be6b-93594cbd4626",
+  "main": {
+    "apiKey": "testkey",
+    "applicationTitle": "Streamarr",
+    "applicationUrl": "",
+    "csrfProtection": false,
+    "cacheImages": false,
+    "defaultPermissions": 32,
+    "localLogin": true,
+    "newPlexLogin": true,
+    "region": "",
+    "originalLanguage": "",
+    "trustProxy": false,
+    "locale": "en"
+  },
+  "plex": {
+    "name": "Streamarr",
+    "ip": "192.168.1.1",
+    "port": 32400,
+    "useSsl": false,
+    "libraries": [
+      {
+        "id": "1",
+        "name": "Movies",
+        "enabled": true,
+        "type": "movie"
+      }
+    ],
+    "machineId": "test"
+  },
+  "tautulli": {},
+  "public": {
+    "initialized": true
+  }
+}

@@ -1,7 +1,6 @@
 import globalMessages from '@app/i18n/globalMessages';
 import PlexOAuth from '@app/utils/plex';
-import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
@@ -50,7 +49,7 @@ const PlexLoginButton = ({
         disabled={loading || isProcessing}
         className="plex-button"
       >
-        <FontAwesomeIcon icon={faArrowRightToBracket} />
+        <ArrowLeftOnRectangleIcon />
         <span>
           {loading
             ? intl.formatMessage(globalMessages.loading)

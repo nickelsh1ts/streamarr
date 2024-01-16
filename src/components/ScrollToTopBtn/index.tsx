@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLevelUpAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 
 const ScrollToTopBtn = () => {
   const [topButton, setShow] = useState(false);
@@ -37,7 +37,7 @@ const ScrollToTopBtn = () => {
 
   return (
     <>
-      <div className="container text-center mb-5">
+      <div className="container mb-5 text-center">
         <button
           id="scrollToTopBtn"
           type="button"

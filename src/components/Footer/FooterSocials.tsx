@@ -1,10 +1,10 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FooterSocials = () => {
   return (
     <>
-      <div className="container text-white-50">
+      <div className="text-white-50 container">
         <h3>
           <a
             className="link-secondary align-middle"

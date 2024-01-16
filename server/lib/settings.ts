@@ -104,6 +104,7 @@ export interface MainSettings {
   trustProxy: boolean;
   partialRequestsEnabled: boolean;
   locale: string;
+  companyTitle: string;
 }
 
 interface PublicSettings {
@@ -126,6 +127,7 @@ interface FullPublicSettings extends PublicSettings {
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  companyTitle: string;
 }
 
 export interface NotificationAgentConfig {
@@ -283,7 +285,7 @@ class Settings {
       vapidPublic: '',
       main: {
         apiKey: '',
-        applicationTitle: 'Overseerr',
+        applicationTitle: 'Streamarr',
         applicationUrl: '',
         csrfProtection: false,
         cacheImages: false,
@@ -300,6 +302,7 @@ class Settings {
         trustProxy: false,
         partialRequestsEnabled: true,
         locale: 'en',
+        companyTitle: 'Nickelsh1ts',
       },
       plex: {
         name: '',
@@ -326,7 +329,7 @@ class Settings {
               ignoreTls: false,
               requireTls: false,
               allowSelfSigned: false,
-              senderName: 'Overseerr',
+              senderName: 'Streamarr',
             },
           },
           discord: {
@@ -508,6 +511,7 @@ class Settings {
       locale: this.data.main.locale,
       emailEnabled: this.data.notifications.agents.email.enabled,
       newPlexLogin: this.data.main.newPlexLogin,
+      companyTitle: this.data.main.companyTitle,
     };
   }
 

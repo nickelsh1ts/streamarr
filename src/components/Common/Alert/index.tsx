@@ -1,5 +1,8 @@
-import { faCircleInfo, faCircleXmark, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
 
 interface AlertProps {
   title?: React.ReactNode;
@@ -9,11 +12,10 @@ interface AlertProps {
 
 const Alert = ({ title, children, type }: AlertProps) => {
   let design = {
-    bgColor:
-      'border border-yellow-500 backdrop-blur bg-yellow-400 bg-opacity-20',
-    titleColor: 'text-yellow-100',
-    textColor: 'text-yellow-300',
-    svg: <FontAwesomeIcon icon={faExclamationTriangle} className="h-5 w-5" />,
+    bgColor: 'border border-red-500 backdrop-blur bg-red-400 bg-opacity-20',
+    titleColor: 'text-red-100',
+    textColor: 'text-red-300',
+    svg: <ExclamationTriangleIcon className="h-5 w-5" />,
   };
 
   switch (type) {
@@ -23,7 +25,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
           'border border-indigo-500 backdrop-blur bg-indigo-400 bg-opacity-20',
         titleColor: 'text-gray-100',
         textColor: 'text-gray-300',
-        svg: <FontAwesomeIcon icon={faCircleInfo} className="h-5 w-5" />,
+        svg: <InformationCircleIcon className="h-5 w-5" />,
       };
       break;
     case 'error':
@@ -31,7 +33,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
         bgColor: 'bg-red-600',
         titleColor: 'text-red-100',
         textColor: 'text-red-300',
-        svg: <FontAwesomeIcon icon={faCircleXmark} className="h-5 w-5" />,
+        svg: <XCircleIcon className="h-5 w-5" />,
       };
       break;
   }

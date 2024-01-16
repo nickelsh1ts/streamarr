@@ -10,7 +10,7 @@ const PageTitle = ({ title }: PageTitleProps) => {
 
   const titleText = `${
     Array.isArray(title) ? title.filter(Boolean).join(' - ') : title
-  } | ${settings.currentSettings.applicationTitle}`;
+  } - ${settings.currentSettings.applicationTitle}`;
 
   return (
     <Head>

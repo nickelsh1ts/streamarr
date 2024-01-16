@@ -1,35 +1,35 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useSettings from '@app/hooks/useSettings';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import {
-  faEnvelopeOpenText,
   faBookOpen,
+  faEnvelopeOpenText,
   faHeadset,
 } from '@fortawesome/free-solid-svg-icons';
-import useSettings from '@app/hooks/useSettings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const MoreHelp = () => {
   const settings = useSettings();
 
   return (
     <>
-      <div className="mt-5 d-print-none text-dark">
+      <div className="d-print-none text-dark mt-5">
         <div className="px-md-5 py-3" style={{ background: '#E8EAED' }}>
           <div className="container py-5">
             <h1 className="text-secondary text-center">Need more help?</h1>
-            <p className="col-lg-8 mx-auto text-center lead">
+            <p className="col-lg-8 lead mx-auto text-center">
               Check out the help section on Plex or reach out below! We&apos;re
               available during EST hours.
             </p>
-            <div className="row row-cols-1 row-cols-lg-2 g-3 pt-3 mb-5">
+            <div className="row row-cols-1 row-cols-lg-2 g-3 mb-5 pt-3">
               <div className="col">
-                <div className="card h-100 shadow bg-white">
-                  <div className="card-body p-4 p-sm-5">
+                <div className="card h-100 bg-white shadow">
+                  <div className="card-body p-sm-5 p-4">
                     <div className="d-flex">
                       <FontAwesomeIcon
                         icon={faHeadset}
                         className="fa-4x my-auto"
                       />
-                      <div className="my-auto ms-4">
+                      <div className="ms-4 my-auto">
                         <h5 className="card-text">Contact Us</h5>
                         <p className="">
                           Need to chat with us? We&apos;re available on Discord!
@@ -60,14 +60,14 @@ const MoreHelp = () => {
                 </div>
               </div>
               <div className="col">
-                <div className="card h-100 shadow bg-white">
-                  <div className="card-body p-4 p-sm-5">
+                <div className="card h-100 bg-white shadow">
+                  <div className="card-body p-sm-5 p-4">
                     <div className="d-flex">
                       <FontAwesomeIcon
                         icon={faBookOpen}
                         className="fa-4x my-auto"
                       />
-                      <div className="my-auto ms-4">
+                      <div className="ms-4 my-auto">
                         <h5 className="card-text">Visit Plex</h5>
                         <p className="">
                           Take a look at the Plex Help section or browse their
