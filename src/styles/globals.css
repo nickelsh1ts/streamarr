@@ -219,7 +219,7 @@
   }
 
   .card-field {
-    @apply py-.5 flex items-center truncate text-sm sm:py-1;
+    @apply py-0.5 flex items-center truncate text-sm sm:py-1;
   }
 
   .card-field-name {
