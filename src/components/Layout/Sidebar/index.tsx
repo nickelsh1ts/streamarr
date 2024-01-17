@@ -1,13 +1,15 @@
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { Permission, useUser } from '@app/hooks/useUser';
+import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
+import { faChartLine, faLock } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Transition } from '@headlessui/react';
 import {
   ClockIcon,
   CogIcon,
   ExclamationTriangleIcon,
   FilmIcon,
-  LifebuoyIcon,
   PlayPauseIcon,
   SparklesIcon,
   TvIcon,
@@ -23,12 +25,14 @@ export const menuMessages = defineMessages({
   watch: 'Watch',
   dashboard: 'Discover',
   browsemovies: 'Movies',
-  browsetv: 'Series',
+  browsetv: 'TV Shows',
   requests: 'Requests',
   issues: 'Issues',
   users: 'Users',
   settings: 'Settings',
-  help: 'Help',
+  releases: 'Release Schedule',
+  statistics: 'Statistics',
+  admin: 'Admin',
 });
 
 interface SidebarProps {
@@ -53,12 +57,6 @@ const SidebarLinks: SidebarLinkProps[] = [
     messagesKey: 'watch',
     svgIcon: <PlayPauseIcon className="mr-3 h-6 w-6" />,
     activeRegExp: /^\/watch/,
-  },
-  {
-    href: '/help',
-    messagesKey: 'help',
-    svgIcon: <LifebuoyIcon className="mr-3 h-6 w-6" />,
-    activeRegExp: /^\/help/,
   },
   {
     href: '/discover',
@@ -97,12 +95,32 @@ const SidebarLinks: SidebarLinkProps[] = [
     permissionType: 'or',
   },
   {
+    href: '/releases',
+    messagesKey: 'releases',
+    svgIcon: <FontAwesomeIcon icon={faCalendarDays} className='mr-3 h-6 w-6' />,
+    activeRegExp: /^\/releases/
+  },
+  {
+    href: '/Statistics',
+    messagesKey: 'statistics',
+    svgIcon: <FontAwesomeIcon icon={faChartLine} className='mr-3 h-6 w-6' />,
+    activeRegExp: /^\/statistics/
+  },
+  {
     href: '/users',
     messagesKey: 'users',
     svgIcon: <UsersIcon className="mr-3 h-6 w-6" />,
     activeRegExp: /^\/users/,
     requiredPermission: Permission.MANAGE_USERS,
     dataTestId: 'sidebar-menu-users',
+  },
+  {
+    href: '/admin',
+    messagesKey: 'admin',
+    svgIcon: <FontAwesomeIcon icon={faLock} className="mr-3 h-6 w-6" />,
+    activeRegExp: /^\/admin/,
+    requiredPermission: Permission.ADMIN,
+    dataTestId: 'sidebar-menu-admin',
   },
   {
     href: '/settings',

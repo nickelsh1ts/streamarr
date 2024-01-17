@@ -105,6 +105,7 @@ export interface MainSettings {
   partialRequestsEnabled: boolean;
   locale: string;
   companyTitle: string;
+  discord: string;
 }
 
 interface PublicSettings {
@@ -128,6 +129,7 @@ interface FullPublicSettings extends PublicSettings {
   emailEnabled: boolean;
   newPlexLogin: boolean;
   companyTitle: string;
+  discord: string;
 }
 
 export interface NotificationAgentConfig {
@@ -303,6 +305,7 @@ class Settings {
         partialRequestsEnabled: true,
         locale: 'en',
         companyTitle: 'Nickelsh1ts',
+        discord: 'https://discord.gg/streamarr',
       },
       plex: {
         name: '',
@@ -512,6 +515,7 @@ class Settings {
       emailEnabled: this.data.notifications.agents.email.enabled,
       newPlexLogin: this.data.main.newPlexLogin,
       companyTitle: this.data.main.companyTitle,
+      discord: this.data.main.discord,
     };
   }
 

@@ -1,5 +1,8 @@
 import MiniQuotaDisplay from '@app/components/Layout/UserDropdown/MiniQuotaDisplay';
+import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu, Transition } from '@headlessui/react';
 import {
   ArrowRightOnRectangleIcon,
@@ -17,6 +20,10 @@ const messages = defineMessages({
   settings: 'Settings',
   requests: 'Requests',
   signout: 'Sign Out',
+  inviteafriend: 'Invite a Friend',
+  faqs: 'FAQs',
+  help: 'Help Centre',
+  getsupport: 'Get Support',
 });
 
 const ForwardedLink = forwardRef<
@@ -37,6 +44,7 @@ ForwardedLink.displayName = 'ForwardedLink';
 const UserDropdown = () => {
   const intl = useIntl();
   const { user, revalidate } = useUser();
+  const settings = useSettings();
 
   const logout = async () => {
     const response = await axios.post('/api/v1/auth/logout');
@@ -124,6 +132,22 @@ const UserDropdown = () => {
                 )}
               </Menu.Item>
               <Menu.Item>
+              {({ active }) => (
+                  <ForwardedLink
+                    href={`/invite`}
+                    className={`flex items-center rounded px-4 py-2 text-sm font-medium text-purple-200 transition duration-150 ease-in-out ${
+                      active
+                        ? 'bg-gradient-to-br from-purple-600 to-purple-600 text-white'
+                        : ''
+                    }`}
+                    data-testid="user-menu-settings"
+                  >
+                    <FontAwesomeIcon icon={faPaperPlane} className="mr-2 inline h-5 w-5" />
+                    <span>{intl.formatMessage(messages.inviteafriend)}</span>
+                  </ForwardedLink>
+                  )}
+              </Menu.Item>
+              <Menu.Item>
                 {({ active }) => (
                   <ForwardedLink
                     href={`/profile/settings`}
@@ -139,6 +163,55 @@ const UserDropdown = () => {
                   </ForwardedLink>
                 )}
               </Menu.Item>
+              </div>
+            <div className="p-1">
+            <Menu.Item>
+                {({ active }) => (
+                  <ForwardedLink
+                    href={`/help/faqs`}
+                    className={`flex items-center rounded px-4 py-2 text-sm font-medium text-purple-200 transition duration-150 ease-in-out ${
+                      active
+                        ? 'bg-gradient-to-br from-purple-600 to-purple-600 text-white'
+                        : ''
+                    }`}
+                    data-testid="user-menu-settings"
+                  >
+                    <span>{intl.formatMessage(messages.faqs)}</span>
+                  </ForwardedLink>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <ForwardedLink
+                    href={`/help`}
+                    className={`flex items-center rounded px-4 py-2 text-sm font-medium text-purple-200 transition duration-150 ease-in-out ${
+                      active
+                        ? 'bg-gradient-to-br from-purple-600 to-purple-600 text-white'
+                        : ''
+                    }`}
+                    data-testid="user-menu-settings"
+                  >
+                    <span>{intl.formatMessage(messages.help)}</span>
+                  </ForwardedLink>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <ForwardedLink
+                    href={settings.currentSettings.discord}
+                    className={`flex items-center rounded px-4 py-2 text-sm font-medium text-purple-200 transition duration-150 ease-in-out ${
+                      active
+                        ? 'bg-gradient-to-br from-purple-600 to-purple-600 text-white'
+                        : ''
+                    }`}
+                    data-testid="user-menu-settings"
+                  >
+                    <span>{intl.formatMessage(messages.getsupport)}</span>
+                  </ForwardedLink>
+                )}
+              </Menu.Item>
+            </div>
+              <div className="p-1">
               <Menu.Item>
                 {({ active }) => (
                   <a

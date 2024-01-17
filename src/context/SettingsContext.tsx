@@ -25,7 +25,7 @@ const defaultSettings = {
   emailEnabled: false,
   newPlexLogin: true,
   companyTitle: '',
-  discord: '',
+  discord: 'https://discord.gg/streamarr',
   supportEmail: '',
 };
 
