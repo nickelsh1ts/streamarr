@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps<MoviePageProps> = async (
   ctx
 ) => {
   const response = await axios.get<MovieDetailsType>(
-    `http://localhost:${process.env.PORT || 5055}/api/v1/movie/${
+    `http://localhost:${process.env.PORT || 6064}/api/v1/movie/${
       ctx.query.movieId
     }`,
     {
