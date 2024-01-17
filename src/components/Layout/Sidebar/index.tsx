@@ -101,7 +101,7 @@ const SidebarLinks: SidebarLinkProps[] = [
     activeRegExp: /^\/releases/
   },
   {
-    href: '/Statistics',
+    href: '/statistics',
     messagesKey: 'statistics',
     svgIcon: <FontAwesomeIcon icon={faChartLine} className='mr-3 h-6 w-6' />,
     activeRegExp: /^\/statistics/

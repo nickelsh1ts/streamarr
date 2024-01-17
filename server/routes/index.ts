@@ -139,6 +139,7 @@ router.get(
   }
 );
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
+router.use('/admin', isAuthenticated(Permission.ADMIN));
 router.use('/search', isAuthenticated(), searchRoutes);
 router.use('/discover', isAuthenticated(), discoverRoutes);
 router.use('/request', isAuthenticated(), requestRoutes);
