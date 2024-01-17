@@ -313,7 +313,7 @@
   "components.MediaSlider.ShowMoreCard.seemore": "Ver más",
   "components.Login.validationpasswordrequired": "Se requiere contraseña",
   "components.Login.validationemailrequired": "Debes indicar una dirección de email válida",
-  "components.Login.signinwithStreamarr": "Usa tu cuenta de {applicationTitle}",
+  "components.Login.signinwithstreamarr": "Usa tu cuenta de {applicationTitle}",
   "components.Login.password": "Contraseña",
   "components.Login.loginerror": "Algo salió mal al intentar iniciar sesión.",
   "components.Login.email": "Dirección de correo electrónico",
