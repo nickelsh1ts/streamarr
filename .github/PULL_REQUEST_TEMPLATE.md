@@ -5,7 +5,8 @@
 #### To-Dos
 
 - [ ] Successful build `yarn build`
-- [ ] Database migration (if required)
+- [ ] Successful `node server.js`
+- [ ] Successful docker image deploy
 
 #### Issues Fixed or Closed
 

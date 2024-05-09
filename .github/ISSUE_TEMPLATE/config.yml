@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 Support via Discord
-    url: https://discord.gg/nickflixtv
+    url: https://discord.gg/streamarr
     about: Chat with other users and Nickelsh1ts
   - name: 💬 Support via GitHub Discussions
-    url: https://github.com/nickelsh1ts/nickflixtv/discussions
+    url: https://github.com/nickelsh1ts/streamarr/discussions
     about: Ask questions and discuss with other community members

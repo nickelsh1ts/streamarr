@@ -2,6 +2,16 @@
 
 # dependencies
 /node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+/public/feeds
 
 # production
 /build
@@ -16,22 +26,14 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-*.env*.local
+.env*.local
+
+# vercel
+.vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# dist files
-dist
-
-# Cypress
-cypress.env.json
-cypress/videos
-cypress/screenshots
-
-# ESLint
-.eslintcache
 
 # logs
 config/logs/*.log*
@@ -40,8 +42,24 @@ config/logs/*.log.gz
 config/logs/*.json.gz
 config/logs/*-audit.json
 
+# dist files
+dist
+
+# ESLint
+.eslintcache
+
 # TS Build Info
 tsconfig.tsbuildinfo
 
 # Config Cache Directory
 config/cache
+
+# Yarn
+.yarn/
+
+# Cypress
+cypress.env.json
+cypress/videos
+cypress/screenshots
+
+src/posts/*.md

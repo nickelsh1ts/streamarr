@@ -1,0 +1,22 @@
+{
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "nickelsh1ts",
+      "name": "nickelsh1ts",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76549245?v=4",
+      "profile": "https://www.nickelsh1ts.com",
+      "contributions": ["code", "design", "ideas", "test"]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "streamarr",
+  "projectOwner": "nickelsh1ts",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
+}

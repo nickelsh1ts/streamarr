@@ -1,28 +1,28 @@
 {
-  "name": "NickflixTV",
-  "short_name": "NickflixTV",
+  "name": "Streamarr",
+  "short_name": "Streamarr",
   "description": "Unlimited movies and TV Shows. Watch anywhere, anytime for free. The future is now.",
   "icons": [
     {
-      "src": "./nickflixtv-logo-192x192.png",
+      "src": "./streamarr-logo-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./nickflixtv-logo_maskable-192x192.png",
+      "src": "./streamarr-logo_maskable-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./nickflixtv-logo-512x512.png",
+      "src": "./streamarr-logo-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./nickflixtv-logo_maskable-512x512.png",
+      "src": "./streamarr-logo_maskable-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

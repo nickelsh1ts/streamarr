@@ -1,0 +1,15 @@
+FROM node:20-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+
+COPY . /app
+WORKDIR /app
+
+RUN corepack enable
+RUN yarn set version stable
+RUN yarn
+
+RUN yarn build
+
+CMD yarn dev

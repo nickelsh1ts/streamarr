@@ -1,4 +1,4 @@
-# Notice: Collection of data on NickflixTV through automated means is prohibited unless explicitly authorized
+# Notice: Collection of data on nickelsh1ts.com through automated means is prohibited unless explicitly authorized
 
 User-agent: Applebot
 User-agent: baiduspider
@@ -15,11 +15,6 @@ User-agent: Applebot
 User-agent: baiduspider
 User-agent: Bingbot
 Allow: /
-Disallow: /img
-Disallow: /inc
-Disallow: /assets
 
 User-agent: *
 Disallow: /
-Disallow: /assets
-Disallow: /inc

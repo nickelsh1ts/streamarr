@@ -11,11 +11,6 @@
     // https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
     "esbenp.prettier-vscode",
 
-    // https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest
-    "Orta.vscode-jest",
-
-    "stylelint.vscode-stylelint",
-
-    "bradlc.vscode-tailwindcss"
+    "stylelint.vscode-stylelint"
   ]
 }
