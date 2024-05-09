@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./public/img/sm-logo_full.png" alt="Streamarr" style="margin: 20px 0;">
+<img src="./public/img/logo_full.png" alt="Streamarr" style="margin: 20px 0;">
 </p>
 
 **Streamarr** is a free private members only streaming service build on top of an ecosystem of free and open source applications such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)**!
