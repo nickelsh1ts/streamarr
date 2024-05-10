@@ -1497,13 +1497,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:19.0.3":
-  version: 19.0.3
-  resolution: "@commitlint/config-conventional@npm:19.0.3"
+"@commitlint/config-conventional@npm:19.2.2":
+  version: 19.2.2
+  resolution: "@commitlint/config-conventional@npm:19.2.2"
   dependencies:
     "@commitlint/types": "npm:^19.0.3"
     conventional-changelog-conventionalcommits: "npm:^7.0.2"
-  checksum: 10c0/3495238f6c5f7402055b104eea00e378701ac760452df8be4254269f49e406f74713f69022a9c912a85275d6cd050ff3bcd0066aea049841201f6bf98a87f0ff
+  checksum: 10c0/2f2a07ee318ac42ffda488521bd84f28268a6d2ea10b332abcad6106559d8a64a765cc58ddea106fd67fce376228cb24059000a584f4986e0e8f972cedd85442
   languageName: node
   linkType: hard
 
@@ -12912,7 +12912,7 @@ __metadata:
   dependencies:
     "@badrap/bar-of-progress": "npm:^0.2.2"
     "@commitlint/cli": "npm:19.0.3"
-    "@commitlint/config-conventional": "npm:19.0.3"
+    "@commitlint/config-conventional": "npm:19.2.2"
     "@heroicons/react": "npm:^2.1.1"
     "@semantic-release/changelog": "npm:6.0.3"
     "@semantic-release/commit-analyzer": "npm:12.0.0"
