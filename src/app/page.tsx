@@ -1,12 +1,14 @@
 import type { Metadata, NextPage } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Stream the greatest Movies, Series, Classics and more',
+  title: 'Stream the greatest Movies, Series, Classics and more - Streamarr',
 };
 
 const Index: NextPage = () => {
   return(
-    null
+    <main className='main'>
+      Testing 123
+    </main>
   );
 };
 
