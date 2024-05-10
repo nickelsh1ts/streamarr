@@ -4593,12 +4593,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.2.21":
-  version: 18.2.21
-  resolution: "@types/react-dom@npm:18.2.21"
+"@types/react-dom@npm:18.3.0":
+  version: 18.3.0
+  resolution: "@types/react-dom@npm:18.3.0"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/a887b4b647071df48173f054854713b68fdacfceeba7fa14f64ba26688d7d43574d7dc88a2a346e28f2e667eeab1b9bdbcad8a54353869835e52638607f61ff5
+  checksum: 10c0/6c90d2ed72c5a0e440d2c75d99287e4b5df3e7b011838cdc03ae5cd518ab52164d86990e73246b9d812eaf02ec351d74e3b4f5bd325bf341e13bf980392fd53b
   languageName: node
   linkType: hard
 
@@ -11913,15 +11913,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.2.0":
-  version: 18.2.0
-  resolution: "react-dom@npm:18.2.0"
+"react-dom@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
   dependencies:
     loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.0"
+    scheduler: "npm:^0.23.2"
   peerDependencies:
-    react: ^18.2.0
-  checksum: 10c0/66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
+    react: ^18.3.1
+  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
   languageName: node
   linkType: hard
 
@@ -12441,7 +12441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.23.0":
+"scheduler@npm:^0.23.2":
   version: 0.23.2
   resolution: "scheduler@npm:0.23.2"
   dependencies:
@@ -12925,7 +12925,7 @@ __metadata:
     "@tailwindcss/typography": "npm:0.5.13"
     "@types/node": "npm:^20.11.25"
     "@types/react": "npm:18.3.1"
-    "@types/react-dom": "npm:18.2.21"
+    "@types/react-dom": "npm:18.3.0"
     "@types/react-transition-group": "npm:4.4.10"
     "@types/semver": "npm:7.5.8"
     "@typescript-eslint/eslint-plugin": "npm:7.8.0"
@@ -12956,7 +12956,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-animate-height: "npm:3.2.3"
     react-aria: "npm:3.32.1"
-    react-dom: "npm:18.2.0"
+    react-dom: "npm:18.3.1"
     react-intl: "npm:6.6.6"
     react-use-clipboard: "npm:1.0.9"
     semantic-release: "npm:23.0.2"
