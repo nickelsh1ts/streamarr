@@ -1,8 +1,21 @@
 const RememberMe = ({ defaultValue, onChange }) => (
-  <label className={`login-remember-me-checkbox-${defaultValue ? '' : 'un'}checked login-remember-me-checkbox`}
-      onClick={() => onChange(!defaultValue)}>
+  <>
+    <label
+      htmlFor="indeterminate-checkbox"
+      className={`login-remember-me-checkbox-${defaultValue ? '' : 'un'}checked login-remember-me-checkbox`}
+    >
       Remember Me
-  </label>
+    </label>
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id="indeterminate-checkbox"
+      name="rememberme"
+      value="true"
+      checked={true}
+      onClick={() => onChange(!defaultValue)}
+    />
+  </>
 );
 
 export default RememberMe;

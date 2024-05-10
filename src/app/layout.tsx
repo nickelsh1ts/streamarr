@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import Router from 'next/router';
 import Layout from '@app/components/Layout';
 import PWAHeader from '@app/components/PWAHeader';
@@ -25,20 +25,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-      <html lang="en-CA" data-theme="fox">
-        <InteractionProvider>
-          <head>
-            <PWAHeader applicationTitle={applicationTitle} />
-          </head>
-          <ServiceWorkerSetup />
-        </InteractionProvider>
-        <body
-          className="flex flex-col min-h-dvh"
-        >
-          <Layout>{children}</Layout>
-        </body>
-      </html>
+    <html lang="en-CA" data-theme="fox">
+      <InteractionProvider>
+        <head>
+          <PWAHeader applicationTitle={applicationTitle} />
+        </head>
+        <ServiceWorkerSetup />
+      </InteractionProvider>
+      <body className="flex flex-col min-h-dvh">
+        <Layout>{children}</Layout>
+      </body>
+    </html>
   );
 }
