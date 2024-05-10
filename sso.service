@@ -1,0 +1,9 @@
+[Unit]
+Description=PlexSSO
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/sso/backend/server.py -p "/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml"
+WorkingDirectory=/opt/sso/backend
+
+[Install]
+WantedBy=multi-user.target

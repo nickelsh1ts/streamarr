@@ -1,0 +1,40 @@
+FROM node:20-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+
+COPY . /app
+WORKDIR /app
+
+RUN corepack enable
+RUN yarn set version stable
+RUN yarn
+
+RUN yarn build
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as aspnet-builder
+
+COPY ./backend /backend
+WORKDIR /backend
+
+RUN dotnet restore && \
+    dotnet publish PlexSSO.sln -c Release -o build /p:CopyOutputSymbolsToPublishDirectory=false && \
+    rm build/ui/index.html
+
+COPY --from=deps /app /backend/build/ui
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+
+WORKDIR /app
+COPY --from=aspnet-builder /backend/build/ui /app
+
+RUN mkdir -p /config && \
+    chmod 777 /config
+
+ENTRYPOINT ["dotnet", "PlexSSO.dll", "--config", "/config/"]
+
+EXPOSE 3000
+
+VOLUME [ "/config" ]
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "dotnet", "PlexSSO.dll", "--healthcheck" ]

@@ -74,7 +74,6 @@
         "prettier-plugin-organize-imports": "3.2.4",
         "prettier-plugin-tailwindcss": "0.5.12",
         "semantic-release": "23.0.2",
-        "semantic-release-docker-buildx": "1.0.1",
         "stylelint": "^16.2.1",
         "typescript": "5.4.2"
     },
@@ -118,7 +117,6 @@
                     "message": "chore(release): ${nextRelease.version}"
                 }
             ],
-            "semantic-release-docker-buildx",
             [
                 "@semantic-release/github",
                 {
