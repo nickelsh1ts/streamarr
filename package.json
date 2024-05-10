@@ -6,6 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "lint": "eslint \"./src/**/*.{ts,tsx}\" --cache",
+        "start": "next start",
         "css-lint": "stylelint src/styles/css/*.css src/styles/globals.css",
         "i18n:extract": "extract-messages -l=en -o src/i18n/locale -d en --flat true --overwriteDefault true \"./src/**/!(*.test).{ts,tsx}\"",
         "format": "prettier 'src/**/*.{css,js,ts,tsx}' --log-level warn --write --cache .",
