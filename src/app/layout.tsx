@@ -1,3 +1,4 @@
+'use client'
 import Router from 'next/router';
 import Layout from '@app/components/Layout';
 import PWAHeader from '@app/components/PWAHeader';
@@ -5,7 +6,6 @@ import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
 import 'styles/css/globals.css';
 import ProgressBar from '@badrap/bar-of-progress';
-import { useEffect, useState } from 'react';
 
 const applicationTitle = 'streamarr';
 
