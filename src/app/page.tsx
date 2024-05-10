@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 
 const Index: NextPage = () => {
   return(
-    <main>
+    <main id='main'>
       Testing 123
     </main>
   );
