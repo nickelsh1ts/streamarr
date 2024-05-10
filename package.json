@@ -37,7 +37,7 @@
         "react-animate-height": "3.2.3",
         "react-aria": "3.32.1",
         "react-dom": "18.2.0",
-        "react-intl": "6.6.2",
+        "react-intl": "6.6.6",
         "react-use-clipboard": "1.0.9",
         "tailwindcss": "3.4.1"
     },
