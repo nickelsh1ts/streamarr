@@ -6,6 +6,13 @@ import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
 import 'styles/css/globals.css';
 import ProgressBar from '@badrap/bar-of-progress';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 const applicationTitle = 'streamarr';
 
@@ -27,7 +34,7 @@ export default function RootLayout({
 }>) {
 
   return (
-      <html lang="en-CA" data-theme="fox">
+      <html lang="en-CA" className={inter.className} data-theme="streamarr">
         <InteractionProvider>
           <head>
             <PWAHeader applicationTitle={applicationTitle} />
