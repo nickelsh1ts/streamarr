@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="mt-auto text-center">
+    <main className="my-auto text-center">
       <h1 className="text-9xl">404</h1>
       <h2 className="text-3xl my-3">
         <PathName />
