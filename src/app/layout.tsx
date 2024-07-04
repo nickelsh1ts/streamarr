@@ -2,7 +2,7 @@ import Layout from '@app/components/Layout';
 import PWAHeader from '@app/components/PWAHeader';
 import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
-import 'styles/css/globals.css';
+import 'styles/globals.css';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({
