@@ -1,4 +1,5 @@
-import Layout from '@app/components/Layout';
+import PullToRefresh from '@app/components/Layout/PullToRefresh';
+import NextTopLoader from 'nextjs-toploader';
 import PWAHeader from '@app/components/PWAHeader';
 import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
@@ -6,10 +7,10 @@ import 'styles/globals.css';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({
-  weight: ['400'],
+  weight: ['300'],
   subsets: ['latin'],
   display: 'swap',
-})
+});
 
 const applicationTitle = 'Streamarr';
 
@@ -18,20 +19,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-      <html lang="en-CA" className={inter.className} data-theme="streamarr">
-        <InteractionProvider>
-          <head>
-            <PWAHeader applicationTitle={applicationTitle} />
-          </head>
-          <ServiceWorkerSetup />
-        </InteractionProvider>
-        <body
-          className="flex flex-col min-h-dvh"
-        >
-          <Layout>{children}</Layout>
-        </body>
-      </html>
+    <html lang="en-CA" className={inter.className} data-theme="streamarr">
+      <InteractionProvider>
+        <head>
+          <PWAHeader applicationTitle={applicationTitle} />
+        </head>
+        <ServiceWorkerSetup />
+      </InteractionProvider>
+      <body className="flex flex-col min-h-dvh">
+        <NextTopLoader color='#974ede' />
+        <PullToRefresh />
+          {children}
+      </body>
+    </html>
   );
 }
