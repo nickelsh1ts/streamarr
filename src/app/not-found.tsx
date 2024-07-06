@@ -1,4 +1,4 @@
-import PathName from '@app/components/common/PathName';
+import PathName from '@app/components/Common/PathName';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
