@@ -39,7 +39,7 @@ export default {
       {
         streamarr: {
           "primary": "#974ede",
-          "primary-content": "#e9ddfb",
+          "primary-content": "#fff",
           "secondary": "#2b0b53",
           "secondary-content": "#cfcbdc",
           "accent": "#e5a00d",
@@ -54,7 +54,7 @@ export default {
           "info-content": "#d2e2ff",
           "success": "#84cc16",
           "success-content": "#060f00",
-          "warning": "#eab308",
+          "warning": "#ffc107",
           "warning-content": "#130c00",
           "error": "#b91c1c",
           "error-content": "#fff",

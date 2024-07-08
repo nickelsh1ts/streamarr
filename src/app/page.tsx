@@ -1,6 +1,5 @@
-import Footer from '@app/components/Layout/Footer';
+import Index from '@app/components/Index';
 import type { Metadata, NextPage } from 'next';
-import Link from 'next/link';
 
 const applicationTitle = 'Streamarr';
 
@@ -12,17 +11,8 @@ export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,
 };
 
-const Index: NextPage = () => {
-  return (<>
-    <main className="main text-center my-auto">
-      <h1 className='text-2xl'>Hello world!</h1>
-      <div className='h-[]'>
-        <Link href="/test">
-        </Link>
-      </div>
-    </main>
-    <Footer /></>
-  );
+const IndexPage: NextPage = () => {
+  return (<Index />)
 };
 
-export default Index;
+export default IndexPage;
