@@ -54,7 +54,7 @@
         "@types/react-transition-group": "4.4.10",
         "@types/semver": "7.5.8",
         "@typescript-eslint/eslint-plugin": "7.8.0",
-        "@typescript-eslint/parser": "7.1.1",
+        "@typescript-eslint/parser": "7.15.0",
         "commitizen": "4.3.0",
         "cy-mobile-commands": "^0.3.0",
         "cypress": "^13.6.6",
