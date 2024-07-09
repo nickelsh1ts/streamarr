@@ -1,6 +1,6 @@
 import ImageFader from '@app/components/Common/ImageFader';
-import axios from 'axios';
-import { useEffect } from 'react';
+// import axios from 'axios';
+// import { useEffect } from 'react';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -14,34 +14,96 @@ export default function Hero({ forRef }) {
       i: '1223',
     },
     {
+      url: '/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg',
+      i: '94997',
+    },
+    {
       url: '/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg',
       i: '32445',
     },
-  ];
-  const options = {
-    method: 'GET',
-    url: 'https://api.themoviedb.org/3/trending/all/week?language=en-US',
-    headers: {
-      accept: 'application/json',
-      Authorization: '',
+    {
+      url: "/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg",
+      i: '76479',
     },
-  };
+    {
+      url: "/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg",
+      i: "280180",
+    },
+    {
+      url: "/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg",
+      i: "508883",
+    },
+    {
+      url: "/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg",
+      i: '519182',
+    },
+    {
+      url: "/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg",
+      i: 762441,
+    },
+    {
+      url: "/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg",
+      i: 639720,
+    },
+    {
+      url: "/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg",
+      i: 85937,
+    },
+    {
+      url: "/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg",
+      i: 1086747,
+    },
+    {
+      url: "/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg",
+      i: 114479,
+    },
+    {
+      url: "/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg",
+      i: 823464,
+    },
+    {
+      url: "/dvBCdCohwWbsP5qAaglOXagDMtk.jpg",
+      i: 533535,
+    },
+    {
+      url: "/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
+      i: 37854,
+    },
+    {
+      url: "/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
+      i: 693134,
+    },
+    {
+      url: "/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg",
+      i: 196322,
+    }
+  ];
 
-  useEffect(() => {
-    axios.request(options).then((res) => {
-      console.log(res);
-      const data = res.data.results.map((x) => ({
-        url: x.backdrop_path,
-        i: x.id,
-      }));
-      ImageArray.push(data);
-    });
-  });
+  // const options = {
+  //   method: 'GET',
+  //   url: 'https://api.themoviedb.org/3/trending/all/week?language=en-US',
+  //   headers: {
+  //     accept: 'application/json',
+  //     Authorization: '',
+  //   },
+  // };
+
+  // useEffect(() => {
+  //   axios.request(options).then((res) => {
+  //     console.log(res);
+  //     const data = res.data.results.map((x) => ({
+  //       url: x.backdrop_path,
+  //       i: x.id,
+  //     }));
+  //     ImageArray.push(data);
+  //   });
+  // });
+
   console.log(ImageArray);
   return (
     <section id="promo" className="min-h-lvh -mt-20" ref={forRef}>
       <ImageFader
-        rotationSpeed={8000}
+        rotationSpeed={6000}
         backgroundImages={
           ImageArray?.map(
             (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
@@ -53,7 +115,7 @@ export default function Hero({ forRef }) {
           <img
             src="/logo_full.png"
             alt="logo"
-            className="mb-10 mt-5 h-auto w-82 mx-auto md:mx-0"
+            className="mb-10 mt-5 h-auto w-82 mx-auto md:mx-0 px-5 md:px-0"
           />
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">
             Unlimited movies and TV shows

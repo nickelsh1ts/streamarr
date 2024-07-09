@@ -48,10 +48,10 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             unoptimized
             loader={imageLoader}
             className="absolute inset-0 h-full w-full"
+            style={{objectFit:"cover"}}
             alt=""
             src={imageUrl}
-            layout="fill"
-            objectFit="cover"
+            fill
           />
           <div
             className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-brand-dark/90 md:from-brand-dark/100 from-40% md:from-15% via-brand-light/75 via-75% md:via-45%"

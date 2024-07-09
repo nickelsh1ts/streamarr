@@ -1,5 +1,9 @@
 'use client'
+import Devices from "@app/components/Index/Devices";
+import Favourites from "@app/components/Index/Favourites";
 import Hero from "@app/components/Index/Hero";
+import Requesting from "@app/components/Index/Requesting";
+import Watching from "@app/components/Index/Watching";
 import Footer from "@app/components/Layout/Footer"
 import Header from "@app/components/Layout/Header"
 import { useInView } from "@app/hooks/useElementInView";
@@ -10,12 +14,15 @@ function Index() {
   const isInView = useInView(targetRef, 0.1);
 
   return (
-    <>
+    <main className="bg-gradient-to-b from-brand-dark from-40% via-brand-light via-60% to-brand-dark to-80%">
       <Header isInView={isInView} />
       <Hero forRef={targetRef} />
-      <div className='h-lvh' id="requesting">Test</div>
+      <Requesting />
+      <Watching />
+      <Favourites />
+      <Devices />
       <Footer />
-    </>
+    </main>
   )
 }
 

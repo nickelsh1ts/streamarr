@@ -40,12 +40,12 @@ const Header = ({isInView = false}) => {
     {(path != '/watch' && path != '/') && MenuLinks.map(menuLink => {
             const isActive = path === menuLink.href;
             return (
-              <Link key={menuLink.href} href={menuLink.href} className={`${isActive ? 'link-primary' : 'link-neutral'} ${path === '/login' && (menuLink.href === '/watch' || menuLink.href === '/request') ? 'hidden' : ''}`}>{menuLink.messagesKey}</Link>
+              <Link key={menuLink.href} href={menuLink.href} className={`${isActive ? 'link-primary' : 'link-neutral'} ${path === '/signin' && (menuLink.href === '/watch' || menuLink.href === '/request') ? 'hidden' : ''}`}>{menuLink.messagesKey}</Link>
             );
           })}
           <div className="ms-auto flex gap-2 place-items-center">
     <Link href="/signup" id="login" className={`btn btn-outline btn-sm md:btn-md text-xs btn-warning rounded-md gap-0.5 md:tracking-widest md:text-lg uppercase no-animation transition-opacity duration-500 ${((path === '/' && isInView) || path != '/' )&& 'opacity-0 pointer-events-none'}`}>Sign up now</Link>
-		{(path != '/login' && path != '/watch') && <Link href="/login" id="login" className="btn btn-sm md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary">Log in <ArrowRightEndOnRectangleIcon className="size-4 md:size-6"/></Link>}
+		{(path != '/signin' && path != '/watch') && <Link href="/signin" id="signin" className="btn btn-sm md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary">Sign in <ArrowRightEndOnRectangleIcon className="size-4 md:size-6"/></Link>}
     </div>
     </div>
 	</header>
