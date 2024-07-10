@@ -28,7 +28,6 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/container-queries'),
@@ -49,7 +48,7 @@ export default {
           "base-100": "#121212",
           "base-200": "#121418",
           "base-300": "#0d1013",
-          "base-content": "#cacbcc",
+          "base-content": "#fff",
           "info": "#2563eb",
           "info-content": "#d2e2ff",
           "success": "#84cc16",
