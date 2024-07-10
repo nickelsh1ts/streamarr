@@ -29,6 +29,7 @@
     "@tailwindcss/typography": "0.5.13",
     "autoprefixer": "10.4.18",
     "axios": "^1.7.2",
+    "bowser": "^2.11.0",
     "date-fns": "^3.6.0",
     "intl": "1.2.5",
     "next": "^14.1.3",

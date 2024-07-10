@@ -42,7 +42,7 @@ export default {
           "secondary": "#2b0b53",
           "secondary-content": "#cfcbdc",
           "accent": "#e5a00d",
-          "accent-content": "#120900",
+          "accent-content": "#fff",
           "neutral": "#6c757d",
           "neutral-content": "#e0e2e4",
           "base-100": "#121212",

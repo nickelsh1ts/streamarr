@@ -39,7 +39,7 @@ function FAQs() {
           <input type="radio" name="faqs" />
           <div className="collapse-title text-xl font-medium">Where can I watch <span className="text-primary ms-1">Streamarr</span>?</div>
           <div className="collapse-content">
-          <p><span className="text-primary">Streamarr</span> is available via the Plex app on compatible mobile devices, web browsers, game consoles, set-top boxes, and smart TVs or at <span className="text-purple">Nickflix</span>TV.com. For a complete list of supported and compatible devices, click <Link href="/help/devices" className="link-warning">here.</Link></p>
+          <p><span className="text-primary">Streamarr</span> is available via the Plex app on compatible mobile devices, web browsers, game consoles, set-top boxes, and smart TVs or at <span className="text-primary">Stremarr</span>.com. For a complete list of supported and compatible devices, click <Link href="/help/devices" className="link-accent">here.</Link></p>
           </div>
         </div>
         <div className="collapse collapse-arrow join-item bg-brand-dark ">

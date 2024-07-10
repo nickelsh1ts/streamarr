@@ -5579,6 +5579,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bowser@npm:^2.11.0":
+  version: 2.11.0
+  resolution: "bowser@npm:2.11.0"
+  checksum: 10c0/04efeecc7927a9ec33c667fa0965dea19f4ac60b3fea60793c2e6cf06c1dcd2f7ae1dbc656f450c5f50783b1c75cf9dc173ba6f3b7db2feee01f8c4b793e1bd3
+  languageName: node
+  linkType: hard
+
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -13027,6 +13034,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:7.1.1"
     autoprefixer: "npm:10.4.18"
     axios: "npm:^1.7.2"
+    bowser: "npm:^2.11.0"
     commitizen: "npm:4.3.0"
     cy-mobile-commands: "npm:^0.3.0"
     cypress: "npm:^13.6.6"

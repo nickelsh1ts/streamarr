@@ -14,7 +14,7 @@ function Requesting() {
                 <span className="text-primary ms-1">Streamarr</span> membership.
               </p>
               <p className="text-neutral mt-0 mb-4">
-                Limits apply. Please see the <Link className="link-warning capitalize" href="/help">help centre</Link> for more.
+                Limits apply. Please see the <Link className="link-accent capitalize" href="/help">help centre</Link> for more.
               </p>
 					  </div>
 					  <div className="">

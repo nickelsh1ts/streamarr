@@ -1,3 +1,4 @@
+'use client'
 import type { ImageLoader } from 'next/image';
 import Image from 'next/image';
 import type { ForwardRefRenderFunction, HTMLAttributes } from 'react';
