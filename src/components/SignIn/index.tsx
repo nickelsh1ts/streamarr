@@ -4,8 +4,8 @@ import Footer from "@app/components/Layout/Footer";
 import Header from "@app/components/Layout/Header";
 import PlexLoginButton from "@app/components/PlexLoginBtn"
 import axios from "axios";
-import Link from "next/link"
 import { useEffect, useState } from "react";
+
 
 const SignIn = () => {
   const [error, setError] = useState('');
@@ -106,6 +106,57 @@ const SignIn = () => {
     }
   ];
 
+  function openPopup({
+    title,
+    w,
+    h,
+  }: {
+    title: string;
+    w: number;
+    h: number;
+  }): Window | void {
+    if (!window) {
+      throw new Error(
+        'Window is undefined. Are you running this in the browser?'
+      );
+    }
+    // Fixes dual-screen position
+    const dualScreenLeft =
+      window.screenLeft != undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop =
+      window.screenTop != undefined ? window.screenTop : window.screenY;
+    const width = window.innerWidth
+      ? window.innerWidth
+      : document.documentElement.clientWidth
+      ? document.documentElement.clientWidth
+      : screen.width;
+    const height = window.innerHeight
+      ? window.innerHeight
+      : document.documentElement.clientHeight
+      ? document.documentElement.clientHeight
+      : screen.height;
+    const left = width / 2 - w / 2 + dualScreenLeft;
+    const top = height / 2 - h / 2 + dualScreenTop;
+
+    const newWindow = window.open(
+      'https://app.plex.tv/auth#?resetPassword',
+      title,
+      'scrollbars=yes, width=' +
+        w +
+        ', height=' +
+        h +
+        ', top=' +
+        top +
+        ', left=' +
+        left
+    );
+
+    if (newWindow) {
+      newWindow.focus();
+      return this;
+    }
+  }
+
   return (<>
       <Header />
     <main className="min-h-[93vh] relative">
@@ -169,12 +220,16 @@ const SignIn = () => {
           </label>
         </div>
 			  <button className="btn btn-block btn-primary hover:btn-secondary text-lg" type="submit" name="signin">Sign In</button>
-			  <p className="mt-1 text-center"><Link target="new" href="https://app.plex.tv/auth#?resetPassword" className="link-warning text-sm">Wait, I forgot my password</Link></p>
+			  <p className="mt-1 text-center">
+          <button type="button" onClick={() => {
+            openPopup({ title: 'Plex Password Reset', w: 600, h: 700 });
+          }} className="link-warning text-sm">Wait, I forgot my password</button>
+        </p>
 		  </form>
         </div>
       </div>
     </div>
-			<p className="mt-4 text-start text-sm px-4 relative">New to <span className="text-primary font-semibold">Streamarr</span>? <a href="/join" className="font-bold hover:brightness-75">Sign up</a></p>
+			<p className="mt-4 text-start text-sm px-2 relative">New to <span className="text-primary font-semibold">Streamarr</span>? <a href="/join" className="font-bold hover:brightness-75">Sign up</a></p>
 		</div>
     </main>
     <Footer />
