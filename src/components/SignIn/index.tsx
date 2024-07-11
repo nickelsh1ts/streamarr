@@ -4,6 +4,7 @@ import Footer from "@app/components/Layout/Footer";
 import Header from "@app/components/Layout/Header";
 import PlexLoginButton from "@app/components/PlexLoginBtn"
 import axios from "axios";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 
@@ -229,7 +230,7 @@ const SignIn = () => {
         </div>
       </div>
     </div>
-			<p className="mt-4 text-start text-sm px-2 relative">New to <span className="text-primary font-semibold">Streamarr</span>? <a href="/join" className="font-bold hover:brightness-75">Sign up</a></p>
+			<p className="mt-4 text-start text-sm px-2 relative">New to <span className="text-primary font-semibold">Streamarr</span>? <Link href="/signup" className="font-bold hover:brightness-75">Sign up</Link></p>
 		</div>
     </main>
     <Footer />
