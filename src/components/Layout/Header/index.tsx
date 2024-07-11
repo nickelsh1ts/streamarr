@@ -31,7 +31,7 @@ const Header = ({isInView = false}) => {
   const path = usePathname();
 
   return (
-    <header id="top" className={`navbar sticky top-0 transition duration-500 ${!isInView && 'bg-brand-dark'} font-bold z-50`}>
+    <header id="top" className={`navbar sticky top-0 transition duration-500 ${!isInView && 'bg-brand-dark'} font-bold z-10`}>
       <div className="md:px-10 flex-1 gap-2 h-10">
 		<Link href="/" className={`hover:brightness-75 transition-opacity duration-500 ${isInView && 'opacity-0 pointer-events-none'}`}>
 			<img src="/logo_full.png" alt="logo" className="w-40 md:w-52 h-auto" />
