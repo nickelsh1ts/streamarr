@@ -153,7 +153,7 @@ export default function Hero({ forRef }) {
                   </div>
                   <input
                     id="icode"
-                    className="input text-xl rounded-none rounded-l-lg w-full pl-12 md:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:ring-warning"
+                    className="input text-xl rounded-none rounded-l-lg w-full pl-12 md:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:outline-warning/30"
                     name="icode"
                     aria-label="Invite Code"
                     placeholder="Invite code"

@@ -172,7 +172,7 @@ const SignIn = () => {
         <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
 			  <p className="text-sm">You will use this account to log into <span className="text-primary font-semibold">Streamarr</span> to watch your favourite movies and TV Shows.</p>
 		  </div>
-      <div className="join join-vertical w-full rounded-1 backdrop-blur-md">
+      <div className="join join-vertical w-full backdrop-blur-md">
         <div className="collapse join-item mb-[1px] border-b border-zinc-800">
         <input type="radio" name="signin" className="checked:cursor-not-allowed" defaultChecked />
         <div className="collapse-title bg-slate-600/40">Use your Ple<span className="text-accent">x</span>&trade; account</div>
@@ -198,7 +198,7 @@ const SignIn = () => {
             <path
               d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
           </svg>
-          <input type="text" className="grow active:ring-error" placeholder="Email address" required />
+          <input type="text" className="grow" placeholder="Email address" required />
         </div>
         <div className="input input-bordered input-primary flex items-center gap-2 active:ring-red-50">
           <svg
