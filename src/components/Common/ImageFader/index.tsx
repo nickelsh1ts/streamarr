@@ -8,6 +8,7 @@ interface ImageFaderProps extends HTMLAttributes<HTMLDivElement> {
   backgroundImages: string[];
   rotationSpeed?: number;
   forceOptimize?: boolean;
+  gradient?: string;
 }
 
 const DEFAULT_ROTATION_SPEED = 6000;
@@ -16,6 +17,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
   {
     backgroundImages,
     rotationSpeed = DEFAULT_ROTATION_SPEED,
+    gradient = 'bg-gradient-to-t md:bg-gradient-to-r from-brand-dark/90 md:from-brand-dark/100 from-40% md:from-15% via-brand-light/75 via-75% md:via-45%',
     ...props
   },
   ref
@@ -55,7 +57,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             fill
           />
           <div
-            className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-brand-dark/90 md:from-brand-dark/100 from-40% md:from-15% via-brand-light/75 via-75% md:via-45%"
+            className={`absolute inset-0 ${gradient}`}
           />
         </div>
       ))}
