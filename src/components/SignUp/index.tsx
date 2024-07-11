@@ -1,4 +1,5 @@
 import ImageFader from "@app/components/Common/ImageFader";
+import Footer from "@app/components/Layout/Footer";
 import Header from "@app/components/Layout/Header"
 import SignUpForm from "@app/components/SignUp/Form";
 
@@ -78,7 +79,7 @@ const Join = () => {
   return (
     <>
       <Header />
-      <main className="min-h-lvh relative">
+      <main className="min-h-[93vh] relative">
         <ImageFader
           rotationSpeed={6000}
           backgroundImages={
@@ -106,6 +107,7 @@ const Join = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   )
 }
