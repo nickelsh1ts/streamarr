@@ -198,7 +198,7 @@ class PlexOAuth {
 
     //Set url to login/plex/loading so browser doesn't block popup
     const newWindow = window.open(
-      '/login/plex/loading',
+      '/signin/plex/loading',
       title,
       'scrollbars=yes, width=' +
         w +

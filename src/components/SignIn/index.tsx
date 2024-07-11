@@ -1,4 +1,7 @@
 'use client'
+import ImageFader from "@app/components/Common/ImageFader";
+import Footer from "@app/components/Layout/Footer";
+import Header from "@app/components/Layout/Header";
 import PlexLoginButton from "@app/components/PlexLoginBtn"
 import axios from "axios";
 import Link from "next/link"
@@ -32,25 +35,105 @@ const SignIn = () => {
     }
   }, [authToken]);
 
-  return (
-    <main className="container max-w-md mx-auto py-10 min-h-[92vh] relative">
-      <div className="text-start px-2 mb-4">
+  const ImageArray = [
+    {
+      url: '/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg',
+      i: '1223',
+    },
+    {
+      url: '/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg',
+      i: '94997',
+    },
+    {
+      url: '/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg',
+      i: '32445',
+    },
+    {
+      url: "/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg",
+      i: '76479',
+    },
+    {
+      url: "/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg",
+      i: "280180",
+    },
+    {
+      url: "/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg",
+      i: "508883",
+    },
+    {
+      url: "/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg",
+      i: '519182',
+    },
+    {
+      url: "/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg",
+      i: 762441,
+    },
+    {
+      url: "/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg",
+      i: 639720,
+    },
+    {
+      url: "/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg",
+      i: 85937,
+    },
+    {
+      url: "/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg",
+      i: 1086747,
+    },
+    {
+      url: "/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg",
+      i: 114479,
+    },
+    {
+      url: "/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg",
+      i: 823464,
+    },
+    {
+      url: "/dvBCdCohwWbsP5qAaglOXagDMtk.jpg",
+      i: 533535,
+    },
+    {
+      url: "/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
+      i: 37854,
+    },
+    {
+      url: "/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
+      i: 693134,
+    },
+    {
+      url: "/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg",
+      i: 196322,
+    }
+  ];
+
+  return (<>
+      <Header />
+    <main className="min-h-[93vh] relative">
+    <ImageFader
+        rotationSpeed={6000}
+        backgroundImages={
+          ImageArray?.map(
+            (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
+          ) ?? []
+        }
+      /><div className="container max-w-lg mx-auto py-14 px-4">
+      <div className="text-start px-2 mb-4 relative">
         <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
 			  <p className="text-sm">You will use this account to log into <span className="text-primary font-semibold">Streamarr</span> to watch your favourite movies and TV Shows.</p>
 		  </div>
       <div className="join join-vertical w-full rounded-1 backdrop-blur-md">
         <div className="collapse join-item mb-[1px] border-b border-zinc-800">
-        <input type="radio" name="signin" defaultChecked />
+        <input type="radio" name="signin" className="checked:cursor-not-allowed" defaultChecked />
         <div className="collapse-title bg-slate-600/40">Use your Ple<span className="text-accent">x</span>&trade; account</div>
-        <div className="collapse-content place-content-center bg-zinc-900/60">
+        <div className="collapse-content place-content-center bg-brand-dark/50">
           <div className="pt-4"><PlexLoginButton isProcessing={isProcessing}
                         onAuthToken={(authToken) => setAuthToken(authToken)} /></div>
         </div>
       </div>
 		  <div className="collapse join-item">
-        <input type="radio" name="signin" />
+        <input type="radio" name="signin" className="checked:cursor-not-allowed" />
         <div className="collapse-title bg-slate-600/40">Use your Streamarr account</div>
-        <div className="collapse-content bg-zinc-900/60">
+        <div className="collapse-content bg-brand-dark/50">
 		  <form method="post" className="mt-4">
         <div className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}>Login failed! Invalid email or password!</div>
 			  <div className="input input-bordered input-primary flex items-center mb-2">
@@ -91,8 +174,11 @@ const SignIn = () => {
         </div>
       </div>
     </div>
-			<p className="mt-4 text-start text-sm px-4">New to <span className="text-primary font-semibold">Streamarr</span>? <a href="/join" className="font-bold hover:brightness-75">Sign up</a></p>
-		</main>
+			<p className="mt-4 text-start text-sm px-4 relative">New to <span className="text-primary font-semibold">Streamarr</span>? <a href="/join" className="font-bold hover:brightness-75">Sign up</a></p>
+		</div>
+    </main>
+    <Footer />
+    </>
   )
 }
 
