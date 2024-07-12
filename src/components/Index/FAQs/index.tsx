@@ -47,7 +47,7 @@ function FAQs() {
           <div className="collapse-title text-xl font-medium">What can I watch on <span className="text-primary ms-1">Streamarr</span>?</div>
           <div className="collapse-content">
             <p>With <span className="text-primary">Streamarr</span>, you can choose from an ever-evolving collection of movies and TV shows. From new releases and timeless classics to nostalgic throwbacks available on <span className="text-primary">Streamarr</span> Retro.</p>
-            <p>Using Overseerr, you can request almost anything that&apros;s not already available and watch it within minutes.</p>
+            <p>Using Overseerr, you can request almost anything that&apos;s not already available and watch it within minutes.</p>
           </div>
         </div>
         </div>
