@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const MoreHelp = () => {
   return (
-    <div className="bg-zinc-200 py-20">
+    <div className="bg-zinc-200 py-20 print:hidden">
       <div className="container max-w-screen-xl mx-auto px-4">
         <h1 className="text-neutral font-extrabold text-center text-4xl">
           Need more help?
