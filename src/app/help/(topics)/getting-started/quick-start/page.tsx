@@ -1,15 +1,4 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
-import type { Metadata } from 'next';
-
-const applicationTitle = 'Streamarr';
-
-const messages = {
-  title: 'Help Centre',
-};
-
-export const metadata: Metadata = {
-  title: `${messages.title} - ${applicationTitle}`,
-};
 
 const QuickStart = () => {
   return (

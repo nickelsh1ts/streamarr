@@ -1,16 +1,16 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 
-const BecomeMember = () => {
+const WatchOnTV = () => {
   return (
     <section className="text-neutral bg-zinc-100 py-5">
       <Breadcrumbs
-        paths="/getting-started/become-a-member"
+        paths="/watching-streamarr/watch-on-tv"
         homeElement={'Help Centre'}
-        names="Getting Started,how to become a member of Streamarr"
+        names="Watching Streamarr,How can I watch Streamarr on my TV?"
       />
-      <div>BecomeMember</div>
+      <div>WatchOnTV</div>
     </section>
   );
 };
 
-export default BecomeMember;
+export default WatchOnTV;

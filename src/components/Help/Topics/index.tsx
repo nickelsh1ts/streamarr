@@ -120,7 +120,7 @@ const Topics = () => {
               Watching <span className="text-primary">Streamarr</span>
             </Link>
             <Link
-              href="/help/watching-streamarr/watch-tv"
+              href="/help/watching-streamarr/watch-on-tv"
               className="hover:text-neutral-600 w-fit"
             >
               Watching <span className="text-primary">Streamarr</span> on your
