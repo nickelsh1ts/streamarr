@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-CA" className={inter.className} data-theme="streamarr">
+    <html lang="en-CA" className={`${inter.className} scroll-smooth`} data-theme="streamarr">
       <InteractionProvider>
         <head>
           <PWAHeader applicationTitle={applicationTitle} />

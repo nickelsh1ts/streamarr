@@ -21,7 +21,7 @@ const Header = ({ isInView = false }) => {
   return (
     <header
       id="top"
-      className={`navbar sticky top-0 transition duration-500 drawer ${!isInView && 'bg-brand-dark'} font-bold z-10`}
+      className={`navbar ${path === '/' && 'sticky top-0'} transition duration-500 drawer ${!isInView && 'bg-brand-dark'} font-bold z-10`}
     >
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content md:px-10 flex-1 max-sm:flex-wrap max-sm:place gap-2 min-h-10">
