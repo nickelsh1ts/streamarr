@@ -76,7 +76,7 @@ const HelpHeader = () => {
 
   return (
     <header id="top" className="flex shadow-sm relative">
-      <div className="-z-10 rel">
+      <div className="-z-10">
         <ImageFader
           rotationSpeed={6000}
           backgroundImages={

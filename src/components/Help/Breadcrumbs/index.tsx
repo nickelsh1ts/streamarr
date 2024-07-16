@@ -13,6 +13,7 @@ type TBreadCrumbProps = {
   capitalizeLinks?: boolean;
   paths: string;
   names: string;
+  print?: boolean;
 };
 
 const Breadcrumbs = ({
@@ -24,6 +25,7 @@ const Breadcrumbs = ({
   capitalizeLinks = true,
   paths,
   names,
+  print = true,
 }: TBreadCrumbProps) => {
   const pathNames = paths.split('/').filter((path) => path);
   const pathTitles = names.split(',').filter((name) => name);
@@ -52,7 +54,7 @@ const Breadcrumbs = ({
           </React.Fragment>
         );
       })}
-      <button onClick={() => {window.print();return false;}} className='btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase ms-auto'><PrinterIcon className='w-5 h-5' /> print</button>
+      {print && <button onClick={() => {window.print();return false;}} className='btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase ms-auto'><PrinterIcon className='w-5 h-5' /> print</button>}
     </div>
   );
 };

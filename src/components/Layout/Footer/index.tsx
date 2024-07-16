@@ -30,10 +30,10 @@ function Footer() {
     <nav className="grid grid-flow-col grid-rows-4 gap-y-5 gap-x-20 mt-10 md:ms-auto">
         <a className="link-neutral text-decoration-none" href="/help/legal/termsofuse">Terms of Use</a>
         <a className="link-neutral text-decoration-none" href="/help/legal/privacy">Privacy Policy</a>
-        <a className="link-neutral text-decoration-none" href="/help/cookies">Cookie Preferences</a><div></div>
+        <a className="link-neutral text-decoration-none" href="/help/legal/privacy#cookies">Cookie Preferences</a><div></div>
 				<a className="link-neutral text-decoration-none" href="/help/">Help Centre</a>
 				<a className="link-neutral text-decoration-none" href="//status.nickflixtv.com/status/services">Status</a>
-				<a className="link-neutral text-decoration-none" href="mailto:info@nickflixtv.com">Contact Us</a>
+				<a className="link-neutral text-decoration-none" href="mailto:info@streamarr.com">Contact Us</a>
 				<a className="link-neutral text-decoration-none" href="/admin">Admin Centre</a>
     </nav>
   </div>
