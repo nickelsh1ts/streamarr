@@ -16,7 +16,7 @@ type CardProps = {
 const HelpCard = ({ heading, subheading, anchors, content }: CardProps) => {
   return (
     <div className="mx-2 my-7 text-black">
-      <div className="container mx-auto md:max-w-screen-md lg:max-w-screen-lg p-10 border border-primary shadow-xl rounded-md print:border-none print:shadow-none">
+      <div className="container mx-auto md:max-w-screen-md lg:max-w-screen-lg p-10 border border-primary shadow-2xl rounded-md print:border-none print:shadow-none bg-zinc-100">
         <div className="text-2xl font-extrabold">{heading}</div>
         <div className="my-2">{subheading}</div>
         <ul className="list mt-4 mb-10">

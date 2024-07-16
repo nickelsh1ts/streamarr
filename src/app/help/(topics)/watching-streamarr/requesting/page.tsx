@@ -18,39 +18,56 @@ const HelpContent = () => {
           Sign in to Streamarr and select
           <img
             className="h-auto w-28 inline-flex self-center mx-1"
-            src="/external/os-logo_full.svg"
+            src="/external/os-logo_full_dark.svg"
             alt="overseerr"
           />
         </li>
+        <li>Search for any movie or show or locate via discovery</li>
+        <li>Open the media discovery page by selecting it</li>
         <li>
-          Search for any movie or show or locate via discovery
+          Select the &quot;Request&quot; option and if relevant select which
+          season(s)
         </li>
         <li>
-          Open the media discovery page by selecting it
-        </li>
-        <li>
-          Select the &quot;Request&quot; option and if relevant select which season(s)
-        </li>
-        <li>
-          Once your request has been approved by a moderator, it will begin downloading
+          Once your request has been approved by a moderator, it will begin
+          downloading
         </li>
       </ul>
-      <p className="italic text-sm my-4" id='importantinfo'>Important Information</p>
+      <p className="italic text-sm my-4" id="importantinfo">
+        Important Information
+      </p>
       <ul className="list list-disc ms-14 my-4">
         <li>
-          Each individual request is processed the moment it&apos;s approved, or in the event it&apos;s auto-approved, immediately.
+          Each individual request is processed the moment it&apos;s approved, or
+          in the event it&apos;s auto-approved, immediately.
         </li>
         <li>
-           The time in which it takes to become available on <span className="text-primary">Streamarr</span> can depend on many factors such as the release date (older media can be more difficult to find), the popularity, and the quality.
+          The time in which it takes to become available on{' '}
+          <span className="text-primary">Streamarr</span> can depend on many
+          factors such as the release date (older media can be more difficult to
+          find), the popularity, and the quality.
         </li>
         <li>
-          Keep an eye on <span className='text-primary'>Overseerr</span>, or watch for the Media Available notification.
+          Keep an eye on <span className="text-primary">Overseerr</span>, or
+          watch for the Media Available notification.
         </li>
         <li>
-        <span className="text-primary">Streamarr</span> currently supports 3 types of notifications, all of which can be enabled or disabled via your <span className="text-primary">Overseerr</span> Profile Settings. <i>(Push Notifications, Email, and/or Discord)</i>
+          <span className="text-primary">Streamarr</span> currently supports 3
+          types of notifications, all of which can be enabled or disabled via
+          your <span className="text-primary">Overseerr</span> Profile Settings.{' '}
+          <i>(Push Notifications, Email, and/or Discord)</i>
         </li>
         <li>
-        <span className="text-primary">Streamarr</span> currently allows for a maximum of <span className="text-info font-extrabold underline">5</span> Movie requests per day and a maximum of <span className="text-info font-extrabold underline">2</span> Season requests every 2 days, per member. This can be either two seasons of one show, or one season from two different shows <i>(Requesting two seasons in one day will leave you with </i><span className="text-info font-extrabold underline">0</span><i> requests for two days).</i>
+          <span className="text-primary">Streamarr</span> currently allows for a
+          maximum of{' '}
+          <span className="text-info font-extrabold underline">5</span> Movie
+          requests per day and a maximum of{' '}
+          <span className="text-info font-extrabold underline">2</span> Season
+          requests every 2 days, per member. This can be either two seasons of
+          one show, or one season from two different shows{' '}
+          <i>(Requesting two seasons in one day will leave you with </i>
+          <span className="text-info font-extrabold underline">0</span>
+          <i> requests for two days).</i>
         </li>
       </ul>
       <p>Access to overseerr requires a Streamarr membership.</p>
@@ -75,7 +92,7 @@ const Heading = () => {
       Request new media with
       <img
         className="h-auto w-44"
-        src="/external/os-logo_full.svg"
+        src="/external/os-logo_full_dark.svg"
         alt="overseerr"
       />
     </span>
