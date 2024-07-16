@@ -100,7 +100,7 @@ const HelpContent = () => {
           a time.
         </li>
       </ul>
-      <p className="mb-16">
+      <p className="">
         Plex may occasionally require network &quot;check in&quot; for continued
         playback offline.
       </p>

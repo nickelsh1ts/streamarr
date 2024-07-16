@@ -53,7 +53,7 @@ const HelpContent = () => {
         </li>
         <li>Further questions can be submitted within each issue</li>
       </ul>
-      <p className="mb-16">
+      <p className="">
         Issues reported are not visible to others and only yourself and the
         Streamarr admin team have access.
       </p>
