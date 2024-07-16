@@ -256,7 +256,7 @@ const DeviceTabs = () => {
 
   return (
     <div className="grid">
-      <div className="tabs tabs-boxed flex flex-wrap z-10 justify-self-stretch place-content-center md:place-content-stretch rounded-none bg-zinc-200 p-0">
+      <div className="tabs tabs-boxed flex flex-wrap justify-self-stretch place-content-center md:place-content-stretch rounded-none bg-zinc-200 p-0">
         {tabs?.map((tab, i) => {
           return (
             <button
