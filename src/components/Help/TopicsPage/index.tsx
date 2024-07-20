@@ -30,7 +30,7 @@ const TopicsPage = ({
               href={link.href}
               className="flex gap-2 place-items-center hover:brightness-75 hover:text-primary hover:underline border border-zinc-300 p-2 rounded-md"
             >
-              <DocumentTextIcon className="w-5 h-5" />
+              <DocumentTextIcon className="w-5 h-5 shrink-0" />
               {link.text}
             </Link>
           );

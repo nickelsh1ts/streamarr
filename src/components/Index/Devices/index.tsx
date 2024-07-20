@@ -3,9 +3,7 @@ function Devices() {
   return (
     <section id="devices" className="min-h-lvh place-content-center py-16">
 				<div className="container mx-auto text-center">
-						<div className="pb-10">
-							<p className="text-3xl font-extrabold">Available on all your favourite devices</p>
-						</div>
+						<p className="text-3xl font-extrabold pb-10 px-5">Available on all your favourite devices</p>
 						<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5">
 						<div>
 							<img alt="provider" src="https://cnbl-cdn.bamgrid.com/assets/00fb59319fa715222100d8a84d11bc7e23a42970b4f413c9e85166d0cfba9346/original" className="h-auto w-auto" loading="lazy" />
