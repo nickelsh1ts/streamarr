@@ -25,6 +25,7 @@ const WatchingStreamarr = () => {
         paths="/watching-streamarr"
         homeElement={'Help Centre'}
         names="Watching Streamarr"
+        print={false}
       />
       <TopicsPage
         heading={'Topics related to watching Streamarr and making Requests'}

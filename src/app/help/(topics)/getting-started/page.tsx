@@ -28,6 +28,7 @@ const GettingStarted = () => {
         paths="/getting-started"
         homeElement={'Help Centre'}
         names="Getting Started"
+        print={false}
       />
       <TopicsPage
         heading={'Topics related to getting started with Streamarr'}
