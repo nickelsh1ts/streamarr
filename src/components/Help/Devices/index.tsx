@@ -256,7 +256,7 @@ const DeviceTabs = () => {
 
   return (
     <div className="grid">
-      <div className="tabs tabs-boxed flex flex-wrap justify-self-stretch place-content-center md:place-content-stretch rounded-none bg-zinc-200 p-0">
+      <div className="tabs tabs-boxed flex flex-wrap place-content-evenly rounded-none bg-zinc-200 p-0">
         {tabs?.map((tab, i) => {
           return (
             <button
@@ -267,7 +267,7 @@ const DeviceTabs = () => {
               }}
               id={`tab-${i}`}
               role="tab"
-              className={`tab group flex flex-col flex-nowrap md:flex-grow h-fit py-5 text-black !rounded-none ${activeTab === `tab-${i}` ? 'bg-zinc-100 border-x border-zinc-300' : ''} `}
+              className={`tab group flex flex-col flex-nowrap flex-grow h-fit py-5 text-black !rounded-none ${activeTab === `tab-${i}` ? 'bg-zinc-100 border-x border-zinc-300' : ''} `}
             >
               {tab.icon}
               {tab.link}
@@ -303,7 +303,7 @@ const DeviceTabs = () => {
                     return (
                       <div
                         key={i}
-                        className="border border-neutral bg-zinc-800 w-full h-36 p-4 place-content-center"
+                        className="border border-neutral bg-zinc-200 w-full h-36 p-4 place-content-center"
                       >
                         <img
                           className="w-auto h-auto"
