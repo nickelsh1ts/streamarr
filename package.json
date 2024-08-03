@@ -120,13 +120,6 @@
           ],
           "message": "chore(release): ${nextRelease.version}"
         }
-      ],
-      "semantic-release-docker-buildx",
-      [
-        "@semantic-release/github",
-        {
-          "addReleases": "bottom"
-        }
       ]
     ],
     "branches": [
@@ -135,7 +128,6 @@
     "npmPublish": false,
     "publish": [
       {
-        "path": "semantic-release-docker-buildx",
         "buildArgs": {
           "COMMIT_TAG": "$GIT_SHA"
         },
