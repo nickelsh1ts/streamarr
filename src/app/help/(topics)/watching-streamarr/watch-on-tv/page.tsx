@@ -19,44 +19,49 @@ const HelpContent = () => {
         <li>The content playing on your device will now show on your TV</li>
       </ul>
       <p className="italic text-sm my-4">Chromecast troubleshooting:</p>
-        <ul className="list list-disc ms-14 my-4">
-          <li>
-            Ensure the Google Home app is installed on your mobile device. It’s
-            available on both the iTunes Store and Google Play Store
-          </li>
-          <li>Ensure the Chromecast device is connected to your TV</li>
-          <li>
-            Ensure the mobile device with Streamarr and the Chromecast device
-            are both connected to the same Wi-Fi network
-          </li>
-        </ul>
-        <p className='mb-16'>For the best experience, including 4k content, we recommend the latest
-        generation model</p>
+      <ul className="list list-disc ms-14 my-4">
+        <li>
+          Ensure the Google Home app is installed on your mobile device. It’s
+          available on both the iTunes Store and Google Play Store
+        </li>
+        <li>Ensure the Chromecast device is connected to your TV</li>
+        <li>
+          Ensure the mobile device with Streamarr and the Chromecast device are
+          both connected to the same Wi-Fi network
+        </li>
+      </ul>
+      <p className="mb-16">
+        For the best experience, including 4k content, we recommend the latest
+        generation model
+      </p>
       <div className="font-extrabold" id="airplay">
         How to use Apple AirPlay
       </div>
-        <ul className="list list-decimal ms-10 my-4">
-          <li>Open the Plex or Streamarr app</li>
-          <li>Tap the Airplay icon at the top of the screen</li>
-          <li>Select the content you wish to view and tap Play</li>
-          <li>Choose the Apple TV you wish to stream to</li>
-          <li>
-            The app will now be cast via Airplay to your TV. The Airplay icon
-            will change colour, letting you know you’re connected.
-          </li>
-          <li>The content playing on your device will now show on your TV</li>
-        </ul>
-        <p className="italic text-sm my-4">Apple AirPlay troubleshooting:</p>
-        <ul className="list list-disc ms-10 my-4">
-          <li>Ensure the Apple TV is connected to your TV</li>
-          <li>
-            Ensure the iOS device with Streamarr and the Apple TV are both
-            connected to the same Wi-Fi network
-          </li>
-        </ul>
-        <p className='mb-16'>For the best experience, including 4k content, we recommend the latest
-        AppleTV model</p>
-      <p className="font-extrabold" id="plexapp">How to use the Plex app:
+      <ul className="list list-decimal ms-10 my-4">
+        <li>Open the Plex or Streamarr app</li>
+        <li>Tap the Airplay icon at the top of the screen</li>
+        <li>Select the content you wish to view and tap Play</li>
+        <li>Choose the Apple TV you wish to stream to</li>
+        <li>
+          The app will now be cast via Airplay to your TV. The Airplay icon will
+          change colour, letting you know you’re connected.
+        </li>
+        <li>The content playing on your device will now show on your TV</li>
+      </ul>
+      <p className="italic text-sm my-4">Apple AirPlay troubleshooting:</p>
+      <ul className="list list-disc ms-10 my-4">
+        <li>Ensure the Apple TV is connected to your TV</li>
+        <li>
+          Ensure the iOS device with Streamarr and the Apple TV are both
+          connected to the same Wi-Fi network
+        </li>
+      </ul>
+      <p className="mb-16">
+        For the best experience, including 4k content, we recommend the latest
+        AppleTV model
+      </p>
+      <p className="font-extrabold" id="plexapp">
+        How to use the Plex app:
       </p>
       <ul className="list list-decimal ms-10 my-4">
         <li>Open the Plex app on your device</li>
@@ -72,8 +77,10 @@ const HelpContent = () => {
         <li>Restart the device with Plex</li>
         <li>Reset and clear the cache of the Plex app</li>
       </ul>
-      <p className=''>For the best experience, including 4k content, we recommend the latest
-      version of Plex</p>
+      <p className="">
+        For the best experience, including 4k content, we recommend the latest
+        version of Plex
+      </p>
     </>
   );
 };

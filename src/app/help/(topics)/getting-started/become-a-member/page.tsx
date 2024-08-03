@@ -50,12 +50,24 @@ const HelpContent = () => {
       </ul>
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
-        <li>In order to access Streamarr services a Ple<span className='text-accent'>x</span>&trade; account is required</li>
-        <li>Once you have successfully joined Streamarr, you may not invite your own friends until the 7 day trial period has ended</li>
-        <li>Failure to accept the invite email sent after registration will result in an inability to access most of Streamarr&apos;s services</li>
+        <li>
+          In order to access Streamarr services a Ple
+          <span className="text-accent">x</span>&trade; account is required
+        </li>
+        <li>
+          Once you have successfully joined Streamarr, you may not invite your
+          own friends until the 7 day trial period has ended
+        </li>
+        <li>
+          Failure to accept the invite email sent after registration will result
+          in an inability to access most of Streamarr&apos;s services
+        </li>
       </ul>
       <p className="">
-        In some cases where failure to complete the sign up form after entering the invite code can result in an invalid code for future attempts. Either ensure you complete registration at the time or request a new code from your friend.
+        In some cases where failure to complete the sign up form after entering
+        the invite code can result in an invalid code for future attempts.
+        Either ensure you complete registration at the time or request a new
+        code from your friend.
       </p>
     </>
   );

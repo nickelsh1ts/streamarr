@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const SignInPage: NextPage = () => {
-  return (<SignIn />)
+  return <SignIn />;
 };
 
 export default SignInPage;

@@ -1,5 +1,4 @@
 {
-  // see
   //  - https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
   "recommendations": [
     // https://marketplace.visualstudio.com/items?itemName=EditorConfig.editorconfig
@@ -29,6 +28,6 @@
 
     "dsznajder.es7-react-js-snippets",
 
-    "usernamehw.errorlens",
+    "usernamehw.errorlens"
   ]
 }

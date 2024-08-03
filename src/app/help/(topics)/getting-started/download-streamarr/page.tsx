@@ -39,7 +39,7 @@ const anchors = [
   {
     href: '#microsoftedge',
     title: 'Microsoft Edge',
-  }
+  },
 ];
 
 const ChromeTab = [
@@ -202,31 +202,51 @@ const MicrosoftTab = [
     title: 'Computer',
     content: (
       <>
-        <p className="text-lg font-extrabold">Install an app in Microsoft Edge</p>
+        <p className="text-lg font-extrabold">
+          Install an app in Microsoft Edge
+        </p>
         <ul className="list ms-4 list-decimal my-4">
-          <li>
-            Open Microsoft Edge.
-          </li>
+          <li>Open Microsoft Edge.</li>
           <li>Navigate to the Streamarr website.</li>
-          <ul className='list list-disc ms-6'>
+          <ul className="list list-disc ms-6">
             <li>
-              Microsoft Edge will prompt you with the possibility of installing the application on the right hands side of the address bar.
+              Microsoft Edge will prompt you with the possibility of installing
+              the application on the right hands side of the address bar.
             </li>
-          <li>
-            Alternatively, you can install by going to the top corner of the browser and select <span className='font-bold'>Settings and more ... <ChevronRightIcon className="w-3 h-3 inline-flex" /> Apps <ChevronRightIcon className="w-3 h-3 inline-flex" /> Install this site as an app.</span>
-          </li>
+            <li>
+              Alternatively, you can install by going to the top corner of the
+              browser and select{' '}
+              <span className="font-bold">
+                Settings and more ...{' '}
+                <ChevronRightIcon className="w-3 h-3 inline-flex" /> Apps{' '}
+                <ChevronRightIcon className="w-3 h-3 inline-flex" /> Install
+                this site as an app.
+              </span>
+            </li>
           </ul>
         </ul>
         <p className="italic text-sm my-4">
-          Once the application is installed, it will appear under <code className='text-primary'>edge://apps.</code>
+          Once the application is installed, it will appear under{' '}
+          <code className="text-primary">edge://apps.</code>
         </p>
-        <p className="text-lg font-extrabold">Uninstall an app in Microsoft Edge</p>
+        <p className="text-lg font-extrabold">
+          Uninstall an app in Microsoft Edge
+        </p>
         <ul className="list ms-4 list-decimal my-4">
-          <li>Open Microsoft Edge and go to <code className='text-primary'>edge://apps.</code></li>
-          <li>Select <span className='font-bold'>Details</span> on the card of the application you want to uninstall.</li>
-          <li>Scroll down and choose <span className='font-bold'>Uninstall</span>.</li>
           <li>
-            Confirm if you also want to clear data from the associated origin and select <span className='font-bold'>Remove</span>.
+            Open Microsoft Edge and go to{' '}
+            <code className="text-primary">edge://apps.</code>
+          </li>
+          <li>
+            Select <span className="font-bold">Details</span> on the card of the
+            application you want to uninstall.
+          </li>
+          <li>
+            Scroll down and choose <span className="font-bold">Uninstall</span>.
+          </li>
+          <li>
+            Confirm if you also want to clear data from the associated origin
+            and select <span className="font-bold">Remove</span>.
           </li>
         </ul>
       </>
@@ -237,15 +257,24 @@ const MicrosoftTab = [
     title: 'Android',
     content: (
       <>
-        <p className="text-lg font-extrabold">Install an app in Microsoft Edge on Android</p>
+        <p className="text-lg font-extrabold">
+          Install an app in Microsoft Edge on Android
+        </p>
         <ul className="list ms-4 list-decimal my-4">
           <li>
-            On the bottom right corner, tap on the menu button denoted by three horizontal dots.
+            On the bottom right corner, tap on the menu button denoted by three
+            horizontal dots.
           </li>
-          <li>From the menu pop-up that you get, select <span className='font-bold'>Add to home screen</span>.</li>
+          <li>
+            From the menu pop-up that you get, select{' '}
+            <span className="font-bold">Add to home screen</span>.
+          </li>
         </ul>
         <p className="italic text-sm my-4">
-        If you set Microsoft Edge as your default browser on your Android device, it will launch on Edge; otherwise, it will launch on the other browser that is set as the default browser, which would most probably be Google Chrome on an Android device.
+          If you set Microsoft Edge as your default browser on your Android
+          device, it will launch on Edge; otherwise, it will launch on the other
+          browser that is set as the default browser, which would most probably
+          be Google Chrome on an Android device.
         </p>
       </>
     ),
@@ -262,23 +291,23 @@ const MicrosoftTab = [
           <li>Open Edge on your iPhone or iPad.</li>
           <li className="">Navigate to the streamarr website.</li>
           <li className="place-items-center">
-            Tap the Hamburger menu <Bars3Icon className='w-5 h-5 inline-flex' />.
+            Tap the Hamburger menu <Bars3Icon className="w-5 h-5 inline-flex" />
+            .
           </li>
+          <li>Tap the share button.</li>
           <li>
-           Tap the share button.
+            Select <span className="font-bold">Add to Home Screen</span>{' '}
           </li>
-          <li>Select <span className='font-bold'>Add to Home Screen</span> </li>
         </ul>
-        <p className="text-lg font-extrabold">How to Remove a Web App from Your Home Screen</p>
+        <p className="text-lg font-extrabold">
+          How to Remove a Web App from Your Home Screen
+        </p>
         <ul className="list list-decimal ms-4 my-4">
+          <li>Touch and hold the app on the Home Screen</li>
+          <li>Tap Remove App</li>
           <li>
-            Touch and hold the app on the Home Screen
-          </li>
-          <li>
-            Tap Remove App
-          </li>
-          <li>
-            Tap Remove from Home Screen to keep it in App Library, or tap Delete App to delete it from iPhone
+            Tap Remove from Home Screen to keep it in App Library, or tap Delete
+            App to delete it from iPhone
           </li>
         </ul>
       </>
@@ -350,16 +379,15 @@ const AppleTab = [
           to the standard website, force quit Safari, then launch the web app
           again.
         </p>
-        <p className="text-lg font-extrabold">How to Remove a Web App from Your Home Screen</p>
+        <p className="text-lg font-extrabold">
+          How to Remove a Web App from Your Home Screen
+        </p>
         <ul className="list list-decimal ms-4 my-4">
+          <li>Touch and hold the app on the Home Screen</li>
+          <li>Tap Remove App</li>
           <li>
-            Touch and hold the app on the Home Screen
-          </li>
-          <li>
-            Tap Remove App
-          </li>
-          <li>
-            Tap Remove from Home Screen to keep it in App Library, or tap Delete App to delete it from iPhone
+            Tap Remove from Home Screen to keep it in App Library, or tap Delete
+            App to delete it from iPhone
           </li>
         </ul>
       </>

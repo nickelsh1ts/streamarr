@@ -41,13 +41,9 @@ const PlexLoginButton = ({
         disabled={loading || isProcessing}
         className="btn btn-accent btn-block font-extrabold disabled:bg-accent/40 disabled:cursor-progress disabled:pointer-events-auto disabled:hover:bg-accent/40 disabled:no-animation"
       >
-        <ArrowLeftEndOnRectangleIcon className='h-7 w-7' />
-        <span className='font-extrabold text-lg'>
-          {loading
-            ? 'loading'
-            : isProcessing
-            ? 'Signing In...'
-            : 'Sign In'}
+        <ArrowLeftEndOnRectangleIcon className="h-7 w-7" />
+        <span className="font-extrabold text-lg">
+          {loading ? 'loading' : isProcessing ? 'Signing In...' : 'Sign In'}
         </span>
       </button>
     </span>

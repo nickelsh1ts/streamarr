@@ -128,7 +128,13 @@ const DeviceTabs = () => {
           Watch Movies
         </>
       ),
-      paragraph: <>You can also watch <span className="text-primary">Streamarr</span> on a variety of game consoles with the Ple<span className="link-warning">x</span>&trade; app.</>,
+      paragraph: (
+        <>
+          You can also watch <span className="text-primary">Streamarr</span> on
+          a variety of game consoles with the Ple
+          <span className="link-warning">x</span>&trade; app.
+        </>
+      ),
       imageArray: [
         {
           src: '/img/xbox-one_logo.png',
@@ -161,17 +167,37 @@ const DeviceTabs = () => {
       icon: (
         <DevicePhoneMobileIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
       ),
-      heading: <>Take <span className='text-primary'>Sreamarr</span> with you</>,
-      paragraph: <>It’s easy to watch <span className="text-purple">Nickflix</span>TV from anywhere. If Ple<span className="link-warning">x</span>&trade; isn’t already on your phone or tablet, you can download the free app from the Apple App Store, Google Play, or the Windows Phone Store.
-      <br/><br/><span className="text-xs text-neutral">*The Ple<span className="link-warning">x</span>&trade; app currently only offers free playback via the casting feature. To watch on the app directly on your phone a small one-time fee is required. If you wish not to pay the fee, you may use the newly mobile optimized <span className="text-primary">Streamarr</span>.com app.</span></>,
+      heading: (
+        <>
+          Take <span className="text-primary">Sreamarr</span> with you
+        </>
+      ),
+      paragraph: (
+        <>
+          It’s easy to watch <span className="text-purple">Nickflix</span>TV
+          from anywhere. If Ple<span className="link-warning">x</span>&trade;
+          isn’t already on your phone or tablet, you can download the free app
+          from the Apple App Store, Google Play, or the Windows Phone Store.
+          <br />
+          <br />
+          <span className="text-xs text-neutral">
+            *The Ple<span className="link-warning">x</span>&trade; app currently
+            only offers free playback via the casting feature. To watch on the
+            app directly on your phone a small one-time fee is required. If you
+            wish not to pay the fee, you may use the newly mobile optimized{' '}
+            <span className="text-primary">Streamarr</span>.com app.
+          </span>
+        </>
+      ),
       imageArray: [
         {
           src: '/img/Android_logo.png',
           alt: 'Android',
-        },{
+        },
+        {
           src: '/img/iOS_Logo.png',
-          alt: 'iOS'
-        }
+          alt: 'iOS',
+        },
       ],
     },
     {
@@ -180,7 +206,13 @@ const DeviceTabs = () => {
         <ComputerDesktopIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
       ),
       heading: 'Watch on what you have',
-      paragraph: <><span className='text-primary'>Streamarr</span> is optimized for today&apos;s most popular browsers so you can watch on your PC or laptop.</>,
+      paragraph: (
+        <>
+          <span className="text-primary">Streamarr</span> is optimized for
+          today&apos;s most popular browsers so you can watch on your PC or
+          laptop.
+        </>
+      ),
     },
   ];
   const ImageArray = [

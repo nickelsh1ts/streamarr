@@ -1,7 +1,7 @@
-import Loading from "@app/app/loading"
+import Loading from '@app/app/loading';
 
 function PlexLoading() {
-  return <Loading />
+  return <Loading />;
 }
 
-export default PlexLoading
+export default PlexLoading;

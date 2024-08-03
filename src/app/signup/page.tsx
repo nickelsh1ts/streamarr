@@ -1,5 +1,5 @@
-import Join from "@app/components/SignUp";
-import type { Metadata, NextPage } from "next"
+import Join from '@app/components/SignUp';
+import type { Metadata, NextPage } from 'next';
 
 const applicationTitle = 'Streamarr';
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const SignUpPage: NextPage = () => {
-  return <Join />
-}
+  return <Join />;
+};
 
-export default SignUpPage
+export default SignUpPage;

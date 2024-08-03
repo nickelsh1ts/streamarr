@@ -1,5 +1,5 @@
-import Help from "@app/components/Help";
-import type { Metadata, NextPage } from "next"
+import Help from '@app/components/Help';
+import type { Metadata, NextPage } from 'next';
 
 const applicationTitle = 'Streamarr';
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const HelpPage: NextPage = () => {
-  return <Help />
-}
+  return <Help />;
+};
 
-export default HelpPage
+export default HelpPage;

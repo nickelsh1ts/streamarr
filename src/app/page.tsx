@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const IndexPage: NextPage = () => {
-  return (<Index />)
+  return <Index />;
 };
 
 export default IndexPage;

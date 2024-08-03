@@ -12,11 +12,7 @@ type TopicsPageProps = {
   links: LinksProps[];
 };
 
-const TopicsPage = ({
-  heading,
-  subheading,
-  links,
-}: TopicsPageProps) => {
+const TopicsPage = ({ heading, subheading, links }: TopicsPageProps) => {
   return (
     <div className="container mx-auto max-w-screen-md mt-10 text-black px-4">
       <div className="text-4xl font-extrabold my-7">{heading}</div>

@@ -22,61 +22,61 @@ export default function Hero({ forRef }) {
       i: '32445',
     },
     {
-      url: "/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg",
+      url: '/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg',
       i: '76479',
     },
     {
-      url: "/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg",
-      i: "280180",
+      url: '/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg',
+      i: '280180',
     },
     {
-      url: "/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg",
-      i: "508883",
+      url: '/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg',
+      i: '508883',
     },
     {
-      url: "/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg",
+      url: '/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg',
       i: '519182',
     },
     {
-      url: "/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg",
+      url: '/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg',
       i: 762441,
     },
     {
-      url: "/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg",
+      url: '/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg',
       i: 639720,
     },
     {
-      url: "/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg",
+      url: '/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg',
       i: 85937,
     },
     {
-      url: "/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg",
+      url: '/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg',
       i: 1086747,
     },
     {
-      url: "/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg",
+      url: '/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg',
       i: 114479,
     },
     {
-      url: "/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg",
+      url: '/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg',
       i: 823464,
     },
     {
-      url: "/dvBCdCohwWbsP5qAaglOXagDMtk.jpg",
+      url: '/dvBCdCohwWbsP5qAaglOXagDMtk.jpg',
       i: 533535,
     },
     {
-      url: "/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
+      url: '/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg',
       i: 37854,
     },
     {
-      url: "/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
+      url: '/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
       i: 693134,
     },
     {
-      url: "/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg",
+      url: '/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg',
       i: 196322,
-    }
+    },
   ];
 
   // const options = {

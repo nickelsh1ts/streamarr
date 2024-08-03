@@ -1,25 +1,32 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import TopicsPage from '@app/components/Help/TopicsPage';
 
-const RelatedArticles = [{
-  href: 'getting-started/become-a-member',
-  text: 'How to become a member of Streamarr'
-},{
-  href: 'getting-started/what-is-streamarr',
-  text: 'What is Streamarr'
-},{
-  href: 'getting-started/what-is-plex',
-  text: 'What is Plex'
-},{
-  href: 'getting-started/download-plex',
-  text: 'How to download the Plex app'
-},{
-  href: 'getting-started/download-streamarr',
-  text: 'How to download the Streamarr app'
-},{
-  href: 'getting-started/quick-start',
-  text: 'Quick start guide to getting started with Streamarr'
-}]
+const RelatedArticles = [
+  {
+    href: 'getting-started/become-a-member',
+    text: 'How to become a member of Streamarr',
+  },
+  {
+    href: 'getting-started/what-is-streamarr',
+    text: 'What is Streamarr',
+  },
+  {
+    href: 'getting-started/what-is-plex',
+    text: 'What is Plex',
+  },
+  {
+    href: 'getting-started/download-plex',
+    text: 'How to download the Plex app',
+  },
+  {
+    href: 'getting-started/download-streamarr',
+    text: 'How to download the Streamarr app',
+  },
+  {
+    href: 'getting-started/quick-start',
+    text: 'Quick start guide to getting started with Streamarr',
+  },
+];
 
 const GettingStarted = () => {
   return (

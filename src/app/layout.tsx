@@ -20,7 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-CA" className={`${inter.className} scroll-smooth`} data-theme="streamarr">
+    <html
+      lang="en-CA"
+      className={`${inter.className} scroll-smooth`}
+      data-theme="streamarr"
+    >
       <InteractionProvider>
         <head>
           <PWAHeader applicationTitle={applicationTitle} />
@@ -28,9 +32,9 @@ export default function RootLayout({
         <ServiceWorkerSetup />
       </InteractionProvider>
       <body className="flex flex-col min-h-dvh">
-        <NextTopLoader color='#974ede' />
+        <NextTopLoader color="#974ede" />
         <PullToRefresh />
-          {children}
+        {children}
       </body>
     </html>
   );

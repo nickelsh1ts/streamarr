@@ -26,7 +26,7 @@ const LegalPage = () => {
               role="tabpanel"
               className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
             >
-              <div className='print:hidden'>
+              <div className="print:hidden">
                 <Link
                   className="link-neutral font-semibold flex place-items-center max-md:m-2"
                   href="/help/legal/termsofuse"
@@ -47,15 +47,16 @@ const LegalPage = () => {
             <div
               role="tabpanel"
               className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
-            ><div className='print:hidden'>
-            <Link
-              className="link-neutral font-semibold flex place-items-center max-md:m-2"
-              href="/help/legal/privacy"
             >
-              Hyperlink{' '}
-              <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
-            </Link>
-          </div>
+              <div className="print:hidden">
+                <Link
+                  className="link-neutral font-semibold flex place-items-center max-md:m-2"
+                  href="/help/legal/privacy"
+                >
+                  Hyperlink{' '}
+                  <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
+                </Link>
+              </div>
               <Privacy />
             </div>
           </div>

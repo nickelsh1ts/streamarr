@@ -1,5 +1,5 @@
-'use client'
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 
 interface TabsProps {
   id: string;
@@ -7,14 +7,14 @@ interface TabsProps {
   content: React.ReactNode;
 }
 
-const Tabs = ({tabs}: {tabs:TabsProps[]}) => {
+const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
   const [activeTab, setActive] = useState(`${tabs[0]?.id}`);
   return (
     <div className="grid">
-    <div role="tablist" className="tabs-bordered border-zinc-400 border-b">
-    {tabs?.map((tab) => {
-      return(
-        <button
+      <div role="tablist" className="tabs-bordered border-zinc-400 border-b">
+        {tabs?.map((tab) => {
+          return (
+            <button
               key={tab.id}
               onClick={(e) => {
                 e.preventDefault();
@@ -26,19 +26,22 @@ const Tabs = ({tabs}: {tabs:TabsProps[]}) => {
             >
               {tab.title}
             </button>
-      );
-    })}
+          );
+        })}
       </div>
       {tabs?.map((tab) => {
-      return(
-      <div key={tab.id} id={tab.id} className={`w-full mt-7 mx-auto${activeTab === tab.id ? '' : ' hidden'}`}>
-        {tab.content}
-      </div>
-      );
-    })}
-
+        return (
+          <div
+            key={tab.id}
+            id={tab.id}
+            className={`w-full mt-7 mx-auto${activeTab === tab.id ? '' : ' hidden'}`}
+          >
+            {tab.content}
+          </div>
+        );
+      })}
     </div>
-  )
-}
+  );
+};
 
-export default Tabs
+export default Tabs;

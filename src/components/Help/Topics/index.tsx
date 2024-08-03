@@ -59,7 +59,12 @@ const Topics = () => {
       <div className="container max-w-screen-xl mx-auto py-7">
         <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
           <div className="flex flex-col gap-4">
-            <Link href='/help/getting-started' className="font-extrabold text-xl hover:text-neutral-600 w-fit">Getting Started</Link>
+            <Link
+              href="/help/getting-started"
+              className="font-extrabold text-xl hover:text-neutral-600 w-fit"
+            >
+              Getting Started
+            </Link>
             <Link
               href="/help/getting-started/what-is-streamarr"
               className="hover:text-neutral-600 w-fit"
@@ -116,7 +121,10 @@ const Topics = () => {
             </Link>
           </div>
           <div className="flex flex-col gap-4">
-            <Link href='/help/watching-streamarr' className="font-extrabold text-xl hover:text-neutral-600 w-fit">
+            <Link
+              href="/help/watching-streamarr"
+              className="font-extrabold text-xl hover:text-neutral-600 w-fit"
+            >
               Watching <span className="text-primary">Streamarr</span>
             </Link>
             <Link

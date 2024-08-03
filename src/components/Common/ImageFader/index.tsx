@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import type { ImageLoader } from 'next/image';
 import Image from 'next/image';
 import type { ForwardRefRenderFunction, HTMLAttributes } from 'react';
@@ -51,14 +51,12 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             unoptimized
             loader={imageLoader}
             className="absolute inset-0 h-full w-full"
-            style={{objectFit:"cover"}}
+            style={{ objectFit: 'cover' }}
             alt=""
             src={imageUrl}
             fill
           />
-          <div
-            className={`absolute inset-0 ${gradient}`}
-          />
+          <div className={`absolute inset-0 ${gradient}`} />
         </div>
       ))}
     </div>
