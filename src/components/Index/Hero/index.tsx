@@ -7,7 +7,7 @@ const scrollToSection = (id: string) => {
   element?.scrollIntoView({ behavior: 'smooth' });
 };
 
-export default function Hero({ forRef }) {
+export default function Hero() {
   const ImageArray = [
     {
       url: '/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg',
@@ -101,7 +101,7 @@ export default function Hero({ forRef }) {
 
   console.log(ImageArray);
   return (
-    <section id="promo" className="min-h-lvh -mt-20" ref={forRef}>
+    <section id="promo" className="min-h-lvh -mt-20">
       <ImageFader
         rotationSpeed={6000}
         backgroundImages={

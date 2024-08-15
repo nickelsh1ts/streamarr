@@ -52,13 +52,13 @@ const MenuLinks: MenuLinksProps[] = [
   },
 ];
 
-const Header = ({ isInView = false }) => {
+const Header = ({ isInView = true }) => {
   const path = usePathname();
 
   return (
     <header
       id="top"
-      className={`navbar ${path === '/' && 'sticky top-0'} transition duration-500 drawer ${!isInView && 'bg-brand-dark'} font-bold z-10`}
+      className={`navbar ${path === '/' && 'sticky top-0'} transition duration-500 drawer ${isInView && 'bg-brand-dark'} font-bold z-10`}
     >
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content md:px-10 flex-1 max-sm:flex-wrap max-sm:place gap-2 min-h-10">
@@ -87,7 +87,7 @@ const Header = ({ isInView = false }) => {
         )}
         <Link
           href="/"
-          className={`hover:brightness-75 transition-opacity duration-500 ${isInView && 'opacity-0 pointer-events-none'}`}
+          className={`hover:brightness-75 transition-opacity duration-500 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >
           <img
             src="/logo_full.png"
@@ -117,7 +117,7 @@ const Header = ({ isInView = false }) => {
             <Link
               href="/signup"
               id="signup"
-              className={`btn btn-outline btn-sm md:btn-md text-xs btn-warning rounded-md gap-0.5 md:tracking-widest md:text-lg uppercase no-animation transition-opacity duration-500 ${path === '/' && isInView && 'opacity-0 pointer-events-none'}`}
+              className={`btn btn-outline btn-sm md:btn-md text-xs btn-warning rounded-md gap-0.5 md:tracking-widest md:text-lg uppercase no-animation transition-opacity duration-500 ${path === '/' && !isInView && 'opacity-0 pointer-events-none'}`}
             >
               Sign up now
             </Link>
