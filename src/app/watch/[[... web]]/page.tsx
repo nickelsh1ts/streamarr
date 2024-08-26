@@ -15,12 +15,8 @@ export const metadata: Metadata = {
 const WatchPage: NextPage = () => {
   return (
     <Watch>
-      <link
-        rel="stylesheet"
-        href="/_next/static/css/app/layout.css?v=1724611409484"
-        data-precedence="next_static/css/app/layout.css"
-      />
-      <link href="/watch.css" rel="stylesheet" />
+      <link rel='stylesheet' href="/tailwind.css" />
+      <link rel="stylesheet" href="/watch.css" />
       <Sidebar />
     </Watch>
   );
