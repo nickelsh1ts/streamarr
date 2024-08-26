@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const getHash = () =>
-  typeof window !== "undefined" ? window.location.hash : undefined;
+  typeof window !== 'undefined' ? window.location.hash : undefined;
 
 const useHash = () => {
   const [isClient, setIsClient] = useState(false);

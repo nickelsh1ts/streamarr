@@ -17,7 +17,7 @@ interface MenuLinksProps {
   messagesKey: string;
   icon?: React.ReactNode;
   divide?: DivideStyle;
-  target?: HTMLAttributeAnchorTarget
+  target?: HTMLAttributeAnchorTarget;
 }
 
 interface OptionsProps {

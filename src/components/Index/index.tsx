@@ -19,12 +19,12 @@ function Index() {
       <Header isInView={isInView} />
       <Hero />
       <div ref={targetRef}>
-      <Requesting />
-      <Watching />
-      <Favourites />
-      <Devices />
-      <FAQs />
-      <Footer />
+        <Requesting />
+        <Watching />
+        <Favourites />
+        <Devices />
+        <FAQs />
+        <Footer />
       </div>
     </main>
   );

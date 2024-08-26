@@ -1,7 +1,5 @@
 'use client';
-import {
-  ArrowRightEndOnRectangleIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -13,7 +11,7 @@ interface MenuLinksProps {
 const MenuLinks: MenuLinksProps[] = [
   {
     href: '/help',
-    messagesKey: 'Help Centre'
+    messagesKey: 'Help Centre',
   },
 ];
 
@@ -36,7 +34,7 @@ const Header = ({ isInView = true }) => {
             className="w-40 md:w-52 h-auto"
           />
         </Link>
-        { path != '/' && (
+        {path != '/' && (
           <div className="divider divider-horizontal divider-neutral mx-0 max-md:hidden"></div>
         )}
         {path != '/' &&
@@ -46,7 +44,7 @@ const Header = ({ isInView = true }) => {
               <Link
                 key={menuLink.href}
                 href={menuLink.href}
-                className={`max-md:hidden ${isActive ? 'link-primary' : 'link-neutral'} ${path === '/signin' && (menuLink.href === '/request') ? 'hidden' : ''}`}
+                className={`max-md:hidden ${isActive ? 'link-primary' : 'link-neutral'} ${path === '/signin' && menuLink.href === '/request' ? 'hidden' : ''}`}
               >
                 {menuLink.messagesKey}
               </Link>

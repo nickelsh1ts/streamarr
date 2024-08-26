@@ -15,7 +15,11 @@ export const metadata: Metadata = {
 const WatchPage: NextPage = () => {
   return (
     <Watch>
-      <link rel="stylesheet" href="/_next/static/css/app/layout.css?v=1724611409484" data-precedence="next_static/css/app/layout.css"/>
+      <link
+        rel="stylesheet"
+        href="/_next/static/css/app/layout.css?v=1724611409484"
+        data-precedence="next_static/css/app/layout.css"
+      />
       <link href="/watch.css" rel="stylesheet" />
       <Sidebar />
     </Watch>

@@ -109,7 +109,7 @@ const LibraryMenu = () => {
               className={`text-lg focus:!bg-primary/70 active:!bg-white/20 ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
             >
               {menuLink.icon}
-              <p className='truncate'>{menuLink.messagesKey}</p>
+              <p className="truncate">{menuLink.messagesKey}</p>
             </Link>
           </li>
         );
@@ -143,7 +143,7 @@ const LibraryMenu = () => {
                       href={libraryLink.href}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
-                      <p className='truncate'>{libraryLink.messageKey}</p>
+                      <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
                   </li>
                 );
@@ -165,7 +165,7 @@ const LibraryMenu = () => {
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <FilmIcon className="w-7 h-7" />
-                  <p className='truncate'>{libraryLink.messageKey}</p>
+                  <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
             );
@@ -199,7 +199,7 @@ const LibraryMenu = () => {
                       href={libraryLink.href}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
-                      <p className='truncate'>{libraryLink.messageKey}</p>
+                      <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
                   </li>
                 );
@@ -220,7 +220,7 @@ const LibraryMenu = () => {
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <TvIcon className="w-7 h-7" />
-                  <p className='truncate'>{libraryLink.messageKey}</p>
+                  <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
             );
@@ -256,7 +256,7 @@ const LibraryMenu = () => {
                       href={libraryLink.href}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
-                      <p className='truncate'>{libraryLink.messageKey}</p>
+                      <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
                   </li>
                 );
@@ -277,7 +277,7 @@ const LibraryMenu = () => {
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <MusicalNoteIcon className="w-7 h-7 inline-flex" />
-                  <p className='truncate'>{libraryLink.messageKey}</p>
+                  <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
             );
@@ -314,7 +314,7 @@ const LibraryMenu = () => {
                       href={libraryLink.href}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
-                      <p className='truncate'>{libraryLink.messageKey}</p>
+                      <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
                   </li>
                 );
@@ -335,7 +335,7 @@ const LibraryMenu = () => {
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <VideoCameraIcon className="w-7 h-7 inline-flex" />
-                  <p className='truncate'>{libraryLink.messageKey}</p>
+                  <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
             );

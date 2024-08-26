@@ -17,11 +17,11 @@ const Watch = ({ children, ...props }) => {
 
   const mountNode = contentRef?.contentWindow?.document?.body;
 
-  if(!pathname.includes('/watch/web/index.html')){
-    router.push('/watch/web/index.html')
+  if (!pathname.includes('/watch/web/index.html')) {
+    router.push('/watch/web/index.html');
   } else {
-  return (
-    <>
+    return (
+      <>
         <p className="hidden">
           If you&apos;re seeing this page, you have not yet configured your
           webserver correctly.
@@ -48,10 +48,9 @@ const Watch = ({ children, ...props }) => {
             <span className="loading loading-dots loading-md text-primary mt-2"></span>
           </div>
         ) : null}
-    </>
-  );
+      </>
+    );
   }
-
 };
 
 export default Watch;
