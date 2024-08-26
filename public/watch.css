@@ -1,0 +1,573 @@
+@charset "utf-8";
+/* CSS Document */
+@import url(https://theme-park.dev/css/base/plex/plex-base.css);
+:root {
+  --color-brand-accent: 974ede;
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: rgba(43, 11, 83, 1);
+  --button-color-hover: #974ede;
+  --accent-color: #fff;
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: #7E27D3!important;
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: #7E27D3 !important;
+  --color-background-accent-focus: #974ede !important;
+  --bs-primary: #7E27D3 !important;
+}
+/* Custom Perm CSS */
+.plex-orange-text {
+  color: #e5a00d !important;
+}
+.plex-orange {
+  color: #e5a00d !important;
+}
+/*------scroll bar---------------------*/
+::-webkit-scrollbar {
+  width: 5px;
+  height: 7px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #525965;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #525965;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #525965;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/*Alt Logo*/
+[class*="NavBar-logoContainer-"] {
+  background-image: url("/logo_full.png");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: 0;
+  width: 174px;
+}
+[class*="NavBar-logoContainer-"] svg {
+  display: none;
+}
+[class*="NavBar-logoContainer-"] a {
+  width: 100%;
+}
+
+@media (max-width: 639px) {
+  .mo\:hide {
+    display: none !important;
+  }
+}
+@media (min-width: 640px) {
+  .sm\:hidden {
+    display: none !important;
+  }
+  .sm\:block {
+    display: block !important;
+  }
+}
+@media (min-width: 1024px) {
+  .lg\:hidden {
+    display: none !important;
+  }
+  [class*="Page-pageScroller-"] {
+    padding-left: 14rem;
+  }
+  .offcanvas-backdrop {
+    display: none !important;
+  }
+  [class*="SidebarContainer-sidebarContainer-"] {
+    z-index: 1051;
+    position: relative;
+    background-color: #1b1b1b
+  }
+  [class*="BottomBar-bottomBar-"] {
+    background: #0F0F0F;
+  }
+  .dropdown-menu-end {
+    transform: translate(-6px, 35px) !important;
+  }
+}
+@media (max-width: 1023px) {
+  [aria-label="Home"] svg {
+    display: none;
+  }
+  [aria-label="Home"] {
+    padding: 0;
+  }
+  .dt\:hidden {
+    display: none;
+  }
+}
+/*Mobile Only*/
+@media (max-width: 639px) {
+  [class*="Player-miniPlayerContainer-"] {
+    margin-bottom: 3.7rem
+  }
+  [class*="DirectoryListJumpBar-jumpBar-"] {
+    margin: 0 0 56px 0;
+  }
+  [class*="PageContent-pageContentScroller-"] {
+    padding-bottom: 4rem !important;
+  }
+  .modal-dialog {
+    margin-top: 4rem;
+  }
+}
+/*Mobile Friendly*/
+@media (max-width: 769.98px) {
+  [class*="SidebarContainer-sidebarContainer-"] {
+    display: none !important;
+  }
+  [class*="PageHeader-pageHeader-"] {
+    height: 60px !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .scroll-container {
+    padding: 0 !important;
+  }
+  [class*="CurrentSourceBreadcrumb-container-"] {
+    margin: 0 !important;
+  }
+  ._1duebfhte, ._1duebfhtf:hover, ._1duebfhtg:focus {
+    min-width: 18rem !important;
+  }
+  .z63thy2 {
+    min-width: 18rem !important
+  }
+  ._1326e1na {
+    min-width: 64px !important
+  }
+  [class*="PlayerControls-controls-"] {
+    width: 100vw;
+  }
+  .modal-body-scroll {
+    max-height: 80vh !important;
+  }
+  [class*="TabButton-button-"] {
+    padding: 0 !important;
+  }
+  [class*="PageHeaderCenter-pageHeaderCenter-"] {
+    max-width: 108px !important;
+  }
+  [class*="PageHeaderLeftGutter-container-"] {
+    left: -12px !important;
+  }
+  [class*="PageContent-pageContentScroller-"] {
+    margin-left: -26px !important;
+  }
+  .user-select-modal-pin-container .pin-digit-container {
+    width: 100%;
+    overflow: hidden;
+  }
+  .user-select-modal {
+    width: 364px
+  }
+  [class*="FirstRunExperienceStep-container-"] {
+    width: 100% !important
+  }
+  [class*="FirstRunExperienceStep-stepContainer-"] {
+    width: 100% !important;
+  }
+  [class*="ControlsContainer-controlsContainer-"] {
+    min-width: 100vw !important;
+  }
+  [class*="NavBar-logoContainer-"] {
+    background-image: url("/streamarr-logo-512x512.png");
+    width: 45px;
+  }
+}
+@media (max-width: 452px) {
+  [class*="PageHeaderLeft-pageHeaderLeft-"], [class*="PageHeaderRight-pageHeaderRight-"] {
+    overflow: revert !important;
+  }
+  [class*="PageHeaderRight-pageHeaderRight-"] > [class*="ActionButtonBar-bar-"] {
+    display: none !important;
+  }
+}
+@media (max-width: 390px) {
+  [class*="DirectoryListJumpBar-jumpBar-"] {
+    display: none !important;
+  }
+}
+/*Position Corrections*/
+[class*="NavBar-right-"] {
+  padding-left: 0 !important;
+}
+[class*="SettingsPage-content-"] {
+  padding-top: 1rem;
+  padding-bottom: 4rem
+}
+[class*="UserSelectModal-darkModalBackdrop-"] {
+  z-index: 1050;
+}
+._1duebfh42 {
+	gap: 0!important;
+	display: flex;
+	flex-wrap: wrap!important;
+}
+._1duebfh2u {
+	margin-right: auto!important;
+}
+[class*="StreamingServicesUpsellHub-container-"] {
+	margin: 5px 5px 5px 40px;
+	padding: 20px 20px 20px 20px;
+}
+[class*="StreamingServicesUpsellHub-text-"] {
+	margin-bottom: 20px!important;
+}
+[aria-label="Select Player"] {
+  padding: 0;
+}
+/*Object Hiding*/
+[class*="NavBarButton-button-"] {
+  display: none !important;
+}
+[class*="NavBar-buttonSeparator-"] {
+  display: none;
+}
+[class*="SourceSidebar-sidebarUnderlay-"] {
+  display: none;
+}
+[aria-label="Settings"] {
+  display: none !important;
+}
+[aria-label="Activity"] {
+  display: none !important;
+}
+[class*="SourceSidebar-sidebar-"] {
+  display: none !important;
+}
+[class*="PivotTabsPageHeaderCenter-pageHeaderCenter-"] {
+  display: none !important;
+}
+[class*="PageHeaderBadge-badge-"] {
+  display: none !important;
+}
+[aria-label="Collapse"] {
+  display: none !important
+}
+[class*="PlayerIconButton-playerButton-"] {
+  display: block !important;
+}
+[href*="#!/logout"] {
+  display: none;
+}
+[class*="NavBarActivityButton-labelContainer-"] {
+  display: none;
+}
+[class*="NavBarActivityButton-spinnerContainer"] {
+  display: none;
+}
+/*Colour Corrections*/
+a {
+  color: #974ede;
+}
+a:hover {
+  color: #7E27D3
+}
+body {
+  background-color: #1f1f1f
+}
+.accordion-button:not(.collapsed)::after {
+  filter: invert(34%) sepia(74%) saturate(3060%) hue-rotate(252deg) brightness(94%) contrast(84%);
+}
+.accordion-button::after {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(286deg) brightness(103%) contrast(103%);
+}
+.accordion-button:not(.collapsed) {
+  box-shadow: none
+}
+.accordion-item {
+  border: none
+}
+.btn-primary, .btn-primary.disabled, .btn-primary:disabled {
+  color: #fff;
+  background-color: #974ede;
+  border-color: #974ede;
+}
+[class*="_76v8d67"] {
+  color: #fff !important;
+}
+[class*="Slider-fill-"] {
+  background-color: #974ede !important
+}
+.card {
+  background-color: #171717 !important;
+}
+[class*="MetadataPosterCard-progressBar-"] {
+  background-color: #974ede !important;
+}
+[class*="PlayButton-playButton-"]:hover [class*="PlayButton-playCircle-"] {
+  border-color: #974ede;
+  background-color: rgba(8, 0, 17, 1);
+  color: #974ede;
+}
+.media-poster-container.selected .media-poster:before {
+  border-color: rgba(43, 11, 83, 1) rgba(43, 11, 83, 1) transparent transparent !important;
+}
+[class*="SeekBar-seekBarBuffer-"], [class*="SessionTile-transcodeProgressPercent-"] {
+  opacity: 0.5 !important
+}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  background-color: #7E27D3 !important;
+}
+.dropdown-menu-dark .dropdown-item.active, .dropdown-menu-dark .dropdown-item:active > .nav-link {
+  background-color: #7E27D3 !important;
+  color: #fff !important
+}
+.dropdown-menu-dark .dropdown-item.active, .dropdown-menu-dark .dropdown-item:active {
+  background-color: #974ede
+}
+.card-announcement .unread {
+  background-color: #974ede;
+}
+.card-announcement .thumb {
+  filter: invert(34%) sepia(74%) saturate(3060%) hue-rotate(252deg) brightness(94%) contrast(84%);
+}
+input[type=checkbox]:checked:after {
+  background-color: #974ede !important;
+  border-color: #2b0b53;
+}
+/*top menu*/
+.plex-logo {
+  background-image: url("/img/nickflixtvlgpr.png") !important
+}
+[class*="NavBar-container-"] {
+  margin: 0 !important;
+  padding: 0 0 0 1rem;
+  height: 61px;
+}
+@media (min-width: 640px) {
+  [class*="NavBar-container-"] {
+    padding: 0 0 0 3.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  [class*="NavBar-container-"] {
+    padding: 0 0 0 1rem;
+  }
+}
+/*Nav Corrections*/
+.offcanvas {
+  visibility: initial
+}
+.offcanvas-backdrop {
+  z-index: 1004 !important;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background: #1f1f1f;
+}
+.offcanvas-bottom {
+  height: fit-content;
+}
+.navbar-nav-scroll {
+	max-height: 90vh;
+}
+[classs*="FirstRunExperienceStep-stepContainer-"] {
+    width: 100% !important;
+}
+[class*="ControlsContainer-controlsContainer-"] {
+	min-width: 100vw !important;
+}
+
+@media (max-width: 452px) {
+  [class*="PageHeaderLeft-pageHeaderLeft-"], [class*="PageHeaderRight-pageHeaderRight-"] {
+    overflow: revert !important;
+  }
+  [class*="PageHeaderRight-pageHeaderRight-"] > [class*="ActionButtonBar-bar-"] {
+    display: none !important;
+  }
+}
+@media (max-width: 390px) {
+  [class*="DirectoryListJumpBar-jumpBar-"] {
+    display: none !important;
+  }
+}
+/*Position Corrections*/
+[class*="NavBar-right-"] {
+  padding-left: 0 !important;
+}
+[class*="SettingsPage-content-"] {
+  padding-top: 1rem;
+  padding-bottom: 4rem
+}
+[class*="UserSelectModal-darkModalBackdrop-"] {
+  z-index: 1050;
+}
+/*Object Hiding*/
+[class*="NavBarButton-button-"] {
+  display: none !important;
+}
+[class*="NavBar-buttonSeparator-"] {
+  display: none;
+}
+[class*="SourceSidebar-sidebarUnderlay-"] {
+  display: none;
+}
+[aria-label="Settings"] {
+  display: none !important;
+}
+[aria-label="Activity"] {
+  display: none !important;
+}
+[class*="SourceSidebar-sidebar-"] {
+  display: none !important;
+}
+[class*="PivotTabsPageHeaderCenter-pageHeaderCenter-"] {
+  display: none !important;
+}
+[class*="PageHeaderBadge-badge-"] {
+  display: none !important;
+}
+[aria-label="Collapse"] {
+  display: none !important
+}
+[class*="PlayerIconButton-playerButton-"] {
+  display: block !important;
+}
+/*Colour Corrections*/
+a {
+  color: #974ede;
+}
+a:hover {
+  color: #7E27D3
+}
+body {
+  background-color: #1f1f1f
+}
+.accordion-button:not(.collapsed)::after {
+  filter: invert(34%) sepia(74%) saturate(3060%) hue-rotate(252deg) brightness(94%) contrast(84%);
+}
+.accordion-button::after {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(286deg) brightness(103%) contrast(103%);
+}
+.accordion-button:not(.collapsed) {
+  box-shadow: none
+}
+.accordion-item {
+  border: none
+}
+.btn-primary, .btn-primary.disabled, .btn-primary:disabled {
+  color: #fff;
+  background-color: #974ede;
+  border-color: #974ede;
+}
+[class*="_76v8d67"] {
+  color: #fff !important;
+}
+[class*="Slider-fill-"] {
+  background-color: #974ede !important
+}
+.card {
+  background-color: #171717 !important;
+}
+[class*="MetadataPosterCard-progressBar-"] {
+  background-color: #974ede !important;
+}
+[class*="PlayButton-playButton-"]:hover [class*="PlayButton-playCircle-"] {
+  border-color: #974ede;
+  background-color: rgba(8, 0, 17, 1);
+  color: #974ede;
+}
+.media-poster-container.selected .media-poster:before {
+  border-color: rgba(43, 11, 83, 1) rgba(43, 11, 83, 1) transparent transparent !important;
+}
+[class*="_76v8d67"] {
+  background-color: #7E27D3 !important
+}
+[class*="_76v8d67"]:hover {
+  background-color: #974ede !important;
+}
+[class*='_76v8d6l'] {
+	background: none!important;
+}
+[class*="SeekBar-seekBarBuffer-"], [class*="SessionTile-transcodeProgressPercent-"] {
+  opacity: 0.5 !important
+}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  background-color: #7E27D3 !important;
+}
+.dropdown-menu-dark .dropdown-item.active, .dropdown-menu-dark .dropdown-item:active > .nav-link {
+  background-color: #7E27D3 !important;
+  color: #fff !important
+}
+.dropdown-menu-dark .dropdown-item.active, .dropdown-menu-dark .dropdown-item:active {
+  background-color: #974ede
+}
+.card-announcement .unread {
+  background-color: #974ede;
+}
+.card-announcement .thumb {
+  filter: invert(34%) sepia(74%) saturate(3060%) hue-rotate(252deg) brightness(94%) contrast(84%);
+}
+input[type=checkbox]:checked:after {
+  background-color: #974ede !important;
+  border-color: #2b0b53;
+}
+/*top menu*/
+.plex-logo {
+  background-image: url("/logo_full.png") !important
+}
+[class*="NavBar-container-"] {
+  margin: 0 !important;
+  padding: 0 0 0 1rem;
+  height: 61px;
+}
+@media (min-width: 640px) {
+  [class*="NavBar-container-"] {
+    padding: 0 0 0 3.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  [class*="NavBar-container-"] {
+    padding: 0 0 0 1rem;
+  }
+  [class*="LiveTVViewPage-page-"] {
+    margin-left: 12rem;
+  }
+}
+/*Nav Corrections*/
+.offcanvas {
+  visibility: initial
+}
+.offcanvas-backdrop {
+  z-index: 1004 !important;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background: #1f1f1f;
+}
+.offcanvas-bottom {
+  height: fit-content;
+}
+.navbar-nav-scroll {
+  max-height: 90vh;
+}

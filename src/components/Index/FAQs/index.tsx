@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 function FAQs() {
   return (
-    <div className="min-h-lvh place-content-center py-16">
+    <section id='faqs' className="min-h-lvh place-content-center py-16">
       <div className="container mx-auto">
         <div className="pb-10">
           <p className="text-2xl md:text-4xl text-center font-extrabold">
@@ -127,7 +127,7 @@ function FAQs() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
