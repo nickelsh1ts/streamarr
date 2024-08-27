@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const WatchPage: NextPage = () => {
   return (
     <Watch>
-      <link rel='stylesheet' href="/tailwind.css" />
+      <link rel="stylesheet" href="/tailwind.css" />
       <link rel="stylesheet" href="/watch.css" />
       <Sidebar />
     </Watch>

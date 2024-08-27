@@ -103,10 +103,10 @@ const LibraryMenu = () => {
             url === '/watch/web/index.html') &&
             menuLink.href === '/watch/web/index.html#!');
         return (
-          <li className="" key={menuLink.href}>
+          <li className="pointer-events-auto" key={menuLink.href}>
             <Link
               href={menuLink.href}
-              className={`text-lg focus:!bg-primary/70 active:!bg-white/20 ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+              className={`text-lg focus:!bg-primary/70 active:!bg-white/20 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
             >
               {menuLink.icon}
               <p className="truncate">{menuLink.messagesKey}</p>
@@ -116,7 +116,7 @@ const LibraryMenu = () => {
       })}
       {LibraryLinks.filter((library) => library.library.includes('movie'))
         .length > 1 ? (
-        <li>
+        <li className="pointer-events-auto">
           <details
             open={
               LibraryLinks.filter((library) =>
@@ -141,7 +141,7 @@ const LibraryMenu = () => {
                   <li key={libraryLink.messageKey}>
                     <Link
                       href={libraryLink.href}
-                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
@@ -158,11 +158,11 @@ const LibraryMenu = () => {
           ).map((libraryLink) => {
             const isActive = url.includes(libraryLink.href);
             return (
-              <li key={libraryLink.messageKey}>
+              <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
                   key={libraryLink.messageKey}
                   href={libraryLink.href}
-                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <FilmIcon className="w-7 h-7" />
                   <p className="truncate">{libraryLink.messageKey}</p>
@@ -174,7 +174,7 @@ const LibraryMenu = () => {
       )}
       {LibraryLinks.filter((library) => library.library.includes('show'))
         .length > 1 ? (
-        <li>
+        <li className="pointer-events-auto">
           <details
             open={
               LibraryLinks.filter((library) => library.library.includes('show'))
@@ -197,7 +197,7 @@ const LibraryMenu = () => {
                   <li key={libraryLink.messageKey}>
                     <Link
                       href={libraryLink.href}
-                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
@@ -214,10 +214,10 @@ const LibraryMenu = () => {
           ).map((libraryLink) => {
             const isActive = url.includes(libraryLink.href);
             return (
-              <li key={libraryLink.messageKey}>
+              <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
                   href={libraryLink.href}
-                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <TvIcon className="w-7 h-7" />
                   <p className="truncate">{libraryLink.messageKey}</p>
@@ -229,7 +229,7 @@ const LibraryMenu = () => {
       )}
       {LibraryLinks.filter((library) => library.library.includes('music'))
         .length > 1 ? (
-        <li>
+        <li className="pointer-events-auto">
           <details
             open={
               LibraryLinks.filter((library) =>
@@ -254,7 +254,7 @@ const LibraryMenu = () => {
                   <li key={libraryLink.messageKey}>
                     <Link
                       href={libraryLink.href}
-                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
@@ -271,10 +271,10 @@ const LibraryMenu = () => {
           ).map((libraryLink) => {
             const isActive = url.includes(libraryLink.href);
             return (
-              <li key={libraryLink.messageKey}>
+              <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
                   href={libraryLink.href}
-                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <MusicalNoteIcon className="w-7 h-7 inline-flex" />
                   <p className="truncate">{libraryLink.messageKey}</p>
@@ -287,7 +287,7 @@ const LibraryMenu = () => {
 
       {LibraryLinks.filter((library) => library.library.includes('livetv'))
         .length > 1 ? (
-        <li>
+        <li className="pointer-events-auto">
           <details
             open={
               LibraryLinks.filter((library) =>
@@ -312,7 +312,7 @@ const LibraryMenu = () => {
                   <li key={libraryLink.messageKey}>
                     <Link
                       href={libraryLink.href}
-                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
@@ -329,10 +329,10 @@ const LibraryMenu = () => {
           ).map((libraryLink) => {
             const isActive = url.includes(libraryLink.href);
             return (
-              <li key={libraryLink.messageKey}>
+              <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
                   href={libraryLink.href}
-                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white pointer-events-none bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <VideoCameraIcon className="w-7 h-7 inline-flex" />
                   <p className="truncate">{libraryLink.messageKey}</p>
@@ -342,8 +342,11 @@ const LibraryMenu = () => {
           })}
         </>
       )}
-      <li className="leading-none my-4">
-        <a className="block active:!bg-primary/20 max-lg:pe-16" href="/request">
+      <li className="leading-none my-4 pointer-events-auto mb-[6.5rem]">
+        <Link
+          className="block active:!bg-primary/20 max-lg:pe-16"
+          href="/request"
+        >
           <img
             className="h-auto w-auto"
             src="/external/os-logo_full.svg"
@@ -353,7 +356,7 @@ const LibraryMenu = () => {
           <p className="ms-auto -mt-3 w-fit">
             <small className="">Request &amp; Report</small>
           </p>
-        </a>
+        </Link>
       </li>
     </>
   );

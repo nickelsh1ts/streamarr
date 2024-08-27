@@ -82,7 +82,7 @@ const Sidebar = () => {
   return (
     <>
       <header
-        id=""
+        id="sidebar"
         className="navbar w-fit transition duration-500 drawer font-bold z-[1006] lg:hidden"
       >
         <input
@@ -168,7 +168,7 @@ const Sidebar = () => {
           />
         </div>
       </div>
-      <ul className="menu w-56 p-2 gap-2 max-lg:hidden fixed top-0 bottom-0 left-0 z-[1006] lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem]">
+      <ul className="menu w-56 p-2 gap-2 max-lg:hidden fixed top-0 bottom-0 left-0 z-[1006] lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none">
         <LibraryMenu />
       </ul>
     </>

@@ -35,8 +35,8 @@ const Watch = ({ children, ...props }) => {
             }, 1000);
           }}
           ref={setContentRef}
-          className={`w-full h-screen z-20${loadingIframe && ' hidden'}`}
-          src={`https://streamarr-dev.nickelsh1ts.com${url && url}`}
+          className={`w-full h-screen z-20${loadingIframe && ' invisible'}`}
+          src={`https://streamarr-dev.nickelsh1ts.com${url && url.replace('null', '')}`}
           allowFullScreen
           title="Plex"
         >
