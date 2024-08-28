@@ -111,6 +111,9 @@ svg {
     margin-left: auto;
     margin-right: auto;
   }
+  [class*="StreamingServicesUpsellHub-content-"] > div {
+    flex-direction: column;
+  }
 }
 /*Mobile Friendly*/
 @media (max-width: 769.98px) {
@@ -216,10 +219,10 @@ svg {
 [class*="SourceSidebar-sidebarUnderlay-"] {
   display: none;
 }
-[aria-label*="Settings"] svg {
+[aria-label*="Settings"] {
   display: none ;
 }
-[title*="Settings"] svg {
+[title*="Settings"] {
   display: initial;
 }
 [aria-label="Activity"] {
@@ -384,4 +387,10 @@ select {
 }
 hr {
   margin: 1rem 0 1rem 0;
+}
+a:has( > [title="Go Premium"]) {
+  display: none;
+}
+div:has(> [role="separator"][aria-orientation="vertical"]) {
+  display: none;
 }

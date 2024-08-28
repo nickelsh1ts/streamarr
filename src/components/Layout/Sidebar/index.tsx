@@ -145,7 +145,7 @@ const Sidebar = () => {
                 />
                 <DropDownMenu
                   dropUp
-                  title="Settings"
+                  title="settings"
                   menuLinks={SettingsLinks}
                   icon={<WrenchIcon className="w-6 h-6 scale-x-[-1]" />}
                 />
@@ -162,7 +162,7 @@ const Sidebar = () => {
             icon={<Cog6ToothIcon className="w-6 h-6" />}
           />
           <DropDownMenu
-            title="Settings"
+            title="settings"
             menuLinks={SettingsLinks}
             icon={<WrenchIcon className="w-6 h-6 scale-x-[-1]" />}
           />
