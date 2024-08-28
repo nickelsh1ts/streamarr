@@ -100,6 +100,17 @@ svg {
   [class*="PlayerControls-buttonGroupLeft-"] {
     margin-top: 10px;
   }
+  div:has( > [data-testid="cellItem"]), [data-testid="metadata"]{
+    margin-left: auto;
+    margin-right: auto;
+  }
+  [class*="VirtualHubScroller-hubScroller-"] > div {
+    width: 100% !important;
+  }
+  [class*="DirectoryListPageContent-pageContentScroller-"] > div {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 /*Mobile Friendly*/
 @media (max-width: 769.98px) {
@@ -135,7 +146,7 @@ svg {
   .user-select-modal-pin-container {
     -webkit-transform: scale(0.67);
        -moz-transform: scale(0.67);
-            transform: scale(0.67);;
+            transform: scale(0.67);
   }
   .user-select-modal {
     max-width: 100%;
@@ -205,8 +216,11 @@ svg {
 [class*="SourceSidebar-sidebarUnderlay-"] {
   display: none;
 }
-[href="#!/settings/web/general"] {
+[aria-label*="Settings"] svg {
   display: none ;
+}
+[title*="Settings"] svg {
+  display: initial;
 }
 [aria-label="Activity"] {
   display: none ;
@@ -314,9 +328,6 @@ svg {
 .btn-danger {
   background-color: #ac3323;
 }
-.form-group {
-  margin-top: 1rem;
-}
 .form-footer {
   margin-bottom: 1rem;
 }
@@ -351,4 +362,26 @@ svg {
   flex-direction: row;
   content: 'Loading ';
   margin-right: 5px;
+}
+.btn-default {
+  background-color: #974ede;
+  color: #fff;
+}
+.btn-default:hover {
+  background: #7E27D3;
+}
+.label {
+  display: initial;
+}
+.label-primary {
+  background-color: #974ede;
+}
+.label-primary:hover:hover {
+  background-color: #7E27D3;
+}
+select {
+  color: initial;
+}
+hr {
+  margin: 1rem 0 1rem 0;
 }

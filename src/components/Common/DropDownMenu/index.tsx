@@ -64,7 +64,7 @@ const DropDownMenu = ({ dropUp, menuLinks, title, icon }: OptionsProps) => {
                 <Link
                   href={menuLink.href}
                   target={menuLink.target}
-                  className={`rounded-none gap-1 pe-2 active:!bg-zinc-50/20 ${isActive ? 'text-white pointer-events-none bg-white/10 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`rounded-none gap-1 pe-2 active:!bg-zinc-50/20 ${isActive ? 'text-white bg-white/10 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   {menuLink.icon}
                   {menuLink.messagesKey}

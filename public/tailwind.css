@@ -791,12 +791,12 @@ html {
   content: var(--tw-content);
 }
 
-.card {
+/* .card {
   position: relative;
   display: flex;
   flex-direction: column;
   border-radius: var(--rounded-box, 1rem);
-}
+} */
 
 .card:focus {
   outline: 2px solid transparent;
