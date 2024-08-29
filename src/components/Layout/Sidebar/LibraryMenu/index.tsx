@@ -30,53 +30,53 @@ const MenuLinks: MenuLinksProps[] = [
   {
     href: '/watch/web/index.html#!',
     messagesKey: 'Home',
-    icon: <HomeIcon className="w-7 h-7 inline-flex" />,
+    icon: <HomeIcon className="w-7 ms-auto h-7 inline-flex" />,
   },
   {
     href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
     messagesKey: 'Discover',
-    icon: <NewspaperIcon className="w-7 h-7 inline-flex" />,
+    icon: <NewspaperIcon className="w-7 ms-auto h-7 inline-flex" />,
   },
   {
     href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
     messagesKey: 'Watch List',
-    icon: <BookmarkIcon className="w-7 h-7 inline-flex" />,
+    icon: <BookmarkIcon className="w-7 ms-auto h-7 inline-flex" />,
   },
 ];
 
 const LibraryLinks: LibraryLinksProps[] = [
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=1&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=1&pivot=',
     messageKey: 'movies',
     library: 'movie',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=10&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=10&pivot=',
     messageKey: 'kids movies',
     library: 'movie',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=4&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=4&pivot=',
     messageKey: 'retro: movies',
     library: 'movie',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=2&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=2&pivot=',
     messageKey: 'tv shows',
     library: 'show',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=8&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=8&pivot=',
     messageKey: 'kids shows:',
     library: 'show',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=5&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=5&pivot=',
     messageKey: 'retro: tv shows',
     library: 'show',
   },
   {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=9&pivot=library',
+    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=9&pivot=',
     messageKey: 'music',
     library: 'music',
   },
@@ -130,7 +130,7 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <FilmIcon className="w-7 h-7" /> Movies
+              <FilmIcon className="w-7 ms-auto h-7" /> Movies
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -140,11 +140,48 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
-                      href={libraryLink.href}
+                      href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
+                    {isActive && (
+                      <ul className="flex flex-col gap-1 mt-1">
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'library'}
+                            className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            Library
+                            {url.includes(libraryLink.href + 'library') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'collections'}
+                            className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Collections</p>
+                            {url.includes(libraryLink.href + 'collections') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'categories'}
+                            className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Categories</p>
+                            {url.includes(libraryLink.href + 'categories') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
                   </li>
                 );
               })}
@@ -161,10 +198,10 @@ const LibraryMenu = () => {
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
                   key={libraryLink.messageKey}
-                  href={libraryLink.href}
+                  href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  <FilmIcon className="w-7 h-7" />
+                  <FilmIcon className="w-7 ms-auto h-7" />
                   <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
@@ -186,7 +223,7 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <TvIcon className="w-7 h-7" /> TV Shows
+              <TvIcon className="w-7 ms-auto h-7" /> TV Shows
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -196,11 +233,48 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
-                      href={libraryLink.href}
+                      href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
+                    {isActive && (
+                      <ul className="flex flex-col gap-1 mt-1">
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'library'}
+                            className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Library </p>
+                            {url.includes(libraryLink.href + 'library') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'collections'}
+                            className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Collections</p>
+                            {url.includes(libraryLink.href + 'collections') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'categories'}
+                            className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Categories</p>
+                            {url.includes(libraryLink.href + 'categories') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
                   </li>
                 );
               })}
@@ -216,10 +290,10 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
-                  href={libraryLink.href}
+                  href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  <TvIcon className="w-7 h-7" />
+                  <TvIcon className="w-7 ms-auto h-7" />
                   <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
@@ -243,7 +317,7 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <MusicalNoteIcon className="w-7 h-7 inline-flex" /> Music (beta)
+              <MusicalNoteIcon className="w-7 ms-auto h-7 inline-flex" /> Music (beta)
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -253,11 +327,48 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
-                      href={libraryLink.href}
+                      href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <p className="truncate">{libraryLink.messageKey}</p>
                     </Link>
+                    {isActive && (
+                      <ul className="flex flex-col gap-1 mt-1">
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'library'}
+                            className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Library </p>
+                            {url.includes(libraryLink.href + 'library') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'collections'}
+                            className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Collections</p>
+                            {url.includes(libraryLink.href + 'collections') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={libraryLink.href + 'categories'}
+                            className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
+                          >
+                            <p>Categories</p>
+                            {url.includes(libraryLink.href + 'categories') && (
+                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            )}
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
                   </li>
                 );
               })}
@@ -273,10 +384,10 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
-                  href={libraryLink.href}
+                  href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  <MusicalNoteIcon className="w-7 h-7 inline-flex" />
+                  <MusicalNoteIcon className="w-7 ms-auto h-7 inline-flex" />
                   <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
@@ -301,7 +412,7 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <VideoCameraIcon className="w-7 h-7 inline-flex" /> Live TV
+              <VideoCameraIcon className="w-7 ms-auto h-7 inline-flex" /> Live TV
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -334,7 +445,7 @@ const LibraryMenu = () => {
                   href={libraryLink.href}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  <VideoCameraIcon className="w-7 h-7 inline-flex" />
+                  <VideoCameraIcon className="w-7 ms-auto h-7 inline-flex" />
                   <p className="truncate">{libraryLink.messageKey}</p>
                 </Link>
               </li>
@@ -342,9 +453,9 @@ const LibraryMenu = () => {
           })}
         </>
       )}
-      <li className="leading-none my-4 pointer-events-auto mb-[6.5rem]">
+      <li className="leading-none my-4 pointer-events-auto lg:mb-[6.5rem]">
         <Link
-          className="block active:!bg-primary/20 max-lg:pe-16"
+          className="block active:!bg-primary/20"
           href="/request"
         >
           <img

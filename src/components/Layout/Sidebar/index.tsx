@@ -118,17 +118,17 @@ const Sidebar = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           />
-          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-72 p-4 gap-1 border-r border-primary">
+          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-64 p-4 gap-1 border-r border-primary">
             <div className="inline-flex place-items-center place-content-between">
               <img
                 src="/logo_full.png"
                 alt="logo"
-                className="w-40 md:w-48 h-auto mb-2 mt-2"
+                className="w-40 md:w-44 h-auto my-2"
               />
               <label
                 htmlFor="my-drawer-3"
                 aria-label="close sidebar"
-                className="text-zinc-300 hover:text-white hover:cursor-pointer"
+                className="text-zinc-300 hover:text-white hover:cursor-pointer my-auto"
               >
                 <XMarkIcon className="w-7 h-7" />
               </label>

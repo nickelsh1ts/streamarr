@@ -223,7 +223,7 @@ svg {
   display: none ;
 }
 [title*="Settings"] {
-  display: initial;
+  display: inherit;
 }
 [aria-label="Activity"] {
   display: none ;

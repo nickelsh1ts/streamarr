@@ -2287,6 +2287,12 @@ details.collapse summary::-webkit-details-marker {
   background-color: var(--fallback-n,oklch(var(--n)/var(--tw-bg-opacity)));
 }
 
+.divider-primary:before,
+  .divider-primary:after {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity)));
+}
+
 .drawer-toggle:checked ~ .drawer-side > .drawer-overlay {
   background-color: #0006;
 }
@@ -4061,6 +4067,10 @@ html:has(.drawer-toggle:checked) {
   width: 100%;
 }
 
+.w-36 {
+  width: 9rem;
+}
+
 .min-w-44 {
   min-width: 11rem;
 }
@@ -5191,6 +5201,10 @@ html:has(.drawer-toggle:checked) {
   background-color: var(--fallback-p,oklch(var(--p)/0.3));
 }
 
+.hover\:bg-white\/\[0\.05\]:hover {
+  background-color: rgb(255 255 255 / 0.05);
+}
+
 .hover\:bg-zinc-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(250 250 250 / var(--tw-bg-opacity));
@@ -5305,10 +5319,6 @@ html:has(.drawer-toggle:checked) {
   .max-lg\:hidden {
     display: none;
   }
-
-  .max-lg\:pe-16 {
-    padding-inline-end: 4rem;
-  }
 }
 
 @media not all and (min-width: 768px) {
@@ -5390,6 +5400,10 @@ html:has(.drawer-toggle:checked) {
 
   .md\:w-52 {
     width: 13rem;
+  }
+
+  .md\:w-44 {
+    width: 11rem;
   }
 
   .md\:max-w-screen-md {
@@ -5520,6 +5534,10 @@ html:has(.drawer-toggle:checked) {
     margin-right: 1.25rem;
   }
 
+  .lg\:mb-\[6\.5rem\] {
+    margin-bottom: 6.5rem;
+  }
+
   .lg\:flex {
     display: flex;
   }
@@ -5554,6 +5572,10 @@ html:has(.drawer-toggle:checked) {
 
   .lg\:place-content-start {
     place-content: start;
+  }
+
+  .lg\:pe-16 {
+    padding-inline-end: 4rem;
   }
 
   .lg\:text-start {
