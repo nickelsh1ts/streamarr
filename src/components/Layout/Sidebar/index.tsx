@@ -72,7 +72,7 @@ const SettingsLinks = [
     messagesKey: 'Authorized Devices',
   },
   {
-    href: '/',
+    href: '/signout',
     messagesKey: 'Log out of Streamarr',
     divide: 'before',
   },
@@ -91,7 +91,7 @@ const Sidebar = () => {
           className="drawer-toggle pointer-events-auto"
         />
         <div className="drawer-content gap-2 min-h-10"></div>
-        <div className="flex-none print:hidden max-sm:hidden lg:hidden pointer-events-auto">
+        <div className="flex-none print:hidden lg:hidden pointer-events-auto">
           <label
             htmlFor="my-drawer-3"
             aria-label="open sidebar"
@@ -112,7 +112,7 @@ const Sidebar = () => {
             </svg>
           </label>
         </div>
-        <div className="drawer-side max-sm:hidden lg:hidden">
+        <div className="drawer-side lg:hidden">
           <label
             htmlFor="my-drawer-3"
             aria-label="close sidebar"

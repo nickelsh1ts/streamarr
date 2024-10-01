@@ -262,7 +262,7 @@ svg {
 /*top menu*/
 [class*="NavBar-container-"] {
   margin: 0 ;
-  padding: 0 0 0 1rem;
+  padding: 0 0 0 3.5rem;
   height: 61px;
 }
 @media (min-width: 640px) {
@@ -388,7 +388,7 @@ select {
 hr {
   margin: 1rem 0 1rem 0;
 }
-a:has( > [title="Go Premium"]) {
+button:has( > [title="Go Premium"]) {
   display: none;
 }
 div:has(> [role="separator"][aria-orientation="vertical"]) {

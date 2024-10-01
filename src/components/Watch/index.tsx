@@ -2,7 +2,7 @@
 
 import useHash from '@app/hooks/useHash';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const Watch = ({ children, ...props }) => {
@@ -17,6 +17,16 @@ const Watch = ({ children, ...props }) => {
 
   const mountNode = contentRef?.contentWindow?.document?.body;
 
+  const innerFrame = contentRef?.contentWindow;
+
+  useEffect(() =>{
+    innerFrame?.addEventListener('hashchange', function(){
+      if(hash != innerFrame.location.hash) {
+        router.push('/watch/web/index.html' + innerFrame.location.hash)
+      }
+  });
+
+  })
   if (!pathname.includes('/watch/web/index.html')) {
     router.push('/watch/web/index.html');
   } else {
@@ -35,7 +45,7 @@ const Watch = ({ children, ...props }) => {
             }, 1000);
           }}
           ref={setContentRef}
-          className={`w-full h-screen z-20${loadingIframe && ' invisible'}`}
+          className={`w-full h-dvh z-20${loadingIframe && ' invisible'}`}
           src={`https://streamarr-dev.nickelsh1ts.com${url && url.replace('null', '')}`}
           allowFullScreen
           title="Plex"
