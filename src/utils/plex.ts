@@ -59,13 +59,13 @@ class PlexOAuth {
     this.plexHeaders = {
       Accept: 'application/json',
       'X-Plex-Product': 'Streamarr',
-      'X-Plex-Version': 'v0.0.1-alpha',
+      'X-Plex-Version': '0.0.1-alpha',
       'X-Plex-Client-Identifier': clientId,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
       'X-Plex-Device': browser.getOSName(),
-      'X-Plex-Device-Name': `Plex OAuth (${browser.getBrowserName()})`,
+      'X-Plex-Device-Name': `Streamarr (${browser.getBrowserName()})`,
       'X-Plex-Device-Screen-Resolution':
         window.screen.width + 'x' + window.screen.height,
       'X-Plex-Language': 'en',

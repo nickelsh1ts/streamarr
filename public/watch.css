@@ -20,6 +20,7 @@
   --bs-primary: #7E27D3 ;
   --color-text-accent: #974ede;
   --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
 }
 :root {
   --color-background-accent: #7E27D3;
@@ -40,6 +41,7 @@
   --bs-primary: #7E27D3 ;
   --color-text-accent: #974ede;
   --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
 }
 svg {
   display: initial;
@@ -393,4 +395,10 @@ button:has( > [title="Go Premium"]) {
 }
 div:has(> [role="separator"][aria-orientation="vertical"]) {
   display: none;
+}
+[data-testid*="requestsModal"] {
+  z-index: 1010;
+}
+html, body {
+  touch-action: auto;
 }
