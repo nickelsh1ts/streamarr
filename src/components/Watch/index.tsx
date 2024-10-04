@@ -19,7 +19,8 @@ const Watch = ({ children, ...props }) => {
   const innerFrame = contentRef?.contentWindow;
 
   useEffect(() => {
-    const div = document
+    setTimeout(() => {
+      const div = document
       ?.getElementsByTagName('iframe')[0]
       .contentDocument?.querySelector("[class^='PlayerContainer-container-']");
     if (div) {
@@ -43,6 +44,7 @@ const Watch = ({ children, ...props }) => {
       const config = { childList: true, subtree: true };
       observer.observe(div, config);
     }
+    },300)
   });
 
   useEffect(() => {
