@@ -1,3 +1,4 @@
+'use client';
 import LibraryMenu from '@app/components/Layout/Sidebar/LibraryMenu';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import {
@@ -11,6 +12,7 @@ import {
   WrenchIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { createRef } from 'react';
 
 const OptionsLinks = [
   {
@@ -24,9 +26,10 @@ const OptionsLinks = [
     icon: <PaperAirplaneIcon className="w-6 h-6" />,
   },
   {
-    href: '/stats',
+    href: 'https://stats.nickflixtv.com',
     messagesKey: 'Statistics',
     icon: <PresentationChartLineIcon className="w-6 h-6" />,
+    target: '_blank',
   },
   {
     href: '/admin',
@@ -34,13 +37,9 @@ const OptionsLinks = [
     icon: <LockClosedIcon className="w-6 h-6" />,
   },
   {
-    href: '/#faqs',
-    messagesKey: 'FAQs',
-    divide: 'before',
-  },
-  {
     href: '/help',
     messagesKey: 'Help Centre',
+    divide: 'before',
   },
   {
     href: 'https://discord.gg/ZSTrRJMcDS',
@@ -79,6 +78,7 @@ const SettingsLinks = [
 ];
 
 const Sidebar = () => {
+  const ref = createRef<HTMLInputElement>();
   return (
     <>
       <header
@@ -89,6 +89,7 @@ const Sidebar = () => {
           id="my-drawer-3"
           type="checkbox"
           className="drawer-toggle pointer-events-auto"
+          ref={ref}
         />
         <div className="drawer-content gap-2 min-h-10"></div>
         <div className="flex-none print:hidden lg:hidden pointer-events-auto">
@@ -133,7 +134,7 @@ const Sidebar = () => {
                 <XMarkIcon className="w-7 h-7" />
               </label>
             </div>
-            <LibraryMenu />
+            <LibraryMenu ref={ref} />
             <div className="mt-auto">
               <div className="bg-zinc-300/40 h-0.5 my-4"></div>
               <div className="flex flex-row place-content-end">
@@ -169,7 +170,7 @@ const Sidebar = () => {
         </div>
       </div>
       <ul className="menu w-56 p-2 gap-2 max-lg:hidden fixed top-0 bottom-0 left-0 z-[1006] lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none">
-        <LibraryMenu />
+        <LibraryMenu ref={ref} />
       </ul>
     </>
   );

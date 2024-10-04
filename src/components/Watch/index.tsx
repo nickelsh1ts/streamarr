@@ -1,5 +1,4 @@
 'use client';
-
 import useHash from '@app/hooks/useHash';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,14 +18,41 @@ const Watch = ({ children, ...props }) => {
 
   const innerFrame = contentRef?.contentWindow;
 
-  useEffect(() =>{
-    innerFrame?.addEventListener('hashchange', function(){
-      if(hash != innerFrame.location.hash) {
-        router.push('/watch/web/index.html' + innerFrame.location.hash)
-      }
+  useEffect(() => {
+    const div = document
+      ?.getElementsByTagName('iframe')[0]
+      .contentDocument?.querySelector("[class^='PlayerContainer-container-']");
+    if (div) {
+      const observer = new MutationObserver(function (mutations) {
+        if (mutations.some((mutation) => mutation.type === 'childList')) {
+          const pageTitle = innerFrame?.document.title;
+          console.log('found mutations');
+          console.log('TITLE: ' + pageTitle);
+          if (
+            document.title != pageTitle &&
+            pageTitle != 'Plex' &&
+            pageTitle != undefined
+          ) {
+            document.title = pageTitle;
+          }
+          if (pageTitle === 'Plex') {
+            document.title = 'Now Streaming - Streamarr';
+          }
+        }
+      });
+      const config = { childList: true, subtree: true };
+      observer.observe(div, config);
+    }
   });
 
-  })
+  useEffect(() => {
+    innerFrame?.addEventListener('hashchange', function () {
+      if (hash != innerFrame.location.hash) {
+        router.push('/watch/web/index.html' + innerFrame.location.hash);
+      }
+    });
+  });
+
   if (!pathname.includes('/watch/web/index.html')) {
     router.push('/watch/web/index.html');
   } else {

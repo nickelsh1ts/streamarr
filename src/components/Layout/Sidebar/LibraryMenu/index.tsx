@@ -1,4 +1,3 @@
-'use client';
 import useHash from '@app/hooks/useHash';
 import {
   FilmIcon,
@@ -13,6 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { createRef, forwardRef } from 'react';
 
 interface MenuLinksProps {
   href: string;
@@ -87,11 +87,17 @@ const LibraryLinks: LibraryLinksProps[] = [
   },
 ];
 
-const LibraryMenu = () => {
+const LibraryMenu = forwardRef<HTMLInputElement>((props, ref = createRef()) => {
   const path = usePathname();
   const hash = useHash();
 
   const url = path + hash;
+
+  function closeBtn() {
+    if (ref != null && typeof ref != 'function') {
+      ref.current.click();
+    }
+  }
 
   return (
     <>
@@ -100,11 +106,13 @@ const LibraryMenu = () => {
           (url.includes(menuLink.href) &&
             menuLink.href != '/watch/web/index.html#!') ||
           ((url === '/watch/web/index.html#!' ||
-            url === '/watch/web/index.html') &&
+            url === '/watch/web/index.html' ||
+            url === '/watch/web/index.html#!/') &&
             menuLink.href === '/watch/web/index.html#!');
         return (
           <li className="pointer-events-auto" key={menuLink.href}>
             <Link
+              onClick={closeBtn}
               href={menuLink.href}
               className={`text-lg focus:!bg-primary/70 active:!bg-white/20 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
             >
@@ -140,6 +148,7 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
+                      onClick={closeBtn}
                       href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
@@ -149,6 +158,7 @@ const LibraryMenu = () => {
                       <ul className="flex flex-col gap-1 mt-1">
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'library'}
                             className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -160,6 +170,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'collections'}
                             className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -171,6 +182,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'categories'}
                             className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -197,6 +209,7 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
+                  onClick={closeBtn}
                   key={libraryLink.messageKey}
                   href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
@@ -233,6 +246,7 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
+                      onClick={closeBtn}
                       href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
@@ -242,6 +256,7 @@ const LibraryMenu = () => {
                       <ul className="flex flex-col gap-1 mt-1">
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'library'}
                             className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -253,6 +268,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'collections'}
                             className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -264,6 +280,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'categories'}
                             className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -290,6 +307,7 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
+                  onClick={closeBtn}
                   href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
@@ -317,7 +335,8 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <MusicalNoteIcon className="w-7 ms-auto h-7 inline-flex" /> Music (beta)
+              <MusicalNoteIcon className="w-7 ms-auto h-7 inline-flex" /> Music
+              (beta)
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -327,6 +346,7 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
+                      onClick={closeBtn}
                       href={libraryLink.href + 'library'}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
@@ -336,6 +356,7 @@ const LibraryMenu = () => {
                       <ul className="flex flex-col gap-1 mt-1">
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'library'}
                             className={`${url.includes(libraryLink.href + 'library') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -347,6 +368,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'collections'}
                             className={`${url.includes(libraryLink.href + 'collections') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -358,6 +380,7 @@ const LibraryMenu = () => {
                         </li>
                         <li>
                           <Link
+                            onClick={closeBtn}
                             href={libraryLink.href + 'categories'}
                             className={`${url.includes(libraryLink.href + 'categories') && 'bg-white/10 hover:bg-white/[0.05]'}`}
                           >
@@ -384,6 +407,7 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
+                  onClick={closeBtn}
                   href={libraryLink.href + 'library'}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
@@ -412,7 +436,8 @@ const LibraryMenu = () => {
             className="group"
           >
             <summary className="text-lg active:!bg-primary/20 text-zinc-300 hover:text-white group-open:text-white">
-              <VideoCameraIcon className="w-7 ms-auto h-7 inline-flex" /> Live TV
+              <VideoCameraIcon className="w-7 ms-auto h-7 inline-flex" /> Live
+              TV
             </summary>
             <ul className="flex flex-col gap-1 mt-1">
               {LibraryLinks.filter((library) =>
@@ -422,6 +447,7 @@ const LibraryMenu = () => {
                 return (
                   <li key={libraryLink.messageKey}>
                     <Link
+                      onClick={closeBtn}
                       href={libraryLink.href}
                       className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
@@ -442,6 +468,7 @@ const LibraryMenu = () => {
             return (
               <li className="pointer-events-auto" key={libraryLink.messageKey}>
                 <Link
+                  onClick={closeBtn}
                   href={libraryLink.href}
                   className={`text-lg w-full focus:!bg-primary/70 active:!bg-primary/20 capitalize ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
@@ -454,10 +481,7 @@ const LibraryMenu = () => {
         </>
       )}
       <li className="leading-none my-4 pointer-events-auto lg:mb-[6.5rem]">
-        <Link
-          className="block active:!bg-primary/20"
-          href="/request"
-        >
+        <Link className="block active:!bg-primary/20" href="/request">
           <img
             className="h-auto w-auto"
             src="/external/os-logo_full.svg"
@@ -471,6 +495,8 @@ const LibraryMenu = () => {
       </li>
     </>
   );
-};
+});
+
+LibraryMenu.displayName = 'Library Menu';
 
 export default LibraryMenu;
