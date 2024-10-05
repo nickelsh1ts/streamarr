@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 interface MenuLinksProps {
   href: string;
@@ -87,7 +87,7 @@ const LibraryLinks: LibraryLinksProps[] = [
   },
 ];
 
-const LibraryMenu = forwardRef<HTMLInputElement>((props, ref = createRef()) => {
+const LibraryMenu = forwardRef<HTMLInputElement>((props, ref) => {
   const path = usePathname();
   const hash = useHash();
 

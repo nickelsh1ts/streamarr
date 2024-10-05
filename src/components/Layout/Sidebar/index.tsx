@@ -170,7 +170,7 @@ const Sidebar = () => {
         </div>
       </div>
       <ul className="menu w-56 p-2 gap-2 max-lg:hidden fixed top-0 bottom-0 left-0 z-[1006] lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none">
-        <LibraryMenu ref={ref} />
+        <LibraryMenu ref={null} />
       </ul>
     </>
   );
