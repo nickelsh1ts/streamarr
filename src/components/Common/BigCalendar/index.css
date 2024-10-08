@@ -1,0 +1,108 @@
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
+.rbc-header {
+  color: white;
+  font-size: 14px !important;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  background: #2b0b53;
+}
+
+:not(th).rbc-header {
+  display: inline-flex;
+}
+
+.rbc-header + .rbc-today {
+  background-color: #974ede;
+}
+
+.react-datepicker__input-container .react-datepicker__calendar-icon {
+  right: 0;
+}
+
+.react-datepicker__calendar-icon {
+  height: 1.3rem !important;
+  width: 1.3rem !important;
+  padding: 0.3rem !important;
+}
+
+.react-datepicker__view-calendar-icon input {
+  padding: 6px 27px 5px 10px !important;
+}
+
+h2.react-datepicker__current-month {
+  display: none;
+}
+
+.react-datepicker__view-calendar-icon input {
+  @apply select select-sm select-primary select-bordered;
+  background-image: none;
+  color: white;
+}
+.react-datepicker-popper {
+  z-index: 100 !important;
+  margin: 0 10px 0 10px;
+}
+.rbc-agenda-view {
+  overflow: visible;
+}
+.rbc-time-view .rbc-row {
+  min-height: 36px;
+}
+.rbc-today {
+  @apply bg-primary backdrop-blur-md bg-opacity-30;
+}
+.rbc-off-range-bg {
+  @apply bg-secondary backdrop-blur-md bg-opacity-30;
+}
+.rbc-day-bg {
+  @apply backdrop-blur-md bg-opacity-30;
+}
+
+.rbc-day-slot {
+  @apply backdrop-blur-md bg-opacity-30;
+}
+
+.rbc-event,
+.rbc-day-slot .rbc-background-event {
+  @apply bg-primary;
+}
+
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
+  @apply border-none;
+}
+.rbc-day-slot .rbc-event-label {
+  display: none;
+}
+.rbc-time-content > .rbc-time-gutter {
+  @apply backdrop-blur-md bg-opacity-30;
+}
+.rbc-agenda-view table.rbc-agenda-table {
+  @apply backdrop-blur-md bg-opacity-30;
+}
+.rbc-time-header-gutter {
+  @apply backdrop-blur-md bg-opacity-30;
+}
+.rbc-show-more {
+  @apply text-primary-content bg-primary backdrop-blur-md bg-opacity-30 hover:text-neutral-content p-0.5 rounded active:text-primary focus:text-primary;
+}
+.rbc-overlay {
+  @apply bg-primary backdrop-blur-md bg-opacity-30 border-secondary rounded-lg;
+}
+
+.rbc-overlay-header {
+  @apply border-0 text-primary-content;
+}
+.rbc-overlay > .rbc-event-continues-after {
+  @apply rounded-md my-0.5;
+}
+
+@media (hover: none) {
+  .rbc-time-header.rbc-overflowing {
+    @apply m-0;
+  }
+}
+.rbc-day-slot .rbc-selected.rbc-background-event, .rbc-event.rbc-selected {
+  @apply bg-secondary
+}
