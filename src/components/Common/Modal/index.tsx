@@ -56,7 +56,7 @@ export default function Modal({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <DialogPanel className="relative transform overflow-hidden rounded-lg text-left shadow-md transition-all sm:my-8 sm:w-full sm:max-w-xl border border-primary">
+              <DialogPanel className="relative transform overflow-hidden rounded-lg text-left shadow-md transition-all sm:my-8 w-full sm:max-w-xl border border-primary">
                 <div className="absolute pt-1 pr-1 top-0 right-0">
                   <button
                     type="button"
@@ -85,7 +85,7 @@ export default function Modal({
                 </div>
                 <div className="bg-[#16191d] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                       <DialogTitle
                         as="h3"
                         className="text-base font-semibold leading-6 text-primary"
