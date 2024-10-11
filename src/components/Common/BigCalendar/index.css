@@ -1,10 +1,10 @@
 @import 'react-big-calendar/lib/css/react-big-calendar.css';
 .rbc-header {
-  @apply text-primary-content bg-secondary items-center justify-center h-9 text-sm
+  @apply text-primary-content bg-secondary items-center justify-center h-9 text-sm;
 }
 
 :not(th).rbc-header {
-  @apply inline-flex
+  @apply inline-flex;
 }
 
 .rbc-header + .rbc-today {
@@ -12,19 +12,19 @@
 }
 
 .react-datepicker__input-container .react-datepicker__calendar-icon {
-  @apply right-0
+  @apply right-0;
 }
 
 .react-datepicker__calendar-icon {
-  @apply !h-5 !w-5 !p-1.5
+  @apply !h-5 !w-5 !p-1.5;
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply !pt-1.5 !pe-7 !pb-1.5 !ps-2.5
+  @apply !pt-1.5 !pe-7 !pb-1.5 !ps-2.5;
 }
 
 h2.react-datepicker__current-month {
-  @apply hidden
+  @apply hidden;
 }
 
 .react-datepicker__view-calendar-icon input {
@@ -32,13 +32,13 @@ h2.react-datepicker__current-month {
   background-image: none;
 }
 .react-datepicker-popper {
-  @apply max-xl:mx-1.5 !z-[5]
+  @apply max-xl:mx-1.5 !z-[5];
 }
 .rbc-agenda-view {
-  @apply overflow-visible
+  @apply overflow-visible;
 }
 .rbc-time-view .rbc-row {
-  @apply min-h-9
+  @apply min-h-9;
 }
 .rbc-today {
   @apply bg-primary backdrop-blur-md bg-opacity-30;
@@ -64,7 +64,7 @@ h2.react-datepicker__current-month {
   @apply border-none;
 }
 .rbc-day-slot .rbc-event-label {
-  @apply hidden
+  @apply hidden;
 }
 .rbc-time-content > .rbc-time-gutter {
   @apply backdrop-blur-md bg-opacity-30;
@@ -94,21 +94,25 @@ h2.react-datepicker__current-month {
     @apply m-0;
   }
 }
-.rbc-day-slot .rbc-selected.rbc-background-event, .rbc-event.rbc-selected {
-  @apply bg-secondary
+.rbc-day-slot .rbc-selected.rbc-background-event,
+.rbc-event.rbc-selected {
+  @apply bg-secondary;
 }
-.rbc-agenda-date-cell, .rbc-agenda-time-cell {
-  @apply max-sm:whitespace-break-spaces max-sm:min-w-20
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell {
+  @apply max-sm:whitespace-break-spaces max-sm:min-w-20;
 }
 .rbc-agenda-view table.rbc-agenda-table thead > tr > th {
-  @apply max-sm:min-w-20 max-sm:whitespace-break-spaces
+  @apply max-sm:min-w-20 max-sm:whitespace-break-spaces;
 }
-.rbc-event:focus, .rbc-day-slot .rbc-background-event:focus {
+.rbc-event:focus,
+.rbc-day-slot .rbc-background-event:focus {
   @apply outline-primary-content outline-1;
 }
-.rbc-day-slot .rbc-event, .rbc-day-slot .rbc-background-event {
-  @apply border-secondary border-2
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
+  @apply border-secondary border-2;
 }
 .rbc-day-slot .rbc-events-container {
-  @apply m-0
+  @apply m-0;
 }

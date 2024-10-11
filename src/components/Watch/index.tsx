@@ -11,40 +11,39 @@ const Watch = ({ children, ...props }) => {
   const router = useRouter();
 
   const [contentRef, setContentRef] = useState(null);
-
   const [loadingIframe, setLoadingIframe] = useState(true);
-
   const mountNode = contentRef?.contentWindow?.document?.body;
-
   const innerFrame = contentRef?.contentWindow;
 
   useEffect(() => {
     setTimeout(() => {
       const div = document
-      ?.getElementsByTagName('iframe')[0]
-      .contentDocument?.querySelector("[class^='PlayerContainer-container-']");
-    if (div) {
-      const observer = new MutationObserver(function (mutations) {
-        if (mutations.some((mutation) => mutation.type === 'childList')) {
-          const pageTitle = innerFrame?.document.title;
-          console.log('found mutations');
-          console.log('TITLE: ' + pageTitle);
-          if (
-            document.title != pageTitle &&
-            pageTitle != 'Plex' &&
-            pageTitle != undefined
-          ) {
-            document.title = pageTitle;
+        ?.getElementsByTagName('iframe')[0]
+        .contentDocument?.querySelector(
+          "[class^='PlayerContainer-container-']"
+        );
+      if (div) {
+        const observer = new MutationObserver(function (mutations) {
+          if (mutations.some((mutation) => mutation.type === 'childList')) {
+            const pageTitle = innerFrame?.document.title;
+            console.log('found mutations');
+            console.log('TITLE: ' + pageTitle);
+            if (
+              document.title != pageTitle &&
+              pageTitle != 'Plex' &&
+              pageTitle != undefined
+            ) {
+              document.title = pageTitle;
+            }
+            if (pageTitle === 'Plex') {
+              document.title = 'Now Streaming - Streamarr';
+            }
           }
-          if (pageTitle === 'Plex') {
-            document.title = 'Now Streaming - Streamarr';
-          }
-        }
-      });
-      const config = { childList: true, subtree: true };
-      observer.observe(div, config);
-    }
-    },300)
+        });
+        const config = { childList: true, subtree: true };
+        observer.observe(div, config);
+      }
+    }, 300);
   });
 
   useEffect(() => {
@@ -60,10 +59,6 @@ const Watch = ({ children, ...props }) => {
   } else {
     return (
       <>
-        <p className="hidden">
-          If you&apos;re seeing this page, you have not yet configured your
-          webserver correctly.
-        </p>
         <iframe
           {...props}
           loading="eager"
