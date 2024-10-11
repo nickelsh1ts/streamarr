@@ -1,5 +1,5 @@
-import Invite from "@app/components/Invite";
-import type { Metadata, NextPage } from "next";
+import Invite from '@app/components/Invite';
+import type { Metadata, NextPage } from 'next';
 
 const applicationTitle = 'Streamarr';
 

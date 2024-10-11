@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 const CreateInvite = ({ setModalState }) => {
   const [select, setOption] = useState('day');
+  const [unlimited, setUnlimited] = useState(false);
   return (
     <div className="max-w-lg mx-auto">
       <form action="#" method="POST" className="space-y-2">
@@ -58,12 +59,36 @@ const CreateInvite = ({ setModalState }) => {
             </select>
           </div>
         </div>
+        {!unlimited && (
+          <div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="usage"
+                className="block text-sm font-medium leading-6"
+              >
+                Invite Usage
+              </label>
+            </div>
+            <div className="flex gap-2">
+              <input
+                id="usage"
+                name="usage"
+                type="number"
+                defaultValue={'1'}
+                max={'999'}
+                min={'1'}
+                className="input input-primary input-bordered w-full"
+              ></input>
+            </div>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <input
             id="unlimited"
             name="unlimited"
             type="checkbox"
             className="checkbox checkbox-xs rounded-md checkbox-primary"
+            onChange={(e) => setUnlimited(e.target.checked)}
           />
           <label htmlFor="unlimited" className="">
             Unlimited invite usage
@@ -83,7 +108,11 @@ const CreateInvite = ({ setModalState }) => {
         </div>
         <div className="flex w-full place-content-end gap-2">
           <button className="btn btn-sm btn-primary mt-2">Create Invite</button>
-          <button onClick={() => setModalState(false)} type="reset" className="btn btn-sm btn-neutral mt-2">
+          <button
+            onClick={() => setModalState(false)}
+            type="reset"
+            className="btn btn-sm btn-neutral mt-2"
+          >
             Cancel
           </button>
         </div>
