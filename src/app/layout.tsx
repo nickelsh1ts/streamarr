@@ -5,6 +5,7 @@ import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
 import 'styles/globals.css';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({
   weight: ['300'],
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body className="flex flex-col min-h-dvh">
         <NextTopLoader color="#974ede" />
         <PullToRefresh />
+        <Toaster />
         {children}
       </body>
     </html>
