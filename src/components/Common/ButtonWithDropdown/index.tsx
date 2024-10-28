@@ -84,7 +84,6 @@ const ButtonWithDropdown = ({
         className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
           styleClasses.mainButtonClasses
         } ${children ? 'rounded-l-md' : 'rounded-md'} ${className}`}
-        ref={buttonRef}
         {...props}
       >
         {text}
@@ -96,6 +95,7 @@ const ButtonWithDropdown = ({
             className={`relative z-10 inline-flex h-full items-center rounded-r-md px-2 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out hover:z-20 focus:z-20 ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={() => setIsOpen((state) => !state)}
+            ref={buttonRef}
           >
             {dropdownIcon ? (
               dropdownIcon

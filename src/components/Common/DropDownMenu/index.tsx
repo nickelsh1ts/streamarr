@@ -1,108 +1,150 @@
 'use client';
+import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
+import { withProperties } from '@app/utils/typeHelpers';
+import { Transition } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { HTMLAttributeAnchorTarget, RefObject } from 'react';
-import { createRef, forwardRef, useRef } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  RefObject,
+} from 'react';
+import { forwardRef, Fragment, useRef, useState } from 'react';
 
-export const DivideStyles = {
-  before: 'before',
-  after: 'after',
-};
-
-type DivideStyle = (typeof DivideStyles)[keyof typeof DivideStyles];
-
-interface MenuLinksProps {
-  href: string;
-  messagesKey: string;
-  icon?: React.ReactNode;
-  divide?: DivideStyle;
-  target?: HTMLAttributeAnchorTarget;
+interface DropdownItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  buttonType?: 'primary' | 'ghost';
+  divide?: 'before' | 'after';
 }
 
-interface OptionsProps {
-  dropUp?: boolean;
-  menuLinks: MenuLinksProps[];
-  title: string;
-  icon?: React.ReactNode;
-}
-
-const DropDownMenu = forwardRef(
+const DropdownItem = forwardRef(
   (
-    { dropUp, menuLinks, title, icon }: OptionsProps,
+    { children, buttonType = 'primary', divide, ...props }: DropdownItemProps,
     ref: RefObject<HTMLInputElement>
   ) => {
-    const path = usePathname();
-    const hash = useHash();
-
-    const url = path + hash;
-
-    const divref = createRef<HTMLDivElement>();
-
-    const outRef = useRef();
+    let styleClass = 'hover:bg-primary-content/10';
+    const url = usePathname() + useHash();
 
     function closeBtn() {
       if (ref != null && typeof ref != 'function') {
         ref.current.click();
       }
-      divref.current.click();
     }
 
+    switch (buttonType) {
+      case 'ghost':
+        styleClass +=
+          ' bg-transparent rounded hover:bg-gradient-to-br from-primary to-primary/20 text-white focus:border-primary-content focus:text-white';
+        break;
+      default:
+        styleClass += '';
+    }
+
+    const isActive = url.includes(props.href);
+
     return (
-      <details
-        className={`dropdown dropdown-end${dropUp ? ' dropdown-top' : ''} pointer-events-auto hover:cursor-pointer`}
-        ref={outRef}
-      >
-        <summary
-          className="flex place-items-center p-1 gap-1 text-zinc-300 hover:text-white"
-          title={title}
-          ref={divref}
+      <li className="">
+        {divide === 'before' && (
+          <span className="border-t p-0 border-zinc-300/40 my-1"></span>
+        )}
+        <Link
+          href={props.href || ''}
+          onClick={() => closeBtn()}
+          onKeyDown={() => closeBtn()}
+          className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+          {...props}
         >
-          {icon ? icon : title}
-          {!dropUp ? (
-            <ChevronDownIcon className="w-4 h-4 -ms-1" />
-          ) : (
-            <ChevronUpIcon className="w-4 h-4 -ms-1" />
-          )}
-        </summary>
-        <ul
-          tabIndex={0}
-          className="dropdown-content mt-2 menu bg-[#202629] rounded-sm z-[1] px-0 min-w-44 text-sm py-1"
-        >
-          <li className="ms-4 mb-2 font-bold text-primary-content/45 uppercase">
-            {title}
-          </li>
-          {menuLinks.map((menuLink) => {
-            const isActive = url.includes(menuLink.href);
-            return (
-              <>
-                {menuLink.divide === 'before' && (
-                  <div className="border-t border-zinc-300/40 my-1"></div>
-                )}
-                <li className={`m-0`} key={menuLink.messagesKey}>
-                  <Link
-                    onClick={closeBtn}
-                    href={menuLink.href}
-                    target={menuLink.target}
-                    className={`rounded-none py-1 active:!bg-zinc-50/20 ${isActive ? 'text-white bg-white/10 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
-                  >
-                    {menuLink.icon}
-                    {menuLink.messagesKey}
-                  </Link>
-                </li>
-                {menuLink.divide === 'after' && (
-                  <div className="border-t border-zinc-300/40 my-1"></div>
-                )}
-              </>
-            );
-          })}
-        </ul>
-      </details>
+          {children}
+        </Link>
+        {divide === 'after' && (
+          <div className="border-t p-0 border-zinc-300/40 my-1"></div>
+        )}
+      </li>
     );
   }
 );
 
-DropDownMenu.displayName = 'Drop Down Menu';
+interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  dropUp?: boolean;
+  title: string;
+  dropdownIcon?: React.ReactNode;
+  buttonType?: 'primary' | 'ghost';
+}
 
-export default DropDownMenu;
+const DropDownMenu = ({
+  dropUp,
+  title,
+  children,
+  dropdownIcon,
+  buttonType,
+  ...props
+}: DropDownMenuProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  useClickOutside(buttonRef, () => setIsOpen(false));
+
+  const styleClasses = {
+    dropdownSideButtonClasses: 'flex place-items-center p-1 gap-1',
+    dropdownClasses: 'py-1',
+  };
+
+  switch (buttonType) {
+    case 'ghost':
+      styleClasses.dropdownClasses += '';
+      styleClasses.dropdownSideButtonClasses += '';
+      break;
+    default:
+      styleClasses.dropdownSideButtonClasses +=
+        ' text-zinc-300 hover:text-white';
+      styleClasses.dropdownClasses += ' bg-[#202629]';
+  }
+
+  return (
+    <span className={`relative inline-flex h-full rounded-md shadow-sm`}>
+      <span className="relative -ml-px block">
+        <button
+          type="button"
+          className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
+          title={title}
+          aria-label="Expand"
+          onClick={() => setIsOpen((state) => !state)}
+          ref={buttonRef}
+          {...props}
+        >
+          {dropdownIcon ? dropdownIcon : title}
+          {!dropUp ? (
+            <ChevronDownIcon className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`} />
+          ) : (
+            <ChevronUpIcon className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`} />
+          )}
+        </button>
+        <Transition
+          as={Fragment}
+          show={isOpen}
+          enter="transition ease-out duration-100"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+        >
+          <div
+            className={`absolute menu min-w-48 text-sm -mr-1 -my-1 right-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right' : 'origin-top-right'}`}
+          >
+            <div className={`rounded-sm ${styleClasses.dropdownClasses}`}>
+              <span className="ms-4 font-bold text-primary-content/45 uppercase">
+                {title}
+              </span>
+              <ul className="mt-2 flex flex-col">{children}</ul>
+            </div>
+          </div>
+        </Transition>
+      </span>
+    </span>
+  );
+};
+
+DropdownItem.displayName = 'Drop Down Item';
+
+export default withProperties(DropDownMenu, { Item: DropdownItem });
