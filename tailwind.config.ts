@@ -17,6 +17,9 @@ export default {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      boxShadow: {
+        '3xl': '0rem 0.25rem 1rem 0rem #00000033',
+      },
       transitionProperty: {
         'max-height': 'max-height',
         width: 'width',

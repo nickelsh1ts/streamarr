@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 'use client';
 import Tooltip from '@app/components/Common/ToolTip';
 import useClickOutside from '@app/hooks/useClickOutside';
@@ -103,14 +104,13 @@ const DropDownMenu = ({
 
   return (
     <span className={`relative inline-flex h-full rounded-md shadow-sm`}>
-      <span className="relative -ml-px block">
+      <span className="relative -ml-px block" ref={buttonRef}>
         <Tooltip content={title}>
           <button
             type="button"
             className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={() => setIsOpen((state) => !state)}
-            ref={buttonRef}
             {...props}
           >
             {dropdownIcon ? dropdownIcon : title}
@@ -142,7 +142,13 @@ const DropDownMenu = ({
               <span className="ms-4 font-bold text-primary-content/45 uppercase">
                 {title}
               </span>
-              <ul className="mt-2 flex flex-col">{children}</ul>
+              <ul
+                className="mt-2 flex flex-col"
+                onKeyDown={() => setIsOpen(false)}
+                onClick={() => setIsOpen(false)}
+              >
+                {children}
+              </ul>
             </div>
           </div>
         </Transition>
