@@ -1,4 +1,5 @@
 'use client';
+import Tooltip from '@app/components/Common/ToolTip';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
 import { withProperties } from '@app/utils/typeHelpers';
@@ -103,22 +104,27 @@ const DropDownMenu = ({
   return (
     <span className={`relative inline-flex h-full rounded-md shadow-sm`}>
       <span className="relative -ml-px block">
-        <button
-          type="button"
-          className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
-          title={title}
-          aria-label="Expand"
-          onClick={() => setIsOpen((state) => !state)}
-          ref={buttonRef}
-          {...props}
-        >
-          {dropdownIcon ? dropdownIcon : title}
-          {!dropUp ? (
-            <ChevronDownIcon className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`} />
-          ) : (
-            <ChevronUpIcon className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`} />
-          )}
-        </button>
+        <Tooltip content={title}>
+          <button
+            type="button"
+            className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
+            aria-label="Expand"
+            onClick={() => setIsOpen((state) => !state)}
+            ref={buttonRef}
+            {...props}
+          >
+            {dropdownIcon ? dropdownIcon : title}
+            {!dropUp ? (
+              <ChevronDownIcon
+                className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+              />
+            ) : (
+              <ChevronUpIcon
+                className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+              />
+            )}
+          </button>
+        </Tooltip>
         <Transition
           as={Fragment}
           show={isOpen}
