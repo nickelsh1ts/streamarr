@@ -48,7 +48,7 @@ const Tooltip = ({
               style={{
                 transformOrigin: 'center 0px',
               }}
-              className="absolute top-0 rotate-180 left-7"
+              className="absolute top-0 rotate-180 left-1/2 -ml-[7px]"
             >
               <svg
                 className="fill-[#202629] block w-4 h-2"
