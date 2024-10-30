@@ -48,7 +48,7 @@ const DropdownItem = forwardRef(
     return (
       <li className="">
         {divide === 'before' && (
-          <span className="border-t p-0 border-zinc-300/40 my-1"></span>
+          <span className="border-t p-0 border-[#ffffff1a] my-1"></span>
         )}
         <Link
           href={props.href || ''}
@@ -69,7 +69,7 @@ const DropdownItem = forwardRef(
 
 interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   dropUp?: boolean;
-  title: string;
+  title?: string;
   dropdownIcon?: React.ReactNode;
   buttonType?: 'primary' | 'ghost';
   toolTip?: boolean;
@@ -92,7 +92,7 @@ const DropDownMenu = ({
 
   const styleClasses = {
     dropdownSideButtonClasses: 'flex place-items-center p-1 gap-1',
-    dropdownClasses: 'py-1',
+    dropdownClasses: 'py-1 rounded-md',
   };
 
   switch (buttonType) {
@@ -103,13 +103,17 @@ const DropDownMenu = ({
     default:
       styleClasses.dropdownSideButtonClasses +=
         ' text-zinc-300 hover:text-white';
-      styleClasses.dropdownClasses += ' bg-[#202629]';
+      styleClasses.dropdownClasses +=
+        ' shadow-3xl bg-[#202629] border-[.2px] border-base-200';
   }
 
   return (
-    <span className={`relative inline-flex h-full rounded-md shadow-sm`}>
+    <span className={`relative inline-flex h-full`}>
       <span className="relative -ml-px block" ref={buttonRef}>
-        <Tooltip content={toolTip && title} tooltipConfig={{placement: ttplacement}}>
+        <Tooltip
+          content={toolTip && title}
+          tooltipConfig={{ placement: ttplacement }}
+        >
           <button
             type="button"
             className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
@@ -129,25 +133,18 @@ const DropDownMenu = ({
             )}
           </button>
         </Tooltip>
-        <Transition
-          as={Fragment}
-          show={isOpen}
-          enter="transition ease-out duration-100"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
-        >
+        <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute menu min-w-48 text-sm -mr-1 -my-1 right-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right' : 'origin-top-right'}`}
+            className={`absolute menu min-w-52 text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
           >
-            <div className={`rounded-sm ${styleClasses.dropdownClasses}`}>
-              <span className="ms-4 font-bold text-primary-content/45 uppercase">
-                {title}
-              </span>
+            <div className={`${styleClasses.dropdownClasses}`}>
+              {title && (
+                <span className="ms-4 font-bold text-primary-content/45 uppercase">
+                  {title}
+                </span>
+              )}
               <ul
-                className="mt-2 flex flex-col"
+                className={`flex flex-col ${title && 'mt-2'}`}
                 onKeyDown={() => setIsOpen(false)}
                 onClick={() => setIsOpen(false)}
               >
