@@ -20,7 +20,7 @@ const Tooltip = ({
     usePopperTooltip({
       followCursor: false,
       offset: [0, 10],
-      placement: 'bottom',
+      placement: 'top',
       ...tooltipConfig,
     });
 
@@ -48,7 +48,7 @@ const Tooltip = ({
               style={{
                 transformOrigin: 'center 0px',
               }}
-              className="absolute top-0 rotate-180 left-1/2 -ml-[7px]"
+              className={`absolute left-1/2 -ml-[7px] ${(tooltipConfig?.placement === 'top' || !tooltipConfig) ? 'bottom-0 -mb-2' : 'top-0 rotate-180'}`}
             >
               <svg
                 className="fill-[#202629] block w-4 h-2"

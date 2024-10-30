@@ -72,6 +72,8 @@ interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string;
   dropdownIcon?: React.ReactNode;
   buttonType?: 'primary' | 'ghost';
+  toolTip?: boolean;
+  ttplacement?: 'top' | 'bottom';
 }
 
 const DropDownMenu = ({
@@ -79,7 +81,9 @@ const DropDownMenu = ({
   title,
   children,
   dropdownIcon,
+  ttplacement = 'bottom',
   buttonType,
+  toolTip = false,
   ...props
 }: DropDownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,7 +109,7 @@ const DropDownMenu = ({
   return (
     <span className={`relative inline-flex h-full rounded-md shadow-sm`}>
       <span className="relative -ml-px block" ref={buttonRef}>
-        <Tooltip content={title}>
+        <Tooltip content={toolTip && title} tooltipConfig={{placement: ttplacement}}>
           <button
             type="button"
             className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
