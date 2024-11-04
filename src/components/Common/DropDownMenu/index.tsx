@@ -11,28 +11,22 @@ import { usePathname } from 'next/navigation';
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
-  RefObject,
+  SetStateAction,
 } from 'react';
-import { forwardRef, Fragment, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 
 interface DropdownItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   buttonType?: 'primary' | 'ghost';
   divide?: 'before' | 'after';
+  isOpen?: boolean;
+  setIsOpen?: (value: SetStateAction<boolean>) => void;
 }
 
-const DropdownItem = forwardRef(
-  (
-    { children, buttonType = 'primary', divide, ...props }: DropdownItemProps,
-    ref: RefObject<HTMLInputElement>
+const DropdownItem = (
+    { children, buttonType = 'primary', divide, isOpen, setIsOpen, ...props }: DropdownItemProps
   ) => {
     let styleClass = 'hover:bg-primary-content/10';
     const url = usePathname() + useHash();
-
-    function closeBtn() {
-      if (ref != null && typeof ref != 'function') {
-        ref.current.click();
-      }
-    }
 
     switch (buttonType) {
       case 'ghost':
@@ -52,8 +46,8 @@ const DropdownItem = forwardRef(
         )}
         <Link
           href={props.href || ''}
-          onClick={() => closeBtn()}
-          onKeyDown={() => closeBtn()}
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          onKeyDown={() => {}}
           className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
           {...props}
         >
@@ -64,8 +58,7 @@ const DropdownItem = forwardRef(
         )}
       </li>
     );
-  }
-);
+  };
 
 interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   dropUp?: boolean;

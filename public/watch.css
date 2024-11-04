@@ -63,18 +63,21 @@ svg {
 }
 @media (min-width: 1024px) {
   [class*="SidebarContainer-sidebarContainer-"] {
-    z-index: 1051;
+    z-index: 1;
     position: relative;
     background-color: #1b1b1b
   }
   [class*="Page-pageScroller-"] {
-    margin-left: 13.5rem;
+    margin-left: 14rem;
   }
   [class*="scroll-container"]:has(> [class="container"]){
     margin-left: 14rem;
   }
   [class*="PlayerContainer-container-"] {
     z-index: 1007;
+  }
+  [class*="NavBarActivityButton-container-"] {
+    margin-right: 3.5rem;
   }
 }
 @media (max-width: 1023px) {
@@ -115,6 +118,12 @@ svg {
   }
   [class*="StreamingServicesUpsellHub-content-"] > div {
     flex-direction: column;
+  }
+  [class*="NavBarActivityButton-container-"] {
+    display: none ;
+  }
+  [class*="Player-miniPlayerContainer-"] {
+    margin-bottom: 4rem;
   }
 }
 /*Mobile Friendly*/
@@ -227,9 +236,6 @@ svg {
 [title*="Settings"] {
   display: inherit;
 }
-[aria-label="Activity"] {
-  display: none ;
-}
 [class*="SourceSidebar-sidebar-"] {
   display: none ;
 }
@@ -245,12 +251,6 @@ svg {
 [target*="_self"] {
   display: none;
 }
-[class*="NavBarActivityButton-labelContainer-"] {
-  display: none;
-}
-[class*="NavBarActivityButton-spinnerContainer"] {
-  display: none;
-}
 /*Color Corrections*/
 [class*=MetadataPosterCardProgressBar-bar-], [class*=PosterCardOverlayProgress-progressBar-], [class*=SeekBar-seekBarFill-], [class*=SessionTile-playProgressPercent-], [class*=VolumeSlider-fill-] {
   background-color: #974ede !important;
@@ -264,7 +264,7 @@ svg {
 /*top menu*/
 [class*="NavBar-container-"] {
   margin: 0 ;
-  padding: 0 0 0 3.5rem;
+  padding: 0 0 0 1rem;
   height: 61px;
 }
 @media (min-width: 640px) {
@@ -358,15 +358,14 @@ svg {
 .loading-sm {
   width: 1.2rem;
 }
-[class*="EmptyPageContent-content-"], [class*="EmptyChannelsContent-container"] {
+[class*="EmptyPageContent-content-"]:has([aria-label="Loading"]):before {
+  content: 'Loading ';
+  margin-right: 5px;
+}
+[class*="EmptyPageContent-content-"]:has([aria-label="Loading"]){
   flex-direction: row;
   font-size: 1.125rem /* 18px */;
   line-height: 1.75rem /* 28px */;
-}
-[class*="EmptyPageContent-content-"]:before {
-  flex-direction: row;
-  content: 'Loading ';
-  margin-right: 5px;
 }
 .btn-default {
   background-color: #974ede;
@@ -401,4 +400,7 @@ div:has(> [role="separator"][aria-orientation="vertical"]) {
 }
 html, body {
   touch-action: auto;
+}
+.plex-logo {
+  background-image: url("/logo_full.png") !important
 }
