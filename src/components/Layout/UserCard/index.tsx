@@ -19,13 +19,13 @@ const UserCard = () => {
   const path = usePathname();
 
   return (
-    <div className="pointer-events-auto max-sm:w-64 relative">
+    <div className="pointer-events-auto w-64 relative">
         <Link
           href="/u/profile"
           className="flex flex-col items-center place-content-center gap-2 p-4 bg-slate-50/10 hover:bg-slate-50/20"
         >
           <img
-            className="inline-block h-10 w-10 rounded-full ring-1 ring-primary-content shadow-3xl"
+            className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
             src="/android-chrome-192x192.png"
             alt="user"
           />
@@ -42,14 +42,14 @@ const UserCard = () => {
           <BellAlertIcon className='size-6 m-1' />
         </div>
         {!path.includes('/watch/web/index') && (
-          <Link className={`btn btn-sm rounded-none w-full inline-flex ${path.includes('/watch/web/index') ? 'btn-primary' : 'btn-ghost'}`} href={'/watch'}>
+          <Link className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.includes('/watch/web/index') ? 'btn-primary' : 'btn-ghost'}`} href={'/watch'}>
             <HomeIcon className='size-5' />
             Home
           </Link>
         )}
         {user.admin && (
           <Link
-            className={`btn btn-sm rounded-none w-full inline-flex ${path.includes('/admin') ? 'btn-primary' : 'btn-ghost'}`}
+            className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.includes('/admin') ? 'btn-primary' : 'btn-ghost'}`}
             href="/admin"
           >
             <LockClosedIcon className="size-5 inline-flex" />
