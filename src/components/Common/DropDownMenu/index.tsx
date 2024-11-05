@@ -22,43 +22,48 @@ interface DropdownItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   setIsOpen?: (value: SetStateAction<boolean>) => void;
 }
 
-const DropdownItem = (
-    { children, buttonType = 'primary', divide, isOpen, setIsOpen, ...props }: DropdownItemProps
-  ) => {
-    let styleClass = 'hover:bg-primary-content/10';
-    const url = usePathname() + useHash();
+const DropdownItem = ({
+  children,
+  buttonType = 'primary',
+  divide,
+  isOpen,
+  setIsOpen,
+  ...props
+}: DropdownItemProps) => {
+  let styleClass = 'hover:bg-primary-content/10';
+  const url = usePathname() + useHash();
 
-    switch (buttonType) {
-      case 'ghost':
-        styleClass +=
-          ' bg-transparent rounded hover:bg-gradient-to-br from-primary to-primary/20 text-white focus:border-primary-content focus:text-white';
-        break;
-      default:
-        styleClass += '';
-    }
+  switch (buttonType) {
+    case 'ghost':
+      styleClass +=
+        ' bg-transparent rounded hover:bg-gradient-to-br from-primary to-primary/20 text-white focus:border-primary-content focus:text-white';
+      break;
+    default:
+      styleClass += '';
+  }
 
-    const isActive = url.includes(props.href);
+  const isActive = url.includes(props.href);
 
-    return (
-      <li className="">
-        {divide === 'before' && (
-          <span className="border-t p-0 border-[#ffffff1a] my-1"></span>
-        )}
-        <Link
-          href={props.href || ''}
-          onClick={() => setIsOpen && setIsOpen(!isOpen)}
-          onKeyDown={() => {}}
-          className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
-          {...props}
-        >
-          {children}
-        </Link>
-        {divide === 'after' && (
-          <div className="border-t p-0 border-zinc-300/40 my-1"></div>
-        )}
-      </li>
-    );
-  };
+  return (
+    <li className="">
+      {divide === 'before' && (
+        <span className="border-t p-0 border-[#ffffff1a] my-1"></span>
+      )}
+      <Link
+        href={props.href || ''}
+        onClick={() => setIsOpen && setIsOpen(!isOpen)}
+        onKeyDown={() => {}}
+        className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+        {...props}
+      >
+        {children}
+      </Link>
+      {divide === 'after' && (
+        <div className="border-t p-0 border-zinc-300/40 my-1"></div>
+      )}
+    </li>
+  );
+};
 
 interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   dropUp?: boolean;

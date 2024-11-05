@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import UserCard from '@app/components/Layout/UserCard';
 
@@ -7,11 +7,14 @@ interface UserDropdownProps {
   tooltip?: boolean;
 }
 
-const UserDropdown = ({dropUp = false, tooltip = false}: UserDropdownProps) => {
+const UserDropdown = ({
+  dropUp = false,
+  tooltip = false,
+}: UserDropdownProps) => {
   return (
     <DropDownMenu
       toolTip={tooltip}
-      tiptitle='Account'
+      tiptitle="Account"
       dropdownIcon={
         <img
           className="h-7 w-7 rounded-full ring-2 ring-primary-content mr-1"
