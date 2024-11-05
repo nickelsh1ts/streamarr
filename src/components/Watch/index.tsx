@@ -1,4 +1,5 @@
 'use client';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useHash from '@app/hooks/useHash';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,30 +20,51 @@ const Watch = ({ children, ...props }) => {
     setTimeout(() => {
       const div = document
         ?.getElementsByTagName('iframe')[0]
-        .contentDocument?.querySelector(
+        ?.contentDocument?.querySelector(
           "[class^='PlayerContainer-container-']"
         );
+      const menu = document
+        ?.getElementsByTagName('iframe')[0]
+        ?.contentDocument?.getElementById('sidebarMenu');
       if (div) {
         const observer = new MutationObserver(function (mutations) {
           if (mutations.some((mutation) => mutation.type === 'childList')) {
             const pageTitle = innerFrame?.document.title;
-            console.log('found mutations');
-            console.log('TITLE: ' + pageTitle);
             if (
               document.title != pageTitle &&
               pageTitle != 'Plex' &&
               pageTitle != undefined
             ) {
               document.title = pageTitle;
+              menu?.classList.add('mb-[6.5rem]');
             }
             if (pageTitle === 'Plex') {
               document.title = 'Now Streaming - Streamarr';
+              menu?.classList.remove('mb-[6.5rem]');
             }
           }
         });
         const config = { childList: true, subtree: true };
         observer.observe(div, config);
       }
+      const iframe = document
+        ?.getElementsByTagName('iframe')[0]
+        ?.contentDocument?.querySelectorAll(
+          "[aria-haspopup^='menu'], [aria-label='Pause'], [aria-label='Play']"
+        );
+      let dbltap = false;
+      iframe?.forEach((e) => {
+        e.addEventListener('touchend', (e) => {
+          if (!dbltap) {
+            dbltap = true;
+            setTimeout(function () {
+              dbltap = false;
+            }, 700);
+          }
+          e.preventDefault();
+          console.log('Double click detected!');
+        });
+      });
     }, 300);
   });
 
@@ -68,19 +90,14 @@ const Watch = ({ children, ...props }) => {
             }, 1000);
           }}
           ref={setContentRef}
-          className={`w-full h-dvh z-20${loadingIframe && ' invisible'}`}
-          src={`https://streamarr-dev.nickelsh1ts.com${url && url.replace('null', '')}`}
+          className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
+          src={`https://streamarr.nickelsh1ts.com${url && url.replace('null', '')}`}
           allowFullScreen
           title="Plex"
         >
           {mountNode && createPortal(children, mountNode)}
         </iframe>
-        {loadingIframe ? (
-          <div className="fixed inset-0 flex items-center justify-center">
-            <span className="text-lg text-white me-1">Loading</span>{' '}
-            <span className="loading loading-dots loading-md text-primary mt-2"></span>
-          </div>
-        ) : null}
+        {loadingIframe ? <LoadingEllipsis fixed /> : null}
       </>
     );
   }
