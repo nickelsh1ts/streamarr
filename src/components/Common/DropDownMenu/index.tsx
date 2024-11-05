@@ -67,6 +67,7 @@ interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   buttonType?: 'primary' | 'ghost';
   toolTip?: boolean;
   ttplacement?: 'top' | 'bottom';
+  tiptitle?: string;
 }
 
 const DropDownMenu = ({
@@ -75,6 +76,7 @@ const DropDownMenu = ({
   children,
   dropdownIcon,
   ttplacement = 'bottom',
+  tiptitle,
   buttonType,
   toolTip = false,
   ...props
@@ -104,7 +106,7 @@ const DropDownMenu = ({
     <span className={`relative inline-flex h-full`}>
       <span className="relative -ml-px block" ref={buttonRef}>
         <Tooltip
-          content={toolTip && title}
+          content={toolTip && tiptitle && tiptitle}
           tooltipConfig={{ placement: ttplacement }}
         >
           <button

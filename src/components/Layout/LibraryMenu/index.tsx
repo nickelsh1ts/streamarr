@@ -194,7 +194,7 @@ export const SingleItem = ({ key, onClick, href, title, icon, active }) => {
       <Link
         onClick={onClick}
         href={href}
-        className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+        className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
       >
         {icon}
         <p className="truncate">{title}</p>
