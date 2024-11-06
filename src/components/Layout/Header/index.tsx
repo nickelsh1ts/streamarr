@@ -16,8 +16,9 @@ const Header = ({ isInView = true }) => {
       className={`navbar sticky top-0 transition duration-500 ${isInView && 'bg-brand-dark'} font-bold z-10`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
-        {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) &&
-          isAuthed && <Sidebar />}
+        {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
+          <Sidebar />
+        )}
         <Link
           href="/"
           className={`hover:brightness-75 transition-opacity duration-500 ${!isInView && 'opacity-0 pointer-events-none'}`}
@@ -39,9 +40,15 @@ const Header = ({ isInView = true }) => {
             </Link>
           )}
           {isAuthed ? (
-            <UserDropdown />
+            !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
+              <div className="max-sm:hidden">
+                <UserDropdown />
+              </div>
+            ) : (
+              <UserDropdown />
+            )
           ) : (
-            path != '/signin' && (
+            !path.match(/^\/signin\/?$/) && (
               <Link
                 href="/signin"
                 id="signin"
