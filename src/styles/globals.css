@@ -95,7 +95,7 @@
   }
 }
 *,
-[class*="Scroller-scroller-"],
+[class*='Scroller-scroller-'],
 *:hover {
   scrollbar-color: auto;
 }
