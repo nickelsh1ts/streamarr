@@ -182,7 +182,7 @@ const MobileMenu = () => {
               <LibraryMenu isOpen={isOpen} setIsOpen={setIsOpen} />
             )}
             {menuType === 'settings' && (
-              <ul className="menu p-0 m-0 space-y-2">
+              <ul className="menu p-0 m-0 space-y-1">
                 {settingsLinks.map((link, i) => {
                   const isActive = pathname.match(link.activeRegExp);
                   return (

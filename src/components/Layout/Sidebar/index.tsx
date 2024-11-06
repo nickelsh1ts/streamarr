@@ -31,7 +31,7 @@ const Sidebar = () => {
           onClick={() => setIsOpen(!isOpen)}
         />
         <div
-          className={`flex-none print:hidden lg:hidden pointer-events-auto ${path.includes('/watch/web/index.html') && 'my-3 mx-2'}`}
+          className={`flex-none print:hidden lg:hidden pointer-events-auto ${path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
         >
           <label
             htmlFor="my-drawer-3"
@@ -57,7 +57,7 @@ const Sidebar = () => {
           <label
             htmlFor="my-drawer-3"
             aria-label="close sidebar"
-            className="drawer-overlay"
+            className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
           />
           <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 gap-1 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
@@ -129,7 +129,7 @@ const Sidebar = () => {
           </ul>
         </div>
       </header>
-      {path.includes('/watch/web/index.html') && (
+      {path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && (
         <div className="fixed top-0 right-0 mt-2 me-2 z-[1000] lg:flex lg:flex-shrink-0 flex-nowrap pointer-events-none">
           <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
             <DropDownMenu
@@ -166,7 +166,7 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu w-56 p-2 gap-2 max-lg:hidden fixed top-0 bottom-0 left-0 lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none ${!path.includes('/watch/web/index.html') && 'backdrop-blur-md'}`}
+        className={`menu w-56 p-2 gap-1 max-lg:hidden fixed top-0 bottom-0 left-0 lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none ${!path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'backdrop-blur-md'}`}
       >
         <SidebarMenu />
       </ul>
@@ -189,7 +189,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         href={'/watch/web/index.html#!'}
         title={'Home'}
         icon={<HomeIcon className="size-7" />}
-        active={path.match(/\/watch\/web\/index\.html#!\/?$/)}
+        active={path.match(/\/watch\/web\/index\.html#?!?\/?$/)}
       />
       <LibraryMenu isOpen={isOpen} setIsOpen={onClick} />
       <SingleItem

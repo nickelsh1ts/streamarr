@@ -25,10 +25,10 @@ const UserDropdown = ({
       dropUp={dropUp}
     >
       <UserCard />
-      <DropDownMenu.Item divide="before" href="/u/profile">
+      <DropDownMenu.Item activeRegEx={/^\/u\/profile\/?$/} divide="before" href="/u/profile">
         View Profile
       </DropDownMenu.Item>
-      <DropDownMenu.Item href="/u/profile/settings">
+      <DropDownMenu.Item activeRegEx={/^\/u\/profile\/settings\/?$/} href="/u/profile/settings">
         Account Settings
       </DropDownMenu.Item>
       <DropDownMenu.Item href="https://stats.nickflixtv.com" target="_blank">

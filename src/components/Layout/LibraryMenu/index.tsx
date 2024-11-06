@@ -114,14 +114,11 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-2">
+    <ul className="menu m-0 p-0 space-y-1">
       {MenuLinks.map((item) => {
         const isActive =
-          (url.includes(item.href) && item.href != '/watch/web/index.html#!') ||
-          ((url === '/watch/web/index.html#!' ||
-            url === '/watch/web/index.html' ||
-            url === '/watch/web/index.html#!/') &&
-            item.href === '/watch/web/index.html#!');
+          url.includes(item.href) && !item.href.match(/^\/watch\/web\/index\.html#!\/?$/) ||
+          url.match(/^\/watch\/web\/index\.html#?!?\/?$/) && item.href.match(/^\/watch\/web\/index\.html#?!?\/?$/) ;
         return (
           <SingleItem
             key={item.title}

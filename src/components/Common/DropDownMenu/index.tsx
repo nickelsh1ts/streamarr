@@ -20,6 +20,7 @@ interface DropdownItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   divide?: 'before' | 'after';
   isOpen?: boolean;
   setIsOpen?: (value: SetStateAction<boolean>) => void;
+  activeRegEx?: RegExp;
 }
 
 const DropdownItem = ({
@@ -27,6 +28,7 @@ const DropdownItem = ({
   buttonType = 'primary',
   divide,
   isOpen,
+  activeRegEx,
   setIsOpen,
   ...props
 }: DropdownItemProps) => {
@@ -42,7 +44,7 @@ const DropdownItem = ({
       styleClass += '';
   }
 
-  const isActive = url.includes(props.href);
+  const isActive = activeRegEx ? url.match(activeRegEx) : url.includes(props.href);
 
   return (
     <li className="">

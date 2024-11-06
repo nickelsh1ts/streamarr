@@ -45,9 +45,9 @@ const UserCard = () => {
       <div className="absolute top-0 right-0">
         <BellAlertIcon className="size-6 m-1" />
       </div>
-      {!path.includes('/watch/web/index') && (
+      {path.match(/^\/(help\/?(.*)?|\/?$)/) && (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.includes('/watch/web/index') ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start btn-ghost`}
           href={'/watch'}
         >
           <HomeIcon className="size-5" />
@@ -56,7 +56,7 @@ const UserCard = () => {
       )}
       {user.admin && (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.includes('/admin') ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
           href="/admin"
         >
           <LockClosedIcon className="size-5 inline-flex" />

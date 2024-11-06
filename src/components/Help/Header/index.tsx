@@ -1,6 +1,5 @@
 import ImageFader from '@app/components/Common/ImageFader';
-import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import Header from '@app/components/Layout/Header';
 
 const HelpHeader = () => {
   const ImageArray = [
@@ -75,44 +74,28 @@ const HelpHeader = () => {
   ];
 
   return (
-    <header id="top" className="flex shadow-sm relative">
-      <div className="-z-10">
-        <ImageFader
-          rotationSpeed={6000}
-          backgroundImages={
-            ImageArray?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
-            ) ?? []
-          }
-          gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
-        />
-      </div>
-      <div className="container max-w-screen-xl mx-auto my-4 md:mb-0 px-2 xl:px-0">
-        <div className="navbar flex-col sm:flex-row gap-4">
-          <div className="sm:navbar-start">
-            <Link
-              href="/"
-              className={`hover:brightness-75 transition-opacity duration-500`}
-            >
-              <img src="/logo_full.png" alt="logo" className="w-64 h-auto" />
-            </Link>
-          </div>
-          <div className="sm:navbar-end">
-            <Link
-              href="/signin"
-              id="signin"
-              className="btn btn-sm md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary"
-            >
-              Sign in{' '}
-              <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
-            </Link>
-          </div>
+    <>
+      <Header />
+      <div id="top" className="flex shadow-sm relative">
+        <div className="-z-10">
+          <ImageFader
+            rotationSpeed={6000}
+            backgroundImages={
+              ImageArray?.map(
+                (backdrop) =>
+                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+              ) ?? []
+            }
+            gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
+          />
         </div>
-        <h2 className="text-center font-extrabold text-3xl my-4">
-          Help Centre
-        </h2>
+        <div className="container max-w-screen-xl mx-auto h-44 content-center">
+          <h2 className="text-center font-extrabold text-3xl my-4">
+            Help Centre
+          </h2>
+        </div>
       </div>
-    </header>
+    </>
   );
 };
 
