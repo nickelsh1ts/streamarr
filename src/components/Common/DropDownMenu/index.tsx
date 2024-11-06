@@ -44,7 +44,9 @@ const DropdownItem = ({
       styleClass += '';
   }
 
-  const isActive = activeRegEx ? url.match(activeRegEx) : url.includes(props.href);
+  const isActive = activeRegEx
+    ? url.match(activeRegEx)
+    : url.includes(props.href);
 
   return (
     <li className="">
