@@ -20,7 +20,7 @@ const Header = ({ isInView = true }) => {
         )}
         <Link
           href="/"
-          className={`hover:brightness-75 transition-opacity duration-500 ${!isInView && 'opacity-0 pointer-events-none'}`}
+          className={`hover:brightness-75 transition-opacity duration-500 ml-2 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >
           <img
             src="/logo_full.png"
