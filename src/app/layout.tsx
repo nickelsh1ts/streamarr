@@ -28,7 +28,9 @@ export default function RootLayout({
   const pathname = usePathname();
   let component: React.ReactNode;
 
-  if (pathname.match(/\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|\/?$)/)) {
+  if (
+    pathname.match(/\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|\/?$)/)
+  ) {
     component = children;
   } else {
     component = <Layout>{children}</Layout>;
