@@ -1,6 +1,9 @@
+import { isAuthed } from '@app/app/layout';
 import ImageFader from '@app/components/Common/ImageFader';
 import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
+import MobileMenu from '@app/components/Layout/MobileMenu';
+import { usePathname } from 'next/navigation';
 
 const ImageArray = [
   {
@@ -73,15 +76,17 @@ const ImageArray = [
   },
 ];
 
-export default function ScheduleLayout({
+const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
+  const pathname = usePathname();
   return (
-    <>
+    <main className="flex flex-col relative h-full min-h-full min-w-0 bg-brand-dark max-sm:pb-10">
       <Header />
-      <main className="min-h-[93vh] relative">
+      <MobileMenu />
+      <div className="fixed top-0 bottom-0 left-0 right-0">
         <ImageFader
           rotationSpeed={6000}
           backgroundImages={
@@ -90,9 +95,14 @@ export default function ScheduleLayout({
             ) ?? []
           }
         />
-        {children}
-      </main>
-      <Footer />
-    </>
+      </div>
+      <div
+        className={`${isAuthed && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
+      >
+        <div className="min-h-[93dvh] flex flex-col flex-grow">{children}</div>
+        <Footer />
+      </div>
+    </main>
   );
-}
+};
+export default Layout;

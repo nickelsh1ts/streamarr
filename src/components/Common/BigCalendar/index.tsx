@@ -139,7 +139,7 @@ export default function BigCalendar() {
         setView={setView}
       />
       <div
-        className={`max-w-screen-xl px-2 mx-auto${view != Views.AGENDA ? ' h-[80vh]' : ''}`}
+        className={`max-w-screen-xl px-2 mx-auto${view != Views.AGENDA ? ' h-[75dvh] md:h-[80dvh]' : ''}`}
       >
         <Calendar
           defaultDate={defaultDate}

@@ -4,8 +4,7 @@ import UserDropdown from '@app/components/Layout/UserDropdown';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-const isAuthed = true;
+import { isAuthed } from '@app/app/layout';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();

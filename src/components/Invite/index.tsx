@@ -10,7 +10,7 @@ const Invite = () => {
   const [modalState, setModalState] = useState(false);
 
   return (
-    <div className="relative max-w-screen-xl mx-auto">
+    <div className="max-w-screen-xl w-full self-center">
       <div className="flex flex-wrap justify-between justify-items-center border-b-2 border-primary py-4 px-2 gap-2 bg-primary backdrop-blur-md bg-opacity-30">
         <div className="max-sm:mx-auto">
           <div className="font-extrabold text-xl">Invite a friend</div>
