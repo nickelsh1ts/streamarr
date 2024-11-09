@@ -114,7 +114,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1">
+    <ul className="menu m-0 p-0 space-y-1 mb-1">
       {MenuLinks.map((item) => {
         const isActive =
           (url.includes(item.href) &&
@@ -123,6 +123,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             item.href.match(/^\/watch\/web\/index\.html#?!?\/?$/));
         return (
           <SingleItem
+            liKey={item.title}
             key={item.title}
             onClick={() => setIsOpen && setIsOpen(!isOpen)}
             href={item.href}
@@ -173,6 +174,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
           />
         ) : Links.length === 1 ? (
           <SingleItem
+            liKey={Links[0].title}
             key={Links[0].title}
             onClick={() => setIsOpen && setIsOpen(!isOpen)}
             href={Links[0].href}
@@ -186,14 +188,39 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
   );
 };
 
-export const SingleItem = ({ key, onClick, href, title, icon, active }) => {
+interface SingleItemProps {
+  liKey: string;
+  onClick?: (value: SetStateAction<boolean>) => void;
+  href: string;
+  title: string;
+  icon: React.ReactNode;
+  active: unknown;
+  className?: string;
+  linkclasses?: string;
+  isOpen?: boolean;
+}
+
+export const SingleItem = ({
+  liKey,
+  onClick,
+  href,
+  title,
+  icon,
+  active,
+  className,
+  linkclasses,
+  isOpen,
+}: SingleItemProps) => {
   const isActive = active;
   return (
-    <li className="pointer-events-auto" key={key}>
+    <li
+      className={`pointer-events-auto ${className ? className : ''}`}
+      key={liKey}
+    >
       <Link
-        onClick={onClick}
+        onClick={() => onClick && onClick(!isOpen)}
         href={href}
-        className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+        className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>

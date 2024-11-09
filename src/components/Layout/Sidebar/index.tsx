@@ -7,16 +7,31 @@ import {
   PaperAirplaneIcon,
   WrenchIcon,
   XMarkIcon,
+  FilmIcon,
+  TvIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  UsersIcon,
+  CogIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/solid';
 import { usePathname } from 'next/navigation';
 import useHash from '@app/hooks/useHash';
-import Image from 'next/image';
 import UserDropdown from '@app/components/Layout/UserDropdown';
+import type { SetStateAction } from 'react';
 import { useState } from 'react';
+import Accordion from '@app/components/Common/Accordion';
+import Image from 'next/image';
+interface MenuLinksProps {
+  href: string;
+  title: string;
+  icon: React.ReactNode;
+}
 
 const Sidebar = () => {
   const path = usePathname() + useHash();
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <header
@@ -29,6 +44,7 @@ const Sidebar = () => {
           className="drawer-toggle pointer-events-auto"
           checked={isOpen}
           onClick={() => setIsOpen(!isOpen)}
+          onChange={() => setIsOpen(!isOpen)}
         />
         <div
           className={`flex-none print:hidden lg:hidden pointer-events-auto ${path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
@@ -59,7 +75,7 @@ const Sidebar = () => {
             aria-label="close sidebar"
             className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
           />
-          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 gap-1 border-r border-primary">
+          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary gap-1">
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <img
                 src="/logo_full.png"
@@ -166,7 +182,7 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu w-56 p-2 gap-1 max-lg:hidden fixed top-0 bottom-0 left-0 lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none ${!path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'backdrop-blur-md'}`}
+        className={`menu space-y-1 w-56 p-2 max-lg:hidden fixed top-0 bottom-0 left-0 lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none ${!path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'backdrop-blur-md'}`}
       >
         <SidebarMenu />
       </ul>
@@ -175,55 +191,167 @@ const Sidebar = () => {
 };
 
 interface SidebarProps {
-  onClick?: () => void;
+  onClick?: (value: SetStateAction<boolean>) => void;
   isOpen?: boolean;
 }
 
 export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const path = usePathname() + useHash();
+
   return (
     <>
+      <Accordion
+        single
+        atLeastOne
+        initialOpenIndexes={path.match(/^\/request\/?(.*)?\/?/) ? [1] : [0]}
+      >
+        {({ openIndexes, handleClick, AccordionContent }) => (
+          <span className="pointer-events-auto">
+            <div className="flex mb-1">
+              <SingleItem
+                className="flex-1"
+                linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
+                liKey={'home'}
+                onClick={() => {
+                  onClick && onClick(!isOpen);
+                  handleClick(0);
+                }}
+                href={'/watch/web/index.html#!'}
+                title={'Home'}
+                icon={<HomeIcon className="size-7" />}
+                active={path.match(/\/watch\/web\/index\.html#?!?\/?$/)}
+              />
+              <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
+                <button
+                  onClick={() => handleClick(0)}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                >
+                  <ChevronDownIcon className="size-5" />
+                </button>
+              </li>
+            </div>
+            <AccordionContent isOpen={openIndexes.includes(0)}>
+              <LibraryMenu isOpen={isOpen} setIsOpen={onClick} />
+            </AccordionContent>
+            <div className="flex">
+              <SingleItem
+                className="flex-1"
+                linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
+                liKey={'request'}
+                onClick={() => {
+                  onClick && onClick(!isOpen);
+                  handleClick(1);
+                }}
+                href={'/request'}
+                title={'Request'}
+                icon={
+                  <Image
+                    alt="Overseerr"
+                    width={28}
+                    height={28}
+                    src={'/external/os-icon.svg'}
+                  />
+                }
+                active={path.match(/^\/request\/?$/)}
+              />
+              <li className={`${openIndexes.includes(1) ? 'hidden' : ''}`}>
+                <button
+                  onClick={() => handleClick(1)}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                >
+                  <ChevronDownIcon className="size-5" />
+                </button>
+              </li>
+            </div>
+            <AccordionContent isOpen={openIndexes.includes(1)}>
+              <RequestMenu onClick={onClick} />
+            </AccordionContent>
+          </span>
+        )}
+      </Accordion>
       <SingleItem
-        key={'home'}
-        onClick={onClick}
-        href={'/watch/web/index.html#!'}
-        title={'Home'}
-        icon={<HomeIcon className="size-7" />}
-        active={path.match(/\/watch\/web\/index\.html#?!?\/?$/)}
-      />
-      <LibraryMenu isOpen={isOpen} setIsOpen={onClick} />
-      <SingleItem
-        key={'request'}
-        onClick={onClick}
-        href={'/request'}
-        title={'Request'}
-        icon={
-          <Image
-            alt="Overseerr"
-            width={28}
-            height={28}
-            src={'/external/os-icon.svg'}
-          />
-        }
-        active={path.match(/\/request\/?/)}
-      />
-      <SingleItem
-        key={'invite'}
-        onClick={onClick}
+        liKey={'invite'}
+        onClick={() => onClick && onClick(!isOpen)}
+        isOpen={isOpen}
         href={'/invite'}
         title={'Invite'}
         icon={<PaperAirplaneIcon className="size-7" />}
         active={path.match(/\/invite\/?/)}
       />
       <SingleItem
-        key={'schedule'}
-        onClick={onClick}
+        liKey={'schedule'}
+        onClick={() => onClick && onClick(!isOpen)}
+        isOpen={isOpen}
         href={'/schedule'}
         title={'Release Schedule'}
         icon={<CalendarDateRangeIcon className="size-7" />}
         active={path.match(/\/schedule\/?/)}
       />
     </>
+  );
+};
+
+interface RequestMenuProps {
+  onClick: (value: SetStateAction<boolean>) => void;
+  isOpen?: boolean;
+}
+
+export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
+  const RequestLinks: MenuLinksProps[] = [
+    {
+      href: '/request/discover/movies',
+      title: 'Movies',
+      icon: <FilmIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/discover/tv',
+      title: 'Series',
+      icon: <TvIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/requests',
+      title: 'Requests',
+      icon: <ClockIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/issues',
+      title: 'Issues',
+      icon: <ExclamationTriangleIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/users',
+      title: 'Users',
+      icon: <UsersIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/settings',
+      title: 'Settings',
+      icon: <CogIcon className="w-7 h-7" />,
+    },
+  ];
+
+  const path = usePathname() + useHash();
+  return (
+    <ul className="menu m-0 p-0 space-y-1 mt-1">
+      {RequestLinks.map((link) => {
+        return (
+          <SingleItem
+            key={link.title}
+            liKey={link.title}
+            onClick={() => onClick && onClick(!isOpen)}
+            href={link.href}
+            title={link.title}
+            icon={link.icon}
+            active={
+              (path.includes(link.href) &&
+                !link.href.match(/^\/request\/?$/)) ||
+              (link.href.match(/^\/request\/?$/) &&
+                path.match(/^\/request\/?$/))
+            }
+          />
+        );
+      })}
+    </ul>
   );
 };
 

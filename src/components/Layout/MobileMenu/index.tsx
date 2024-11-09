@@ -1,5 +1,6 @@
 'use client';
 import LibraryMenu from '@app/components/Layout/LibraryMenu';
+import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
@@ -181,6 +182,9 @@ const MobileMenu = () => {
             {menuType === 'library' && (
               <LibraryMenu isOpen={isOpen} setIsOpen={setIsOpen} />
             )}
+            {menuType === 'request' && (
+              <RequestMenu isOpen={isOpen} onClick={setIsOpen} />
+            )}
             {menuType === 'settings' && (
               <ul className="menu p-0 m-0 space-y-1">
                 {settingsLinks.map((link, i) => {
@@ -199,24 +203,32 @@ const MobileMenu = () => {
                 })}
               </ul>
             )}
-            {pathname.includes('/watch/web/index') && (
-              <ul className="menu p-0 m-0 mt-2">
-                <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
-                  <button
-                    onClick={() => setMenuType('library')}
-                    className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
-                  >
-                    Libraries
-                  </button>
+            <ul className="menu p-0 m-0 mt-2">
+              <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
+                <button
+                  onClick={() => setMenuType('library')}
+                  className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                >
+                  Libraries
+                </button>
+                <button
+                  onClick={() => setMenuType('request')}
+                  className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                >
+                  Request
+                </button>
+                {pathname.match(
+                  /^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/
+                ) && (
                   <button
                     onClick={() => setMenuType('settings')}
                     className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
                     Settings
                   </button>
-                </li>
-              </ul>
-            )}
+                )}
+              </li>
+            </ul>
           </>
         )}
       </Transition>
@@ -224,7 +236,10 @@ const MobileMenu = () => {
         <div className="flex h-full items-center justify-between px-6 py-2 text-primary-content backdrop-filter-none">
           <button
             className={`flex flex-col items-center space-y-1 ${
-              isOpen && (menuType === 'library' || menuType === 'settings')
+              isOpen &&
+              (menuType === 'library' ||
+                menuType === 'settings' ||
+                menuType === 'request')
                 ? 'text-primary'
                 : ''
             }`}
@@ -232,16 +247,26 @@ const MobileMenu = () => {
               if (
                 menuType === 'library' ||
                 menuType === 'settings' ||
+                menuType === 'request' ||
                 !isOpen
               ) {
                 toggle();
               }
-              if (!isOpen || menuType === 'nav') {
+              if (
+                !isOpen ||
+                (menuType === 'nav' && !pathname.match(/^\/request\/?(.*)?\/?/))
+              ) {
                 setMenuType('library');
+              }
+              if (pathname.match(/^\/request\/?(.*)?\/?/)) {
+                setMenuType('request');
               }
             }}
           >
-            {isOpen && (menuType === 'library' || menuType === 'settings') ? (
+            {isOpen &&
+            (menuType === 'library' ||
+              menuType === 'settings' ||
+              menuType === 'request') ? (
               <Bars3BottomLeftIcon className="size-7" />
             ) : (
               <Bars3Icon className="size-7" />
