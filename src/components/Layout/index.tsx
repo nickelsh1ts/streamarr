@@ -85,7 +85,7 @@ const Layout = ({
   return (
     <main className="flex flex-col relative h-full min-h-full min-w-0 bg-brand-dark max-sm:pb-10">
       <Header />
-      <MobileMenu />
+      {isAuthed && <MobileMenu />}
       <div className="fixed top-0 bottom-0 left-0 right-0">
         <ImageFader
           rotationSpeed={6000}

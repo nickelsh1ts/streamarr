@@ -1,17 +1,21 @@
-'use client';
-import Loading from '@app/app/loading';
-import type { NextPage } from 'next';
-import { useRouter } from 'next/navigation';
+import Request from '@app/components/Request';
+import type { Metadata, NextPage } from 'next';
 
-const osPath = 'https://nickflixtv.com/request';
+const applicationTitle = 'Streamarr';
+
+const messages = {
+  title: 'Request',
+};
+
+export const metadata: Metadata = {
+  title: `${messages.title} - ${applicationTitle}`,
+};
 
 const RequestPage: NextPage = () => {
-  const router = useRouter();
-  if (osPath) {
-    router.push(osPath);
-    return <Loading />;
-  } else {
-    return <div>Overseerr Not initialized</div>;
-  }
+  return (
+    <Request>
+      <link rel="stylesheet" href="/request.css" />
+    </Request>
+  );
 };
 export default RequestPage;
