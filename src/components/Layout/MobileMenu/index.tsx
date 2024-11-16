@@ -68,7 +68,6 @@ const MobileMenu = () => {
           width={24}
           height={24}
           src={'/external/os-icon.svg'}
-          className="h-6 w-6 grayscale"
         />
       ),
       svgIconSelected: (
@@ -77,31 +76,30 @@ const MobileMenu = () => {
           width={24}
           height={24}
           src={'/external/os-icon.svg'}
-          className="h-6 w-6"
         />
       ),
-      activeRegExp: /^\/request\/$/,
+      activeRegExp: /^\/request\/?$/,
     },
     {
       href: '/invite',
       content: 'Invite',
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
-      activeRegExp: /^\/invite/,
+      activeRegExp: /^\/invite\/?/,
     },
     {
       href: '/schedule',
       content: 'Schedule',
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
-      activeRegExp: /^\/schedule/,
+      activeRegExp: /^\/schedule\/?/,
     },
     {
       href: '/admin',
       content: 'Admin Center',
       svgIcon: <LockClosedIcon className="h-6 w-6" />,
       svgIconSelected: <FilledLockClosedIcon className="h-6 w-6" />,
-      activeRegExp: /^\/admin/,
+      activeRegExp: /^\/admin\/?/,
     },
   ];
 
