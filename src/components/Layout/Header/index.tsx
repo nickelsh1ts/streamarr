@@ -20,7 +20,7 @@ const Header = ({ isInView = true }) => {
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
           <Sidebar />
         )}
-        {!path.match(/^\/$/) || isAuthed && (
+        {(!path.match(/^\/$/) || isAuthed) && (
           <button onClick={() => router.back()} className="pwa-only">
             <ArrowLeftIcon className="size-7 m-2" />
           </button>
