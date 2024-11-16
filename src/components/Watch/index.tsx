@@ -71,7 +71,7 @@ const Watch = ({ children, ...props }) => {
   useEffect(() => {
     innerFrame?.addEventListener('hashchange', function () {
       if (hash != innerFrame.location.hash) {
-        router.push('/watch/web/index.html' + innerFrame.location.hash);
+        router.replace('/watch/web/index.html' + innerFrame.location.hash);
       }
     });
   });
