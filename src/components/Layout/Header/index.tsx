@@ -20,7 +20,9 @@ const Header = ({ isInView = true }) => {
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
           <Sidebar />
         )}
-        <button onClick={() => router.back()} className='pwa-only'><ArrowLeftIcon className='size-7 m-2'/></button>
+        <button onClick={() => router.back()} className="pwa-only">
+          <ArrowLeftIcon className="size-7 m-2" />
+        </button>
         <Link
           href="/"
           className={`hover:brightness-75 transition-opacity duration-500 ml-2 ${!isInView && 'opacity-0 pointer-events-none'}`}
