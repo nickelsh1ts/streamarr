@@ -3,11 +3,13 @@ import Sidebar from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { isAuthed } from '@app/app/layout';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
+  const router = useRouter();
 
   return (
     <header
@@ -18,6 +20,7 @@ const Header = ({ isInView = true }) => {
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
           <Sidebar />
         )}
+        <button onClick={() => router.back()} className='pwa-only'><ArrowLeftIcon className='size-7 m-2'/></button>
         <Link
           href="/"
           className={`hover:brightness-75 transition-opacity duration-500 ml-2 ${!isInView && 'opacity-0 pointer-events-none'}`}

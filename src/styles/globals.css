@@ -133,3 +133,9 @@
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+@media all and (display-mode: browser) {
+  .pwa-only {
+    @apply hidden;
+  }
+}
