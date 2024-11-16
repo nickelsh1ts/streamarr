@@ -64,7 +64,12 @@ div:has( > div.sidebar) {
 .lg\:left-64 {
   left: 0;
 }
-
+[aria-label*="Open sidebar"]{
+  display: none;
+}
+button.pwa-only {
+  display: none;
+}
 ::-webkit-scrollbar {
   width: 15px;
   height: 14px;

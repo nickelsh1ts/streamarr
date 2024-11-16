@@ -14,10 +14,15 @@ const Request = ({ children, ...props }) => {
   const innerFrame = contentRef?.contentWindow;
 
   useEffect(() => {
-    innerFrame?.navigation.addEventListener('navigate', function () {
-      router.push(
-        '/request' + innerFrame.location.pathname.replace('/overseerr', '')
-      );
+    innerFrame?.navigation.addEventListener('navigate', () => {
+      setLoadingIframe(true);
+      setTimeout(() => {
+        if (url != innerFrame.location.pathname.replace('/overseerr', '')) {
+          router.push(
+            innerFrame.location.pathname.replace('/overseerr', '/request')
+          );
+        }
+      }, 600);
     });
   });
 
@@ -32,7 +37,7 @@ const Request = ({ children, ...props }) => {
           }, 1000);
         }}
         ref={setContentRef}
-        className={`w-full h-[93dvh] relative ${loadingIframe && 'invisible'} relative`}
+        className={`w-full h-[93dvh] relative ${loadingIframe && 'invisible'}`}
         src={`https://streamarr.nickelsh1ts.com/overseerr${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
