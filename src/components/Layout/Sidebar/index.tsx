@@ -22,6 +22,7 @@ import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import Accordion from '@app/components/Common/Accordion';
 import Image from 'next/image';
+import VersionStatus from '@app/components/Layout/VersionStatus';
 interface MenuLinksProps {
   href: string;
   title: string;
@@ -75,7 +76,7 @@ const Sidebar = () => {
             aria-label="close sidebar"
             className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
           />
-          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary gap-1">
+          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <img
                 src="/logo_full.png"
@@ -92,6 +93,7 @@ const Sidebar = () => {
             </div>
             <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
             <div className="mt-auto">
+              <VersionStatus onClick={() => setIsOpen(!isOpen)} />
               {path.includes('/watch/web/index.html') && (
                 <>
                   <div className="bg-zinc-300/40 h-0.5 my-4"></div>
@@ -182,9 +184,12 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu space-y-1 w-56 p-2 max-lg:hidden fixed top-0 bottom-0 left-0 lg:flex lg:flex-shrink-0 flex-nowrap overflow-auto mt-[3.75rem] pointer-events-none ${!path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'backdrop-blur-md'}`}
+        className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto ${!path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'backdrop-blur-md'}`}
       >
         <SidebarMenu />
+        <div className="mt-auto">
+          <VersionStatus />
+        </div>
       </ul>
     </>
   );
@@ -199,7 +204,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const path = usePathname() + useHash();
 
   return (
-    <>
+    <div className='space-y-1 mb-1'>
       <Accordion
         single
         atLeastOne
@@ -287,7 +292,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         icon={<CalendarDateRangeIcon className="size-7" />}
         active={path.match(/\/schedule\/?/)}
       />
-    </>
+    </div>
   );
 };
 
