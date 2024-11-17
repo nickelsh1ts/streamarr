@@ -99,7 +99,9 @@ const Layout = ({
       <div
         className={`${isAuthed && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
       >
-        <div className="min-h-[93dvh] flex flex-col flex-grow">{children}</div>
+        <div className="min-h-[93dvh] flex flex-col flex-grow relative">
+          {children}
+        </div>
         <Footer />
       </div>
     </main>

@@ -171,6 +171,8 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             icon={icon}
             LibraryLinks={Links}
             defaultPivot={'library'}
+            liKey={type}
+            key={type}
           />
         ) : Links.length === 1 ? (
           <SingleItem
@@ -234,6 +236,7 @@ export const MultiItem = ({
   title,
   icon,
   LibraryLinks,
+  liKey,
   defaultPivot,
 }) => {
   const path = usePathname();
@@ -244,7 +247,7 @@ export const MultiItem = ({
   let pivotList = null;
 
   return (
-    <li className="pointer-events-auto">
+    <li className="pointer-events-auto" key={liKey}>
       <details
         open={
           LibraryLinks.map((item) => {

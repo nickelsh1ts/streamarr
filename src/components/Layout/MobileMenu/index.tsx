@@ -10,12 +10,10 @@ import {
   CalendarDateRangeIcon,
   EllipsisHorizontalIcon,
   HomeIcon,
-  LockClosedIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 import {
   PaperAirplaneIcon as FilledPaperAirplaneIcon,
-  LockClosedIcon as FilledLockClosedIcon,
   CalendarDateRangeIcon as FilledCalendarDateRangeIcon,
   HomeIcon as FilledHomeIcon,
   XMarkIcon,
@@ -93,13 +91,6 @@ const MobileMenu = () => {
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
-    },
-    {
-      href: '/admin',
-      content: 'Admin Center',
-      svgIcon: <LockClosedIcon className="h-6 w-6" />,
-      svgIconSelected: <FilledLockClosedIcon className="h-6 w-6" />,
-      activeRegExp: /^\/admin\/?/,
     },
   ];
 
