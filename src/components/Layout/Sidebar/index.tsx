@@ -204,7 +204,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const path = usePathname() + useHash();
 
   return (
-    <div className='space-y-1 mb-1'>
+    <div className="space-y-1 mb-1">
       <Accordion
         single
         atLeastOne
