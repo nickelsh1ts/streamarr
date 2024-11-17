@@ -21,10 +21,12 @@ const Request = ({ children, ...props }) => {
           router.push(
             innerFrame.location.pathname.replace('/overseerr', '/request')
           );
+        } else {
+          setTimeout(() => setLoadingIframe(false), 600);
         }
       }, 600);
     });
-  });
+  }, [innerFrame?.location.pathname, innerFrame?.navigation, router, url]);
 
   return (
     <>
@@ -45,7 +47,7 @@ const Request = ({ children, ...props }) => {
         {mountNode && createPortal(children, mountNode)}
       </iframe>
       {loadingIframe ? (
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#1f1f1f]">
           <span className="text-lg text-white me-1">Loading</span>{' '}
           <span className="loading loading-dots loading-md text-primary mt-2"></span>
         </div>
