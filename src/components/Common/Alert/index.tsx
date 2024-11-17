@@ -6,7 +6,7 @@ import {
 
 interface AlertProps {
   title?: React.ReactNode;
-  type?: 'warning' | 'info' | 'error';
+  type?: 'warning' | 'info' | 'error' | 'primary';
   children?: React.ReactNode;
 }
 
@@ -29,30 +29,36 @@ const Alert = ({ title, children, type }: AlertProps) => {
       break;
     case 'error':
       design = {
-        bgColor: 'bg-error border border-error',
+        bgColor: 'bg-error backdrop-blur bg-opacity-20 border border-error',
         titleColor: 'text-error-content',
         textColor: 'text-error-content',
         svg: <XCircleIcon className="size-5" />,
+      };
+      break;
+    case 'primary':
+      design = {
+        bgColor: 'bg-primary backdrop-blur bg-opacity-20 border border-primary',
+        titleColor: 'text-primary-content',
+        textColor: 'text-primary-content',
+        svg: <InformationCircleIcon className="size-5" />,
       };
       break;
   }
 
   return (
     <div className={`mb-4 rounded-md p-4 ${design.bgColor}`}>
-      <div className="flex">
+      <div className={`flex ${design.titleColor}`}>
         <div className={`flex-shrink-0 ${design.titleColor}`}>{design.svg}</div>
-        <div className="ml-3">
-          {title && (
-            <div className={`text-sm font-medium ${design.titleColor}`}>
-              {title}
+        {title && (
+          <div className="ml-3">
+            <div className={`text-sm ${design.textColor}`}>
+              <div className={`text-sm font-medium ${design.titleColor}`}>
+                {title}
+              </div>
             </div>
-          )}
-          {children && (
-            <div className={`mt-2 text-sm first:mt-0 ${design.textColor}`}>
-              {children}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+        {children && children}
       </div>
     </div>
   );
