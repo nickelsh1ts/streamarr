@@ -1,7 +1,14 @@
+import DynamicFrame from '@app/components/Common/DynamicFrame';
+
 const AdminTVShows = () => {
   return (
-    <div>
-      <h3 className="text-2xl font-extrabold">TV Shows</h3>
+    <div className="relative -m-4">
+      <DynamicFrame
+        title={'movies'}
+        domainURL={'https://streamarr.nickelsh1ts.com'}
+        basePath={'/admin/sonarr'}
+        newBase={'/admin/tv'}
+      ></DynamicFrame>
     </div>
   );
 };
