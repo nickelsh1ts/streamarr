@@ -4,7 +4,7 @@ const AdminSubtitles = () => {
   return (
     <div className="relative -m-4">
       <DynamicFrame
-        title={'movies'}
+        title={'subtitles'}
         domainURL={'https://streamarr.nickelsh1ts.com'}
         basePath={'/admin/bazarr'}
         newBase={'/admin/srt'}

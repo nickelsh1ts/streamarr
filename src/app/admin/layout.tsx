@@ -43,6 +43,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       route: '/admin/transcode',
       regex: /^\/admin\/transcode/,
     },
+    {
+      text: 'Downloading',
+      route: '/admin/downloads/overview',
+      regex: /^\/admin\/downloads/,
+    },
   ];
 
   return (

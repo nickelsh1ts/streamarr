@@ -4,7 +4,7 @@ const AdminIndexers = () => {
   return (
     <div className="relative -m-4">
       <DynamicFrame
-        title={'movies'}
+        title={'indexers'}
         domainURL={'https://streamarr.nickelsh1ts.com'}
         basePath={'/admin/prowlarr'}
         newBase={'/admin/indexers'}

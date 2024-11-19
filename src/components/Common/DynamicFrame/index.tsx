@@ -57,7 +57,7 @@ const DynamicFrame = ({
       <iframe
         {...props}
         loading="lazy"
-        onLoad={() => setLoadingIframe(false)}
+        onLoad={() => setTimeout(() => setLoadingIframe(false), 600)}
         ref={setContentRef}
         className={`w-full h-[85dvh] relative ${loadingIframe && 'invisible'}`}
         src={`${domainURL}${basePath}${pathname}`}

@@ -4,7 +4,7 @@ const AdminTranscoding = () => {
   return (
     <div className="relative -m-4">
       <DynamicFrame
-        title={'movies'}
+        title={'transcoding'}
         domainURL={'https://streamarr.nickelsh1ts.com'}
         basePath={'/admin/tdarr'}
         newBase={'/admin/transcode'}
