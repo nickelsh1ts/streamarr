@@ -55,7 +55,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <div className="mt-2">
         <AdminTabs AdminRoutes={AdminRoutes} />
       </div>
-      <div className="mt-6 text-white">{children}</div>
+      <div className="mt-6">{children}</div>
     </div>
   );
 };

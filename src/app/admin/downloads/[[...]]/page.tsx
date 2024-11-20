@@ -1,8 +1,6 @@
-import AdminDownloads from "@app/components/Admin/Downloads"
+import AdminDownloads from '@app/components/Admin/Downloads';
 
 const DownloadsPage = () => {
-  return (
-    <AdminDownloads />
-  )
-}
-export default DownloadsPage
+  return <AdminDownloads />;
+};
+export default DownloadsPage;

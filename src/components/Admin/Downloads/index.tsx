@@ -1,4 +1,4 @@
-import DynamicFrame from "@app/components/Common/DynamicFrame"
+import DynamicFrame from '@app/components/Common/DynamicFrame';
 
 const AdminDownloads = () => {
   return (
@@ -10,6 +10,6 @@ const AdminDownloads = () => {
         newBase={'/admin/downloads/overview'}
       ></DynamicFrame>
     </div>
-  )
-}
-export default AdminDownloads
+  );
+};
+export default AdminDownloads;
