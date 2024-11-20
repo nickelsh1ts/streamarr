@@ -1,3 +1,4 @@
+'use client';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { Field } from 'formik';
 import { useState } from 'react';
@@ -12,7 +13,11 @@ interface CustomFieldProps extends React.ComponentProps<typeof Field> {
 
 type SensitiveInputProps = CustomInputProps | CustomFieldProps;
 
-const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
+const SensitiveInput = ({
+  as = 'input',
+  size = 'md',
+  ...props
+}: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
   const Component = as === 'input' ? 'input' : Field;
   const componentProps =
@@ -23,10 +28,10 @@ const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
           as: props.type === 'textarea' && !isHidden ? 'textarea' : undefined,
         };
   return (
-    <label htmlFor="" className="flex items-center">
+    <>
       <Component
         {...componentProps}
-        className={`rounded-l-only ${componentProps.className ?? ''}`}
+        className={`rounded-r-none ${componentProps.className ?? ''}`}
         type={
           isHidden
             ? 'password'
@@ -41,15 +46,15 @@ const SensitiveInput = ({ as = 'input', ...props }: SensitiveInputProps) => {
           setHidden(!isHidden);
         }}
         type="button"
-        className="btn btn-primary rounded-l-none"
+        className={`btn btn-primary btn-${size} rounded-none last:rounded-r-md`}
       >
         {isHidden ? (
-          <EyeSlashIcon className="size-4" />
+          <EyeSlashIcon className="size-5" />
         ) : (
-          <EyeIcon className="size-4" />
+          <EyeIcon className="size-5" />
         )}
       </button>
-    </label>
+    </>
   );
 };
 

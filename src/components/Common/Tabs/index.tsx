@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-interface TabsProps {
+export interface TabsProps {
   id: string;
   title: string;
   content: React.ReactNode;

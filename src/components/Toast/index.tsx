@@ -76,7 +76,7 @@ const Toast = ({
         } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 ${toastStyle.join(' ')}`}
       >
         <div className="flex-1 w-0 p-4">
-          <div className="flex items-start">
+          <div className="flex items-center">
             {icon && (
               <div className="flex-shrink-0 pt-0.5 self-center">{icon}</div>
             )}
