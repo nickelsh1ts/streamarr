@@ -37,7 +37,7 @@ const AdminUsers = () => {
   const isUserPermsEditable = (userId: number) => userId !== 1;
 
   return (
-    <div>
+    <form className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">User List</h3>
       <Table>
         <thead>
@@ -76,11 +76,7 @@ const AdminUsers = () => {
         </thead>
         <Table.TBody>
           {data?.map((user) => (
-            <tr
-              key={`user-list-${user.id}`}
-              data-testid="user-list-row"
-              className="bg-secondary bg-opacity-70"
-            >
+            <tr key={`user-list-${user.id}`} data-testid="user-list-row">
               <Table.TD>
                 {isUserPermsEditable(user.id) && (
                   <input
@@ -212,7 +208,7 @@ const AdminUsers = () => {
           </tr>
         </Table.TBody>
       </Table>
-    </div>
+    </form>
   );
 };
 export default AdminUsers;

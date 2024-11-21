@@ -1,8 +1,12 @@
 @tailwind base;
 @tailwind components;
-
-.list-circle {
-  list-style-type: circle;
+@layer components {
+  .list-circle {
+    list-style-type: circle;
+  }
+  code {
+    @apply truncate bg-base-100/75 py-1 px-1.5 rounded-md;
+  }
 }
 
 @tailwind utilities;

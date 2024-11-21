@@ -29,22 +29,16 @@ const AboutSettings = () => {
         <List title={'About Streamarr'}>
           <Alert>
             <p className="ml-3 text-sm leading-5">
-              You are running the{' '}
-              <code className="truncate bg-base-100/75 py-1 px-1.5 rounded-md">
-                develop
-              </code>{' '}
-              branch of Streamarr, which is only recommended for those
-              contributing to development or assisting with bleeding-edge
-              testing.
+              You are running the <code>develop</code> branch of Streamarr,
+              which is only recommended for those contributing to development or
+              assisting with bleeding-edge testing.
             </p>
           </Alert>
           <List.Item
             title={'Version'}
             className="flex flex-row items-center truncate"
           >
-            <code className="truncate bg-base-100/75 py-1 px-1.5 rounded-md">
-              0.00.1
-            </code>
+            <code>0.00.1</code>
             <a
               href="https://github.com/nickelsh1ts/streamarr/releases"
               target="_blank"
@@ -62,14 +56,10 @@ const AboutSettings = () => {
           <List.Item title="Total Users">82</List.Item>
           <List.Item title="Total Invites">36</List.Item>
           <List.Item title="Data Directory">
-            <code className="bg-base-100/75 py-1 px-1.5 rounded-md">
-              /app/config
-            </code>
+            <code>/app/config</code>
           </List.Item>
           <List.Item title="Time Zone">
-            <code className="bg-base-100/75 py-1 px-1.5 rounded-md">
-              America/Toronto
-            </code>
+            <code>America/Toronto</code>
           </List.Item>
         </List>
       </div>

@@ -8,9 +8,11 @@ import useClipboard from 'react-use-clipboard';
 const CopyButton = ({
   textToCopy,
   size = 'md',
+  grouped = true,
 }: {
   textToCopy: string;
   size?: 'sm' | 'md' | 'lg';
+  grouped?: boolean;
 }) => {
   const [isCopied, setCopied] = useClipboard(textToCopy, {
     successDuration: 1000,
@@ -32,7 +34,7 @@ const CopyButton = ({
         e.preventDefault();
         setCopied();
       }}
-      className={`btn btn-primary btn-${size} rounded-none only:rounded-md last:rounded-r-md`}
+      className={`btn btn-primary btn-${size} ${grouped && 'rounded-none only:rounded-md last:rounded-r-md'}`}
     >
       <ClipboardDocumentIcon className="size-5" />
     </button>

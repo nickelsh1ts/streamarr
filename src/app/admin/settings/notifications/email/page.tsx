@@ -1,6 +1,6 @@
 import EmailNotifications from '@app/components/Admin/Settings/Notifications';
 
-const SettingsNotificationsPage = () => {
+const NotificationsEmailPage = () => {
   return <EmailNotifications />;
 };
-export default SettingsNotificationsPage;
+export default NotificationsEmailPage;
