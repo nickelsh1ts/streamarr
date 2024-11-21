@@ -1,4 +1,6 @@
 import PermissionEdit from '@app/components/Admin/PermissionEdit';
+import Button from '@app/components/Common/Button';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 const UserSettings = () => {
   return (
@@ -41,6 +43,12 @@ const UserSettings = () => {
           <div className="max-w-lg">
             <PermissionEdit />
           </div>
+        </div>
+        <div className="divider divider-primary mb-0 col-span-full" />
+        <div className="flex justify-end col-span-3">
+          <Button type="submit" buttonSize="sm" buttonType="primary">
+            <ArrowDownTrayIcon className="size-4 mr-2" /> Save Changes
+          </Button>
         </div>
       </div>
     </div>

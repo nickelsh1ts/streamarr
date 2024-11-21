@@ -1,4 +1,6 @@
+import WebpushNotifications from '@app/components/Admin/Settings/Notifications/WebpushNotifications';
+
 const NotificationsWebpushPage = () => {
-  return 'WEBPUSH';
+  return <WebpushNotifications />;
 };
 export default NotificationsWebpushPage;

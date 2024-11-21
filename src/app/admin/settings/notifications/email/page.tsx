@@ -1,4 +1,4 @@
-import EmailNotifications from '@app/components/Admin/Settings/Notifications';
+import EmailNotifications from '@app/components/Admin/Settings/Notifications/EmailNotifications';
 
 const NotificationsEmailPage = () => {
   return <EmailNotifications />;

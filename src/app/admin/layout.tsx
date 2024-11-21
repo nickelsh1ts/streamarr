@@ -35,7 +35,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     },
     {
       text: 'Subtitles',
-      route: '/admin/srt',
+      route: '/admin/srt/series',
       regex: /^\/admin\/srt/,
     },
     {

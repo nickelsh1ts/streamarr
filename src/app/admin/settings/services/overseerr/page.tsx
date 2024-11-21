@@ -1,6 +1,6 @@
 import ServicesOverseerr from '@app/components/Admin/Settings/Services/Overseerr';
 
-const SettingsServicesPage = () => {
+const ServicesOverseerrPage = () => {
   return <ServicesOverseerr />;
 };
-export default SettingsServicesPage;
+export default ServicesOverseerrPage;
