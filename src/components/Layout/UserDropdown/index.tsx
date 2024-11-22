@@ -26,9 +26,9 @@ const UserDropdown = ({
     >
       <UserCard />
       <DropDownMenu.Item
-        activeRegEx={/^\/u\/profile\/?$/}
+        activeRegEx={/^\/profile\/?$/}
         divide="before"
-        href="/u/profile"
+        href="/profile"
       >
         View Profile
       </DropDownMenu.Item>
