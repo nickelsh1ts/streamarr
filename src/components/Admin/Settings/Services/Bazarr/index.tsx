@@ -1,5 +1,5 @@
-import Button from "@app/components/Common/Button";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import Button from '@app/components/Common/Button';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 const ServicesBazarr = () => {
   return (

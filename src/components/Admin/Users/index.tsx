@@ -37,7 +37,7 @@ const AdminUsers = () => {
   const isUserPermsEditable = (userId: number) => userId !== 1;
 
   return (
-    <form className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">User List</h3>
       <Table>
         <thead>
@@ -90,7 +90,7 @@ const AdminUsers = () => {
               <Table.TD>
                 <div className="flex items-center">
                   <Link
-                    href={`/users/${user.id}`}
+                    href={`/admin/users/${user.id}`}
                     className="h-10 w-10 flex-shrink-0"
                   >
                     <img
@@ -101,7 +101,7 @@ const AdminUsers = () => {
                   </Link>
                   <div className="ml-4">
                     <Link
-                      href={`/users/${user.id}`}
+                      href={`/admin/users/${user.id}`}
                       className="text-base font-bold leading-5 transition duration-300 hover:underline"
                       data-testid="user-list-username-link"
                     >
@@ -117,7 +117,7 @@ const AdminUsers = () => {
               </Table.TD>
               <Table.TD>
                 <Link
-                  href={`/users/${user.id}/requests`}
+                  href={`/admin/users/${user.id}/requests`}
                   className="text-sm leading-5 transition duration-300 hover:underline"
                 >
                   {user.requestCount}
@@ -143,7 +143,9 @@ const AdminUsers = () => {
                   buttonType="warning"
                   disabled={user.id === 1 && !isAuthed}
                   className="mr-2 disabled:bg-warning/50"
-                  onClick={() => router.push(`/users/${user.id}/settings`)}
+                  onClick={() =>
+                    router.push(`/admin/users/${user.id}/settings`)
+                  }
                 >
                   Edit
                 </Button>
@@ -208,7 +210,7 @@ const AdminUsers = () => {
           </tr>
         </Table.TBody>
       </Table>
-    </form>
+    </div>
   );
 };
 export default AdminUsers;
