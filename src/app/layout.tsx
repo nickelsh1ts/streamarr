@@ -9,6 +9,8 @@ import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import { usePathname } from 'next/navigation';
 import Layout from '@app/components/Layout';
+import NotificationProvider from '@app/context/NotificationContext';
+import Notifications from '@app/components/Layout/Notifications';
 
 const inter = Inter({
   weight: ['300'],
@@ -52,7 +54,10 @@ export default function RootLayout({
         <NextTopLoader color="#974ede" />
         <PullToRefresh />
         <Toaster />
-        {component}
+        <NotificationProvider>
+          <Notifications />
+          {component}
+        </NotificationProvider>
       </body>
     </html>
   );

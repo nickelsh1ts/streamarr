@@ -1,4 +1,5 @@
 'use client';
+import { NotificationContext } from '@app/context/NotificationContext';
 import {
   BellAlertIcon,
   HomeIcon,
@@ -6,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useContext } from 'react';
 
 interface UserType {
   name: string;
@@ -21,11 +23,12 @@ const user: UserType = {
 
 const UserCard = () => {
   const path = usePathname();
+  const { setIsOpen } = useContext(NotificationContext);
 
   return (
     <div className="pointer-events-auto w-64 relative">
       <Link
-        href="/u/profile"
+        href="/profile"
         className="flex flex-col items-center place-content-center gap-2 p-4 bg-slate-50/10 hover:bg-slate-50/20"
       >
         <img
@@ -42,8 +45,13 @@ const UserCard = () => {
           </p>
         </div>
       </Link>
-      <div className="absolute top-0 right-0">
-        <BellAlertIcon className="size-6 m-1" />
+      <div className="absolute top-1 right-1">
+        <button onClick={() => setIsOpen(true)} className="indicator">
+          <span className="indicator-item indicator-start left-2 top-2 badge badge-sm font-thin badge-error h-5">
+            9
+          </span>
+          <BellAlertIcon className="size-8 m-1" />
+        </button>
       </div>
       {path.match(/^\/(help\/?(.*)?|\/?$)/) && (
         <Link
