@@ -275,13 +275,13 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         )}
       </Accordion>
       <SingleItem
-        liKey={'invite'}
+        liKey={'invites'}
         onClick={() => onClick && onClick(!isOpen)}
         isOpen={isOpen}
-        href={'/invite'}
-        title={'Invite'}
+        href={'/invites'}
+        title={'Invites'}
         icon={<PaperAirplaneIcon className="size-7" />}
-        active={path.match(/\/invite\/?/)}
+        active={path.match(/^\/invites\/?/)}
       />
       <SingleItem
         liKey={'schedule'}
