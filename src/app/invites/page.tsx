@@ -12,6 +12,10 @@ export const metadata: Metadata = {
 };
 
 const InvitePage: NextPage = () => {
-  return <Invite />;
+  return (
+    <div className="max-sm:mb-14">
+      <Invite />
+    </div>
+  );
 };
 export default InvitePage;
