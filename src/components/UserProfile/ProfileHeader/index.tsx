@@ -27,12 +27,12 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
   subtextItems.push(`User ID: ${user.id}`);
 
   return (
-    <div className="mt-6 mb-12 lg:flex lg:items-end lg:justify-between lg:space-x-5 mx-4">
+    <div className="mt-6 mb-12 lg:flex lg:items-end lg:justify-between lg:space-x-5 mx-4 p-4 bg-gradient-to-b from-primary/40 via-secondary/30 to-secondary/0 backdrop-blur rounded-lg">
       <div className="flex items-end justify-items-end space-x-5">
         <div className="flex-shrink-0">
           <div className="relative">
             <img
-              className="h-24 w-24 rounded-full bg-gray-600 object-cover ring-1 ring-gray-700"
+              className="h-24 w-24 rounded-full bg-primary-content object-cover ring-1 ring-primary-content"
               src={user.avatar}
               alt=""
             />
@@ -46,19 +46,21 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
           <h1 className="mb-1 flex flex-col sm:flex-row sm:items-center">
             <Link
               href={
-                user.id === loggedInUser?.id ? '/profile' : `/users/${user.id}`
+                user.id === loggedInUser?.id
+                  ? '/profile'
+                  : `/admin/users/${user.id}`
               }
-              className="text-overseerr text-lg font-bold hover:to-purple-200 sm:text-2xl"
+              className="text-primary text-lg font-bold hover:opacity-70 sm:text-2xl"
             >
               {user.displayName}
             </Link>
             {user.email && user.displayName.toLowerCase() !== user.email && (
-              <span className="text-sm text-gray-400 sm:ml-2 sm:text-lg">
+              <span className="text-sm text-primary-content sm:ml-2 sm:text-lg">
                 ({user.email})
               </span>
             )}
           </h1>
-          <p className="text-sm font-medium text-gray-400">
+          <p className="text-sm font-medium text-neutral-300">
             {subtextItems.reduce((prev, curr) => (
               <>
                 {prev} | {curr}

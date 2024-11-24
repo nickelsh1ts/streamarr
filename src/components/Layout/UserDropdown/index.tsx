@@ -35,7 +35,7 @@ const UserDropdown = ({
           View Profile
         </DropDownMenu.Item>
         <DropDownMenu.Item
-          activeRegEx={/^\/profile\/settings\/?$/}
+          activeRegEx={/^\/profile\/settings\/?/}
           href="/profile/settings"
         >
           Account Settings

@@ -1,6 +1,6 @@
 import UserSettingsGeneral from '@app/components/UserProfile/UserSettings/UserSettingsGeneral';
 
-const ProfileSettings = () => {
+const UserSettingsGeneralPage = () => {
   return <UserSettingsGeneral />;
 };
-export default ProfileSettings;
+export default UserSettingsGeneralPage;

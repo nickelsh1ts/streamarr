@@ -1,10 +1,35 @@
 'use client';
-import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
+import type { AdminRoute } from '@app/components/Common/AdminTabs';
+import AdminTabs from '@app/components/Common/AdminTabs';
 import moment from 'moment';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 
-const UserSettings = () => {
+const UserSettings = ({ children }: { children: React.ReactNode }) => {
+  const AdminRoutes: AdminRoute[] = [
+    {
+      text: 'General',
+      route: '/settings/general',
+      regex: /\/settings(\/general)?$/,
+    },
+    {
+      text: 'Password',
+      route: '/settings/password',
+      regex: /\/settings\/password/,
+    },
+    {
+      text: 'Notifications',
+      route: '/settings/notifications/email',
+      regex: /\/settings\/notifications/,
+    },
+    {
+      text: 'Permissions',
+      route: '/settings/permissions',
+      regex: /\/settings\/permissions/,
+    },
+  ];
+
   const userQuery = useParams<{ userid: string }>();
+  const pathname = usePathname();
   let user;
 
   if (!userQuery.userid) {
@@ -24,7 +49,19 @@ const UserSettings = () => {
       createdAt: moment().toDate(),
     };
   }
-  return <ProfileHeader isSettingsPage user={user} />;
+
+  AdminRoutes.forEach((settingsRoute) => {
+    settingsRoute.route = pathname.includes('/profile')
+      ? `/profile${settingsRoute.route}`
+      : `/admin/users/${user.id}${settingsRoute.route}`;
+  });
+
+  return (
+    <div className="m-4 bg-primary bg-opacity-30 backdrop-blur rounded">
+      <AdminTabs AdminRoutes={AdminRoutes} />
+      {children}
+    </div>
+  );
 };
 
 export default UserSettings;
