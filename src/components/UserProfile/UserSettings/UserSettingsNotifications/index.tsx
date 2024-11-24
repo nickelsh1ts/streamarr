@@ -43,7 +43,7 @@ const UserSettingsNotifications = ({
         </span>
       ),
       route: '/settings/notifications/email',
-      regex: /\/settings\/notifications\/email/,
+      regex: /\/settings\/notifications(\/email)?$/,
     },
     {
       text: 'Webpush',
