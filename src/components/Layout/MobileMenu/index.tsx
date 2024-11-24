@@ -80,7 +80,7 @@ const MobileMenu = () => {
     },
     {
       href: '/invites',
-      content: 'Invites',
+      content: 'Invite',
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,

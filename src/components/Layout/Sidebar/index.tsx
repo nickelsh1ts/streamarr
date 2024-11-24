@@ -279,7 +279,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         onClick={() => onClick && onClick(!isOpen)}
         isOpen={isOpen}
         href={'/invites'}
-        title={'Invites'}
+        title={'Invite'}
         icon={<PaperAirplaneIcon className="size-7" />}
         active={path.match(/^\/invites\/?/)}
       />
