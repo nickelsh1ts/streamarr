@@ -17,7 +17,10 @@ const Request = ({ children, ...props }) => {
     innerFrame?.navigation.addEventListener('navigate', () => {
       setLoadingIframe(true);
       setTimeout(() => {
-        if (url != innerFrame.location.pathname.replace('/overseerr', '')) {
+        if (
+          url != innerFrame.location.pathname.replace('/overseerr', '') &&
+          !innerFrame.location.pathname.includes('/search')
+        ) {
           router.push(
             innerFrame.location.pathname.replace('/overseerr', '/request')
           );
