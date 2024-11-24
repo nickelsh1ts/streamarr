@@ -27,12 +27,12 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
     };
   }
   return (
-    <>
+    <div className="max-sm:mb-14">
       {!pathname.includes('/invites') && (
         <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
       )}
       {children}
-    </>
+    </div>
   );
 };
 export default ProfileLayout;

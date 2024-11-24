@@ -4,7 +4,7 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 const UserSettings = () => {
   return (
-    <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <div className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">User Settings</h3>
       <p className="mb-5">Configure global and default user settings.</p>
       <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 items-start max-sm:space-y-4 max-sm:space-y-reverse">

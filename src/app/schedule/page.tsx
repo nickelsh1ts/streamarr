@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const SchedulePage = () => {
   return (
-    <div className="relative">
+    <div className="relative max-sm:mb-16">
       <BigCalendar />
     </div>
   );

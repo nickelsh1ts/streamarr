@@ -83,7 +83,7 @@ const Layout = ({
 }>) => {
   const pathname = usePathname();
   return (
-    <main className="flex flex-col relative h-full min-h-full min-w-0 bg-brand-dark max-sm:pb-10">
+    <main className="flex flex-col relative h-full min-h-full min-w-0 bg-brand-dark">
       <Header />
       {isAuthed && <MobileMenu />}
       <div className="fixed top-0 bottom-0 left-0 right-0">
@@ -99,10 +99,12 @@ const Layout = ({
       <div
         className={`${isAuthed && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
       >
-        <div className="min-h-[93dvh] flex flex-col flex-grow relative">
+        <div
+          className={`${pathname.match(/^\/(signin|signup)\/?/) ? 'min-h-[calc(100dvh-4rem)]' : 'min-h-[calc(100dvh-8rem)] sm:min-h-[calc(100dvh-4rem)]'} flex flex-col flex-grow relative`}
+        >
           {children}
         </div>
-        <Footer />
+        {pathname.match(/^\/(signin|signup)\/?/) && <Footer />}
       </div>
     </main>
   );

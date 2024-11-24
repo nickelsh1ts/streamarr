@@ -59,7 +59,7 @@ const DynamicFrame = ({
         loading="lazy"
         onLoad={() => setTimeout(() => setLoadingIframe(false), 600)}
         ref={setContentRef}
-        className={`w-full h-[85dvh] relative ${loadingIframe && 'invisible'}`}
+        className={`w-full h-[calc(100dvh-11.8rem)] sm:h-[calc(100dvh-8.45rem)] relative ${loadingIframe && 'invisible'}`}
         src={`${domainURL}${basePath}${pathname}`}
         allowFullScreen
         title={title}

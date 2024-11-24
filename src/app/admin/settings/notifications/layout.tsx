@@ -31,7 +31,7 @@ const notificationTabs = [
 
 const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
   return (
-    <form className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">Notification Settings</h3>
       <p className="mb-5">Configure and enable notification agents.</p>
       <AdminTabs tabType="button" AdminRoutes={notificationTabs} />

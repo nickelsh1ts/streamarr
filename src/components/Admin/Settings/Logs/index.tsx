@@ -70,7 +70,7 @@ const LogsSettings = () => {
   );
 
   return (
-    <form className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">Logs</h3>
       <p className="mb-5">
         You can also view these logs directly via <code>stdout</code>, or in{' '}

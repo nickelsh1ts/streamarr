@@ -37,7 +37,7 @@ const AdminUsers = () => {
   const isUserPermsEditable = (userId: number) => userId !== 1;
 
   return (
-    <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <div className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
       <h3 className="text-2xl font-extrabold">User List</h3>
       <Table>
         <thead>
