@@ -77,19 +77,16 @@ const HelpHeader = () => {
     <>
       <Header />
       <div id="top" className="flex shadow-sm relative">
-        <div className="-z-10">
-          <ImageFader
-            rotationSpeed={6000}
-            backgroundImages={
-              ImageArray?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
-              ) ?? []
-            }
-            gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
-          />
-        </div>
-        <div className="container max-w-screen-xl mx-auto h-44 content-center">
+        <ImageFader
+          rotationSpeed={6000}
+          backgroundImages={
+            ImageArray?.map(
+              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
+            ) ?? []
+          }
+          gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
+        />
+        <div className="container max-w-screen-xl mx-auto h-44 content-center z-0">
           <h2 className="text-center font-extrabold text-3xl my-4">
             Help Centre
           </h2>

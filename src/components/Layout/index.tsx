@@ -1,3 +1,4 @@
+'use client';
 import { isAuthed } from '@app/app/layout';
 import ImageFader from '@app/components/Common/ImageFader';
 import Footer from '@app/components/Layout/Footer';
@@ -5,7 +6,7 @@ import Header from '@app/components/Layout/Header';
 import MobileMenu from '@app/components/Layout/MobileMenu';
 import { usePathname } from 'next/navigation';
 
-const ImageArray = [
+export const ImageArray = [
   {
     url: '/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg',
     i: '1223',
@@ -83,19 +84,22 @@ const Layout = ({
 }>) => {
   const pathname = usePathname();
   return (
-    <main className="flex flex-col relative h-full min-h-full min-w-0 bg-brand-dark">
+    <main className="flex flex-col relative h-full min-h-full min-w-0">
       <Header />
       {isAuthed && <MobileMenu />}
-      <div className="fixed top-0 bottom-0 left-0 right-0">
-        <ImageFader
-          rotationSpeed={6000}
-          backgroundImages={
-            ImageArray?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
-            ) ?? []
-          }
-        />
-      </div>
+      {pathname.match(/^\/(signin|signup)\/?/) && (
+        <div className="fixed top-0 bottom-0 left-0 right-0">
+          <ImageFader
+            rotationSpeed={6000}
+            backgroundImages={
+              ImageArray?.map(
+                (backdrop) =>
+                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+              ) ?? []
+            }
+          />
+        </div>
+      )}
       <div
         className={`${isAuthed && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
       >

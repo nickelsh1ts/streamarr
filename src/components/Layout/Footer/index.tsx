@@ -8,7 +8,7 @@ function Footer() {
   return (
     <footer
       id="footer"
-      className="footer grid-flow-row gap-2 py-6 px-10 print:hidden bg-brand-dark"
+      className="footer grid-flow-row gap-2 py-6 px-10 print:hidden bg-brand-dark max-sm:pb-16"
     >
       <div className="place-self-center mb-4">
         <BackToTopBtn full />

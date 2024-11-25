@@ -3,37 +3,29 @@ import Sidebar from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { isAuthed } from '@app/app/layout';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import BackButton from '@app/components/Layout/BackButton';
+import DynamicLogo from '@app/components/Layout/DynamicLogo';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
-  const router = useRouter();
 
   return (
     <header
       id="top"
-      className={`navbar sticky top-0 transition duration-500 ${isInView && 'bg-brand-dark'} font-bold z-10`}
+      className={`navbar sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-10`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
           <Sidebar />
         )}
-        {(!path.match(/^\/$/) || isAuthed) && (
-          <button onClick={() => router.back()} className="pwa-only">
-            <ArrowLeftIcon className="size-7 m-2" />
-          </button>
-        )}
+        {(!path.match(/^\/$/) || isAuthed) && <BackButton />}
         <Link
-          href="/"
-          className={`hover:brightness-75 transition-opacity duration-500 ml-2 ${!isInView && 'opacity-0 pointer-events-none'}`}
+          href={isAuthed ? '/watch' : '/'}
+          className={`hover:brightness-75 transition-opacity duration-500 ml-0.5 -mt-1 md:ml-0.5 md:-mt-0.5 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >
-          <img
-            src="/logo_full.png"
-            alt="logo"
-            className="w-40 sm:w-48 h-auto"
-          />
+          <DynamicLogo />
         </Link>
         <div className={`ms-auto flex gap-2 place-items-center`}>
           {path.match(/\/$/) && !isAuthed && (

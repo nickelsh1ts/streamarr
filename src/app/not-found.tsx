@@ -1,35 +1,68 @@
+'use client';
+import ImageFader from '@app/components/Common/ImageFader';
 import PathName from '@app/components/Common/PathName';
+import { ImageArray } from '@app/components/Layout';
+import Footer from '@app/components/Layout/Footer';
+import { BackwardIcon } from '@heroicons/react/24/solid';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: '404 – Streamarr',
 };
 
 export default function NotFound() {
+  const router = useRouter();
   return (
-    <div className="text-center my-auto">
-      <h1 className="text-9xl">404</h1>
-      <p className="text-4xl mb-3 capitalize">
-        <PathName /> Not Found
-      </p>
-      <Link className="text-md btn btn-sm btn-primary" href="/">
-        Return Home{' '}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-5"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    <>
+      <div className="text-center min-h-[calc(100dvh-4rem)] grid place-items-center relative">
+        <div className="absolute top-0 bottom-0 left-0 right-0">
+          <ImageFader
+            rotationSpeed={6000}
+            backgroundImages={
+              ImageArray?.map(
+                (backdrop) =>
+                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+              ) ?? []
+            }
           />
-        </svg>
-      </Link>
-    </div>
+        </div>
+        <div className="w-full max-w-2xl overflow-hidden relative">
+          <div
+            className="h-72"
+            style={{
+              backgroundImage: 'url(/img/caveman.gif)',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'auto 30rem',
+              backgroundPosition: '50% 35%',
+            }}
+          >
+            <h1 className="text-8xl font-extrabold">404</h1>
+          </div>
+          <div className="px-4 mb-10">
+            <p className="uppercase text-4xl mr-2 py-0.5 overflow-hidden text-ellipsis">
+              Lost in{' '}
+              <s className="text-primary">
+                <span className="text-primary-content">Space</span>
+              </s>{' '}
+              <span className="lowercase">
+                <PathName />
+              </span>
+            </p>
+            <p>Hmm, looks like that page doesn&apos;t exist.</p>
+          </div>
+          <button
+            className="text-lg font-bold btn btn-sm btn-primary"
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Let&apos;s Rewind
+            <BackwardIcon className="size-5" />
+          </button>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 }

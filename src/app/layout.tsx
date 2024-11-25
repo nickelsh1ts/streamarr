@@ -50,7 +50,7 @@ export default function RootLayout({
         </head>
         <ServiceWorkerSetup />
       </InteractionProvider>
-      <body>
+      <body className="bg-[#1f1f1f]">
         <NextTopLoader color="#974ede" />
         <PullToRefresh />
         <Toaster />

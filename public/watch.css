@@ -262,22 +262,44 @@ svg {
   filter: brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(2935%) hue-rotate(265deg) brightness(83%) contrast(99%);
 }
 /*top menu*/
-[class*="NavBar-container-"] {
+@media all and (display-mode: browser) {
+  [class*="NavBar-container-"] {
   margin: 0 ;
   padding: 0 0 0 1rem;
   height: 61px;
-}
-@media (min-width: 640px) {
-  [class*="NavBar-container-"] {
-    padding: 0 0 0 3.5rem;
   }
+  @media (min-width: 640px) {
+    [class*="NavBar-container-"] {
+      padding: 0 0 0 3.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    [class*="NavBar-container-"] {
+      padding: 0 0 0 1rem;
+    }
+  }
+}
+@media all and (display-mode: standalone) {
+  [class*="NavBar-container-"] {
+  margin: 0 ;
+  padding: 0 0 0 3.5rem;
+  height: 61px;
+  }
+  @media (min-width: 640px) {
+    [class*="NavBar-container-"] {
+      padding: 0 0 0 6.3rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    [class*="NavBar-container-"] {
+      padding: 0 0 0 3.5rem;
+    }
+  }
+}
+
+@media (min-width: 640px) {
   [aria-label*="Account Menu"] {
     margin-right: 4rem;
-  }
-}
-@media (min-width: 1024px) {
-  [class*="NavBar-container-"] {
-    padding: 0 0 0 1rem;
   }
 }
 [class*="PlexHeaderImage-plexImage-"] {

@@ -1,3 +1,4 @@
+import BackButton from '@app/components/Layout/BackButton';
 import MobileMenu from '@app/components/Layout/MobileMenu';
 import Sidebar from '@app/components/Layout/Sidebar';
 import Watch from '@app/components/Watch';
@@ -18,6 +19,9 @@ const WatchPage: NextPage = () => {
     <Watch>
       <link rel="stylesheet" href="/tailwind.css" />
       <link rel="stylesheet" href="/watch.css" />
+      <div className="fixed top-[0.6rem] left-2 sm:max-lg:left-[3.2rem] pointer-events-none pwa-only z-[1006]">
+        <BackButton />
+      </div>
       <Sidebar />
       <MobileMenu />
     </Watch>
