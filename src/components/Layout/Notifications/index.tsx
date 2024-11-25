@@ -44,13 +44,13 @@ const currentNotifications: NotificationCardProps[] = [
     icon: <InformationCircleIcon className="size-6 text-error" />,
     title: 'Update available',
     children: <p>New version 0.0.12 available!</p>,
-    createdDate: moment('2024, 11, 21').toDate(),
+    createdDate: moment('2024-11-21').toDate(),
   },
   {
     icon: <ExclamationTriangleIcon className="size-6 text-warning" />,
     title: 'Update available',
     children: <p>New version 0.0.10 available!</p>,
-    createdDate: moment('2024, 10, 21').toDate(),
+    createdDate: moment('2024-10-21').toDate(),
   },
 ];
 
