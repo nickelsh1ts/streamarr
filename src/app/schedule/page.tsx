@@ -1,4 +1,4 @@
-import BigCalendar from '@app/components/Common/BigCalendar';
+import Schedule from '@app/components/Schedule';
 import type { Metadata } from 'next';
 
 const applicationTitle = 'Streamarr';
@@ -12,10 +12,6 @@ export const metadata: Metadata = {
 };
 
 const SchedulePage = () => {
-  return (
-    <div className="relative max-sm:mb-16">
-      <BigCalendar />
-    </div>
-  );
+  return <Schedule />;
 };
 export default SchedulePage;

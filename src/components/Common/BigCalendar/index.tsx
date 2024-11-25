@@ -16,11 +16,11 @@ import {
 } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
-import events from './DemoData';
 import TimezoneSelect from './TimezoneSelect';
 import './index.css';
 import CalendarToolBar from '@app/components/Common/BigCalendar/CalendarToolBar';
 import Modal from '@app/components/Common/Modal';
+import events from './DemoData';
 
 interface eventProps {
   id: number;
@@ -36,7 +36,11 @@ function getDate(str, momentObj) {
   return momentObj(str, 'YYYY-MM-DD').toDate();
 }
 
-export default function BigCalendar() {
+export default function BigCalendar({
+  ReleaseEvents = events,
+}: {
+  ReleaseEvents?: typeof events;
+}) {
   const [timezone, setTimezone] = useState(defaultTZ);
 
   const [date, setDate] = useState(defaultDateStr);
@@ -53,10 +57,10 @@ export default function BigCalendar() {
         defaultDate: getDate(defaultDateStr, moment),
         getNow: () => moment().toDate(),
         localizer: momentLocalizer(moment),
-        myEvents: [...events],
+        myEvents: ReleaseEvents,
         scrollToTime: moment().toDate(),
       };
-    }, [timezone]);
+    }, [ReleaseEvents, timezone]);
 
   useEffect(() => {
     return () => {
@@ -164,22 +168,19 @@ export default function BigCalendar() {
           onDrillDown={onDrillDown}
           toolbar={false}
         />
-        {selectedEvent && (
-          <Modal
-            onClose={() => {
-              setModalState(false);
-              setSelectedEvent(undefined);
-            }}
-            title={selectedEvent.title}
-            subtitle={
-              moment(selectedEvent.start).format('dddd, MMMM DD h:mm A') +
-              ' to ' +
-              moment(selectedEvent.end).format('dddd, MMMM DD h:mm A')
-            }
-            show={modalState}
-            content={'THIS IS MY CONTENT'}
-          />
-        )}
+        <Modal
+          onClose={() => {
+            setModalState(false);
+          }}
+          title={selectedEvent?.title}
+          subtitle={
+            moment(selectedEvent?.start).format('dddd, MMMM DD h:mm A') +
+            ' to ' +
+            moment(selectedEvent?.end).format('dddd, MMMM DD h:mm A')
+          }
+          show={modalState}
+          content={'THIS IS MY CONTENT'}
+        />
       </div>
       <TimezoneSelect
         defaultTZ={defaultTZ}
