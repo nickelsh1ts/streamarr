@@ -28,7 +28,7 @@ h2.react-datepicker__current-month {
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply select select-sm select-primary select-bordered text-primary-content;
+  @apply select select-sm select-primary select-bordered text-primary-content w-full;
   background-image: none;
 }
 .react-datepicker-popper {
@@ -115,4 +115,7 @@ h2.react-datepicker__current-month {
 }
 .rbc-day-slot .rbc-events-container {
   @apply m-0;
+}
+.react-datepicker-wrapper {
+  @apply !flex flex-1;
 }

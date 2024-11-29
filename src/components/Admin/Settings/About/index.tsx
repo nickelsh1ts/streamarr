@@ -25,15 +25,17 @@ const AboutSettings = () => {
           </p>
         </div>
       </Alert>
-      <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
-        <Alert>
-          <p className="ml-3 text-sm leading-5">
-            You are running the <code>develop</code> branch of Streamarr, which
-            is only recommended for those contributing to development or
-            assisting with bleeding-edge testing.
-          </p>
-        </Alert>
+      <div className="mt-6">
         <List title={'About Streamarr'}>
+          <div className="mt-4">
+            <Alert>
+              <p className="ml-3 text-sm leading-5">
+                You are running the <code>develop</code> branch of Streamarr,
+                which is only recommended for those contributing to development
+                or assisting with bleeding-edge testing.
+              </p>
+            </Alert>
+          </div>
           <List.Item
             title={'Version'}
             className="flex flex-row items-center truncate"
@@ -63,7 +65,7 @@ const AboutSettings = () => {
           </List.Item>
         </List>
       </div>
-      <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <div className="mt-6">
         <List title="Getting Support">
           <List.Item title="Documentation">
             <a
@@ -97,7 +99,7 @@ const AboutSettings = () => {
           </List.Item>
         </List>
       </div>
-      <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <div className="mt-6">
         <List title="Support Streamarr">
           <List.Item title="Help Pay for Coffee ☕️">
             <a

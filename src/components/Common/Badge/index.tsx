@@ -31,25 +31,19 @@ const Badge = (
 
   switch (badgeType) {
     case 'error':
-      badgeStyle.push(
-        'bg-error bg-opacity-80 border-error-content border text-error-content'
-      );
+      badgeStyle.push('bg-error bg-opacity-80 text-error-content');
       if (href) {
         badgeStyle.push('hover:bg-error bg-opacity-100');
       }
       break;
     case 'warning':
-      badgeStyle.push(
-        'bg-warning bg-opacity-80 border-warning-content border text-warning-content'
-      );
+      badgeStyle.push('bg-warning bg-opacity-80 text-warning-content');
       if (href) {
         badgeStyle.push('hover:bg-warning hover:bg-opacity-100');
       }
       break;
     case 'success':
-      badgeStyle.push(
-        'bg-success bg-opacity-80 border border-success-content text-success-content'
-      );
+      badgeStyle.push('bg-success bg-opacity-80 text-success-content');
       if (href) {
         badgeStyle.push('hover:bg-success hover:bg-opacity-100');
       }
@@ -67,9 +61,7 @@ const Badge = (
       }
       break;
     default:
-      badgeStyle.push(
-        'bg-primary bg-opacity-80 border border-primary-content text-primary-content'
-      );
+      badgeStyle.push('bg-primary bg-opacity-80 text-primary-content');
       if (href) {
         badgeStyle.push('hover:bg-primary hover:bg-opacity-100');
       }

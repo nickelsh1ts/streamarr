@@ -64,7 +64,7 @@ const Notifications = () => {
     <Transition show={isOpen || false}>
       <div
         ref={ref}
-        className={`fixed flex flex-col top-0 bottom-0 ${pathname.match(/^\/watch\/web\/index\.html\/?/) && 'max-sm:mb-[3.8rem]'} right-0 z-50 bg-secondary bg-opacity-30 backdrop-blur border-l border-primary w-full sm:max-w-96 max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-[closed]:max-sm:translate-y-full data-[closed]:sm:translate-x-full`}
+        className={`fixed flex flex-col top-0 bottom-0 ${pathname.match(/^\/watch\/web\/index\.html\/?/) && 'max-sm:mb-[3.8rem]'} right-0 z-50 bg-secondary bg-opacity-30 backdrop-blur sm:border-l border-primary w-full sm:max-w-96 max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-[closed]:max-sm:translate-y-full data-[closed]:sm:translate-x-full`}
       >
         <div className="w-full bg-primary/50 h-20 content-center p-4 flex flex-wrap justify-between items-center">
           <span>

@@ -70,20 +70,20 @@ const LogsSettings = () => {
   );
 
   return (
-    <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <form className="my-6">
       <h3 className="text-2xl font-extrabold">Logs</h3>
       <p className="mb-5">
         You can also view these logs directly via <code>stdout</code>, or in{' '}
         <code>/app/config/logs/streamarr.log</code>.
       </p>
-      <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row sm:justify-end">
+      <div className="mt-2 flex flex-grow flex-col md:flex-grow-0 sm:flex-row sm:justify-end">
         <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
           <span className="btn btn-sm rounded-md btn-primary rounded-r-none px-3 text-sm pointer-events-none">
             <MagnifyingGlassIcon className="size-5" />
           </span>
           <input
             type="text"
-            className="input input-sm input-primary rounded-l-none rounded-md"
+            className="input input-sm input-primary rounded-l-none rounded-md flex-1"
             onChange={() => {}}
           />
         </div>
@@ -116,7 +116,7 @@ const LogsSettings = () => {
                 setCurrentFilter(e.target.value as Filter);
                 router.push(pathname);
               }}
-              className="select select-sm select-primary rounded-l-none rounded-md"
+              className="select select-sm select-primary rounded-l-none rounded-md flex-1"
             >
               <option value="debug">Debug</option>
               <option value="info">Info</option>

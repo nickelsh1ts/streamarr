@@ -15,10 +15,10 @@ export default function TimezoneSelect({
 
   return (
     <div>
-      <div className="my-3 mx-auto max-w-screen-xl px-2 flex justify-end">
+      <div className="my-3 px-4 flex justify-end">
         {title ? <strong style={{ marginBottom: 10 }}>{title}</strong> : null}
         <select
-          className="select select-bordered select-primary select-sm bg-base-200 max-w-56 text-ellipsis"
+          className="select select-bordered select-primary select-sm bg-base-200 text-ellipsis max-sm:flex-1"
           value={timezone}
           onChange={onChange}
         >

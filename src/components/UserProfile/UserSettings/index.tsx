@@ -57,7 +57,7 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
   });
 
   return (
-    <div className="m-4 bg-primary bg-opacity-30 backdrop-blur rounded">
+    <div className="mb-4">
       <AdminTabs AdminRoutes={AdminRoutes} />
       {children}
     </div>

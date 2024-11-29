@@ -32,7 +32,7 @@ const List = ({ title, subTitle, children }: ListProps) => {
         <h3 className="text-2xl font-bold">{title}</h3>
         {subTitle && <p className="description">{subTitle}</p>}
       </div>
-      <div className="mt-6 mb-10 border-t border-primary">
+      <div className="mt-6 mb-10">
         <dl className="divide-y divide-primary">{children}</dl>
       </div>
     </>

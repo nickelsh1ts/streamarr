@@ -2,6 +2,7 @@
 import { isAuthed } from '@app/app/layout';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import Header from '@app/components/Common/Header';
 import Table from '@app/components/Common/Table';
 import {
   PencilIcon,
@@ -37,8 +38,8 @@ const AdminUsers = () => {
   const isUserPermsEditable = (userId: number) => userId !== 1;
 
   return (
-    <div className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
-      <h3 className="text-2xl font-extrabold">User List</h3>
+    <div className="mt-6 mx-4">
+      <Header>User list</Header>
       <Table>
         <thead>
           <tr>

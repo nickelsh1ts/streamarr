@@ -51,11 +51,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   ];
 
   return (
-    <div className="px-4 max-sm:mb-16">
-      <div className="mt-2">
+    <div className="max-sm:mb-16">
+      <div className="mt-2 px-4">
         <AdminTabs AdminRoutes={AdminRoutes} />
       </div>
-      <div className="mt-6">{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 };

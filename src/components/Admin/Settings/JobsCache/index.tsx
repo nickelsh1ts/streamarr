@@ -36,7 +36,7 @@ const JobsCacheSettings = () => {
 
   return (
     <>
-      <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <form className="mt-6">
         <h3 className="text-2xl font-extrabold">Jobs</h3>
         <p className="mb-5">
           Streamarr performs certain maintenance tasks as regularly-scheduled
@@ -104,7 +104,7 @@ const JobsCacheSettings = () => {
           </Table.TBody>
         </Table>
       </form>
-      <form className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <form className="my-6">
         <h3 className="text-2xl font-extrabold">Image Cache</h3>
         <p className="mb-5">
           Streamarr will proxy and cache images from pre-configured external

@@ -6,7 +6,7 @@ import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 const PlexSettings = () => {
   return (
-    <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <form className="my-6">
       <h3 className="text-2xl font-extrabold">Plex Settings</h3>
       <p className="mb-5">
         Configure the settings for your Plex server. Streamarr scans your Plex

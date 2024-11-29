@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const InvitePage: NextPage = () => {
   return (
-    <div className="max-sm:mb-14">
+    <div className="max-sm:mb-14 px-4">
       <Invite />
     </div>
   );

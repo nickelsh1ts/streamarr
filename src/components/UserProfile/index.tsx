@@ -34,7 +34,7 @@ const UserProfile = () => {
   return (
     <>
       <div className="relative">
-        <dl className="mx-4 grid grid-cols-2 gap-5 lg:grid-cols-3">
+        <dl className="grid grid-cols-2 gap-5 lg:grid-cols-3">
           <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
             <dt className="truncate text-sm font-bold text-gray-300">
               Invites Remaining
@@ -71,7 +71,7 @@ const UserProfile = () => {
           </div>
         </dl>
       </div>
-      <div className="flex m-4">
+      <div className="flex my-4 relative z-40">
         <Link
           className="flex items-center gap-2 link-primary"
           href={

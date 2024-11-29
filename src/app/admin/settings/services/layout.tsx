@@ -51,7 +51,7 @@ const ServicesTabs = [
 
 const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+    <div className="my-6">
       <h3 className="text-2xl font-extrabold">Services</h3>
       <p className="mb-2">Configure your various services below.</p>
       <AdminTabs AdminRoutes={ServicesTabs} />

@@ -2,7 +2,7 @@ import DynamicFrame from '@app/components/Common/DynamicFrame';
 
 const AdminDownloads = () => {
   return (
-    <div className="relative -m-4">
+    <div className="relative mt-2">
       <DynamicFrame
         title={'downloads'}
         domainURL={'https://streamarr.nickelsh1ts.com'}

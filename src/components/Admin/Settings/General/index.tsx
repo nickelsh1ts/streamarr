@@ -12,7 +12,7 @@ import {
 const GeneralSettings = () => {
   return (
     <>
-      <form className="mt-6 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <form className="mt-6">
         <h3 className="text-2xl font-extrabold">General Settings</h3>
         <p className="mb-5">
           Configure global and default settings for Streamarr.
@@ -45,7 +45,7 @@ const GeneralSettings = () => {
                   Toast({
                     icon: <XCircleIcon className="size-7" />,
                     title: 'Error: Failed to revalidate API',
-                    type: 'error',
+                    type: 'success',
                   })
                 }
               >
@@ -86,7 +86,7 @@ const GeneralSettings = () => {
           </Button>
         </div>
       </form>
-      <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <div className="mt-6 mb-10">
         <h3 className="text-2xl font-extrabold">Invite Settings</h3>
         <p className="mb-5">
           Configure global and default invite settings for Streamarr.
@@ -99,7 +99,7 @@ const GeneralSettings = () => {
           </Button>
         </div>
       </div>
-      <div className="mt-6 mb-10 bg-secondary bg-opacity-30 backdrop-blur rounded-md p-4 border border-primary">
+      <div className="mt-6 mb-10">
         <h3 className="text-2xl font-extrabold">Schedule Settings</h3>
         <p className="mb-5">
           Configure global and default schedule settings for Streamarr.

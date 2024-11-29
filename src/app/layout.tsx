@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import Layout from '@app/components/Layout';
 import NotificationProvider from '@app/context/NotificationContext';
 import Notifications from '@app/components/Layout/Notifications';
+import { SettingsProvider } from '@app/context/SettingsContext';
 
 const inter = Inter({
   weight: ['300'],
@@ -44,21 +45,23 @@ export default function RootLayout({
       className={`${inter.className} scroll-smooth`}
       data-theme="streamarr"
     >
-      <InteractionProvider>
-        <head>
-          <PWAHeader applicationTitle={applicationTitle} />
-        </head>
-        <ServiceWorkerSetup />
-      </InteractionProvider>
-      <body className="bg-[#1f1f1f]">
-        <NextTopLoader color="#974ede" />
-        <PullToRefresh />
-        <Toaster />
-        <NotificationProvider>
-          <Notifications />
-          {component}
-        </NotificationProvider>
-      </body>
+      <SettingsProvider currentSettings={null}>
+        <InteractionProvider>
+          <head>
+            <PWAHeader applicationTitle={applicationTitle} />
+          </head>
+          <ServiceWorkerSetup />
+          <body className="bg-[#1f1f1f]">
+            <NextTopLoader color="#974ede" />
+            <PullToRefresh />
+            <Toaster />
+            <NotificationProvider>
+              <Notifications />
+              {component}
+            </NotificationProvider>
+          </body>
+        </InteractionProvider>
+      </SettingsProvider>
     </html>
   );
 }
