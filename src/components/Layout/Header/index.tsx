@@ -14,7 +14,7 @@ const Header = ({ isInView = true }) => {
   return (
     <header
       id="top"
-      className={`navbar sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-10`}
+      className={`navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-10`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
@@ -39,7 +39,7 @@ const Header = ({ isInView = true }) => {
           )}
           {isAuthed ? (
             !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
-              <div className="max-sm:hidden">
+              <div className="max-sm:hidden -mt-1">
                 <UserDropdown />
               </div>
             ) : (

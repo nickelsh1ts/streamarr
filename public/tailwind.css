@@ -4819,6 +4819,10 @@ code {
   height: 100%;
 }
 
+.h-14 {
+  height: 3.5rem;
+}
+
 .max-h-\[85dvh\] {
   max-height: 85dvh;
 }
@@ -4866,6 +4870,14 @@ code {
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+.min-h-0 {
+  min-height: 0px;
+}
+
+.min-h-14 {
+  min-height: 3.5rem;
 }
 
 .\!w-32 {
@@ -6295,6 +6307,18 @@ code {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
+.pt-\[0\.7rem\] {
+  padding-top: 0.7rem;
+}
+
+.pt-\[0\.6rem\] {
+  padding-top: 0.6rem;
 }
 
 .text-left {
