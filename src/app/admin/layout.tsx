@@ -51,7 +51,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   ];
 
   return (
-    <div className="max-sm:mb-16">
+    <div className="max-sm:mb-14">
       <div className="mt-2 px-4">
         <AdminTabs AdminRoutes={AdminRoutes} />
       </div>
