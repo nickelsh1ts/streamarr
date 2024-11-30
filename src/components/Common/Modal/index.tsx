@@ -23,10 +23,16 @@ export default function Modal({
 }: Props) {
   return (
     <Dialog onClose={onClose} open={show}>
-      <DialogBackdrop className="fixed inset-0 z-[1050] w-full bg-base-300 backdrop-blur-sm bg-opacity-30" />
-      <div className="fixed inset-0 z-[1050] w-screen overflow-y-auto">
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 z-[1050] w-full bg-base-300 backdrop-blur-sm bg-opacity-30 transition-opacity data-[closed]:opacity-0"
+      />
+      <div className="fixed inset-0 max-sm:bottom-16 z-[1050] w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <DialogPanel className="relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full sm:max-w-xl border border-primary">
+          <DialogPanel
+            transition
+            className="relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full sm:max-w-xl border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full"
+          >
             <div className="absolute pt-1 pr-1 top-0 right-0">
               <button
                 type="button"
