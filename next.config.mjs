@@ -13,6 +13,25 @@ const nextConfig = {
   env: {
     commitTag: process.env.COMMIT_TAG || 'local',
   },
+  async redirects() {
+    return [
+      {
+        source: '/watch',
+        destination: '/watch/web/index.html#!',
+        permanent: false,
+      },
+      {
+        source: '/watch{/:path((?!web).*)}',
+        destination: '/watch/web/index.html#!',
+        permanent: false,
+      },
+      {
+        source: '/watch/web{/:slug((?!index.html).*)}',
+        destination: '/watch/web/index.html#!',
+        permanent: false,
+      },
+    ];
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,

@@ -30,7 +30,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
       }}
       role="button"
       tabIndex={0}
-      className={`flex items-center rounded-lg p-2 text-xs transition duration-300 pointer-events-auto ${
+      className={`flex items-center rounded-lg p-2 pl-5 text-xs transition duration-300 pointer-events-auto ${
         data.updateAvailable
           ? 'bg-warning bg-opacity-60 backdrop-blur text-white hover:bg-opacity-50'
           : 'bg-primary bg-opacity-30 backdrop-blur text-primary-content hover:bg-opacity-20'

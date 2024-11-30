@@ -139,7 +139,7 @@ const DropDownMenu = ({
         </Tooltip>
         <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute menu min-w-52 text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
+            className={`absolute z-50 menu min-w-52 text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
           >
             <div className={`${styleClasses.dropdownClasses}`}>
               {title && (

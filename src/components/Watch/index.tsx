@@ -65,7 +65,7 @@ const Watch = ({ children, ...props }) => {
           console.log('Double click detected!');
         });
       });
-    }, 300);
+    }, 600);
   });
 
   useEffect(() => {
@@ -74,33 +74,28 @@ const Watch = ({ children, ...props }) => {
         router.replace('/watch/web/index.html' + innerFrame.location.hash);
       }
     });
-  });
-
-  if (!pathname.includes('/watch/web/index.html')) {
-    router.push('/watch/web/index.html');
-  } else {
-    return (
-      <>
-        <iframe
-          {...props}
-          loading="eager"
-          onLoad={() => {
-            setTimeout(() => {
-              setLoadingIframe(false);
-            }, 1000);
-          }}
-          ref={setContentRef}
-          className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-          src={`https://streamarr.nickelsh1ts.com${url && url.replace('null', '')}`}
-          allowFullScreen
-          title="Plex"
-        >
-          {mountNode && createPortal(children, mountNode)}
-        </iframe>
-        {loadingIframe ? <LoadingEllipsis fixed /> : null}
-      </>
-    );
-  }
+  }, [hash, innerFrame, router]);
+  return (
+    <>
+      <iframe
+        {...props}
+        loading="eager"
+        onLoad={() => {
+          setTimeout(() => {
+            setLoadingIframe(false);
+          }, 1000);
+        }}
+        ref={setContentRef}
+        className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
+        src={`https://streamarr.nickelsh1ts.com${url && url.replace('null', '')}`}
+        allowFullScreen
+        title="Plex"
+      >
+        {mountNode && createPortal(children, mountNode)}
+      </iframe>
+      {loadingIframe ? <LoadingEllipsis fixed /> : null}
+    </>
+  );
 };
 
 export default Watch;
