@@ -32,7 +32,9 @@ export default function RootLayout({
   let component: React.ReactNode;
 
   if (
-    pathname.match(/\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|\/?$)/)
+    pathname.match(
+      /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|\/?$)/
+    )
   ) {
     component = children;
   } else {

@@ -1,5 +1,6 @@
 'use client';
 import Accordion from '@app/components/Common/Accordion';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
 import axios from 'axios';
 import Link from 'next/link';
@@ -86,6 +87,9 @@ const SignIn = () => {
 
   return (
     <>
+      <div className="absolute top-4 right-4">
+        <LanguagePicker />
+      </div>
       <div className="container max-w-lg mx-auto py-14 px-4">
         <div className="text-start px-2 mb-4 relative">
           <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
@@ -99,7 +103,7 @@ const SignIn = () => {
           {({ openIndexes, handleClick, AccordionContent }) => (
             <div className="max-w-md my-4 mx-auto w-full backdrop-blur-md text-primary-content">
               <button
-                className={`collapse-title text-start mb-[1px] border-b border-zinc-800 bg-slate-600/40 rounded-t-lg ${
+                className={`collapse-title text-start mb-[1px] border border-primary bg-primary/40 rounded-t-lg ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -109,7 +113,7 @@ const SignIn = () => {
                 account
               </button>
               <AccordionContent isOpen={openIndexes.includes(0)}>
-                <div className="p-3 place-content-center bg-brand-dark/50">
+                <div className="p-3 place-content-center border border-secondary bg-secondary/50">
                   <PlexLoginButton
                     isProcessing={isProcessing}
                     onAuthToken={(authToken) => setAuthToken(authToken)}
@@ -117,7 +121,7 @@ const SignIn = () => {
                 </div>
               </AccordionContent>
               <button
-                className={`collapse-title text-start bg-slate-600/40 ${
+                className={`collapse-title text-start border border-primary bg-primary/40 ${
                   openIndexes.includes(1)
                     ? 'text-primary-content cursor-not-allowed'
                     : 'rounded-b-lg'
@@ -127,7 +131,7 @@ const SignIn = () => {
                 Sign with Streamarr
               </button>
               <AccordionContent isOpen={openIndexes.includes(1)}>
-                <div className="p-4 place-content-center bg-brand-dark/50 rounded-b-lg">
+                <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
                   <form method="post" className="mt-4">
                     <div
                       className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}

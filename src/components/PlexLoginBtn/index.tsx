@@ -43,7 +43,20 @@ const PlexLoginButton = ({
       >
         <ArrowLeftEndOnRectangleIcon className="h-7 w-7" />
         <span className="font-extrabold text-lg">
-          {loading ? 'loading' : isProcessing ? 'Signing In...' : 'Sign In'}
+          {loading ? (
+            'loading'
+          ) : isProcessing ? (
+            'Signing In...'
+          ) : (
+            <>
+              Sign In with{' '}
+              <img
+                alt="Plex"
+                src="https://www.plex.tv/wp-content/themes/plex/assets/img/plex-logo.svg"
+                className="inline-flex w-10 h-auto"
+              />
+            </>
+          )}
         </span>
       </button>
     </span>

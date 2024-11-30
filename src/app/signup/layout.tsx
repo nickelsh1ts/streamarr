@@ -3,5 +3,5 @@ export default function SignInLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section>{children}</section>;
+  return <section className="h-[calc(100dvh-4rem)]">{children}</section>;
 }
