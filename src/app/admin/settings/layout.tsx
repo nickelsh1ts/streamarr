@@ -24,6 +24,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/admin\/settings\/plex/,
     },
     {
+      text: 'Overseerr',
+      route: '/request/settings',
+      regex: /^\/request\/settings/,
+    },
+    {
       text: 'Services',
       route: '/admin/settings/services',
       regex: /^\/admin\/settings\/services/,

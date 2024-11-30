@@ -45,7 +45,7 @@ const GeneralSettings = () => {
                   Toast({
                     icon: <XCircleIcon className="size-7" />,
                     title: 'Error: Failed to revalidate API',
-                    type: 'success',
+                    type: 'error',
                   })
                 }
               >

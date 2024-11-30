@@ -38,8 +38,18 @@ const AdminUsers = () => {
   const isUserPermsEditable = (userId: number) => userId !== 1;
 
   return (
-    <div className="mt-6 mx-4">
-      <Header>User list</Header>
+    <div className="mx-4">
+      <div className="flex flex-col justify-between sm:flex-row sm:items-end">
+        <Header>User list</Header>
+        <div className="flex flex-grow flex-col sm:flex-row sm:flex-grow-0">
+          <Link
+            href={'/request/users'}
+            className="btn btn-primary btn-sm rounded-md disabled:btn-secondary"
+          >
+            Overseerr Users
+          </Link>
+        </div>
+      </div>
       <Table>
         <thead>
           <tr>

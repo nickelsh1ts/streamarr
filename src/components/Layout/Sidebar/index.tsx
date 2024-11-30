@@ -11,8 +11,6 @@ import {
   TvIcon,
   ClockIcon,
   ExclamationTriangleIcon,
-  UsersIcon,
-  CogIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/solid';
 import { usePathname } from 'next/navigation';
@@ -322,16 +320,6 @@ export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
       href: '/request/issues',
       title: 'Issues',
       icon: <ExclamationTriangleIcon className="w-7 h-7" />,
-    },
-    {
-      href: '/request/users',
-      title: 'Users',
-      icon: <UsersIcon className="w-7 h-7" />,
-    },
-    {
-      href: '/request/settings',
-      title: 'Settings',
-      icon: <CogIcon className="w-7 h-7" />,
     },
   ];
 
