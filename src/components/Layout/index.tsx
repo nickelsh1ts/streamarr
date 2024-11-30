@@ -104,7 +104,7 @@ const Layout = ({
         className={`${isAuthed && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
       >
         <div
-          className={`${pathname.match(/^\/(signin|signup)\/?/) ? 'min-h-[calc(100dvh-4rem)]' : 'min-h-[calc(100dvh-8rem)] sm:min-h-[calc(100dvh-4rem)]'} flex flex-col flex-grow relative`}
+          className={`${pathname.match(/^\/(signin|signup)\/?/) ? 'min-h-[calc(100dvh-4rem)]' : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'} flex flex-col flex-grow relative`}
         >
           {children}
         </div>
