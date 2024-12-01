@@ -35,9 +35,10 @@ const HelpContent = () => {
       <p className="italic text-sm my-4">
         <span className="text-error font-bold">Important Information</span>:
         Until you accept this invite, your Ple
-        <span className="text-accent">x</span>&trade; account will not have
-        access to <span className="text-primary font-bold">Streamarr</span>{' '}
-        content.
+        <span className="text-accent">
+          x
+        </span>&trade; account will not have access to{' '}
+        <span className="text-primary font-bold">Streamarr</span> content.
       </p>
       <div className="mt-5 font-extrabold" id="second">
         Next, we can login and start setting up your account
