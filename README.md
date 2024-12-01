@@ -2,7 +2,7 @@
 <img src="./public/logo_full.png" alt="Streamarr" style="margin: 20px 0;">
 </p>
 
-**Streamarr** is a an open source web application meant to wrap an existing *Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience. 
+**Streamarr** is a an open source web application meant to wrap an existing \*Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience.
 
 ## Current Features
 
@@ -12,7 +12,7 @@
 - Integrated with Overseerr for a complete user experience for streaming, requesting and reporting issues.
 - A fully customizable user permission system.
 - Built as a PWA so users can access on-the-go or on a PC.
-- Supports most* Plex library types: Movies, TV Shows, Music and live TV.
+- Supports most\* Plex library types: Movies, TV Shows, Music and live TV.
 - An integrated Help Center for clear user instructions and support.
 
 ## Planned Features
@@ -20,6 +20,8 @@
 - An integrated notification system with custom notification triggers.
 - Enable Customization of the Help Center.
 - Fully customizable email newsletters and communications.
+- Disable the home page.
+- Theme and Logo customization.
 
 With more features to come! Check out the [issue tracker](https://github.com/nickelsh1ts/streamarr/issues) to see what's been requested already.
 

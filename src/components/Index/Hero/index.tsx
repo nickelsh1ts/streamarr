@@ -129,7 +129,7 @@ export default function Hero() {
                 htmlFor="icode"
                 className="label-text mb-2 text-sm md:text-base"
               >
-                Currently by invite only. Enter an invite code to join us!
+                Get started by entering your invite code below.
               </label>
             </div>
             <div className="flex items-end mb-3">
@@ -172,9 +172,14 @@ export default function Hero() {
               </div>
             </div>
           </form>
-          <div className="p-0 mt-3 md:mt-7 mb-3">
-            <span className="font-bold">Movies: </span>613{' '}
-            <span className="text-accent">&#124;</span>
+          <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
+            <p className="first:pl-0 pl-4">
+              <span className="font-bold">Movies: </span> 613
+            </p>
+            <p className="first:pl-0 pl-4">TV Shows: 166</p>
+            <p className="first:pl-0 pl-4">Kids Shows: 8</p>
+            <p className="first:pl-0 pl-4">Retro Movies: 128</p>
+            <p className="first:pl-0 pl-4">Retro TV Shows: 104</p>
           </div>
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">

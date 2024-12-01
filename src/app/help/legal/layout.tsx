@@ -19,7 +19,6 @@ export default function LegalLayout({
 }>) {
   return (
     <>
-      <style>{`body { background-color: #f4f4f5; }`}</style>
       <Header />
       {children}
       <Footer />

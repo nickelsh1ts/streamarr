@@ -11,7 +11,7 @@ const LegalPage = () => {
       <div className="py-5 bg-zinc-100 text-neutral" style={null}>
         <Breadcrumbs paths="/legal" homeElement={'Help Centre'} names="Legal" />
       </div>
-      <section className="py-5 my-auto">
+      <section className="py-5 my-auto bg-zinc-100">
         <main className=" container max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto place-content-center p-4 space-y-5">
           <div role="tablist" className="tabs tabs-lifted">
             <input

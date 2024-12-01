@@ -43,6 +43,12 @@
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
 }
+* {
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+.font-base {
+  font-weight: 700!important;
+}
 svg {
   display: initial;
 }
