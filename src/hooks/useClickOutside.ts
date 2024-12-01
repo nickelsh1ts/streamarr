@@ -20,9 +20,17 @@ const useClickOutside = (
       }
     };
     document.body.addEventListener('click', handleBodyClick, { capture: true });
+    document
+      .querySelector('iframe')
+      ?.contentDocument?.addEventListener('click', handleBodyClick, {
+        capture: true,
+      });
 
     return () => {
       document.body.removeEventListener('click', handleBodyClick);
+      document
+        .querySelector('iframe')
+        ?.contentDocument?.removeEventListener('click', handleBodyClick);
     };
   }, [ref, callback]);
 };

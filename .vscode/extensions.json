@@ -1,5 +1,4 @@
 {
-  // see
   //  - https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
   "recommendations": [
     // https://marketplace.visualstudio.com/items?itemName=EditorConfig.editorconfig
@@ -11,6 +10,24 @@
     // https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
     "esbenp.prettier-vscode",
 
-    "stylelint.vscode-stylelint"
+    "stylelint.vscode-stylelint",
+
+    "streetsidesoftware.code-spell-checker",
+
+    "ms-vscode.vscode-typescript-next",
+
+    "stylelint.vscode-stylelint",
+
+    "bradlc.vscode-tailwindcss",
+
+    "pulkitgangwar.nextjs-snippets",
+
+    "ecmel.vscode-html-css",
+
+    "eamodio.gitlens",
+
+    "dsznajder.es7-react-js-snippets",
+
+    "usernamehw.errorlens"
   ]
 }

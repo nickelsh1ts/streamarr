@@ -1,4 +1,5 @@
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+
 export default function Loading() {
-    // Or a custom loading skeleton component
-    return;
-  }
+  return <LoadingEllipsis fixed />;
+}

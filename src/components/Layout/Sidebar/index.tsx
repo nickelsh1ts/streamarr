@@ -1,0 +1,351 @@
+'use client';
+import LibraryMenu, { SingleItem } from '@app/components/Layout/LibraryMenu';
+import DropDownMenu from '@app/components/Common/DropDownMenu';
+import {
+  HomeIcon,
+  CalendarDateRangeIcon,
+  PaperAirplaneIcon,
+  WrenchIcon,
+  XMarkIcon,
+  FilmIcon,
+  TvIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  ChevronDownIcon,
+} from '@heroicons/react/24/solid';
+import { usePathname } from 'next/navigation';
+import useHash from '@app/hooks/useHash';
+import UserDropdown from '@app/components/Layout/UserDropdown';
+import type { SetStateAction } from 'react';
+import { useState } from 'react';
+import Accordion from '@app/components/Common/Accordion';
+import Image from 'next/image';
+import VersionStatus from '@app/components/Layout/VersionStatus';
+interface MenuLinksProps {
+  href: string;
+  title: string;
+  icon: React.ReactNode;
+}
+
+const Sidebar = () => {
+  const path = usePathname() + useHash();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <header
+        id="sidebar"
+        className="w-fit transition duration-500 drawer font-bold z-[1006] max-sm:hidden lg:hidden"
+      >
+        <input
+          id="my-drawer-3"
+          type="checkbox"
+          className="drawer-toggle pointer-events-auto"
+          checked={isOpen}
+          onClick={() => setIsOpen(!isOpen)}
+          onChange={() => setIsOpen(!isOpen)}
+        />
+        <div
+          className={`flex-none print:hidden lg:hidden pointer-events-auto ${path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
+        >
+          <label
+            htmlFor="my-drawer-3"
+            aria-label="open sidebar"
+            className="inline-flex h-10 min-h-10 flex-shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:!text-primary cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-7 w-7 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </label>
+        </div>
+        <div className="drawer-side lg:hidden">
+          <label
+            htmlFor="my-drawer-3"
+            aria-label="close sidebar"
+            className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
+          />
+          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
+            <div className="flex flex-row place-items-center place-content-between mb-2">
+              <img
+                src="/logo_full.png"
+                alt="logo"
+                className="my-2 mx-4 h-auto w-44"
+              />
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="close sidebar"
+                className="text-zinc-300 hover:text-white hover:cursor-pointer"
+              >
+                <XMarkIcon className="w-7 h-7" />
+              </button>
+            </div>
+            <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            <div className="mt-auto">
+              <VersionStatus onClick={() => setIsOpen(!isOpen)} />
+              {path.includes('/watch/web/index.html') && (
+                <>
+                  <div className="bg-zinc-300/40 h-0.5 my-4"></div>
+                  <div className="flex flex-row place-content-end">
+                    <DropDownMenu
+                      dropUp
+                      toolTip
+                      ttplacement="top"
+                      title="settings"
+                      tiptitle="settings"
+                      dropdownIcon={
+                        <WrenchIcon className="w-6 h-6 scale-x-[-1]" />
+                      }
+                    >
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/web/general"
+                      >
+                        General
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/web/quality"
+                      >
+                        Quality
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/web/player"
+                      >
+                        Player
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/online-media-sources"
+                        divide="before"
+                      >
+                        Online Media Sources
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/devices/all"
+                      >
+                        Authorized Devices
+                      </DropDownMenu.Item>
+                    </DropDownMenu>
+                  </div>
+                </>
+              )}
+            </div>
+          </ul>
+        </div>
+      </header>
+      {path.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && (
+        <div className="fixed top-0 right-0 mt-2 me-2 z-[1000] lg:flex lg:flex-shrink-0 flex-nowrap pointer-events-none">
+          <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
+            <DropDownMenu
+              title="settings"
+              tiptitle="settings"
+              toolTip
+              ttplacement="bottom"
+              dropdownIcon={<WrenchIcon className="w-6 h-6 scale-x-[-1]" />}
+            >
+              <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/general">
+                General
+              </DropDownMenu.Item>
+              <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/quality">
+                Quality
+              </DropDownMenu.Item>
+              <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/player">
+                Player
+              </DropDownMenu.Item>
+              <DropDownMenu.Item
+                href="/watch/web/index.html#!/settings/online-media-sources"
+                divide="before"
+              >
+                Online Media Sources
+              </DropDownMenu.Item>
+              <DropDownMenu.Item href="/watch/web/index.html#!/settings/devices/all">
+                Authorized Devices
+              </DropDownMenu.Item>
+            </DropDownMenu>
+          </div>
+          <div className="pointer-events-auto max-sm:hidden">
+            <UserDropdown tooltip />
+          </div>
+        </div>
+      )}
+      <ul
+        id="sidebarMenu"
+        className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral-700 font-base`}
+      >
+        <SidebarMenu />
+        <div className="mt-auto">
+          <VersionStatus />
+        </div>
+      </ul>
+    </>
+  );
+};
+
+interface SidebarProps {
+  onClick?: (value: SetStateAction<boolean>) => void;
+  isOpen?: boolean;
+}
+
+export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
+  const path = usePathname() + useHash();
+
+  return (
+    <div className="space-y-1 mb-1">
+      <Accordion
+        single
+        atLeastOne
+        initialOpenIndexes={path.match(/^\/request\/?(.*)?\/?/) ? [1] : [0]}
+      >
+        {({ openIndexes, handleClick, AccordionContent }) => (
+          <span className="pointer-events-auto">
+            <div className="flex mb-1">
+              <SingleItem
+                className="flex-1"
+                linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
+                liKey={'home'}
+                onClick={() => {
+                  onClick && onClick(!isOpen);
+                  handleClick(0);
+                }}
+                href={'/watch/web/index.html#!'}
+                title={'Home'}
+                icon={<HomeIcon className="size-7" />}
+                active={path.match(/\/watch\/web\/index\.html#?!?\/?$/)}
+              />
+              <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
+                <button
+                  onClick={() => handleClick(0)}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                >
+                  <ChevronDownIcon className="size-5" />
+                </button>
+              </li>
+            </div>
+            <AccordionContent isOpen={openIndexes.includes(0)}>
+              <LibraryMenu isOpen={isOpen} setIsOpen={onClick} />
+            </AccordionContent>
+            <div className="flex">
+              <SingleItem
+                className="flex-1"
+                linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
+                liKey={'request'}
+                onClick={() => {
+                  onClick && onClick(!isOpen);
+                  handleClick(1);
+                }}
+                href={'/request'}
+                title={'Request'}
+                icon={
+                  <Image
+                    alt="Overseerr"
+                    width={28}
+                    height={28}
+                    src={'/external/os-icon.svg'}
+                  />
+                }
+                active={path.match(/^\/request\/?$/)}
+              />
+              <li className={`${openIndexes.includes(1) ? 'hidden' : ''}`}>
+                <button
+                  onClick={() => handleClick(1)}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                >
+                  <ChevronDownIcon className="size-5" />
+                </button>
+              </li>
+            </div>
+            <AccordionContent isOpen={openIndexes.includes(1)}>
+              <RequestMenu onClick={onClick} />
+            </AccordionContent>
+          </span>
+        )}
+      </Accordion>
+      <SingleItem
+        liKey={'invites'}
+        onClick={() => onClick && onClick(!isOpen)}
+        isOpen={isOpen}
+        href={'/invites'}
+        title={'Invite'}
+        icon={<PaperAirplaneIcon className="size-7" />}
+        active={path.match(/^\/invites\/?/)}
+      />
+      <SingleItem
+        liKey={'schedule'}
+        onClick={() => onClick && onClick(!isOpen)}
+        isOpen={isOpen}
+        href={'/schedule'}
+        title={'Release Schedule'}
+        icon={<CalendarDateRangeIcon className="size-7" />}
+        active={path.match(/\/schedule\/?/)}
+      />
+    </div>
+  );
+};
+
+interface RequestMenuProps {
+  onClick: (value: SetStateAction<boolean>) => void;
+  isOpen?: boolean;
+}
+
+export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
+  const RequestLinks: MenuLinksProps[] = [
+    {
+      href: '/request/discover/movies',
+      title: 'Movies',
+      icon: <FilmIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/discover/tv',
+      title: 'Series',
+      icon: <TvIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/requests',
+      title: 'Requests',
+      icon: <ClockIcon className="w-7 h-7" />,
+    },
+    {
+      href: '/request/issues',
+      title: 'Issues',
+      icon: <ExclamationTriangleIcon className="w-7 h-7" />,
+    },
+  ];
+
+  const path = usePathname() + useHash();
+  return (
+    <ul className="menu m-0 p-0 space-y-1 mt-1">
+      {RequestLinks.map((link) => {
+        return (
+          <SingleItem
+            key={link.title}
+            liKey={link.title}
+            onClick={() => onClick && onClick(!isOpen)}
+            href={link.href}
+            title={link.title}
+            icon={link.icon}
+            active={
+              (path.includes(link.href) &&
+                !link.href.match(/^\/request\/?$/)) ||
+              (link.href.match(/^\/request\/?$/) &&
+                path.match(/^\/request\/?$/))
+            }
+          />
+        );
+      })}
+    </ul>
+  );
+};
+
+export default Sidebar;
