@@ -47,7 +47,7 @@ export default function RootLayout({
             />
           </head>
           <ServiceWorkerSetup />
-          <body className="bg-[#1f1f1f] min-h-dvh main">
+          <body className="bg-[#1f1f1f] min-h-dvh">
             <NextTopLoader color="#974ede" />
             <PullToRefresh />
             <Toaster />
