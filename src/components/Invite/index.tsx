@@ -32,9 +32,9 @@ const Invite = () => {
   } else {
     user = {
       id: parseInt(userQuery.userid),
-      displayName: 'SantiagoAcevedo',
+      displayName: 'DemoUser',
       avatar: '/android-chrome-192x192.png',
-      email: 'query@streamarr.dev',
+      email: 'demo@streamarr.dev',
       createdAt: moment().toDate(),
       InvitesRemaining: 4,
     };

@@ -17,7 +17,7 @@ interface UserType {
 
 const user: UserType = {
   name: 'nickelsh1ts',
-  email: 'ni.wege@gmail.com',
+  email: 'nickelsh1ts@streamarr.dev',
   admin: true,
 };
 
