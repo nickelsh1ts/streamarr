@@ -84,7 +84,7 @@ const Layout = ({
 }>) => {
   const pathname = usePathname();
   return (
-    <main id='main' className="flex flex-col relative h-full min-h-full min-w-0 main">
+    <main className="flex flex-col relative h-full min-h-full min-w-0">
       <Header />
       {isAuthed && <MobileMenu />}
       {pathname.match(/^\/(signin|signup)\/?/) && (
