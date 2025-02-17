@@ -94,7 +94,7 @@
     "eslint-plugin-react": "7.37.2",
     "eslint-plugin-react-hooks": "5.0.0",
     "extract-react-intl-messages": "4.1.1",
-    "globals": "^15.12.0",
+    "globals": "^15.15.0",
     "lint-staged": "15.2.10",
     "prettier": "3.4.1",
     "prettier-plugin-organize-imports": "4.1.0",
