@@ -4,12 +4,46 @@ import UserDropdown from '@app/components/Layout/UserDropdown';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { isAuthed } from '@app/app/layout';
 import BackButton from '@app/components/Layout/BackButton';
 import DynamicLogo from '@app/components/Layout/DynamicLogo';
+import { verifySession } from '@app/lib/dal';
+import { useEffect, useState } from 'react';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
+  const [data, setData] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await verifySession();
+        if (!response) {
+          throw new Error('Failed to fetch');
+        }
+        const result = await response;
+        setData(result.isAuthed);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    <LoadingEllipsis />;
+  }
+
+  if (error) {
+    console.log(error);
+  }
+
+  const isAuthed = data;
 
   return (
     <header

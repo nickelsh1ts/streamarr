@@ -10533,6 +10533,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.0.11":
+  version: 6.0.11
+  resolution: "jose@npm:6.0.11"
+  checksum: 10c0/d290be4532174e7a53730b7fb84c74327531172bd403b196c592b312b73eedb7489949837bfe831fdbd280799bfc5ba778bc807495a73eda08ae6c49414f405a
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -14710,6 +14717,7 @@ __metadata:
     formik: "npm:^2.4.6"
     globals: "npm:^15.12.0"
     intl: "npm:1.2.5"
+    jose: "npm:^6.0.11"
     lint-staged: "npm:15.2.10"
     moment: "npm:^2.30.1"
     next: "npm:^14.2.14"

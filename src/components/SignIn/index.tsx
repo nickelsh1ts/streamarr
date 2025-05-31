@@ -2,6 +2,7 @@
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
+import { signin } from '@app/lib/auth';
 import axios from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -19,7 +20,6 @@ const SignIn = () => {
       setProcessing(true);
       try {
         const response = await axios.post('/api/v1/auth/plex', { authToken });
-
         if (response.data?.id) {
           // revalidate();
         }
@@ -31,6 +31,7 @@ const SignIn = () => {
     };
     if (authToken) {
       login();
+      signin(authToken);
     }
   }, [authToken]);
 

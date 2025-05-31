@@ -14,8 +14,6 @@ import { SettingsProvider } from '@app/context/SettingsContext';
 
 const applicationTitle = 'Streamarr';
 
-export const isAuthed = true;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +24,7 @@ export default function RootLayout({
 
   if (
     pathname.match(
-      /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|\/?$)/
+      /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|logout|\/?$)/
     )
   ) {
     component = children;
