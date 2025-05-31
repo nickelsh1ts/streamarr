@@ -13,7 +13,9 @@
     "format:check": "prettier 'src/**/*.{css,js,ts,tsx}' --check --cache .",
     "typecheck": "yarn typecheck:client",
     "typecheck:client": "tsc --noEmit",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "css-build": "tailwindcss -o public/tailwind.css",
+    "css-watch": "tailwindcss -o public/tailwind.css --watch"
   },
   "repository": {
     "type": "git",
