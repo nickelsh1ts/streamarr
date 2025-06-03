@@ -26,7 +26,7 @@ export async function decrypt(session: string | undefined = '') {
   }
 }
 
-export async function updateSession() {
+export async function updateSession(admin: boolean) {
   const session = (await cookies()).get('myStreamarrSession')?.value;
   const payload = await decrypt(session);
 
@@ -34,10 +34,17 @@ export async function updateSession() {
     return null;
   }
 
+  if (payload?.admin === admin) {
+    return null;
+  }
+
+  const userId = payload?.userId;
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
+  const newSession = await encrypt({ userId, admin, expires });
+
   const cookieStore = await cookies();
-  cookieStore.set('myStreamarrSession', session, {
+  cookieStore.set('myStreamarrSession', newSession, {
     httpOnly: true,
     secure: true,
     expires: expires,
@@ -46,9 +53,9 @@ export async function updateSession() {
   });
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, admin: boolean) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
+  const session = await encrypt({ userId, admin, expiresAt });
   const cookieStore = await cookies();
 
   cookieStore.set('myStreamarrSession', session, {
