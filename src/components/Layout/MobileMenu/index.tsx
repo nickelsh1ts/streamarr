@@ -140,7 +140,7 @@ const MobileMenu = () => {
       <Transition
         show={isOpen}
         as="div"
-        className="absolute top-0 left-0 right-0 flex w-full max-h-[85dvh] overflow-scroll transition ease-out duration-500 opacity-100 -translate-y-full data-[leave]:duration-500 data-[leave]:opacity-0 data-[leave]:translate-y-0 data-[closed]:opacity-0 data-[closed]:translate-y-0 flex-col border-t border-primary bg-primary bg-opacity-30 px-6 pt-6 font-semibold backdrop-blur"
+        className="absolute top-0 left-0 right-0 flex w-full max-h-[85dvh] transition ease-out duration-500 opacity-100 -translate-y-full data-[leave]:duration-500 data-[leave]:opacity-0 data-[leave]:translate-y-0 data-[closed]:opacity-0 data-[closed]:translate-y-0 flex-col border-t border-primary bg-primary bg-opacity-30 px-6 pt-6 font-semibold backdrop-blur"
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
@@ -192,7 +192,7 @@ const MobileMenu = () => {
                 })}
               </ul>
             )}
-            <ul className="menu p-0 m-0 mt-2">
+            <ul className="menu p-0 m-0 mt-2 mb-2">
               <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
                 <button
                   onClick={() => setMenuType('library')}

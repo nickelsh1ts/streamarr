@@ -48,7 +48,7 @@ const Header = ({ isInView = true }) => {
   return (
     <header
       id="top"
-      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-10`}
+      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (

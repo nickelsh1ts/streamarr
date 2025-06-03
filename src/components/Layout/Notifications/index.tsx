@@ -3,11 +3,7 @@ import { NotificationContext } from '@app/context/NotificationContext';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import {
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-  TrashIcon,
-} from '@heroicons/react/24/solid';
+import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import moment from 'moment';
 import { usePathname } from 'next/navigation';
 import { useContext, useRef } from 'react';
@@ -20,12 +16,16 @@ interface NotificationCardProps {
 }
 
 const NotificationCard = ({ icon, title, children, createdDate }) => {
+  const { setIsOpen } = useContext(NotificationContext);
   return (
     <div className="flex p-2 space-y-1 flex-col bg-base-100 text-white bg-opacity-80 w-full rounded-md relative">
       <div className="flex items-center">
         {icon}
         <span className="font-bold ml-1 w-full pr-2">{title}</span>
-        <button className="p-1 m-1 rounded-md focus:outline-none focus:ring-2 focus:ring-error-content hover:opacity-70 bg-error">
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-1 m-1 rounded-md focus:outline-none focus:ring-2 focus:ring-error-content hover:opacity-70 bg-error"
+        >
           <TrashIcon className="size-4" />
         </button>
       </div>
@@ -41,16 +41,15 @@ const NotificationCard = ({ icon, title, children, createdDate }) => {
 
 const currentNotifications: NotificationCardProps[] = [
   {
-    icon: <InformationCircleIcon className="size-6 text-error" />,
-    title: 'Update available',
-    children: <p>New version 0.0.12 available!</p>,
-    createdDate: moment('2024-11-21').toDate(),
-  },
-  {
-    icon: <ExclamationTriangleIcon className="size-6 text-warning" />,
-    title: 'Update available',
-    children: <p>New version 0.0.10 available!</p>,
-    createdDate: moment('2024-10-21').toDate(),
+    icon: <InformationCircleIcon className="size-6 text-warning" />,
+    title: 'Currently Unavailable',
+    children: (
+      <p>
+        The notification center is currently under active development. Check
+        back later.
+      </p>
+    ),
+    createdDate: moment('2025-06-02').toDate(),
   },
 ];
 
@@ -69,7 +68,7 @@ const Notifications = () => {
         <div className="w-full bg-primary/50 h-20 content-center p-4 flex flex-wrap justify-between items-center">
           <span>
             <h3 className="text-lg font-bold">Notifications</h3>
-            <p className="text-sm font-thin text-neutral-300">1 unread</p>
+            <p className="text-sm font-thin text-neutral-300">0 unread</p>
           </span>
           <button
             className="hover:opacity-70 p-1 size-8"

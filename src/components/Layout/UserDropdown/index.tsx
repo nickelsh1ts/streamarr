@@ -13,7 +13,7 @@ const UserDropdown = ({
 }: UserDropdownProps) => {
   return (
     <div className="indicator">
-      <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block" />
+      <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block !hidden" />
       <DropDownMenu
         toolTip={tooltip}
         tiptitle="Account"
@@ -48,7 +48,7 @@ const UserDropdown = ({
           Get Support
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/logout" divide="before">
-          Log Out Of Streamarr
+          Sign Out of Streamarr
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

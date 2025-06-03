@@ -81,7 +81,7 @@ function FAQs() {
                 To invite a friend simply log into your account, select options
                 from the menu and click invite a friend. Share the generated
                 code with your friend and send them to{' '}
-                <span className="text-primary">Streamarr</span>.com/join or
+                <span className="text-primary">Streamarr</span>.com/signup or
                 click the share button!
               </p>
             </div>
@@ -99,7 +99,7 @@ function FAQs() {
                 consoles, set-top boxes, and smart TVs or at{' '}
                 <span className="text-primary">Stremarr</span>.com. For a
                 complete list of supported and compatible devices, click{' '}
-                <Link href="/help/devices" className="link-accent">
+                <Link href="/help/watching-streamarr/devices" className="link-accent">
                   here.
                 </Link>
               </p>

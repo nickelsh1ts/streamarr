@@ -114,7 +114,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1">
+    <ul className="menu m-0 p-0 space-y-1 mb-1 overflow-auto grid grid-col">
       {MenuLinks.map((item) => {
         const isActive =
           (url.includes(item.href) &&
