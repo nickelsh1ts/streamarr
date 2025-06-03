@@ -26,7 +26,7 @@ const ServicesUptime = () => {
               id="senderName"
               name="senderName"
               type="text"
-              placeholder="https://streamarr.nickelsh1ts.com/status"
+              placeholder={process.env.NEXT_PUBLIC_BASE_DOMAIN + '/status'}
             />
           </div>
         </div>

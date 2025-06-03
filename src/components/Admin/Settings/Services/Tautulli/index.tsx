@@ -26,7 +26,7 @@ const ServicesTautulli = () => {
               id="senderName"
               name="senderName"
               type="text"
-              placeholder="https://streamarr.nickelsh1ts.com/stats"
+              placeholder={process.env.NEXT_PUBLIC_BASE_DOMAIN + '/stats'}
             />
           </div>
         </div>

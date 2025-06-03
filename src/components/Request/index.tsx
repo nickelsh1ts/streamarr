@@ -43,7 +43,7 @@ const Request = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-4rem)] relative ${loadingIframe && 'invisible'}`}
-        src={`https://streamarr.nickelsh1ts.com/overseerr${url && url.replace('null', '')}`}
+        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN}/overseerr${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >

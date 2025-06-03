@@ -5,7 +5,7 @@ const AdminSubtitles = () => {
     <div className="relative mt-2">
       <DynamicFrame
         title={'subtitles'}
-        domainURL={'https://streamarr.nickelsh1ts.com'}
+        domainURL={process.env.NEXT_PUBLIC_BASE_DOMAIN}
         basePath={'/admin/bazarr'}
         newBase={'/admin/srt'}
       ></DynamicFrame>

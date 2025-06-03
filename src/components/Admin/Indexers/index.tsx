@@ -5,7 +5,7 @@ const AdminIndexers = () => {
     <div className="relative mt-2">
       <DynamicFrame
         title={'indexers'}
-        domainURL={'https://streamarr.nickelsh1ts.com'}
+        domainURL={process.env.NEXT_PUBLIC_BASE_DOMAIN}
         basePath={'/admin/prowlarr'}
         newBase={'/admin/indexers'}
       ></DynamicFrame>

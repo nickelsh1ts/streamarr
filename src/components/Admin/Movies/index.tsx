@@ -5,7 +5,7 @@ const AdminMovies = () => {
     <div className="relative mt-2">
       <DynamicFrame
         title={'movies'}
-        domainURL={'https://streamarr.nickelsh1ts.com'}
+        domainURL={process.env.NEXT_PUBLIC_BASE_DOMAIN}
         basePath={'/admin/radarr'}
         newBase={'/admin/movies'}
       ></DynamicFrame>

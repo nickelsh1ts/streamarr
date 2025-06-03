@@ -64,7 +64,7 @@ const GeneralSettings = () => {
           <div className="col-span-2">
             <input
               className="input input-primary input-sm w-full"
-              placeholder="https://streamarr.nickelsh1ts.com"
+              placeholder={process.env.NEXT_PUBLIC_BASE_DOMAIN}
             />
           </div>
           <label htmlFor="applicationTitle">Display Language</label>

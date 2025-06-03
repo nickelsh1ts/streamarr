@@ -5,9 +5,9 @@ const AdminDownloads = () => {
     <div className="relative mt-2">
       <DynamicFrame
         title={'downloads'}
-        domainURL={'https://streamarr.nickelsh1ts.com'}
-        basePath={'/admin/flood/overview'}
-        newBase={'/admin/downloads/overview'}
+        domainURL={process.env.NEXT_PUBLIC_BASE_DOMAIN}
+        basePath={'/admin/qbt'}
+        newBase={'/admin/downloads'}
       ></DynamicFrame>
     </div>
   );

@@ -22,7 +22,7 @@ const ServicesProwlarr = () => {
         <div className="sm:col-span-2">
           <div className="flex">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
-              https://streamarr.nickelsh1ts.com
+              {process.env.NEXT_PUBLIC_BASE_DOMAIN}
             </span>
             <input
               className="input input-sm input-primary rounded-md w-1/2 rounded-l-none"

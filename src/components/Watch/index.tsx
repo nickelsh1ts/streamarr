@@ -87,7 +87,7 @@ const Watch = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-        src={`https://streamarr.nickelsh1ts.com${url && url.replace('null', '')}`}
+        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN}${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >
