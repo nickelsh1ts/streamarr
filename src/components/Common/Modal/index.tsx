@@ -11,6 +11,7 @@ interface Props {
   title?: string;
   content?: React.ReactNode;
   show: boolean;
+  size?: 'sm' | 'lg';
   onClose?: () => void;
 }
 
@@ -19,6 +20,7 @@ export default function Modal({
   subtitle,
   content,
   show,
+  size = 'sm',
   onClose,
 }: Props) {
   return (
@@ -27,13 +29,13 @@ export default function Modal({
         transition
         className="fixed inset-0 z-[1050] w-full bg-base-300 backdrop-blur-sm bg-opacity-30 transition-opacity data-[closed]:opacity-0"
       />
-      <div className="fixed inset-0 max-sm:bottom-16 z-[1050] w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-[1050] w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full sm:max-w-xl border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full"
+            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full`}
           >
-            <div className="absolute pt-1 pr-1 top-0 right-0">
+            <div className="absolute pt-1 pr-1 top-0 right-0 z-10">
               <button
                 type="button"
                 className="btn hover:bg-zinc-700 p-1 btn-sm rounded-md"

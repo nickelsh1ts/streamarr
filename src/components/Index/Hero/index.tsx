@@ -1,6 +1,5 @@
 import ImageFader from '@app/components/Common/ImageFader';
-// import axios from 'axios';
-// import { useEffect } from 'react';
+import useBackdrops from '@app/hooks/useBackdrops';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -8,104 +7,14 @@ const scrollToSection = (id: string) => {
 };
 
 export default function Hero() {
-  const ImageArray = [
-    {
-      url: '/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg',
-      i: '1223',
-    },
-    {
-      url: '/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg',
-      i: '94997',
-    },
-    {
-      url: '/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg',
-      i: '32445',
-    },
-    {
-      url: '/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg',
-      i: '76479',
-    },
-    {
-      url: '/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg',
-      i: '280180',
-    },
-    {
-      url: '/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg',
-      i: '508883',
-    },
-    {
-      url: '/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg',
-      i: '519182',
-    },
-    {
-      url: '/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg',
-      i: 762441,
-    },
-    {
-      url: '/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg',
-      i: 639720,
-    },
-    {
-      url: '/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg',
-      i: 85937,
-    },
-    {
-      url: '/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg',
-      i: 1086747,
-    },
-    {
-      url: '/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg',
-      i: 114479,
-    },
-    {
-      url: '/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg',
-      i: 823464,
-    },
-    {
-      url: '/dvBCdCohwWbsP5qAaglOXagDMtk.jpg',
-      i: 533535,
-    },
-    {
-      url: '/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg',
-      i: 37854,
-    },
-    {
-      url: '/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
-      i: 693134,
-    },
-    {
-      url: '/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg',
-      i: 196322,
-    },
-  ];
+  const backdrops = useBackdrops();
 
-  // const options = {
-  //   method: 'GET',
-  //   url: 'https://api.themoviedb.org/3/trending/all/week?language=en-US',
-  //   headers: {
-  //     accept: 'application/json',
-  //     Authorization: '',
-  //   },
-  // };
-
-  // useEffect(() => {
-  //   axios.request(options).then((res) => {
-  //     console.log(res);
-  //     const data = res.data.results.map((x) => ({
-  //       url: x.backdrop_path,
-  //       i: x.id,
-  //     }));
-  //     ImageArray.push(data);
-  //   });
-  // });
-
-  console.log(ImageArray);
   return (
     <section id="promo" className="min-h-lvh -mt-20">
       <ImageFader
         rotationSpeed={6000}
         backgroundImages={
-          ImageArray?.map(
+          backdrops?.map(
             (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
           ) ?? []
         }
@@ -129,7 +38,7 @@ export default function Hero() {
                 htmlFor="icode"
                 className="label-text mb-2 text-sm md:text-base"
               >
-                Get started by entering your invite code below.
+                Invites are currently disabled. Please try again later.
               </label>
             </div>
             <div className="flex items-end mb-3">
@@ -159,10 +68,12 @@ export default function Hero() {
                     placeholder="Invite code"
                     maxLength={6}
                     required
+                    disabled
                   />
                 </div>
                 <button
                   type="submit"
+                  disabled
                   className="btn btn-warning rounded-none rounded-r-lg"
                 >
                   <span className="text-lg text-center rounded-lg cursor-pointe font-bold">
@@ -174,12 +85,18 @@ export default function Hero() {
           </form>
           <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
             <p className="first:pl-0 pl-4">
-              <span className="font-bold">Movies: </span> 613
+              <span className="font-bold">Movies: </span> 805
             </p>
-            <p className="first:pl-0 pl-4">TV Shows: 166</p>
-            <p className="first:pl-0 pl-4">Kids Shows: 8</p>
-            <p className="first:pl-0 pl-4">Retro Movies: 128</p>
-            <p className="first:pl-0 pl-4">Retro TV Shows: 104</p>
+            <p className="first:pl-0 pl-4">
+              <span className="font-bold">TV Shows: </span> 213
+            </p>
+            <p className="first:pl-0 pl-4">
+              <span className="font-bold">Retro Movies: </span> 184
+            </p>
+            <p className="first:pl-0 pl-4">
+              <span className="font-bold">Retro TV Shows: </span> 130
+            </p>
+            <p className="first:pl-0 pl-4 font-bold">+ more</p>
           </div>
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">

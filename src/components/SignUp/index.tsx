@@ -1,5 +1,6 @@
 'use client';
 import Button from '@app/components/Common/Button';
+import ComingSoon from '@app/components/Common/ComingSoon';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import SignUpForm from '@app/components/SignUp/Form';
@@ -95,6 +96,7 @@ const Join = () => {
           )}
         </div>
       </div>
+      <ComingSoon />
     </div>
   );
 };

@@ -12,7 +12,8 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { mutate } from 'swr';
-import { ImageArray } from '@app/components/Layout';
+import ComingSoon from '@app/components/Common/ComingSoon';
+import useBackdrops from '@app/hooks/useBackdrops';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -36,7 +37,7 @@ const Setup = () => {
     }
   };
 
-  const backdrops = ImageArray;
+  const backdrops = useBackdrops();
 
   return (
     <div className="relative flex min-h-screen flex-col justify-center py-12">
@@ -131,6 +132,7 @@ const Setup = () => {
           )}
         </div>
       </div>
+      <ComingSoon />
     </div>
   );
 };

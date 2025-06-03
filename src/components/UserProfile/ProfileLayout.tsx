@@ -1,7 +1,8 @@
 'use client';
+import ComingSoon from '@app/components/Common/ComingSoon';
 import ImageFader from '@app/components/Common/ImageFader';
-import { ImageArray } from '@app/components/Layout';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
+import useBackdrops from '@app/hooks/useBackdrops';
 import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
 
@@ -9,6 +10,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isSettingsPage = !!pathname.match(/\/settings/);
   const userQuery = useParams<{ userid: string }>();
+  const backdrops = useBackdrops();
   let user;
 
   if (!userQuery.userid) {
@@ -36,7 +38,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             rotationSpeed={6000}
             gradient="bg-gradient-to-t from-[#1f1f1f] from-0% to-secondary/85 to-75%"
             backgroundImages={
-              ImageArray?.map(
+              backdrops?.map(
                 (backdrop) =>
                   `https://image.tmdb.org/t/p/original${backdrop.url}`
               ) ?? []
@@ -48,6 +50,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
         <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
       )}
       {children}
+      <ComingSoon />
     </div>
   );
 };
