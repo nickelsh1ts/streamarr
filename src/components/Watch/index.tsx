@@ -62,7 +62,7 @@ const Watch = ({ children, ...props }) => {
             }, 700);
           }
           e.preventDefault();
-          console.log('Double click detected!');
+          // console.log('Double click detected!');
         });
       });
     }, 600);

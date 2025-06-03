@@ -1,12 +1,12 @@
-version: '3'
+name: streamarr
 
 services:
-  nickelsh1ts:
+  streamarr:
     container_name: streamarr-dev
     build:
       context: .
       dockerfile: Dockerfile.local
-    image: streamarr-dev:pre-release
+    image: streamarr-dev:latest
     volumes:
       - .:/app:rw,cached
       - /app/node_modules

@@ -1,6 +1,6 @@
 {
   "name": "streamarr",
-  "version": "0",
+  "version": "0.00.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
