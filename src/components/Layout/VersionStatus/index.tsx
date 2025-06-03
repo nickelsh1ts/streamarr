@@ -1,3 +1,4 @@
+import useIsAdmin from '@app/hooks/useIsAdmin';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
@@ -11,17 +12,18 @@ interface VersionStatusProps {
 }
 
 const VersionStatus = ({ onClick }: VersionStatusProps) => {
-  const versionStream = 'Streamarr Local 💾';
+  const versionStream = 'Streamarr Preview 💾';
+  const isAdmin = useIsAdmin();
   const data = {
     updateAvailable: false,
     commitTag: 'develop',
-    version: 'develop-v0.0.1',
+    version: 'develop-v0.00.1',
     commitsBehind: 0,
   };
 
   return (
     <Link
-      href="/admin/settings/about"
+      href={`${isAdmin ? '/admin/settings/about' : '/help'}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && onClick) {
