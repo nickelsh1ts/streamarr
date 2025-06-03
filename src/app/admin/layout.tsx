@@ -29,6 +29,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       regex: /^\/admin\/tv/,
     },
     {
+      text: 'Music',
+      route: '/admin/music',
+      regex: /^\/admin\/music/,
+    },
+    {
       text: 'Indexers',
       route: '/admin/indexers',
       regex: /^\/admin\/indexers/,
@@ -45,7 +50,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     },
     {
       text: 'Downloading',
-      route: '/admin/downloads/overview',
+      route: '/admin/downloads',
       regex: /^\/admin\/downloads/,
     },
   ];
