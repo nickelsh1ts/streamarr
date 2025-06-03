@@ -99,7 +99,10 @@ function FAQs() {
                 consoles, set-top boxes, and smart TVs or at{' '}
                 <span className="text-primary">Stremarr</span>.com. For a
                 complete list of supported and compatible devices, click{' '}
-                <Link href="/help/watching-streamarr/devices" className="link-accent">
+                <Link
+                  href="/help/watching-streamarr/devices"
+                  className="link-accent"
+                >
                   here.
                 </Link>
               </p>
