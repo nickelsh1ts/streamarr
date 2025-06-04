@@ -2,6 +2,7 @@ import BackButton from '@app/components/Layout/BackButton';
 import MobileMenu from '@app/components/Layout/MobileMenu';
 import Sidebar from '@app/components/Layout/Sidebar';
 import Watch from '@app/components/Watch';
+import WelcomeModal from '@app/components/WelcomeModal';
 import type { Metadata, NextPage } from 'next';
 
 const applicationTitle = 'Streamarr';
@@ -24,6 +25,7 @@ const WatchPage: NextPage = () => {
       </div>
       <Sidebar />
       <MobileMenu />
+      <WelcomeModal />
     </Watch>
   );
 };
