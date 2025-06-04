@@ -25,6 +25,7 @@ interface LibraryLinksProps {
   href: string;
   title: string;
   type: 'movies' | 'TV shows' | 'music' | 'live TV' | 'photos' | 'other';
+  regExp: RegExp;
 }
 
 interface LibraryMenuProps {
@@ -50,51 +51,61 @@ const LibraryLinks: LibraryLinksProps[] = [
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=1',
     title: 'movies',
     type: 'movies',
+    regExp: /(?=(\/(.*)=1&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=10',
     title: 'kids movies',
     type: 'movies',
+    regExp: /(?=(\/(.*)=10&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=4',
     title: 'retro: movies',
     type: 'movies',
+    regExp: /(?=(\/(.*)=4&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=11',
     title: 'retro: Kids movies',
     type: 'movies',
+    regExp: /(?=(\/(.*)=11&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=2',
     title: 'TV shows',
     type: 'TV shows',
+    regExp: /(?=(\/(.*)=2&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=8',
     title: 'kids shows',
     type: 'TV shows',
+    regExp: /(?=(\/(.*)=8&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=5',
     title: 'retro: TV shows',
     type: 'TV shows',
+    regExp: /(?=(\/(.*)=5&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=7',
     title: 'retro: Kids shows',
     type: 'TV shows',
+    regExp: /(?=(\/(.*)=7&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=9',
     title: 'music',
     type: 'music',
+    regExp: /(?=(\/(.*)=9&pivot))/,
   },
   {
     href: '/watch/web/index.html#!/live-tv',
     title: 'live TV',
     type: 'live TV',
+    regExp: /^\/watch\/web\/index\.html#!\/live-tv\/?(.)*?$/,
   },
 ];
 
@@ -138,7 +149,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
           library.type.includes(type)
         );
         const isActive = Links.map((libraries) => {
-          return url.includes(libraries.href);
+          return url.match(libraries.regExp);
         }).filter((library) => library)[0];
 
         let icon = null;
@@ -262,7 +273,7 @@ export const MultiItem = ({
         </summary>
         <ul className="flex flex-col gap-1 mt-1">
           {LibraryLinks.map((item) => {
-            const isActive = url.includes(item.href);
+            const isActive = url.match(item.regExp);
 
             switch (item.type) {
               case 'movies':

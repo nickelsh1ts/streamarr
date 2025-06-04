@@ -32,8 +32,8 @@ const nextConfig = {
     });
     config.resolve.fallback = {
       fs: false,
-      path: false
-    }
+      path: false,
+    };
     return config;
   },
   experimental: {
