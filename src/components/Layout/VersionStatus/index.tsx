@@ -1,4 +1,5 @@
 import useIsAdmin from '@app/hooks/useIsAdmin';
+import { getAppVersion } from '@app/utils/appVersion';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
@@ -17,7 +18,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
   const data = {
     updateAvailable: false,
     commitTag: 'develop',
-    version: 'develop-v0.00.1',
+    version: getAppVersion(),
     commitsBehind: 0,
   };
 
@@ -55,9 +56,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
           ) : data.commitsBehind === -1 ? (
             'out of date'
           ) : (
-            <code className="bg-transparent p-0">
-              {data.version.replace('develop-', '')}
-            </code>
+            <code className="bg-transparent p-0">{data.version}</code>
           )}
         </span>
       </div>
