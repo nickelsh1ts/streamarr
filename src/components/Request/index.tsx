@@ -14,7 +14,7 @@ const Request = ({ children, ...props }) => {
   const innerFrame = contentRef?.contentWindow;
 
   useEffect(() => {
-    innerFrame?.navigation.addEventListener('navigate', () => {
+    innerFrame?.navigation?.addEventListener('navigate', () => {
       setLoadingIframe(true);
       setTimeout(() => {
         if (
