@@ -100,7 +100,7 @@ const SignIn = () => {
           {({ openIndexes, handleClick, AccordionContent }) => (
             <div className="max-w-md my-4 mx-auto w-full backdrop-blur-md text-primary-content">
               <button
-                className={`collapse-title text-start mb-[1px] border border-primary bg-primary/40 rounded-t-lg ${
+                className={`collapse-title text-start mb-[1px] border border-primary bg-primary/40 rounded-t-lg w-full ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -123,7 +123,7 @@ const SignIn = () => {
                 </div>
               </AccordionContent>
               <button
-                className={`collapse-title text-start border border-primary bg-primary/40 ${
+                className={`collapse-title text-start border border-primary bg-primary/40 w-full ${
                   openIndexes.includes(1)
                     ? 'text-primary-content cursor-not-allowed'
                     : 'rounded-b-lg'
