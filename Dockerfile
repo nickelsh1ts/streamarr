@@ -13,7 +13,7 @@ FROM base AS builder
 
 WORKDIR /app
 
-COPY package.json yarn.lock* .env.local ./
+COPY package.json yarn.lock* .env ./
 
 RUN echo 'nodeLinker: "node-modules"' > ./.yarnrc.yml
 RUN yarn --immutable --network-timeout 1000000
