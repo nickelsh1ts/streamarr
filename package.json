@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "standalone": "yarn build && cp -r public/ .next/standalone && cp -r .next/static .next/standalone/.next",
+    "prepare": "yarn format && yarn lint && yarn css-lint && yarn typecheck",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --cache",
     "start": "next start",
     "css-lint": "stylelint src/styles/*.css public/*.css",
