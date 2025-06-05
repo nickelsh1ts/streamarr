@@ -1,6 +1,10 @@
 import Setup from '@app/components/Setup';
-import type { NextPage } from 'next';
+import type { Metadata, NextPage } from 'next';
 import { redirect } from 'next/navigation';
+
+export const metadata: Metadata = {
+  title: `Setup - ${process.env.NEXT_PUBLIC_APP_NAME}`,
+};
 
 const SetupPage: NextPage = () => {
   redirect('/');

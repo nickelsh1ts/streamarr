@@ -35,10 +35,6 @@ const Header = ({ isInView = true }) => {
     fetchData();
   }, []);
 
-  if (loading) {
-    <LoadingEllipsis />;
-  }
-
   if (error) {
     console.log(error);
   }
@@ -71,25 +67,29 @@ const Header = ({ isInView = true }) => {
               Sign up now
             </Link>
           )}
-          {isAuthed ? (
-            !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
-              <div className="max-sm:hidden -mt-1">
+          {!loading ? (
+            isAuthed ? (
+              !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
+                <div className="max-sm:hidden -mt-1">
+                  <UserDropdown />
+                </div>
+              ) : (
                 <UserDropdown />
-              </div>
+              )
             ) : (
-              <UserDropdown />
+              !path.match(/^\/signin\/?$/) && (
+                <Link
+                  href="/signin"
+                  id="signin"
+                  className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
+                >
+                  Sign in{' '}
+                  <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
+                </Link>
+              )
             )
           ) : (
-            !path.match(/^\/signin\/?$/) && (
-              <Link
-                href="/signin"
-                id="signin"
-                className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
-              >
-                Sign in{' '}
-                <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
-              </Link>
-            )
+            <LoadingEllipsis text="" />
           )}
         </div>
       </div>

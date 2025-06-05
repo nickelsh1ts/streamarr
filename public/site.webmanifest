@@ -28,7 +28,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "./watch",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#2b0b53",
   "theme_color": "#1f1f1f",
