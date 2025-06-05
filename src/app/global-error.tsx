@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 export const metadata: Metadata = {
-  title: 'ERROR – Streamarr',
+  title: `ERROR – ${process.env.NEXT_PUBLIC_APP_NAME}`,
 };
 
 export default function Error({

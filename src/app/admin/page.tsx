@@ -3,7 +3,7 @@ import GeneralSettings from '@app/components/Admin/Settings/General';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Admin – Streamarr',
+  title: `Admin – ${process.env.NEXT_PUBLIC_APP_NAME}`,
 };
 
 const AdminPage = () => {

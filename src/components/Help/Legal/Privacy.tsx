@@ -5,7 +5,8 @@ const Privacy = () => {
       <p>
         This Privacy Statement explains our practices, including your choices,
         regarding the collection, use, and disclosure of certain information,
-        including your personal information in connection with the Streamarr
+        including your personal information in connection with the{' '}
+        {process.env.NEXT_PUBLIC_APP_NAME}
         service.
       </p>
       <p className="font-extrabold mt-10 text-xl mb-2">Contacting Us</p>
@@ -17,16 +18,16 @@ const Privacy = () => {
           href="/help"
         >
           {' '}
-          streamarr.com/help
+          {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com/help
         </a>
         . For questions specifically about this Privacy Statement, or our use of
         your personal information, cookies or similar technologies, please
         contact us by email at{' '}
         <a
           className="text-decoration-none link-primary font-extrabold"
-          href="mailto:privacy@streamarr.com"
+          href={`mailto:privacy@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com`}
         >
-          privacy@streamarr.com
+          privacy@{process.env.NEXT_PUBLIC_APP_NAME.toLowerCase()}.com
         </a>
         .
       </p>
@@ -61,20 +62,21 @@ const Privacy = () => {
           </span>{' '}
           We collect information about you and your use of our service, your
           interactions with us, as well as information regarding your network,
-          network devices, and your computer or other Streamarr capable devices
-          you might use to access our service (such as gaming systems, smart
-          TVs, mobile devices, set top boxes, and other streaming media
-          devices). This information includes:
+          network devices, and your computer or other{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME} capable devices you might use to
+          access our service (such as gaming systems, smart TVs, mobile devices,
+          set top boxes, and other streaming media devices). This information
+          includes:
         </li>
         <ul className="list-circle mx-5">
           <li className="my-5">
-            your activity on the Streamarr service, such as title selections and
-            shows you have watched;
+            your activity on the {process.env.NEXT_PUBLIC_APP_NAME} service,
+            such as title selections and shows you have watched;
           </li>
           <li className="my-5">
             device IDs or other unique identifiers, including for your network
-            devices, and devices that are Streamarr capable on your Wi-Fi
-            network;
+            devices, and devices that are {process.env.NEXT_PUBLIC_APP_NAME}{' '}
+            capable on your Wi-Fi network;
           </li>
           <li className="my-5">
             device and software characteristics (such as type and
@@ -103,14 +105,15 @@ const Privacy = () => {
         </li>
         <li className="my-5">
           secure our systems, prevent fraud and help us protect the security of
-          Streamarr accounts;
+          [process.env.NEXT_PUBLIC_APP_NAME] accounts;
         </li>
         <li className="my-5">
           prevent, detect and investigate potentially prohibited or illegal
           activities, including fraud, and to enforce our terms (such as
-          determining whether and for which Streamarr signup offers you are
-          eligible and determining whether a particular device is permitted to
-          use the account consistent with our Terms of Use);
+          determining whether and for which {process.env.NEXT_PUBLIC_APP_NAME}{' '}
+          signup offers you are eligible and determining whether a particular
+          device is permitted to use the account consistent with our Terms of
+          Use);
         </li>
         <li className="my-5">
           analyze and understand our audience, improve our service (including
@@ -119,10 +122,11 @@ const Privacy = () => {
         </li>
         <li className="my-5">
           communicate with you concerning our service so that we can send you
-          news about Streamarr, details about new features and content available
-          on Streamarr, promotional announcements. These communications may be
-          by various methods, such as email, push notifications and online
-          messaging channels.
+          news about {process.env.NEXT_PUBLIC_APP_NAME}, details about new
+          features and content available on {process.env.NEXT_PUBLIC_APP_NAME},
+          promotional announcements. These communications may be by various
+          methods, such as email, push notifications and online messaging
+          channels.
         </li>
       </ul>
       <span className="font-extrabold">Last Updated:</span> July 12, 2024

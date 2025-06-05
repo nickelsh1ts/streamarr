@@ -63,3 +63,5 @@ cypress/videos
 cypress/screenshots
 
 src/posts/*.md
+
+*nickflixtv*

@@ -8,7 +8,7 @@ const Devices = () => {
       <Breadcrumbs
         paths="/watching-streamarr/devices"
         homeElement={'Help Centre'}
-        names="Watching Streamarr,Connect to Streamarr using your favourite devices"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME},Connect to ${process.env.NEXT_PUBLIC_APP_NAME} using your favourite devices`}
         print={false}
       />
       <Header />

@@ -1,7 +1,7 @@
 import Schedule from '@app/components/Schedule';
 import type { Metadata } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
 
 const messages = {
   title: 'Schedule',

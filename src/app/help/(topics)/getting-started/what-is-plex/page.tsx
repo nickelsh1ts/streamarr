@@ -20,10 +20,12 @@ const HelpContent = () => {
       </p>
       <p className="mb-4">
         If you are streaming only third-party content (
-        <span className="text-primary font-bold">Streamarr</span>, live TV, web
-        shows), then you are good to go as soon as you have an account, just
-        install an app on your phone, Smart TV, computer, or simply open up our
-        web app on your browser!
+        <span className="text-primary font-bold">
+          {process.env.NEXT_PUBLIC_APP_NAME}
+        </span>
+        , live TV, web shows), then you are good to go as soon as you have an
+        account, just install an app on your phone, Smart TV, computer, or
+        simply open up our web app on your browser!
       </p>
       <p className="mb-4">
         Watch thousands of free, on-demand Movies & Shows streaming service or

@@ -29,7 +29,7 @@ const PopularTopics = () => {
         <p className="mb-4 text-sm">
           Having issues connecting? Check out our{' '}
           <Link
-            href="//status.streamarr.com"
+            href={`//status.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com/status/services`}
             className="link-primary font-extrabold mb-4"
           >
             Status Page

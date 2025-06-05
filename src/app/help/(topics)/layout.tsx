@@ -3,7 +3,7 @@ import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
 import type { Metadata } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
 
 const messages = {
   title: 'Help Centre',

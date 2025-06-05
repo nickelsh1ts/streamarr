@@ -44,8 +44,12 @@ const DeviceTabs = () => {
         <>
           The newest generation of media players and streaming sticks offer a
           fast, easy, and affordable way to watch
-          <span className="text-primary"> Streamarr</span> on your TV with the
-          Ple<span className="link-accent">x</span>&trade; app.
+          <span className="text-primary">
+            {' '}
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          on your TV with the Ple<span className="link-accent">x</span>&trade;
+          app.
         </>
       ),
       imageArray: [
@@ -83,7 +87,11 @@ const DeviceTabs = () => {
           interface on your big screen with the Ple
           <span className="text-accent">x</span> Smart TV app, available in most
           smart TV app stores, and access
-          <span className="tet-primary"> Streamarr</span> directly on-screen.
+          <span className="tet-primary">
+            {' '}
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          directly on-screen.
         </>
       ),
       imageArray: [
@@ -131,8 +139,11 @@ const DeviceTabs = () => {
       ),
       paragraph: (
         <>
-          You can also watch <span className="text-primary">Streamarr</span> on
-          a variety of game consoles with the Ple
+          You can also watch{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          on a variety of game consoles with the Ple
           <span className="link-warning">x</span>&trade; app.
         </>
       ),
@@ -170,7 +181,11 @@ const DeviceTabs = () => {
       ),
       heading: (
         <>
-          Take <span className="text-primary">Sreamarr</span> with you
+          Take{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          with you
         </>
       ),
       paragraph: (
@@ -186,7 +201,10 @@ const DeviceTabs = () => {
             only offers free playback via the casting feature. To watch on the
             app directly on your phone a small one-time fee is required. If you
             wish not to pay the fee, you may use the newly mobile optimized{' '}
-            <span className="text-primary">Streamarr</span>.com app.
+            <span className="text-primary">
+              {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}
+            </span>
+            .com app.
           </span>
         </>
       ),
@@ -209,9 +227,11 @@ const DeviceTabs = () => {
       heading: 'Watch on what you have',
       paragraph: (
         <>
-          <span className="text-primary">Streamarr</span> is optimized for
-          today&apos;s most popular browsers so you can watch on your PC or
-          laptop.
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          is optimized for today&apos;s most popular browsers so you can watch
+          on your PC or laptop.
         </>
       ),
     },
@@ -285,7 +305,9 @@ const DeviceTabs = () => {
         })}
       </div>
       <div className="container mx-auto text-center py-10 px-5 text-black">
-        <span className="text-primary font-extrabold">Streamarr</span>{' '}
+        <span className="text-primary font-extrabold">
+          {process.env.NEXT_PUBLIC_APP_NAME}
+        </span>{' '}
         membership and internet connection required.
       </div>
     </div>

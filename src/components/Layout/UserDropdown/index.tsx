@@ -40,7 +40,10 @@ const UserDropdown = ({
         >
           Account Settings
         </DropDownMenu.Item>
-        <DropDownMenu.Item href="https://stats.nickflixtv.com" target="_blank">
+        <DropDownMenu.Item
+          href={`https://stats.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com`}
+          target="_blank"
+        >
           Watch Statistics
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/help">Help Centre</DropDownMenu.Item>
@@ -48,7 +51,7 @@ const UserDropdown = ({
           Get Support
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/logout" divide="before">
-          Sign Out of Streamarr
+          Sign Out of {process.env.NEXT_PUBLIC_APP_NAME}
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

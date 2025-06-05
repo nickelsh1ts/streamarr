@@ -4,11 +4,11 @@ import TopicsPage from '@app/components/Help/TopicsPage';
 const RelatedArticles = [
   {
     href: 'getting-started/become-a-member',
-    text: 'How to become a member of Streamarr',
+    text: `How to become a member of ${process.env.NEXT_PUBLIC_APP_NAME}`,
   },
   {
     href: 'getting-started/what-is-streamarr',
-    text: 'What is Streamarr',
+    text: `What is ${process.env.NEXT_PUBLIC_APP_NAME}`,
   },
   {
     href: 'getting-started/what-is-plex',
@@ -20,11 +20,11 @@ const RelatedArticles = [
   },
   {
     href: 'getting-started/download-streamarr',
-    text: 'How to download the Streamarr app',
+    text: `How to download the ${process.env.NEXT_PUBLIC_APP_NAME} app`,
   },
   {
     href: 'getting-started/quick-start',
-    text: 'Quick start guide to getting started with Streamarr',
+    text: `Quick start guide to getting started with ${process.env.NEXT_PUBLIC_APP_NAME}`,
   },
 ];
 
@@ -38,10 +38,8 @@ const GettingStarted = () => {
         print={false}
       />
       <TopicsPage
-        heading={'Topics related to getting started with Streamarr'}
-        subheading={
-          "If you're new to Streamarr and looking to get started and not sure where to go, you can read through these topics."
-        }
+        heading={`Topics related to getting started with ${process.env.NEXT_PUBLIC_APP_NAME}`}
+        subheading={`If you're new to ${process.env.NEXT_PUBLIC_APP_NAME} and looking to get started and not sure where to go, you can read through these topics.`}
         links={RelatedArticles}
       />
     </section>

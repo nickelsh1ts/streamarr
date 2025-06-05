@@ -15,9 +15,14 @@ function Requesting() {
           </p>
           <p className="mb-0 text-lg">
             Request almost any Movie or TV Show and watch it directly on
-            <span className="text-primary ms-1">Streamarr</span> in no time with
-            Overseerr. Enjoy Overseerr as part of your
-            <span className="text-primary ms-1">Streamarr</span> membership.
+            <span className="text-primary ms-1">
+              {process.env.NEXT_PUBLIC_APP_NAME}
+            </span>{' '}
+            in no time with Overseerr. Enjoy Overseerr as part of your
+            <span className="text-primary ms-1">
+              {process.env.NEXT_PUBLIC_APP_NAME}
+            </span>{' '}
+            membership.
           </p>
           <p className="text-neutral mt-0 mb-4">
             Limits apply. Please see the{' '}

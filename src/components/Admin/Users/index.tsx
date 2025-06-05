@@ -18,7 +18,7 @@ const data = [
   {
     id: 1,
     displayName: 'Nickelsh1ts',
-    email: 'nickelsh1ts@streamarr.dev',
+    email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
     avatar: '/android-chrome-192x192.png',
     requestCount: 0,
     userType: 'local',
@@ -27,7 +27,7 @@ const data = [
   {
     id: 2,
     displayName: 'DemoUser',
-    email: 'demo@streamarr.dev',
+    email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
     avatar: '/android-chrome-192x192.png',
     requestCount: 0,
     userType: 'plex',

@@ -8,7 +8,10 @@ const HelpContent = () => {
         How to invite a friend:
       </div>
       <ul className="list list-decimal ms-14 my-4">
-        <li>Sign in to Streamarr from your preferred device</li>
+        <li>
+          Sign in to {process.env.NEXT_PUBLIC_APP_NAME} from your preferred
+          device
+        </li>
         <li>Look for and select the options menu</li>
         <li>Choose &quot;Invite a friend&quot;</li>
         <li>Select the &quot;generate code&quot; button</li>
@@ -29,12 +32,12 @@ const HelpContent = () => {
         team and is not guaranteed.
       </p>
       <div className="mt-5 font-extrabold" id="joinstreamarr">
-        How to join Streamarr:
+        How to join {process.env.NEXT_PUBLIC_APP_NAME}:
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li>
-          Navigate to the &quot;Home&quot; or &quot;Sign Up&quot; page on
-          Streamarr
+          Navigate to the &quot;Home&quot; or &quot;Sign Up&quot; page on{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME}
         </li>
         <li>In the provided text input, enter the invite code</li>
         <li>Select the &quot;Let&apos;s Get Started&quot; button to begin</li>
@@ -45,22 +48,24 @@ const HelpContent = () => {
         <li>
           If the information provided is valid and sign up is successful, you
           will need to accept your invite via email before you can access
-          Streamarr services
+          {process.env.NEXT_PUBLIC_APP_NAME} services
         </li>
       </ul>
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
         <li>
-          In order to access Streamarr services a Ple
+          In order to access {process.env.NEXT_PUBLIC_APP_NAME} services a Ple
           <span className="text-accent">x</span>&trade; account is required
         </li>
         <li>
-          Once you have successfully joined Streamarr, you may not invite your
-          own friends until the 7 day trial period has ended
+          Once you have successfully joined {process.env.NEXT_PUBLIC_APP_NAME},
+          you may not invite your own friends until the 7 day trial period has
+          ended
         </li>
         <li>
           Failure to accept the invite email sent after registration will result
-          in an inability to access most of Streamarr&apos;s services
+          in an inability to access most of {process.env.NEXT_PUBLIC_APP_NAME}
+          &apos;s services
         </li>
       </ul>
       <p className="">
@@ -80,7 +85,7 @@ const anchors = [
   },
   {
     href: '#joinstreamarr',
-    title: 'Joining Streamarr',
+    title: `Joining ${process.env.NEXT_PUBLIC_APP_NAME}`,
   },
 ];
 
@@ -90,13 +95,13 @@ const BecomeMember = () => {
       <Breadcrumbs
         paths="/getting-started/become-a-member"
         homeElement={'Help Centre'}
-        names="Getting Started,how to become a member of Streamarr"
+        names={`Getting Started,how to become a member of ${process.env.NEXT_PUBLIC_APP_NAME}`}
       />
       <HelpCard
         anchors={anchors}
         content={<HelpContent />}
-        heading="How to become a member of Streamarr"
-        subheading="Streamarr is a private members access streaming service. Currently members can only be invited by an already active member of Streamarr. Please reach out to a friend and ask them to send you an invite."
+        heading={`How to become a member of ${process.env.NEXT_PUBLIC_APP_NAME}`}
+        subheading={`${process.env.NEXT_PUBLIC_APP_NAME} is a private members access streaming service. Currently members can only be invited by an already active member of ${process.env.NEXT_PUBLIC_APP_NAME}. Please reach out to a friend and ask them to send you an invite.`}
       />
     </section>
   );

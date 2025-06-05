@@ -53,7 +53,7 @@ const Setup = () => {
       </div>
       <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl">
         <img
-          src="/logo_full.png"
+          src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
           className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
           alt="Logo"
         />

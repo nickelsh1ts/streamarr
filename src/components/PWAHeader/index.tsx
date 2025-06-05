@@ -2,7 +2,9 @@ interface PWAHeaderProps {
   applicationTitle?: string;
 }
 
-const PWAHeader = ({ applicationTitle = 'Streamarr' }: PWAHeaderProps) => {
+const PWAHeader = ({
+  applicationTitle = process.env.NEXT_PUBLIC_APP_NAME,
+}: PWAHeaderProps) => {
   return (
     <>
       <link

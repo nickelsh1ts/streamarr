@@ -2,7 +2,7 @@ import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import Privacy from '@app/components/Help/Legal/Privacy';
 import type { Metadata } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
 
 const messages = {
   title: 'Privacy Statement',

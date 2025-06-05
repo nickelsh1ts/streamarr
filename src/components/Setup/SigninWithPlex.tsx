@@ -39,7 +39,7 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   return (
     <form>
       <div className="mb-2 flex justify-center text-xl font-bold">
-        Welcome to Streamarr
+        Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
       </div>
       <div className="mb-2 flex justify-center pb-6 text-sm">
         Get started by signing in with your Plex account

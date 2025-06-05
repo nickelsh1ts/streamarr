@@ -69,7 +69,11 @@ const Topics = () => {
               href="/help/getting-started/what-is-streamarr"
               className="hover:text-neutral-600 w-fit"
             >
-              What is <span className="text-primary">Streamarr</span>?
+              What is{' '}
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME}
+              </span>
+              ?
             </Link>
             <Link
               href="/help/getting-started/what-is-plex"
@@ -89,7 +93,10 @@ const Topics = () => {
               className="hover:text-neutral-600 w-fit"
             >
               How to download the{' '}
-              <span className="text-primary">Streamarr</span> app
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME}
+              </span>{' '}
+              app
             </Link>
             <Link
               href="/help/getting-started/quick-start"
@@ -116,7 +123,10 @@ const Topics = () => {
               href="/watch/web/index.html#!/settings/online-media-sources"
               className="hover:text-neutral-600 w-fit"
             >
-              Turn on/off non-<span className="text-primary">Streamarr</span>{' '}
+              Turn on/off non-
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME}
+              </span>{' '}
               content
             </Link>
           </div>
@@ -125,14 +135,20 @@ const Topics = () => {
               href="/help/watching-streamarr"
               className="font-extrabold text-xl hover:text-neutral-600 w-fit"
             >
-              Watching <span className="text-primary">Streamarr</span>
+              Watching{' '}
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME}
+              </span>
             </Link>
             <Link
               href="/help/watching-streamarr/watch-on-tv"
               className="hover:text-neutral-600 w-fit"
             >
-              Watching <span className="text-primary">Streamarr</span> on your
-              TV
+              Watching{' '}
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME}
+              </span>{' '}
+              on your TV
             </Link>
             <Link
               href="/help/watching-streamarr/download-offline"

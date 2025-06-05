@@ -30,7 +30,7 @@ const MoreHelp = () => {
                 <div className="flex flex-wrap mt-4">
                   <Link
                     target="_blank"
-                    href="https://discord.gg/ZSTrRJMcDS"
+                    href={`https://discord.gg/${process.env.NEXT_PUBLIC_APP_NAME.toLowerCase()}`}
                     type="button"
                     className="btn btn-sm btn-primary hover:btn-secondary me-1 mb-2 rounded-md text-base min-h-9"
                     rel="noreferrer"
@@ -49,7 +49,7 @@ const MoreHelp = () => {
                   </Link>
                   <Link
                     target="_blank"
-                    href="mailto:info@nickflixtv.com"
+                    href={`mailto:info@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com`}
                     type="button"
                     className="btn btn-sm btn-outline btn-primary mx-1 mb-2 rounded-md text-base min-h-9"
                     rel="noreferrer"

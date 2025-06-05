@@ -19,8 +19,11 @@ const Header = () => {
       </div>
       <div className="container max-w-screen-lg mx-auto py-14 relative">
         <p className="text-3xl mx-7 md:text-5xl  md:mx-14 font-extrabold text-center text-white">
-          Connect to <span className="text-primary">Streamarr</span> using your
-          favourite devices.
+          Connect to{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>{' '}
+          using your favourite devices.
         </p>
       </div>
     </div>

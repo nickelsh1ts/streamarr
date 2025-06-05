@@ -21,6 +21,8 @@
   --color-text-accent: #974ede;
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
+  --logo-image-url:  url("/logo_full.png");
+  --logo-sm-url:  url("/streamarr-logo-512x512.png");
 }
 :root {
   --color-background-accent: #7E27D3;
@@ -42,6 +44,8 @@
   --color-text-accent: #974ede;
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
+  --logo-image-url:  url("/logo_full.png");
+  --logo-sm-url:  url("/streamarr-logo-512x512.png");
 }
 .font-base {
   font-weight: 700!important;
@@ -51,7 +55,7 @@ svg {
 }
 /*Alt Logo*/
 [class*="NavBar-logoContainer-"] {
-  background-image: url("/logo_full.png");
+  background-image: var(--logo-image-url);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: contain;
@@ -188,7 +192,7 @@ svg {
     min-width: 100vw ;
   }
   [class*="NavBar-logoContainer-"] {
-    background-image: url("/streamarr-logo-512x512.png");
+    background-image: var(--logo-sm-url);
     width: 45px;
   }
 }
@@ -312,7 +316,7 @@ svg {
   }
 }
 [class*="PlexHeaderImage-plexImage-"] {
-  background-image: url("/logo_full.png");
+  background-image: var(--logo-image-url);
   width: 100%;
 }
 [class*="PlexHeaderImage-plexImageContainer-"]{
@@ -442,7 +446,7 @@ html, body {
   touch-action: auto;
 }
 .plex-logo {
-  background-image: url("/logo_full.png") !important
+  background-image: var(--logo-image-url) !important
 }
 [class*="NavBarAccountMenu-disclosure-"] > div > [class*="ImagePoster-flex-"]:has(img) > img {
   display: none;

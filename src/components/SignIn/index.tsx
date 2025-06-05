@@ -90,8 +90,10 @@ const SignIn = () => {
           <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
           <p className="text-sm">
             You will use this account to log into{' '}
-            <span className="text-primary font-semibold">Streamarr</span> to
-            watch your favourite movies and TV Shows.
+            <span className="text-primary font-semibold">
+              {process.env.NEXT_PUBLIC_APP_NAME}
+            </span>{' '}
+            to watch your favourite movies and TV Shows.
           </p>
         </div>
         <Accordion single atLeastOne>
@@ -128,7 +130,7 @@ const SignIn = () => {
                 }`}
                 onClick={() => handleClick(1)}
               >
-                Sign in with Streamarr
+                Sign in with {process.env.NEXT_PUBLIC_APP_NAME}
               </button>
               <AccordionContent isOpen={openIndexes.includes(1)}>
                 <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
@@ -222,7 +224,11 @@ const SignIn = () => {
           )}
         </Accordion>
         <p className="mt-4 text-start text-sm px-2 relative">
-          New to <span className="text-primary font-semibold">Streamarr</span>?
+          New to{' '}
+          <span className="text-primary font-semibold">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>
+          ?
           <Link href="/signup" className="font-bold hover:brightness-75 ms-1">
             Sign up
           </Link>

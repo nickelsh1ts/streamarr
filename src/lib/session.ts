@@ -27,7 +27,9 @@ export async function decrypt(session: string | undefined = '') {
 }
 
 export async function updateSession(admin: boolean) {
-  const session = (await cookies()).get('myStreamarrSession')?.value;
+  const session = (await cookies()).get(
+    `my${process.env.NEXT_PUBLIC_APP_NAME}Session`
+  )?.value;
   const payload = await decrypt(session);
 
   if (!session || !payload) {
@@ -44,7 +46,7 @@ export async function updateSession(admin: boolean) {
   const newSession = await encrypt({ userId, admin, expires });
 
   const cookieStore = await cookies();
-  cookieStore.set('myStreamarrSession', newSession, {
+  cookieStore.set(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`, newSession, {
     httpOnly: true,
     secure: true,
     expires: expires,
@@ -58,7 +60,7 @@ export async function createSession(userId: string, admin: boolean) {
   const session = await encrypt({ userId, admin, expiresAt });
   const cookieStore = await cookies();
 
-  cookieStore.set('myStreamarrSession', session, {
+  cookieStore.set(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`, session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
@@ -69,5 +71,5 @@ export async function createSession(userId: string, admin: boolean) {
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete('myStreamarrSession');
+  cookieStore.delete(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`);
 }

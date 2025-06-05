@@ -27,7 +27,9 @@ const WelcomeModal = () => {
         <div className="mb-8">
           <p className="text-4xl">
             <span className="font-bold">Welcome to</span>{' '}
-            <span className="font-extralight">Streamarr</span>
+            <span className="font-extralight">
+              {process.env.NEXT_PUBLIC_APP_NAME}
+            </span>
           </p>
         </div>
         <div className="mb-8 text-justify">

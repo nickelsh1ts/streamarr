@@ -16,7 +16,7 @@ interface UserType {
 }
 
 const user: UserType = {
-  name: 'Streamarr UI Preview',
+  name: `${process.env.NEXT_PUBLIC_APP_NAME} UI Preview`,
   email: 'v0.00.1',
 };
 

@@ -12,7 +12,7 @@ import NotificationProvider from '@app/context/NotificationContext';
 import Notifications from '@app/components/Layout/Notifications';
 import { SettingsProvider } from '@app/context/SettingsContext';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
 
 export default function RootLayout({
   children,

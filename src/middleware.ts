@@ -18,7 +18,9 @@ export default async function middleware(req: NextRequest) {
   const isAdminRoute = path.match(AdminRoutes);
 
   // 3. Decrypt the session from the cookie
-  const cookie = (await cookies()).get('myStreamarrSession')?.value;
+  const cookie = (await cookies()).get(
+    `my${process.env.NEXT_PUBLIC_APP_NAME}Session`
+  )?.value;
   const session = await decrypt(cookie);
 
   // 4. Redirect to /signin if the user is not authenticated

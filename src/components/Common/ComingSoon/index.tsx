@@ -26,8 +26,7 @@ const features = [
   },
   {
     name: 'User Profiles.',
-    description:
-      'View, edit and manage your Streamarr user profile and settings.',
+    description: `View, edit and manage your ${process.env.NEXT_PUBLIC_APP_NAME} user profile and settings.`,
     icon: UserCircleIcon,
   },
   {

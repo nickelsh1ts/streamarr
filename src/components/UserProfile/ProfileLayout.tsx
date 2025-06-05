@@ -18,7 +18,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
       id: 1,
       displayName: 'Nickelsh1ts',
       avatar: '/android-chrome-192x192.png',
-      email: 'nickelsh1ts@streamarr.dev',
+      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
     };
   } else {
@@ -26,7 +26,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
       id: parseInt(userQuery.userid),
       displayName: 'QueriedUser',
       avatar: '/android-chrome-192x192.png',
-      email: 'query@streamarr.dev',
+      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
     };
   }

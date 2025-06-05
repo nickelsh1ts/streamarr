@@ -14,9 +14,12 @@ const SubHeading = () => {
   return (
     <>
       Although the Ple<span className="text-accent">x</span>&trade; app is not
-      required to use <span className="text-primary font-bold">Streamarr</span>,
-      on certain devices such as smart TVs or game systems it may offer a better
-      experience. Some smart TVs and media devices will come with the Ple
+      required to use{' '}
+      <span className="text-primary font-bold">
+        {process.env.NEXT_PUBLIC_APP_NAME}
+      </span>
+      , on certain devices such as smart TVs or game systems it may offer a
+      better experience. Some smart TVs and media devices will come with the Ple
       <span className="text-accent">x</span>&trade; app already installed, or
       easily installable via their built in app stores.
     </>
@@ -72,7 +75,10 @@ const HelpContent = () => {
         <li>
           Downloading the Ple<span className="text-accent">x</span>&trade; app
           is not required to stream content directly from{' '}
-          <span className="text-primary font-bold">Streamarr</span>.
+          <span className="text-primary font-bold">
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>
+          .
         </li>
         <li>
           Downloading content to watch offline, such as when on an airplane, the
@@ -81,7 +87,10 @@ const HelpContent = () => {
       </ul>
       <p>
         If you wish instead to download the{' '}
-        <span className="text-primary font-bold">Streamarr</span> app, check out{' '}
+        <span className="text-primary font-bold">
+          {process.env.NEXT_PUBLIC_APP_NAME}
+        </span>{' '}
+        app, check out{' '}
         <Link
           href={'/help/getting-started/download-streamarr'}
           className="link-primary underline"

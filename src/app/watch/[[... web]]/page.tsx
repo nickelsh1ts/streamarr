@@ -5,7 +5,7 @@ import Watch from '@app/components/Watch';
 import WelcomeModal from '@app/components/WelcomeModal';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
 
 const messages = {
   title: 'Now Streaming',

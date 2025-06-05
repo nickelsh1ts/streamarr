@@ -39,7 +39,7 @@ const Watch = ({ children, ...props }) => {
               menu?.classList.add('mb-[6.5rem]');
             }
             if (pageTitle === 'Plex') {
-              document.title = 'Now Streaming - Streamarr';
+              document.title = `Now Streaming - ${process.env.NEXT_PUBLIC_APP_NAME}`;
               menu?.classList.remove('mb-[6.5rem]');
             }
           }
@@ -75,6 +75,24 @@ const Watch = ({ children, ...props }) => {
       }
     });
   }, [hash, innerFrame, router]);
+
+  useEffect(() => {
+    if (mountNode) {
+      mountNode.style.setProperty(
+        '--logo-image-url',
+        (process.env.NEXT_PUBLIC_LOGO &&
+          `url("${process.env.NEXT_PUBLIC_LOGO}")`) ||
+          'url("/logo_full.png")'
+      );
+      mountNode.style.setProperty(
+        '--logo-sm-url',
+        (process.env.NEXT_PUBLIC_LOGO_SM &&
+          `url("${process.env.NEXT_PUBLIC_LOGO_SM}")`) ||
+          'url("/streamarr-logo-512x512.png")'
+      );
+    }
+  });
+
   return (
     <>
       <iframe
