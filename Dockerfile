@@ -42,7 +42,7 @@ COPY --from=builder /app/public ./public
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/.env.local ./.env
+COPY --from=builder --chown=nextjs:nodejs /app/.env ./.env
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
