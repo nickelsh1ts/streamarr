@@ -28,7 +28,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: yarn prepare && yarn standalone
+          build: yarn standalone
           start: node .next/standalone/server.js
           wait-on: 'http://localhost:3000'
           record: true

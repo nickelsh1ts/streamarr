@@ -26,7 +26,7 @@ jobs:
       - name: Formatting
         run: yarn format:check
       - name: Build
-        run: yarn prepare && yarn standalone
+        run: yarn standalone
 
   build_and_push:
     name: Build & Publish Docker Images
