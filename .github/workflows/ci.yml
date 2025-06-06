@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install dependencies
         run: yarn
       - name: Lint
