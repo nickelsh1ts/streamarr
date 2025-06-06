@@ -28,14 +28,14 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: yarn build
-          start: yarn start
+          build: yarn prepare && yarn standalone
+          start: node .next/standalone/server.js
           wait-on: 'http://localhost:3000'
           record: true
           parallel: true # Runs test in parallel using settings above
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_MIGRATIONS: tr
+          WITH_MIGRATIONS: false
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
