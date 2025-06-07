@@ -26,7 +26,7 @@ const Invite = () => {
       id: currentUser.id,
       displayName: currentUser.displayName,
       avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
+      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: currentUser.invitesRemaining,
     };
@@ -35,7 +35,7 @@ const Invite = () => {
       id: parseInt(userQuery.userid),
       displayName: 'DemoUser',
       avatar: '/android-chrome-192x192.png',
-      email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
+      email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: 4,
     };

@@ -13,7 +13,7 @@ interface VersionStatusProps {
 }
 
 const VersionStatus = ({ onClick }: VersionStatusProps) => {
-  const versionStream = `${process.env.NEXT_PUBLIC_APP_NAME} Preview 💾`;
+  const versionStream = `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} Preview 💾`;
   const isAdmin = useIsAdmin();
   const data = {
     updateAvailable: false,

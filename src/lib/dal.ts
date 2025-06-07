@@ -7,7 +7,7 @@ import { cache } from 'react';
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get(
-    `my${process.env.NEXT_PUBLIC_APP_NAME}Session`
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`
   )?.value;
   const session = await decrypt(cookie);
 

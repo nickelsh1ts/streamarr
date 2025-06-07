@@ -2,7 +2,7 @@ import UserSettings from '@app/components/UserProfile/UserSettings';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: `Profile – Settings - ${process.env.NEXT_PUBLIC_APP_NAME}`,
+  title: `Profile – Settings - ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`,
 };
 
 const ProfileSettingsLayout = ({ children }: { children: React.ReactNode }) => {

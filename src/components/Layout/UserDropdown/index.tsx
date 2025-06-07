@@ -41,7 +41,7 @@ const UserDropdown = ({
           Account Settings
         </DropDownMenu.Item>
         <DropDownMenu.Item
-          href={`https://stats.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.com`}
+          href={`https://stats.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
           target="_blank"
         >
           Watch Statistics
@@ -51,7 +51,7 @@ const UserDropdown = ({
           Get Support
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/logout" divide="before">
-          Sign Out of {process.env.NEXT_PUBLIC_APP_NAME}
+          Sign Out of {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

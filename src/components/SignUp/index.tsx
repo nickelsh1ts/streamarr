@@ -36,7 +36,7 @@ const Join = () => {
       <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
           <div className="mb-2 flex justify-center text-2xl font-bold">
-            Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
+            Welcome to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </div>
           <div className="mb-2 text-center text-sm">
             Registration is by invite only.

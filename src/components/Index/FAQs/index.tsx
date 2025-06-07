@@ -15,14 +15,14 @@ function FAQs() {
             <div className="collapse-title text-xl font-medium">
               What is{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
               ?
             </div>
             <div className="collapse-content">
               <p>
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>{' '}
                 allows you to watch all your favourites in one place. With
                 entertainment from Netflix, Disney+, Prime Video, HBO Max, and
@@ -47,7 +47,7 @@ function FAQs() {
               <p className="mb-4">
                 If you are streaming only third-party content (
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>
                 , live TV, web shows), then you are good to go as soon as you
                 have an account, just install an app on your phone, Smart TV,
@@ -78,14 +78,14 @@ function FAQs() {
             <div className="collapse-title text-xl font-medium">
               How can I join{' '}
               <span className="text-primary ms-1">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
             </div>
             <div className="collapse-content">
               <p className="mb-4">
                 Joining{' '}
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>{' '}
                 is by invite only. Current active members can invite up to 5 of
                 their friends.
@@ -95,7 +95,8 @@ function FAQs() {
                 from the menu and click invite a friend. Share the generated
                 code with your friend and send them to{' '}
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME.toLowerCase()}
+                  {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() ||
+                    'streamarr'}
                 </span>
                 .com/signup or click the share button!
               </p>
@@ -106,19 +107,20 @@ function FAQs() {
             <div className="collapse-title text-xl font-medium">
               Where can I watch{' '}
               <span className="text-primary ms-1">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
               ?
             </div>
             <div className="collapse-content">
               <p>
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>{' '}
                 is available via the Plex app on compatible mobile devices, web
                 browsers, game consoles, set-top boxes, and smart TVs or at{' '}
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}
+                  {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() ||
+                    'streamarr'}
                 </span>
                 .com. For a complete list of supported and compatible devices,
                 click{' '}
@@ -136,7 +138,7 @@ function FAQs() {
             <div className="collapse-title text-xl font-medium">
               What can I watch on{' '}
               <span className="text-primary ms-1">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
               ?
             </div>
@@ -144,13 +146,13 @@ function FAQs() {
               <p>
                 With{' '}
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>
                 , you can choose from an ever-evolving collection of movies and
                 TV shows. From new releases and timeless classics to nostalgic
                 throwbacks available on{' '}
                 <span className="text-primary">
-                  {process.env.NEXT_PUBLIC_APP_NAME}
+                  {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
                 </span>{' '}
                 Retro.
               </p>

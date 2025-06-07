@@ -1,11 +1,9 @@
 import Help from '@app/components/Help';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
-const messages = {
-  title: 'Help Centre',
-};
+const messages = { title: 'Help Centre' };
 
 export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,

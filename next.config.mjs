@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
+import crypto from 'crypto';
+
+const randomString = crypto.randomBytes(32).toString('base64');
+
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   env: {
     commitTag: process.env.COMMIT_TAG || 'local',
+    RANDOM_STRING: randomString,
   },
   async redirects() {
     return [

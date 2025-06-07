@@ -3,7 +3,7 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey = process.env.SESSION_SECRET || process.env.RANDOM_STRING;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload) {
@@ -28,7 +28,7 @@ export async function decrypt(session: string | undefined = '') {
 
 export async function updateSession(admin: boolean) {
   const session = (await cookies()).get(
-    `my${process.env.NEXT_PUBLIC_APP_NAME}Session`
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`
   )?.value;
   const payload = await decrypt(session);
 
@@ -46,13 +46,17 @@ export async function updateSession(admin: boolean) {
   const newSession = await encrypt({ userId, admin, expires });
 
   const cookieStore = await cookies();
-  cookieStore.set(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`, newSession, {
-    httpOnly: true,
-    secure: true,
-    expires: expires,
-    sameSite: 'lax',
-    path: '/',
-  });
+  cookieStore.set(
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`,
+    newSession,
+    {
+      httpOnly: true,
+      secure: true,
+      expires: expires,
+      sameSite: 'lax',
+      path: '/',
+    }
+  );
 }
 
 export async function createSession(userId: string, admin: boolean) {
@@ -60,16 +64,22 @@ export async function createSession(userId: string, admin: boolean) {
   const session = await encrypt({ userId, admin, expiresAt });
   const cookieStore = await cookies();
 
-  cookieStore.set(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`, session, {
-    httpOnly: true,
-    secure: true,
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  });
+  cookieStore.set(
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`,
+    session,
+    {
+      httpOnly: true,
+      secure: true,
+      expires: expiresAt,
+      sameSite: 'lax',
+      path: '/',
+    }
+  );
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete(`my${process.env.NEXT_PUBLIC_APP_NAME}Session`);
+  cookieStore.delete(
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`
+  );
 }

@@ -2,11 +2,9 @@ import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import Privacy from '@app/components/Help/Legal/Privacy';
 import type { Metadata } from 'next';
 
-const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME;
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
-const messages = {
-  title: 'Privacy Statement',
-};
+const messages = { title: 'Privacy Statement' };
 
 export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,

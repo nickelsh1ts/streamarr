@@ -16,6 +16,8 @@ const Watch = ({ children, ...props }) => {
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
+  const [hostname, setHostname] = useState('');
+
   useEffect(() => {
     setTimeout(() => {
       const div = document
@@ -39,7 +41,7 @@ const Watch = ({ children, ...props }) => {
               menu?.classList.add('mb-[6.5rem]');
             }
             if (pageTitle === 'Plex') {
-              document.title = `Now Streaming - ${process.env.NEXT_PUBLIC_APP_NAME}`;
+              document.title = `Now Streaming - ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`;
               menu?.classList.remove('mb-[6.5rem]');
             }
           }
@@ -93,6 +95,12 @@ const Watch = ({ children, ...props }) => {
     }
   });
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
+    }
+  }, [setHostname]);
+
   return (
     <>
       <iframe
@@ -105,7 +113,7 @@ const Watch = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN}${url && url.replace('null', '')}`}
+        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >

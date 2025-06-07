@@ -13,6 +13,8 @@ const Request = ({ children, ...props }) => {
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
+  const [hostname, setHostname] = useState('');
+
   useEffect(() => {
     innerFrame?.navigation?.addEventListener('navigate', () => {
       setLoadingIframe(true);
@@ -31,6 +33,12 @@ const Request = ({ children, ...props }) => {
     });
   }, [innerFrame?.location.pathname, innerFrame?.navigation, router, url]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
+    }
+  }, [setHostname]);
+
   return (
     <>
       <iframe
@@ -43,7 +51,7 @@ const Request = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-4rem)] relative ${loadingIframe && 'invisible'}`}
-        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN}/overseerr${url && url.replace('null', '')}`}
+        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}/overseerr${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >

@@ -7475,6 +7475,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crypto@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "crypto@npm:1.0.1"
+  checksum: 10c0/fcf7dbd68ac5415b7fde7d7208fe203038e92e83e8a8fcf6e86ab4771ce3dd026d6967a990ba56b9d1c771378210814d5c90d907d3739fbd1723d552ad6c8ab8
+  languageName: node
+  linkType: hard
+
 "css-functions-list@npm:^3.2.3":
   version: 3.2.3
   resolution: "css-functions-list@npm:3.2.3"
@@ -13570,12 +13577,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.4.1":
-  version: 3.4.1
-  resolution: "prettier@npm:3.4.1"
+"prettier@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/2d6cc3101ad9de72b49c59339480b0983e6ff6742143da0c43f476bf3b5ef88ede42ebd9956d7a0a8fa59f7a5990e8ef03c9ad4c37f7e4c9e5db43ee0853156c
+  checksum: 10c0/3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
   languageName: node
   linkType: hard
 
@@ -15161,6 +15168,7 @@ __metadata:
     axios-rate-limit: "npm:^1.4.0"
     bowser: "npm:^2.11.0"
     commitizen: "npm:4.3.1"
+    crypto: "npm:^1.0.1"
     cy-mobile-commands: "npm:^0.3.0"
     cypress: "npm:^13.16.0"
     cz-conventional-changelog: "npm:3.3.0"
@@ -15187,7 +15195,7 @@ __metadata:
     node-cache: "npm:^5.1.2"
     plex-api: "npm:^5.3.2"
     postcss: "npm:8.4.49"
-    prettier: "npm:3.4.1"
+    prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:4.1.0"
     prettier-plugin-tailwindcss: "npm:0.6.9"
     react: "npm:^18.3.1"

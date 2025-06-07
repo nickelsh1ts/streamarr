@@ -6,7 +6,7 @@ function Watching() {
           <img
             src="/devices-to-watch.png"
             className="mx-auto h-auto w-auto"
-            alt={`Watching ${process.env.NEXT_PUBLIC_APP_NAME}`}
+            alt={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
             loading="lazy"
           />
         </div>
@@ -26,7 +26,7 @@ function Watching() {
             <li className="mb-4">
               Limit your experience to{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>{' '}
               or leverage all Plex has to offer.
             </li>

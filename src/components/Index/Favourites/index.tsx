@@ -4,7 +4,7 @@ function Favourites() {
       <div className="mx-auto px-5 text-center text-light">
         <p className="p-2 text-4xl font-extrabold">
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </span>{' '}
           has all your favourites in one place
         </p>

@@ -2,22 +2,10 @@ import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 
 const anchors = [
-  {
-    href: '#first',
-    title: 'First step',
-  },
-  {
-    href: '#second',
-    title: 'Second Step',
-  },
-  {
-    href: '#third',
-    title: 'Third Step',
-  },
-  {
-    href: '#last',
-    title: 'Last step',
-  },
+  { href: '#first', title: 'First step' },
+  { href: '#second', title: 'Second Step' },
+  { href: '#third', title: 'Third Step' },
+  { href: '#last', title: 'Last step' },
 ];
 
 const HelpContent = () => {
@@ -30,18 +18,17 @@ const HelpContent = () => {
         Once you&apos;ve created your Ple<span className="text-accent">x</span>
         &trade; account and registered for{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>{' '}
         you&apos;ll receive an invite email that requires you to accept.
       </p>
       <p className="italic text-sm my-4">
         <span className="text-error font-bold">Important Information</span>:
         Until you accept this invite, your Ple
-        <span className="text-accent">
-          x
-        </span>&trade; account will not have access to{' '}
+        <span className="text-accent">x</span>&trade; account will not have
+        access to{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>{' '}
         content.
       </p>
@@ -53,13 +40,13 @@ const HelpContent = () => {
         page currently lists a lot of content available from Ple
         <span className="text-accent">x</span>&trade; and not{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>
         . To change this, you need to log into app.ple
         <span className="text-accent">x</span>
         .tv and &quot;pin&quot;{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>{' '}
         via the menu.
       </p>
@@ -74,14 +61,14 @@ const HelpContent = () => {
       <div className="mt-5 font-extrabold" id="third">
         And if we only want to see & access{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>{' '}
         content, not Ple<span className="text-accent">x</span>&trade;
       </div>
       <p className="my-4">
         From the Options menu in{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>{' '}
         you can select Online Media Sources and disable Live TV, Movies & TV and
         Music.

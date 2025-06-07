@@ -91,7 +91,7 @@ const SignIn = () => {
           <p className="text-sm">
             You will use this account to log into{' '}
             <span className="text-primary font-semibold">
-              {process.env.NEXT_PUBLIC_APP_NAME}
+              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
             </span>{' '}
             to watch your favourite movies and TV Shows.
           </p>
@@ -130,7 +130,7 @@ const SignIn = () => {
                 }`}
                 onClick={() => handleClick(1)}
               >
-                Sign in with {process.env.NEXT_PUBLIC_APP_NAME}
+                Sign in with {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </button>
               <AccordionContent isOpen={openIndexes.includes(1)}>
                 <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
@@ -226,7 +226,7 @@ const SignIn = () => {
         <p className="mt-4 text-start text-sm px-2 relative">
           New to{' '}
           <span className="text-primary font-semibold">
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </span>
           ?
           <Link href="/signup" className="font-bold hover:brightness-75 ms-1">

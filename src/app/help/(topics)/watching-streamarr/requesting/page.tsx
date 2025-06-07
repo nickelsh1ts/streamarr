@@ -15,7 +15,8 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li className="">
-          Sign in to {process.env.NEXT_PUBLIC_APP_NAME} and select
+          Sign in to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and
+          select
           <img
             className="h-auto w-28 inline-flex self-center mx-1"
             src="/external/os-logo_full_dark.svg"
@@ -44,7 +45,7 @@ const HelpContent = () => {
         <li>
           The time in which it takes to become available on{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </span>{' '}
           can depend on many factors such as the release date (older media can
           be more difficult to find), the popularity, and the quality.
@@ -55,7 +56,7 @@ const HelpContent = () => {
         </li>
         <li>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </span>{' '}
           currently supports 3 types of notifications, all of which can be
           enabled or disabled via your{' '}
@@ -64,7 +65,7 @@ const HelpContent = () => {
         </li>
         <li>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
           </span>{' '}
           currently allows for a maximum of{' '}
           <span className="text-info font-extrabold underline">5</span> Movie
@@ -78,22 +79,16 @@ const HelpContent = () => {
         </li>
       </ul>
       <p>
-        Access to overseerr requires a {process.env.NEXT_PUBLIC_APP_NAME}{' '}
-        membership.
+        Access to overseerr requires a{' '}
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} membership.
       </p>
     </>
   );
 };
 
 const anchors = [
-  {
-    href: '#requesting',
-    title: 'Requesting',
-  },
-  {
-    href: '#importantinfo',
-    title: 'Important Info',
-  },
+  { href: '#requesting', title: 'Requesting' },
+  { href: '#importantinfo', title: 'Important Info' },
 ];
 
 const Heading = () => {
@@ -177,7 +172,7 @@ const Requesting = () => {
       <Breadcrumbs
         paths="/watching-streamarr/requesting"
         homeElement={'Help Centre'}
-        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME},Request new media with Overseerr`}
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},Request new media with Overseerr`}
       />
       <HelpCard
         heading={<Heading />}

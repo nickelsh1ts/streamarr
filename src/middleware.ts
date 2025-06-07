@@ -19,7 +19,7 @@ export default async function middleware(req: NextRequest) {
 
   // 3. Decrypt the session from the cookie
   const cookie = (await cookies()).get(
-    `my${process.env.NEXT_PUBLIC_APP_NAME}Session`
+    `my${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}Session`
   )?.value;
   const session = await decrypt(cookie);
 

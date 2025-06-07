@@ -8,18 +8,14 @@ const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
   let user;
 
-  const currentUser = {
-    id: 1,
-    invitesRemaining: 'Unlimited',
-    invitesSent: 15,
-  };
+  const currentUser = { id: 1, invitesRemaining: 'Unlimited', invitesSent: 15 };
 
   if (!userQuery.userid) {
     user = {
       id: 1,
       displayName: 'Nickelsh1ts',
       avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
+      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
     };
   } else {
@@ -27,7 +23,7 @@ const UserProfile = () => {
       id: parseInt(userQuery.userid),
       displayName: 'QueriedUser',
       avatar: '/android-chrome-192x192.png',
-      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase()}.dev`,
+      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
     };
   }

@@ -39,9 +39,10 @@ const JobsCacheSettings = () => {
       <form className="mt-6">
         <h3 className="text-2xl font-extrabold">Jobs</h3>
         <p className="mb-5">
-          {process.env.NEXT_PUBLIC_APP_NAME} performs certain maintenance tasks
-          as regularly-scheduled jobs, but they can also be manually triggered
-          below. Manually running a job will not alter its schedule.
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} performs certain
+          maintenance tasks as regularly-scheduled jobs, but they can also be
+          manually triggered below. Manually running a job will not alter its
+          schedule.
         </p>
         <Table>
           <thead>
@@ -107,9 +108,9 @@ const JobsCacheSettings = () => {
       <form className="my-6">
         <h3 className="text-2xl font-extrabold">Image Cache</h3>
         <p className="mb-5">
-          {process.env.NEXT_PUBLIC_APP_NAME} will proxy and cache images from
-          pre-configured external sources. Cached images are saved into your
-          config folder. You can find the files in{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} will proxy and cache
+          images from pre-configured external sources. Cached images are saved
+          into your config folder. You can find the files in{' '}
           <code>/app/config/cache/images</code>.
         </p>
         <Table>

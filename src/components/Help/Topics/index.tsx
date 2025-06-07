@@ -71,7 +71,7 @@ const Topics = () => {
             >
               What is{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
               ?
             </Link>
@@ -94,7 +94,7 @@ const Topics = () => {
             >
               How to download the{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>{' '}
               app
             </Link>
@@ -125,7 +125,7 @@ const Topics = () => {
             >
               Turn on/off non-
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>{' '}
               content
             </Link>
@@ -137,7 +137,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>
             </Link>
             <Link
@@ -146,7 +146,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME}
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </span>{' '}
               on your TV
             </Link>

@@ -11,7 +11,9 @@ const Heading = () => {
   return (
     <>
       How to download the{' '}
-      <span className="text-primary">{process.env.NEXT_PUBLIC_APP_NAME}</span>{' '}
+      <span className="text-primary">
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+      </span>{' '}
       app
     </>
   );
@@ -21,7 +23,7 @@ const SubHeading = () => {
   return (
     <>
       <span className="text-primary font-bold">
-        {process.env.NEXT_PUBLIC_APP_NAME}
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
       </span>{' '}
       currently functions and is designed as a Progressive Web Application
       (PWA). Not all modern browser support PWAs at this time. Below you will
@@ -32,18 +34,9 @@ const SubHeading = () => {
 };
 
 const anchors = [
-  {
-    href: '#googlechrome',
-    title: 'Google Chrome',
-  },
-  {
-    href: '#applesafari',
-    title: 'Apple Safari',
-  },
-  {
-    href: '#microsoftedge',
-    title: 'Microsoft Edge',
-  },
+  { href: '#googlechrome', title: 'Google Chrome' },
+  { href: '#applesafari', title: 'Apple Safari' },
+  { href: '#microsoftedge', title: 'Microsoft Edge' },
 ];
 
 const ChromeTab = [
@@ -55,7 +48,10 @@ const ChromeTab = [
         <p className="text-lg font-extrabold">Install a web app</p>
         <ul className="list ms-4 list-decimal my-4">
           <li>On your computer, open Chrome.</li>
-          <li>Browse to the {process.env.NEXT_PUBLIC_APP_NAME} website.</li>
+          <li>
+            Browse to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
+          </li>
           <li className="place-items-center">
             At the top right, select More{' '}
             <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />{' '}
@@ -83,13 +79,16 @@ const ChromeTab = [
         <p className="text-lg font-extrabold">Uninstall a web app</p>
         <ul className="list ms-4 list-decimal my-4">
           <li>On your computer, open Chrome.</li>
-          <li>Browse to the {process.env.NEXT_PUBLIC_APP_NAME} website.</li>
+          <li>
+            Browse to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
+          </li>
           <li className="place-items-center">
             At the top right, select More{' '}
             <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />{' '}
             <ChevronRightIcon className="w-3 h-3 inline-flex" />{' '}
             <span className="font-bold">
-              Uninstall {process.env.NEXT_PUBLIC_APP_NAME}
+              Uninstall {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
             </span>{' '}
             <ChevronRightIcon className="w-3 h-3 inline-flex" />{' '}
             <span className="font-bold">Remove.</span>
@@ -124,7 +123,10 @@ const ChromeTab = [
             />
             .
           </li>
-          <li>Browse to the {process.env.NEXT_PUBLIC_APP_NAME} website.</li>
+          <li>
+            Browse to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
+          </li>
           <li className="place-items-center">
             On the right of the address bar, tap More{' '}
             <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />{' '}
@@ -171,7 +173,10 @@ const ChromeTab = [
             />
             .
           </li>
-          <li>Browse to the {process.env.NEXT_PUBLIC_APP_NAME} website.</li>
+          <li>
+            Browse to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
+          </li>
           <li className="place-items-center">
             On the right of the address bar, tap Share{' '}
             <ArrowUpOnSquareIcon className="w-4 h-4 inline-flex" />.
@@ -213,7 +218,10 @@ const MicrosoftTab = [
         </p>
         <ul className="list ms-4 list-decimal my-4">
           <li>Open Microsoft Edge.</li>
-          <li>Navigate to the {process.env.NEXT_PUBLIC_APP_NAME} website.</li>
+          <li>
+            Navigate to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
+          </li>
           <ul className="list list-disc ms-6">
             <li>
               Microsoft Edge will prompt you with the possibility of installing
@@ -296,7 +304,8 @@ const MicrosoftTab = [
         <ul className="list ms-4 list-decimal my-4">
           <li>Open Edge on your iPhone or iPad.</li>
           <li className="">
-            Navigate to the {process.env.NEXT_PUBLIC_APP_NAME} website.
+            Navigate to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
           </li>
           <li className="place-items-center">
             Tap the Hamburger menu <Bars3Icon className="w-5 h-5 inline-flex" />
@@ -372,7 +381,8 @@ const AppleTab = [
         <ul className="list ms-4 list-decimal my-4">
           <li>Open Safari on your iPhone or iPad.</li>
           <li className="">
-            Navigate to the {process.env.NEXT_PUBLIC_APP_NAME} website.
+            Navigate to the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
+            website.
           </li>
           <li className="place-items-center">
             Tap the Action button (often called the Share button).
@@ -436,7 +446,7 @@ const DownloadStreamarr = () => {
       <Breadcrumbs
         paths="/getting-started/download-streamarr"
         homeElement={'Help Centre'}
-        names={`Getting Started,How to download the ${process.env.NEXT_PUBLIC_APP_NAME} app`}
+        names={`Getting Started,How to download the ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} app`}
       />
       <HelpCard
         heading={<Heading />}

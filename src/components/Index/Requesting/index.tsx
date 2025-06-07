@@ -16,11 +16,11 @@ function Requesting() {
           <p className="mb-0 text-lg">
             Request almost any Movie or TV Show and watch it directly on
             <span className="text-primary ms-1">
-              {process.env.NEXT_PUBLIC_APP_NAME}
+              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
             </span>{' '}
             in no time with Overseerr. Enjoy Overseerr as part of your
             <span className="text-primary ms-1">
-              {process.env.NEXT_PUBLIC_APP_NAME}
+              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
             </span>{' '}
             membership.
           </p>

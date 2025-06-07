@@ -21,7 +21,7 @@ const HelpContent = () => {
       <p className="mb-4">
         If you are streaming only third-party content (
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </span>
         , live TV, web shows), then you are good to go as soon as you have an
         account, just install an app on your phone, Smart TV, computer, or

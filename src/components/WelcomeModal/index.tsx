@@ -28,7 +28,7 @@ const WelcomeModal = () => {
           <p className="text-4xl">
             <span className="font-bold">Welcome to</span>{' '}
             <span className="font-extralight">
-              {process.env.NEXT_PUBLIC_APP_NAME}
+              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
             </span>
           </p>
         </div>
