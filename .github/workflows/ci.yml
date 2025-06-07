@@ -24,7 +24,7 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Formatting
-        run: yarn format:check
+        run: yarn prettier 'src/**/*.{css,js,ts,tsx}' --check --cache .
       - name: Build
         run: yarn standalone
 
