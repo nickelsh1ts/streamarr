@@ -19,5 +19,12 @@
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false,
-  "cSpell.words": ["Homelab", "nextjs", "NICKFLIXTV", "rehype", "Streamarr"]
+  "cSpell.words": [
+    "Homelab",
+    "MOVIEDB",
+    "nextjs",
+    "NICKFLIXTV",
+    "rehype",
+    "Streamarr"
+  ]
 }
