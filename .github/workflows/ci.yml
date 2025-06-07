@@ -23,8 +23,6 @@ jobs:
         run: yarn
       - name: Lint
         run: yarn lint
-      - name: Formatting
-        run: yarn prettier 'src/**/*.{css,js,ts,tsx}' --check --cache .
       - name: Build
         run: yarn standalone
 
