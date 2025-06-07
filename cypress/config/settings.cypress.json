@@ -1,11 +1,11 @@
 {
-    "clientId": "6919275e-142a-48d8-be6b-93594cbd4626",
-    "main": {
-      "apiKey": "testkey",
-      "applicationTitle": "Streamarr",
-      "applicationUrl": "",
-      "region": "",
-      "originalLanguage": "",
-      "locale": "en"
-    }
+  "clientId": "6919275e-142a-48d8-be6b-93594cbd4626",
+  "main": {
+  "apiKey": "testkey",
+  "applicationTitle": "Streamarr",
+  "applicationUrl": "",
+  "region": "",
+  "originalLanguage": "",
+  "locale": "en"
   }
+}

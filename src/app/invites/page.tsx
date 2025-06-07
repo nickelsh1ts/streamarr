@@ -1,11 +1,9 @@
 import Invite from '@app/components/Invite';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
-const messages = {
-  title: 'Invite a friend',
-};
+const messages = { title: 'Invite a friend' };
 
 export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,

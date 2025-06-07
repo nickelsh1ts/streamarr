@@ -1,9 +1,10 @@
 'use client';
-import { isAuthed } from '@app/app/layout';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import Header from '@app/components/Common/Header';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Table from '@app/components/Common/Table';
+import { verifySession } from '@app/lib/dal';
 import {
   PencilIcon,
   ChevronLeftIcon,
@@ -11,12 +12,13 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const data = [
   {
     id: 1,
     displayName: 'Nickelsh1ts',
-    email: 'nickelsh1ts@streamarr.dev',
+    email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
     avatar: '/android-chrome-192x192.png',
     requestCount: 0,
     userType: 'local',
@@ -25,7 +27,7 @@ const data = [
   {
     id: 2,
     displayName: 'DemoUser',
-    email: 'demo@streamarr.dev',
+    email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
     avatar: '/android-chrome-192x192.png',
     requestCount: 0,
     userType: 'plex',
@@ -36,6 +38,38 @@ const data = [
 const AdminUsers = () => {
   const router = useRouter();
   const isUserPermsEditable = (userId: number) => userId !== 1;
+  const [user, setData] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await verifySession();
+        if (!response) {
+          throw new Error('Failed to fetch');
+        }
+        const result = await response;
+        setData(result.isAuthed);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    <LoadingEllipsis />;
+  }
+
+  if (error) {
+    console.log(error);
+  }
+
+  const isAuthed = user;
 
   return (
     <div className="mx-4">

@@ -1,5 +1,6 @@
 'use client';
 import { NotificationContext } from '@app/context/NotificationContext';
+import useIsAdmin from '@app/hooks/useIsAdmin';
 import {
   BellAlertIcon,
   HomeIcon,
@@ -12,18 +13,18 @@ import { useContext } from 'react';
 interface UserType {
   name: string;
   email: string;
-  admin: boolean;
 }
 
 const user: UserType = {
-  name: 'nickelsh1ts',
-  email: 'nickelsh1ts@streamarr.dev',
-  admin: true,
+  name: `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} UI Preview`,
+  email: 'v0.00.1',
 };
 
 const UserCard = () => {
   const path = usePathname();
   const { setIsOpen } = useContext(NotificationContext);
+
+  const isAdmin = useIsAdmin();
 
   return (
     <div className="pointer-events-auto w-64 relative">
@@ -47,9 +48,7 @@ const UserCard = () => {
       </Link>
       <div className="absolute top-1 right-1">
         <button onClick={() => setIsOpen(true)} className="indicator">
-          <span className="indicator-item indicator-start left-2 top-2 badge badge-sm font-thin badge-error h-5">
-            9
-          </span>
+          <span className="indicator-item indicator-start left-2 top-2 badge badge-sm font-thin badge-error h-5 hidden"></span>
           <BellAlertIcon className="size-8 m-1" />
         </button>
       </div>
@@ -62,7 +61,7 @@ const UserCard = () => {
           Home
         </Link>
       )}
-      {user.admin && (
+      {isAdmin && (
         <Link
           className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
           href="/admin"

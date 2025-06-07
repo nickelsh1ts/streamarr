@@ -4,17 +4,47 @@ import UserDropdown from '@app/components/Layout/UserDropdown';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { isAuthed } from '@app/app/layout';
 import BackButton from '@app/components/Layout/BackButton';
 import DynamicLogo from '@app/components/Layout/DynamicLogo';
+import { verifySession } from '@app/lib/dal';
+import { useEffect, useState } from 'react';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
+  const [data, setData] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await verifySession();
+        if (!response) {
+          throw new Error('Failed to fetch');
+        }
+        const result = await response;
+        setData(result.isAuthed);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (error) {
+    console.log(error);
+  }
+
+  const isAuthed = data;
 
   return (
     <header
       id="top"
-      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-10`}
+      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
@@ -37,25 +67,29 @@ const Header = ({ isInView = true }) => {
               Sign up now
             </Link>
           )}
-          {isAuthed ? (
-            !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
-              <div className="max-sm:hidden -mt-1">
+          {!loading ? (
+            isAuthed ? (
+              !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
+                <div className="max-sm:hidden -mt-1">
+                  <UserDropdown />
+                </div>
+              ) : (
                 <UserDropdown />
-              </div>
+              )
             ) : (
-              <UserDropdown />
+              !path.match(/^\/signin\/?$/) && (
+                <Link
+                  href="/signin"
+                  id="signin"
+                  className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
+                >
+                  Sign in{' '}
+                  <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
+                </Link>
+              )
             )
           ) : (
-            !path.match(/^\/signin\/?$/) && (
-              <Link
-                href="/signin"
-                id="signin"
-                className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
-              >
-                Sign in{' '}
-                <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
-              </Link>
-            )
+            <LoadingEllipsis text="" />
           )}
         </div>
       </div>

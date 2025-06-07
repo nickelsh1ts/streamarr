@@ -4,7 +4,7 @@
 
 #### To-Dos
 
-- [ ] Successful build `yarn build`
+- [ ] Successful build `yarn prepare && yarn standalone`
 - [ ] Successful `node server.js`
 - [ ] Successful docker image deploy
 

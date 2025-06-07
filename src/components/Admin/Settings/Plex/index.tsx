@@ -9,7 +9,8 @@ const PlexSettings = () => {
     <form className="my-6">
       <h3 className="text-2xl font-extrabold">Plex Settings</h3>
       <p className="mb-5">
-        Configure the settings for your Plex server. Streamarr scans your Plex
+        Configure the settings for your Plex server.{' '}
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} scans your Plex
         libraries to generate menus.
       </p>
       <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">

@@ -115,9 +115,7 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
             </div>
             <div className="flex overflow-hidden items-center py-1 truncate whitespace-nowrap leading-5">
               <span className="font-extrabold mr-2">Created</span>
-              {moment(
-                invite.created
-              ).fromNow()} by{' '}
+              {moment(invite.created).fromNow()} by{' '}
               <Link
                 className="link-hover font-extrabold flex items-center truncate"
                 href={'/admin/users/1'}
@@ -134,9 +132,7 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
             </div>
             <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
               <span className="font-extrabold mr-2">Modified</span>
-              {moment(
-                invite.created
-              ).fromNow()} by{' '}
+              {moment(invite.created).fromNow()} by{' '}
               <Link
                 className="link-hover font-extrabold flex items-center truncate"
                 href={'/admin/users/1'}

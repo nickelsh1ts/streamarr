@@ -36,7 +36,7 @@ function Footer() {
             <a
               className="link-neutral"
               target="_blank"
-              href="https://discord.gg/ZSTrRJMcDS"
+              href="https://discord.gg/streamarr"
               rel="noreferrer"
             >
               <svg
@@ -108,13 +108,13 @@ function Footer() {
           </Link>
           <Link
             className="link-neutral text-decoration-none"
-            href="//status.nickflixtv.com/status/services"
+            href={`//status.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com/status/services`}
           >
             Status
           </Link>
           <Link
             className="link-neutral text-decoration-none"
-            href="mailto:info@streamarr.com"
+            href={`mailto:info@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
           >
             Contact Us
           </Link>

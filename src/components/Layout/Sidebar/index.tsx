@@ -77,7 +77,7 @@ const Sidebar = () => {
           <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <img
-                src="/logo_full.png"
+                src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
                 alt="logo"
                 className="my-2 mx-4 h-auto w-44"
               />
@@ -277,7 +277,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         onClick={() => onClick && onClick(!isOpen)}
         isOpen={isOpen}
         href={'/invites'}
-        title={'Invite'}
+        title={'Invites'}
         icon={<PaperAirplaneIcon className="size-7" />}
         active={path.match(/^\/invites\/?/)}
       />

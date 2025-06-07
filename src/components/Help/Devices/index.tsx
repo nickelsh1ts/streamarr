@@ -4,6 +4,8 @@ import { useState } from 'react';
 import ImageFader from '@app/components/Common/ImageFader';
 import { ComputerDesktopIcon, TvIcon } from '@heroicons/react/24/outline';
 import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
+import useBackdrops from '@app/hooks/useBackdrops';
+import Image from 'next/image';
 
 interface imageArrayProps {
   src: string;
@@ -43,31 +45,20 @@ const DeviceTabs = () => {
         <>
           The newest generation of media players and streaming sticks offer a
           fast, easy, and affordable way to watch
-          <span className="text-primary"> Streamarr</span> on your TV with the
-          Ple<span className="link-accent">x</span>&trade; app.
+          <span className="text-primary">
+            {' '}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          on your TV with the Ple<span className="link-accent">x</span>&trade;
+          app.
         </>
       ),
       imageArray: [
-        {
-          src: '/img/Apple_TV_Logo.png',
-          alt: 'Apple TV',
-        },
-        {
-          src: '/img/Chromecast_Logo.png',
-          alt: 'Chromecast',
-        },
-        {
-          src: '/img/Amazon_Fire_TV_Logo.png',
-          alt: 'FireTV',
-        },
-        {
-          src: '/img/Roku_TV_Logo.png',
-          alt: 'Roku TV',
-        },
-        {
-          src: '/img/Android_TV_Logo.png',
-          alt: 'Android',
-        },
+        { src: '/img/Apple_TV_Logo.png', alt: 'Apple TV' },
+        { src: '/img/Chromecast_Logo.png', alt: 'Chromecast' },
+        { src: '/img/Amazon_Fire_TV_Logo.png', alt: 'FireTV' },
+        { src: '/img/Roku_TV_Logo.png', alt: 'Roku TV' },
+        { src: '/img/Android_TV_Logo.png', alt: 'Android' },
       ],
     },
     {
@@ -82,30 +73,19 @@ const DeviceTabs = () => {
           interface on your big screen with the Ple
           <span className="text-accent">x</span> Smart TV app, available in most
           smart TV app stores, and access
-          <span className="tet-primary"> Streamarr</span> directly on-screen.
+          <span className="tet-primary">
+            {' '}
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          directly on-screen.
         </>
       ),
       imageArray: [
-        {
-          src: '/img/LG-Logo.png',
-          alt: 'LG',
-        },
-        {
-          src: '/img/Samsung-Logo.png',
-          alt: 'Samsung',
-        },
-        {
-          src: '/img/vidaa-logo.jpg',
-          alt: 'Vidaa',
-        },
-        {
-          src: '/img/Vizio-logo.png',
-          alt: 'Vizio',
-        },
-        {
-          src: '/img/Toshiba-logo.png',
-          alt: 'Toshiba',
-        },
+        { src: '/img/LG-Logo.png', alt: 'LG' },
+        { src: '/img/Samsung-Logo.png', alt: 'Samsung' },
+        { src: '/img/vidaa-logo.jpg', alt: 'Vidaa' },
+        { src: '/img/Vizio-logo.png', alt: 'Vizio' },
+        { src: '/img/Toshiba-logo.png', alt: 'Toshiba' },
       ],
     },
     {
@@ -130,36 +110,21 @@ const DeviceTabs = () => {
       ),
       paragraph: (
         <>
-          You can also watch <span className="text-primary">Streamarr</span> on
-          a variety of game consoles with the Ple
+          You can also watch{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          on a variety of game consoles with the Ple
           <span className="link-warning">x</span>&trade; app.
         </>
       ),
       imageArray: [
-        {
-          src: '/img/xbox-one_logo.png',
-          alt: 'Xbox One',
-        },
-        {
-          src: '/img/xbox-series_logo.png',
-          alt: 'Xbox Series x|s',
-        },
-        {
-          src: '/img/ps3_logo.png',
-          alt: 'PS3',
-        },
-        {
-          src: '/img/ps4_logo.png',
-          alt: 'PS4',
-        },
-        {
-          src: '/img/ps5_logo.png',
-          alt: 'PS5',
-        },
-        {
-          src: '/img/nvidia-shield_logo.png',
-          alt: 'Nvidia Shield',
-        },
+        { src: '/img/xbox-one_logo.png', alt: 'Xbox One' },
+        { src: '/img/xbox-series_logo.png', alt: 'Xbox Series x|s' },
+        { src: '/img/ps3_logo.png', alt: 'PS3' },
+        { src: '/img/ps4_logo.png', alt: 'PS4' },
+        { src: '/img/ps5_logo.png', alt: 'PS5' },
+        { src: '/img/nvidia-shield_logo.png', alt: 'Nvidia Shield' },
       ],
     },
     {
@@ -169,7 +134,11 @@ const DeviceTabs = () => {
       ),
       heading: (
         <>
-          Take <span className="text-primary">Sreamarr</span> with you
+          Take{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          with you
         </>
       ),
       paragraph: (
@@ -185,19 +154,16 @@ const DeviceTabs = () => {
             only offers free playback via the casting feature. To watch on the
             app directly on your phone a small one-time fee is required. If you
             wish not to pay the fee, you may use the newly mobile optimized{' '}
-            <span className="text-primary">Streamarr</span>.com app.
+            <span className="text-primary">
+              {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
+            </span>
+            .com app.
           </span>
         </>
       ),
       imageArray: [
-        {
-          src: '/img/Android_logo.png',
-          alt: 'Android',
-        },
-        {
-          src: '/img/iOS_Logo.png',
-          alt: 'iOS',
-        },
+        { src: '/img/Android_logo.png', alt: 'Android' },
+        { src: '/img/iOS_Logo.png', alt: 'iOS' },
       ],
     },
     {
@@ -208,83 +174,17 @@ const DeviceTabs = () => {
       heading: 'Watch on what you have',
       paragraph: (
         <>
-          <span className="text-primary">Streamarr</span> is optimized for
-          today&apos;s most popular browsers so you can watch on your PC or
-          laptop.
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          is optimized for today&apos;s most popular browsers so you can watch
+          on your PC or laptop.
         </>
       ),
     },
   ];
-  const ImageArray = [
-    {
-      url: '/wNAhuOZ3Zf84jCIlrcI6JhgmY5q.jpg',
-      i: '1223',
-    },
-    {
-      url: '/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg',
-      i: '94997',
-    },
-    {
-      url: '/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg',
-      i: '32445',
-    },
-    {
-      url: '/7cqKGQMnNabzOpi7qaIgZvQ7NGV.jpg',
-      i: '76479',
-    },
-    {
-      url: '/rrwt0u1rW685u9bJ9ougg5HJEHC.jpg',
-      i: '280180',
-    },
-    {
-      url: '/ybn3jCia5XBD0ZgEM07gcUPuRNh.jpg',
-      i: '508883',
-    },
-    {
-      url: '/fDmci71SMkfZM8RnCuXJVDPaSdE.jpg',
-      i: '519182',
-    },
-    {
-      url: '/6XjMwQTvnICBz6TguiDKkDVHvgS.jpg',
-      i: 762441,
-    },
-    {
-      url: '/nxxCPRGTzxUH8SFMrIsvMmdxHti.jpg',
-      i: 639720,
-    },
-    {
-      url: '/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg',
-      i: 85937,
-    },
-    {
-      url: '/5Aks5cCqHG8xFLoUSLsfGdVfIC.jpg',
-      i: 1086747,
-    },
-    {
-      url: '/kwronSXO1ogMqHHFvY2eBxfFLdn.jpg',
-      i: 114479,
-    },
-    {
-      url: '/jvPMJ2zM92jfXxVEFsqP1MMrLaO.jpg',
-      i: 823464,
-    },
-    {
-      url: '/dvBCdCohwWbsP5qAaglOXagDMtk.jpg',
-      i: 533535,
-    },
-    {
-      url: '/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg',
-      i: 37854,
-    },
-    {
-      url: '/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
-      i: 693134,
-    },
-    {
-      url: '/5fWxvjOUvtUoSmiMEpFl77V6KZV.jpg',
-      i: 196322,
-    },
-  ];
+
+  const backdrops = useBackdrops();
 
   return (
     <div className="grid">
@@ -308,15 +208,36 @@ const DeviceTabs = () => {
         })}
       </div>
       <div className="bg-zinc-200 relative min-h-[47.5vh]">
-        <ImageFader
-          rotationSpeed={6000}
-          backgroundImages={
-            ImageArray?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
-            ) ?? []
-          }
-          gradient="backdrop-blur-xl bg-black/70"
-        />
+        {backdrops ? (
+          <ImageFader
+            rotationSpeed={6000}
+            gradient="backdrop-blur-xl bg-black/70"
+            backgroundImages={
+              backdrops?.map(
+                (backdrop) =>
+                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+              ) ?? []
+            }
+          />
+        ) : (
+          <div>
+            <div
+              className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
+            >
+              <Image
+                unoptimized
+                className="absolute inset-0 h-full w-full"
+                style={{ objectFit: 'cover' }}
+                alt=""
+                src={'/img/people-cinema-watching.jpg'}
+                fill
+              />
+              <div
+                className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
+              />
+            </div>
+          </div>
+        )}
         {tabs?.map((tab, i) => {
           return (
             <div
@@ -352,7 +273,9 @@ const DeviceTabs = () => {
         })}
       </div>
       <div className="container mx-auto text-center py-10 px-5 text-black">
-        <span className="text-primary font-extrabold">Streamarr</span>{' '}
+        <span className="text-primary font-extrabold">
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+        </span>{' '}
         membership and internet connection required.
       </div>
     </div>

@@ -1,17 +1,14 @@
 /** @type {import('next').NextConfig} */
+import crypto from 'crypto';
+
+const randomString = crypto.randomBytes(32).toString('base64');
+
 const nextConfig = {
-  // output: 'standalone',
+  output: 'standalone',
   reactStrictMode: true,
-  // Optional: Change links `/me` -> `/me/` and emit `/me.html` -> `/me/index.html`
-  // trailingSlash: true,
-
-  // Optional: Prevent automatic `/me` -> `/me/`, instead preserve `href`
-  // skipTrailingSlashRedirect: true,
-
-  // Optional: Change the output directory `out` -> `dist`
-  // distDir: 'dist',
   env: {
     commitTag: process.env.COMMIT_TAG || 'local',
+    RANDOM_STRING: randomString,
   },
   async redirects() {
     return [
@@ -38,6 +35,10 @@ const nextConfig = {
       issuer: /\.(js|ts)x?$/,
       use: ['@svgr/webpack'],
     });
+    config.resolve.fallback = {
+      fs: false,
+      path: false,
+    };
     return config;
   },
   experimental: {

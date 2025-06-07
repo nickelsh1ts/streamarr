@@ -1,3 +1,5 @@
+import useIsAdmin from '@app/hooks/useIsAdmin';
+import { getAppVersion } from '@app/utils/appVersion';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
@@ -11,17 +13,18 @@ interface VersionStatusProps {
 }
 
 const VersionStatus = ({ onClick }: VersionStatusProps) => {
-  const versionStream = 'Streamarr Local 💾';
+  const versionStream = `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} Preview 💾`;
+  const isAdmin = useIsAdmin();
   const data = {
     updateAvailable: false,
     commitTag: 'develop',
-    version: 'develop-v0.0.1',
+    version: getAppVersion(),
     commitsBehind: 0,
   };
 
   return (
     <Link
-      href="/admin/settings/about"
+      href={`${isAdmin ? '/admin/settings/about' : '/help'}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && onClick) {
@@ -53,9 +56,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
           ) : data.commitsBehind === -1 ? (
             'out of date'
           ) : (
-            <code className="bg-transparent p-0">
-              {data.version.replace('develop-', '')}
-            </code>
+            <code className="bg-transparent p-0">{data.version}</code>
           )}
         </span>
       </div>

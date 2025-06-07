@@ -1,10 +1,12 @@
 {
   "name": "streamarr",
-  "version": "0",
+  "version": "0.00.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "standalone": "yarn build && cp -r public/ .next/standalone && cp -r .next/static .next/standalone/.next",
+    "prepare": "yarn format && yarn lint && yarn css-lint && yarn typecheck",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --cache",
     "start": "next start",
     "css-lint": "stylelint src/styles/*.css public/*.css",
@@ -13,7 +15,9 @@
     "format:check": "prettier 'src/**/*.{css,js,ts,tsx}' --check --cache .",
     "typecheck": "yarn typecheck:client",
     "typecheck:client": "tsc --noEmit",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "css-build": "tailwindcss -o public/tailwind.css",
+    "css-watch": "tailwindcss -o public/tailwind.css --watch"
   },
   "repository": {
     "type": "git",
@@ -35,6 +39,7 @@
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "intl": "1.2.5",
+    "jose": "^6.0.11",
     "moment": "^2.30.1",
     "next": "^14.2.14",
     "nextjs-toploader": "^3.7.15",
@@ -57,6 +62,7 @@
     "tailwindcss": "3.4.15",
     "theme-change": "^2.5.0",
     "typeorm": "^0.3.20",
+    "usehooks-ts": "^3.1.1",
     "web-push": "^3.6.7",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
@@ -80,6 +86,7 @@
     "@typescript-eslint/eslint-plugin": "8.16.0",
     "@typescript-eslint/parser": "8.16.0",
     "commitizen": "4.3.1",
+    "crypto": "^1.0.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^13.16.0",
     "cz-conventional-changelog": "3.3.0",
@@ -96,7 +103,7 @@
     "extract-react-intl-messages": "4.1.1",
     "globals": "^15.12.0",
     "lint-staged": "15.2.10",
-    "prettier": "3.4.1",
+    "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.9",
     "semantic-release": "24.2.0",

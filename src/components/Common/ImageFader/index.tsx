@@ -17,7 +17,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
   {
     backgroundImages,
     rotationSpeed = DEFAULT_ROTATION_SPEED,
-    gradient = 'bg-gradient-to-t md:bg-gradient-to-r from-brand-dark/90 md:from-brand-dark/100 from-40% md:from-15% via-brand-light/75 via-75% md:via-45%',
+    gradient = 'bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0',
     ...props
   },
   ref

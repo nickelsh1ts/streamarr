@@ -1,7 +1,17 @@
+'use client';
 import Button from '@app/components/Common/Button';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
 
 const ServicesProwlarr = () => {
+  const [hostname, setHostname] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
+    }
+  }, [setHostname]);
+
   return (
     <>
       <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
@@ -22,7 +32,7 @@ const ServicesProwlarr = () => {
         <div className="sm:col-span-2">
           <div className="flex">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
-              https://streamarr.nickelsh1ts.com
+              {process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}
             </span>
             <input
               className="input input-sm input-primary rounded-md w-1/2 rounded-l-none"

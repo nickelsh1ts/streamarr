@@ -45,7 +45,7 @@ export default function BigCalendar({
 
   const [date, setDate] = useState(defaultDateStr);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [view, setView] = useState<any>(Views.AGENDA);
+  const [view, setView] = useState<any>(Views.MONTH);
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate]);
   const onView = useCallback((newView) => setView(newView), [setView]);
@@ -147,7 +147,7 @@ export default function BigCalendar({
       >
         <Calendar
           defaultDate={defaultDate}
-          defaultView={Views.AGENDA}
+          defaultView={Views.MONTH}
           events={myEvents}
           getNow={getNow}
           localizer={localizer}

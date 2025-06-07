@@ -12,7 +12,9 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { mutate } from 'swr';
-import { ImageArray } from '@app/components/Layout';
+import ComingSoon from '@app/components/Common/ComingSoon';
+import useBackdrops from '@app/hooks/useBackdrops';
+import Image from 'next/image';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -36,23 +38,44 @@ const Setup = () => {
     }
   };
 
-  const backdrops = ImageArray;
+  const backdrops = useBackdrops();
 
   return (
     <div className="relative flex min-h-screen flex-col justify-center py-12">
-      <ImageFader
-        backgroundImages={
-          backdrops?.map(
-            (backdrop) => `https://image.tmdb.org/t/p/original/${backdrop.url}`
-          ) ?? []
-        }
-      />
+      {backdrops ? (
+        <ImageFader
+          rotationSpeed={6000}
+          backgroundImages={
+            backdrops?.map(
+              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
+            ) ?? []
+          }
+        />
+      ) : (
+        <div>
+          <div
+            className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
+          >
+            <Image
+              unoptimized
+              className="absolute inset-0 h-full w-full"
+              style={{ objectFit: 'cover' }}
+              alt=""
+              src={'/img/people-cinema-watching.jpg'}
+              fill
+            />
+            <div
+              className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
+            />
+          </div>
+        </div>
+      )}
       <div className="absolute top-4 right-4 z-50">
         <LanguagePicker />
       </div>
       <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl">
         <img
-          src="/logo_full.png"
+          src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
           className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
           alt="Logo"
         />
@@ -131,6 +154,7 @@ const Setup = () => {
           )}
         </div>
       </div>
+      <ComingSoon />
     </div>
   );
 };

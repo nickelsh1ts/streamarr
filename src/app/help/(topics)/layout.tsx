@@ -3,11 +3,9 @@ import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
 import type { Metadata } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
-const messages = {
-  title: 'Help Centre',
-};
+const messages = { title: 'Help Centre' };
 
 export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,
@@ -15,9 +13,7 @@ export const metadata: Metadata = {
 
 export default function TopicsLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <main>
       <Header />

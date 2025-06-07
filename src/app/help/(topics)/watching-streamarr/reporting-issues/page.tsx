@@ -9,7 +9,10 @@ const HelpContent = () => {
         Reporting an issue:
       </div>
       <ul className="list list-decimal ms-14 my-4">
-        <li>Open your Streamarr account and browse to Overseerr</li>
+        <li>
+          Open your {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} account
+          and browse to Overseerr
+        </li>
         <li>Search for or browse to the media you wish to report</li>
         <li className="flex flex-wrap place-items-center">
           On the Movie or TV Shows discovery page, locate the
@@ -37,7 +40,10 @@ const HelpContent = () => {
         Issue Tracking:
       </div>
       <ul className="list list-decimal ms-14 my-4">
-        <li>Open your Streamarr account and browse to Overseerr</li>
+        <li>
+          Open your {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} account
+          and browse to Overseerr
+        </li>
         <li>from the menu options select Issues</li>
         <li>You can filter all, open or resolved issues</li>
         <li>Select View Issue to review information submitted</li>
@@ -54,22 +60,17 @@ const HelpContent = () => {
         <li>Further questions can be submitted within each issue</li>
       </ul>
       <p className="">
-        Issues reported are not visible to others and only yourself and the
-        Streamarr admin team have access.
+        Issues reported are not visible to others and only yourself and the{' '}
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} admin team have
+        access.
       </p>
     </>
   );
 };
 
 const anchors = [
-  {
-    href: '#reportingissue',
-    title: 'Reporting an Issue',
-  },
-  {
-    href: '#issuetracking',
-    title: 'Issue Tracking',
-  },
+  { href: '#reportingissue', title: 'Reporting an Issue' },
+  { href: '#issuetracking', title: 'Issue Tracking' },
 ];
 
 const ReportingIssues = () => {
@@ -78,10 +79,10 @@ const ReportingIssues = () => {
       <Breadcrumbs
         paths="/watching-streamarr/reporting-issues"
         homeElement={'Help Centre'}
-        names="Watching Streamarr,How can I report an issue with Streamarr content?"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},How can I report an issue with ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content?`}
       />
       <HelpCard
-        heading="How can I report an issue with Streamarr content?"
+        heading={`How can I report an issue with ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content?`}
         subheading="You can use the Overseerr app to report issues with missing or incomplete media as well as issues or difficulty you experience with playback on certain devices."
         anchors={anchors}
         content={<HelpContent />}

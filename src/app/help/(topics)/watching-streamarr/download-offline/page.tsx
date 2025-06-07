@@ -12,7 +12,10 @@ const HelpContent = () => {
         <li>Open the app store on your supported device</li>
         <li>Search for Plex under entertainment</li>
         <li>Install the application</li>
-        <li>Log into the Plex app with your Streamarr registered account</li>
+        <li>
+          Log into the Plex app with your{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} registered account
+        </li>
       </ul>
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
@@ -27,11 +30,11 @@ const HelpContent = () => {
         </li>
         <li>
           You are required to connect your device and Plex to the same account
-          registered with Streamarr
+          registered with {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </li>
         <li>
-          Streamarr is not responsible for the Plex app or any issues that may
-          arise from use
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} is not responsible
+          for the Plex app or any issues that may arise from use
         </li>
       </ul>
       <p className="mb-16">
@@ -56,16 +59,17 @@ const HelpContent = () => {
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
         <li>
-          You cannot currently download media on Streamarr.com or on the
-          Streamarr app.
+          You cannot currently download media on{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
+          .com or on the {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} app.
         </li>
         <li>
           To download on PC or MAC, please ensure you are using the Plex for
           Windows/MAC and not Plex HTPC.
         </li>
         <li>
-          Streamarr content can only be downloaded while online and connected to
-          the internet
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content can only be
+          downloaded while online and connected to the internet
         </li>
       </ul>
       <p className="mb-16">
@@ -109,18 +113,9 @@ const HelpContent = () => {
 };
 
 const anchors = [
-  {
-    href: '#downloadplex',
-    title: 'Download Plex',
-  },
-  {
-    href: '#downloadmedia',
-    title: 'Download Media',
-  },
-  {
-    href: '#watchoffline',
-    title: 'Watch Offline',
-  },
+  { href: '#downloadplex', title: 'Download Plex' },
+  { href: '#downloadmedia', title: 'Download Media' },
+  { href: '#watchoffline', title: 'Watch Offline' },
 ];
 
 const DownloadOffline = () => {
@@ -129,11 +124,11 @@ const DownloadOffline = () => {
       <Breadcrumbs
         paths="/watching-streamarr/download-offline"
         homeElement={'Help Centre'}
-        names="Watching Streamarr,How can I watch Streamarr offline?"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},How can I watch ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} offline?`}
       />
       <HelpCard
-        heading="How can I watch Streamarr offline?"
-        subheading="You can use the Plex app to download Streamarr content for streaming offline on some supported devices such as Laptops, tablets and Mobile."
+        heading={`How can I watch ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} offline?`}
+        subheading={`You can use the Plex app to download ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content for streaming offline on some supported devices such as Laptops, tablets and Mobile.`}
         anchors={anchors}
         content={<HelpContent />}
       />

@@ -2,7 +2,8 @@
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
-import axios from 'axios';
+import useIsAdmin from '@app/hooks/useIsAdmin';
+import { auth } from '@app/lib/auth';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -10,19 +11,13 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [isProcessing, setProcessing] = useState(false);
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const isAdmin = useIsAdmin();
 
-  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
-  // We take the token and attempt to sign in. If we get a success message, we will
-  // ask swr to revalidate the user which _should_ come back with a valid user.
   useEffect(() => {
     const login = async () => {
       setProcessing(true);
       try {
-        const response = await axios.post('/api/v1/auth/plex', { authToken });
-
-        if (response.data?.id) {
-          // revalidate();
-        }
+        auth(authToken, isAdmin);
       } catch (e) {
         setError(e.response.data.message);
         setAuthToken(undefined);
@@ -32,7 +27,7 @@ const SignIn = () => {
     if (authToken) {
       login();
     }
-  }, [authToken]);
+  }, [authToken, isAdmin]);
 
   function openPopup({
     title,
@@ -95,15 +90,17 @@ const SignIn = () => {
           <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
           <p className="text-sm">
             You will use this account to log into{' '}
-            <span className="text-primary font-semibold">Streamarr</span> to
-            watch your favourite movies and TV Shows.
+            <span className="text-primary font-semibold">
+              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            </span>{' '}
+            to watch your favourite movies and TV Shows.
           </p>
         </div>
         <Accordion single atLeastOne>
           {({ openIndexes, handleClick, AccordionContent }) => (
             <div className="max-w-md my-4 mx-auto w-full backdrop-blur-md text-primary-content">
               <button
-                className={`collapse-title text-start mb-[1px] border border-primary bg-primary/40 rounded-t-lg ${
+                className={`collapse-title text-start mb-[1px] border border-primary bg-primary/40 rounded-t-lg w-full ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -112,6 +109,11 @@ const SignIn = () => {
                 Use your Ple<span className="text-accent">x</span>&trade;
                 account
               </button>
+              <div
+                className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
+              >
+                Login failed! Something went wrong, let&apos;s try again!
+              </div>
               <AccordionContent isOpen={openIndexes.includes(0)}>
                 <div className="p-3 place-content-center border border-secondary bg-secondary/50">
                   <PlexLoginButton
@@ -121,14 +123,14 @@ const SignIn = () => {
                 </div>
               </AccordionContent>
               <button
-                className={`collapse-title text-start border border-primary bg-primary/40 ${
+                className={`collapse-title text-start border border-primary bg-primary/40 w-full ${
                   openIndexes.includes(1)
                     ? 'text-primary-content cursor-not-allowed'
                     : 'rounded-b-lg'
                 }`}
                 onClick={() => handleClick(1)}
               >
-                Sign with Streamarr
+                Sign in with {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
               </button>
               <AccordionContent isOpen={openIndexes.includes(1)}>
                 <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
@@ -152,6 +154,7 @@ const SignIn = () => {
                         type="text"
                         className="grow"
                         placeholder="Email address"
+                        disabled
                         required
                       />
                     </div>
@@ -172,6 +175,7 @@ const SignIn = () => {
                         type="password"
                         className="grow"
                         placeholder="Password"
+                        disabled
                         required
                       />
                     </div>
@@ -179,14 +183,19 @@ const SignIn = () => {
                       <label className="flex cursor-pointer place-items-center">
                         <input
                           type="checkbox"
+                          disabled
                           defaultChecked
                           className="checkbox checkbox-primary checkbox-xs me-2 rounded-md"
                         />
                         <span className="label-text">Remember me</span>
                       </label>
                     </div>
+                    <p className="text-sm text-center mb-2 text-error">
+                      Local sign in is currently disabled
+                    </p>
                     <button
                       className="btn btn-block btn-primary hover:btn-secondary text-lg"
+                      disabled
                       type="submit"
                       name="signin"
                     >
@@ -195,6 +204,7 @@ const SignIn = () => {
                     <p className="mt-1 text-center">
                       <button
                         type="button"
+                        disabled
                         onClick={() => {
                           openPopup({
                             title: 'Plex Password Reset',
@@ -202,7 +212,7 @@ const SignIn = () => {
                             h: 700,
                           });
                         }}
-                        className="link-warning text-sm"
+                        className="text-warning text-sm hover:cursor-not-allowed"
                       >
                         Wait, I forgot my password
                       </button>
@@ -214,7 +224,11 @@ const SignIn = () => {
           )}
         </Accordion>
         <p className="mt-4 text-start text-sm px-2 relative">
-          New to <span className="text-primary font-semibold">Streamarr</span>?
+          New to{' '}
+          <span className="text-primary font-semibold">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>
+          ?
           <Link href="/signup" className="font-bold hover:brightness-75 ms-1">
             Sign up
           </Link>

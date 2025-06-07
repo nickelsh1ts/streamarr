@@ -1,10 +1,10 @@
 import Index from '@app/components/Index';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
 const messages = {
-  title: 'Stream the greatest Movies, Series, Classics and more',
+  title: 'Stream the greatest Movies, Shows, Classics and more',
 };
 
 export const metadata: Metadata = {

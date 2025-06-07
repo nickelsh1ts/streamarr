@@ -1,11 +1,9 @@
 import Request from '@app/components/Request';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = 'Streamarr';
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
-const messages = {
-  title: 'Request',
-};
+const messages = { title: 'Request' };
 
 export const metadata: Metadata = {
   title: `${messages.title} - ${applicationTitle}`,

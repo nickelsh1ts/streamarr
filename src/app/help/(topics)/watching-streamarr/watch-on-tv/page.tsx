@@ -8,7 +8,9 @@ const HelpContent = () => {
         How to Chromecast:
       </div>
       <ul className="list list-decimal ms-14 my-4">
-        <li>Open the Plex or Streamarr app</li>
+        <li>
+          Open the Plex or {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} app
+        </li>
         <li>Tap the Cast icon at the top of the screen</li>
         <li>Select the content you wish to view and tap Play</li>
         <li>Choose the device you wish to stream to</li>
@@ -26,8 +28,9 @@ const HelpContent = () => {
         </li>
         <li>Ensure the Chromecast device is connected to your TV</li>
         <li>
-          Ensure the mobile device with Streamarr and the Chromecast device are
-          both connected to the same Wi-Fi network
+          Ensure the mobile device with{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and the Chromecast
+          device are both connected to the same Wi-Fi network
         </li>
       </ul>
       <p className="mb-16">
@@ -38,7 +41,9 @@ const HelpContent = () => {
         How to use Apple AirPlay
       </div>
       <ul className="list list-decimal ms-10 my-4">
-        <li>Open the Plex or Streamarr app</li>
+        <li>
+          Open the Plex or {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} app
+        </li>
         <li>Tap the Airplay icon at the top of the screen</li>
         <li>Select the content you wish to view and tap Play</li>
         <li>Choose the Apple TV you wish to stream to</li>
@@ -52,8 +57,9 @@ const HelpContent = () => {
       <ul className="list list-disc ms-10 my-4">
         <li>Ensure the Apple TV is connected to your TV</li>
         <li>
-          Ensure the iOS device with Streamarr and the Apple TV are both
-          connected to the same Wi-Fi network
+          Ensure the iOS device with{' '}
+          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and the Apple TV are
+          both connected to the same Wi-Fi network
         </li>
       </ul>
       <p className="mb-16">
@@ -86,18 +92,9 @@ const HelpContent = () => {
 };
 
 const anchors = [
-  {
-    href: '#chromecast',
-    title: 'Chromecast',
-  },
-  {
-    href: '#airplay',
-    title: 'Apple AirPlay',
-  },
-  {
-    href: '#plexapp',
-    title: 'Plex App',
-  },
+  { href: '#chromecast', title: 'Chromecast' },
+  { href: '#airplay', title: 'Apple AirPlay' },
+  { href: '#plexapp', title: 'Plex App' },
 ];
 
 const WatchOnTV = () => {
@@ -106,11 +103,11 @@ const WatchOnTV = () => {
       <Breadcrumbs
         paths="/watching-streamarr/watch-on-tv"
         homeElement={'Help Centre'}
-        names="Watching Streamarr,How can I watch Streamarr on my TV?"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},How can I watch ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} on my TV?`}
       />
       <HelpCard
-        heading="How can I watch Streamarr on my TV?"
-        subheading="You can use Chromecast or Apple AirPlay to wirelessly stream Streamarr content from your Android or iOS mobile device to your TV or play directly on some supported devices such as Apple or Google TV with the Plex app"
+        heading={`How can I watch ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} on my TV?`}
+        subheading={`You can use Chromecast or Apple AirPlay to wirelessly stream ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content from your Android or iOS mobile device to your TV or play directly on some supported devices such as Apple or Google TV with the Plex app`}
         anchors={anchors}
         content={<HelpContent />}
       />

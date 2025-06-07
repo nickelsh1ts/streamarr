@@ -6,7 +6,7 @@ function Watching() {
           <img
             src="/devices-to-watch.png"
             className="mx-auto h-auto w-auto"
-            alt="Watching Streamarr"
+            alt={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
             loading="lazy"
           />
         </div>
@@ -25,8 +25,10 @@ function Watching() {
             </li>
             <li className="mb-4">
               Limit your experience to{' '}
-              <span className="text-primary">Streamarr</span> or leverage all
-              Plex has to offer.
+              <span className="text-primary">
+                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+              </span>{' '}
+              or leverage all Plex has to offer.
             </li>
             <li className="mb-4">
               An ever-growing range of titles in 720p/1080p/4K and Dolby Atmos

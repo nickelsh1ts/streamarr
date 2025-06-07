@@ -3,8 +3,10 @@ function Favourites() {
     <section id="favs" className="min-h-lvh place-content-center py-16">
       <div className="mx-auto px-5 text-center text-light">
         <p className="p-2 text-4xl font-extrabold">
-          <span className="text-primary">Streamarr</span> has all your
-          favourites in one place
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          has all your favourites in one place
         </p>
         <p className="text-lg py-4">
           An ever evolving collection of the world&apos;s most beloved movies

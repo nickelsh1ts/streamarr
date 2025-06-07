@@ -1,4 +1,5 @@
 'use client';
+import ComingSoon from '@app/components/Common/ComingSoon';
 import Header from '@app/components/Common/Header';
 import Modal from '@app/components/Common/Modal';
 import CreateInvite from '@app/components/Invite/CreateInvite';
@@ -25,7 +26,7 @@ const Invite = () => {
       id: currentUser.id,
       displayName: currentUser.displayName,
       avatar: '/android-chrome-192x192.png',
-      email: 'nickelsh1ts@streamarr.dev',
+      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: currentUser.invitesRemaining,
     };
@@ -34,7 +35,7 @@ const Invite = () => {
       id: parseInt(userQuery.userid),
       displayName: 'DemoUser',
       avatar: '/android-chrome-192x192.png',
-      email: 'demo@streamarr.dev',
+      email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: 4,
     };
@@ -118,6 +119,7 @@ const Invite = () => {
         content={<CreateInvite setModalState={setModalState} />}
       />
       <InvitesList />
+      <ComingSoon />
     </div>
   );
 };

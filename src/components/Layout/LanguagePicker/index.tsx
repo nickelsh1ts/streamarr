@@ -13,7 +13,7 @@ const LanguagePicker = () => {
   useClickOutside(dropdownRef, () => setDropdownOpen(false));
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       <div>
         <button
           className={`rounded-full p-1 hover:bg-primary/70 hover:text-white focus:bg-primary/80 focus:text-white focus:outline-none focus:ring-1 focus:ring-primary sm:p-2 ${

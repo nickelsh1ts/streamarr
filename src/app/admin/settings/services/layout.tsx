@@ -18,6 +18,11 @@ const ServicesTabs = [
     regex: /^\/admin\/settings\/services\/sonarr\/?/,
   },
   {
+    text: 'Lidarr',
+    route: '/admin/settings/services/lidarr',
+    regex: /^\/admin\/settings\/services\/lidarr\/?/,
+  },
+  {
     text: 'Prowlarr',
     route: '/admin/settings/services/prowlarr',
     regex: /^\/admin\/settings\/services\/prowlarr\/?/,

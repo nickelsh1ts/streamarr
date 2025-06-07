@@ -12,21 +12,17 @@ import NotificationProvider from '@app/context/NotificationContext';
 import Notifications from '@app/components/Layout/Notifications';
 import { SettingsProvider } from '@app/context/SettingsContext';
 
-const applicationTitle = 'Streamarr';
-
-export const isAuthed = true;
+const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
   let component: React.ReactNode;
 
   if (
     pathname.match(
-      /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|\/?$)/
+      /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|logout|\/?$)/
     )
   ) {
     component = children;

@@ -18,9 +18,19 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
-  <body class="">
-    Currently Offline
+  <body class="bg-[#1f1f1f]">
+    <h1 class="text-2xl m-4 text-white text-center">Currently Offline</h1>
+
+    <div class="w-full text-center">
+      <button
+        class="m-4 rounded-md hover:cursor-pointer bg-purple-700 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-purple-600"
+        type="button"
+      >
+        ↻ Reload
+      </button>
+    </div>
     <!-- Inline the page's JavaScript file. -->
     <script>
       // Manual reload feature.

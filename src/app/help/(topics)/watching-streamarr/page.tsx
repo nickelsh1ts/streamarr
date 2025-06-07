@@ -4,7 +4,7 @@ import TopicsPage from '@app/components/Help/TopicsPage';
 const RelatedArticles = [
   {
     href: 'watching-streamarr/devices',
-    text: 'Supported devices for watching Streamarr',
+    text: `Supported devices for watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`,
   },
   {
     href: 'watching-streamarr/requesting',
@@ -12,7 +12,7 @@ const RelatedArticles = [
   },
   {
     href: 'watching-streamarr/watch-on-tv',
-    text: 'Watching Streamarr on your TV',
+    text: `Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} on your TV`,
   },
   {
     href: 'watching-streamarr/download-offline',
@@ -20,7 +20,7 @@ const RelatedArticles = [
   },
   {
     href: 'watching-streamarr/reporting-issues',
-    text: 'Reporting an issue with Streamarr content',
+    text: `Reporting an issue with ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content`,
   },
 ];
 
@@ -30,14 +30,12 @@ const WatchingStreamarr = () => {
       <Breadcrumbs
         paths="/watching-streamarr"
         homeElement={'Help Centre'}
-        names="Watching Streamarr"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
         print={false}
       />
       <TopicsPage
-        heading={'Topics related to watching Streamarr and making Requests'}
-        subheading={
-          'If you have questions or are unsure of how to use Streamarr or make new requests, you can read through these topics.'
-        }
+        heading={`Topics related to watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and making Requests`}
+        subheading={`If you have questions or are unsure of how to use ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} or make new requests, you can read through these topics.`}
         links={RelatedArticles}
       />
     </section>

@@ -15,7 +15,8 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li className="">
-          Sign in to Streamarr and select
+          Sign in to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and
+          select
           <img
             className="h-auto w-28 inline-flex self-center mx-1"
             src="/external/os-logo_full_dark.svg"
@@ -43,23 +44,30 @@ const HelpContent = () => {
         </li>
         <li>
           The time in which it takes to become available on{' '}
-          <span className="text-primary">Streamarr</span> can depend on many
-          factors such as the release date (older media can be more difficult to
-          find), the popularity, and the quality.
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          can depend on many factors such as the release date (older media can
+          be more difficult to find), the popularity, and the quality.
         </li>
         <li>
           Keep an eye on <span className="text-primary">Overseerr</span>, or
           watch for the Media Available notification.
         </li>
         <li>
-          <span className="text-primary">Streamarr</span> currently supports 3
-          types of notifications, all of which can be enabled or disabled via
-          your <span className="text-primary">Overseerr</span> Profile Settings.{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          currently supports 3 types of notifications, all of which can be
+          enabled or disabled via your{' '}
+          <span className="text-primary">Overseerr</span> Profile Settings.{' '}
           <i>(Push Notifications, Email, and/or Discord)</i>
         </li>
         <li>
-          <span className="text-primary">Streamarr</span> currently allows for a
-          maximum of{' '}
+          <span className="text-primary">
+            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          </span>{' '}
+          currently allows for a maximum of{' '}
           <span className="text-info font-extrabold underline">5</span> Movie
           requests per day and a maximum of{' '}
           <span className="text-info font-extrabold underline">2</span> Season
@@ -70,20 +78,17 @@ const HelpContent = () => {
           <i> requests for two days).</i>
         </li>
       </ul>
-      <p>Access to overseerr requires a Streamarr membership.</p>
+      <p>
+        Access to overseerr requires a{' '}
+        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} membership.
+      </p>
     </>
   );
 };
 
 const anchors = [
-  {
-    href: '#requesting',
-    title: 'Requesting',
-  },
-  {
-    href: '#importantinfo',
-    title: 'Important Info',
-  },
+  { href: '#requesting', title: 'Requesting' },
+  { href: '#importantinfo', title: 'Important Info' },
 ];
 
 const Heading = () => {
@@ -167,7 +172,7 @@ const Requesting = () => {
       <Breadcrumbs
         paths="/watching-streamarr/requesting"
         homeElement={'Help Centre'}
-        names="Watching Streamarr,Request new media with Overseerr"
+        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},Request new media with Overseerr`}
       />
       <HelpCard
         heading={<Heading />}

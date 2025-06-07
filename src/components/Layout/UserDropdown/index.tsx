@@ -13,7 +13,7 @@ const UserDropdown = ({
 }: UserDropdownProps) => {
   return (
     <div className="indicator">
-      <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block" />
+      <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block !hidden" />
       <DropDownMenu
         toolTip={tooltip}
         tiptitle="Account"
@@ -40,7 +40,10 @@ const UserDropdown = ({
         >
           Account Settings
         </DropDownMenu.Item>
-        <DropDownMenu.Item href="https://stats.nickflixtv.com" target="_blank">
+        <DropDownMenu.Item
+          href={`https://stats.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
+          target="_blank"
+        >
           Watch Statistics
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/help">Help Centre</DropDownMenu.Item>
@@ -48,7 +51,7 @@ const UserDropdown = ({
           Get Support
         </DropDownMenu.Item>
         <DropDownMenu.Item href="/logout" divide="before">
-          Log Out Of Streamarr
+          Sign Out of {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

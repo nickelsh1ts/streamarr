@@ -1,3 +1,4 @@
+import { getAppVersion } from '@app/utils/appVersion';
 import axios from 'axios';
 import Bowser from 'bowser';
 
@@ -58,14 +59,14 @@ class PlexOAuth {
     const browser = Bowser.getParser(window.navigator.userAgent);
     this.plexHeaders = {
       Accept: 'application/json',
-      'X-Plex-Product': 'Streamarr',
-      'X-Plex-Version': '0.0.1-alpha',
+      'X-Plex-Product': process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr',
+      'X-Plex-Version': getAppVersion(),
       'X-Plex-Client-Identifier': clientId,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
       'X-Plex-Device': browser.getOSName(),
-      'X-Plex-Device-Name': `Streamarr (${browser.getBrowserName()})`,
+      'X-Plex-Device-Name': `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} (${browser.getBrowserName()})`,
       'X-Plex-Device-Screen-Resolution':
         window.screen.width + 'x' + window.screen.height,
       'X-Plex-Language': 'en',
