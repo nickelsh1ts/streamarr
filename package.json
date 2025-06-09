@@ -48,7 +48,7 @@
     "postcss": "8.4.49",
     "react": "^18.3.1",
     "react-animate-height": "^3.2.3",
-    "react-aria": "3.36.0",
+    "react-aria": "3.41.0",
     "react-big-calendar": "^1.16.3",
     "react-datepicker": "^7.5.0",
     "react-dom": "18.3.1",
