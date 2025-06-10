@@ -45,6 +45,23 @@ config/logs/*-audit.json
 # dist files
 dist
 
+# sqlite journal
+config/db/db.sqlite3-journal
+
+# database
+config/db/*.sqlite3*
+config/settings.json
+
+# logs
+config/logs/*.log*
+config/logs/*.json
+config/logs/*.log.gz
+config/logs/*.json.gz
+config/logs/*-audit.json
+
+# Config Cache Directory
+config/cache
+
 # ESLint
 .eslintcache
 

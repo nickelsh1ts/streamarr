@@ -2,9 +2,7 @@
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 
-type SettingsLayoutProps = {
-  children: React.ReactNode;
-};
+type SettingsLayoutProps = { children: React.ReactNode };
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   const AdminRoutes: AdminRoute[] = [

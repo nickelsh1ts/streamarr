@@ -1,7 +1,6 @@
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
 import List from '@app/components/Common/List';
-import { getAppVersion } from '@app/utils/appVersion';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
 const AboutSettings = () => {
@@ -41,7 +40,7 @@ const AboutSettings = () => {
             title={'Version'}
             className="flex flex-row items-center truncate"
           >
-            <code>{getAppVersion()}</code>
+            <code>0.00.1</code>
             <a
               href="https://github.com/nickelsh1ts/streamarr/releases"
               target="_blank"

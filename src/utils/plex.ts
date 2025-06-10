@@ -1,4 +1,3 @@
-import { getAppVersion } from '@app/utils/appVersion';
 import axios from 'axios';
 import Bowser from 'bowser';
 
@@ -60,7 +59,7 @@ class PlexOAuth {
     this.plexHeaders = {
       Accept: 'application/json',
       'X-Plex-Product': process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr',
-      'X-Plex-Version': getAppVersion(),
+      'X-Plex-Version': '0.00.1',
       'X-Plex-Client-Identifier': clientId,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),

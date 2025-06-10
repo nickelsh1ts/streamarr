@@ -1,5 +1,4 @@
 import useIsAdmin from '@app/hooks/useIsAdmin';
-import { getAppVersion } from '@app/utils/appVersion';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
@@ -18,7 +17,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
   const data = {
     updateAvailable: false,
     commitTag: 'develop',
-    version: getAppVersion(),
+    version: '0.00.1',
     commitsBehind: 0,
   };
 

@@ -281,9 +281,7 @@ const MobileMenu = () => {
                 >
                   {cloneElement(
                     isActive ? link.svgIconSelected : link.svgIcon,
-                    {
-                      className: 'h-7 w-7',
-                    }
+                    { className: 'h-7 w-7' }
                   )}
                 </Link>
               );
