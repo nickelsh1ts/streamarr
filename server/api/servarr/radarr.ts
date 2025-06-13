@@ -188,9 +188,10 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
           label: 'Radarr',
           errorMessage: e instanceof Error ? e.message : String(e),
           options,
-          response: (e instanceof Error && 'response' in e)
-            ? (e as AxiosErrorWithResponse).response?.data
-            : undefined,
+          response:
+            e instanceof Error && 'response' in e
+              ? (e as AxiosErrorWithResponse).response?.data
+              : undefined,
         }
       );
       throw new Error('Failed to add movie to Radarr');

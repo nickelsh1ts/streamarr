@@ -194,7 +194,9 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
       return response.data;
     } catch (e) {
-      throw new Error(`[${this.apiName}] Failed to create tag: ${e instanceof Error ? e.message : String(e)}`);
+      throw new Error(
+        `[${this.apiName}] Failed to create tag: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   };
 
@@ -208,7 +210,9 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
         ...options,
       });
     } catch (e) {
-      throw new Error(`[${this.apiName}] Failed to run command: ${e instanceof Error ? e.message : String(e)}`);
+      throw new Error(
+        `[${this.apiName}] Failed to run command: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 }

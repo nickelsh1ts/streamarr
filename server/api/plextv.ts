@@ -219,7 +219,9 @@ class PlexTvAPI extends ExternalAPI {
         (server) => server.$.machineIdentifier === settings.plex.machineId
       );
     } catch (e) {
-      logger.error(`Error checking user access: ${e instanceof Error ? e.message : String(e)}`);
+      logger.error(
+        `Error checking user access: ${e instanceof Error ? e.message : String(e)}`
+      );
       return false;
     }
   }
@@ -229,10 +231,10 @@ class PlexTvAPI extends ExternalAPI {
       transformResponse: [],
       responseType: 'text',
     });
-    const parsedXml = (await xml2js.parseStringPromise(
-      response.data,
-      { explicitArray: false, ignoreAttrs: false }
-    )) as UsersResponse;
+    const parsedXml = (await xml2js.parseStringPromise(response.data, {
+      explicitArray: false,
+      ignoreAttrs: false,
+    })) as UsersResponse;
     return parsedXml;
   }
 

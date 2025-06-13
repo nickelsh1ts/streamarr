@@ -147,7 +147,11 @@ class TautulliAPI {
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch stats from Tautulli',
-        { label: 'Tautulli API', errorMessage: e instanceof Error ? e.message : String(e), ratingKey }
+        {
+          label: 'Tautulli API',
+          errorMessage: e instanceof Error ? e.message : String(e),
+          ratingKey,
+        }
       );
       throw new Error(
         `[Tautulli] Failed to fetch media watch stats: ${e instanceof Error ? e.message : String(e)}`
@@ -171,7 +175,11 @@ class TautulliAPI {
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch users from Tautulli',
-        { label: 'Tautulli API', errorMessage: e instanceof Error ? e.message : String(e), ratingKey }
+        {
+          label: 'Tautulli API',
+          errorMessage: e instanceof Error ? e.message : String(e),
+          ratingKey,
+        }
       );
       throw new Error(
         `[Tautulli] Failed to fetch media watch users: ${e instanceof Error ? e.message : String(e)}`

@@ -126,7 +126,9 @@ class SonarrAPI extends ServarrBase<{
 
       return response.data;
     } catch (e) {
-      throw new Error(`[Sonarr] Failed to retrieve series: ${e instanceof Error ? e.message : String(e)}`);
+      throw new Error(
+        `[Sonarr] Failed to retrieve series: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 
@@ -136,7 +138,9 @@ class SonarrAPI extends ServarrBase<{
 
       return response.data;
     } catch (e) {
-      throw new Error(`[Sonarr] Failed to retrieve series by ID: ${e instanceof Error ? e.message : String(e)}`);
+      throw new Error(
+        `[Sonarr] Failed to retrieve series by ID: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 
@@ -275,9 +279,10 @@ class SonarrAPI extends ServarrBase<{
         label: 'Sonarr API',
         errorMessage: e instanceof Error ? e.message : String(e),
         options,
-        response: (e instanceof Error && 'response' in e)
-          ? (e as AxiosErrorWithResponse).response?.data
-          : undefined,
+        response:
+          e instanceof Error && 'response' in e
+            ? (e as AxiosErrorWithResponse).response?.data
+            : undefined,
       });
       throw new Error('Failed to add series');
     }
