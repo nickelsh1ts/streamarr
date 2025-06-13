@@ -106,6 +106,11 @@ export interface LanguageProfile {
   name: string;
 }
 
+// Add a custom error interface for axios-like errors
+interface AxiosErrorWithResponse extends Error {
+  response?: { data?: unknown };
+}
+
 class SonarrAPI extends ServarrBase<{
   seriesId: number;
   episodeId: number;
@@ -121,7 +126,7 @@ class SonarrAPI extends ServarrBase<{
 
       return response.data;
     } catch (e) {
-      throw new Error(`[Sonarr] Failed to retrieve series: ${e.message}`);
+      throw new Error(`[Sonarr] Failed to retrieve series: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
@@ -131,7 +136,7 @@ class SonarrAPI extends ServarrBase<{
 
       return response.data;
     } catch (e) {
-      throw new Error(`[Sonarr] Failed to retrieve series by ID: ${e.message}`);
+      throw new Error(`[Sonarr] Failed to retrieve series by ID: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
@@ -151,7 +156,7 @@ class SonarrAPI extends ServarrBase<{
     } catch (e) {
       logger.error('Error retrieving series by series title', {
         label: 'Sonarr API',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
         title,
       });
       throw new Error('No series found');
@@ -174,7 +179,7 @@ class SonarrAPI extends ServarrBase<{
     } catch (e) {
       logger.error('Error retrieving series by tvdb ID', {
         label: 'Sonarr API',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
         tvdbId: id,
       });
       throw new Error('Series not found');
@@ -268,9 +273,11 @@ class SonarrAPI extends ServarrBase<{
     } catch (e) {
       logger.error('Something went wrong while adding a series to Sonarr.', {
         label: 'Sonarr API',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
         options,
-        response: e?.response?.data,
+        response: (e instanceof Error && 'response' in e)
+          ? (e as AxiosErrorWithResponse).response?.data
+          : undefined,
       });
       throw new Error('Failed to add series');
     }

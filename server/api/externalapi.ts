@@ -59,13 +59,10 @@ class ExternalAPI {
     if (cachedItem) {
       return cachedItem;
     }
-
     const response = await this.axios.get<T>(endpoint, config);
-
     if (this.cache) {
       this.cache.set(cacheKey, response.data, ttl ?? DEFAULT_TTL);
     }
-
     return response.data;
   }
 
@@ -83,13 +80,10 @@ class ExternalAPI {
     if (cachedItem) {
       return cachedItem;
     }
-
     const response = await this.axios.post<T>(endpoint, data, config);
-
     if (this.cache) {
       this.cache.set(cacheKey, response.data, ttl ?? DEFAULT_TTL);
     }
-
     return response.data;
   }
 
@@ -100,10 +94,8 @@ class ExternalAPI {
   ): Promise<T> {
     const cacheKey = this.serializeCacheKey(endpoint, config?.params);
     const cachedItem = this.cache?.get<T>(cacheKey);
-
     if (cachedItem) {
       const keyTtl = this.cache?.getTtl(cacheKey) ?? 0;
-
       // If the item has passed our rolling check, fetch again in background
       if (
         keyTtl - (ttl ?? DEFAULT_TTL) * 1000 <
@@ -115,13 +107,10 @@ class ExternalAPI {
       }
       return cachedItem;
     }
-
     const response = await this.axios.get<T>(endpoint, config);
-
     if (this.cache) {
       this.cache.set(cacheKey, response.data, ttl ?? DEFAULT_TTL);
     }
-
     return response.data;
   }
 

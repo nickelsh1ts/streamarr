@@ -186,9 +186,11 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
         'Failed to add movie to Radarr. This might happen if the movie already exists, in which case you can safely ignore this error.',
         {
           label: 'Radarr',
-          errorMessage: e.message,
+          errorMessage: e instanceof Error ? e.message : String(e),
           options,
-          response: e?.response?.data,
+          response: (e instanceof Error && 'response' in e)
+            ? (e as AxiosErrorWithResponse).response?.data
+            : undefined,
         }
       );
       throw new Error('Failed to add movie to Radarr');
@@ -214,6 +216,11 @@ class RadarrAPI extends ServarrBase<{ movieId: number }> {
       );
     }
   }
+}
+
+// Add a custom error interface for axios-like errors
+interface AxiosErrorWithResponse extends Error {
+  response?: { data?: unknown };
 }
 
 export default RadarrAPI;

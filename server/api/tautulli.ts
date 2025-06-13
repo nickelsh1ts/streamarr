@@ -123,10 +123,10 @@ class TautulliAPI {
     } catch (e) {
       logger.error('Something went wrong fetching Tautulli server info', {
         label: 'Tautulli API',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
       });
       throw new Error(
-        `[Tautulli] Failed to fetch Tautulli server info: ${e.message}`
+        `[Tautulli] Failed to fetch Tautulli server info: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -147,10 +147,10 @@ class TautulliAPI {
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch stats from Tautulli',
-        { label: 'Tautulli API', errorMessage: e.message, ratingKey }
+        { label: 'Tautulli API', errorMessage: e instanceof Error ? e.message : String(e), ratingKey }
       );
       throw new Error(
-        `[Tautulli] Failed to fetch media watch stats: ${e.message}`
+        `[Tautulli] Failed to fetch media watch stats: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -171,10 +171,10 @@ class TautulliAPI {
     } catch (e) {
       logger.error(
         'Something went wrong fetching media watch users from Tautulli',
-        { label: 'Tautulli API', errorMessage: e.message, ratingKey }
+        { label: 'Tautulli API', errorMessage: e instanceof Error ? e.message : String(e), ratingKey }
       );
       throw new Error(
-        `[Tautulli] Failed to fetch media watch users: ${e.message}`
+        `[Tautulli] Failed to fetch media watch users: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -184,7 +184,6 @@ class TautulliAPI {
       if (!user.plexId) {
         throw new Error('User does not have an associated Plex ID');
       }
-
       return (
         await this.axios.get<TautulliWatchStatsResponse>('/api/v2', {
           params: {
@@ -200,12 +199,12 @@ class TautulliAPI {
         'Something went wrong fetching user watch stats from Tautulli',
         {
           label: 'Tautulli API',
-          errorMessage: e.message,
+          errorMessage: e instanceof Error ? e.message : String(e),
           user: user.displayName,
         }
       );
       throw new Error(
-        `[Tautulli] Failed to fetch user watch stats: ${e.message}`
+        `[Tautulli] Failed to fetch user watch stats: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -214,15 +213,12 @@ class TautulliAPI {
     user: User
   ): Promise<TautulliHistoryRecord[]> {
     let results: TautulliHistoryRecord[] = [];
-
     try {
       if (!user.plexId) {
         throw new Error('User does not have an associated Plex ID');
       }
-
       const take = 100;
       let start = 0;
-
       while (results.length < 20) {
         const tautulliData = (
           await this.axios.get<TautulliHistoryResponse>('/api/v2', {
@@ -238,11 +234,9 @@ class TautulliAPI {
             },
           })
         ).data.response.data.data;
-
         if (!tautulliData.length) {
           return results;
         }
-
         results = uniqWith(results.concat(tautulliData), (recordA, recordB) =>
           recordA.grandparent_rating_key && recordB.grandparent_rating_key
             ? recordA.grandparent_rating_key === recordB.grandparent_rating_key
@@ -250,22 +244,20 @@ class TautulliAPI {
               ? recordA.parent_rating_key === recordB.parent_rating_key
               : recordA.rating_key === recordB.rating_key
         );
-
         start += take;
       }
-
       return results.slice(0, 20);
     } catch (e) {
       logger.error(
         'Something went wrong fetching user watch history from Tautulli',
         {
           label: 'Tautulli API',
-          errorMessage: e.message,
+          errorMessage: e instanceof Error ? e.message : String(e),
           user: user.displayName,
         }
       );
       throw new Error(
-        `[Tautulli] Failed to fetch user watch history: ${e.message}`
+        `[Tautulli] Failed to fetch user watch history: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }

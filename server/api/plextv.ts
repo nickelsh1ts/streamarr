@@ -129,7 +129,6 @@ class PlexTvAPI extends ExternalAPI {
         nodeCache: cacheManager.getCache('plextv').data,
       }
     );
-
     this.authToken = authToken;
   }
 
@@ -139,8 +138,10 @@ class PlexTvAPI extends ExternalAPI {
         '/api/resources?includeHttps=1',
         { transformResponse: [], responseType: 'text' }
       );
+      // Use explicit xml2js options for better performance and security
       const parsedXml = await xml2js.parseStringPromise(
-        devicesResp.data as DeviceResponse
+        devicesResp.data as string,
+        { explicitArray: false, ignoreAttrs: false }
       );
       return parsedXml?.MediaContainer?.Device?.map((pxml: DeviceResponse) => ({
         name: pxml.$.name,
@@ -153,34 +154,33 @@ class PlexTvAPI extends ExternalAPI {
         createdAt: new Date(parseInt(pxml.$?.createdAt, 10) * 1000),
         lastSeenAt: new Date(parseInt(pxml.$?.lastSeenAt, 10) * 1000),
         provides: pxml.$.provides.split(','),
-        owned: pxml.$.owned == '1' ? true : false,
+        owned: pxml.$.owned == '1',
         accessToken: pxml.$?.accessToken,
         publicAddress: pxml.$?.publicAddress,
-        publicAddressMatches:
-          pxml.$?.publicAddressMatches == '1' ? true : false,
-        httpsRequired: pxml.$?.httpsRequired == '1' ? true : false,
-        synced: pxml.$?.synced == '1' ? true : false,
-        relay: pxml.$?.relay == '1' ? true : false,
-        dnsRebindingProtection:
-          pxml.$?.dnsRebindingProtection == '1' ? true : false,
-        natLoopbackSupported:
-          pxml.$?.natLoopbackSupported == '1' ? true : false,
-        presence: pxml.$?.presence == '1' ? true : false,
+        publicAddressMatches: pxml.$?.publicAddressMatches == '1',
+        httpsRequired: pxml.$?.httpsRequired == '1',
+        synced: pxml.$?.synced == '1',
+        relay: pxml.$?.relay == '1',
+        dnsRebindingProtection: pxml.$?.dnsRebindingProtection == '1',
+        natLoopbackSupported: pxml.$?.natLoopbackSupported == '1',
+        presence: pxml.$?.presence == '1',
         ownerID: pxml.$?.ownerID,
-        home: pxml.$?.home == '1' ? true : false,
+        home: pxml.$?.home == '1',
         sourceTitle: pxml.$?.sourceTitle,
-        connection: pxml?.Connection?.map((conn: ConnectionResponse) => ({
-          protocol: conn.$.protocol,
-          address: conn.$.address,
-          port: parseInt(conn.$.port, 10),
-          uri: conn.$.uri,
-          local: conn.$.local == '1' ? true : false,
-        })),
+        connection: Array.isArray(pxml?.Connection)
+          ? pxml.Connection.map((conn: ConnectionResponse) => ({
+              protocol: conn.$.protocol,
+              address: conn.$.address,
+              port: parseInt(conn.$.port, 10),
+              uri: conn.$.uri,
+              local: conn.$.local == '1',
+            }))
+          : [],
       }));
     } catch (e) {
       logger.error('Something went wrong getting the devices from plex.tv', {
         label: 'Plex.tv API',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
       });
       throw new Error('Invalid auth token');
     }
@@ -191,11 +191,10 @@ class PlexTvAPI extends ExternalAPI {
       const account = await this.axios.get<PlexAccountResponse>(
         '/users/account.json'
       );
-
       return account.data.user;
     } catch (e) {
       logger.error(
-        `Something went wrong while getting the account from plex.tv: ${e.message}`,
+        `Something went wrong while getting the account from plex.tv: ${e instanceof Error ? e.message : String(e)}`,
         { label: 'Plex.tv API' }
       );
       throw new Error('Invalid auth token');
@@ -204,29 +203,23 @@ class PlexTvAPI extends ExternalAPI {
 
   public async checkUserAccess(userId: number): Promise<boolean> {
     const settings = getSettings();
-
     try {
       if (!settings.plex.machineId) {
         throw new Error('Plex is not configured!');
       }
-
       const usersResponse = await this.getUsers();
-
       const users = usersResponse.MediaContainer.User;
-
       const user = users.find((u) => parseInt(u.$.id) === userId);
-
       if (!user) {
         throw new Error(
           "This user does not exist on the main Plex account's shared list"
         );
       }
-
       return !!user.Server?.find(
         (server) => server.$.machineIdentifier === settings.plex.machineId
       );
     } catch (e) {
-      logger.error(`Error checking user access: ${e.message}`);
+      logger.error(`Error checking user access: ${e instanceof Error ? e.message : String(e)}`);
       return false;
     }
   }
@@ -236,9 +229,9 @@ class PlexTvAPI extends ExternalAPI {
       transformResponse: [],
       responseType: 'text',
     });
-
     const parsedXml = (await xml2js.parseStringPromise(
-      response.data
+      response.data,
+      { explicitArray: false, ignoreAttrs: false }
     )) as UsersResponse;
     return parsedXml;
   }
@@ -254,7 +247,7 @@ class PlexTvAPI extends ExternalAPI {
     } catch (e) {
       logger.error('Failed to ping token', {
         label: 'Plex Refresh Token',
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
       });
     }
   }

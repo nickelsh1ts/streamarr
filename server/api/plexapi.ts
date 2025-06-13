@@ -105,9 +105,6 @@ class PlexAPI {
           cb(undefined, plexToken);
         },
       },
-      // requestOptions: {
-      //   includeChildren: 1,
-      // },
       options: {
         identifier: settings.clientId,
         product: 'Streamarr',
@@ -118,34 +115,41 @@ class PlexAPI {
   }
 
   public async getStatus() {
-    return await this.plexClient.query('/');
+    try {
+      return await this.plexClient.query('/');
+    } catch (e) {
+      logger.error('Failed to get Plex status', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to get Plex status');
+    }
   }
 
   public async getLibraries(): Promise<PlexLibrary[]> {
-    const response =
-      await this.plexClient.query<PlexLibrariesResponse>('/library/sections');
-
-    return response.MediaContainer.Directory;
+    try {
+      const response =
+        await this.plexClient.query<PlexLibrariesResponse>('/library/sections');
+      return response.MediaContainer.Directory;
+    } catch (e) {
+      logger.error('Failed to fetch Plex libraries', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex libraries');
+    }
   }
 
   public async syncLibraries(): Promise<void> {
     const settings = getSettings();
-
     try {
       const libraries = await this.getLibraries();
-
       const newLibraries: Library[] = libraries
-        // Remove libraries that are not movie or show
-        .filter(
-          (library) => library.type === 'movie' || library.type === 'show'
-        )
-        // Remove libraries that do not have a metadata agent set (usually personal video libraries)
         .filter((library) => library.agent !== 'com.plexapp.agents.none')
         .map((library) => {
           const existing = settings.plex.libraries.find(
             (l) => l.id === library.key && l.name === library.title
           );
-
           return {
             id: library.key,
             name: library.title,
@@ -154,17 +158,14 @@ class PlexAPI {
             lastScan: existing?.lastScan,
           };
         });
-
       settings.plex.libraries = newLibraries;
     } catch (e) {
       logger.error('Failed to fetch Plex libraries', {
         label: 'Plex API',
-        message: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
       });
-
       settings.plex.libraries = [];
     }
-
     settings.save();
   }
 
@@ -172,39 +173,60 @@ class PlexAPI {
     id: string,
     { offset = 0, size = 50 }: { offset?: number; size?: number } = {}
   ): Promise<{ totalSize: number; items: PlexLibraryItem[] }> {
-    const response = await this.plexClient.query<PlexLibraryResponse>({
-      uri: `/library/sections/${id}/all?includeGuids=1`,
-      extraHeaders: {
-        'X-Plex-Container-Start': `${offset}`,
-        'X-Plex-Container-Size': `${size}`,
-      },
-    });
-
-    return {
-      totalSize: response.MediaContainer.totalSize,
-      items: response.MediaContainer.Metadata ?? [],
-    };
+    try {
+      const response = await this.plexClient.query<PlexLibraryResponse>({
+        uri: `/library/sections/${id}/all?includeGuids=1`,
+        extraHeaders: {
+          'X-Plex-Container-Start': `${offset}`,
+          'X-Plex-Container-Size': `${size}`,
+        },
+      });
+      return {
+        totalSize: response.MediaContainer.totalSize,
+        items: response.MediaContainer.Metadata ?? [],
+      };
+    } catch (e) {
+      logger.error('Failed to fetch Plex library contents', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex library contents');
+    }
   }
 
   public async getMetadata(
     key: string,
     options: { includeChildren?: boolean } = {}
   ): Promise<PlexMetadata> {
-    const response = await this.plexClient.query<PlexMetadataResponse>(
-      `/library/metadata/${key}${
-        options.includeChildren ? '?includeChildren=1' : ''
-      }`
-    );
-
-    return response.MediaContainer.Metadata[0];
+    try {
+      const response = await this.plexClient.query<PlexMetadataResponse>(
+        `/library/metadata/${key}${
+          options.includeChildren ? '?includeChildren=1' : ''
+        }`
+      );
+      return response.MediaContainer.Metadata[0];
+    } catch (e) {
+      logger.error('Failed to fetch Plex metadata', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex metadata');
+    }
   }
 
   public async getChildrenMetadata(key: string): Promise<PlexMetadata[]> {
-    const response = await this.plexClient.query<PlexMetadataResponse>(
-      `/library/metadata/${key}/children`
-    );
-
-    return response.MediaContainer.Metadata;
+    try {
+      const response = await this.plexClient.query<PlexMetadataResponse>(
+        `/library/metadata/${key}/children`
+      );
+      return response.MediaContainer.Metadata;
+    } catch (e) {
+      logger.error('Failed to fetch Plex children metadata', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex children metadata');
+    }
   }
 
   public async getRecentlyAdded(
@@ -212,17 +234,24 @@ class PlexAPI {
     options: { addedAt: number } = { addedAt: Date.now() - 1000 * 60 * 60 },
     mediaType: 'movie' | 'show'
   ): Promise<PlexLibraryItem[]> {
-    const response = await this.plexClient.query<PlexLibraryResponse>({
-      uri: `/library/sections/${id}/all?type=${
-        mediaType === 'show' ? '4' : '1'
-      }&sort=addedAt%3Adesc&addedAt>>=${Math.floor(options.addedAt / 1000)}`,
-      extraHeaders: {
-        'X-Plex-Container-Start': `0`,
-        'X-Plex-Container-Size': `500`,
-      },
-    });
-
-    return response.MediaContainer.Metadata;
+    try {
+      const response = await this.plexClient.query<PlexLibraryResponse>({
+        uri: `/library/sections/${id}/all?type=${
+          mediaType === 'show' ? '4' : '1'
+        }&sort=addedAt%3Adesc&addedAt>>=${Math.floor(options.addedAt / 1000)}`,
+        extraHeaders: {
+          'X-Plex-Container-Start': `0`,
+          'X-Plex-Container-Size': `500`,
+        },
+      });
+      return response.MediaContainer.Metadata;
+    } catch (e) {
+      logger.error('Failed to fetch Plex recently added', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex recently added');
+    }
   }
 }
 
