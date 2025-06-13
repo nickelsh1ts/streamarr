@@ -1,11 +1,73 @@
 {
   "clientId": "6919275e-142a-48d8-be6b-93594cbd4626",
+  "vapidPrivate": "SX1X7arps5pnM_fAxiwIWBhBik3QDOFv6SxItdTxpCM",
+  "vapidPublic": "BL82j38MWEUbTUMREoAb9_39Gqobm_NfiXWTFBKDAHdc5h1WNrutRiJJEE2qmYsaLnQZRfpaMEXzEUz1czGrSLU",
   "main": {
-  "apiKey": "testkey",
-  "applicationTitle": "Streamarr",
-  "applicationUrl": "",
-  "region": "",
-  "originalLanguage": "",
-  "locale": "en"
+    "apiKey": "testkey",
+    "applicationTitle": "Streamarr",
+    "applicationUrl": "",
+    "csrfProtection": false,
+    "cacheImages": false,
+    "defaultPermissions": 32,
+    "defaultQuotas": {
+      "invites": {}
+    },
+    "localLogin": true,
+    "newPlexLogin": true,
+    "region": "",
+    "originalLanguage": "",
+    "trustProxy": false,
+    "locale": "en"
+  },
+  "plex": {
+    "name": "Stream",
+    "ip": "192.168.1.1",
+    "port": 32400,
+    "useSsl": false,
+    "libraries": [
+      {
+        "id": "1",
+        "name": "Movies",
+        "enabled": true,
+        "type": "movie"
+      }
+    ],
+    "machineId": "test"
+  },
+  "tautulli": {},
+  "public": {
+    "initialized": true
+  },
+  "notifications": {
+    "agents": {
+      "email": {
+        "enabled": false,
+        "options": {
+          "emailFrom": "",
+          "smtpHost": "",
+          "smtpPort": 587,
+          "secure": false,
+          "ignoreTls": false,
+          "requireTls": false,
+          "allowSelfSigned": false,
+          "senderName": "Streamarr"
+        }
+      },
+      "webpush": {
+        "enabled": false,
+        "options": {}
+      }
+    }
+  },
+  "jobs": {
+    "plex-full-scan": {
+      "schedule": "0 0 3 * * *"
+    },
+  "plex-refresh-token": {
+   "schedule": "0 0 5 * * *"
+  },
+  "image-cache-cleanup": {
+   "schedule": "0 0 5 * * *"
+  }
   }
 }
