@@ -1,6 +1,6 @@
 'use client';
 import { NotificationContext } from '@app/context/NotificationContext';
-import useIsAdmin from '@app/hooks/useIsAdmin';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
   BellAlertIcon,
   HomeIcon,
@@ -10,21 +10,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
 
-interface UserType {
-  name: string;
-  email: string;
-}
-
-const user: UserType = {
-  name: `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} UI Preview`,
-  email: 'v0.00.1',
-};
-
 const UserCard = () => {
+  const { user } = useUser();
   const path = usePathname();
   const { setIsOpen } = useContext(NotificationContext);
 
-  const isAdmin = useIsAdmin();
+  const { hasPermission } = useUser();
 
   return (
     <div className="pointer-events-auto w-64 relative">
@@ -34,15 +25,15 @@ const UserCard = () => {
       >
         <img
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
-          src="/android-chrome-192x192.png"
+          src={user?.avatar}
           alt="user"
         />
         <div className="flex flex-col w-full place-content-start">
           <p className="text-lg text-center leading-tight truncate capitalize">
-            {user.name}
+            {user?.displayName}
           </p>
           <p className="text-xs text-center leading-tight truncate lowercase">
-            {user.email}
+            {user?.email}
           </p>
         </div>
       </Link>
@@ -61,7 +52,7 @@ const UserCard = () => {
           Home
         </Link>
       )}
-      {isAdmin && (
+      {hasPermission(Permission.ADMIN) && (
         <Link
           className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
           href="/admin"

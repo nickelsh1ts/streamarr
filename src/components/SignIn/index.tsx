@@ -2,22 +2,31 @@
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
-import useIsAdmin from '@app/hooks/useIsAdmin';
-import { auth } from '@app/lib/auth';
+import { useUser } from '@app/hooks/useUser';
+import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const SignIn = () => {
   const [error, setError] = useState('');
   const [isProcessing, setProcessing] = useState(false);
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
-  const isAdmin = useIsAdmin();
+  const { user, revalidate } = useUser();
+  const router = useRouter();
 
+  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
+  // We take the token and attempt to sign in. If we get a success message, we will
+  // ask swr to revalidate the user which _should_ come back with a valid user.
   useEffect(() => {
     const login = async () => {
       setProcessing(true);
       try {
-        auth(authToken, isAdmin);
+        const response = await axios.post('/api/v1/auth/plex', { authToken });
+
+        if (response.data?.id) {
+          revalidate();
+        }
       } catch (e) {
         setError(e.response.data.message);
         setAuthToken(undefined);
@@ -27,7 +36,15 @@ const SignIn = () => {
     if (authToken) {
       login();
     }
-  }, [authToken, isAdmin]);
+  }, [authToken, revalidate]);
+
+  // Effect that is triggered whenever `useUser`'s user changes. If we get a new
+  // valid user, we redirect the user to the home page as the login was successful.
+  useEffect(() => {
+    if (user) {
+      router.push('/watch');
+    }
+  }, [user, router]);
 
   function openPopup({
     title,

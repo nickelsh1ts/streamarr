@@ -2,15 +2,19 @@
 import ComingSoon from '@app/components/Common/ComingSoon';
 import ImageFader from '@app/components/Common/ImageFader';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
-import useBackdrops from '@app/hooks/useBackdrops';
 import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
+import useSWR from 'swr';
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isSettingsPage = !!pathname.match(/\/settings/);
   const userQuery = useParams<{ userid: string }>();
-  const backdrops = useBackdrops();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
   let user;
 
   if (!userQuery.userid) {
@@ -39,8 +43,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             gradient="bg-gradient-to-t from-[#1f1f1f] from-0% to-secondary/85 to-75%"
             backgroundImages={
               backdrops?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
               ) ?? []
             }
           />

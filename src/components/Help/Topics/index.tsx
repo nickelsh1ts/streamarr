@@ -170,7 +170,6 @@ const Topics = () => {
                 openPopup({ title: 'Plex Password Reset', w: 600, h: 700 });
               }}
               className="hover:text-neutral-600 text-start"
-              rel="noreferrer"
             >
               Reset Password
               <ArrowLongRightIcon className="link-error w-6 float-end" />

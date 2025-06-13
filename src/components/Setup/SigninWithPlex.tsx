@@ -1,4 +1,5 @@
 import PlexLoginButton from '@app/components/PlexLoginBtn';
+import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -6,27 +7,26 @@ interface LoginWithPlexProps {
   onComplete: () => void;
 }
 
-const user = false;
-
 const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const { user, revalidate } = useUser();
 
   // Effect that is triggered when the `authToken` comes back from the Plex OAuth
   // We take the token and attempt to login. If we get a success message, we will
-  // ask swr to revalidate the user which _shouid_ come back with a valid user.
+  // ask swr to revalidate the user which _should_ come back with a valid user.
 
   useEffect(() => {
     const login = async () => {
       const response = await axios.post('/api/v1/auth/plex', { authToken });
 
       if (response.data?.id) {
-        null;
+        revalidate();
       }
     };
     if (authToken) {
       login();
     }
-  }, [authToken]);
+  }, [authToken, revalidate]);
 
   // Effect that is triggered whenever `useUser`'s user changes. If we get a new
   // valid user, we call onComplete which will take us to the next step in Setup.
@@ -34,7 +34,7 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
     if (user) {
       onComplete();
     }
-  }, [onComplete]);
+  }, [user, onComplete]);
 
   return (
     <form>

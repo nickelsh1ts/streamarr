@@ -11,15 +11,13 @@ import useLocale from '@app/hooks/useLocale';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { mutate } from 'swr';
-import ComingSoon from '@app/components/Common/ComingSoon';
-import useBackdrops from '@app/hooks/useBackdrops';
+import useSWR, { mutate } from 'swr';
 import Image from 'next/image';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [plexSettingsComplete] = useState(false);
+  const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
   const router = useRouter();
   const { locale } = useLocale();
 
@@ -34,11 +32,15 @@ const Setup = () => {
       await axios.post('/api/v1/settings/main', { locale });
       mutate('/api/v1/settings/public');
 
-      router.push('/');
+      router.push('/watch');
     }
   };
 
-  const backdrops = useBackdrops();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
 
   return (
     <div className="relative flex min-h-screen flex-col justify-center py-12">
@@ -47,7 +49,7 @@ const Setup = () => {
           rotationSpeed={6000}
           backgroundImages={
             backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
+              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
             ) ?? []
           }
         />
@@ -111,7 +113,7 @@ const Setup = () => {
           )}
           {currentStep === 2 && (
             <div>
-              <SettingsPlex />
+              <SettingsPlex onComplete={() => setPlexSettingsComplete(true)} />
               <div className="mt-4 text-sm text-neutral-300">
                 <span className="mr-2">
                   <Badge>Tip</Badge>
@@ -154,7 +156,6 @@ const Setup = () => {
           )}
         </div>
       </div>
-      <ComingSoon />
     </div>
   );
 };

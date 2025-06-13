@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ForwardedRef } from 'react';
+import type { ForwardedRef, JSX } from 'react';
 import React from 'react';
 
 export type ButtonType =

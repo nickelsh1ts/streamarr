@@ -4,8 +4,8 @@ import { useState } from 'react';
 import ImageFader from '@app/components/Common/ImageFader';
 import { ComputerDesktopIcon, TvIcon } from '@heroicons/react/24/outline';
 import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
-import useBackdrops from '@app/hooks/useBackdrops';
 import Image from 'next/image';
+import useSWR from 'swr';
 
 interface imageArrayProps {
   src: string;
@@ -184,7 +184,11 @@ const DeviceTabs = () => {
     },
   ];
 
-  const backdrops = useBackdrops();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
 
   return (
     <div className="grid">
@@ -214,8 +218,7 @@ const DeviceTabs = () => {
             gradient="backdrop-blur-xl bg-black/70"
             backgroundImages={
               backdrops?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
               ) ?? []
             }
           />

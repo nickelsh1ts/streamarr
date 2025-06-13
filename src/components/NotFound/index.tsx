@@ -35,7 +35,7 @@ export default function NotFound() {
               </s>{' '}
             </p>
             <p className="lowercase text-3xl overflow-hidden text-ellipsis">
-              <PathName />
+              {PathName()}
             </p>
           </div>
           <p className="text-lg font-bold">

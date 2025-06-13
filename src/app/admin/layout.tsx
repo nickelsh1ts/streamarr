@@ -1,12 +1,15 @@
 'use client';
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
+import useRouteGuard from '@app/hooks/useRouteGuard';
+import { Permission } from '@server/lib/permissions';
 
 type AdminLayoutProps = {
   children: React.ReactNode;
 };
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  useRouteGuard(Permission.ADMIN);
   const AdminRoutes: AdminRoute[] = [
     {
       text: 'Settings',

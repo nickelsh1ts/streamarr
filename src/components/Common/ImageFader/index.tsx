@@ -1,6 +1,6 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import type { ImageLoader } from 'next/image';
-import Image from 'next/image';
 import type { ForwardRefRenderFunction, HTMLAttributes } from 'react';
 import React, { useEffect, useState } from 'react';
 
@@ -18,6 +18,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
     backgroundImages,
     rotationSpeed = DEFAULT_ROTATION_SPEED,
     gradient = 'bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0',
+    forceOptimize,
     ...props
   },
   ref
@@ -35,8 +36,14 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
     };
   }, [backgroundImages, rotationSpeed]);
 
-  const imageLoader: ImageLoader = ({ src }) => src;
+  let overrides = {};
 
+  const imageLoader: ImageLoader = ({ src }) => src;
+  if (forceOptimize) {
+    overrides = {
+      unoptimized: false,
+    };
+  }
   return (
     <div ref={ref}>
       {backgroundImages.map((imageUrl, i) => (
@@ -47,7 +54,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
           }`}
           {...props}
         >
-          <Image
+          <CachedImage
             unoptimized
             loader={imageLoader}
             className="absolute inset-0 h-full w-full"
@@ -55,6 +62,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             alt=""
             src={imageUrl}
             fill
+            {...overrides}
           />
           <div className={`absolute inset-0 ${gradient}`} />
         </div>

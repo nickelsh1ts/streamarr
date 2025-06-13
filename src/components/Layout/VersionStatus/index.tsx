@@ -1,29 +1,38 @@
-import useIsAdmin from '@app/hooks/useIsAdmin';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
   CodeBracketIcon,
   ServerIcon,
 } from '@heroicons/react/24/outline';
+import type { StatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import Link from 'next/link';
+import useSWR from 'swr';
 
 interface VersionStatusProps {
   onClick?: () => void;
 }
 
 const VersionStatus = ({ onClick }: VersionStatusProps) => {
-  const versionStream = `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} Preview 💾`;
-  const isAdmin = useIsAdmin();
-  const data = {
-    updateAvailable: false,
-    commitTag: 'develop',
-    version: '0.00.1',
-    commitsBehind: 0,
-  };
+  const { hasPermission } = useUser();
+  const { data } = useSWR<StatusResponse>('/api/v1/status', {
+    refreshInterval: 60 * 1000,
+  });
+
+  if (!data) {
+    return null;
+  }
+
+  const versionStream =
+    data.commitTag === 'local'
+      ? 'Keep it up! 💾'
+      : data.version.startsWith('develop-')
+        ? 'Streamarr Develop'
+        : 'Streamarr Stable';
 
   return (
     <Link
-      href={`${isAdmin ? '/admin/settings/about' : '/help'}`}
+      href={`${hasPermission(Permission.ADMIN) ? '/admin/settings/about' : '/help'}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && onClick) {
@@ -49,13 +58,15 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
         <span className="font-bold">{versionStream}</span>
         <span className="truncate">
           {data.commitTag === 'local' ? (
-            'local version'
+            'working on it'
           ) : data.commitsBehind > 0 ? (
             data.commitsBehind + ' commit(s) behind'
           ) : data.commitsBehind === -1 ? (
             'out of date'
           ) : (
-            <code className="bg-transparent p-0">{data.version}</code>
+            <code className="bg-transparent p-0">
+              {data.version.replace('develop-', '')}
+            </code>
           )}
         </span>
       </div>

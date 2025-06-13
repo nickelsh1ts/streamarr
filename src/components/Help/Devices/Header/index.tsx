@@ -1,10 +1,14 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
-import useBackdrops from '@app/hooks/useBackdrops';
 import Image from 'next/image';
+import useSWR from 'swr';
 
 const Header = () => {
-  const backdrops = useBackdrops();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
   return (
     <div className="relative mt-4">
       <div className="-z-10">
@@ -14,8 +18,7 @@ const Header = () => {
             gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
             backgroundImages={
               backdrops?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
+                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
               ) ?? []
             }
           />

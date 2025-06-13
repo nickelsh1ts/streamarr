@@ -22,7 +22,7 @@ const Help = () => {
               </p>
               <p className="mt-3 text-sm leading-5 md:mt-0 md:ml-6">
                 <a
-                  href="http://github.com/nickelsh1ts/streamarr"
+                  href="https://github.com/nickelsh1ts/streamarr"
                   className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
                   target="_blank"
                   rel="noreferrer"

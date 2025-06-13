@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type AvailableLocale = 'en';
+export type AvailableLocale = 'en' | 'es';
 
 type AvailableLanguageObject = Record<
   string,
@@ -11,6 +11,10 @@ export const availableLanguages: AvailableLanguageObject = {
   en: {
     code: 'en',
     display: 'English',
+  },
+  es: {
+    code: 'es',
+    display: 'Español',
   },
 };
 
