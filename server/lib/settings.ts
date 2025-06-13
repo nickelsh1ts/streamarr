@@ -284,7 +284,7 @@ class Settings {
   set tautulli(data: TautulliSettings) {
     this.data.tautulli = data;
   }
-  
+
   get radarr(): RadarrSettings[] {
     return this.data.radarr;
   }
