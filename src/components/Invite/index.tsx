@@ -1,5 +1,5 @@
 'use client';
-import ComingSoon from '@app/components/Common/ComingSoon';
+// import ComingSoon from '@app/components/Common/ComingSoon';
 import Header from '@app/components/Common/Header';
 import Modal from '@app/components/Common/Modal';
 import CreateInvite from '@app/components/Invite/CreateInvite';
@@ -119,7 +119,7 @@ const Invite = () => {
         content={<CreateInvite setModalState={setModalState} />}
       />
       <InvitesList />
-      <ComingSoon />
+      {/* <ComingSoon /> */}
     </div>
   );
 };

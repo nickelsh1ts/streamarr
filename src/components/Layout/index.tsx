@@ -8,37 +8,59 @@ import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
 import Image from 'next/image';
+import { useMemo } from 'react';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-
   const { user } = useUser();
 
-  return (
-    <SWRConfig
-      value={{
-        fetcher: (url) => axios.get(url).then((res) => res.data),
-        fallback: {
-          '/api/v1/auth/me': user,
-        },
-      }}
-    >
-      {!pathname.match(
+  const isMainLayout = useMemo(
+    () =>
+      !pathname.match(
         /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|logout|\/?$)/
-      ) ? (
+      ),
+    [pathname]
+  );
+  const isAuthLayout = useMemo(
+    () => pathname.match(/^\/(signin|signup|setup)\/?/),
+    [pathname]
+  );
+  const isFooterLayout = useMemo(
+    () => pathname.match(/^\/(signin|signup)\/?/),
+    [pathname]
+  );
+  const isSidebar = useMemo(
+    () => user && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/),
+    [user, pathname]
+  );
+  const swrConfigValue = useMemo(
+    () => ({
+      fetcher: (url: string) => axios.get(url).then((res) => res.data),
+      fallback: {
+        '/api/v1/auth/me': user,
+      },
+    }),
+    [user]
+  );
+
+  return (
+    <SWRConfig value={swrConfigValue}>
+      {isMainLayout ? (
         <main className="flex flex-col relative h-full min-h-full min-w-0">
           <Header />
           {user && <MobileMenu />}
-          {pathname.match(/^\/(signin|signup|setup)\/?/) && <FaderBackground />}
-          <div
-            className={`${user && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && 'lg:ms-56'} relative`}
-          >
+          {isAuthLayout && <FaderBackground />}
+          <div className={`${isSidebar && 'lg:ms-56'} relative`}>
             <div
-              className={`${pathname.match(/^\/(signin|signup)\/?/) ? 'min-h-[calc(100dvh-4rem)]' : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'} flex flex-col flex-grow relative`}
+              className={`${
+                isFooterLayout
+                  ? 'min-h-[calc(100dvh-4rem)]'
+                  : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
+              } flex flex-col flex-grow relative`}
             >
               {children}
             </div>
-            {pathname.match(/^\/(signin|signup)\/?/) && <Footer />}
+            {isFooterLayout && <Footer />}
           </div>
         </main>
       ) : (

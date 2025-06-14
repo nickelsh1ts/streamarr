@@ -1,32 +1,10 @@
 'use client';
-import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
-  const AdminRoutes: AdminRoute[] = [
-    {
-      text: 'General',
-      route: '/settings/general',
-      regex: /\/settings(\/general)?$/,
-    },
-    {
-      text: 'Password',
-      route: '/settings/password',
-      regex: /\/settings\/password/,
-    },
-    {
-      text: 'Notifications',
-      route: '/settings/notifications/email',
-      regex: /\/settings\/notifications/,
-    },
-    {
-      text: 'Permissions',
-      route: '/settings/permissions',
-      regex: /\/settings\/permissions/,
-    },
-  ];
 
   const userQuery = useParams<{ userid: string }>();
   const pathname = usePathname();
@@ -50,15 +28,41 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
     };
   }
 
-  AdminRoutes.forEach((settingsRoute) => {
-    settingsRoute.route = pathname.includes('/profile')
-      ? `/profile${settingsRoute.route}`
-      : `/admin/users/${user.id}${settingsRoute.route}`;
-  });
+  const computedRoutes = useMemo(
+    () =>
+      [
+        {
+          text: 'General',
+          route: '/settings/general',
+          regex: /\/settings(\/general)?$/,
+        },
+        {
+          text: 'Password',
+          route: '/settings/password',
+          regex: /\/settings\/password/,
+        },
+        {
+          text: 'Notifications',
+          route: '/settings/notifications/email',
+          regex: /\/settings\/notifications/,
+        },
+        {
+          text: 'Permissions',
+          route: '/settings/permissions',
+          regex: /\/settings\/permissions/,
+        },
+      ].map((settingsRoute) => ({
+        ...settingsRoute,
+        route: pathname.includes('/profile')
+          ? `/profile${settingsRoute.route}`
+          : `/admin/users/${user.id}${settingsRoute.route}`,
+      })),
+    [pathname, user.id]
+  );
 
   return (
     <div className="mb-4">
-      <AdminTabs AdminRoutes={AdminRoutes} />
+      <AdminTabs AdminRoutes={computedRoutes} />
       {children}
     </div>
   );

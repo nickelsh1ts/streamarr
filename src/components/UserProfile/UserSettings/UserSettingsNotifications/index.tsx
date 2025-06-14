@@ -1,10 +1,10 @@
 'use client';
-import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import { EnvelopeIcon } from '@heroicons/react/24/outline';
 import { CloudIcon } from '@heroicons/react/24/solid';
 import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 const UserSettingsNotifications = ({
   children,
@@ -33,43 +33,37 @@ const UserSettingsNotifications = ({
   }
 
   const pathname = usePathname();
-  const settingsRoutes: AdminRoute[] = [
-    {
-      text: 'Email',
-      content: (
-        <span className="flex items-center">
-          <EnvelopeIcon className="mr-2 h-4" />
-          Email
-        </span>
-      ),
-      route: '/settings/notifications/email',
-      regex: /\/settings\/notifications(\/email)?$/,
-    },
-    {
-      text: 'Webpush',
-      content: (
-        <span className="flex items-center">
-          <CloudIcon className="mr-2 h-4" />
-          Webpush
-        </span>
-      ),
-      route: '/settings/notifications/webpush',
-      regex: /\/settings\/notifications\/webpush/,
-    },
-  ];
 
-  settingsRoutes.forEach((settingsRoute) => {
-    settingsRoute.route = pathname.includes('/profile')
-      ? `/profile${settingsRoute.route}`
-      : `/admin/users/${user?.id}${settingsRoute.route}`;
-  });
+  const computedRoutes = useMemo(
+    () =>
+      [
+        {
+          text: 'Email Notifications',
+          route: '/settings/notifications/email',
+          icon: EnvelopeIcon,
+          regex: /\/settings\/notifications\/email/,
+        },
+        {
+          text: 'Cloud Notifications',
+          route: '/settings/notifications/cloud',
+          icon: CloudIcon,
+          regex: /\/settings\/notifications\/cloud/,
+        },
+      ].map((settingsRoute) => ({
+        ...settingsRoute,
+        route: pathname.includes('/profile')
+          ? `/profile${settingsRoute.route}`
+          : `/admin/users/${user?.id}${settingsRoute.route}`,
+      })),
+    [pathname, user?.id]
+  );
 
   return (
     <div>
       <div className="mb-6">
         <h3 className="heading">Notification Settings</h3>
       </div>
-      <AdminTabs tabType="button" AdminRoutes={settingsRoutes} />
+      <AdminTabs tabType="button" AdminRoutes={computedRoutes} />
       <div className="section">{children}</div>
     </div>
   );

@@ -77,7 +77,7 @@ export default function BigCalendar({
     []
   );
 
-  const clickRef = useRef(null);
+  const clickRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -93,7 +93,9 @@ export default function BigCalendar({
     [setDate, setView]
   );
 
-  const [selectedEvent, setSelectedEvent] = useState(undefined);
+  const [selectedEvent, setSelectedEvent] = useState<eventProps | undefined>(
+    undefined
+  );
   const [modalState, setModalState] = useState(false);
 
   const onSelectEvent = useCallback((calEvent: eventProps) => {
@@ -130,18 +132,31 @@ export default function BigCalendar({
     }
   }, [view, date]);
 
+  const calendarToolbarProps = useMemo(
+    () => ({
+      oneMonth: moment(date).add(30, 'days').format('M/DD/YYYY'),
+      startOfWeek: moment(date)?.startOf('week').format('MMMM DD'),
+      endOfWeek: moment(date)?.endOf('week').format('MMMM DD'),
+      view,
+      setDate,
+      date,
+      dateText,
+      setView,
+    }),
+    [date, view, setDate, setView, dateText]
+  );
+
+  const modalSubtitle = useMemo(
+    () =>
+      selectedEvent
+        ? `${moment(selectedEvent?.start).format('dddd, MMMM DD h:mm A')} to ${moment(selectedEvent?.end).format('dddd, MMMM DD h:mm A')}`
+        : '',
+    [selectedEvent]
+  );
+
   return (
     <Fragment>
-      <CalendarToolBar
-        oneMonth={moment(date).add(30, 'days').format('M/DD/YYYY')}
-        startOfWeek={moment(date)?.startOf('week').format('MMMM DD')}
-        endOfWeek={moment(date)?.endOf('week').format('MMMM DD')}
-        view={view}
-        setDate={setDate}
-        date={date}
-        dateText={dateText}
-        setView={setView}
-      />
+      <CalendarToolBar {...calendarToolbarProps} />
       <div
         className={`px-4 ${view != Views.AGENDA ? 'h-[calc(100dvh-28rem)] min-h-80 sm:h-[calc(100dvh-16rem)] sm:min-h-[30rem]' : ''}`}
       >
@@ -173,11 +188,7 @@ export default function BigCalendar({
             setModalState(false);
           }}
           title={selectedEvent?.title}
-          subtitle={
-            moment(selectedEvent?.start).format('dddd, MMMM DD h:mm A') +
-            ' to ' +
-            moment(selectedEvent?.end).format('dddd, MMMM DD h:mm A')
-          }
+          subtitle={modalSubtitle}
           show={modalState}
           content={'THIS IS MY CONTENT'}
         />

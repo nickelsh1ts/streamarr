@@ -9,12 +9,12 @@ import NotificationProvider from '@app/context/NotificationContext';
 import Notifications from '@app/components/Layout/Notifications';
 import { SettingsProvider } from '@app/context/SettingsContext';
 import type { ReactNode } from 'react';
-import Layout from '@app/components/Layout';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import type { User } from '@app/hooks/useUser';
 import { cookies } from 'next/headers';
 import { UserContext } from '@app/context/UserContext';
+import Layout from '@app/components/Layout';
 
 let currentSettings: PublicSettingsResponse = {
   initialized: false,

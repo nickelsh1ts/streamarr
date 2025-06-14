@@ -2,7 +2,7 @@
 import CachedImage from '@app/components/Common/CachedImage';
 import type { ImageLoader } from 'next/image';
 import type { ForwardRefRenderFunction, HTMLAttributes } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 interface ImageFaderProps extends HTMLAttributes<HTMLDivElement> {
   backgroundImages: string[];
@@ -30,23 +30,25 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
       () => setIndex((ai) => (ai + 1) % backgroundImages.length),
       rotationSpeed
     );
-
     return () => {
       clearInterval(interval);
     };
   }, [backgroundImages, rotationSpeed]);
 
-  let overrides = {};
+  const imageLoader = useMemo<ImageLoader>(
+    () =>
+      ({ src }) =>
+        src,
+    []
+  );
+  const overrides = useMemo(
+    () => (forceOptimize ? { unoptimized: false } : {}),
+    [forceOptimize]
+  );
 
-  const imageLoader: ImageLoader = ({ src }) => src;
-  if (forceOptimize) {
-    overrides = {
-      unoptimized: false,
-    };
-  }
-  return (
-    <div ref={ref}>
-      {backgroundImages.map((imageUrl, i) => (
+  const renderedImages = useMemo(
+    () =>
+      backgroundImages.map((imageUrl, i) => (
         <div
           key={`banner-image-${i}`}
           className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in ${
@@ -66,9 +68,11 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
           />
           <div className={`absolute inset-0 ${gradient}`} />
         </div>
-      ))}
-    </div>
+      )),
+    [backgroundImages, activeIndex, gradient, imageLoader, overrides, props]
   );
+
+  return <div ref={ref}>{renderedImages}</div>;
 };
 
 export default React.forwardRef<HTMLDivElement, ImageFaderProps>(ImageFader);

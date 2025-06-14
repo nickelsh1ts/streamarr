@@ -1,5 +1,7 @@
 import Button from '@app/components/Common/Button';
+import { useUser } from '@app/hooks/useUser';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
+import { Permission } from '@server/lib/permissions';
 import Link from 'next/link';
 
 type User = {
@@ -16,15 +18,21 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
+  const { user: loggedInUser, hasPermission } = useUser();
   const subtextItems: React.ReactNode[] = [
-    <>Joined {user.createdAt.toDateString()}</>,
+    <>
+      Joined{' '}
+      {new Date(user.createdAt).toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}
+    </>,
   ];
 
-  const loggedInUser = {
-    id: 1,
-  };
-
-  subtextItems.push(`User ID: ${user.id}`);
+  if (hasPermission(Permission.MANAGE_INVITES)) {
+    subtextItems.push(<span>User ID: {user.id}</span>);
+  }
 
   return (
     <div className="mt-6 pt-4 mb-12 lg:flex lg:items-end lg:justify-between lg:space-x-5 relative">
@@ -61,10 +69,11 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
             )}
           </h1>
           <p className="text-sm font-medium text-neutral-300">
-            {subtextItems.reduce((prev, curr) => (
-              <>
-                {prev} | {curr}
-              </>
+            {subtextItems.map((item, idx) => (
+              <span key={idx}>
+                {idx > 0 && ' | '}
+                {item}
+              </span>
             ))}
           </p>
         </div>
