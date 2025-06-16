@@ -45,7 +45,7 @@
     "nextjs-toploader": "^3.7.15",
     "node-cache": "^5.1.2",
     "plex-api": "^5.3.2",
-    "postcss": "8.4.49",
+    "postcss": "8.5.5",
     "react": "^18.3.1",
     "react-animate-height": "^3.2.3",
     "react-aria": "3.36.0",
