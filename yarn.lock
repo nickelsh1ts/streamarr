@@ -15282,9 +15282,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-tailwindcss@npm:0.6.12":
-  version: 0.6.12
-  resolution: "prettier-plugin-tailwindcss@npm:0.6.12"
+"prettier-plugin-tailwindcss@npm:0.6.13":
+  version: 0.6.13
+  resolution: "prettier-plugin-tailwindcss@npm:0.6.13"
   peerDependencies:
     "@ianvs/prettier-plugin-sort-imports": "*"
     "@prettier/plugin-pug": "*"
@@ -15336,7 +15336,7 @@ __metadata:
       optional: true
     prettier-plugin-svelte:
       optional: true
-  checksum: 10c0/fc3428fa4395483c9ddfc356929d9a3e43ae1b34a9696a0ba47219295111105c93b5021ceb40fea6ee893b79a2cce23cf685868dce52701ca11269900431c535
+  checksum: 10c0/88e8ceef24a88850c751268e25ab628df91094ab5501fd39b473b8c3d6c025b871a792f9ce00a069b0ebb19bfb9b7ce85d02672e158899c541d888aee0df2c6f
   languageName: node
   linkType: hard
 
@@ -17478,7 +17478,7 @@ __metadata:
     postcss: "npm:8.5.6"
     prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:4.1.0"
-    prettier-plugin-tailwindcss: "npm:0.6.12"
+    prettier-plugin-tailwindcss: "npm:0.6.13"
     react: "npm:^19.1.0"
     react-animate-height: "npm:^3.2.3"
     react-aria: "npm:3.41.1"
@@ -17501,7 +17501,7 @@ __metadata:
     theme-change: "npm:^2.5.0"
     ts-node: "npm:^10.9.2"
     tsc-alias: "npm:^1.8.16"
-    typeorm: "npm:^0.3.24"
+    typeorm: "npm:^0.3.25"
     typescript: "npm:^5.8.3"
     usehooks-ts: "npm:^3.1.1"
     web-push: "npm:^3.6.7"
@@ -18632,9 +18632,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeorm@npm:^0.3.24":
-  version: 0.3.24
-  resolution: "typeorm@npm:0.3.24"
+"typeorm@npm:^0.3.25":
+  version: 0.3.25
+  resolution: "typeorm@npm:0.3.25"
   dependencies:
     "@sqltools/formatter": "npm:^1.2.5"
     ansis: "npm:^3.17.0"
@@ -18708,7 +18708,7 @@ __metadata:
     typeorm: cli.js
     typeorm-ts-node-commonjs: cli-ts-node-commonjs.js
     typeorm-ts-node-esm: cli-ts-node-esm.js
-  checksum: 10c0/f78fe361c5eba065dfd0e05a7e2ee1bcb5b27a6a24fb6f1b57b03f7df74078364ac13b1ab2915676c50e9fb9c0a41a480834aaadae80fcc6c962c8844adabf03
+  checksum: 10c0/f0b52e451003713aba83a96bce5ee942c7f3ae236ee2e241b7872a19a3e3ac7ac24c91f3c279606678838c360de3c25a8156239b047f7980b0ba2b7ba6f73152
   languageName: node
   linkType: hard
 
