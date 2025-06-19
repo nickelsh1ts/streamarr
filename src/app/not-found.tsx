@@ -1,10 +1,10 @@
-import NotFound from '@app/components/NotFound';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: `404 – ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`,
-};
+import NotFound from 'components/NotFound';
 
 export default function NotFoundPage() {
-  return <NotFound />;
+  return (
+    <>
+      <title>404 - Not Found - Streamarr</title>
+      <NotFound />
+    </>
+  );
 }

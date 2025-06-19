@@ -18,10 +18,11 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default [
+const eslintConfig = [
   ...fixupConfigRules(
     compat.extends(
       'eslint:recommended',
+      'next',
       'plugin:@typescript-eslint/recommended',
       'plugin:jsx-a11y/recommended',
       'plugin:react/recommended',
@@ -112,3 +113,5 @@ export default [
     },
   },
 ];
+
+export default eslintConfig;

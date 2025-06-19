@@ -1,7 +1,9 @@
 'use client';
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useRouteGuard from '@app/hooks/useRouteGuard';
+import { useUser } from '@app/hooks/useUser';
 import { Permission } from '@server/lib/permissions';
 
 type AdminLayoutProps = {
@@ -57,6 +59,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       regex: /^\/admin\/downloads/,
     },
   ];
+
+  const { hasPermission } = useUser();
+
+  if (!hasPermission(Permission.ADMIN)) {
+    return <LoadingEllipsis fixed />;
+  }
 
   return (
     <div className="max-sm:mb-14">

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 const now = new Date();
 
 export default [

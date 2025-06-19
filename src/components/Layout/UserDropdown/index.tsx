@@ -1,9 +1,9 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import UserCard from '@app/components/Layout/UserCard';
+import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 interface UserDropdownProps {
   dropUp?: boolean;
@@ -14,15 +14,8 @@ const UserDropdown = ({
   dropUp = false,
   tooltip = false,
 }: UserDropdownProps) => {
-  const { user, revalidate } = useUser();
-  const router = useRouter();
-  const logout = async () => {
-    const response = await axios.post('/api/v1/auth/logout');
-
-    if (response.data?.status === 'ok') {
-      revalidate();
-    }
-  };
+  const { user } = useUser();
+  const { currentSettings } = useSettings();
 
   return (
     <div className="indicator">
@@ -31,7 +24,7 @@ const UserDropdown = ({
         toolTip={tooltip}
         tiptitle="Account"
         dropdownIcon={
-          <img
+          <CachedImage
             className="h-7 w-7 rounded-full ring-2 ring-primary-content mr-1"
             src={user?.avatar}
             alt=""
@@ -54,7 +47,7 @@ const UserDropdown = ({
           Account Settings
         </DropDownMenu.Item>
         <DropDownMenu.Item
-          href={`https://stats.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
+          href={`https://stats.${currentSettings.applicationTitle.toLowerCase() || 'streamarr'}.com`}
           target="_blank"
         >
           Watch Statistics
@@ -63,11 +56,8 @@ const UserDropdown = ({
         <DropDownMenu.Item href="https://discord.gg/ZSTrRJMcDS" target="_blank">
           Get Support
         </DropDownMenu.Item>
-        <DropDownMenu.Item
-          onClick={() => logout().then(() => router.push('/'))}
-          divide="before"
-        >
-          Sign Out of {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+        <DropDownMenu.Item href="/logout" divide="before">
+          Sign Out of {currentSettings.applicationTitle}
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

@@ -70,10 +70,8 @@ app
 
     // Register Notification Agents
     notificationManager.registerAgents([new EmailAgent(), new WebPushAgent()]);
-
     // Start Jobs
     startJobs();
-
     const server = express();
     if (settings.main.trustProxy) {
       server.enable('trust proxy');
@@ -93,7 +91,6 @@ app
         next();
       });
     }
-
     // Set up sessions
     const sessionRespository = getRepository(Session);
     server.use(
@@ -122,11 +119,6 @@ app
         validateRequests: true,
       })
     );
-    /**
-     * This is a workaround to convert dates to strings before they are validated by
-     * OpenAPI validator. Otherwise, they are treated as objects instead of strings
-     * and response validation will fail
-     */
     server.use((_req, res, next) => {
       const original = res.json;
       res.json = function jsonp(json) {
@@ -135,27 +127,28 @@ app
       next();
     });
     server.use('/api/v1', routes);
-
-    // Do not set cookies so CDNs can cache them
     server.use('/imageproxy', clearCookies, imageproxy);
-
     server.get('*', (req, res) => handle(req, res));
     server.use(
       (
-        err: { status: number; message: string; errors: string[] },
+        err: unknown,
         _req: Request,
         res: Response,
         // We must provide a next function for the function signature here even though its not used
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _next: NextFunction
       ) => {
-        // format error
+        const errorInfo = err as {
+          status?: number;
+          message?: string;
+          errors?: string[];
+          stack?: string;
+        };
         res
-          .status(err.status || 500)
-          .json({ message: err.message, errors: err.errors });
+          .status(errorInfo.status || 500)
+          .json({ message: errorInfo.message, errors: errorInfo.errors });
       }
     );
-
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {

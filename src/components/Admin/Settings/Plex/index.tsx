@@ -88,27 +88,35 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const TautulliSettingsSchema = Yup.object().shape(
     {
       tautulliHostname: Yup.string()
-        .when(['tautulliPort', 'tautulliApiKey'], {
-          is: (value: unknown) => !!value,
-          then: Yup.string()
-            .nullable()
-            .required('You must provide a valid hostname or IP address'),
-          otherwise: Yup.string().nullable(),
-        })
+        .when(
+          ['tautulliPort', 'tautulliApiKey'],
+          ([tautulliPort, tautulliApiKey], schema) => {
+            if (tautulliPort || tautulliApiKey) {
+              return schema
+                .nullable()
+                .required('You must provide a valid hostname or IP address');
+            }
+            return schema.nullable();
+          }
+        )
         .matches(
           /^(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
           'You must provide a valid hostname or IP address'
         ),
-      tautulliPort: Yup.number().when(['tautulliHostname', 'tautulliApiKey'], {
-        is: (value: unknown) => !!value,
-        then: Yup.number()
-          .typeError('You must provide a valid port number')
-          .nullable()
-          .required('You must provide a valid port number'),
-        otherwise: Yup.number()
-          .typeError('You must provide a valid port number')
-          .nullable(),
-      }),
+      tautulliPort: Yup.number().when(
+        ['tautulliHostname', 'tautulliApiKey'],
+        ([tautulliHostname, tautulliApiKey], schema) => {
+          if (tautulliHostname || tautulliApiKey) {
+            return schema
+              .typeError('You must provide a valid port number')
+              .nullable()
+              .required('You must provide a valid port number');
+          }
+          return schema
+            .typeError('You must provide a valid port number')
+            .nullable();
+        }
+      ),
       tautulliUrlBase: Yup.string()
         .test(
           'leading-slash',
@@ -120,11 +128,15 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           'URL base must not end in a trailing slash',
           (value) => !value || !value.endsWith('/')
         ),
-      tautulliApiKey: Yup.string().when(['tautulliHostname', 'tautulliPort'], {
-        is: (value: unknown) => !!value,
-        then: Yup.string().nullable().required('You must provide an API key'),
-        otherwise: Yup.string().nullable(),
-      }),
+      tautulliApiKey: Yup.string().when(
+        ['tautulliHostname', 'tautulliPort'],
+        ([tautulliHostname, tautulliPort], schema) => {
+          if (tautulliHostname || tautulliPort) {
+            return schema.nullable().required('You must provide an API key');
+          }
+          return schema.nullable();
+        }
+      ),
       tautulliExternalUrl: Yup.string()
         .url('You must provide a valid URL')
         .test(

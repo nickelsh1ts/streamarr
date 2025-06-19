@@ -2,6 +2,7 @@
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
+import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
@@ -14,6 +15,7 @@ const SignIn = () => {
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const router = useRouter();
+  const { currentSettings } = useSettings();
 
   // Effect that is triggered when the `authToken` comes back from the Plex OAuth
   // We take the token and attempt to sign in. If we get a success message, we will
@@ -25,7 +27,7 @@ const SignIn = () => {
         const response = await axios.post('/api/v1/auth/plex', { authToken });
 
         if (response.data?.id) {
-          revalidate();
+          revalidate().then(() => router.push('/watch'));
         }
       } catch (e) {
         setError(e.response.data.message);
@@ -36,7 +38,7 @@ const SignIn = () => {
     if (authToken) {
       login();
     }
-  }, [authToken, revalidate]);
+  }, [authToken, revalidate, router]);
 
   // Effect that is triggered whenever `useUser`'s user changes. If we get a new
   // valid user, we redirect the user to the home page as the login was successful.
@@ -108,7 +110,7 @@ const SignIn = () => {
           <p className="text-sm">
             You will use this account to log into{' '}
             <span className="text-primary font-semibold">
-              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+              {currentSettings.applicationTitle}
             </span>{' '}
             to watch your favourite movies and TV Shows.
           </p>
@@ -126,13 +128,13 @@ const SignIn = () => {
                 Use your Ple<span className="text-accent">x</span>&trade;
                 account
               </button>
-              <div
-                className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
-              >
-                Login failed! Something went wrong, let&apos;s try again!
-              </div>
               <AccordionContent isOpen={openIndexes.includes(0)}>
                 <div className="p-3 place-content-center border border-secondary bg-secondary/50">
+                  <div
+                    className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
+                  >
+                    Login failed! Something went wrong, let&apos;s try again!
+                  </div>
                   <PlexLoginButton
                     isProcessing={isProcessing}
                     onAuthToken={(authToken) => setAuthToken(authToken)}
@@ -147,7 +149,7 @@ const SignIn = () => {
                 }`}
                 onClick={() => handleClick(1)}
               >
-                Sign in with {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                Sign in with {currentSettings.applicationTitle}
               </button>
               <AccordionContent isOpen={openIndexes.includes(1)}>
                 <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
@@ -243,7 +245,7 @@ const SignIn = () => {
         <p className="mt-4 text-start text-sm px-2 relative">
           New to{' '}
           <span className="text-primary font-semibold">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>
           ?
           <Link href="/signup" className="font-bold hover:brightness-75 ms-1">

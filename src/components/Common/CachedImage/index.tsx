@@ -21,7 +21,9 @@ const CachedImage = ({ src, ...props }: ImageProps) => {
     }
   }
 
-  return <Image unoptimized loader={imageLoader} src={imageUrl} {...props} />;
+  return (
+    <Image alt="" unoptimized loader={imageLoader} src={imageUrl} {...props} />
+  );
 };
 
 export default CachedImage;

@@ -2,17 +2,24 @@
 import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
 import MobileMenu from '@app/components/Layout/MobileMenu';
-import { usePathname } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
 import Image from 'next/image';
 import { useMemo } from 'react';
+import { publicRoutes } from '@app/middleware';
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({
+  children,
+  initialized,
+}: {
+  children: React.ReactNode;
+  initialized: boolean;
+}) => {
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, loading } = useUser();
 
   const isMainLayout = useMemo(
     () =>
@@ -42,6 +49,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }),
     [user]
   );
+
+  if (!initialized) {
+    if (!pathname.match(/setup|signin\/plex\/loading/)) {
+      redirect('/setup');
+    }
+  } else {
+    if (pathname.match(/setup/)) {
+      redirect('/');
+    }
+
+    if (!publicRoutes.test(pathname) && !user && !loading) {
+      redirect('/signin');
+    }
+
+    if (pathname.match(/(signin|setup|\/$)/) && user && !loading) {
+      redirect('/watch');
+    }
+  }
 
   return (
     <SWRConfig value={swrConfigValue}>

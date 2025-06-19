@@ -143,40 +143,54 @@ class PlexTvAPI extends ExternalAPI {
         devicesResp.data as string,
         { explicitArray: false, ignoreAttrs: false }
       );
-      return parsedXml?.MediaContainer?.Device?.map((pxml: DeviceResponse) => ({
-        name: pxml.$.name,
-        product: pxml.$.product,
-        productVersion: pxml.$.productVersion,
-        platform: pxml.$?.platform,
-        platformVersion: pxml.$?.platformVersion,
-        device: pxml.$?.device,
-        clientIdentifier: pxml.$.clientIdentifier,
-        createdAt: new Date(parseInt(pxml.$?.createdAt, 10) * 1000),
-        lastSeenAt: new Date(parseInt(pxml.$?.lastSeenAt, 10) * 1000),
-        provides: pxml.$.provides.split(','),
-        owned: pxml.$.owned == '1',
-        accessToken: pxml.$?.accessToken,
-        publicAddress: pxml.$?.publicAddress,
-        publicAddressMatches: pxml.$?.publicAddressMatches == '1',
-        httpsRequired: pxml.$?.httpsRequired == '1',
-        synced: pxml.$?.synced == '1',
-        relay: pxml.$?.relay == '1',
-        dnsRebindingProtection: pxml.$?.dnsRebindingProtection == '1',
-        natLoopbackSupported: pxml.$?.natLoopbackSupported == '1',
-        presence: pxml.$?.presence == '1',
-        ownerID: pxml.$?.ownerID,
-        home: pxml.$?.home == '1',
-        sourceTitle: pxml.$?.sourceTitle,
-        connection: Array.isArray(pxml?.Connection)
-          ? pxml.Connection.map((conn: ConnectionResponse) => ({
-              protocol: conn.$.protocol,
-              address: conn.$.address,
-              port: parseInt(conn.$.port, 10),
-              uri: conn.$.uri,
-              local: conn.$.local == '1',
-            }))
-          : [],
-      }));
+      // Normalize Device to always be an array before mapping
+      const devicesRaw = parsedXml?.MediaContainer?.Device;
+      const devices = Array.isArray(devicesRaw)
+        ? devicesRaw
+        : devicesRaw
+          ? [devicesRaw]
+          : [];
+      return devices.map((pxml: DeviceResponse) => {
+        // Normalize Connection to always be an array before mapping
+        const connectionsRaw = pxml?.Connection;
+        const connections = Array.isArray(connectionsRaw)
+          ? connectionsRaw
+          : connectionsRaw
+            ? [connectionsRaw]
+            : [];
+        return {
+          name: pxml.$.name,
+          product: pxml.$.product,
+          productVersion: pxml.$.productVersion,
+          platform: pxml.$?.platform,
+          platformVersion: pxml.$?.platformVersion,
+          device: pxml.$?.device,
+          clientIdentifier: pxml.$.clientIdentifier,
+          createdAt: new Date(parseInt(pxml.$?.createdAt, 10) * 1000),
+          lastSeenAt: new Date(parseInt(pxml.$?.lastSeenAt, 10) * 1000),
+          provides: pxml.$.provides.split(','),
+          owned: pxml.$.owned == '1',
+          accessToken: pxml.$?.accessToken,
+          publicAddress: pxml.$?.publicAddress,
+          publicAddressMatches: pxml.$?.publicAddressMatches == '1',
+          httpsRequired: pxml.$?.httpsRequired == '1',
+          synced: pxml.$?.synced == '1',
+          relay: pxml.$?.relay == '1',
+          dnsRebindingProtection: pxml.$?.dnsRebindingProtection == '1',
+          natLoopbackSupported: pxml.$?.natLoopbackSupported == '1',
+          presence: pxml.$?.presence == '1',
+          ownerID: pxml.$?.ownerID,
+          home: pxml.$?.home == '1',
+          sourceTitle: pxml.$?.sourceTitle,
+          connection: connections.map((conn: ConnectionResponse) => ({
+            protocol: conn.$.protocol,
+            address: conn.$.address,
+            port: parseInt(conn.$.port, 10),
+            uri: conn.$.uri,
+            local: conn.$.local == '1',
+          })),
+        };
+      });
     } catch (e) {
       logger.error('Something went wrong getting the devices from plex.tv', {
         label: 'Plex.tv API',
@@ -208,14 +222,24 @@ class PlexTvAPI extends ExternalAPI {
         throw new Error('Plex is not configured!');
       }
       const usersResponse = await this.getUsers();
-      const users = usersResponse.MediaContainer.User;
+      const usersRaw = usersResponse.MediaContainer.User;
+      if (!usersRaw) {
+        throw new Error("No users found in Plex account's shared list");
+      }
+      const users = Array.isArray(usersRaw) ? usersRaw : [usersRaw];
       const user = users.find((u) => parseInt(u.$.id) === userId);
       if (!user) {
         throw new Error(
           "This user does not exist on the main Plex account's shared list"
         );
       }
-      return !!user.Server?.find(
+      const serversRaw = user.Server;
+      const servers = Array.isArray(serversRaw)
+        ? serversRaw
+        : serversRaw
+          ? [serversRaw]
+          : [];
+      return !!servers.find(
         (server) => server.$.machineIdentifier === settings.plex.machineId
       );
     } catch (e) {

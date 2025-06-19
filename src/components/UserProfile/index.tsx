@@ -1,32 +1,59 @@
 'use client';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { Permission, useUser } from '@app/hooks/useUser';
+import type {
+  QuotaResponse,
+  UserInvitesResponse,
+} from '@server/interfaces/api/userInterfaces';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
-import moment from 'moment';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import Error from '@app/app/error';
+import useSWR from 'swr';
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
-  let user;
+  const { user, error } = useUser({
+    id: Number(userQuery.userid),
+  });
+  const { user: currentUser, hasPermission: currentHasPermission } = useUser();
 
-  const currentUser = { id: 1, invitesRemaining: 'Unlimited', invitesSent: 15 };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: invites, error: inviteError } = useSWR<UserInvitesResponse>(
+    user &&
+      (user.id === currentUser?.id ||
+        currentHasPermission(
+          [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
+          { type: 'or' }
+        ))
+      ? `/api/v1/user/${user?.id}/requests?take=10&skip=0`
+      : null
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: quota } = useSWR<QuotaResponse>(
+    user &&
+      (user.id === currentUser?.id ||
+        currentHasPermission(
+          [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+          { type: 'and' }
+        ))
+      ? `/api/v1/user/${user.id}/quota`
+      : null
+  );
 
-  if (!userQuery.userid) {
-    user = {
-      id: 1,
-      displayName: 'Nickelsh1ts',
-      avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
-  } else {
-    user = {
-      id: parseInt(userQuery.userid),
-      displayName: 'QueriedUser',
-      avatar: '/android-chrome-192x192.png',
-      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
+  if (!user && !error) {
+    return <LoadingEllipsis fixed />;
   }
+
+  if (!user) {
+    return (
+      <Error
+        error={{ name: '404', message: 'User not found', statusCode: 404 }}
+        reset={() => {}}
+      />
+    );
+  }
+
   return (
     <>
       <div className="relative">
@@ -44,7 +71,7 @@ const UserProfile = () => {
                     : `/admin/users/${user?.id}/invites?filter=all`
                 }
               >
-                {currentUser.invitesRemaining}
+                {currentUser.inviteLimit - currentUser.invitesSent || 'none'}
               </Link>
             </dd>
           </div>

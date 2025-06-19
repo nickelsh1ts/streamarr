@@ -19,7 +19,7 @@ export default function Error({
   statusCode,
   reset,
 }: {
-  error: Error & { name: string; message: string } | ErrorProps;
+  error: (Error & { name: string; message: string }) | ErrorProps;
   statusCode?: ErrorProps['statusCode'];
   reset: () => void;
 }) {
@@ -35,9 +35,7 @@ export default function Error({
       case 503:
         return 'Service Unavailable';
       default:
-        return statusCode
-          ? 'Something went wrong!'
-          : 'Oops'
+        return statusCode ? 'Something went wrong!' : 'Oops';
     }
   };
 
@@ -47,8 +45,8 @@ export default function Error({
         <ExclamationCircleIcon className="size-14 text-warning" />
         <h3 className="text-3xl font-bold mb-8 text-center">
           {statusCode
-          ? statusCode + ' - ' + getErrorMessage(statusCode)
-          : getErrorMessage(statusCode)}
+            ? statusCode + ' - ' + getErrorMessage(statusCode)
+            : getErrorMessage(statusCode)}
         </h3>
         <Alert type="error">
           <div className="flex flex-col w-full">

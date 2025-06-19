@@ -4,7 +4,6 @@ import crypto from 'crypto';
 const randomString = crypto.randomBytes(32).toString('base64');
 
 const nextConfig = {
-  output: 'standalone',
   reactStrictMode: true,
   allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS
     ? process.env.ALLOWED_DEV_ORIGINS.split(',')
@@ -14,7 +13,14 @@ const nextConfig = {
     RANDOM_STRING: randomString,
   },
   images: {
-    domains: ['image.tmdb.org'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.tmdb.org',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   async redirects() {
     return [
