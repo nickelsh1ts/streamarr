@@ -1,7 +1,10 @@
+'use client';
+import useSettings from '@app/hooks/useSettings';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 const PopularTopics = () => {
+  const { currentSettings } = useSettings();
   return (
     <div className="bg-zinc-100 text-black p-4">
       <div className="container max-w-screen-xl mx-auto border-b-2">
@@ -29,7 +32,7 @@ const PopularTopics = () => {
         <p className="mb-4 text-sm">
           Having issues connecting? Check out our{' '}
           <Link
-            href={`//status.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com/status/services`}
+            href={`//status.${currentSettings.applicationTitle.toLowerCase()}.com/status/services`}
             className="link-primary font-extrabold mb-4"
           >
             Status Page

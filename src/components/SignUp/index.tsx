@@ -5,6 +5,7 @@ import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import SignUpForm from '@app/components/SignUp/Form';
 import useLocale from '@app/hooks/useLocale';
+import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -14,6 +15,7 @@ const Join = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const router = useRouter();
   const { locale } = useLocale();
+  const { currentSettings } = useSettings();
 
   const finishSignup = async () => {
     setIsUpdating(true);
@@ -36,7 +38,7 @@ const Join = () => {
       <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
           <div className="mb-2 flex justify-center text-2xl font-bold">
-            Welcome to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            Welcome to {currentSettings.applicationTitle}
           </div>
           <div className="mb-2 text-center text-sm">
             Registration is by invite only.

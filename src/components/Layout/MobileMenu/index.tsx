@@ -60,22 +60,8 @@ const MobileMenu = () => {
     {
       href: '/request',
       content: 'Request',
-      svgIcon: (
-        <Image
-          alt="Overseerr"
-          width={24}
-          height={24}
-          src={'/external/os-icon.svg'}
-        />
-      ),
-      svgIconSelected: (
-        <Image
-          alt="Overseerr"
-          width={24}
-          height={24}
-          src={'/external/os-icon.svg'}
-        />
-      ),
+      svgIcon: <Image alt="Overseerr" src={'/external/os-icon.svg'} />,
+      svgIconSelected: <Image alt="Overseerr" src={'/external/os-icon.svg'} />,
       activeRegExp: /^\/request\/?$/,
     },
     {

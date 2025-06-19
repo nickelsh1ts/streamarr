@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import CopyButton from '@app/components/Common/CopyButton';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import useSettings from '@app/hooks/useSettings';
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
@@ -12,6 +13,7 @@ import { useEffect, useState } from 'react';
 
 const GeneralSettings = () => {
   const [hostname, setHostname] = useState('');
+  const { currentSettings } = useSettings();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -25,7 +27,7 @@ const GeneralSettings = () => {
         <h3 className="text-2xl font-extrabold">General Settings</h3>
         <p className="mb-5">
           Configure global and default settings for{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}.
+          {currentSettings.applicationTitle}.
         </p>
         <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
           <label htmlFor="apiKey" className="">
@@ -67,14 +69,14 @@ const GeneralSettings = () => {
           <div className="col-span-2">
             <input
               className="input input-primary input-sm w-full"
-              placeholder={process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+              placeholder={currentSettings.applicationTitle}
             />
           </div>
           <label htmlFor="applicationTitle">Application URL</label>
           <div className="col-span-2">
             <input
               className="input input-primary input-sm w-full"
-              placeholder={process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}
+              placeholder={hostname}
             />
           </div>
           <label htmlFor="applicationTitle">Display Language</label>
@@ -100,7 +102,7 @@ const GeneralSettings = () => {
         <h3 className="text-2xl font-extrabold">Invite Settings</h3>
         <p className="mb-5">
           Configure global and default invite settings for{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}.
+          {currentSettings.applicationTitle}.
         </p>
         <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl"></div>
         <div className="divider divider-primary mb-0 col-span-full" />
@@ -114,7 +116,7 @@ const GeneralSettings = () => {
         <h3 className="text-2xl font-extrabold">Schedule Settings</h3>
         <p className="mb-5">
           Configure global and default schedule settings for{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}.
+          {currentSettings.applicationTitle}.
         </p>
         <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl"></div>
         <div className="divider divider-primary mb-0 col-span-full" />

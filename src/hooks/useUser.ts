@@ -19,7 +19,9 @@ export interface User {
   userType: number;
   createdAt: Date;
   updatedAt: Date;
-  requestCount: number;
+  inviteCount: number;
+  inviteLimit: number;
+  invitesSent: number;
   settings?: UserSettings;
 }
 
@@ -31,8 +33,6 @@ export interface UserSettings {
   originalLanguage?: string;
   locale?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
-  watchlistSyncMovies?: boolean;
-  watchlistSyncTv?: boolean;
 }
 
 interface UserHookResponse {

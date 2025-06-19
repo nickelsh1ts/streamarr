@@ -1,17 +1,27 @@
+/* eslint-disable @next/next/no-css-tags */
 import BackButton from '@app/components/Layout/BackButton';
 import MobileMenu from '@app/components/Layout/MobileMenu';
 import Sidebar from '@app/components/Layout/Sidebar';
 import Watch from '@app/components/Watch';
 import WelcomeModal from '@app/components/WelcomeModal';
+import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { Metadata, NextPage } from 'next';
-
-const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
 
 const messages = { title: 'Now Streaming' };
 
-export const metadata: Metadata = {
-  title: `${messages.title} - ${applicationTitle}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const res = await fetch(
+    `http://${process.env.HOST || 'localhost'}:${
+      process.env.PORT || 3000
+    }/api/v1/settings/public`,
+    { cache: 'no-store' }
+  );
+  const currentSettings: PublicSettingsResponse = await res.json();
+
+  return {
+    title: `${messages.title} - ${currentSettings.applicationTitle}`,
+  };
+}
 
 const WatchPage: NextPage = () => {
   return (

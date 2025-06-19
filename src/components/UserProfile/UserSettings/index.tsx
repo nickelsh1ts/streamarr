@@ -1,13 +1,14 @@
 'use client';
 import AdminTabs from '@app/components/Common/AdminTabs';
+import useSettings from '@app/hooks/useSettings';
 import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
-
   const userQuery = useParams<{ userid: string }>();
   const pathname = usePathname();
+  const { currentSettings } = useSettings();
   let user;
 
   if (!userQuery.userid) {
@@ -15,7 +16,7 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
       id: 1,
       displayName: 'Nickelsh1ts',
       avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
+      email: `nickelsh1ts@${currentSettings.applicationTitle.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
     };
   } else {
@@ -23,7 +24,7 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
       id: parseInt(userQuery.userid),
       displayName: 'QueriedUser',
       avatar: '/android-chrome-192x192.png',
-      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
+      email: `query@${currentSettings.applicationTitle.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
     };
   }

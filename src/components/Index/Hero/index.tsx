@@ -1,6 +1,7 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
 import useSWR from 'swr';
+import Image from 'next/image';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -26,7 +27,7 @@ export default function Hero() {
       />
       <div className="grid grid-flow-row min-h-lvh md:ps-12 md:text-start text-center relative">
         <div className="md:ps-4 mt-auto pt-24">
-          <img
+          <Image
             src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
             alt="logo"
             className="mb-10 mt-5 h-auto w-82 mx-auto md:mx-0 px-5 md:px-0"

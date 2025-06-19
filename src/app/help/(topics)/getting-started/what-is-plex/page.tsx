@@ -1,8 +1,12 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
 import Link from 'next/link';
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <p className="mb-4">
@@ -21,7 +25,7 @@ const HelpContent = () => {
       <p className="mb-4">
         If you are streaming only third-party content (
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>
         , live TV, web shows), then you are good to go as soon as you have an
         account, just install an app on your phone, Smart TV, computer, or

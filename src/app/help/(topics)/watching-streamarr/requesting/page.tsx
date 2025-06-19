@@ -1,13 +1,18 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
 import {
-  BellIcon,
-  ClockIcon,
-  DevicePhoneMobileIcon,
   StarIcon,
+  ClockIcon,
+  BellIcon,
+  DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <div className="font-extrabold" id="requesting">
@@ -15,13 +20,7 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li className="">
-          Sign in to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} and
-          select
-          <img
-            className="h-auto w-28 inline-flex self-center mx-1"
-            src="/external/os-logo_full_dark.svg"
-            alt="overseerr"
-          />
+          Sign in to {currentSettings.applicationTitle} and select
         </li>
         <li>Search for any movie or show or locate via discovery</li>
         <li>Open the media discovery page by selecting it</li>
@@ -45,7 +44,7 @@ const HelpContent = () => {
         <li>
           The time in which it takes to become available on{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           can depend on many factors such as the release date (older media can
           be more difficult to find), the popularity, and the quality.
@@ -56,7 +55,7 @@ const HelpContent = () => {
         </li>
         <li>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           currently supports 3 types of notifications, all of which can be
           enabled or disabled via your{' '}
@@ -65,7 +64,7 @@ const HelpContent = () => {
         </li>
         <li>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           currently allows for a maximum of{' '}
           <span className="text-info font-extrabold underline">5</span> Movie
@@ -78,10 +77,6 @@ const HelpContent = () => {
           <i> requests for two days).</i>
         </li>
       </ul>
-      <p>
-        Access to overseerr requires a{' '}
-        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} membership.
-      </p>
     </>
   );
 };
@@ -95,7 +90,7 @@ const Heading = () => {
   return (
     <span className="flex flex-wrap place-items-center border-b-2 gap-x-2 border-zinc-500 pb-4">
       Request new media with
-      <img
+      <Image
         className="h-auto w-44"
         src="/external/os-logo_full_dark.svg"
         alt="overseerr"
@@ -167,12 +162,14 @@ const Benefits = () => {
 };
 
 const Requesting = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <section className="text-neutral bg-zinc-100 py-5">
       <Breadcrumbs
         paths="/watching-streamarr/requesting"
         homeElement={'Help Centre'}
-        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},Request new media with Overseerr`}
+        names={`Watching ${currentSettings.applicationTitle},Request new media with Overseerr`}
       />
       <HelpCard
         heading={<Heading />}

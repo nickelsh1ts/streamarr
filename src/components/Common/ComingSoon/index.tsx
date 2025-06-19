@@ -10,35 +10,38 @@ import {
   BackwardIcon,
 } from '@heroicons/react/24/solid';
 import Button from '@app/components/Common/Button';
-
-const features = [
-  {
-    name: 'Invite a Friend.',
-    description:
-      "Soon you'll be able to invite some of your closest friends to join in on the fun. Generate, manage and send invite codes.",
-    icon: PaperAirplaneIcon,
-  },
-  {
-    name: 'Release Schedule.',
-    description:
-      'Check out when the latest and greatest movies and episodes air. Never miss a new release again.',
-    icon: CalendarDaysIcon,
-  },
-  {
-    name: 'User Profiles.',
-    description: `View, edit and manage your ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} user profile and settings.`,
-    icon: UserCircleIcon,
-  },
-  {
-    name: 'Notification Center.',
-    description:
-      'A central notification center to manage and view application messages, request & invite statuses and more.',
-    icon: BellAlertIcon,
-  },
-];
+import useSettings from '@app/hooks/useSettings';
+import Image from 'next/image';
 
 export const ComingSoonContent = () => {
   const router = useRouter();
+  const { currentSettings } = useSettings();
+
+  const features = [
+    {
+      name: 'Invite a Friend.',
+      description:
+        "Soon you'll be able to invite some of your closest friends to join in on the fun. Generate, manage and send invite codes.",
+      icon: PaperAirplaneIcon,
+    },
+    {
+      name: 'Release Schedule.',
+      description:
+        'Check out when the latest and greatest movies and episodes air. Never miss a new release again.',
+      icon: CalendarDaysIcon,
+    },
+    {
+      name: 'User Profiles.',
+      description: `View, edit and manage your ${currentSettings.applicationTitle} user profile and settings.`,
+      icon: UserCircleIcon,
+    },
+    {
+      name: 'Notification Center.',
+      description:
+        'A central notification center to manage and view application messages, request & invite statuses and more.',
+      icon: BellAlertIcon,
+    },
+  ];
   return (
     <div className="text-left lg:-mt-8 -mb-4 lg:-mr-6 md:-ml-4">
       <div className="mx-auto max-w-7xl md:px-2 lg:px-8">
@@ -81,7 +84,7 @@ export const ComingSoonContent = () => {
           </div>
           <div className="relative max-md:-ml-10 md:max-lg:overflow-hidden rounded-xl md:max-lg:mb-8">
             <div className="absolute h-full w-full justify-items-center ms-4">
-              <img
+              <Image
                 alt="Coming Soon"
                 src="/img/coming-soon-marquee.png"
                 className="w-auto max-sm:max-h-64 sm:max-h-92 h-auto"
@@ -95,7 +98,7 @@ export const ComingSoonContent = () => {
                 Let&apos;s rewind <BackwardIcon className="size-7 ms-2" />
               </Button>
             </div>
-            <img
+            <Image
               alt="Cinema Seating"
               src="/img/cinema-seating.jpg"
               className="max-w-none md:rounded-xl shadow-xl ring-1 ring-gray-400/10 max-sm:max-h-[28rem] w-auto h-full"

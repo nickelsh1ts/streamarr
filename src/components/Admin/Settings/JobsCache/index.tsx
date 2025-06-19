@@ -1,7 +1,9 @@
+'use client';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Table from '@app/components/Common/Table';
+import useSettings from '@app/hooks/useSettings';
 import { PencilIcon, StopIcon, PlayIcon } from '@heroicons/react/24/outline';
 
 interface Job {
@@ -13,6 +15,8 @@ interface Job {
 }
 
 const JobsCacheSettings = () => {
+  const { currentSettings } = useSettings();
+
   const data: Job[] = [
     {
       id: 'plex-library-sync',
@@ -39,10 +43,9 @@ const JobsCacheSettings = () => {
       <form className="mt-6">
         <h3 className="text-2xl font-extrabold">Jobs</h3>
         <p className="mb-5">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} performs certain
-          maintenance tasks as regularly-scheduled jobs, but they can also be
-          manually triggered below. Manually running a job will not alter its
-          schedule.
+          {currentSettings.applicationTitle} performs certain maintenance tasks
+          as regularly-scheduled jobs, but they can also be manually triggered
+          below. Manually running a job will not alter its schedule.
         </p>
         <Table>
           <thead>
@@ -108,9 +111,9 @@ const JobsCacheSettings = () => {
       <form className="my-6">
         <h3 className="text-2xl font-extrabold">Image Cache</h3>
         <p className="mb-5">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} will proxy and cache
-          images from pre-configured external sources. Cached images are saved
-          into your config folder. You can find the files in{' '}
+          {currentSettings.applicationTitle} will proxy and cache images from
+          pre-configured external sources. Cached images are saved into your
+          config folder. You can find the files in{' '}
           <code>/app/config/cache/images</code>.
         </p>
         <Table>

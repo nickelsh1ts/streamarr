@@ -26,7 +26,13 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    return <Error statusCode={404} error={{ name: '404', message: 'User not found' }} reset={() => {}} />;
+    return (
+      <Error
+        statusCode={404}
+        error={{ name: '404', message: 'User not found' }}
+        reset={() => {}}
+      />
+    );
   }
 
   return (

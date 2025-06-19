@@ -1,6 +1,7 @@
 import Badge from '@app/components/Common/Badge';
 import moment from 'moment';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface InvitesType {
   icode: string;
@@ -120,7 +121,7 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
                 className="link-hover font-extrabold flex items-center truncate"
                 href={'/admin/users/1'}
               >
-                <img
+                <Image
                   src={'/android-chrome-192x192.png'}
                   alt=""
                   className="size-5 mr-1 ml-1.5 object-cover"
@@ -137,7 +138,7 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
                 className="link-hover font-extrabold flex items-center truncate"
                 href={'/admin/users/1'}
               >
-                <img
+                <Image
                   src={'/android-chrome-192x192.png'}
                   alt=""
                   className="size-5 mr-1 ml-1.5 object-cover"

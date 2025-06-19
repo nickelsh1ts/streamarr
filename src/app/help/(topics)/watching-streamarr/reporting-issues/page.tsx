@@ -1,8 +1,12 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <div className="mt-5 font-extrabold" id="reportingissue">
@@ -10,8 +14,8 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li>
-          Open your {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} account
-          and browse to Overseerr
+          Open your {currentSettings.applicationTitle} account and browse to
+          Overseerr
         </li>
         <li>Search for or browse to the media you wish to report</li>
         <li className="flex flex-wrap place-items-center">
@@ -41,8 +45,8 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li>
-          Open your {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} account
-          and browse to Overseerr
+          Open your {currentSettings.applicationTitle} account and browse to
+          Overseerr
         </li>
         <li>from the menu options select Issues</li>
         <li>You can filter all, open or resolved issues</li>
@@ -61,8 +65,7 @@ const HelpContent = () => {
       </ul>
       <p className="">
         Issues reported are not visible to others and only yourself and the{' '}
-        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} admin team have
-        access.
+        {currentSettings.applicationTitle} admin team have access.
       </p>
     </>
   );
@@ -74,15 +77,16 @@ const anchors = [
 ];
 
 const ReportingIssues = () => {
+  const { currentSettings } = useSettings();
   return (
     <section className="text-neutral bg-zinc-100 py-5">
       <Breadcrumbs
         paths="/watching-streamarr/reporting-issues"
         homeElement={'Help Centre'}
-        names={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'},How can I report an issue with ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content?`}
+        names={`Watching ${currentSettings.applicationTitle},How can I report an issue with ${currentSettings.applicationTitle} content?`}
       />
       <HelpCard
-        heading={`How can I report an issue with ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} content?`}
+        heading={`How can I report an issue with ${currentSettings.applicationTitle} content?`}
         subheading="You can use the Overseerr app to report issues with missing or incomplete media as well as issues or difficulty you experience with playback on certain devices."
         anchors={anchors}
         content={<HelpContent />}

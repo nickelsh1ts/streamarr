@@ -1,4 +1,5 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import { NotificationContext } from '@app/context/NotificationContext';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
@@ -23,7 +24,7 @@ const UserCard = () => {
         href="/profile"
         className="flex flex-col items-center place-content-center gap-2 p-4 bg-slate-50/10 hover:bg-slate-50/20"
       >
-        <img
+        <CachedImage
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
           src={user?.avatar}
           alt="user"

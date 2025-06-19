@@ -76,7 +76,7 @@ const Sidebar = () => {
           />
           <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
-              <img
+              <Image
                 src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
                 alt="logo"
                 className="my-2 mx-4 h-auto w-44"

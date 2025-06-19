@@ -1,5 +1,7 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
 
 const anchors = [
   { href: '#first', title: 'First step' },
@@ -9,6 +11,8 @@ const anchors = [
 ];
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <div className="mt-5 font-extrabold" id="first">
@@ -18,7 +22,7 @@ const HelpContent = () => {
         Once you&apos;ve created your Ple<span className="text-accent">x</span>
         &trade; account and registered for{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         you&apos;ll receive an invite email that requires you to accept.
       </p>
@@ -28,7 +32,7 @@ const HelpContent = () => {
         <span className="text-accent">x</span>&trade; account will not have
         access to{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         content.
       </p>
@@ -40,13 +44,13 @@ const HelpContent = () => {
         page currently lists a lot of content available from Ple
         <span className="text-accent">x</span>&trade; and not{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>
         . To change this, you need to log into app.ple
         <span className="text-accent">x</span>
         .tv and &quot;pin&quot;{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         via the menu.
       </p>
@@ -61,14 +65,14 @@ const HelpContent = () => {
       <div className="mt-5 font-extrabold" id="third">
         And if we only want to see & access{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         content, not Ple<span className="text-accent">x</span>&trade;
       </div>
       <p className="my-4">
         From the Options menu in{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         you can select Online Media Sources and disable Live TV, Movies & TV and
         Music.

@@ -1,14 +1,21 @@
 import Join from '@app/components/SignUp';
+import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { Metadata, NextPage } from 'next';
 
-const applicationTitle = process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr';
-
 const messages = { title: 'Sign Up' };
+export async function generateMetadata(): Promise<Metadata> {
+  const res = await fetch(
+    `http://${process.env.HOST || 'localhost'}:${
+      process.env.PORT || 3000
+    }/api/v1/settings/public`,
+    { cache: 'no-store' }
+  );
+  const currentSettings: PublicSettingsResponse = await res.json();
 
-export const metadata: Metadata = {
-  title: `${messages.title} - ${applicationTitle}`,
-};
-
+  return {
+    title: `${messages.title} - ${currentSettings.applicationTitle}`,
+  };
+}
 const SignUpPage: NextPage = () => {
   return <Join />;
 };

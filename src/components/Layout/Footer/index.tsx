@@ -1,5 +1,6 @@
 'use client';
 import BackToTopBtn from '@app/components/Common/BackToTopBtn';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -75,7 +76,7 @@ function Footer() {
               href="https://www.nickelsh1ts.com"
               rel="noreferrer"
             >
-              <img
+              <Image
                 alt="logo"
                 className="h-auto w-64"
                 src="/nickelsh1ts-full.png"

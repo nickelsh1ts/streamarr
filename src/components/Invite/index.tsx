@@ -1,17 +1,18 @@
 'use client';
-// import ComingSoon from '@app/components/Common/ComingSoon';
-import Header from '@app/components/Common/Header';
-import Modal from '@app/components/Common/Modal';
-import CreateInvite from '@app/components/Invite/CreateInvite';
-import InvitesList from '@app/components/Invite/InvitesList';
+import Header from 'components/Common/Header';
+import Modal from 'components/Common/Modal';
+import CreateInvite from 'components/Invite/CreateInvite';
+import InvitesList from 'components/Invite/InvitesList';
 import { FunnelIcon, BarsArrowDownIcon } from '@heroicons/react/24/solid';
 import moment from 'moment';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import useSettings from '@app/hooks/useSettings';
 
 const Invite = () => {
   const [modalState, setModalState] = useState(false);
   const userQuery = useParams<{ userid: string }>();
+  const { currentSettings } = useSettings();
   let user;
 
   const currentUser = {
@@ -26,7 +27,7 @@ const Invite = () => {
       id: currentUser.id,
       displayName: currentUser.displayName,
       avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
+      email: `nickelsh1ts@${currentSettings.applicationTitle.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: currentUser.invitesRemaining,
     };
@@ -35,7 +36,7 @@ const Invite = () => {
       id: parseInt(userQuery.userid),
       displayName: 'DemoUser',
       avatar: '/android-chrome-192x192.png',
-      email: `demo@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
+      email: `demo@${currentSettings.applicationTitle.toLowerCase()}.dev`,
       createdAt: moment().toDate(),
       InvitesRemaining: 4,
     };
@@ -119,7 +120,6 @@ const Invite = () => {
         content={<CreateInvite setModalState={setModalState} />}
       />
       <InvitesList />
-      {/* <ComingSoon /> */}
     </div>
   );
 };

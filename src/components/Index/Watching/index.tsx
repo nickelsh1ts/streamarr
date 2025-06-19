@@ -1,12 +1,17 @@
+import useSettings from '@app/hooks/useSettings';
+import Image from 'next/image';
+
 function Watching() {
+  const { currentSettings } = useSettings();
+
   return (
     <section id="watching" className="min-h-lvh place-content-center py-16">
       <div className="container lg:flex flex-row place-items-center mx-auto px-5">
         <div className="mx-auto md:p-10">
-          <img
+          <Image
             src="/devices-to-watch.png"
             className="mx-auto h-auto w-auto"
-            alt={`Watching ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
+            alt={`Watching ${currentSettings.applicationTitle}`}
             loading="lazy"
           />
         </div>
@@ -26,7 +31,7 @@ function Watching() {
             <li className="mb-4">
               Limit your experience to{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               or leverage all Plex has to offer.
             </li>

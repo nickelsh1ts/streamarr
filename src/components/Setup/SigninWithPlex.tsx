@@ -1,4 +1,5 @@
 import PlexLoginButton from '@app/components/PlexLoginBtn';
+import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ interface LoginWithPlexProps {
 const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
+  const { currentSettings } = useSettings();
 
   // Effect that is triggered when the `authToken` comes back from the Plex OAuth
   // We take the token and attempt to login. If we get a success message, we will
@@ -39,7 +41,7 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   return (
     <form>
       <div className="mb-2 flex justify-center text-xl font-bold">
-        Welcome to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+        Welcome to {currentSettings.applicationTitle}
       </div>
       <div className="mb-2 flex justify-center pb-6 text-sm">
         Get started by signing in with your Plex account

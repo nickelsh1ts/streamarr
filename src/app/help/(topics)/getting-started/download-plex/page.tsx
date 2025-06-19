@@ -1,5 +1,7 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
 import Link from 'next/link';
 
 const Heading = () => {
@@ -11,12 +13,14 @@ const Heading = () => {
 };
 
 const SubHeading = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       Although the Ple<span className="text-accent">x</span>&trade; app is not
       required to use{' '}
       <span className="text-primary font-bold">
-        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+        {currentSettings.applicationTitle}
       </span>
       , on certain devices such as smart TVs or game systems it may offer a
       better experience. Some smart TVs and media devices will come with the Ple
@@ -29,6 +33,8 @@ const SubHeading = () => {
 const anchors = [{ href: '#downloadplex', title: 'Downloading Plex' }];
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <div className="mt-5 font-extrabold" id="downloadplex">
@@ -71,7 +77,7 @@ const HelpContent = () => {
           Downloading the Ple<span className="text-accent">x</span>&trade; app
           is not required to stream content directly from{' '}
           <span className="text-primary font-bold">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>
           .
         </li>
@@ -83,7 +89,7 @@ const HelpContent = () => {
       <p>
         If you wish instead to download the{' '}
         <span className="text-primary font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         app, check out{' '}
         <Link

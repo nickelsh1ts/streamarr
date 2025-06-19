@@ -1,4 +1,5 @@
 'use client';
+import useSettings from '@app/hooks/useSettings';
 import { ArrowLongRightIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
@@ -54,6 +55,8 @@ const Topics = () => {
     }
   }
 
+  const { currentSettings } = useSettings();
+
   return (
     <div className="bg-zinc-100 text-black pb-10 px-5">
       <div className="container max-w-screen-xl mx-auto py-7">
@@ -71,7 +74,7 @@ const Topics = () => {
             >
               What is{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>
               ?
             </Link>
@@ -94,7 +97,7 @@ const Topics = () => {
             >
               How to download the{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               app
             </Link>
@@ -125,7 +128,7 @@ const Topics = () => {
             >
               Turn on/off non-
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               content
             </Link>
@@ -137,7 +140,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>
             </Link>
             <Link
@@ -146,7 +149,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               on your TV
             </Link>

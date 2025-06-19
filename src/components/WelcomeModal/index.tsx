@@ -1,6 +1,8 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
+import useSettings from '@app/hooks/useSettings';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
@@ -9,6 +11,7 @@ const initialValue = false;
 
 const WelcomeModal = () => {
   const [modalState, setModalState] = useState(false);
+  const { currentSettings } = useSettings();
 
   const [value, setValue] = useLocalStorage(key, initialValue, {
     initializeWithValue: false,
@@ -22,13 +25,13 @@ const WelcomeModal = () => {
     return (
       <div className="w-full h-full justify-items-center">
         <div className="m-8">
-          <img alt="welcome" src="/img/welcome.png" className="w-96 h-auto" />
+          <Image alt="welcome" src="/img/welcome.png" className="w-96 h-auto" />
         </div>
         <div className="mb-8">
           <p className="text-4xl">
             <span className="font-bold">Welcome to</span>{' '}
             <span className="font-extralight">
-              {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+              {currentSettings.applicationTitle}
             </span>
           </p>
         </div>

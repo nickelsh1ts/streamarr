@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import PathName from '@app/components/Common/PathName';
 import Footer from '@app/components/Layout/Footer';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function NotFound() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function NotFound() {
     <>
       <div className="text-center min-h-[calc(100dvh-4rem)] grid place-items-center relative">
         <div className="absolute top-0 bottom-0 left-0 right-0">
-          <img
+          <Image
             title=""
             alt=""
             style={{ objectFit: 'cover' }}
@@ -22,7 +23,7 @@ export default function NotFound() {
         </div>
         <div className="w-full max-w-4xl relative px-4 overflow-hidden">
           <div className="h-full w-full justify-items-center mb-4">
-            <img alt="" src="/img/404-chair.png" className="" />
+            <Image alt="" src="/img/404-chair.png" className="" />
             {/* <img alt="" src="/img/404-robot-yellow.png" className=" top-9" /> */}
           </div>
           <div className="px-4 mb-10">

@@ -1,6 +1,7 @@
 'use client';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import Header from '@app/components/Common/Header';
 import Table from '@app/components/Common/Table';
 import { useUser } from '@app/hooks/useUser';
@@ -106,7 +107,7 @@ const AdminUsers = () => {
                     href={`/admin/users/${user.id}`}
                     className="h-10 w-10 flex-shrink-0"
                   >
-                    <img
+                    <CachedImage
                       className="h-10 w-10 rounded-full object-cover"
                       src={user.avatar}
                       alt=""

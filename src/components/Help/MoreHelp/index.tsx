@@ -1,3 +1,5 @@
+'use client';
+import useSettings from '@app/hooks/useSettings';
 import {
   BookOpenIcon,
   ChatBubbleLeftRightIcon,
@@ -6,6 +8,8 @@ import {
 import Link from 'next/link';
 
 const MoreHelp = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <div className="bg-zinc-200 py-20 print:hidden">
       <div className="container max-w-screen-xl mx-auto px-4">
@@ -30,7 +34,7 @@ const MoreHelp = () => {
                 <div className="flex flex-wrap mt-4">
                   <Link
                     target="_blank"
-                    href={`https://discord.gg/${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}`}
+                    href={`https://discord.gg/${currentSettings.applicationTitle.toLowerCase()}`}
                     type="button"
                     className="btn btn-sm btn-primary hover:btn-secondary me-1 mb-2 rounded-md text-base min-h-9"
                     rel="noreferrer"
@@ -49,7 +53,7 @@ const MoreHelp = () => {
                   </Link>
                   <Link
                     target="_blank"
-                    href={`mailto:info@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
+                    href={`mailto:info@${currentSettings.applicationTitle.toLowerCase()}.com`}
                     type="button"
                     className="btn btn-sm btn-outline btn-primary mx-1 mb-2 rounded-md text-base min-h-9"
                     rel="noreferrer"

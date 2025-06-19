@@ -1,5 +1,6 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
+import useSettings from '@app/hooks/useSettings';
 import Image from 'next/image';
 import useSWR from 'swr';
 
@@ -9,6 +10,8 @@ const Header = () => {
     refreshWhenHidden: false,
     revalidateOnFocus: false,
   });
+  const { currentSettings } = useSettings();
+
   return (
     <div className="relative mt-4">
       <div className="-z-10">
@@ -46,7 +49,7 @@ const Header = () => {
         <p className="text-3xl mx-7 md:text-5xl  md:mx-14 font-extrabold text-center text-white">
           Connect to{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           using your favourite devices.
         </p>

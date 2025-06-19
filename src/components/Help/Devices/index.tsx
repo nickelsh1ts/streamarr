@@ -6,6 +6,7 @@ import { ComputerDesktopIcon, TvIcon } from '@heroicons/react/24/outline';
 import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import useSWR from 'swr';
+import useSettings from '@app/hooks/useSettings';
 
 interface imageArrayProps {
   src: string;
@@ -22,6 +23,7 @@ interface TabProps {
 
 const DeviceTabs = () => {
   const [activeTab, setActive] = useState('tab-0');
+  const { currentSettings } = useSettings();
 
   const tabs: TabProps[] = [
     {
@@ -47,7 +49,7 @@ const DeviceTabs = () => {
           fast, easy, and affordable way to watch
           <span className="text-primary">
             {' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           on your TV with the Ple<span className="link-accent">x</span>&trade;
           app.
@@ -75,7 +77,7 @@ const DeviceTabs = () => {
           smart TV app stores, and access
           <span className="tet-primary">
             {' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           directly on-screen.
         </>
@@ -112,7 +114,7 @@ const DeviceTabs = () => {
         <>
           You can also watch{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           on a variety of game consoles with the Ple
           <span className="link-warning">x</span>&trade; app.
@@ -136,7 +138,7 @@ const DeviceTabs = () => {
         <>
           Take{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           with you
         </>
@@ -175,7 +177,7 @@ const DeviceTabs = () => {
       paragraph: (
         <>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           is optimized for today&apos;s most popular browsers so you can watch
           on your PC or laptop.
@@ -261,7 +263,7 @@ const DeviceTabs = () => {
                         key={i}
                         className="border border-neutral bg-zinc-200 w-full h-36 p-4 place-content-center"
                       >
-                        <img
+                        <Image
                           className="w-auto h-auto"
                           src={image.src}
                           alt={image.alt}
@@ -277,7 +279,7 @@ const DeviceTabs = () => {
       </div>
       <div className="container mx-auto text-center py-10 px-5 text-black">
         <span className="text-primary font-extrabold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         membership and internet connection required.
       </div>

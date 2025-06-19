@@ -1,6 +1,7 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useHash from '@app/hooks/useHash';
+import useSettings from '@app/hooks/useSettings';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -17,6 +18,8 @@ const Watch = ({ children, ...props }) => {
   const innerFrame = contentRef?.contentWindow;
 
   const [hostname, setHostname] = useState('');
+
+  const { currentSettings } = useSettings();
 
   useEffect(() => {
     setTimeout(() => {
@@ -41,7 +44,7 @@ const Watch = ({ children, ...props }) => {
               menu?.classList.add('mb-[6.5rem]');
             }
             if (pageTitle === 'Plex') {
-              document.title = `Now Streaming - ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`;
+              document.title = `Now Streaming - ${currentSettings.applicationTitle}`;
               menu?.classList.remove('mb-[6.5rem]');
             }
           }
@@ -113,7 +116,7 @@ const Watch = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}${url && url.replace('null', '')}`}
+        src={`${hostname}${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >

@@ -1,5 +1,6 @@
 import PlexOAuth from '@app/utils/plex';
 import { ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const plexOAuth = new PlexOAuth();
@@ -50,7 +51,7 @@ const PlexLoginButton = ({
           ) : (
             <>
               Sign In with{' '}
-              <img
+              <Image
                 alt="Plex"
                 src="https://www.plex.tv/wp-content/themes/plex/assets/img/plex-logo.svg"
                 className="inline-flex w-10 h-auto"

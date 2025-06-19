@@ -1,4 +1,5 @@
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import { useUser } from '@app/hooks/useUser';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
 import { Permission } from '@server/lib/permissions';
@@ -39,7 +40,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
       <div className="flex items-end justify-items-end space-x-5">
         <div className="flex-shrink-0">
           <div className="relative">
-            <img
+            <CachedImage
               className="h-24 w-24 rounded-full bg-primary-content object-cover ring-1 ring-primary-content"
               src={user.avatar}
               alt=""
