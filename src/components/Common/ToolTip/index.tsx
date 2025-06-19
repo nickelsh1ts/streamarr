@@ -35,7 +35,11 @@ const Tooltip = ({
 
   return (
     <>
-      {React.cloneElement(children, { ref: setTriggerRef })}
+      {React.isValidElement(children) &&
+        React.cloneElement(children, {
+          // @ts-expect-error: ref is valid for React elements
+          ref: setTriggerRef,
+        })}
       {visible &&
         content &&
         ReactDOM.createPortal(

@@ -151,12 +151,6 @@
     "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3"
   },
-  "resolutions": {
-    "sqlite3/node-gyp": "11.2.0",
-    "@types/react": "18.3.23",
-    "@types/react-dom": "18.3.7",
-    "@types/express-session": "1.17.6"
-  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

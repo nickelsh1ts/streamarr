@@ -3,40 +3,53 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { Field } from 'formik';
 import { useState } from 'react';
 
-interface CustomInputProps extends React.ComponentProps<'input'> {
+interface SensitiveInputBaseProps {
+  buttonSize?: 'sm' | 'md' | 'lg';
+  id?: string;
+  name?: string;
+}
+
+interface CustomInputProps
+  extends React.ComponentProps<'input'>,
+    SensitiveInputBaseProps {
   as?: 'input';
 }
 
-interface CustomFieldProps extends React.ComponentProps<typeof Field> {
-  as?: 'field';
+interface CustomFieldProps
+  extends React.ComponentProps<typeof Field>,
+    SensitiveInputBaseProps {
+  as: 'field';
 }
 
 type SensitiveInputProps = CustomInputProps | CustomFieldProps;
 
 const SensitiveInput = ({
   as = 'input',
-  size = 'md',
+  buttonSize = 'md',
   ...props
 }: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
-  const Component = as === 'input' ? 'input' : Field;
-  const componentProps =
-    as === 'input'
-      ? props
-      : {
-          ...props,
-          as: props.type === 'textarea' && !isHidden ? 'textarea' : undefined,
-        };
+  const isInput = as === 'input';
+  const Component = isInput ? 'input' : Field;
+  // Type guards for type and className
+  const type = 'type' in props ? props.type : undefined;
+  const className = 'className' in props ? props.className : undefined;
+  const componentProps = isInput
+    ? props
+    : {
+        ...props,
+        as: type === 'textarea' && !isHidden ? 'textarea' : undefined,
+      };
   return (
     <>
       <Component
         {...componentProps}
-        className={`rounded-r-none ${componentProps.className ?? ''}`}
+        className={`rounded-r-none ${className ?? ''}`}
         type={
           isHidden
             ? 'password'
-            : props.type !== 'password'
-              ? (props.type ?? 'text')
+            : type !== 'password'
+              ? (type ?? 'text')
               : 'text'
         }
       />
@@ -46,7 +59,7 @@ const SensitiveInput = ({
           setHidden(!isHidden);
         }}
         type="button"
-        className={`btn btn-primary btn-${size} rounded-none last:rounded-r-md`}
+        className={`btn btn-primary btn-${buttonSize} rounded-none last:rounded-r-md`}
       >
         {isHidden ? (
           <EyeSlashIcon className="size-5" />

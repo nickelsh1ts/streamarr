@@ -38,7 +38,7 @@ const GeneralSettings = () => {
               <SensitiveInput
                 type="text"
                 id="apiKey"
-                size={'sm'}
+                buttonSize={'sm'}
                 className="input input-sm input-primary w-full"
                 value={'Lorem ipsum odor'}
                 readOnly

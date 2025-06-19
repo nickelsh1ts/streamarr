@@ -197,6 +197,7 @@ export default function BigCalendar({
         defaultTZ={defaultTZ}
         setTimezone={setTimezone}
         timezone={timezone}
+        title={undefined}
       />
     </Fragment>
   );

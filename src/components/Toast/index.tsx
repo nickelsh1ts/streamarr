@@ -1,4 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import type { JSX } from 'react';
 import toast from 'react-hot-toast';
 
 type Renderable = JSX.Element | string | null;

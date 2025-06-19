@@ -128,7 +128,7 @@ const EmailNotifications = () => {
             <SensitiveInput
               id="authPass"
               name="authPass"
-              size="sm"
+              buttonSize="sm"
               className="input input-sm input-primary rounded-md w-full"
             />
           </div>

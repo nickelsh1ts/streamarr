@@ -55,7 +55,7 @@ const currentNotifications: NotificationCardProps[] = [
 
 const Notifications = () => {
   const { isOpen, setIsOpen } = useContext(NotificationContext);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   useClickOutside(ref, () => setIsOpen(false));
 
