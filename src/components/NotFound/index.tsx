@@ -13,18 +13,24 @@ export default function NotFound() {
       <div className="text-center min-h-[calc(100dvh-4rem)] grid place-items-center relative">
         <div className="absolute top-0 bottom-0 left-0 right-0">
           <Image
-            title=""
             alt=""
             style={{ objectFit: 'cover' }}
             className="h-full w-full"
             src="/img/people-cinema-watching.jpg"
+            width={1920}
+            height={1080}
           />
           <div className="absolute inset-0 bg-brand-dark/60" />
         </div>
         <div className="w-full max-w-4xl relative px-4 overflow-hidden">
           <div className="h-full w-full justify-items-center mb-4">
-            <Image alt="" src="/img/404-chair.png" className="" />
-            {/* <img alt="" src="/img/404-robot-yellow.png" className=" top-9" /> */}
+            <Image
+              alt=""
+              src="/img/404-chair.png"
+              width={399}
+              height={378}
+              className=""
+            />
           </div>
           <div className="px-4 mb-10">
             <p className="uppercase text-4xl mr-2 py-0.5 overflow-hidden text-ellipsis font-extralight">

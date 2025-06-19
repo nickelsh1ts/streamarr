@@ -15,6 +15,8 @@ function Requesting() {
               className="h-auto w-48 ms-3"
               src="/external/os-logo_full.svg"
               alt="overseerr"
+              width={192}
+              height={48}
             />
           </p>
           <p className="mb-0 text-lg">
@@ -36,12 +38,14 @@ function Requesting() {
             for more.
           </p>
         </div>
-        <div className="">
+        <div className="w-4/5">
           <Image
             src="/request-promo.png"
             className="h-auto w-4/5 mx-auto"
             alt="overseer promo"
             loading="lazy"
+            width={600}
+            height={400}
           />
         </div>
       </div>

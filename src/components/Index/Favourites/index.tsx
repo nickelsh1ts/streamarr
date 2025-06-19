@@ -22,46 +22,64 @@ function Favourites() {
             alt="provider"
             src="/img/netflix.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/disneyplus.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/primevideo.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/appletv.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/hulu.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/hbomax.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/paramountplus.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/peacock.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
           <Image
             alt="provider"
             src="/img/evenmore.png"
             className="h-auto w-2/5 md:w-1/4"
+            width={520}
+            height={280}
           />
         </div>
       </div>

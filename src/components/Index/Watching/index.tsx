@@ -7,12 +7,14 @@ function Watching() {
   return (
     <section id="watching" className="min-h-lvh place-content-center py-16">
       <div className="container lg:flex flex-row place-items-center mx-auto px-5">
-        <div className="mx-auto md:p-10">
+        <div className="mx-auto md:p-10 w-4/5">
           <Image
             src="/devices-to-watch.png"
             className="mx-auto h-auto w-auto"
             alt={`Watching ${currentSettings.applicationTitle}`}
             loading="lazy"
+            width={600}
+            height={400}
           />
         </div>
         <div>

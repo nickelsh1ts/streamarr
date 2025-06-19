@@ -21,6 +21,13 @@ const HelpContent = () => {
       <ul className="list list-decimal ms-14 my-4">
         <li className="">
           Sign in to {currentSettings.applicationTitle} and select
+          <Image
+            className="h-auto w-28 inline-flex self-center mx-1"
+            src="/external/os-logo_full_dark.svg"
+            alt="overseerr"
+            width={112}
+            height={48}
+          />
         </li>
         <li>Search for any movie or show or locate via discovery</li>
         <li>Open the media discovery page by selecting it</li>
@@ -94,6 +101,8 @@ const Heading = () => {
         className="h-auto w-44"
         src="/external/os-logo_full_dark.svg"
         alt="overseerr"
+        width={176}
+        height={44}
       />
     </span>
   );

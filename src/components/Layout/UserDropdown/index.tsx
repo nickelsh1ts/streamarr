@@ -28,6 +28,8 @@ const UserDropdown = ({
             className="h-7 w-7 rounded-full ring-2 ring-primary-content mr-1"
             src={user?.avatar}
             alt=""
+            width={28}
+            height={28}
           />
         }
         dropUp={dropUp}

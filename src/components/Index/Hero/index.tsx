@@ -30,7 +30,9 @@ export default function Hero() {
           <Image
             src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
             alt="logo"
-            className="mb-10 mt-5 h-auto w-82 mx-auto md:mx-0 px-5 md:px-0"
+            width={448}
+            height={100}
+            className="mb-10 mt-5 h-auto w-[448px] mx-auto md:mx-0 px-5 md:px-0"
           />
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">
             Unlimited movies and TV shows

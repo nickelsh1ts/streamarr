@@ -28,6 +28,8 @@ const UserCard = () => {
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
           src={user?.avatar}
           alt="user"
+          width={64}
+          height={64}
         />
         <div className="flex flex-col w-full place-content-start">
           <p className="text-lg text-center leading-tight truncate capitalize">

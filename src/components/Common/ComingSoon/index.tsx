@@ -87,7 +87,9 @@ export const ComingSoonContent = () => {
               <Image
                 alt="Coming Soon"
                 src="/img/coming-soon-marquee.png"
-                className="w-auto max-sm:max-h-64 sm:max-h-92 h-auto"
+                className="w-auto max-sm:max-h-64 sm:max-h-96 h-auto"
+                width={600}
+                height={256}
               />
               <Button
                 onClick={() => router.back()}
@@ -102,6 +104,8 @@ export const ComingSoonContent = () => {
               alt="Cinema Seating"
               src="/img/cinema-seating.jpg"
               className="max-w-none md:rounded-xl shadow-xl ring-1 ring-gray-400/10 max-sm:max-h-[28rem] w-auto h-full"
+              width={600}
+              height={448}
             />
           </div>
         </div>

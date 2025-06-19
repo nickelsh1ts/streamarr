@@ -1,4 +1,5 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import Tabs from '@app/components/Common/Tabs';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
@@ -8,7 +9,6 @@ import {
   ChevronRightIcon,
   EllipsisVerticalIcon,
 } from '@heroicons/react/24/solid';
-import Image from 'next/image';
 
 const Heading = () => {
   const { currentSettings } = useSettings();
@@ -66,10 +66,12 @@ const HelpContent = () => {
             <ul className="list list-disc ms-6">
               <li className="place-items-center">
                 You may also at the top right of the address bar, select Install{' '}
-                <Image
+                <CachedImage
                   className="w-5 h-5 inline-flex"
-                  src="//storage.googleapis.com/support-kms-prod/IXP8s7ymZF6tqtGlIECQYtQfOkZX6X9pHMsX"
+                  src="https://storage.googleapis.com/support-kms-prod/IXP8s7ymZF6tqtGlIECQYtQfOkZX6X9pHMsX"
                   alt="download"
+                  width={20}
+                  height={20}
                 />
               </li>
             </ul>
@@ -116,10 +118,12 @@ const HelpContent = () => {
           <ul className="list ms-4 list-decimal my-4">
             <li>
               On your Android device, open Chrome{' '}
-              <Image
+              <CachedImage
                 className="w-5 h-5 inline-flex"
-                src="//storage.googleapis.com/support-kms-prod/Y57p9LEW3v1cnw4Svh3a53DOnyRPFkiDfTDc"
+                src="https://storage.googleapis.com/support-kms-prod/Y57p9LEW3v1cnw4Svh3a53DOnyRPFkiDfTDc"
                 alt="chrome"
+                width={20}
+                height={20}
               />
               .
             </li>
@@ -163,10 +167,12 @@ const HelpContent = () => {
           <ul className="list ms-4 list-decimal my-4">
             <li>
               On your iPhone or iPad, open Chrome{' '}
-              <Image
+              <CachedImage
                 className="w-5 h-5 inline-flex"
-                src="//storage.googleapis.com/support-kms-prod/Y57p9LEW3v1cnw4Svh3a53DOnyRPFkiDfTDc"
+                src="https://storage.googleapis.com/support-kms-prod/Y57p9LEW3v1cnw4Svh3a53DOnyRPFkiDfTDc"
                 alt="chrome"
+                width={20}
+                height={20}
               />
               .
             </li>

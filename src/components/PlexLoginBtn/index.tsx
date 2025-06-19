@@ -55,6 +55,8 @@ const PlexLoginButton = ({
                 alt="Plex"
                 src="https://www.plex.tv/wp-content/themes/plex/assets/img/plex-logo.svg"
                 className="inline-flex w-10 h-auto"
+                width={40}
+                height={40}
               />
             </>
           )}

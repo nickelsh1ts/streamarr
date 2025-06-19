@@ -80,6 +80,8 @@ function Footer() {
                 alt="logo"
                 className="h-auto w-64"
                 src="/nickelsh1ts-full.png"
+                width={256}
+                height={64}
               />
             </a>
           </div>

@@ -79,6 +79,8 @@ const Sidebar = () => {
               <Image
                 src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
                 alt="logo"
+                width={176}
+                height={52}
                 className="my-2 mx-4 h-auto w-44"
               />
               <button

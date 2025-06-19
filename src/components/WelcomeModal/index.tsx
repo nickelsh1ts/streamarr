@@ -25,7 +25,13 @@ const WelcomeModal = () => {
     return (
       <div className="w-full h-full justify-items-center">
         <div className="m-8">
-          <Image alt="welcome" src="/img/welcome.png" className="w-96 h-auto" />
+          <Image
+            alt="welcome"
+            src="/img/welcome.png"
+            width={384}
+            height={192}
+            className="w-96 h-auto"
+          />
         </div>
         <div className="mb-8">
           <p className="text-4xl">

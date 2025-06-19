@@ -80,6 +80,8 @@ const Setup = () => {
           src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
           className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
           alt="Logo"
+          width={448}
+          height={196}
         />
         <AppDataWarning />
         <nav className="relative z-50">

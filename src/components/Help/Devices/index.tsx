@@ -267,6 +267,8 @@ const DeviceTabs = () => {
                           className="w-auto h-auto"
                           src={image.src}
                           alt={image.alt}
+                          width={128}
+                          height={48}
                         />
                       </div>
                     );

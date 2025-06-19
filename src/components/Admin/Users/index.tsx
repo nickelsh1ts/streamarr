@@ -49,7 +49,7 @@ const AdminUsers = () => {
             href={'/request/users'}
             className="btn btn-primary btn-sm rounded-md disabled:btn-secondary"
           >
-            Streamarr Users
+            Overseerr Users
           </Link>
         </div>
       </div>
@@ -111,6 +111,8 @@ const AdminUsers = () => {
                       className="h-10 w-10 rounded-full object-cover"
                       src={user.avatar}
                       alt=""
+                      width={40}
+                      height={40}
                     />
                   </Link>
                   <div className="ml-4">

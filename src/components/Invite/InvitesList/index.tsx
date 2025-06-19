@@ -125,6 +125,8 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
                   src={'/android-chrome-192x192.png'}
                   alt=""
                   className="size-5 mr-1 ml-1.5 object-cover"
+                  width={20}
+                  height={20}
                 />
                 <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
                   Nickelsh1ts
@@ -142,6 +144,8 @@ const InviteCard = ({ invite }: { invite: InvitesType }) => {
                   src={'/android-chrome-192x192.png'}
                   alt=""
                   className="size-5 mr-1 ml-1.5 object-cover"
+                  width={20}
+                  height={20}
                 />
                 <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
                   Nickelsh1ts
