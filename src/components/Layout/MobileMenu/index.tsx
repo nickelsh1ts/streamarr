@@ -3,7 +3,6 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
-import useHash from '@app/hooks/useHash';
 import { Transition } from '@headlessui/react';
 import {
   Bars3BottomLeftIcon,
@@ -21,9 +20,8 @@ import {
 } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import type { JSX } from 'react';
-import { cloneElement, useRef, useState } from 'react';
+import { cloneElement, useEffect, useRef, useState } from 'react';
 
 interface MenuLink {
   href: string;
@@ -38,8 +36,22 @@ interface MenuLink {
 const MobileMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [menuType, setMenuType] = useState(null);
-  const pathname = usePathname() + useHash();
+  const [menuType, setMenuType] = useState<string | null>(null);
+  // Track the actual browser URL for active highlighting
+  const [currentUrl, setCurrentUrl] = useState('');
+  useEffect(() => {
+    let lastUrl = window.location.pathname + window.location.hash;
+    setCurrentUrl(lastUrl);
+    const interval = setInterval(() => {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (newUrl !== lastUrl) {
+        lastUrl = newUrl;
+        setCurrentUrl(newUrl);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+  const url = currentUrl;
   useClickOutside(ref, () => {
     setTimeout(() => {
       if (isOpen) {
@@ -145,7 +157,7 @@ const MobileMenu = () => {
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
-            const isActive = pathname.match(link.activeRegExp);
+            const isActive = url.match(link.activeRegExp);
             return (
               <Link
                 key={`mobile-menu-link-${link.href}`}
@@ -173,12 +185,12 @@ const MobileMenu = () => {
               <LibraryMenu isOpen={isOpen} setIsOpen={setIsOpen} />
             )}
             {menuType === 'request' && (
-              <RequestMenu isOpen={isOpen} onClick={setIsOpen} />
+              <RequestMenu onClick={setIsOpen} url={url} />
             )}
             {menuType === 'settings' && (
               <ul className="menu p-0 m-0 space-y-1">
                 {settingsLinks.map((link, i) => {
-                  const isActive = pathname.match(link.activeRegExp);
+                  const isActive = url.match(link.activeRegExp);
                   return (
                     <li key={i} className="">
                       <Link
@@ -207,9 +219,7 @@ const MobileMenu = () => {
                 >
                   Request
                 </button>
-                {pathname.match(
-                  /^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/
-                ) && (
+                {url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/) && (
                   <button
                     onClick={() => setMenuType('settings')}
                     className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
@@ -244,11 +254,11 @@ const MobileMenu = () => {
               }
               if (
                 !isOpen ||
-                (menuType === 'nav' && !pathname.match(/^\/request\/?(.*)?\/?/))
+                (menuType === 'nav' && !url.match(/^\/request\/?(.*)?\/?/))
               ) {
                 setMenuType('library');
               }
-              if (pathname.match(/^\/request\/?(.*)?\/?/)) {
+              if (url.match(/^\/request\/?(.*)?\/?/)) {
                 setMenuType('request');
               }
             }}
@@ -265,7 +275,7 @@ const MobileMenu = () => {
           {filteredLinks
             .slice(0, filteredLinks.length === 4 ? 4 : 3)
             .map((link) => {
-              const isActive = pathname.match(link.activeRegExp) && !isOpen;
+              const isActive = url.match(link.activeRegExp) && !isOpen;
               return (
                 <Link
                   key={`mobile-menu-link-${link.href}`}

@@ -1,4 +1,3 @@
-import useHash from '@app/hooks/useHash';
 import {
   FilmIcon,
   BookmarkIcon,
@@ -12,7 +11,7 @@ import {
   VideoCameraIcon,
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
 
 interface MenuLinksProps {
@@ -110,10 +109,21 @@ const LibraryLinks: LibraryLinksProps[] = [
 ];
 
 const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
-  const path = usePathname();
-  const hash = useHash();
+  const [currentUrl, setCurrentUrl] = useState('');
+  useEffect(() => {
+    let lastUrl = window.location.pathname + window.location.hash;
+    setCurrentUrl(lastUrl);
+    const interval = setInterval(() => {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (newUrl !== lastUrl) {
+        lastUrl = newUrl;
+        setCurrentUrl(newUrl);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
-  const url = path + hash;
+  const url = currentUrl;
 
   const libraryTypes = [
     'movies',
@@ -126,34 +136,20 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
 
   return (
     <ul className="menu m-0 p-0 space-y-1 mb-1 overflow-auto grid grid-col">
-      {MenuLinks.map((item) => {
-        const isActive =
-          (url.includes(item.href) &&
-            !item.href.match(/^\/watch\/web\/index\.html#!\/?$/)) ||
-          (url.match(/^\/watch\/web\/index\.html#?!?\/?$/) &&
-            item.href.match(/^\/watch\/web\/index\.html#?!?\/?$/));
-        return (
-          <SingleItem
-            liKey={item.title}
-            key={item.title}
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            href={item.href}
-            title={item.title}
-            icon={item.icon}
-            active={isActive}
-          />
-        );
-      })}
+      {MenuLinks.map((item) => (
+        <SingleItem
+          liKey={item.title}
+          key={item.title}
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          href={item.href}
+          title={item.title}
+          icon={item.icon}
+          url={url}
+        />
+      ))}
       {libraryTypes.map((type) => {
-        const Links = LibraryLinks.filter((library) =>
-          library.type.includes(type)
-        );
-        const isActive = Links.map((libraries) => {
-          return url.match(libraries.regExp);
-        }).filter((library) => library)[0];
-
+        const Links = LibraryLinks.filter((library) => library.type === type);
         let icon = null;
-
         switch (type) {
           case 'movies':
             icon = <FilmIcon className="size-7" />;
@@ -174,7 +170,6 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             icon = <RectangleGroupIcon className="size-7" />;
             break;
         }
-
         return Links.length > 1 ? (
           <MultiItem
             onClick={() => setIsOpen && setIsOpen(!isOpen)}
@@ -184,6 +179,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             defaultPivot={'library'}
             liKey={type}
             key={type}
+            url={url}
           />
         ) : Links.length === 1 ? (
           <SingleItem
@@ -193,7 +189,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             href={Links[0].href}
             title={Links[0].title}
             icon={icon}
-            active={isActive}
+            url={url}
           />
         ) : null;
       })}
@@ -203,14 +199,13 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
 
 interface SingleItemProps {
   liKey: string;
-  onClick?: (value: SetStateAction<boolean>) => void;
+  onClick?: () => void;
   href: string;
   title: string;
   icon: React.ReactNode;
-  active: unknown;
   className?: string;
   linkclasses?: string;
-  isOpen?: boolean;
+  url: string;
 }
 
 export const SingleItem = ({
@@ -219,19 +214,21 @@ export const SingleItem = ({
   href,
   title,
   icon,
-  active,
   className,
   linkclasses,
-  isOpen,
+  url,
 }: SingleItemProps) => {
-  const isActive = active;
+  const isHome = href === '/watch/web/index.html#!';
+  const isActive = isHome
+    ? /^\/watch\/web\/index\.html#!?\/?$/.test(url)
+    : url && href && url.includes(href);
   return (
     <li
       className={`pointer-events-auto ${className ? className : ''}`}
       key={liKey}
     >
       <Link
-        onClick={() => onClick && onClick(!isOpen)}
+        onClick={onClick}
         href={href}
         className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
       >
@@ -242,6 +239,16 @@ export const SingleItem = ({
   );
 };
 
+interface MultiItemProps {
+  onClick?: () => void;
+  title: string;
+  icon: React.ReactNode;
+  LibraryLinks: LibraryLinksProps[];
+  liKey: string;
+  defaultPivot: string;
+  url: string;
+}
+
 export const MultiItem = ({
   onClick,
   title,
@@ -249,22 +256,13 @@ export const MultiItem = ({
   LibraryLinks,
   liKey,
   defaultPivot,
-}) => {
-  const path = usePathname();
-  const hash = useHash();
-
-  const url = path + hash;
-
-  let pivotList = null;
-
+  url,
+}: MultiItemProps) => {
+  let pivotList: string[] | null = null;
   return (
     <li className="pointer-events-auto" key={liKey}>
       <details
-        open={
-          LibraryLinks.map((item) => {
-            return url.includes(item.href);
-          }).filter((item) => item)[0]
-        }
+        open={LibraryLinks.some((item) => url.includes(item.href))}
         className="group"
       >
         <summary className="active:!bg-primary/20 space-x-2 gap-0 text-zinc-300 hover:text-white group-open:text-white capitalize">
@@ -274,7 +272,6 @@ export const MultiItem = ({
         <ul className="flex flex-col gap-1 mt-1">
           {LibraryLinks.map((item) => {
             const isActive = url.match(item.regExp);
-
             switch (item.type) {
               case 'movies':
                 pivotList = ['library', 'collections', 'categories'];
@@ -289,7 +286,6 @@ export const MultiItem = ({
                 pivotList = null;
                 break;
             }
-
             return (
               <li key={item.title}>
                 <Link
@@ -305,30 +301,24 @@ export const MultiItem = ({
                 </Link>
                 {isActive && pivotList && (
                   <ul className="flex flex-col gap-1 mt-1">
-                    {pivotList.map((pivot) => {
-                      return (
-                        <li key={pivot}>
-                          <Link
-                            onClick={onClick}
-                            href={
-                              item.href && pivotList
-                                ? item.href + '&pivot=' + pivot
-                                : item.href
-                            }
-                            className={`active:!bg-white/15 ${url.includes(item.href + '&pivot=' + pivot) && 'bg-white/10 hover:bg-white/[0.05]'}`}
-                          >
-                            <p className="capitalize">{pivot}</p>
-                            {url.includes(
-                              item.href && pivotList
-                                ? item.href + '&pivot=' + pivot
-                                : item.href
-                            ) && (
-                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
-                            )}
-                          </Link>
-                        </li>
-                      );
-                    })}
+                    {pivotList.map((pivot) => (
+                      <li key={pivot}>
+                        <Link
+                          onClick={onClick}
+                          href={
+                            item.href && pivotList
+                              ? item.href + '&pivot=' + pivot
+                              : item.href
+                          }
+                          className={`active:!bg-white/15 ${url.includes(item.href + '&pivot=' + pivot) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+                        >
+                          <p className="capitalize">{pivot}</p>
+                          {url.includes(item.href + '&pivot=' + pivot) && (
+                            <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                          )}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 )}
               </li>

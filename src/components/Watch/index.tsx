@@ -1,25 +1,48 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import useHash from '@app/hooks/useHash';
 import useSettings from '@app/hooks/useSettings';
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const Watch = ({ children, ...props }) => {
-  const pathname = usePathname();
-  const hash = useHash();
-  const url = `${pathname.replace('/watch', '')}${hash}`;
-  const router = useRouter();
-
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
   const [hostname, setHostname] = useState('');
-
+  const [iframeUrl, setIframeUrl] = useState('');
   const { currentSettings } = useSettings();
+
+  // Track the parent window's location for the iframe src (polling approach)
+  useEffect(() => {
+    let lastParentUrl = window.location.pathname + window.location.hash;
+    let lastIframeUrl = '';
+    setIframeUrl(lastParentUrl.replace('/watch', ''));
+    const interval = setInterval(() => {
+      const parentUrl = window.location.pathname + window.location.hash;
+      const iframeUrlNow = innerFrame
+        ? innerFrame.location.pathname + innerFrame.location.hash
+        : '';
+
+      // If parent location changed (sidebar/menu navigation)
+      if (parentUrl !== lastParentUrl) {
+        lastParentUrl = parentUrl;
+        setIframeUrl(parentUrl.replace('/watch', ''));
+        // Don't update parent location here!
+      }
+      // If iframe location changed (user navigated inside iframe)
+      else if (iframeUrlNow && iframeUrlNow !== lastIframeUrl) {
+        lastIframeUrl = iframeUrlNow;
+        if ('/watch' + iframeUrlNow !== parentUrl) {
+          window.history.replaceState(null, '', '/watch' + iframeUrlNow);
+          setIframeUrl(iframeUrlNow.replace('/watch', ''));
+          lastParentUrl = '/watch' + iframeUrlNow;
+        }
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [innerFrame]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -74,14 +97,6 @@ const Watch = ({ children, ...props }) => {
   });
 
   useEffect(() => {
-    innerFrame?.addEventListener('hashchange', function () {
-      if (hash != innerFrame.location.hash) {
-        router.replace('/watch/web/index.html' + innerFrame.location.hash);
-      }
-    });
-  }, [hash, innerFrame, router]);
-
-  useEffect(() => {
     if (mountNode) {
       mountNode.style.setProperty(
         '--logo-image-url',
@@ -104,6 +119,18 @@ const Watch = ({ children, ...props }) => {
     }
   }, [setHostname]);
 
+  // Remove key from iframe and update src imperatively
+  useEffect(() => {
+    if (
+      contentRef &&
+      contentRef.src !==
+        `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`
+    ) {
+      contentRef.src = `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [iframeUrl, hostname]);
+
   return (
     <>
       <iframe
@@ -116,12 +143,11 @@ const Watch = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-        src={`${hostname}${url && url.replace('null', '')}`}
+        src={`${hostname}${iframeUrl && iframeUrl.replace('null', '')}`}
         allowFullScreen
         title="Plex"
-      >
-        {mountNode && createPortal(children, mountNode)}
-      </iframe>
+      />
+      {mountNode && createPortal(children, mountNode)}
       {loadingIframe ? <LoadingEllipsis fixed /> : null}
     </>
   );

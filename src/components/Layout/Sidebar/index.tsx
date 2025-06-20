@@ -13,14 +13,13 @@ import {
   ExclamationTriangleIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/solid';
-import { usePathname } from 'next/navigation';
-import useHash from '@app/hooks/useHash';
-import UserDropdown from '@app/components/Layout/UserDropdown';
 import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Accordion from '@app/components/Common/Accordion';
 import Image from 'next/image';
 import VersionStatus from '@app/components/Layout/VersionStatus';
+import UserDropdown from '@app/components/Layout/UserDropdown';
+
 interface MenuLinksProps {
   href: string;
   title: string;
@@ -28,7 +27,22 @@ interface MenuLinksProps {
 }
 
 const Sidebar = () => {
-  const path = usePathname() + useHash();
+  // Track the actual browser URL for active highlighting
+  const [currentUrl, setCurrentUrl] = useState('');
+  useEffect(() => {
+    let lastUrl = window.location.pathname + window.location.hash;
+    setCurrentUrl(lastUrl);
+    const interval = setInterval(() => {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (newUrl !== lastUrl) {
+        lastUrl = newUrl;
+        setCurrentUrl(newUrl);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  const path = currentUrl;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -91,7 +105,11 @@ const Sidebar = () => {
                 <XMarkIcon className="w-7 h-7" />
               </button>
             </div>
-            <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            <SidebarMenu
+              isOpen={isOpen}
+              onClick={() => setIsOpen(!isOpen)}
+              url={path}
+            />
             <div className="mt-auto">
               <VersionStatus onClick={() => setIsOpen(!isOpen)} />
               {path.includes('/watch/web/index.html') && (
@@ -186,7 +204,7 @@ const Sidebar = () => {
         id="sidebarMenu"
         className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral-700 font-base`}
       >
-        <SidebarMenu />
+        <SidebarMenu url={path} />
         <div className="mt-auto">
           <VersionStatus />
         </div>
@@ -200,15 +218,18 @@ interface SidebarProps {
   isOpen?: boolean;
 }
 
-export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
-  const path = usePathname() + useHash();
-
+export const SidebarMenu = ({
+  onClick,
+  isOpen,
+  url,
+}: SidebarProps & { url: string }) => {
+  // Use the url prop for all active checks
   return (
     <div className="space-y-1 mb-1">
       <Accordion
         single
         atLeastOne
-        initialOpenIndexes={path.match(/^\/request\/?(.*)?\/?/) ? [1] : [0]}
+        initialOpenIndexes={url.match(/^\/request\/?(.*)?\/?/) ? [1] : [0]}
       >
         {({ openIndexes, handleClick, AccordionContent }) => (
           <span className="pointer-events-auto">
@@ -224,12 +245,12 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                 href={'/watch/web/index.html#!'}
                 title={'Home'}
                 icon={<HomeIcon className="size-7" />}
-                active={path.match(/\/watch\/web\/index\.html#?!?\/?$/)}
+                url={url}
               />
               <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
                 <button
                   onClick={() => handleClick(0)}
-                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
                 >
                   <ChevronDownIcon className="size-5" />
                 </button>
@@ -257,19 +278,19 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                     src={'/external/os-icon.svg'}
                   />
                 }
-                active={path.match(/^\/request\/?$/)}
+                url={url}
               />
               <li className={`${openIndexes.includes(1) ? 'hidden' : ''}`}>
                 <button
                   onClick={() => handleClick(1)}
-                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${path.match(/^\/?request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
                 >
                   <ChevronDownIcon className="size-5" />
                 </button>
               </li>
             </div>
             <AccordionContent isOpen={openIndexes.includes(1)}>
-              <RequestMenu onClick={onClick} />
+              <RequestMenu onClick={onClick} url={url} />
             </AccordionContent>
           </span>
         )}
@@ -277,20 +298,18 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
       <SingleItem
         liKey={'invites'}
         onClick={() => onClick && onClick(!isOpen)}
-        isOpen={isOpen}
         href={'/invites'}
         title={'Invites'}
         icon={<PaperAirplaneIcon className="size-7" />}
-        active={path.match(/^\/invites\/?/)}
+        url={url}
       />
       <SingleItem
         liKey={'schedule'}
         onClick={() => onClick && onClick(!isOpen)}
-        isOpen={isOpen}
         href={'/schedule'}
         title={'Release Schedule'}
         icon={<CalendarDateRangeIcon className="size-7" />}
-        active={path.match(/\/schedule\/?/)}
+        url={url}
       />
     </div>
   );
@@ -298,10 +317,12 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
 
 interface RequestMenuProps {
   onClick: (value: SetStateAction<boolean>) => void;
-  isOpen?: boolean;
 }
 
-export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
+export const RequestMenu = ({
+  onClick,
+  url,
+}: RequestMenuProps & { url: string }) => {
   const RequestLinks: MenuLinksProps[] = [
     {
       href: '/request/discover/movies',
@@ -324,8 +345,6 @@ export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
       icon: <ExclamationTriangleIcon className="w-7 h-7" />,
     },
   ];
-
-  const path = usePathname() + useHash();
   return (
     <ul className="menu m-0 p-0 space-y-1 mt-1">
       {RequestLinks.map((link) => {
@@ -333,16 +352,11 @@ export const RequestMenu = ({ onClick, isOpen }: RequestMenuProps) => {
           <SingleItem
             key={link.title}
             liKey={link.title}
-            onClick={() => onClick && onClick(!isOpen)}
+            onClick={() => onClick && onClick(false)}
             href={link.href}
             title={link.title}
             icon={link.icon}
-            active={
-              (path.includes(link.href) &&
-                !link.href.match(/^\/request\/?$/)) ||
-              (link.href.match(/^\/request\/?$/) &&
-                path.match(/^\/request\/?$/))
-            }
+            url={url}
           />
         );
       })}
