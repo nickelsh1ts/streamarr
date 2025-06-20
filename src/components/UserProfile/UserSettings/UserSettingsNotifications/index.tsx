@@ -44,10 +44,10 @@ const UserSettingsNotifications = ({
           regex: /\/settings\/notifications\/email/,
         },
         {
-          text: 'Cloud Notifications',
-          route: '/settings/notifications/cloud',
+          text: 'WebPush Notifications',
+          route: '/settings/notifications/webpush',
           icon: CloudIcon,
-          regex: /\/settings\/notifications\/cloud/,
+          regex: /\/settings\/notifications\/webpush/,
         },
       ].map((settingsRoute) => ({
         ...settingsRoute,
