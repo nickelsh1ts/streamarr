@@ -5,6 +5,8 @@ import moment from 'moment';
 import { useParams, usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
+//TODO complete the user settings functionality, including API calls and state management
+
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
   const userQuery = useParams<{ userid: string }>();
   const pathname = usePathname();

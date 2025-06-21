@@ -3,6 +3,8 @@ import Badge from '@app/components/Common/Badge';
 import List from '@app/components/Common/List';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
+//TODO Integrate api and logic to fetch and display version, libraries, users, invites, data directory, and time zone
+
 const AboutSettings = () => {
   return (
     <div>

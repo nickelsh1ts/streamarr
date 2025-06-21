@@ -27,6 +27,8 @@ export type LogMessage = {
   data?: Record<string, unknown>;
 };
 
+//TODO Implement log management functionality via api
+
 const LogsSettings = () => {
   const router = useRouter();
   const pathname = usePathname();

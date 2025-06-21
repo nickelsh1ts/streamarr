@@ -2,6 +2,8 @@
 import Button from '@app/components/Common/Button';
 import { BeakerIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
+//TODO Implement webpush notification functionality
+
 const WebpushNotifications = () => {
   return (
     <>

@@ -14,6 +14,8 @@ import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import Image from 'next/image';
 
+//TODO Add additional logic to implement Sonarr, Radarr, Overseerr, and Tautulli setup steps
+
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);

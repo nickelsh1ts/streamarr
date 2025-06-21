@@ -2,6 +2,8 @@ import PermissionEdit from '@app/components/Admin/PermissionEdit';
 import Button from '@app/components/Common/Button';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
+// TODO Implement user settings functionality such as enabling local login, default permissions, etc.
+
 const UserSettings = () => {
   return (
     <div className="my-6">

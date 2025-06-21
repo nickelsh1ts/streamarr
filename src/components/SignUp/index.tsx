@@ -1,6 +1,5 @@
 'use client';
 import Button from '@app/components/Common/Button';
-// import ComingSoon from '@app/components/Common/ComingSoon';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import SignUpForm from '@app/components/SignUp/Form';
@@ -9,6 +8,12 @@ import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+//TODO Add logic and api calls to implement signup via invite codes
+
+//TODO Add logic and functionality to allow creation of Plex account for users who don't already have one
+
+//TODO Add logic and app settings to allow for disabling of signup
 
 const Join = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -98,7 +103,6 @@ const Join = () => {
           )}
         </div>
       </div>
-      {/* <ComingSoon /> */}
     </div>
   );
 };

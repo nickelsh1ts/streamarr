@@ -3,6 +3,8 @@ import useSettings from '@app/hooks/useSettings';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
+//TODO Update and implement status link from support settings
+
 const PopularTopics = () => {
   const { currentSettings } = useSettings();
   return (

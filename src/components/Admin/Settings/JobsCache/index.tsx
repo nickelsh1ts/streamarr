@@ -38,6 +38,8 @@ const JobsCacheSettings = () => {
     imageCache: { tmdb: { imageCount: 41416, size: '978.51 MB' } },
   };
 
+  // TODO Implement logic and api for jobs/cache management functionality
+
   return (
     <>
       <form className="mt-6">

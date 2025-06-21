@@ -21,7 +21,7 @@ export const getAppVersion = (): string => {
 
   let finalVersion = version;
 
-  if (version === '0.0.1') {
+  if (version === '0.00.1') {
     finalVersion = `develop-${getCommitTag()}`;
   }
 

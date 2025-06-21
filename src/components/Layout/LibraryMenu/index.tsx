@@ -108,6 +108,8 @@ const LibraryLinks: LibraryLinksProps[] = [
   },
 ];
 
+//TODO Implement api calls and logic to render library menu items from plex integration
+
 const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
   const [currentUrl, setCurrentUrl] = useState('');
   useEffect(() => {

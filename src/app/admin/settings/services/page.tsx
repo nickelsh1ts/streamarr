@@ -16,6 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+//TODO implement each services settings and configurations
+
 const SettingsServicesPage = () => {
   return <ServicesOverseerr />;
 };

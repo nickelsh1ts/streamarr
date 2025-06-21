@@ -8,6 +8,10 @@ const scrollToSection = (id: string) => {
   element?.scrollIntoView({ behavior: 'smooth' });
 };
 
+//TODO integrate tautulli stats into hero section for live data
+
+//TODO add invite code functionality to hero section
+
 export default function Hero() {
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
     refreshInterval: 0,

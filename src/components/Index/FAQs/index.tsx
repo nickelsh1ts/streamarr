@@ -1,6 +1,8 @@
 import useSettings from '@app/hooks/useSettings';
 import Link from 'next/link';
 
+//TODO create logic for fetching default invite counts
+
 function FAQs() {
   const { currentSettings } = useSettings();
 

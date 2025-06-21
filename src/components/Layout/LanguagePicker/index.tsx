@@ -6,6 +6,8 @@ import { Transition } from '@headlessui/react';
 import { LanguageIcon } from '@heroicons/react/24/solid';
 import { useRef, useState } from 'react';
 
+//TODO Implement actual language change functionality and persist the selected language in user settings
+
 const LanguagePicker = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { locale, setLocale } = useLocale();

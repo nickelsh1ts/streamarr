@@ -7,6 +7,8 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
+//TODO Add app settings and data import for links and email addresses
+
 const MoreHelp = () => {
   const { currentSettings } = useSettings();
 

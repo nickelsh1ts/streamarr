@@ -10,6 +10,8 @@ interface UserDropdownProps {
   tooltip?: boolean;
 }
 
+//TODO Add additional logic to update stats link from tautulli settings & Get support link from support settings
+
 const UserDropdown = ({
   dropUp = false,
   tooltip = false,

@@ -27,5 +27,6 @@
     "pxml",
     "rehype",
     "Streamarr"
-  ]
+  ],
+  "todo-tree.tree.scanMode": "workspace"
 }

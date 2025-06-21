@@ -2,6 +2,8 @@
 import type { PermissionItem } from '@app/components/Admin/PermissionOption';
 import PermissionOption from '@app/components/Admin/PermissionOption';
 
+//TODO Implement logic and API for permission management functionality
+
 const permissionList: PermissionItem[] = [
   {
     id: 'admin',

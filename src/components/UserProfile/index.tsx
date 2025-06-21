@@ -11,6 +11,8 @@ import { useParams } from 'next/navigation';
 import Error from '@app/app/error';
 import useSWR from 'swr';
 
+//TODO complete the user profile functionality, including API calls and state management and invite management
+
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
   const { user, error } = useUser({
@@ -26,7 +28,7 @@ const UserProfile = () => {
           [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
           { type: 'or' }
         ))
-      ? `/api/v1/user/${user?.id}/requests?take=10&skip=0`
+      ? `/api/v1/user/${user?.id}/invites?take=10&skip=0`
       : null
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

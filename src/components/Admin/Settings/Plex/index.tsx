@@ -51,6 +51,10 @@ interface SettingsPlexProps {
   onComplete?: () => void;
 }
 
+//TODO Adjust plex settings functinality to remove media scans and only scan for libraries
+
+//TODO Implement tautulli settings and configuration
+
 const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isRefreshingPresets, setIsRefreshingPresets] = useState(false);

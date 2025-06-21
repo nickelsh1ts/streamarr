@@ -1,5 +1,7 @@
 import Image from 'next/image';
 
+//TODO create an app setting and upload of custom logo functionality instead of using environment variables
+
 const DynamicLogo = () => {
   return (
     <>

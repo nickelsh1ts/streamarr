@@ -16,6 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+//TODO complete admin settings functionality
+
 const SettingsPage = () => {
   return <GeneralSettings />;
 };

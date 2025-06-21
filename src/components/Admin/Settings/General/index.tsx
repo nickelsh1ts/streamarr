@@ -21,6 +21,14 @@ const GeneralSettings = () => {
     }
   }, [setHostname]);
 
+  //TODO Implement logic and API for general settings management functionality
+
+  //TODO Implement and integrate invite settings management functionality
+
+  //TODO Implement and integrate schedule settings management functionality
+
+  //TODO Implement and integrate support settings management functionality
+
   return (
     <>
       <form className="mt-6">
@@ -116,6 +124,20 @@ const GeneralSettings = () => {
         <h3 className="text-2xl font-extrabold">Schedule Settings</h3>
         <p className="mb-5">
           Configure global and default schedule settings for{' '}
+          {currentSettings.applicationTitle}.
+        </p>
+        <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl"></div>
+        <div className="divider divider-primary mb-0 col-span-full" />
+        <div className="flex justify-end col-span-3 mt-4">
+          <Button type="submit" buttonSize="sm" buttonType="primary">
+            <ArrowDownTrayIcon className="size-4 mr-2" /> Save Changes
+          </Button>
+        </div>
+      </div>
+      <div className="mt-6 mb-10">
+        <h3 className="text-2xl font-extrabold">Support Settings</h3>
+        <p className="mb-5">
+          Configure global and default support settings for{' '}
           {currentSettings.applicationTitle}.
         </p>
         <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl"></div>

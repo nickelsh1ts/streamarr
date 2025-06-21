@@ -9,6 +9,8 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import useSettings from '@app/hooks/useSettings';
 
+// TODO complete the invite functionality, including API calls and state management
+
 const Invite = () => {
   const [modalState, setModalState] = useState(false);
   const userQuery = useParams<{ userid: string }>();

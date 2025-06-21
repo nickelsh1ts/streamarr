@@ -1,9 +1,10 @@
 'use client';
 import BigCalendar from '@app/components/Common/BigCalendar';
-// import ComingSoon from '@app/components/Common/ComingSoon';
 import Header from '@app/components/Common/Header';
 import demoschedule from '@app/components/Schedule/demoschedule';
 import { FunnelIcon } from '@heroicons/react/24/solid';
+
+// TODO Implement the actual schedule functionality, including API calls and state management
 
 const Schedule = () => {
   return (
@@ -30,7 +31,6 @@ const Schedule = () => {
         </div>
       </div>
       <BigCalendar ReleaseEvents={demoschedule} />
-      {/* <ComingSoon /> */}
     </div>
   );
 };
