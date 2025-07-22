@@ -1,7 +1,9 @@
+> 🚧 **Under Active Development:** I'm excited to bring this project to life, but note that it is unfinished in it's current state and some things may be broken or not fully implemented.
+<br></br>
+
 <p align="center">
 <img src="./public/logo_full.png" alt="Streamarr" style="margin: 20px 0;">
 </p>
-> 🚧 **Under Active Development:** I'm excited to bring this project to life, but note that it is unfinished in it's current state and some things may be broken or not fully implemented.
 
 **Streamarr** is a an open source web application meant to wrap an existing \*Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience.
 
