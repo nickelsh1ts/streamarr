@@ -39,6 +39,9 @@ export class UserSettings {
   @Column({ nullable: true })
   public pgpKey?: string;
 
+  @Column({ nullable: true })
+  public sharedLibraries?: string;
+
   @Column({
     type: 'text',
     nullable: true,

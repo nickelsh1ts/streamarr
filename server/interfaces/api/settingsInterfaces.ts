@@ -14,6 +14,8 @@ export interface LogsResultsResponse extends PaginatedResponse {
 
 export interface SettingsAboutResponse {
   version: string;
+  totalUsers?: number;
+  totalInvites?: number;
   tz?: string;
   appDataPath: string;
 }
@@ -24,13 +26,20 @@ export interface PublicSettingsResponse {
   applicationUrl: string;
   localLogin: boolean;
   region: string;
-  originalLanguage: string;
   cacheImages: boolean;
   vapidPublic: string;
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  supportUrl: string;
+  supportEmail: string;
+  extendedHome: boolean;
+  enableSignUp: boolean;
+  releaseSched: boolean;
+  statsUrl: string;
+  statusUrl: string;
+  statusEnabled: boolean;
 }
 
 export interface CacheItem {
@@ -47,7 +56,10 @@ export interface CacheItem {
 
 export interface CacheResponse {
   apiCaches: CacheItem[];
-  imageCache: Record<'tmdb', { size: number; imageCount: number }>;
+  imageCache: {
+    tmdb: { size: number; imageCount: number };
+    qrcode: { size: number; imageCount: number };
+  };
 }
 
 export interface StatusResponse {

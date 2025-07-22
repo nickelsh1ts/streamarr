@@ -15,4 +15,4 @@ FROM deps AS runner
 
 WORKDIR /app
 
-CMD ["yarn", "dev"]
+CMD ["/bin/sh", "-c", "FLASK_ENV=development python3 server/python/plex_invite.py & yarn dev"]

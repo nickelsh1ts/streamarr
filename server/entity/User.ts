@@ -1,7 +1,8 @@
 import { UserType } from '@server/constants/user';
+import { getRepository } from '@server/datasource';
 import PreparedEmail from '@server/lib/email';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
-import type { Permission } from '@server/lib/permissions';
+import { Permission } from '@server/lib/permissions';
 import { hasPermission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -15,14 +16,19 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  Not,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationCount,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserPushSubscription } from './UserPushSubscription';
 import { UserSettings } from './UserSettings';
 import Invite from '@server/entity/Invite';
+import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
+import { AfterDate } from '@server/utils/dateHelpers';
+import { InviteStatus } from '@server/constants/invite';
 
 @Entity()
 export class User {
@@ -79,6 +85,9 @@ export class User {
   @Column()
   public avatar: string;
 
+  @RelationCount((user: User) => user.createdInvites)
+  public inviteCount: number;
+
   @Column({ nullable: true })
   public inviteQuotaLimit?: number;
 
@@ -90,6 +99,9 @@ export class User {
 
   @OneToMany(() => Invite, (invite) => invite.updatedBy)
   public modifiedInvites: Invite[];
+
+  @Column({ nullable: true })
+  public inviteQuotaDays?: number;
 
   @OneToOne(() => UserSettings, (settings) => settings.user, {
     cascade: true,
@@ -144,33 +156,10 @@ export class User {
     this.password = hashedPassword;
   }
 
-  public async generatePassword(): Promise<void> {
+  public async generatePassword(): Promise<string> {
     const password = generatePassword.randomPassword({ length: 16 });
-    this.setPassword(password);
-
-    const { applicationTitle, applicationUrl } = getSettings().main;
-    try {
-      logger.info(`Sending generated password email for ${this.email}`, {
-        label: 'User Management',
-      });
-
-      const email = new PreparedEmail(getSettings().notifications.agents.email);
-      await email.send({
-        template: path.join(__dirname, '../templates/email/generatedpassword'),
-        message: { to: this.email },
-        locals: {
-          password: password,
-          applicationUrl,
-          applicationTitle,
-          recipientName: this.username,
-        },
-      });
-    } catch (e) {
-      logger.error('Failed to send out generated password email', {
-        label: 'User Management',
-        message: e.message,
-      });
-    }
+    await this.setPassword(password);
+    return password;
   }
 
   public async resetPassword(): Promise<void> {
@@ -212,5 +201,64 @@ export class User {
   @AfterLoad()
   public setDisplayName(): void {
     this.displayName = this.username || this.plexUsername || this.email;
+  }
+
+  public async getQuota(): Promise<QuotaResponse> {
+    const {
+      main: { defaultQuotas },
+    } = getSettings();
+    const inviteRepository = getRepository(Invite);
+    const canBypass = this.hasPermission([Permission.MANAGE_USERS], {
+      type: 'or',
+    });
+
+    const inviteQuotaLimit = !canBypass
+      ? (this.inviteQuotaLimit ?? defaultQuotas.invites.quotaLimit)
+      : -1;
+    const inviteQuotaDays =
+      this.inviteQuotaDays ?? defaultQuotas.invites.quotaDays;
+
+    // Count invite invites made during quota period
+    let inviteQuotaUsed: number;
+    if (inviteQuotaLimit) {
+      if (inviteQuotaDays === 0) {
+        // Lifetime: count all invites ever made by this user
+        inviteQuotaUsed = await inviteRepository.count({
+          where: {
+            createdBy: { id: this.id },
+            status: Not(InviteStatus.EXPIRED),
+          },
+        });
+      } else {
+        const inviteDate = new Date();
+        inviteDate.setDate(inviteDate.getDate() - inviteQuotaDays);
+        inviteQuotaUsed = await inviteRepository.count({
+          where: {
+            createdBy: { id: this.id },
+            createdAt: AfterDate(inviteDate),
+            status: Not(InviteStatus.EXPIRED),
+          },
+        });
+      }
+    } else {
+      inviteQuotaUsed = 0;
+    }
+
+    return {
+      invite: {
+        days: inviteQuotaDays,
+        limit: inviteQuotaLimit,
+        used: inviteQuotaUsed,
+        remaining: inviteQuotaLimit
+          ? Math.max(0, inviteQuotaLimit - inviteQuotaUsed)
+          : null,
+        restricted:
+          inviteQuotaLimit &&
+          inviteQuotaLimit != -1 &&
+          inviteQuotaLimit - inviteQuotaUsed <= 0
+            ? true
+            : false,
+      },
+    };
   }
 }

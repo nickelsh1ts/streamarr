@@ -15,7 +15,11 @@ import cacheManager from '@server/lib/cache';
 import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import { plexFullScanner } from '@server/lib/scanners/plex';
-import type { JobId, MainSettings } from '@server/lib/settings';
+import type {
+  JobId,
+  MainSettings,
+  ServiceSettings,
+} from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -23,17 +27,24 @@ import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
+import QRCodeProxy from '@server/lib/qrcodeproxy';
+import path from 'path';
 import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
 import { rescheduleJob } from 'node-schedule';
-import path from 'path';
 import semver from 'semver';
 import { URL } from 'url';
 import notificationRoutes from './notifications';
+import Invite from '@server/entity/Invite';
+import radarrRoutes from './radarr';
+import sonarrRoutes from './sonarr';
 
 const settingsRoutes = Router();
 
 settingsRoutes.use('/notifications', notificationRoutes);
+settingsRoutes.use('/radarr', radarrRoutes);
+settingsRoutes.use('/sonarr', sonarrRoutes);
 
 const filteredMainSettings = (
   user: User,
@@ -128,7 +139,7 @@ settingsRoutes.get('/plex/devices/servers', async (req, res, next) => {
       ? new PlexTvAPI(admin.plexToken)
       : null;
     const devices = (await plexTvClient?.getDevices())?.filter((device) => {
-      return device.provides.includes('app') && device.owned;
+      return device.provides.includes('server') && device.owned;
     });
     const settings = getSettings();
 
@@ -227,6 +238,132 @@ settingsRoutes.post('/plex/sync', (req, res) => {
     plexFullScanner.run();
   }
   res.status(200).json(plexFullScanner.status());
+});
+
+settingsRoutes.get('/services', (_req, res) => {
+  const settings = getSettings();
+
+  const services: ServiceSettings[] = [];
+
+  services.push(
+    settings.bazarr,
+    settings.downloads,
+    settings.lidarr,
+    settings.overseerr,
+    settings.prowlarr,
+    settings.tdarr,
+    settings.uptime
+  );
+
+  const servicesWithId = [
+    { ...settings.bazarr, id: 'bazarr' },
+    { ...settings.downloads, id: 'downloads' },
+    { ...settings.lidarr, id: 'lidarr' },
+    { ...settings.overseerr, id: 'overseerr' },
+    { ...settings.prowlarr, id: 'prowlarr' },
+    { ...settings.tdarr, id: 'tdarr' },
+    { ...settings.uptime, id: 'uptime' },
+  ];
+
+  res.status(200).json(servicesWithId);
+});
+
+settingsRoutes.get('/uptime', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.uptime);
+});
+
+settingsRoutes.post('/uptime', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.uptime, req.body);
+  settings.save();
+  res.status(200).json(settings.uptime);
+});
+
+settingsRoutes.get('/downloads', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.downloads);
+});
+
+settingsRoutes.post('/downloads', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.downloads, req.body);
+  settings.save();
+  res.status(200).json(settings.downloads);
+});
+
+settingsRoutes.get('/tdarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.tdarr);
+});
+
+settingsRoutes.post('/tdarr', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.tdarr, req.body);
+  settings.save();
+  res.status(200).json(settings.tdarr);
+});
+
+settingsRoutes.get('/bazarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.bazarr);
+});
+
+settingsRoutes.post('/bazarr', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.bazarr, req.body);
+  settings.save();
+  res.status(200).json(settings.bazarr);
+});
+
+settingsRoutes.get('/prowlarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.prowlarr);
+});
+
+settingsRoutes.post('/prowlarr', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.prowlarr, req.body);
+  settings.save();
+  res.status(200).json(settings.prowlarr);
+});
+
+settingsRoutes.get('/lidarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.lidarr);
+});
+
+settingsRoutes.post('/lidarr', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.lidarr, req.body);
+  settings.save();
+  res.status(200).json(settings.lidarr);
+});
+
+settingsRoutes.get('/overseerr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.overseerr);
+});
+
+settingsRoutes.post('/overseerr', async (req, res) => {
+  const settings = getSettings();
+
+  Object.assign(settings.overseerr, req.body);
+  settings.save();
+  res.status(200).json(settings.overseerr);
 });
 
 settingsRoutes.get('/tautulli', (_req, res) => {
@@ -549,7 +686,31 @@ settingsRoutes.get('/cache', async (_req, res) => {
 
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
 
-  res.status(200).json({ apiCaches, imageCache: { tmdb: tmdbImageCache } });
+  // QR code cache stats
+  const qrProxy = new QRCodeProxy();
+  const qrCacheDir = qrProxy.getCacheDirectory();
+  let qrImageCount = 0;
+  let qrCacheSize = 0;
+  try {
+    const files = await fsPromises.readdir(qrCacheDir);
+    for (const file of files) {
+      if (file.endsWith('.png')) {
+        qrImageCount++;
+        const stat = await fsPromises.stat(path.join(qrCacheDir, file));
+        qrCacheSize += stat.size;
+      }
+    }
+  } catch {
+    // ignore errors, just show 0s
+  }
+
+  res.status(200).json({
+    apiCaches,
+    imageCache: {
+      tmdb: tmdbImageCache,
+      qrcode: { imageCount: qrImageCount, size: qrCacheSize },
+    },
+  });
 });
 
 settingsRoutes.post<{ cacheId: AvailableCacheIds }>(
@@ -560,9 +721,9 @@ settingsRoutes.post<{ cacheId: AvailableCacheIds }>(
     if (cache) {
       cache.flush();
       res.status(204).send();
+    } else {
+      next({ status: 404, message: 'Cache not found.' });
     }
-
-    next({ status: 404, message: 'Cache not found.' });
   }
 );
 
@@ -580,8 +741,16 @@ settingsRoutes.post(
 );
 
 settingsRoutes.get('/about', async (req, res) => {
+  const inviteRepository = getRepository(Invite);
+  const userRepository = getRepository(User);
+
+  const totalInvites = await inviteRepository.count();
+  const totalUsers = await userRepository.count();
+
   res.status(200).json({
     version: getAppVersion(),
+    totalInvites,
+    totalUsers,
     tz: process.env.TZ,
     appDataPath: appDataPath(),
   } as SettingsAboutResponse);

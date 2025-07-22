@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 export const SETUP_REGEX = /\/(setup|signin\/plex\/loading)/;
 export const publicRoutes =
-  /(\/|signin(\/plex\/loading)?|signup|resetpassword|setup|signin(\/plex\/loading)?|help\/?(.*)?)$/;
+  /(\/|signin(\/plex\/loading)?|signup|resetpassword\/?(.*)?|setup|signin(\/plex\/loading)?|help\/?(.*)?)$/;
 
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;

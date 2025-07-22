@@ -10,7 +10,8 @@ export interface UserInvitesResponse extends PaginatedResponse {
   results: Invite[];
 }
 
-export interface InviteStatus {
+export interface QuotaStatus {
+  days?: number;
   limit?: number;
   used: number;
   remaining?: number;
@@ -18,9 +19,5 @@ export interface InviteStatus {
 }
 
 export interface QuotaResponse {
-  invite: InviteStatus;
-}
-
-export interface UserInviteDataResponse {
-  inviteCount: number;
+  invite: QuotaStatus;
 }

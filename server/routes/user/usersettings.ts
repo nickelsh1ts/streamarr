@@ -35,6 +35,15 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
   '/main',
   isOwnProfileOrAdmin(),
   async (req, res, next) => {
+    const {
+      main: {
+        defaultQuotas,
+        sharedLibraries: defaultSharedLibraries,
+        downloads,
+        liveTv,
+        plexHome,
+      },
+    } = getSettings();
     const userRepository = getRepository(User);
 
     try {
@@ -49,8 +58,18 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
       res.status(200).json({
         username: user.username,
         locale: user.settings?.locale,
-        region: user.settings?.region,
-        originalLanguage: user.settings?.originalLanguage,
+        inviteQuotaLimit: user.inviteQuotaLimit,
+        inviteQuotaDays: user.inviteQuotaDays,
+        globalInviteQuotaDays: defaultQuotas.invites.quotaDays,
+        globalInviteQuotaLimit: defaultQuotas.invites.quotaLimit,
+        globalInviteUsageLimit: defaultQuotas.invites.quotaUsage,
+        globalInvitesExpiryLimit: defaultQuotas.invites.quotaExpiryLimit,
+        globalInvitesExpiryTime: defaultQuotas.invites.quotaExpiryTime,
+        globalAllowDownloads: downloads,
+        globalLiveTv: liveTv,
+        globalPlexHome: plexHome,
+        sharedLibraries: user.settings?.sharedLibraries,
+        globalSharedLibraries: defaultSharedLibraries,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
@@ -84,17 +103,24 @@ userSettingsRoutes.post<
 
     user.username = req.body.username;
 
+    // Update quota values only if the user has the correct permissions
+    if (
+      !user.hasPermission(Permission.MANAGE_USERS) &&
+      req.user?.id !== user.id
+    ) {
+      user.inviteQuotaDays = req.body.inviteQuotaDays;
+      user.inviteQuotaLimit = req.body.inviteQuotaLimit;
+    }
+
     if (!user.settings) {
       user.settings = new UserSettings({
         user: req.user,
         locale: req.body.locale,
-        region: req.body.region,
-        originalLanguage: req.body.originalLanguage,
+        sharedLibraries: req.body.sharedLibraries,
       });
     } else {
       user.settings.locale = req.body.locale;
-      user.settings.region = req.body.region;
-      user.settings.originalLanguage = req.body.originalLanguage;
+      user.settings.sharedLibraries = req.body.sharedLibraries;
     }
 
     await userRepository.save(user);
@@ -102,8 +128,6 @@ userSettingsRoutes.post<
     res.status(200).json({
       username: user.username,
       locale: user.settings.locale,
-      region: user.settings.region,
-      originalLanguage: user.settings.originalLanguage,
     });
   } catch (e) {
     next({ status: 500, message: e.message });

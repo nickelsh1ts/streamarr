@@ -99,6 +99,7 @@ app
         secret: settings.clientId,
         resave: false,
         saveUninitialized: false,
+        name: 'streamarr.sid',
         cookie: {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
@@ -111,6 +112,7 @@ app
         }).connect(sessionRespository) as Store,
       })
     );
+    server.use('/imageproxy', clearCookies, imageproxy);
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(
@@ -127,7 +129,6 @@ app
       next();
     });
     server.use('/api/v1', routes);
-    server.use('/imageproxy', clearCookies, imageproxy);
     server.get('*', (req, res) => handle(req, res));
     server.use(
       (
@@ -154,12 +155,12 @@ app
     if (host) {
       server.listen(port, host, () => {
         logger.info(`server ready on ${host} port ${port}`, {
-          label: 'server',
+          label: 'Server',
         });
       });
     } else {
       server.listen(port, () => {
-        logger.info(`server ready on port ${port}`, { label: 'server' });
+        logger.info(`server ready on port ${port}`, { label: 'Server' });
       });
     }
   })

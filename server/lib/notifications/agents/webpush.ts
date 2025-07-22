@@ -167,9 +167,7 @@ class WebPushAgent
       );
 
       await Promise.all(
-        pushSubs.map(async (sub) => {
-          webPushNotification(sub, notificationPayload);
-        })
+        pushSubs.map((sub) => webPushNotification(sub, notificationPayload))
       );
     }
 

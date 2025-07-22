@@ -15,28 +15,17 @@ import { getAppVersion, getCommitTag } from '@server/utils/appVersion';
 import { Router } from 'express';
 import authRoutes from './auth';
 import user from './user';
-import type { User } from '@server/entity/User';
 import { isPerson } from '@server/utils/typeHelpers';
 import inviteRoutes from './invite';
+import serviceRoutes from './service';
+import calendarRoutes from './calendar';
+import PlexAPI from '@server/api/plexapi';
+import { getRepository } from '@server/datasource';
+import { User } from '@server/entity/User';
+import signupRoutes from './signup';
 
-export const createTmdbWithRegionLanguage = (user?: User): TheMovieDb => {
-  const settings = getSettings();
-
-  const region =
-    user?.settings?.region === 'all'
-      ? ''
-      : user?.settings?.region
-        ? user?.settings?.region
-        : settings.main.region;
-
-  const originalLanguage =
-    user?.settings?.originalLanguage === 'all'
-      ? ''
-      : user?.settings?.originalLanguage
-        ? user?.settings?.originalLanguage
-        : settings.main.originalLanguage;
-
-  return new TheMovieDb({ region, originalLanguage });
+export const createTmdbWithRegionLanguage = (): TheMovieDb => {
+  return new TheMovieDb();
 };
 
 const router = Router();
@@ -108,10 +97,53 @@ router.get('/settings/public', async (req, res) => {
     res.status(200).json(settings.fullPublicSettings);
   }
 });
+router.get('/libraries', async (req, res, next) => {
+  const settings = getSettings();
+  const userRepository = getRepository(User);
+  try {
+    const admin = await userRepository.findOneOrFail({
+      select: { id: true, plexToken: true },
+      where: { id: 1 },
+    });
+    const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+
+    // Only enabled libraries
+    const enabledLibraries = settings.plex.libraries.filter(
+      (lib) => lib.enabled
+    );
+
+    // Get media counts for each enabled library
+    const results = await Promise.all(
+      enabledLibraries.map(async (lib) => {
+        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
+          size: 0,
+        });
+        return {
+          id: lib.id,
+          name: lib.name,
+          type: lib.type,
+          mediaCount: totalSize,
+        };
+      })
+    );
+
+    res.status(200).json(results);
+  } catch (e) {
+    logger.error('Something went wrong getting plex libraries', {
+      label: 'API',
+      errorMessage: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Unable to retrieve Plex libraries.',
+    });
+  }
+});
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
 router.use('/invite', isAuthenticated(), inviteRoutes);
-// router.use('/service', isAuthenticated(), serviceRoutes);
+router.use('/service', isAuthenticated(), serviceRoutes);
 router.use('/auth', authRoutes);
+router.use('/signup', signupRoutes);
 
 router.get('/regions', isAuthenticated(), async (req, res, next) => {
   const tmdb = new TheMovieDb();
@@ -175,5 +207,13 @@ router.get('/backdrops', async (req, res, next) => {
 router.get('/', (_req, res) => {
   res.status(200).json({ api: 'Streamarr API', version: '1.0' });
 });
+
+router.use(
+  '/calendar',
+  isAuthenticated([Permission.VIEW_SCHEDULE, Permission.STREAMARR], {
+    type: 'or',
+  }),
+  calendarRoutes
+);
 
 export default router;

@@ -1,4 +1,3 @@
-import RadarrAPI from '@server/api/servarr/radarr';
 import SonarrAPI from '@server/api/servarr/sonarr';
 import TheMovieDb from '@server/api/themoviedb';
 import type {
@@ -20,9 +19,6 @@ serviceRoutes.get('/radarr', async (req, res) => {
       name: radarr.name,
       is4k: radarr.is4k,
       isDefault: radarr.isDefault,
-      activeDirectory: radarr.activeDirectory,
-      activeProfileId: radarr.activeProfileId,
-      activeTags: radarr.tags ?? [],
     })
   );
 
@@ -45,36 +41,13 @@ serviceRoutes.get<{ radarrId: string }>(
       });
     }
 
-    const radarr = new RadarrAPI({
-      apiKey: radarrSettings.apiKey,
-      url: RadarrAPI.buildUrl(radarrSettings, '/api/v3'),
-    });
-
-    const profiles = await radarr.getProfiles();
-    const rootFolders = await radarr.getRootFolders();
-    const tags = await radarr.getTags();
-
     res.status(200).json({
       server: {
         id: radarrSettings.id,
         name: radarrSettings.name,
         is4k: radarrSettings.is4k,
         isDefault: radarrSettings.isDefault,
-        activeDirectory: radarrSettings.activeDirectory,
-        activeProfileId: radarrSettings.activeProfileId,
-        activeTags: radarrSettings.tags,
       },
-      profiles: profiles.map((profile) => ({
-        id: profile.id,
-        name: profile.name,
-      })),
-      rootFolders: rootFolders.map((folder) => ({
-        id: folder.id,
-        freeSpace: folder.freeSpace,
-        path: folder.path,
-        totalSpace: folder.totalSpace,
-      })),
-      tags,
     } as ServiceCommonServerWithDetails);
   }
 );
@@ -88,13 +61,6 @@ serviceRoutes.get('/sonarr', async (req, res) => {
       name: sonarr.name,
       is4k: sonarr.is4k,
       isDefault: sonarr.isDefault,
-      activeDirectory: sonarr.activeDirectory,
-      activeProfileId: sonarr.activeProfileId,
-      activeAnimeProfileId: sonarr.activeAnimeProfileId,
-      activeAnimeDirectory: sonarr.activeAnimeDirectory,
-      activeLanguageProfileId: sonarr.activeLanguageProfileId,
-      activeAnimeLanguageProfileId: sonarr.activeAnimeLanguageProfileId,
-      activeTags: [],
     })
   );
 
@@ -116,46 +82,14 @@ serviceRoutes.get<{ sonarrId: string }>(
         message: 'Sonarr server with provided ID does not exist.',
       });
     }
-
-    const sonarr = new SonarrAPI({
-      apiKey: sonarrSettings.apiKey,
-      url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
-    });
-
     try {
-      const profiles = await sonarr.getProfiles();
-      const rootFolders = await sonarr.getRootFolders();
-      const languageProfiles = await sonarr.getLanguageProfiles();
-      const tags = await sonarr.getTags();
-
       res.status(200).json({
         server: {
           id: sonarrSettings.id,
           name: sonarrSettings.name,
           is4k: sonarrSettings.is4k,
           isDefault: sonarrSettings.isDefault,
-          activeDirectory: sonarrSettings.activeDirectory,
-          activeProfileId: sonarrSettings.activeProfileId,
-          activeAnimeProfileId: sonarrSettings.activeAnimeProfileId,
-          activeAnimeDirectory: sonarrSettings.activeAnimeDirectory,
-          activeLanguageProfileId: sonarrSettings.activeLanguageProfileId,
-          activeAnimeLanguageProfileId:
-            sonarrSettings.activeAnimeLanguageProfileId,
-          activeTags: sonarrSettings.tags,
-          activeAnimeTags: sonarrSettings.animeTags,
         },
-        profiles: profiles.map((profile) => ({
-          id: profile.id,
-          name: profile.name,
-        })),
-        rootFolders: rootFolders.map((folder) => ({
-          id: folder.id,
-          freeSpace: folder.freeSpace,
-          path: folder.path,
-          totalSpace: folder.totalSpace,
-        })),
-        languageProfiles: languageProfiles,
-        tags,
       } as ServiceCommonServerWithDetails);
     } catch (e) {
       next({ status: 500, message: e.message });

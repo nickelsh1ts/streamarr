@@ -5,6 +5,7 @@ import type { JobId } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import schedule from 'node-schedule';
+import expiredInvites from '@server/lib/expiredInvites';
 
 interface ScheduledJob {
   id: JobId;
@@ -66,6 +67,21 @@ export const startJobs = (): void => {
         label: 'Jobs',
       });
       refreshToken.run();
+    }),
+  });
+
+  // Run expired invites cleanup every 24 hours
+  scheduledJobs.push({
+    id: 'invites-qrcode-cleanup',
+    name: 'Invite & QR Code Cleanup',
+    type: 'process',
+    interval: 'hours',
+    cronSchedule: jobs['invites-qrcode-cleanup']?.schedule,
+    job: schedule.scheduleJob(jobs['invites-qrcode-cleanup']?.schedule, () => {
+      logger.info('Starting scheduled job: Expired Invite and QR Cleanup', {
+        label: 'Jobs',
+      });
+      expiredInvites.run();
     }),
   });
 

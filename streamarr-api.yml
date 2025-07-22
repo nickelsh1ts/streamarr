@@ -18,6 +18,8 @@ tags:
     description: Endpoints related to logging in or out, and the currently authenticated user.
   - name: users
     description: Endpoints related to user management.
+  - name: calendar
+    description: Endpoints related to calendar events.
 servers:
   - url: '{server}/api/v1'
     variables:
@@ -26,6 +28,28 @@ servers:
 
 components:
   schemas:
+    CalendarEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          example: VEVENT
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        summary:
+          type: string
+          description: Event summary/title
+        description:
+          type: string
+          description: Event description/details
+        uid:
+          type: string
+          description: Unique event identifier
+        # Additional iCal fields can be included as needed
     User:
       type: object
       properties:
@@ -296,12 +320,197 @@ components:
         externalUrl:
           type: string
           nullable: true
+    RadarrSettings:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 0
+          readOnly: true
+        name:
+          type: string
+          example: 'Radarr Main'
+        hostname:
+          type: string
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 7878
+        apiKey:
+          type: string
+          example: 'exampleapikey'
+        useSsl:
+          type: boolean
+          example: false
+        baseUrl:
+          type: string
+        activeProfileId:
+          type: number
+          example: 1
+        activeProfileName:
+          type: string
+          example: 720p/1080p
+        activeDirectory:
+          type: string
+          example: '/movies'
+        is4k:
+          type: boolean
+          example: false
+        minimumAvailability:
+          type: string
+          example: 'In Cinema'
+        isDefault:
+          type: boolean
+          example: false
+        externalUrl:
+          type: string
+          example: http://radarr.example.com
+        syncEnabled:
+          type: boolean
+          example: false
+        preventSearch:
+          type: boolean
+          example: false
+      required:
+        - name
+        - hostname
+        - port
+        - apiKey
+        - useSsl
+        - is4k
+        - isDefault
+    SonarrSettings:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 0
+          readOnly: true
+        name:
+          type: string
+          example: 'Sonarr Main'
+        hostname:
+          type: string
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 8989
+        apiKey:
+          type: string
+          example: 'exampleapikey'
+        useSsl:
+          type: boolean
+          example: false
+        baseUrl:
+          type: string
+        activeProfileId:
+          type: number
+          example: 1
+        activeProfileName:
+          type: string
+          example: 720p/1080p
+        activeDirectory:
+          type: string
+          example: '/tv/'
+        activeLanguageProfileId:
+          type: number
+          example: 1
+        activeAnimeProfileId:
+          type: number
+          nullable: true
+        activeAnimeLanguageProfileId:
+          type: number
+          nullable: true
+        activeAnimeProfileName:
+          type: string
+          example: 720p/1080p
+          nullable: true
+        activeAnimeDirectory:
+          type: string
+          nullable: true
+        is4k:
+          type: boolean
+          example: false
+        enableSeasonFolders:
+          type: boolean
+          example: false
+        isDefault:
+          type: boolean
+          example: false
+        externalUrl:
+          type: string
+          example: http://radarr.example.com
+        syncEnabled:
+          type: boolean
+          example: false
+        preventSearch:
+          type: boolean
+          example: false
+      required:
+        - name
+        - hostname
+        - port
+        - apiKey
+        - useSsl
+        - is4k
+        - isDefault
+    ServarrTag:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        label:
+          type: string
+          example: A Label
+    ServiceSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          nullable: true
+          example: false
+        externalUrl:
+          type: string
+          nullable: true
     PublicSettings:
       type: object
       properties:
         initialized:
           type: boolean
           example: false
+    Invites:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 123
+          readOnly: true
+        status:
+          type: number
+          example: 0
+          description: Status of the invite.
+          readOnly: true
+        createdAt:
+          type: string
+          example: '2020-09-12T10:00:27.000Z'
+          readOnly: true
+        updatedAt:
+          type: string
+          example: '2020-09-12T10:00:27.000Z'
+          readOnly: true
+        invitedBy:
+          $ref: '#/components/schemas/User'
+        updatedBy:
+          anyOf:
+            - $ref: '#/components/schemas/User'
+            - type: string
+              nullable: true
+        profileId:
+          type: number
+      required:
+        - id
+        - status
     ExternalIds:
       type: object
       properties:
@@ -329,6 +538,15 @@ components:
         twitterId:
           type: string
           nullable: true
+    ServiceProfile:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: 720p/1080p
     PageInfo:
       type: object
       properties:
@@ -429,6 +647,141 @@ components:
         remotePoster:
           type: string
           example: https://artworks.thetvdb.com/banners/posters/5c8f116129983.jpg
+    SonarrSeries:
+      type: object
+      properties:
+        title:
+          type: string
+          example: COVID-25
+        sortTitle:
+          type: string
+          example: covid 25
+        seasonCount:
+          type: number
+          example: 1
+        status:
+          type: string
+          example: upcoming
+        overview:
+          type: string
+          example: The thread is picked up again by Marianne Schmidt which ...
+        network:
+          type: string
+          example: CBS
+        airTime:
+          type: string
+          example: 02:15
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              coverType:
+                type: string
+                example: banner
+              url:
+                type: string
+                example: /sonarr/MediaCoverProxy/6467f05d9872726ad08cbf920e5fee4bf69198682260acab8eab5d3c2c958e92/5c8f116c6aa5c.jpg
+        remotePoster:
+          type: string
+          example: https://artworks.thetvdb.com/banners/posters/5c8f116129983.jpg
+        seasons:
+          type: array
+          items:
+            type: object
+            properties:
+              seasonNumber:
+                type: number
+                example: 1
+              monitored:
+                type: boolean
+                example: true
+        year:
+          type: number
+          example: 2015
+        path:
+          type: string
+        profileId:
+          type: number
+        languageProfileId:
+          type: number
+        seasonFolder:
+          type: boolean
+        monitored:
+          type: boolean
+        useSceneNumbering:
+          type: boolean
+        runtime:
+          type: number
+        tvdbId:
+          type: number
+          example: 12345
+        tvRageId:
+          type: number
+        tvMazeId:
+          type: number
+        firstAired:
+          type: string
+        lastInfoSync:
+          type: string
+          nullable: true
+        seriesType:
+          type: string
+        cleanTitle:
+          type: string
+        imdbId:
+          type: string
+        titleSlug:
+          type: string
+        certification:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        added:
+          type: string
+        ratings:
+          type: array
+          items:
+            type: object
+            properties:
+              votes:
+                type: number
+              value:
+                type: number
+        qualityProfileId:
+          type: number
+        id:
+          type: number
+          nullable: true
+        rootFolderPath:
+          type: string
+          nullable: true
+        addOptions:
+          type: array
+          items:
+            type: object
+            properties:
+              ignoreEpisodesWithFiles:
+                type: boolean
+                nullable: true
+              ignoreEpisodesWithoutFiles:
+                type: boolean
+                nullable: true
+              searchForMissingEpisodes:
+                type: boolean
+                nullable: true
+    QRCode:
+      type: object
+      properties:
+        qrCode:
+          type: string
+          example: '/image/qrcode/invite-1.png'
     UserSettingsNotifications:
       type: object
       properties:
@@ -446,10 +799,50 @@ components:
           type: number
         webpush:
           type: number
+    SignupInviteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+    SignupCompleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+    SignupPlexAuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        message:
+          type: string
+      required:
+        - user
+        - message
+    InviteValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        message:
+          type: string
+      required:
+        - valid
+        - message
   securitySchemes:
     cookieAuth:
       type: apiKey
-      name: connect.sid
+      name: streamarr.sid
       in: cookie
     apiKey:
       type: apiKey
@@ -723,6 +1116,236 @@ paths:
                       type: string
                     thumb:
                       type: string
+  /settings/services:
+    get:
+      summary: Get services settings
+      description: Retrieves current services settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/uptime:
+    get:
+      summary: Get Uptime settings
+      description: Retrieves current Uptime settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update Uptime settings
+      description: Updates Uptime settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/downloads:
+    get:
+      summary: Get downloads settings
+      description: Retrieves current downloads settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update downloads settings
+      description: Updates downloads settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/tdarr:
+    get:
+      summary: Get tdarr settings
+      description: Retrieves current tdarr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update tdarr settings
+      description: Updates tdarr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/bazarr:
+    get:
+      summary: Get bazarr settings
+      description: Retrieves current bazarr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update bazarr settings
+      description: Updates bazarr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/prowlarr:
+    get:
+      summary: Get prowlarr settings
+      description: Retrieves current prowlarr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update prowlarr settings
+      description: Updates prowlarr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/lidarr:
+    get:
+      summary: Get lidarr settings
+      description: Retrieves current lidarr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update lidarr settings
+      description: Updates lidarr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/overseerr:
+    get:
+      summary: Get overseerr settings
+      description: Retrieves current overseerr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update overseerr settings
+      description: Updates overseerr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
@@ -754,6 +1377,272 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TautulliSettings'
+  /settings/radarr:
+    get:
+      summary: Get Radarr settings
+      description: Returns all Radarr settings in a JSON array.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: 'Values were returned'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RadarrSettings'
+    post:
+      summary: Create Radarr instance
+      description: Creates a new Radarr instance from the invite body.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadarrSettings'
+      responses:
+        '201':
+          description: 'New Radarr instance created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RadarrSettings'
+  /settings/radarr/test:
+    post:
+      summary: Test Radarr configuration
+      description: Tests if the Radarr configuration is valid. Returns profiles and root folders on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 7878
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                baseUrl:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+                - useSsl
+      responses:
+        '200':
+          description: Succesfully connected to Radarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+  /settings/radarr/{radarrId}:
+    put:
+      summary: Update Radarr instance
+      description: Updates an existing Radarr instance with the provided values.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadarrSettings'
+      responses:
+        '200':
+          description: 'Radarr instance updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RadarrSettings'
+    delete:
+      summary: Delete Radarr instance
+      description: Deletes an existing Radarr instance based on the radarrId parameter.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: 'Radarr instance updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RadarrSettings'
+  /settings/radarr/{radarrId}/profiles:
+    get:
+      summary: Get available Radarr profiles
+      description: Returns a list of profiles available on the Radarr server instance in a JSON array.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Returned list of profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceProfile'
+  /settings/sonarr:
+    get:
+      summary: Get Sonarr settings
+      description: Returns all Sonarr settings in a JSON array.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: 'Values were returned'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SonarrSettings'
+    post:
+      summary: Create Sonarr instance
+      description: Creates a new Sonarr instance from the invite body.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SonarrSettings'
+      responses:
+        '201':
+          description: 'New Sonarr instance created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SonarrSettings'
+  /settings/sonarr/test:
+    post:
+      summary: Test Sonarr configuration
+      description: Tests if the Sonarr configuration is valid. Returns profiles and root folders on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8989
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                baseUrl:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+                - useSsl
+      responses:
+        '200':
+          description: Succesfully connected to Sonarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+  /settings/sonarr/{sonarrId}:
+    put:
+      summary: Update Sonarr instance
+      description: Updates an existing Sonarr instance with the provided values.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SonarrSettings'
+      responses:
+        '200':
+          description: 'Sonarr instance updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SonarrSettings'
+    delete:
+      summary: Delete Sonarr instance
+      description: Deletes an existing Sonarr instance based on the sonarrId parameter.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: 'Sonarr instance updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SonarrSettings'
   /settings/public:
     get:
       summary: Get public settings
@@ -768,6 +1657,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicSettings'
+  /libraries:
+    get:
+      summary: Get public library stats
+      security: []
+      description: Returns enabled libraries and their total media counts. Mainly used for library stats on the index.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Public libraries returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlexLibrary'
   /settings/initialize:
     post:
       summary: Initialize application
@@ -1118,7 +2021,7 @@ paths:
   /auth/plex:
     post:
       summary: Sign in using a Plex token
-      description: Takes an `authToken` (Plex token) to log the user in. Generates a session cookie for use in further requests. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions.
+      description: Takes an `authToken` (Plex token) to log the user in. Generates a session cookie for use in further invites. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions.
       security: []
       tags:
         - auth
@@ -1143,7 +2046,7 @@ paths:
   /auth/local:
     post:
       summary: Sign in using a local account
-      description: Takes an `email` and a `password` to log the user in. Generates a session cookie for use in further requests.
+      description: Takes an `email` and a `password` to log the user in. Generates a session cookie for use in further invites.
       security: []
       tags:
         - auth
@@ -1273,7 +2176,7 @@ paths:
           name: sort
           schema:
             type: string
-            enum: [created, updated, requests, displayname]
+            enum: [created, updated, invites, displayname]
             default: created
       responses:
         '200':
@@ -1319,7 +2222,7 @@ paths:
     put:
       summary: Update batch of users
       description: |
-        Update users with given IDs with provided values in request `body.settings`. You cannot update users' Plex tokens through this request.
+        Update users with given IDs with provided values in invite `body.settings`. You cannot update users' Plex tokens through this invite.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -1350,7 +2253,7 @@ paths:
     post:
       summary: Import all users from Plex
       description: |
-        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the request body, only the specified users will be imported. Otherwise, all users will be imported.
+        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the invite body, only the specified users will be imported. Otherwise, all users will be imported.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -1508,7 +2411,7 @@ paths:
     put:
       summary: Update a user by user ID
       description: |
-        Update a user with the provided values. You cannot update a user's Plex token through this request.
+        Update a user with the provided values. You cannot update a user's Plex token through this invite.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -1550,6 +2453,84 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+  /user/{userId}/invites:
+    get:
+      summary: Get invites for a specific user
+      description: |
+        Retrieves a user's invites in a JSON object.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 20
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+      responses:
+        '200':
+          description: User's invites returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Invites'
+  /user/{userId}/quota:
+    get:
+      summary: Get quotas for a specific user
+      description: |
+        Returns quota details for a user in a JSON object. Requires `MANAGE_USERS` permission if viewing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: User quota details in JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invite:
+                    type: object
+                    properties:
+                      days:
+                        type: number
+                        example: 7
+                      limit:
+                        type: number
+                        example: 10
+                      used:
+                        type: number
+                        example: 6
+                      remaining:
+                        type: number
+                        example: 4
+                      restricted:
+                        type: boolean
+                        example: false
   /user/{userId}/settings/main:
     get:
       summary: Get general settings for a user
@@ -1755,6 +2736,231 @@ paths:
                   permissions:
                     type: number
                     example: 2
+  /invite:
+    get:
+      summary: Get all invites
+      description: |
+        Returns all invites if the user has the `ADMIN` or `MANAGE_INVITES` permissions. Otherwise, only the logged-in user's invites are returned.
+
+        If the `invitedBy` parameter is specified, only invites from that particular user ID will be returned.
+      tags:
+        - invite
+      parameters:
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 20
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+        - in: query
+          name: filter
+          schema:
+            type: string
+            nullable: true
+            enum: [all, active, inactive, expired, deleted, redeemed]
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [created, modified]
+            default: created
+        - in: query
+          name: createdBy
+          schema:
+            type: number
+            nullable: true
+            example: 1
+      responses:
+        '200':
+          description: invites returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Invites'
+    post:
+      summary: Create new invite
+      description: |
+        Creates a new invite with the provided media ID and type. The `invite` permission is required.
+        If the user has the `ADMIN` or `AUTO_APPROVE` permissions, their invite will be auomatically approved.
+      tags:
+        - invite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  nullable: true
+      responses:
+        '201':
+          description: Succesfully created the invite
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
+  /invite/count:
+    get:
+      summary: Gets invite counts
+      description: |
+        Returns the number of pending and approved invites.
+      tags:
+        - invite
+      responses:
+        '200':
+          description: invite counts returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: number
+                  pending:
+                    type: number
+                  approved:
+                    type: number
+                  declined:
+                    type: number
+                  processing:
+                    type: number
+                  available:
+                    type: number
+  /invite/{inviteId}:
+    get:
+      summary: Get Invites
+      description: Returns a specific Invites in a JSON object.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Succesfully returns invite
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
+    put:
+      summary: Update Invites
+      description: Updates a specific media invite and returns the invite in a JSON object. Requires the `MANAGE_INVITES` permission.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  nullable: true
+      responses:
+        '200':
+          description: Succesfully updated invite
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
+    delete:
+      summary: Delete invite
+      description: Removes a invite. If the user has the `MANAGE_INVITES` permission, any invite can be removed. Otherwise, only pending invites can be removed.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Succesfully removed invite
+  /invite/{inviteId}/retry:
+    post:
+      summary: Retry failed invite
+      description: |
+        Retries a invite by resending invites to Sonarr or Radarr.
+
+        Requires the `MANAGE_INVITES` permission or `ADMIN`.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Retry triggered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
+  /invite/{inviteId}/{status}:
+    post:
+      summary: Update an invite's status
+      description: |
+        Updates an invite's status to active, inactive, expired or redeemed. Also returns the invite in a JSON object.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - in: path
+          name: status
+          description: New status
+          required: true
+          schema:
+            type: string
+            enum: [active, inactive, expired, redeemed]
+      responses:
+        '200':
+          description: invite status changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
   /regions:
     get:
       summary: Regions supported by TMDB
@@ -1802,6 +3008,109 @@ paths:
                     name:
                       type: string
                       example: English
+  /service/radarr:
+    get:
+      summary: Get non-sensitive Radarr server list
+      description: Returns a list of Radarr server IDs and names in a JSON object.
+      tags:
+        - service
+      responses:
+        '200':
+          description: invite successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RadarrSettings'
+  /service/radarr/{radarrId}:
+    get:
+      summary: Get Radarr server quality profiles and root folders
+      description: Returns a Radarr server's quality profile and root folder details in a JSON object.
+      tags:
+        - service
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: invite successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    $ref: '#/components/schemas/RadarrSettings'
+                  profiles:
+                    $ref: '#/components/schemas/ServiceProfile'
+  /service/sonarr:
+    get:
+      summary: Get non-sensitive Sonarr server list
+
+      description: Returns a list of Sonarr server IDs and names in a JSON object.
+      tags:
+        - service
+      responses:
+        '200':
+          description: invite successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SonarrSettings'
+  /service/sonarr/{sonarrId}:
+    get:
+      summary: Get Sonarr server quality profiles and root folders
+      description: Returns a Sonarr server's quality profile and root folder details in a JSON object.
+      tags:
+        - service
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: invite successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    $ref: '#/components/schemas/SonarrSettings'
+                  profiles:
+                    $ref: '#/components/schemas/ServiceProfile'
+  /service/sonarr/lookup/{tmdbId}:
+    get:
+      summary: Get series from Sonarr
+      description: Returns a list of series returned by searching for the name in Sonarr.
+      tags:
+        - service
+      parameters:
+        - in: path
+          name: tmdbId
+          required: true
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: invite successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SonarrSeries'
   /backdrops:
     get:
       summary: Get backdrops of trending items
@@ -1818,6 +3127,213 @@ paths:
                 type: array
                 items:
                   type: string
-security:
-  - cookieAuth: []
-  - apiKey: []
+  /invite/{inviteId}/qrcode:
+    get:
+      summary: Get QR code image for invite
+      description: |
+        Returns the QR code image for the specified invite. If the QR code is not cached, it will be generated and cached automatically.
+        Requires authentication and invite permissions.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          required: true
+          schema:
+            type: string
+          description: The ID of the invite
+      responses:
+        '200':
+          description: QR code image returned
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized or insufficient permissions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Invite or QR code not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Delete invite QR code
+      description: Deletes the cached QR code image for the specified invite. Requires `MANAGE_INVITES` or `CREATE_INVITES` permission. Only the invite creator or users with `MANAGE_INVITES` can delete the QR code.
+      tags:
+        - invite
+      parameters:
+        - in: path
+          name: inviteId
+          description: invite ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '204':
+          description: Successfully deleted QR code image
+        '401':
+          description: Unauthorized You do not have permission to delete this QR code
+        '404':
+          description: QR code not found
+  /calendar/sonarr:
+    get:
+      summary: Get Sonarr calendar events
+      description: Returns a list of cached Sonarr calendar events (requires VIEW_SCHEDULE permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of Sonarr calendar events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarEvent'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /calendar/radarr:
+    get:
+      summary: Get Radarr calendar events
+      description: Returns a list of cached Radarr calendar events (requires VIEW_SCHEDULE permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of Radarr calendar events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarEvent'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /signup/validate/{icode}:
+    get:
+      tags:
+        - public
+      summary: Validate an invite code for signup
+      parameters:
+        - name: icode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invite code is valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteValidationResponse'
+        '404':
+          description: Invite code not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteValidationResponse'
+
+  /signup/plexauth/{authToken}:
+    get:
+      tags:
+        - public
+      summary: Authenticate user with Plex and link invite
+      parameters:
+        - name: authToken
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plex authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupPlexAuthResponse'
+
+  /signup/invite:
+    post:
+      tags:
+        - public
+      summary: Assign libraries and permissions from invite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                icode:
+                  type: string
+                userId:
+                  type: integer
+      responses:
+        '200':
+          description: Libraries and permissions assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupInviteResponse'
+
+  /signup/complete:
+    post:
+      tags:
+        - public
+      summary: Finalize signup and update invite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                icode:
+                  type: string
+                userId:
+                  type: integer
+                displayName:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Signup complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupCompleteResponse'

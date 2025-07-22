@@ -1,11 +1,25 @@
 import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
+import type { User } from '@server/entity/User';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import { Permission } from '@server/lib/permissions';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
+import QRCodeProxy from '@server/lib/qrcodeproxy';
+
+function generateIcode(): string {
+  // Generates a random 8-character alphanumeric invite code
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let icode = '';
+  for (let i = 0; i < 8; i++) {
+    icode += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return icode;
+}
 
 const inviteRoutes = Router();
 
@@ -16,6 +30,7 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
       Permission.MANAGE_INVITES,
       Permission.VIEW_INVITES,
       Permission.CREATE_INVITES,
+      Permission.STREAMARR,
     ],
     { type: 'or' }
   ),
@@ -37,8 +52,8 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
     let statusFilter: InviteStatus[];
 
     switch (req.query.filter) {
-      case 'valid':
-        statusFilter = [InviteStatus.VALID];
+      case 'active':
+        statusFilter = [InviteStatus.ACTIVE];
         break;
       case 'redeemed':
         statusFilter = [InviteStatus.REDEEMED];
@@ -46,18 +61,23 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
       case 'expired':
         statusFilter = [InviteStatus.EXPIRED];
         break;
+      case 'inactive':
+        statusFilter = [InviteStatus.INACTIVE];
+        break;
       default:
         statusFilter = [
-          InviteStatus.VALID,
+          InviteStatus.ACTIVE,
           InviteStatus.EXPIRED,
           InviteStatus.REDEEMED,
+          InviteStatus.INACTIVE,
         ];
     }
 
     let query = getRepository(Invite)
       .createQueryBuilder('invite')
       .leftJoinAndSelect('invite.createdBy', 'createdBy')
-      .leftJoinAndSelect('invite.modifiedBy', 'modifiedBy')
+      .leftJoinAndSelect('invite.updatedBy', 'updatedBy')
+      .leftJoinAndSelect('invite.redeemedBy', 'redeemedBy') // Ensure redeemedBy is populated
       .where('invite.status IN (:...InviteStatus)', {
         InviteStatus: statusFilter,
       });
@@ -86,6 +106,40 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
       .skip(skip)
       .getManyAndCount();
 
+    // Explicitly run expiry/status update logic for each invite
+    const inviteRepository = getRepository(Invite);
+    await Promise.all(
+      invites.map(async (invite) => {
+        let expiryDate;
+        if (invite.expiresAt) {
+          expiryDate = new Date(invite.expiresAt);
+        } else if (invite.expiryLimit !== 0) {
+          let msPerUnit = 86400000;
+          if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
+          if (invite.expiryTime === 'months') msPerUnit = 2629800000;
+          expiryDate = new Date(
+            invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
+          );
+        }
+        const now = Date.now();
+        // Only check for expiry, not usage limit (handled at use time)
+        if (
+          expiryDate &&
+          now > expiryDate.getTime() &&
+          invite.status !== InviteStatus.EXPIRED &&
+          invite.status !== InviteStatus.REDEEMED // Don't override redeemed
+        ) {
+          invite.status = InviteStatus.EXPIRED;
+          await inviteRepository.save(invite);
+          logger.debug('Invite marked as expired and saved', {
+            label: 'API',
+            inviteId: invite.id,
+            icode: invite.icode,
+          });
+        }
+      })
+    );
+
     res.status(200).json({
       pageInfo: {
         pages: Math.ceil(inviteCount / pageSize),
@@ -102,16 +156,72 @@ inviteRoutes.post<
   Record<string, string>,
   Invite,
   {
-    code: string;
+    icode: string;
     inviteStatus: number;
-    expiresAt?: Date;
+    expiryLimit?: number;
+    expiryTime?: 'days' | 'weeks' | 'months';
+    liveTv?: boolean;
+    plexHome?: boolean;
+    sharedLibraries?: string;
     downloads?: boolean;
     status?: InviteStatus;
-    maxUses?: number;
+    usageLimit?: number;
+    inviteAs?: User;
   }
 >(
   '/',
-  isAuthenticated([Permission.MANAGE_INVITES, Permission.CREATE_INVITES], {
+  isAuthenticated(
+    [
+      Permission.MANAGE_INVITES,
+      Permission.CREATE_INVITES,
+      Permission.STREAMARR,
+    ],
+    {
+      type: 'or',
+    }
+  ),
+  async (req, res, next) => {
+    if (!req.user) {
+      return next({ status: 500, message: 'User missing from request.' });
+    }
+
+    const inviteRepository = getRepository(Invite);
+
+    const invite = new Invite({
+      createdBy: req.body.inviteAs ?? req.user,
+      updatedBy: req.user,
+      icode: req.body.icode || generateIcode(),
+      expiresAt:
+        req.body.expiryLimit > 0 && req.body.expiryTime
+          ? new Date(
+              Date.now() +
+                req.body.expiryLimit *
+                  {
+                    days: 86400000,
+                    weeks: 604800000,
+                    months: 2629800000,
+                  }[req.body.expiryTime]
+            )
+          : null,
+      status: req.body.status ?? InviteStatus.ACTIVE,
+      usageLimit: req.body.usageLimit ?? 1,
+      downloads: req.body.downloads ?? true,
+      liveTv: req.body.liveTv ?? false,
+      plexHome: req.body.plexHome ?? false,
+      sharedLibraries: req.body.sharedLibraries ?? '',
+      expiryLimit: req.body.expiryLimit ?? 1,
+      expiryTime: req.body.expiryTime ?? 'days',
+    });
+
+    const newinvite = await inviteRepository.save(invite);
+
+    res.status(200).json(newinvite);
+  }
+);
+
+inviteRoutes.put<{ id: string }, Invite, Invite>(
+  '/:id',
+  isAuthenticated([Permission.MANAGE_INVITES, Permission.ADVANCED_INVITES], {
     type: 'or',
   }),
   async (req, res, next) => {
@@ -122,19 +232,33 @@ inviteRoutes.post<
 
     const inviteRepository = getRepository(Invite);
 
-    const invite = new Invite({
-      createdBy: req.user,
-      updatedBy: req.user,
-      code: req.body.code,
-      expiresAt: req.body.expiresAt ? new Date(req.body.expiresAt) : null,
-      downloads: req.body.downloads,
-      status: req.body.status || InviteStatus.VALID,
-      maxUses: req.body.maxUses || 1,
-    });
+    try {
+      const invite = await inviteRepository.findOneOrFail({
+        where: { id: Number(req.params.id) },
+      });
 
-    const newinvite = await inviteRepository.save(invite);
+      inviteRepository.merge(invite, req.body);
+      // If invite was REDEEMED and usageLimit is now greater than uses, set back to ACTIVE
+      if (
+        invite.status === InviteStatus.REDEEMED &&
+        invite.usageLimit > invite.uses
+      ) {
+        invite.status = InviteStatus.ACTIVE;
+      }
+      // If usageLimit is set to a value less than or equal to uses, set to REDEEMED
+      if (invite.usageLimit > 0 && invite.usageLimit <= invite.uses) {
+        invite.status = InviteStatus.REDEEMED;
+      }
+      const updatedInvite = await inviteRepository.save(invite);
 
-    res.status(200).json(newinvite);
+      res.status(200).json(updatedInvite);
+    } catch (e) {
+      logger.debug('Something went wrong saving invite.', {
+        label: 'API',
+        errorMessage: e.message,
+      });
+      next({ status: 404, message: 'Invite not found' });
+    }
   }
 );
 
@@ -148,7 +272,7 @@ inviteRoutes.get('/count', async (req, res, next) => {
 
     const activeCount = await query
       .where('invite.status = :InviteStatus', {
-        InviteStatus: InviteStatus.VALID,
+        InviteStatus: InviteStatus.ACTIVE,
       })
       .getCount();
 
@@ -179,6 +303,7 @@ inviteRoutes.get<{ inviteId: string }>(
       Permission.MANAGE_INVITES,
       Permission.VIEW_INVITES,
       Permission.CREATE_INVITES,
+      Permission.STREAMARR,
     ],
     { type: 'or' }
   ),
@@ -224,9 +349,16 @@ inviteRoutes.get<{ inviteId: string }>(
 
 inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
   '/:inviteId/:status',
-  isAuthenticated([Permission.MANAGE_INVITES, Permission.CREATE_INVITES], {
-    type: 'or',
-  }),
+  isAuthenticated(
+    [
+      Permission.MANAGE_INVITES,
+      Permission.CREATE_INVITES,
+      Permission.STREAMARR,
+    ],
+    {
+      type: 'or',
+    }
+  ),
   async (req, res, next) => {
     const inviteRepository = getRepository(Invite);
     // Satisfy typescript here. User is set, we assure you!
@@ -255,11 +387,15 @@ inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
         case 'redeemed':
           newStatus = InviteStatus.REDEEMED;
           break;
-        case 'valid':
-          newStatus = InviteStatus.VALID;
+        case 'active':
+          newStatus = InviteStatus.ACTIVE;
           break;
         case 'expired':
           newStatus = InviteStatus.EXPIRED;
+          break;
+        case 'inactive':
+          newStatus = InviteStatus.INACTIVE;
+          break;
       }
 
       if (!newStatus) {
@@ -288,11 +424,70 @@ inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
   }
 );
 
+inviteRoutes.get<{ inviteId: string }>(
+  '/:inviteId/qrcode',
+  isAuthenticated(
+    [
+      Permission.MANAGE_INVITES,
+      Permission.VIEW_INVITES,
+      Permission.CREATE_INVITES,
+      Permission.STREAMARR,
+    ],
+    { type: 'or' }
+  ),
+  async (req, res, next) => {
+    const inviteRepository = getRepository(Invite);
+    try {
+      const invite = await inviteRepository.findOneOrFail({
+        where: { id: Number(req.params.inviteId) },
+      });
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_INVITES) &&
+        invite.createdBy.id !== req.user?.id
+      ) {
+        return next({
+          status: 401,
+          message: 'You do not have permission to view this QR Code.',
+        });
+      }
+      const qrProxy = new QRCodeProxy();
+      const inviteUrl = `${getSettings().main.applicationUrl}/signup?icode=${invite.icode}`;
+      await qrProxy.getQRCode(invite.id, invite.icode, inviteUrl);
+      const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
+      const imageData = await qrProxy.getImage(cacheKey);
+      if (imageData) {
+        res.writeHead(200, {
+          'Content-Type': `image/${imageData.meta.extension}`,
+          'Content-Length': imageData.imageBuffer.length,
+          'Cache-Control': `public, max-age=${imageData.meta.curRevalidate}`,
+          'OS-Cache-Key': imageData.meta.cacheKey,
+          'OS-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
+        });
+        res.end(imageData.imageBuffer);
+      } else {
+        res.status(404).send();
+      }
+    } catch (e) {
+      logger.error('Failed to serve QR code image', {
+        errorMessage: e.message,
+      });
+      next({ status: 500, message: 'Failed to serve QR code image.' });
+    }
+  }
+);
+
 inviteRoutes.delete(
   '/:inviteId',
-  isAuthenticated([Permission.MANAGE_INVITES, Permission.CREATE_INVITES], {
-    type: 'or',
-  }),
+  isAuthenticated(
+    [
+      Permission.MANAGE_INVITES,
+      Permission.CREATE_INVITES,
+      Permission.STREAMARR,
+    ],
+    {
+      type: 'or',
+    }
+  ),
   async (req, res, next) => {
     const inviteRepository = getRepository(Invite);
 
@@ -321,6 +516,47 @@ inviteRoutes.delete(
         errorMessage: e.message,
       });
       next({ status: 404, message: 'invite not found.' });
+    }
+  }
+);
+
+inviteRoutes.delete(
+  '/:inviteId/qrcode',
+  isAuthenticated(
+    [
+      Permission.MANAGE_INVITES,
+      Permission.CREATE_INVITES,
+      Permission.STREAMARR,
+    ],
+    {
+      type: 'or',
+    }
+  ),
+  async (req, res, next) => {
+    const inviteRepository = getRepository(Invite);
+    try {
+      const invite = await inviteRepository.findOneOrFail({
+        where: { id: Number(req.params.inviteId) },
+        relations: { createdBy: true },
+      });
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_INVITES) &&
+        invite.createdBy.id !== req.user?.id
+      ) {
+        return next({
+          status: 401,
+          message: 'You do not have permission to delete this QR Code.',
+        });
+      }
+      const qrProxy = new QRCodeProxy();
+      const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
+      await qrProxy.deleteImage(cacheKey);
+      res.status(204).send();
+    } catch (e) {
+      logger.error('Failed to delete QR code image', {
+        errorMessage: e.message,
+      });
+      next({ status: 404, message: 'QR code not found.' });
     }
   }
 );

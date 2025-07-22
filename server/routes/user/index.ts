@@ -3,7 +3,11 @@ import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
-import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
+import type {
+  QuotaResponse,
+  UserInvitesResponse,
+  UserResultsResponse,
+} from '@server/interfaces/api/userInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -11,6 +15,10 @@ import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { In } from 'typeorm';
 import userSettingsRoutes from './usersettings';
+import PreparedEmail from '@server/lib/email';
+import path from 'path';
+import crypto from 'crypto';
+import Invite from '@server/entity/Invite';
 
 const router = Router();
 
@@ -29,6 +37,16 @@ router.get('/', async (req, res, next) => {
           "(CASE WHEN (user.username IS NULL OR user.username = '') THEN (CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN user.email ELSE LOWER(user.plexUsername) END) ELSE LOWER(user.username) END)",
           'ASC'
         );
+        break;
+      case 'invites':
+        query = query
+          .addSelect((subQuery) => {
+            return subQuery
+              .select('COUNT(invite.id)', 'inviteCount')
+              .from(Invite, 'invite')
+              .where('invite.createdBy.id = user.id');
+          }, 'inviteCount')
+          .orderBy('inviteCount', 'DESC');
         break;
       default:
         query = query.orderBy('user.id', 'ASC');
@@ -81,6 +99,7 @@ router.post(
       }
 
       const passedExplicitPassword = body.password && body.password.length > 0;
+      const avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(body.email.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
 
       if (
         !passedExplicitPassword &&
@@ -90,6 +109,7 @@ router.post(
       }
 
       const user = new User({
+        avatar: body.avatar ?? avatar,
         username: body.username,
         email: body.email,
         password: body.password,
@@ -98,15 +118,47 @@ router.post(
         userType: UserType.LOCAL,
       });
 
+      let generatedPassword: string | undefined;
       if (passedExplicitPassword) {
-        await user?.setPassword(body.password);
+        await user.setPassword(body.password);
       } else {
-        await user?.generatePassword();
+        generatedPassword = await user.generatePassword();
       }
 
       await userRepository.save(user);
+
+      if (generatedPassword) {
+        const { applicationTitle, applicationUrl } = getSettings().main;
+        try {
+          logger.info(`Sending generated password email for ${user.email}`, {
+            label: 'User Management',
+          });
+          const email = new PreparedEmail(
+            getSettings().notifications.agents.email
+          );
+          await email.send({
+            template: path.join(
+              __dirname,
+              '../../templates/email/generatedpassword'
+            ),
+            message: { to: user.email },
+            locals: {
+              password: generatedPassword,
+              applicationUrl,
+              applicationTitle,
+              recipientName: user.username,
+            },
+          });
+        } catch (e) {
+          logger.error('Failed to send out generated password email', {
+            label: 'User Management',
+            message: e.message,
+          });
+        }
+      }
       res.status(201).json(user.filter());
     } catch (e) {
+      logger.error('User creation failed', { error: e, stack: e.stack });
       next({ status: 500, message: e.message });
     }
   }
@@ -189,15 +241,18 @@ router.get<{ userId: number; key: string }>(
   }
 );
 
-router.delete<{ userId: number; key: string }>(
-  '/:userId/pushSubscription/:key',
+router.delete<{ userId: number; endpoint: string }>(
+  '/:userId/pushSubscription/:endpoint',
   async (req, res, next) => {
     try {
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSub = await userPushSubRepository.findOneOrFail({
         relations: { user: true },
-        where: { user: { id: req.params.userId }, p256dh: req.params.key },
+        where: {
+          user: { id: req.params.userId },
+          endpoint: req.params.endpoint,
+        },
       });
 
       await userPushSubRepository.remove(userPushSub);
@@ -205,7 +260,7 @@ router.delete<{ userId: number; key: string }>(
     } catch (e) {
       logger.error('Something went wrong deleting the user push subcription', {
         label: 'API',
-        key: req.params.key,
+        endpoint: req.params.endpoint,
         errorMessage: e.message,
       });
       return next({ status: 500, message: 'User push subcription not found' });
@@ -231,6 +286,61 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 });
 
 router.use('/:id/settings', userSettingsRoutes);
+
+router.get<{ id: string }, UserInvitesResponse>(
+  '/:id/invites',
+  async (req, res, next) => {
+    const pageSize = req.query.take ? Number(req.query.take) : 20;
+    const skip = req.query.skip ? Number(req.query.skip) : 0;
+
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (
+        user.id !== req.user?.id &&
+        !req.user?.hasPermission(
+          [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
+          { type: 'or' }
+        )
+      ) {
+        return next({
+          status: 403,
+          message: "You do not have permission to view this user's invites.",
+        });
+      }
+
+      const [invites, inviteCount] = await getRepository(Invite)
+        .createQueryBuilder('invite')
+        .leftJoinAndSelect('invite.modifiedBy', 'modifiedBy')
+        .leftJoinAndSelect('invite.createdBy', 'createdBy')
+        .andWhere('createdBy.id = :id', {
+          id: user.id,
+        })
+        .orderBy('invite.id', 'DESC')
+        .take(pageSize)
+        .skip(skip)
+        .getManyAndCount();
+
+      res.status(200).json({
+        pageInfo: {
+          pages: Math.ceil(inviteCount / pageSize),
+          pageSize,
+          results: inviteCount,
+          page: Math.ceil(skip / pageSize) + 1,
+        },
+        results: invites,
+      });
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
 
 export const canMakePermissionsChange = (
   permissions: number,
@@ -428,6 +538,39 @@ router.post(
       res.status(201).json(User.filterMany(createdUsers));
     } catch (e) {
       next({ status: 500, message: e.message });
+    }
+  }
+);
+
+router.get<{ id: string }, QuotaResponse>(
+  '/:id/quota',
+  async (req, res, next) => {
+    try {
+      const userRepository = getRepository(User);
+
+      if (
+        Number(req.params.id) !== req.user?.id &&
+        !req.user?.hasPermission(
+          [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+          { type: 'and' }
+        )
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to view this user's invite limits.",
+        });
+      }
+
+      const user = await userRepository.findOneOrFail({
+        where: { id: Number(req.params.id) },
+      });
+
+      const quotas = await user.getQuota();
+
+      res.status(200).json(quotas);
+    } catch (e) {
+      next({ status: 404, message: e.message });
     }
   }
 );

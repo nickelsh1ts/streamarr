@@ -11,12 +11,7 @@ export interface Library {
   enabled: boolean;
   type: 'show' | 'movie';
   lastScan?: number;
-}
-
-export interface Region {
-  iso_3166_1: string;
-  english_name: string;
-  name?: string;
+  mediaCount?: number;
 }
 
 export interface Language {
@@ -44,6 +39,13 @@ export interface TautulliSettings {
   externalUrl?: string;
 }
 
+export interface ServiceSettings {
+  enabled: boolean;
+  externalUrl?: string;
+  urlBase?: string;
+  id?: string;
+}
+
 export interface DVRSettings {
   id: number;
   name: string;
@@ -52,36 +54,32 @@ export interface DVRSettings {
   apiKey: string;
   useSsl: boolean;
   baseUrl?: string;
-  activeProfileId: number;
-  activeProfileName: string;
-  activeDirectory: string;
-  tags: number[];
+  activeProfileId?: number;
+  activeProfileName?: string;
+  activeDirectory?: string;
+  tags?: number[];
   is4k: boolean;
   isDefault: boolean;
   externalUrl?: string;
   syncEnabled: boolean;
-  preventSearch: boolean;
-  tagRequests: boolean;
+  preventSearch?: boolean;
+  tagRequests?: boolean;
 }
 
 export interface RadarrSettings extends DVRSettings {
-  minimumAvailability: string;
+  minimumAvailability?: string;
 }
 
 export interface SonarrSettings extends DVRSettings {
-  seriesType: 'standard' | 'daily' | 'anime';
-  animeSeriesType: 'standard' | 'daily' | 'anime';
-  activeAnimeProfileId?: number;
-  activeAnimeProfileName?: string;
-  activeAnimeDirectory?: string;
-  activeAnimeLanguageProfileId?: number;
-  activeLanguageProfileId?: number;
-  animeTags?: number[];
-  enableSeasonFolders: boolean;
+  seriesType?: 'standard' | 'daily' | 'anime';
 }
 
 interface Quota {
   quotaLimit?: number;
+  quotaDays?: number;
+  quotaUsage?: number;
+  quotaExpiryLimit?: number;
+  quotaExpiryTime?: 'days' | 'weeks' | 'months';
 }
 
 export interface MainSettings {
@@ -94,12 +92,19 @@ export interface MainSettings {
   defaultQuotas: {
     invites: Quota;
   };
+  sharedLibraries: string;
+  downloads: boolean;
+  liveTv: boolean;
+  plexHome: boolean;
   localLogin: boolean;
   newPlexLogin: boolean;
-  region: string;
-  originalLanguage: string;
+  enableSignUp: boolean;
+  releaseSched: boolean;
   trustProxy: boolean;
   locale: string;
+  supportUrl: string;
+  supportEmail: string;
+  extendedHome: boolean;
 }
 
 interface PublicSettings {
@@ -110,14 +115,20 @@ interface FullPublicSettings extends PublicSettings {
   applicationTitle: string;
   applicationUrl: string;
   localLogin: boolean;
-  region: string;
-  originalLanguage: string;
   cacheImages: boolean;
   vapidPublic: string;
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  supportUrl: string;
+  supportEmail: string;
+  extendedHome: boolean;
+  enableSignUp: boolean;
+  statsUrl: string;
+  releaseSched: boolean;
+  statusUrl: string;
+  statusEnabled: boolean;
 }
 
 export interface NotificationAgentConfig {
@@ -154,7 +165,6 @@ export enum NotificationAgentKey {
 
 interface NotificationAgents {
   email: NotificationAgentEmail;
-  webhook: NotificationAgentWebhook;
   webpush: NotificationAgentConfig;
 }
 
@@ -169,6 +179,7 @@ interface JobSettings {
 export type JobId =
   | 'plex-full-scan'
   | 'plex-refresh-token'
+  | 'invites-qrcode-cleanup'
   | 'image-cache-cleanup';
 
 interface AllSettings {
@@ -180,6 +191,13 @@ interface AllSettings {
   tautulli: TautulliSettings;
   radarr: RadarrSettings[];
   sonarr: SonarrSettings[];
+  uptime: ServiceSettings;
+  downloads: ServiceSettings;
+  tdarr: ServiceSettings;
+  bazarr: ServiceSettings;
+  prowlarr: ServiceSettings;
+  lidarr: ServiceSettings;
+  overseerr: ServiceSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
   jobs: Record<JobId, JobSettings>;
@@ -207,17 +225,59 @@ class Settings {
         defaultQuotas: {
           invites: {},
         },
+        sharedLibraries: '',
+        downloads: true,
+        liveTv: false,
+        plexHome: false,
         localLogin: true,
         newPlexLogin: true,
-        region: '',
-        originalLanguage: '',
+        enableSignUp: false,
+        releaseSched: false,
         trustProxy: false,
         locale: 'en',
+        supportUrl: '',
+        supportEmail: '',
+        extendedHome: true,
       },
-      plex: { name: '', ip: '', port: 32400, useSsl: false, libraries: [] },
+      plex: {
+        name: '',
+        ip: '',
+        port: 32400,
+        useSsl: false,
+        webAppUrl: '/web/index.html',
+        libraries: [],
+      },
       tautulli: {},
       radarr: [],
       sonarr: [],
+      uptime: {
+        enabled: false,
+        externalUrl: 'https://status.streamarr.dev',
+      },
+      downloads: {
+        enabled: false,
+        urlBase: '/admin/qbt',
+      },
+      tdarr: {
+        enabled: false,
+        urlBase: '/admin/tdarr',
+      },
+      bazarr: {
+        enabled: false,
+        urlBase: '/admin/bazarr',
+      },
+      prowlarr: {
+        enabled: false,
+        urlBase: '/admin/prowlarr',
+      },
+      lidarr: {
+        enabled: false,
+        urlBase: '/admin/lidarr',
+      },
+      overseerr: {
+        enabled: false,
+        urlBase: '/overseerr',
+      },
       public: { initialized: false },
       notifications: {
         agents: {
@@ -234,15 +294,6 @@ class Settings {
               senderName: 'Streamarr',
             },
           },
-          webhook: {
-            enabled: false,
-            types: 0,
-            options: {
-              webhookUrl: '',
-              jsonPayload:
-                'IntcbiAgXCJub3RpZmljYXRpb25fdHlwZVwiOiBcInt7bm90aWZpY2F0aW9uX3R5cGV9fVwiLFxuICBcImV2ZW50XCI6IFwie3tldmVudH19XCIsXG4gIFwic3ViamVjdFwiOiBcInt7c3ViamVjdH19XCIsXG4gIFwibWVzc2FnZVwiOiBcInt7bWVzc2FnZX19XCIsXG4gIFwiaW1hZ2VcIjogXCJ7e2ltYWdlfX1cIixcbiAgXCJ7e21lZGlhfX1cIjoge1xuICAgIFwibWVkaWFfdHlwZVwiOiBcInt7bWVkaWFfdHlwZX19XCIsXG4gICAgXCJ0bWRiSWRcIjogXCJ7e21lZGlhX3RtZGJpZH19XCIsXG4gICAgXCJ0dmRiSWRcIjogXCJ7e21lZGlhX3R2ZGJpZH19XCIsXG4gICAgXCJzdGF0dXNcIjogXCJ7e21lZGlhX3N0YXR1c319XCIsXG4gICAgXCJzdGF0dXM0a1wiOiBcInt7bWVkaWFfc3RhdHVzNGt9fVwiXG4gIH0sXG4gIFwie3tyZXF1ZXN0fX1cIjoge1xuICAgIFwicmVxdWVzdF9pZFwiOiBcInt7cmVxdWVzdF9pZH19XCIsXG4gICAgXCJyZXF1ZXN0ZWRCeV9lbWFpbFwiOiBcInt7cmVxdWVzdGVkQnlfZW1haWx9fVwiLFxuICAgIFwicmVxdWVzdGVkQnlfdXNlcm5hbWVcIjogXCJ7e3JlcXVlc3RlZEJ5X3VzZXJuYW1lfX1cIixcbiAgICBcInJlcXVlc3RlZEJ5X2F2YXRhclwiOiBcInt7cmVxdWVzdGVkQnlfYXZhdGFyfX1cIixcbiAgICBcInJlcXVlc3RlZEJ5X3NldHRpbmdzX2Rpc2NvcmRJZFwiOiBcInt7cmVxdWVzdGVkQnlfc2V0dGluZ3NfZGlzY29yZElkfX1cIixcbiAgICBcInJlcXVlc3RlZEJ5X3NldHRpbmdzX3RlbGVncmFtQ2hhdElkXCI6IFwie3tyZXF1ZXN0ZWRCeV9zZXR0aW5nc190ZWxlZ3JhbUNoYXRJZH19XCJcbiAgfSxcbiAgXCJ7e2lzc3VlfX1cIjoge1xuICAgIFwiaXNzdWVfaWRcIjogXCJ7e2lzc3VlX2lkfX1cIixcbiAgICBcImlzc3VlX3R5cGVcIjogXCJ7e2lzc3VlX3R5cGV9fVwiLFxuICAgIFwiaXNzdWVfc3RhdHVzXCI6IFwie3tpc3N1ZV9zdGF0dXN9fVwiLFxuICAgIFwicmVwb3J0ZWRCeV9lbWFpbFwiOiBcInt7cmVwb3J0ZWRCeV9lbWFpbH19XCIsXG4gICAgXCJyZXBvcnRlZEJ5X3VzZXJuYW1lXCI6IFwie3tyZXBvcnRlZEJ5X3VzZXJuYW1lfX1cIixcbiAgICBcInJlcG9ydGVkQnlfYXZhdGFyXCI6IFwie3tyZXBvcnRlZEJ5X2F2YXRhcn19XCIsXG4gICAgXCJyZXBvcnRlZEJ5X3NldHRpbmdzX2Rpc2NvcmRJZFwiOiBcInt7cmVwb3J0ZWRCeV9zZXR0aW5nc19kaXNjb3JkSWR9fVwiLFxuICAgIFwicmVwb3J0ZWRCeV9zZXR0aW5nc190ZWxlZ3JhbUNoYXRJZFwiOiBcInt7cmVwb3J0ZWRCeV9zZXR0aW5nc190ZWxlZ3JhbUNoYXRJZH19XCJcbiAgfSxcbiAgXCJ7e2NvbW1lbnR9fVwiOiB7XG4gICAgXCJjb21tZW50X21lc3NhZ2VcIjogXCJ7e2NvbW1lbnRfbWVzc2FnZX19XCIsXG4gICAgXCJjb21tZW50ZWRCeV9lbWFpbFwiOiBcInt7Y29tbWVudGVkQnlfZW1haWx9fVwiLFxuICAgIFwiY29tbWVudGVkQnlfdXNlcm5hbWVcIjogXCJ7e2NvbW1lbnRlZEJ5X3VzZXJuYW1lfX1cIixcbiAgICBcImNvbW1lbnRlZEJ5X2F2YXRhclwiOiBcInt7Y29tbWVudGVkQnlfYXZhdGFyfX1cIixcbiAgICBcImNvbW1lbnRlZEJ5X3NldHRpbmdzX2Rpc2NvcmRJZFwiOiBcInt7Y29tbWVudGVkQnlfc2V0dGluZ3NfZGlzY29yZElkfX1cIixcbiAgICBcImNvbW1lbnRlZEJ5X3NldHRpbmdzX3RlbGVncmFtQ2hhdElkXCI6IFwie3tjb21tZW50ZWRCeV9zZXR0aW5nc190ZWxlZ3JhbUNoYXRJZH19XCJcbiAgfSxcbiAgXCJ7e2V4dHJhfX1cIjogW11cbn0i',
-            },
-          },
           webpush: { enabled: false, options: {} },
         },
       },
@@ -250,6 +301,7 @@ class Settings {
         'plex-full-scan': { schedule: '0 0 3 * * *' },
         'plex-refresh-token': { schedule: '0 0 5 * * *' },
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
+        'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
       },
     };
     if (initialSettings) {
@@ -285,8 +337,64 @@ class Settings {
     this.data.tautulli = data;
   }
 
+  get uptime(): ServiceSettings {
+    return this.data.uptime;
+  }
+
+  set uptime(data: ServiceSettings) {
+    this.data.uptime = data;
+  }
+
+  get downloads(): ServiceSettings {
+    return this.data.downloads;
+  }
+
+  set downloads(data: ServiceSettings) {
+    this.data.downloads = data;
+  }
+
+  get tdarr(): ServiceSettings {
+    return this.data.tdarr;
+  }
+
+  set tdarr(data: ServiceSettings) {
+    this.data.tdarr = data;
+  }
+
+  get bazarr(): ServiceSettings {
+    return this.data.bazarr;
+  }
+
+  set bazarr(data: ServiceSettings) {
+    this.data.bazarr = data;
+  }
+
   get radarr(): RadarrSettings[] {
     return this.data.radarr;
+  }
+
+  get prowlarr(): ServiceSettings {
+    return this.data.prowlarr;
+  }
+
+  set prowlarr(data: ServiceSettings) {
+    this.data.prowlarr = data;
+  }
+
+  get lidarr(): ServiceSettings {
+    return this.data.lidarr;
+  }
+
+  set lidarr(data: ServiceSettings) {
+    this.data.lidarr = data;
+  }
+
+  get overseerr(): ServiceSettings {
+    return this.data.overseerr;
+  }
+
+  set overseerr(data: ServiceSettings) {
+    this.data.overseerr = data;
   }
 
   set radarr(data: RadarrSettings[]) {
@@ -315,14 +423,20 @@ class Settings {
       applicationTitle: this.data.main.applicationTitle,
       applicationUrl: this.data.main.applicationUrl,
       localLogin: this.data.main.localLogin,
-      region: this.data.main.region,
-      originalLanguage: this.data.main.originalLanguage,
       cacheImages: this.data.main.cacheImages,
       vapidPublic: this.vapidPublic,
       enablePushRegistration: this.data.notifications.agents.webpush.enabled,
       locale: this.data.main.locale,
       emailEnabled: this.data.notifications.agents.email.enabled,
       newPlexLogin: this.data.main.newPlexLogin,
+      supportUrl: this.data.main.supportUrl,
+      supportEmail: this.data.main.supportEmail,
+      extendedHome: this.data.main.extendedHome,
+      enableSignUp: this.data.main.enableSignUp,
+      statsUrl: this.data.tautulli.externalUrl,
+      releaseSched: this.data.main.releaseSched,
+      statusUrl: this.data.uptime.externalUrl,
+      statusEnabled: this.data.uptime.enabled,
     };
   }
 

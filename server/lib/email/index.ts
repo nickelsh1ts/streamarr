@@ -5,8 +5,8 @@ import nodemailer from 'nodemailer';
 import { URL } from 'url';
 import { openpgpEncrypt } from './openpgpEncrypt';
 
-class PreparedEmail extends Email {
-  send: (settings) => void;
+class PreparedEmail {
+  private email: Email;
   public constructor(settings: NotificationAgentEmail, pgpKey?: string) {
     const { applicationUrl } = getSettings().main;
 
@@ -42,7 +42,7 @@ class PreparedEmail extends Email {
       );
     }
 
-    super({
+    this.email = new Email({
       message: {
         from: {
           name: settings.options.senderName,
@@ -52,6 +52,10 @@ class PreparedEmail extends Email {
       send: true,
       transport: transport,
     });
+  }
+
+  send(options) {
+    return this.email.send(options);
   }
 }
 
