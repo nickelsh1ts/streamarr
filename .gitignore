@@ -82,3 +82,7 @@ cypress/screenshots
 src/posts/*.md
 
 *nickflixtv*
+
+# pythoncache
+__pycache__
+*.py[cod]
