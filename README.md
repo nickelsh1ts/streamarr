@@ -18,15 +18,6 @@ Currently under active development Streamarr aims to be a complete (or at least 
 
 ---
 
-### What Streamarr is and Isn't
-- Streamarr is an invite management system.
-- Streamarr is a front end web interface for end users and sys-admins
-- Streamarr is a Streamer's best friend.
-
-- Streamarr is NOT meant for casual/occasional users.
-- Streamarr is NOT for users who do not own a Plex Server.
-- Streamarr is NOT meant for those who don't need help managing and accessing an entire suit of \*Arr apps and systems.
-
 ## Major Features
 
 - Admin Centre for easy to manage settings and users.
