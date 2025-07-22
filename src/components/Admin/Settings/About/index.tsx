@@ -1,11 +1,38 @@
+'use client';
+import Error from '@app/app/error';
+import Releases from '@app/components/Admin/Settings/About/Releases';
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
 import List from '@app/components/Common/List';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
-
-//TODO Integrate api and logic to fetch and display version, libraries, users, invites, data directory, and time zone
+import type {
+  SettingsAboutResponse,
+  StatusResponse,
+} from '@server/interfaces/api/settingsInterfaces';
+import useSWR from 'swr';
 
 const AboutSettings = () => {
+  const { data, error } = useSWR<SettingsAboutResponse>(
+    '/api/v1/settings/about'
+  );
+
+  const { data: status } = useSWR<StatusResponse>('/api/v1/status');
+
+  if (!data && !error) {
+    return <LoadingEllipsis />;
+  }
+
+  if (!data) {
+    return (
+      <Error
+        statusCode={500}
+        error={{ name: 'Failed to read status' }}
+        reset={null}
+      />
+    );
+  }
+
   return (
     <div>
       <Alert type="primary">
@@ -30,41 +57,72 @@ const AboutSettings = () => {
       <div className="mt-6">
         <List title={'About Streamarr'}>
           <div className="mt-4">
-            <Alert>
-              <p className="ml-3 text-sm leading-5">
-                You are running the <code>develop</code> branch of Streamarr,
-                which is only recommended for those contributing to development
-                or assisting with bleeding-edge testing.
-              </p>
-            </Alert>
+            {data.version.startsWith('develop-') && (
+              <Alert>
+                <p className="ml-3 text-sm leading-5">
+                  You are running the <code>develop</code> branch of Streamarr,
+                  which is only recommended for those contributing to
+                  development or assisting with bleeding-edge testing.
+                </p>
+              </Alert>
+            )}
           </div>
           <List.Item
             title={'Version'}
             className="flex flex-row items-center truncate"
           >
-            <code>0.00.1</code>
-            <a
-              href="https://github.com/nickelsh1ts/streamarr/releases"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Badge
-                badgeType="success"
-                className="ml-2 !cursor-pointer transition hover:bg-opacity-70 text-white"
-              >
-                Up to Date
-              </Badge>
-            </a>
+            <code>{data.version.replace('develop-', '')}</code>
+            {status?.commitTag !== 'local' &&
+              (status?.updateAvailable ? (
+                <a
+                  href={
+                    data.version.startsWith('develop-')
+                      ? `https://github.com/nickelsh1ts/streamarr/compare/${status.commitTag}...develop`
+                      : 'https://github.com/nickelsh1ts/streamarr/releases'
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Badge
+                    badgeType="warning"
+                    className="ml-2 !cursor-pointer transition hover:bg-yellow-400"
+                  >
+                    Out of date
+                  </Badge>
+                </a>
+              ) : (
+                <a
+                  href={
+                    data.version.startsWith('develop-')
+                      ? 'https://github.com/nickelsh1ts/streamarr/commits/develop'
+                      : 'https://github.com/nickelsh1ts/streamarr/releases'
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Badge
+                    badgeType="success"
+                    className="ml-2 !cursor-pointer transition hover:bg-green-400"
+                  >
+                    Up to date
+                  </Badge>
+                </a>
+              ))}
           </List.Item>
-          <List.Item title="Total Libraries">10</List.Item>
-          <List.Item title="Total Users">82</List.Item>
-          <List.Item title="Total Invites">36</List.Item>
+          <List.Item title="Total Users">
+            <code>{data.totalUsers}</code>
+          </List.Item>
+          <List.Item title="Total Invites">
+            <code>{data.totalInvites}</code>
+          </List.Item>
           <List.Item title="Data Directory">
-            <code>/app/config</code>
+            <code>{data.appDataPath}</code>
           </List.Item>
-          <List.Item title="Time Zone">
-            <code>America/Toronto</code>
-          </List.Item>
+          {data.tz && (
+            <List.Item title="Time Zone">
+              <code>{data.tz}</code>
+            </List.Item>
+          )}
         </List>
       </div>
       <div className="mt-6">
@@ -125,6 +183,9 @@ const AboutSettings = () => {
             </a>
           </List.Item>
         </List>
+      </div>
+      <div className="section">
+        <Releases currentVersion={data.version} />
       </div>
     </div>
   );

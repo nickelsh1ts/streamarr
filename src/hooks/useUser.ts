@@ -19,18 +19,15 @@ export interface User {
   userType: number;
   createdAt: Date;
   updatedAt: Date;
+  inviteQuotaLimit?: number;
+  inviteQuotaDays?: number;
   inviteCount: number;
-  inviteLimit: number;
-  invitesSent: number;
   settings?: UserSettings;
 }
 
 type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 
 export interface UserSettings {
-  discordId?: string;
-  region?: string;
-  originalLanguage?: string;
   locale?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
 }

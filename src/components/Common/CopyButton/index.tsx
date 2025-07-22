@@ -1,4 +1,5 @@
 'use client';
+import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/solid';
@@ -7,10 +8,12 @@ import useClipboard from 'react-use-clipboard';
 
 const CopyButton = ({
   textToCopy,
+  itemTitle,
   size = 'md',
   grouped = true,
 }: {
   textToCopy: string;
+  itemTitle?: string;
   size?: 'sm' | 'md' | 'lg';
   grouped?: boolean;
 }) => {
@@ -22,22 +25,29 @@ const CopyButton = ({
     if (isCopied) {
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
-        title: 'Copied to clipboard!',
+        title: itemTitle
+          ? `Copied ${itemTitle} to clipboard!`
+          : 'Copied to clipboard',
         type: 'primary',
       });
     }
-  }, [isCopied]);
+  }, [isCopied, itemTitle]);
 
   return (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        setCopied();
-      }}
-      className={`btn btn-primary btn-${size} ${grouped && 'rounded-none only:rounded-md last:rounded-r-md'}`}
+    <Tooltip
+      content="Copy to Clipboard"
+      tooltipConfig={{ followCursor: true, placement: 'top-end' }}
     >
-      <ClipboardDocumentIcon className="size-5" />
-    </button>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          setCopied();
+        }}
+        className={`btn btn-primary btn-${size} ${grouped && 'rounded-none only:rounded-md last:rounded-r-md'}`}
+      >
+        <ClipboardDocumentIcon className="size-5" />
+      </button>
+    </Tooltip>
   );
 };
 

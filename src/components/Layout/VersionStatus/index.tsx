@@ -1,4 +1,4 @@
-import { Permission, useUser } from '@app/hooks/useUser';
+'use client';
 import {
   ArrowUpCircleIcon,
   BeakerIcon,
@@ -14,7 +14,6 @@ interface VersionStatusProps {
 }
 
 const VersionStatus = ({ onClick }: VersionStatusProps) => {
-  const { hasPermission } = useUser();
   const { data } = useSWR<StatusResponse>('/api/v1/status', {
     refreshInterval: 60 * 1000,
   });
@@ -32,7 +31,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
 
   return (
     <Link
-      href={`${hasPermission(Permission.ADMIN) ? '/admin/settings/about' : '/help'}`}
+      href="/admin/settings/about"
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && onClick) {

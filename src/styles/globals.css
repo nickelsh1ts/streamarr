@@ -153,3 +153,63 @@
     @apply hidden;
   }
 }
+
+.react-select-container {
+  @apply w-full;
+}
+
+.react-select-container .react-select__control {
+  @apply bg-base-100 border border-primary rounded-md text-primary-content hover:border-primary shadow-none;
+}
+
+.react-select-container .react-select__input {
+  @apply !text-primary-content p-2;
+}
+
+.react-select__value-container {
+  @apply p-2 gap-2;
+}
+
+.react-select-container .react-select__multi-value {
+  @apply border border-primary rounded-md bg-primary;
+}
+
+.react-select__multi-value__label {
+  @apply !text-primary-content text-sm px-2 py-1;
+}
+
+.react-select__multi-value__remove {
+  @apply hover:!bg-secondary hover:!bg-opacity-70 hover:!text-error px-1 rounded-r-md;
+}
+
+.react-select-container .react-select__indicator-separator {
+  @apply bg-neutral-500 my-2 mx-2;
+}
+
+.react-select-container .react-select__indicator {
+  @apply text-white mx-2 hover:text-neutral-600 hover:cursor-pointer;
+}
+
+.react-select-container .react-select__menu {
+  @apply bg-base-100 rounded-md;
+}
+
+.react-select__menu-list {
+  @apply bg-base-100 border border-primary px-1 rounded-md mt-2 py-2 text-sm;
+}
+
+.react-select__option {
+  @apply p-2;
+}
+
+.react-select__option--is-focused {
+  @apply !bg-primary rounded-md text-primary-content;
+}
+
+.react-select__option--is-selected {
+  @apply !bg-primary text-primary-content;
+}
+
+.react-select__option:active {
+  @apply !bg-primary text-primary-content;
+}

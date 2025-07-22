@@ -66,7 +66,7 @@ function Button<P extends ElementTypes = 'button'>(
       buttonStyle.push('btn-ghost');
       break;
     default:
-      buttonStyle.push('btn-primary');
+      buttonStyle.push('btn-neutral');
   }
 
   switch (buttonSize) {

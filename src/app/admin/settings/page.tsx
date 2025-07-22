@@ -1,4 +1,4 @@
-import GeneralSettings from '@app/components/Admin/Settings/General';
+import Settings from '@app/components/Admin/Settings/General';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { Metadata } from 'next';
 
@@ -16,9 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-//TODO complete admin settings functionality
-
 const SettingsPage = () => {
-  return <GeneralSettings />;
+  return <Settings />;
 };
 export default SettingsPage;

@@ -71,12 +71,13 @@ const WelcomeModal = () => {
   return (
     <Modal
       size="sm"
-      onClose={() => {
+      onCancel={() => {
         setValue(true);
       }}
       show={modalState}
-      content={<WelcomeModalContent />}
-    />
+    >
+      <WelcomeModalContent />
+    </Modal>
   );
 };
 

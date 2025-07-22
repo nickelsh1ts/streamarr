@@ -45,7 +45,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             backgroundImages={
               backdrops?.map(
                 (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
-              ) ?? []
+              ) ?? ['/img/people-cinema-watching.jpg']
             }
           />
         </div>

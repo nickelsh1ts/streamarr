@@ -31,12 +31,12 @@ const notificationTabs = [
 
 const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
   return (
-    <form className="my-6">
+    <div className="my-6">
       <h3 className="text-2xl font-extrabold">Notification Settings</h3>
       <p className="mb-5">Configure and enable notification agents.</p>
       <AdminTabs tabType="button" AdminRoutes={notificationTabs} />
       <div className="mt-4">{children}</div>
-    </form>
+    </div>
   );
 };
 

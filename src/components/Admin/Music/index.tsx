@@ -1,9 +1,13 @@
 'use client';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import type { ServiceSettings } from '@server/lib/settings';
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 const AdminMusic = () => {
   const [hostname, setHostname] = useState('');
+  const { data } = useSWR<ServiceSettings>('/api/v1/settings/lidarr');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -11,12 +15,16 @@ const AdminMusic = () => {
     }
   }, [setHostname]);
 
+  if (!data) {
+    <LoadingEllipsis />;
+  }
+
   return (
     <div className="relative mt-2">
       <DynamicFrame
         title={'music'}
-        domainURL={process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}
-        basePath={'/admin/lidarr'}
+        domainURL={hostname}
+        basePath={data?.urlBase}
         newBase={'/admin/music'}
       ></DynamicFrame>
     </div>

@@ -3,8 +3,6 @@ import useSettings from '@app/hooks/useSettings';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-//TODO Update and implement status link from support settings
-
 const PopularTopics = () => {
   const { currentSettings } = useSettings();
   return (
@@ -31,15 +29,17 @@ const PopularTopics = () => {
             <DocumentTextIcon className="w-5" /> Requesting new media
           </Link>
         </div>
-        <p className="mb-4 text-sm">
-          Having issues connecting? Check out our{' '}
-          <Link
-            href={`//status.${currentSettings.applicationTitle.toLowerCase()}.com/status/services`}
-            className="link-primary font-extrabold mb-4"
-          >
-            Status Page
-          </Link>
-        </p>
+        {currentSettings.statusUrl && currentSettings.statusEnabled && (
+          <p className="mb-4 text-sm">
+            Having issues connecting? Check out our{' '}
+            <Link
+              href={currentSettings.statusUrl}
+              className="link-primary font-extrabold mb-4"
+            >
+              Status Page
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

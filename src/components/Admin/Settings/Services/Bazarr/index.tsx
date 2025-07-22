@@ -1,56 +1,147 @@
 'use client';
 import Button from '@app/components/Common/Button';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Toast from '@app/components/Toast';
+import {
+  ArrowDownTrayIcon,
+  CheckBadgeIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import type { ServiceSettings } from '@server/lib/settings';
+import axios from 'axios';
+import { Field, Formik } from 'formik';
+import useSWR from 'swr';
+import * as Yup from 'yup';
 
 const ServicesBazarr = () => {
-  const [hostname, setHostname] = useState('');
+  const { data: dataBazarr, mutate: revalidateBazarr } =
+    useSWR<ServiceSettings>('/api/v1/settings/bazarr');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
-    }
-  }, [setHostname]);
+  const SettingsSchema = Yup.object().shape({
+    urlBase: Yup.string()
+      .test(
+        'leading-slash',
+        'URL base must have a leading slash',
+        (value) => !value || value.startsWith('/')
+      )
+      .test(
+        'no-trailing-slash',
+        'URL must not end in a trailing slash',
+        (value) => !value || !value.endsWith('/')
+      ),
+  });
+
+  if (!dataBazarr) {
+    return <LoadingEllipsis />;
+  }
 
   return (
-    <>
-      <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
-        <label htmlFor="service">
-          Enable Bazarr<span className="ml-1 text-error">*</span>
-        </label>
-        <div className="sm:col-span-2">
-          <div className="flex">
-            <input
-              type="checkbox"
-              className="checkbox checkbox-sm checkbox-primary rounded-md"
-            />
-          </div>
-        </div>
-        <label htmlFor="BazarrBasePath" className="text-label">
-          Bazarr Base Path
-        </label>
-        <div className="sm:col-span-2">
-          <div className="flex">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
-              {process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}
-            </span>
-            <input
-              className="input input-sm input-primary rounded-md w-1/2 rounded-l-none"
-              id="senderName"
-              name="senderName"
-              type="text"
-              placeholder="/admin/bazarr"
-            />
-          </div>
-        </div>
+    <div className="max-w-6xl mb-10">
+      <div className="mb-6">
+        <h3 className="text-2xl font-extrabold">Bazarr Settings</h3>
+        <p className="mb-5">
+          Optionally configure the settings for your Bazarr server.
+        </p>
       </div>
-      <div className="divider divider-primary mb-0 col-span-full" />
-      <div className="flex justify-end col-span-3 mt-4">
-        <Button type="submit" buttonSize="sm" buttonType="primary">
-          <ArrowDownTrayIcon className="size-4 mr-2" /> Save Changes
-        </Button>
-      </div>
-    </>
+      <Formik
+        initialValues={{
+          enabled: dataBazarr?.enabled ?? false,
+          urlBase: dataBazarr?.urlBase,
+        }}
+        validationSchema={SettingsSchema}
+        onSubmit={async (values) => {
+          try {
+            await axios.post('/api/v1/settings/Bazarr', {
+              enabled: values.enabled,
+              urlBase: values.urlBase,
+            } as ServiceSettings);
+
+            Toast({
+              title: 'Bazarr settings saved successfully!',
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          } catch {
+            Toast({
+              title: 'Something went wrong while saving Bazarr settings.',
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          } finally {
+            revalidateBazarr();
+          }
+        }}
+      >
+        {({
+          errors,
+          touched,
+          values,
+          handleSubmit,
+          setFieldValue,
+          isSubmitting,
+          isValid,
+        }) => {
+          return (
+            <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="service">
+                  Enable Bazarr<span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      type="checkbox"
+                      id="enabled"
+                      name="enabled"
+                      onChange={() => {
+                        setFieldValue('enabled', !values.enabled);
+                      }}
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
+                  {errors.enabled &&
+                    touched.enabled &&
+                    typeof errors.enabled === 'string' && (
+                      <div className="text-error">{errors.enabled}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="urlBase">URL Base</label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      className="input input-sm input-primary rounded-md w-full"
+                      id="urlBase"
+                      name="urlBase"
+                      inputMode="url"
+                      type="text"
+                    />
+                  </div>
+                  {errors.urlBase && touched.urlBase && (
+                    <div className="text-error">{errors.urlBase}</div>
+                  )}
+                </div>
+              </div>
+              <div className="divider divider-primary mb-0 col-span-full" />
+              <div className="flex justify-end col-span-3 mt-4">
+                <span className="ml-3 inline-flex rounded-md shadow-sm">
+                  <Button
+                    buttonType="primary"
+                    buttonSize="sm"
+                    type="submit"
+                    disabled={isSubmitting || !isValid}
+                  >
+                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                  </Button>
+                </span>
+              </div>
+            </form>
+          );
+        }}
+      </Formik>
+    </div>
   );
 };
 export default ServicesBazarr;

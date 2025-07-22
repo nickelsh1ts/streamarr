@@ -10,7 +10,13 @@ type ToastPosition =
   | 'bottom-left'
   | 'bottom-center'
   | 'bottom-right';
-type ToastType = 'default' | 'primary' | 'error' | 'warning' | 'success';
+type ToastType =
+  | 'default'
+  | 'primary'
+  | 'error'
+  | 'warning'
+  | 'success'
+  | 'info';
 
 interface ToastProps {
   icon?: Renderable;
@@ -26,16 +32,19 @@ interface ToastProps {
   };
 }
 
-const Toast = ({
-  icon,
-  title,
-  message,
-  duration = 5000,
-  position = 'top-right',
-  classnames = '',
-  type = 'default',
-  ariaProps = { role: 'status', 'aria-live': 'polite' },
-}: ToastProps) => {
+const Toast = (
+  {
+    icon,
+    title,
+    message,
+    duration = 5000,
+    position = 'top-right',
+    classnames = '',
+    type = 'default',
+    ariaProps = { role: 'status', 'aria-live': 'polite' },
+  }: ToastProps,
+  onShow?: (id: string) => void
+) => {
   const toastStyle = [];
   const ringStyle = [];
   switch (type) {
@@ -63,13 +72,19 @@ const Toast = ({
       );
       ringStyle.push('focus:ring-success-content');
       break;
+    case 'info':
+      toastStyle.push(
+        'bg-info ring-info-content ring-opacity-30 text-info-content'
+      );
+      ringStyle.push('focus:ring-info-content');
+      break;
     default:
       toastStyle.push(
         'bg-base-100 ring-base-content ring-opacity-30 text-base-content'
       );
       ringStyle.push('focus:ring-base-content');
   }
-  toast.custom(
+  const id = toast.custom(
     (t) => (
       <div
         className={`${
@@ -107,6 +122,10 @@ const Toast = ({
       },
     }
   );
+  if (onShow) onShow(id);
+  return id;
 };
+
+export const dismissToast = (id: string) => toast.dismiss(id);
 
 export default Toast;

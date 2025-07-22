@@ -7,6 +7,9 @@ interface SensitiveInputBaseProps {
   buttonSize?: 'sm' | 'md' | 'lg';
   id?: string;
   name?: string;
+  className?: string;
+  disabled?: boolean;
+  placeholder?: string;
 }
 
 interface CustomInputProps
@@ -19,6 +22,7 @@ interface CustomFieldProps
   extends React.ComponentProps<typeof Field>,
     SensitiveInputBaseProps {
   as: 'field';
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 type SensitiveInputProps = CustomInputProps | CustomFieldProps;
@@ -29,27 +33,32 @@ const SensitiveInput = ({
   ...props
 }: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
-  const isInput = as === 'input';
-  const Component = isInput ? 'input' : Field;
-  // Type guards for type and className
-  const type = 'type' in props ? props.type : undefined;
-  const className = 'className' in props ? props.className : undefined;
-  const componentProps = isInput
-    ? props
-    : {
-        ...props,
-        as: type === 'textarea' && !isHidden ? 'textarea' : undefined,
-      };
+  const Component = as === 'input' ? 'input' : Field;
+  const componentProps =
+    as === 'input'
+      ? props
+      : {
+          ...props,
+          as:
+            'type' in props && props.type === 'textarea' && !isHidden
+              ? 'textarea'
+              : undefined,
+        };
   return (
     <>
       <Component
+        autoComplete="off"
+        data-1pignore="true"
+        data-lpignore="true"
+        data-bwignore="true"
         {...componentProps}
-        className={`rounded-r-none ${className ?? ''}`}
+        className={`rounded-r-none ${componentProps.className ?? ''}`}
+        placeholder={componentProps.placeholder}
         type={
           isHidden
             ? 'password'
-            : type !== 'password'
-              ? (type ?? 'text')
+            : 'type' in props && props.type !== 'password'
+              ? (props.type ?? 'text')
               : 'text'
         }
       />

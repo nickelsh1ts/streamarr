@@ -6,7 +6,7 @@ import Topics from '@app/components/Help/Topics';
 import Footer from '@app/components/Layout/Footer';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
-//TODO Add app settings and conditional logic to turn on/off help
+//TODO update help articles with current and up to date information
 
 const Help = () => {
   return (

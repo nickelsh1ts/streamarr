@@ -7,12 +7,20 @@ const defaultSettings = {
   applicationUrl: '',
   localLogin: true,
   region: '',
-  originalLanguage: '',
   cacheImages: false,
   enablePushRegistration: false,
+  vapidPublic: '',
   locale: 'en',
   emailEnabled: false,
   newPlexLogin: true,
+  supportUrl: '',
+  supportEmail: '',
+  extendedHome: true,
+  releaseSched: false,
+  enableSignUp: false,
+  statsUrl: '',
+  statusUrl: '',
+  statusEnabled: false,
 };
 
 export interface SettingsContextProps {

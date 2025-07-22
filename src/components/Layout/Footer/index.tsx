@@ -1,11 +1,16 @@
 'use client';
 import BackToTopBtn from '@app/components/Common/BackToTopBtn';
+import useSettings from '@app/hooks/useSettings';
+import { useUser, Permission } from '@app/hooks/useUser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
 function Footer() {
   const [currentYear] = useState(() => new Date().getFullYear());
+  const { currentSettings } = useSettings();
+  const { user, loading, hasPermission } = useUser();
+
   return (
     <footer
       id="footer"
@@ -109,21 +114,27 @@ function Footer() {
           <Link className="link-neutral text-decoration-none" href="/help/">
             Help Centre
           </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href={`//status.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com/status/services`}
-          >
-            Status
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href={`mailto:info@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
-          >
-            Contact Us
-          </Link>
-          <Link className="link-neutral text-decoration-none" href="/admin">
-            Admin Centre
-          </Link>
+          {currentSettings.statusEnabled && currentSettings.statsUrl && (
+            <Link
+              className="link-neutral text-decoration-none"
+              href={currentSettings.statusUrl}
+            >
+              Status
+            </Link>
+          )}
+          {currentSettings.supportEmail && (
+            <Link
+              className="link-neutral text-decoration-none"
+              href={`mailto:${currentSettings.supportEmail}`}
+            >
+              Contact Us
+            </Link>
+          )}
+          {((!user && !loading) || hasPermission(Permission.ADMIN)) && (
+            <Link className="link-neutral text-decoration-none" href="/admin">
+              Admin Centre
+            </Link>
+          )}
         </nav>
       </div>
       <p

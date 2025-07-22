@@ -46,34 +46,14 @@ const Setup = () => {
 
   return (
     <div className="relative flex min-h-screen flex-col justify-center py-12">
-      {backdrops ? (
-        <ImageFader
-          rotationSpeed={6000}
-          backgroundImages={
-            backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
-            ) ?? []
-          }
-        />
-      ) : (
-        <div>
-          <div
-            className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
-          >
-            <Image
-              unoptimized
-              className="absolute inset-0 h-full w-full"
-              style={{ objectFit: 'cover' }}
-              alt=""
-              src={'/img/people-cinema-watching.jpg'}
-              fill
-            />
-            <div
-              className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
-            />
-          </div>
-        </div>
-      )}
+      <ImageFader
+        rotationSpeed={6000}
+        backgroundImages={
+          backdrops?.map(
+            (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+          ) ?? ['/img/people-cinema-watching.jpg']
+        }
+      />
       <div className="absolute top-4 right-4 z-50">
         <LanguagePicker />
       </div>

@@ -79,7 +79,7 @@ h2.react-datepicker__current-month {
   @apply text-primary-content bg-primary backdrop-blur-md bg-opacity-30 hover:text-neutral-content p-0.5 rounded active:text-primary focus:text-primary;
 }
 .rbc-overlay {
-  @apply bg-primary backdrop-blur-md bg-opacity-30 border-secondary rounded-lg;
+  @apply bg-secondary backdrop-blur-md bg-opacity-30 border-secondary rounded-lg;
 }
 
 .rbc-overlay-header {

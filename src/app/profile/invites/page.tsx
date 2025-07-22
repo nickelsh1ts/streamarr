@@ -1,5 +1,5 @@
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
-import Invite from 'components/Invite';
+import Invite from '@app/components/InviteList';
 import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {

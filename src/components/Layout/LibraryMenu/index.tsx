@@ -11,6 +11,7 @@ import {
   VideoCameraIcon,
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
 
@@ -18,6 +19,7 @@ interface MenuLinksProps {
   href: string;
   title: string;
   icon: React.ReactNode;
+  regExp: RegExp;
 }
 
 interface LibraryLinksProps {
@@ -37,11 +39,13 @@ const MenuLinks: MenuLinksProps[] = [
     href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
     title: 'Discover',
     icon: <NewspaperIcon className="w-7 h-7" />,
+    regExp: /(?=(\/(.*)=home&pivot=discover))/,
   },
   {
     href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
     title: 'Watch List',
     icon: <BookmarkIcon className="w-7 h-7" />,
+    regExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
   },
 ];
 
@@ -111,7 +115,8 @@ const LibraryLinks: LibraryLinksProps[] = [
 //TODO Implement api calls and logic to render library menu items from plex integration
 
 const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
-  const [currentUrl, setCurrentUrl] = useState('');
+  const pathname = usePathname();
+  const [currentUrl, setCurrentUrl] = useState(pathname);
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
     setCurrentUrl(lastUrl);
@@ -147,6 +152,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
           title={item.title}
           icon={item.icon}
           url={url}
+          regExp={item.regExp}
         />
       ))}
       {libraryTypes.map((type) => {
@@ -192,6 +198,7 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
             title={Links[0].title}
             icon={icon}
             url={url}
+            regExp={Links[0].regExp}
           />
         ) : null;
       })}
@@ -208,6 +215,7 @@ interface SingleItemProps {
   className?: string;
   linkclasses?: string;
   url: string;
+  regExp: RegExp;
 }
 
 export const SingleItem = ({
@@ -219,11 +227,10 @@ export const SingleItem = ({
   className,
   linkclasses,
   url,
+  regExp,
 }: SingleItemProps) => {
-  const isHome = href === '/watch/web/index.html#!';
-  const isActive = isHome
-    ? /^\/watch\/web\/index\.html#!?\/?$/.test(url)
-    : url && href && url.includes(href);
+  const isActive = regExp.test(url);
+
   return (
     <li
       className={`pointer-events-auto ${className ? className : ''}`}

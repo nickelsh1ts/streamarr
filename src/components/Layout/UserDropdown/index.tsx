@@ -10,8 +10,6 @@ interface UserDropdownProps {
   tooltip?: boolean;
 }
 
-//TODO Add additional logic to update stats link from tautulli settings & Get support link from support settings
-
 const UserDropdown = ({
   dropUp = false,
   tooltip = false,
@@ -27,11 +25,11 @@ const UserDropdown = ({
         tiptitle="Account"
         dropdownIcon={
           <CachedImage
-            className="h-7 w-7 rounded-full ring-2 ring-primary-content mr-1"
+            className="h-9 w-9 rounded-full mr-1"
             src={user?.avatar}
             alt=""
-            width={28}
-            height={28}
+            width={36}
+            height={36}
           />
         }
         dropUp={dropUp}
@@ -50,16 +48,27 @@ const UserDropdown = ({
         >
           Account Settings
         </DropDownMenu.Item>
-        <DropDownMenu.Item
-          href={`https://stats.${currentSettings.applicationTitle.toLowerCase() || 'streamarr'}.com`}
-          target="_blank"
-        >
-          Watch Statistics
-        </DropDownMenu.Item>
+        {currentSettings?.statsUrl && (
+          <DropDownMenu.Item
+            href={currentSettings?.statsUrl.toLowerCase()}
+            target="_blank"
+          >
+            Watch History
+          </DropDownMenu.Item>
+        )}
         <DropDownMenu.Item href="/help">Help Centre</DropDownMenu.Item>
-        <DropDownMenu.Item href="https://discord.gg/ZSTrRJMcDS" target="_blank">
-          Get Support
-        </DropDownMenu.Item>
+        {(currentSettings.supportUrl || currentSettings.supportEmail) && (
+          <DropDownMenu.Item
+            href={
+              currentSettings.supportUrl
+                ? currentSettings.supportUrl
+                : `mailto:${currentSettings.supportEmail.toLowerCase()}`
+            }
+            target="_blank"
+          >
+            Get Support
+          </DropDownMenu.Item>
+        )}
         <DropDownMenu.Item href="/logout" divide="before">
           Sign Out of {currentSettings.applicationTitle}
         </DropDownMenu.Item>

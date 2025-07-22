@@ -119,12 +119,9 @@ const ComingSoon = () => {
   const router = useRouter();
 
   return (
-    <Modal
-      size="lg"
-      onClose={() => router.back()}
-      show={modalState}
-      content={<ComingSoonContent />}
-    />
+    <Modal size="lg" onCancel={() => router.back()} show={modalState}>
+      <ComingSoonContent />
+    </Modal>
   );
 };
 

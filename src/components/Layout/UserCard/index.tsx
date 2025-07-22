@@ -55,7 +55,7 @@ const UserCard = () => {
           Home
         </Link>
       )}
-      {hasPermission(Permission.ADMIN) && (
+      {hasPermission(Permission.ADMIN) ? (
         <Link
           className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
           href="/admin"
@@ -63,7 +63,15 @@ const UserCard = () => {
           <LockClosedIcon className="size-5 inline-flex" />
           Admin Center
         </Link>
-      )}
+      ) : hasPermission(Permission.MANAGE_USERS) ? (
+        <Link
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
+          href="/admin/users"
+        >
+          <LockClosedIcon className="size-5 inline-flex" />
+          Manage Users
+        </Link>
+      ) : null}
     </div>
   );
 };

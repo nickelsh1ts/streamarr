@@ -92,7 +92,11 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
             }
             passHref
           >
-            <Button buttonSize="sm" className="max-lg:w-full">
+            <Button
+              buttonSize="sm"
+              buttonType="primary"
+              className="max-lg:w-full"
+            >
               <CogIcon className="size-5" />
               <span>Edit Settings</span>
             </Button>
@@ -107,7 +111,11 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               }
               passHref
             >
-              <Button buttonSize="sm" className="max-lg:w-full">
+              <Button
+                buttonSize="sm"
+                buttonType="primary"
+                className="max-lg:w-full"
+              >
                 <UserIcon className="size-5" />
                 <span>View Profile</span>
               </Button>

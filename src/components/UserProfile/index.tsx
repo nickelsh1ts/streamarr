@@ -10,8 +10,9 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Error from '@app/app/error';
 import useSWR from 'swr';
+import ProgressCircle from '@app/components/Common/ProgressCircle';
 
-//TODO complete the user profile functionality, including API calls and state management and invite management
+//TODO create a request more invites feature
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
@@ -20,7 +21,6 @@ const UserProfile = () => {
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: invites, error: inviteError } = useSWR<UserInvitesResponse>(
     user &&
       (user.id === currentUser?.id ||
@@ -31,7 +31,6 @@ const UserProfile = () => {
       ? `/api/v1/user/${user?.id}/invites?take=10&skip=0`
       : null
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: quota } = useSWR<QuotaResponse>(
     user &&
       (user.id === currentUser?.id ||
@@ -44,7 +43,7 @@ const UserProfile = () => {
   );
 
   if (!user && !error) {
-    return <LoadingEllipsis fixed />;
+    return <LoadingEllipsis />;
   }
 
   if (!user) {
@@ -58,57 +57,103 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="relative">
-        <dl className="grid grid-cols-2 gap-5 lg:grid-cols-3">
-          <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
-            <dt className="truncate text-sm font-bold text-gray-300">
-              Invites Remaining
-            </dt>
-            <dd className="mt-1 text-3xl font-semibold text-white">
+      {quota &&
+        (user.id === currentUser?.id ||
+          currentHasPermission(
+            [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+            { type: 'and' }
+          )) && (
+          <div className="relative">
+            <dl className="grid grid-cols-2 gap-5 lg:grid-cols-3">
+              <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
+                <dt className="truncate text-sm font-bold text-gray-300">
+                  Total Invites
+                </dt>
+                <dd className="mt-1 text-3xl font-semibold text-white">
+                  <Link
+                    className="link-hover"
+                    href={
+                      user.id === currentUser?.id
+                        ? '/profile/invites?filter=all'
+                        : `/admin/users/${user?.id}/invites?filter=all`
+                    }
+                  >
+                    {user.inviteCount || 'None'}
+                  </Link>
+                </dd>
+              </div>
+              <div
+                className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                  quota.invite.restricted
+                    ? 'bg-gradient-to-t from-red-900 to-transparent ring-red-500'
+                    : 'ring-gray-700'
+                } sm:p-6`}
+              >
+                <dt
+                  className={`truncate text-sm font-bold text-gray-300 ${
+                    quota.invite.restricted ? 'text-red-500' : 'text-gray-300'
+                  }`}
+                >
+                  {quota.invite.limit
+                    ? `Invites (${quota.invite.days === 0 || quota.invite.limit === -1 ? 'Lifetime' : `past ${quota?.invite.days} day${quota.invite.days > 1 ? 's' : ''}`})`
+                    : 'Invites'}
+                </dt>
+                <dd
+                  className={`mt-1 text-sm font-semibold items-center flex text-white ${
+                    quota.invite.restricted ? 'text-red-500' : 'text-white'
+                  }`}
+                >
+                  {quota.invite.limit > 0 ? (
+                    <>
+                      <ProgressCircle
+                        progress={Math.round(
+                          ((quota?.invite.remaining ?? 0) /
+                            (quota?.invite.limit ?? 1)) *
+                            100
+                        )}
+                        useHeatLevel
+                        className="mr-2 h-8 w-8"
+                      />
+                      <div>
+                        <span className="text-3xl font-semibold">
+                          {quota.invite.remaining} of {quota.invite.limit}
+                        </span>{' '}
+                        remaining
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-3xl font-semibold">
+                      {quota.invite.limit === -1 ? 'Unlimited' : 'None'}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        )}
+      {(user.id === currentUser?.id ||
+        currentHasPermission(
+          [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
+          { type: 'or' }
+        )) &&
+        (!invites || !!invites.results.length) &&
+        !inviteError && (
+          <>
+            <div className="flex my-4 relative">
               <Link
-                className="link-hover"
+                className="flex items-center gap-2 link-primary"
                 href={
                   user.id === currentUser?.id
                     ? '/profile/invites?filter=all'
                     : `/admin/users/${user?.id}/invites?filter=all`
                 }
               >
-                {currentUser.inviteLimit - currentUser.invitesSent || 'none'}
+                <span className="text-2xl font-bold">Recent Invites</span>
+                <ArrowRightCircleIcon className="size-5" />
               </Link>
-            </dd>
-          </div>
-          <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
-            <dt className="truncate text-sm font-bold text-gray-300">
-              Invites Sent
-            </dt>
-            <dd className="mt-1 text-3xl font-semibold text-white">
-              <Link
-                className="link-hover"
-                href={
-                  user.id === currentUser?.id
-                    ? '/profile/invites?filter=all'
-                    : `/admin/users/${user?.id}/invites?filter=all`
-                }
-              >
-                {currentUser.invitesSent}
-              </Link>
-            </dd>
-          </div>
-        </dl>
-      </div>
-      <div className="flex my-4 relative z-40">
-        <Link
-          className="flex items-center gap-2 link-primary"
-          href={
-            user.id === currentUser?.id
-              ? '/profile/invites?filter=all'
-              : `/admin/users/${user?.id}/invites?filter=all`
-          }
-        >
-          <span className="text-2xl font-bold">Users Invited</span>
-          <ArrowRightCircleIcon className="size-5" />
-        </Link>
-      </div>
+            </div>
+          </>
+        )}
     </>
   );
 };

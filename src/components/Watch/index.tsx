@@ -7,14 +7,27 @@ import { createPortal } from 'react-dom';
 const Watch = ({ children, ...props }) => {
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
-  const mountNode = contentRef?.contentWindow?.document?.body;
-  const innerFrame = contentRef?.contentWindow;
+  let mountNode = null;
+  let innerFrame = null;
+  try {
+    if (
+      contentRef?.contentWindow &&
+      contentRef?.contentWindow.location.origin === window.location.origin
+    ) {
+      mountNode = contentRef.contentWindow.document.body;
+      innerFrame = contentRef.contentWindow;
+    }
+  } catch {
+    // Cross-origin access error, ignore or handle gracefully
+    mountNode = null;
+    innerFrame = null;
+  }
 
   const [hostname, setHostname] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const { currentSettings } = useSettings();
 
-  // Track the parent window's location for the iframe src (polling approach)
+  // Track the parent window's location for the iframe src
   useEffect(() => {
     let lastParentUrl = window.location.pathname + window.location.hash;
     let lastIframeUrl = '';
@@ -46,11 +59,16 @@ const Watch = ({ children, ...props }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      const div = document
-        ?.getElementsByTagName('iframe')[0]
-        ?.contentDocument?.querySelector(
-          "[class^='PlayerContainer-container-']"
-        );
+      let div = null;
+      try {
+        div = document
+          ?.getElementsByTagName('iframe')[0]
+          ?.contentDocument?.querySelector(
+            "[class^='PlayerContainer-container-']"
+          );
+      } catch {
+        // Cross-origin, div remains null
+      }
       const menu = document
         ?.getElementsByTagName('iframe')[0]
         ?.contentDocument?.getElementById('sidebarMenu');
@@ -119,7 +137,6 @@ const Watch = ({ children, ...props }) => {
     }
   }, [setHostname]);
 
-  // Remove key from iframe and update src imperatively
   useEffect(() => {
     if (
       contentRef &&

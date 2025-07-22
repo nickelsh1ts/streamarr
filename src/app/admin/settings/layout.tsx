@@ -1,10 +1,17 @@
 'use client';
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
+import useRouteGuard from '@app/hooks/useRouteGuard';
+import { Permission } from '@server/lib/permissions';
+import type { ServiceSettings } from '@server/lib/settings';
+import useSWR from 'swr';
 
 type SettingsLayoutProps = { children: React.ReactNode };
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
+  const { data } = useSWR<ServiceSettings[]>('/api/v1/settings/services');
+  useRouteGuard(Permission.ADMIN);
+
   const AdminRoutes: AdminRoute[] = [
     {
       text: 'General',
@@ -23,8 +30,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
     },
     {
       text: 'Overseerr',
-      route: '/request/settings',
-      regex: /^\/request\/settings/,
+      route: '/admin/settings/overseerr/settings',
+      regex: /^\/admin\/settings\/overseerr\/?(.*)?/,
+      hidden: data?.some(
+        (d) => d.id.includes('overseerr') && (!d.enabled || !d.urlBase)
+      ),
     },
     {
       text: 'Services',

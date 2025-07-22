@@ -1,21 +1,22 @@
 'use client';
 import Sidebar from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
-import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import BackButton from '@app/components/Layout/BackButton';
 import DynamicLogo from '@app/components/Layout/DynamicLogo';
 import { useUser } from '@app/hooks/useUser';
+import useSettings from '@app/hooks/useSettings';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
+  const { currentSettings } = useSettings();
   const { user } = useUser();
 
   return (
     <header
       id="top"
-      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
+      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && user && (
@@ -29,7 +30,7 @@ const Header = ({ isInView = true }) => {
           <DynamicLogo />
         </Link>
         <div className={`ms-auto flex gap-2 place-items-center`}>
-          {path.match(/\/$/) && !user && (
+          {path.match(/\/$/) && !user && currentSettings.enableSignUp && (
             <Link
               href="/signup"
               id="signup"
@@ -54,7 +55,6 @@ const Header = ({ isInView = true }) => {
                 className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
               >
                 Sign in{' '}
-                <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
               </Link>
             )
           )}

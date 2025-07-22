@@ -1,3 +1,9 @@
+import {
+  CalendarDateRangeIcon,
+  CalendarDaysIcon,
+  CalendarIcon,
+  QueueListIcon,
+} from '@heroicons/react/24/solid';
 import moment from 'moment';
 import { useCallback } from 'react';
 import { Views } from 'react-big-calendar';
@@ -70,7 +76,7 @@ const CalendarToolBar = ({
 
   return (
     <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
-      <div id="datePicker" className="text-primary">
+      <div id="datePicker" className="text-primary z-50">
         {view != Views.WEEK ? (
           <DatePicker
             dateFormat={dateFormat}
@@ -190,11 +196,22 @@ const CalendarToolBar = ({
           </button>
         </div>
         <div className="flex flex-grow sm:mb-0 lg:flex-grow-0">
+          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
+            {view === 'month' ? (
+              <CalendarIcon className="size-6" />
+            ) : view === 'week' ? (
+              <CalendarDateRangeIcon className="size-6" />
+            ) : view === 'day' ? (
+              <CalendarDaysIcon className="size-6" />
+            ) : (
+              <QueueListIcon className="size-6" />
+            )}
+          </span>
           <select
             id="view"
             onChange={(view) => setView(view.target.value)}
             value={view}
-            className="select select-sm select-primary w-full flex-1"
+            className="select select-sm select-primary rounded-md rounded-l-none flex-1"
           >
             <option value="month">Month</option>
             <option value="week">Week</option>

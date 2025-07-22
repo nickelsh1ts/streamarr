@@ -3,6 +3,8 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
+import useSettings from '@app/hooks/useSettings';
+import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
   Bars3BottomLeftIcon,
@@ -31,13 +33,15 @@ interface MenuLink {
   activeRegExp: RegExp;
   as?: string;
   dataTestId?: string;
+  hidden?: boolean;
 }
 
 const MobileMenu = () => {
+  const { currentSettings } = useSettings();
+  const { hasPermission } = useUser();
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
-  // Track the actual browser URL for active highlighting
   const [currentUrl, setCurrentUrl] = useState('');
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
@@ -90,6 +94,9 @@ const MobileMenu = () => {
         />
       ),
       activeRegExp: /^\/request\/?$/,
+      hidden: !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
+        type: 'or',
+      }),
     },
     {
       href: '/invites',
@@ -97,6 +104,17 @@ const MobileMenu = () => {
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
+      hidden:
+        !currentSettings.enableSignUp ||
+        !hasPermission(
+          [
+            Permission.CREATE_INVITES,
+            Permission.MANAGE_INVITES,
+            Permission.VIEW_INVITES,
+            Permission.STREAMARR,
+          ],
+          { type: 'or' }
+        ),
     },
     {
       href: '/schedule',
@@ -104,6 +122,14 @@ const MobileMenu = () => {
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
+      hidden: !hasPermission(
+        [
+          Permission.VIEW_SCHEDULE,
+          Permission.CREATE_EVENTS,
+          Permission.STREAMARR,
+        ],
+        { type: 'or' }
+      ),
     },
   ];
 
@@ -146,7 +172,7 @@ const MobileMenu = () => {
     },
   ];
 
-  const filteredLinks = menuLinks;
+  const filteredLinks = menuLinks.filter((link) => !link.hidden);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]" ref={ref}>

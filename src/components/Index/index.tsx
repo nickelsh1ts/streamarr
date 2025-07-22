@@ -8,28 +8,28 @@ import Watching from '@app/components/Index/Watching';
 import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
 import { useInView } from '@app/hooks/useElementInView';
+import useSettings from '@app/hooks/useSettings';
 import { useRef } from 'react';
 
 function Index() {
   const targetRef = useRef(null);
   const isInView = useInView(targetRef, 0.17);
-
-  //TODO Add app settings and conditional logic here for each section
-
-  //TODO Add app settings and conditional logic to turn on/off index page
+  const settings = useSettings();
 
   return (
     <main className="bg-gradient-to-b from-brand-dark from-20% via-brand-light via-50% to-brand-dark to-80%">
       <Header isInView={isInView} />
       <Hero />
-      <div ref={targetRef}>
-        <Requesting />
-        <Watching />
-        <Favourites />
-        <Devices />
-        <FAQs />
-        <Footer />
-      </div>
+      {settings.currentSettings.extendedHome && (
+        <div ref={targetRef}>
+          <Requesting />
+          <Watching />
+          <Favourites />
+          <Devices />
+          <FAQs />
+          <Footer />
+        </div>
+      )}
     </main>
   );
 }

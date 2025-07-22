@@ -1,6 +1,6 @@
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
-import Invite from 'components/Invite';
 import type { Metadata, NextPage } from 'next';
+import InviteList from '@app/components/InviteList';
 
 const messages = { title: 'Invite a friend' };
 
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const InvitePage: NextPage = () => {
   return (
     <div className="max-sm:mb-14 px-4">
-      <Invite />
+      <InviteList />
     </div>
   );
 };

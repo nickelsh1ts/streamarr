@@ -1,8 +1,16 @@
 'use client';
 import useSettings from '@app/hooks/useSettings';
+import { useState, useEffect } from 'react';
 
 const Privacy = () => {
   const { currentSettings } = useSettings();
+  const [hostname, setHostname] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(`${window?.location?.host}`);
+    }
+  }, [setHostname]);
 
   return (
     <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">
@@ -11,30 +19,30 @@ const Privacy = () => {
         This Privacy Statement explains our practices, including your choices,
         regarding the collection, use, and disclosure of certain information,
         including your personal information in connection with the{' '}
-        {currentSettings.applicationTitle}
-        service.
+        {currentSettings.applicationTitle} service.
       </p>
       <p className="font-extrabold mt-10 text-xl mb-2">Contacting Us</p>
       <p>
         If you have general questions about your account or how to contact us
-        for assistance, please visit our online help center at
+        for assistance, please visit our online help center at{' '}
         <a
           className="text-decoration-none link-primary font-extrabold"
           href="/help"
         >
-          {' '}
-          {currentSettings.applicationTitle.toLowerCase()}
-          .com/help
+          {currentSettings.applicationUrl
+            .toLowerCase()
+            .replace('http://', '')
+            .replace('https://', '') || hostname}
+          /help
         </a>
         . For questions specifically about this Privacy Statement, or our use of
         your personal information, cookies or similar technologies, please
         contact us by email at{' '}
         <a
           className="text-decoration-none link-primary font-extrabold"
-          href={`mailto:privacy@${currentSettings.applicationTitle.toLowerCase()}.com`}
+          href={`mailto:${currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}`}
         >
-          privacy@
-          {currentSettings.applicationTitle.toLowerCase()}.com
+          {currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}
         </a>
         .
       </p>
@@ -111,8 +119,8 @@ const Privacy = () => {
           and help us quickly and efficiently respond to inquiries and requests;
         </li>
         <li className="my-5">
-          secure our systems, prevent fraud and help us protect the security of
-          [process.env.NEXT_PUBLIC_APP_NAME] accounts;
+          secure our systems, prevent fraud and help us protect the security of{' '}
+          {currentSettings.applicationTitle} accounts;
         </li>
         <li className="my-5">
           prevent, detect and investigate potentially prohibited or illegal

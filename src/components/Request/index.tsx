@@ -1,12 +1,22 @@
 'use client';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import useRouteGuard from '@app/hooks/useRouteGuard';
+import { Permission } from '@server/lib/permissions';
+import type { ServiceSettings } from '@server/lib/settings';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import useSWR from 'swr';
 
 const Request = ({ children, ...props }) => {
+  useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
+    type: 'or',
+  });
   const pathname = usePathname();
   const url = pathname.replace('/request', '');
   const router = useRouter();
+
+  const { data } = useSWR<ServiceSettings>('/api/v1/settings/overseerr');
 
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
@@ -16,28 +26,40 @@ const Request = ({ children, ...props }) => {
   const [hostname, setHostname] = useState('');
 
   useEffect(() => {
-    innerFrame?.navigation?.addEventListener('navigate', () => {
+    if (!data?.urlBase) {
       setLoadingIframe(true);
-      setTimeout(() => {
-        if (
-          url != innerFrame.location.pathname.replace('/overseerr', '') &&
-          !innerFrame.location.pathname.includes('/search')
-        ) {
-          router.push(
-            innerFrame.location.pathname.replace('/overseerr', '/request')
-          );
-        } else {
-          setTimeout(() => setLoadingIframe(false), 600);
-        }
-      }, 600);
-    });
-  }, [innerFrame?.location.pathname, innerFrame?.navigation, router, url]);
+    } else {
+      innerFrame?.navigation?.addEventListener('navigate', () => {
+        setLoadingIframe(true);
+        setTimeout(() => {
+          if (
+            url != innerFrame?.location?.pathname.replace(data?.urlBase, '') &&
+            !innerFrame?.location?.pathname.includes('/search')
+          ) {
+            router.push(
+              innerFrame?.location?.pathname.replace(data?.urlBase, '/request')
+            );
+          } else {
+            setTimeout(() => setLoadingIframe(false), 600);
+          }
+        }, 600);
+      });
+    }
+  }, [
+    data?.urlBase,
+    innerFrame?.location?.pathname,
+    innerFrame?.navigation,
+    router,
+    url,
+  ]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
+    if (typeof window !== 'undefined' && data?.urlBase) {
+      setHostname(
+        `${window?.location?.protocol}//${window?.location?.host}${data?.urlBase}`
+      );
     }
-  }, [setHostname]);
+  }, [data?.urlBase, setHostname]);
 
   return (
     <>
@@ -51,7 +73,7 @@ const Request = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-4rem)] relative ${loadingIframe && 'invisible'}`}
-        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}/overseerr${url && url.replace('null', '')}`}
+        src={`${hostname}${url && url.replace('null', '')}`}
         allowFullScreen
         title="Plex"
       >
@@ -59,8 +81,7 @@ const Request = ({ children, ...props }) => {
       </iframe>
       {loadingIframe ? (
         <div className="absolute inset-0 flex items-center justify-center bg-[#1f1f1f]">
-          <span className="text-lg text-white me-1">Loading</span>{' '}
-          <span className="loading loading-dots loading-md text-primary mt-2"></span>
+          <LoadingEllipsis />
         </div>
       ) : null}
     </>

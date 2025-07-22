@@ -7,9 +7,9 @@ import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
-import Image from 'next/image';
 import { useMemo } from 'react';
 import { publicRoutes } from '@app/middleware';
+import useSettings from '@app/hooks/useSettings';
 
 const Layout = ({
   children,
@@ -20,6 +20,7 @@ const Layout = ({
 }) => {
   const pathname = usePathname();
   const { user, loading } = useUser();
+  const { currentSettings } = useSettings();
 
   const isMainLayout = useMemo(
     () =>
@@ -29,15 +30,19 @@ const Layout = ({
     [pathname]
   );
   const isAuthLayout = useMemo(
-    () => pathname.match(/^\/(signin|signup|setup)\/?/),
+    () => pathname.match(/^\/(signin|signup|resetpassword\/?(.*)?|setup)\/?/),
     [pathname]
   );
   const isFooterLayout = useMemo(
-    () => pathname.match(/^\/(signin|signup)\/?/),
+    () => pathname.match(/^\/(signin|signup|resetpassword\/?(.*)?)\/?/),
     [pathname]
   );
   const isSidebar = useMemo(
-    () => user && !pathname.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/),
+    () =>
+      user &&
+      !pathname.match(
+        /^(\/|\/signin|\/signup|\/resetpassword\/?(.*)?|\/help\/?(.*)?)$/
+      ),
     [user, pathname]
   );
   const swrConfigValue = useMemo(
@@ -64,6 +69,19 @@ const Layout = ({
     }
 
     if (pathname.match(/(signin|setup|\/$)/) && user && !loading) {
+      redirect('/watch');
+    }
+
+    if (pathname.match(/signup/) && !currentSettings.enableSignUp) {
+      redirect('/signin');
+    }
+
+    if (
+      ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
+        (pathname.match(/invites/) && !currentSettings.enableSignUp)) &&
+      user &&
+      !loading
+    ) {
       redirect('/watch');
     }
   }
@@ -106,34 +124,14 @@ const FaderBackground = () => {
   return (
     <>
       <div className="fixed top-0 bottom-0 left-0 right-0">
-        {backdrops ? (
-          <ImageFader
-            rotationSpeed={6000}
-            backgroundImages={
-              backdrops?.map(
-                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
-              ) ?? []
-            }
-          />
-        ) : (
-          <div>
-            <div
-              className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
-            >
-              <Image
-                unoptimized
-                className="absolute inset-0 h-full w-full"
-                style={{ objectFit: 'cover' }}
-                alt=""
-                src={'/img/people-cinema-watching.jpg'}
-                fill
-              />
-              <div
-                className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
-              />
-            </div>
-          </div>
-        )}
+        <ImageFader
+          rotationSpeed={6000}
+          backgroundImages={
+            backdrops?.map(
+              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+            ) ?? ['/img/people-cinema-watching.jpg']
+          }
+        />
       </div>
     </>
   );

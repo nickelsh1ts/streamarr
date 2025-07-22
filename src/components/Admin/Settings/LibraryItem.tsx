@@ -9,7 +9,7 @@ interface LibraryItemProps {
 const LibraryItem = ({ isEnabled, name, onToggle }: LibraryItemProps) => {
   return (
     <li className="col-span-1 flex rounded-md shadow-sm">
-      <div className="flex flex-1 items-center justify-between truncate rounded-md border-t border-b border-r border-gray-700 bg-gray-600">
+      <div className="flex flex-1 items-center justify-between truncate rounded-md border-t border-b border-r border-neutral-600 bg-neutral-800">
         <div className="flex-1 cursor-default truncate px-4 py-6 text-sm leading-5">
           {name}
         </div>
@@ -25,8 +25,8 @@ const LibraryItem = ({ isEnabled, name, onToggle }: LibraryItemProps) => {
               }
             }}
             className={`${
-              isEnabled ? 'bg-indigo-600' : 'bg-gray-700'
-            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring`}
+              isEnabled ? 'bg-primary' : 'bg-neutral-700'
+            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
           >
             <span
               aria-hidden="true"
@@ -41,7 +41,7 @@ const LibraryItem = ({ isEnabled, name, onToggle }: LibraryItemProps) => {
                     : 'opacity-100 duration-200 ease-in'
                 } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
               >
-                <XMarkIcon className="h-3 w-3 text-gray-400" />
+                <XMarkIcon className="h-3 w-3 text-neutral-400" />
               </span>
               <span
                 className={`${
@@ -50,7 +50,7 @@ const LibraryItem = ({ isEnabled, name, onToggle }: LibraryItemProps) => {
                     : 'opacity-0 duration-100 ease-out'
                 } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
               >
-                <CheckIcon className="h-3 w-3 text-indigo-600" />
+                <CheckIcon className="h-3 w-3 text-primary" />
               </span>
             </span>
           </span>

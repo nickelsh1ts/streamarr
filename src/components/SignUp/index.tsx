@@ -1,37 +1,46 @@
 'use client';
-import Button from '@app/components/Common/Button';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SetupSteps from '@app/components/Setup/SetupSteps';
-import SignUpForm from '@app/components/SignUp/Form';
-import useLocale from '@app/hooks/useLocale';
+import ConfirmAccountForm from '@app/components/SignUp/Forms/ConfirmAccountForm';
+import ICodeForm from '@app/components/SignUp/Forms/ICodeForm';
+import SignUpAuthForm from '@app/components/SignUp/Forms/SignUpAuthForm';
+import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import type { User } from '@server/entity/User';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-//TODO Add logic and api calls to implement signup via invite codes
-
-//TODO Add logic and functionality to allow creation of Plex account for users who don't already have one
-
-//TODO Add logic and app settings to allow for disabling of signup
-
 const Join = () => {
-  const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [user, setUser] = useState<User>(null);
   const router = useRouter();
-  const { locale } = useLocale();
   const { currentSettings } = useSettings();
 
+  // Step 3: Finalize signup
   const finishSignup = async () => {
-    setIsUpdating(true);
-    const response = await axios.post<{ initialized: boolean }>(
-      '/api/v1/signup/initialize'
-    );
-
-    setIsUpdating(false);
-    if (response.data.initialized) {
-      await axios.post('/api/v1/signup', { locale });
-      router.push('/');
+    if (!user || !inviteCode) return;
+    try {
+      await axios.post('/api/v1/signup/invite', {
+        icode: inviteCode,
+        userId: user.id,
+      });
+      await axios.post('/api/v1/signup/complete', {
+        userId: user.id,
+        icode: inviteCode,
+      });
+      router.push('/watch/web/index.html#!/settings/manage-library-access');
+    } catch (e) {
+      Toast({
+        title: 'Error during signup',
+        message:
+          e.response?.data?.message ||
+          'An error occurred during signup. Please try again.',
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
     }
   };
 
@@ -42,10 +51,10 @@ const Join = () => {
       </div>
       <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
-          <div className="mb-2 flex justify-center text-2xl font-bold">
+          <div className="mb-2 flex justify-center text-3xl font-bold">
             Welcome to {currentSettings.applicationTitle}
           </div>
-          <div className="mb-2 text-center text-sm">
+          <div className="mb-2 text-center">
             Registration is by invite only.
           </div>
         </div>
@@ -76,29 +85,46 @@ const Join = () => {
         </nav>
         <div className="mt-10 w-full rounded-md border border-secondary bg-secondary bg-opacity-50 backdrop-blur p-4 text-white">
           {currentStep === 1 && (
-            <>
-              <div className="mb-2 text-center pb-6 text-sm">
+            <div>
+              <p className="mb-2 text-center pb-6">
                 Get started by entering your invite code below.
-              </div>
-              <SignUpForm onComplete={() => setCurrentStep(2)} />
-            </>
+              </p>
+              <ICodeForm
+                onComplete={(code) => {
+                  setInviteCode(code);
+                  setCurrentStep(2);
+                }}
+              />
+            </div>
+          )}
+          {currentStep === 2 && (
+            <div>
+              <p className="mb-2 text-center pb-6">
+                Please sign in with your Plex account to continue the
+                registration process.
+              </p>
+              <SignUpAuthForm
+                onComplete={(plexUser) => {
+                  setUser(plexUser);
+                  // If user already has access, redirect
+                  if (
+                    plexUser?.settings?.sharedLibraries &&
+                    plexUser.settings.sharedLibraries.length > 0
+                  ) {
+                    router.replace('/watch');
+                  } else {
+                    setCurrentStep(3);
+                  }
+                }}
+              />
+            </div>
           )}
           {currentStep === 3 && (
             <div>
-              <p>Settings Services</p>
-              <div className="actions">
-                <div className="flex justify-end">
-                  <span className="ml-3 inline-flex rounded-md shadow-sm">
-                    <Button
-                      buttonType="primary"
-                      onClick={() => finishSignup()}
-                      disabled={isUpdating}
-                    >
-                      {isUpdating ? 'Completing...' : 'Complete Signup'}
-                    </Button>
-                  </span>
-                </div>
-              </div>
+              <p className="mb-2 text-center pb-6">
+                Review your details below and confirm your account.
+              </p>
+              <ConfirmAccountForm user={user} onComplete={finishSignup} />
             </div>
           )}
         </div>

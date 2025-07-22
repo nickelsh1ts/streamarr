@@ -13,21 +13,19 @@ const TermsOfUse = () => {
           {currentSettings.applicationTitle} provides a personalized
           subscription service that allows our members to access movies and TV
           shows (&quot;
-          {currentSettings.applicationTitle}
-          content&quot;) streamed over the Internet to certain
-          Internet-connected TVs, computers and other devices (&quot;Plex&trade;
-          ready devices&quot;).
+          {currentSettings.applicationTitle} content&quot;) streamed over the
+          Internet to certain Internet-connected TVs, computers and other
+          devices (&quot;Plex&trade; ready devices&quot;).
         </p>
         <p className="mb-2">
           These Terms of Use govern your use of our service. As used in these
           Terms of Use, &quot;{currentSettings.applicationTitle} service&quot;,
           &quot;our service&quot; or &quot;the service&quot; means the
-          personalized service provided by
-          {currentSettings.applicationTitle} for discovering and watching{' '}
-          {currentSettings.applicationTitle} content, including all features and
-          functionalities, recommendations and reviews, the website, and user
-          interfaces, as well as all content and software associated with our
-          service.
+          personalized service provided by {currentSettings.applicationTitle}{' '}
+          for discovering and watching {currentSettings.applicationTitle}{' '}
+          content, including all features and functionalities, recommendations
+          and reviews, the website, and user interfaces, as well as all content
+          and software associated with our service.
         </p>
         <ul className="list-disc mx-9 my-5">
           <li className="mb-2">
@@ -181,18 +179,17 @@ const TermsOfUse = () => {
             </span>{' '}
             The member who created the {currentSettings.applicationTitle}{' '}
             account (the &quot;Account Owner&quot;) is responsible for any
-            activity that occurs through the
-            {currentSettings.applicationTitle} account. To maintain control over
-            the account and to prevent anyone from accessing the account (which
-            would include information on viewing history for the account), the
-            Account Owner should maintain control over the Plex&trade; ready
-            devices that are used to access the service and not reveal the
-            password associated with the account to anyone. You are responsible
-            for updating and maintaining the accuracy of the information you
-            provide to us relating to your account. We can terminate your
-            account or place your account on hold in order to protect you,{' '}
-            {currentSettings.applicationTitle} or our partners from identity
-            theft or other fraudulent activity.
+            activity that occurs through the {currentSettings.applicationTitle}{' '}
+            account. To maintain control over the account and to prevent anyone
+            from accessing the account (which would include information on
+            viewing history for the account), the Account Owner should maintain
+            control over the Plex&trade; ready devices that are used to access
+            the service and not reveal the password associated with the account
+            to anyone. You are responsible for updating and maintaining the
+            accuracy of the information you provide to us relating to your
+            account. We can terminate your account or place your account on hold
+            in order to protect you, {currentSettings.applicationTitle} or our
+            partners from identity theft or other fraudulent activity.
           </li>
           <li className="mb-4">
             <span className="font-extrabold">
