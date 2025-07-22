@@ -7,7 +7,8 @@
 
 **Streamarr** is a an open source web application meant to wrap an existing \*Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience.
 
-**Overview**
+## Overview
+
 Currently under active development Streamarr aims to be a complete (or at least semi-complete) web application for those who heavily manage a plex server with various *Arr applications and many users. Featuring a full front end to make accessing both streaming and backend *Arr services easy and straightforward. Integrating with Overseerr to manage requests and a fully featured invite system to make end user experiences a breeze.
 
 [![GitHub last commit](https://img.shields.io/github/release-date/nickelsh1ts/streamarr?style=for-the-badge&logo=github)](https://github.com/nickelsh1ts/streamarr)
@@ -17,14 +18,14 @@ Currently under active development Streamarr aims to be a complete (or at least 
 
 ---
 
-**What Streamarr is and Isn't**
-Streamarr is an invite management system.
-Streamarr is a front end web interface for end users and sys-admins
-Streamarr is a Streamer's best friend.
+### What Streamarr is and Isn't
+- Streamarr is an invite management system.
+- Streamarr is a front end web interface for end users and sys-admins
+- Streamarr is a Streamer's best friend.
 
-Streamarr is NOT meant for casual/occasional users.
-Streamarr is NOT for users who do not own a Plex Server.
-Streamarr is NOT meant for those who don't need help managing and accessing an entire suit of \*Arr apps and systems.
+- Streamarr is NOT meant for casual/occasional users.
+- Streamarr is NOT for users who do not own a Plex Server.
+- Streamarr is NOT meant for those who don't need help managing and accessing an entire suit of \*Arr apps and systems.
 
 ## Major Features
 
