@@ -66,31 +66,32 @@ class ImageProxy {
   }
 
   private static async getDirectorySize(dir: string): Promise<number> {
-    const files = await promises.readdir(dir, { withFileTypes: true });
-
-    const paths = files.map(async (file) => {
-      const path = join(dir, file.name);
-
-      if (file.isDirectory()) return await ImageProxy.getDirectorySize(path);
-
-      if (file.isFile()) {
-        const { size } = await promises.stat(path);
-
-        return size;
-      }
-
+    try {
+      const files = await promises.readdir(dir, { withFileTypes: true });
+      const paths = files.map(async (file) => {
+        const path = join(dir, file.name);
+        if (file.isDirectory()) return await ImageProxy.getDirectorySize(path);
+        if (file.isFile()) {
+          const { size } = await promises.stat(path);
+          return size;
+        }
+        return 0;
+      });
+      return (await Promise.all(paths))
+        .flat(Infinity)
+        .reduce((i, size) => i + size, 0);
+    } catch {
       return 0;
-    });
-
-    return (await Promise.all(paths))
-      .flat(Infinity)
-      .reduce((i, size) => i + size, 0);
+    }
   }
 
   private static async getImageCount(dir: string) {
-    const files = await promises.readdir(dir);
-
-    return files.length;
+    try {
+      const files = await promises.readdir(dir);
+      return files.length;
+    } catch {
+      return 0;
+    }
   }
 
   private axios;
