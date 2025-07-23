@@ -13,7 +13,7 @@
     "css-lint": "stylelint src/styles/*.css public/*.css",
     "i18n:extract": "extract-messages -l=en -o src/i18n/locale -d en --flat true --overwriteDefault true \"./src/**/!(*.test).{ts,tsx}\"",
     "migration:generate": "ts-node -r tsconfig-paths/register --project server/tsconfig.json ./node_modules/typeorm/cli.js migration:generate -d server/datasource.ts",
-    "migration:create": "ts-node -r tsconfig-paths/register --project server/tsconfig.json ./node_modules/typeorm/cli.js migration:create -d server/datasource.ts",
+    "migration:create": "ts-node -r tsconfig-paths/register --project server/tsconfig.json ./node_modules/typeorm/cli.js migration:create",
     "migration:run": "ts-node -r tsconfig-paths/register --project server/tsconfig.json ./node_modules/typeorm/cli.js migration:run -d server/datasource.ts",
     "format": "prettier 'src/**/*.{css,js,ts,tsx}' 'server/**/*.{css,js,ts,tsx}' --log-level warn --write --cache .",
     "format:check": "prettier 'src/**/*.{css,js,ts,tsx}' 'server/**/*.{css,js,ts,tsx}' --check --cache .",
