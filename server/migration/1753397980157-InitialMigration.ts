@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitialMigration1753222951099 implements MigrationInterface {
-  name = 'InitialMigration1753222951099';
+export class InitialMigration1753397980157 implements MigrationInterface {
+  name = 'InitialMigration1753397980157';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -33,7 +33,7 @@ export class InitialMigration1753222951099 implements MigrationInterface {
       `ALTER TABLE "temporary_user_push_subscription" RENAME TO "user_push_subscription"`
     );
     await queryRunner.query(
-      `CREATE TABLE "temporary_invite" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "status" integer NOT NULL DEFAULT (2), "expiresAt" datetime, "icode" varchar NOT NULL, "uses" integer NOT NULL DEFAULT (0), "usageLimit" integer NOT NULL DEFAULT (1), "downloads" boolean NOT NULL DEFAULT (1), "liveTv" boolean NOT NULL DEFAULT (0), "plexHome" boolean NOT NULL DEFAULT (0), "expiryLimit" integer NOT NULL DEFAULT (1), "expiryTime" text NOT NULL DEFAULT (''), "sharedLibraries" varchar NOT NULL DEFAULT (''), "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "createdById" integer, "updatedById" integer, CONSTRAINT "FK_1fd4ebf122b26dc6c7245e544f3" FOREIGN KEY ("createdById") REFERENCES "user" ("id") ON DELETE CASCADE ON UPDATE NO ACTION, CONSTRAINT "FK_ec6eb73bd3f57afbf7cb68da10b" FOREIGN KEY ("updatedById") REFERENCES "user" ("id") ON DELETE CASCADE ON UPDATE NO ACTION)`
+      `CREATE TABLE "temporary_invite" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "status" integer NOT NULL DEFAULT (2), "expiresAt" datetime, "icode" varchar NOT NULL, "uses" integer NOT NULL DEFAULT (0), "usageLimit" integer NOT NULL DEFAULT (1), "downloads" boolean NOT NULL DEFAULT (1), "liveTv" boolean NOT NULL DEFAULT (0), "plexHome" boolean NOT NULL DEFAULT (0), "expiryLimit" integer NOT NULL DEFAULT (1), "expiryTime" text NOT NULL DEFAULT (''), "sharedLibraries" varchar NOT NULL DEFAULT (''), "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "createdById" integer, "updatedById" integer, CONSTRAINT "FK_1fd4ebf122b26dc6c7245e544f3" FOREIGN KEY ("createdById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION, CONSTRAINT "FK_ec6eb73bd3f57afbf7cb68da10b" FOREIGN KEY ("updatedById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION)`
     );
     await queryRunner.query(
       `INSERT INTO "temporary_invite"("id", "status", "expiresAt", "icode", "uses", "usageLimit", "downloads", "liveTv", "plexHome", "expiryLimit", "expiryTime", "sharedLibraries", "createdAt", "updatedAt", "createdById", "updatedById") SELECT "id", "status", "expiresAt", "icode", "uses", "usageLimit", "downloads", "liveTv", "plexHome", "expiryLimit", "expiryTime", "sharedLibraries", "createdAt", "updatedAt", "createdById", "updatedById" FROM "invite"`

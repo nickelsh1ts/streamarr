@@ -1,5 +1,5 @@
 > 🚧 **Under Active Development:** I'm excited to bring this project to life, but note that it is unfinished in it's current state and some things may be broken or not fully implemented.
-<br></br>
+> <br></br>
 
 <p align="center">
 <img src="./public/logo_full.png" alt="Streamarr" style="margin: 20px 0;">
