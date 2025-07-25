@@ -459,6 +459,21 @@ router.delete<{ id: string }>(
         });
       }
 
+      // Before deleting the user, remove them from any invite redeemedBy arrays
+      const inviteRepository = getRepository(Invite);
+      const invites = await inviteRepository
+        .createQueryBuilder('invite')
+        .leftJoinAndSelect('invite.redeemedBy', 'redeemedBy')
+        .where('redeemedBy.id = :userId', { userId: user.id })
+        .getMany();
+
+      for (const invite of invites) {
+        // Remove user from redeemedBy array but keep the invite and its status
+        // We don't decrease uses count since the invite was legitimately used
+        invite.redeemedBy = invite.redeemedBy.filter((u) => u.id !== user.id);
+        await inviteRepository.save(invite);
+      }
+
       await userRepository.delete(user.id);
       res.status(200).json(user.filter());
     } catch (e) {

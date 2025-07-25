@@ -23,10 +23,6 @@ const Join = () => {
   const finishSignup = async () => {
     if (!user || !inviteCode) return;
     try {
-      await axios.post('/api/v1/signup/invite', {
-        icode: inviteCode,
-        userId: user.id,
-      });
       await axios.post('/api/v1/signup/complete', {
         userId: user.id,
         icode: inviteCode,
@@ -104,17 +100,11 @@ const Join = () => {
                 registration process.
               </p>
               <SignUpAuthForm
+                inviteCode={inviteCode}
                 onComplete={(plexUser) => {
                   setUser(plexUser);
-                  // If user already has access, redirect
-                  if (
-                    plexUser?.settings?.sharedLibraries &&
-                    plexUser.settings.sharedLibraries.length > 0
-                  ) {
-                    router.replace('/watch');
-                  } else {
-                    setCurrentStep(3);
-                  }
+                  // Always proceed to step 3 for account confirmation
+                  setCurrentStep(3);
                 }}
               />
             </div>

@@ -799,16 +799,6 @@ components:
           type: number
         webpush:
           type: number
-    SignupInviteResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-      required:
-        - success
-        - message
     SignupCompleteResponse:
       type: object
       properties:
@@ -3267,30 +3257,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/InviteValidationResponse'
 
-  /signup/plexauth/{authToken}:
-    get:
-      tags:
-        - public
-      summary: Authenticate user with Plex and link invite
-      parameters:
-        - name: authToken
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Plex authentication successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SignupPlexAuthResponse'
-
-  /signup/invite:
+  /signup/plexauth:
     post:
       tags:
         - public
-      summary: Assign libraries and permissions from invite
+      summary: Authenticate user with Plex and create account
       requestBody:
         required: true
         content:
@@ -3298,17 +3269,22 @@ paths:
             schema:
               type: object
               properties:
+                authToken:
+                  type: string
+                  description: Plex authentication token
                 icode:
                   type: string
-                userId:
-                  type: integer
+                  description: Invite code
+              required:
+                - authToken
+                - icode
       responses:
         '200':
-          description: Libraries and permissions assigned
+          description: Plex authentication successful and user created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignupInviteResponse'
+                $ref: '#/components/schemas/SignupPlexAuthResponse'
 
   /signup/complete:
     post:

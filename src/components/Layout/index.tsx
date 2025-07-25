@@ -13,7 +13,7 @@ import useSettings from '@app/hooks/useSettings';
 
 const Layout = ({
   children,
-  initialized,
+  initialized: serverInitialized,
 }: {
   children: React.ReactNode;
   initialized: boolean;
@@ -21,6 +21,15 @@ const Layout = ({
   const pathname = usePathname();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
+
+  // Use SWR to get the latest settings, which will update when mutated
+  const { data: dynamicSettings } = useSWR('/api/v1/settings/public');
+
+  // Use dynamic settings first, then client context, then server-side as fallback
+  const initialized =
+    dynamicSettings?.initialized ??
+    currentSettings.initialized ??
+    serverInitialized;
 
   const isMainLayout = useMemo(
     () =>
@@ -60,22 +69,27 @@ const Layout = ({
       redirect('/setup');
     }
   } else {
-    if (pathname.match(/setup/)) {
-      redirect('/');
+    // Redirect from setup to admin after completion
+    if (pathname.match(/^\/setup$/) && user) {
+      redirect('/admin');
     }
 
+    // Protected routes require authentication
     if (!publicRoutes.test(pathname) && !user && !loading) {
       redirect('/signin');
     }
 
-    if (pathname.match(/(signin|setup|\/$)/) && user && !loading) {
+    // Authenticated users on signin/home go to watch
+    if (pathname.match(/(signin|\/$)/) && user && !loading) {
       redirect('/watch');
     }
 
+    // Signup disabled redirect
     if (pathname.match(/signup/) && !currentSettings.enableSignUp) {
       redirect('/signin');
     }
 
+    // Feature-disabled redirects
     if (
       ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
         (pathname.match(/invites/) && !currentSettings.enableSignUp)) &&

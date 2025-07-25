@@ -52,17 +52,19 @@ def invite():
         return jsonify({'success': False, 'error': 'Server not found or connection failed'}), 404
 
     try:
-        # Select libraries: all if empty, else by ID
-        if not libraries or libraries == '':
+        # Select libraries: grant all if empty array/null, else filter by specific IDs
+        if not libraries or libraries == '' or (isinstance(libraries, list) and len(libraries) == 0):
             selected_sections = plex_server.library.sections()
         else:
             if isinstance(libraries, str):
                 library_ids = [lib_id.strip() for lib_id in libraries.split(',') if lib_id.strip()]
             else:
                 library_ids = [str(lib_id) for lib_id in libraries]
+
             all_sections = plex_server.library.sections()
             id_to_section = {str(section.key): section for section in all_sections}
             selected_sections = [id_to_section[lib_id] for lib_id in library_ids if lib_id in id_to_section]
+
             if len(selected_sections) != len(library_ids):
                 logger.error('Invalid library section IDs', {'library_ids': libraries})
                 return jsonify({'success': False, 'error': 'Invalid library section IDs'}), 400
@@ -81,7 +83,6 @@ def invite():
                 allowChannels=allow_channels,
                 allowCameraUpload=allow_camera_upload
             )
-            logger.info(f'Plex Home user invited: {email}')
             return jsonify({'success': True, 'message': 'Plex Home user created. Plex Home email invitation sent.'})
         account.inviteFriend(
             email,
@@ -91,7 +92,6 @@ def invite():
             allowCameraUpload=allow_camera_upload,
             allowChannels=allow_channels
         )
-        logger.info(f'Plex friend invited: {email}')
         return jsonify({'success': True, 'message': 'Invite sent. Please visit /watch/web/index.html#!/settings/manage-library-access to accept.'})
     except Exception as e:
         logger.error('Invite error', {'error': str(e)})

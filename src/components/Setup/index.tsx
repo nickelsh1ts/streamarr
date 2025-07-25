@@ -9,32 +9,40 @@ import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import Image from 'next/image';
-
-//TODO Add additional logic to implement Sonarr, Radarr, Overseerr, and Tautulli setup steps
+import SettingsServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
+import SettingsServicesSonarr from '@app/components/Admin/Settings/Services/Sonarr';
+import { useUser } from '@app/hooks/useUser';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
-  const router = useRouter();
   const { locale } = useLocale();
+  const { revalidate } = useUser();
 
   const finishSetup = async () => {
     setIsUpdating(true);
-    const response = await axios.post<{ initialized: boolean }>(
-      '/api/v1/settings/initialize'
-    );
+    try {
+      // Initialize the app
+      const initResponse = await axios.post<{ initialized: boolean }>(
+        '/api/v1/settings/initialize'
+      );
 
-    setIsUpdating(false);
-    if (response.data.initialized) {
-      await axios.post('/api/v1/settings/main', { locale });
-      mutate('/api/v1/settings/public');
+      if (initResponse.data.initialized) {
+        // Update main settings and refresh data
+        await axios.post('/api/v1/settings/main', { locale });
+        await Promise.all([mutate('/api/v1/settings/public'), revalidate()]);
 
-      router.push('/watch');
+        // Redirect to admin page
+        window.location.href = '/admin';
+      }
+    } catch (error) {
+      console.error('Error finishing setup:', error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -102,8 +110,8 @@ const Setup = () => {
                 <span className="mr-2">
                   <Badge>Tip</Badge>
                 </span>
-                Scanning will run in the background. You can continue the setup
-                process in the meantime.
+                Only libraries that are enabled will be accessible from
+                Streamarr.
               </div>
               <div className="actions">
                 <div className="flex justify-end">
@@ -121,8 +129,9 @@ const Setup = () => {
             </div>
           )}
           {currentStep === 3 && (
-            <div>
-              <p>Settings Services</p>
+            <div className="flex flex-col gap-4">
+              <SettingsServicesRadarr />
+              <SettingsServicesSonarr />
               <div className="actions">
                 <div className="flex justify-end">
                   <span className="ml-3 inline-flex rounded-md shadow-sm">

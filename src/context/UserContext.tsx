@@ -25,7 +25,16 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
   }, [pathname, revalidate]);
 
   useEffect(() => {
-    if (!pathname.match(publicRoutes) && (!user || error) && !routing.current) {
+    // Don't redirect during setup process, signin, or on public routes
+    const isSetupPage = pathname === '/setup';
+    const isPublicRoute = publicRoutes.test(pathname);
+
+    if (
+      !isSetupPage &&
+      !isPublicRoute &&
+      (!user || error) &&
+      !routing.current
+    ) {
       routing.current = true;
       location.href = '/signin';
     }
