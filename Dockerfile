@@ -1,3 +1,4 @@
+//
 FROM node:24-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production YARN_VERSION=4.9.2
@@ -27,7 +28,8 @@ COPY server ./server
 RUN if [ -f server/python/requirements.txt ]; then \
     python3 -m venv /app/venv && \
     . /app/venv/bin/activate && \
-    pip install --no-cache-dir -r server/python/requirements.txt; \
+    pip install --no-cache-dir -r server/python/requirements.txt && \
+    pip install --no-cache-dir gunicorn; \
 fi
 
 RUN yarn build
