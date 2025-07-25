@@ -118,7 +118,7 @@ export const ServerInstance = ({
   );
 };
 
-const SettingsServices = () => {
+const SettingsServicesRadarr = () => {
   const {
     data: radarrData,
     error: radarrError,
@@ -263,4 +263,4 @@ const SettingsServices = () => {
   );
 };
 
-export default SettingsServices;
+export default SettingsServicesRadarr;

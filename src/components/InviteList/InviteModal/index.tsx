@@ -71,7 +71,11 @@ const InviteModal = ({
   const filteredUserData = useMemo(
     () =>
       userData?.results.filter((user) =>
-        hasPermission([Permission.CREATE_INVITES], user.permissions)
+        hasPermission(
+          [Permission.CREATE_INVITES, Permission.STREAMARR],
+          user.permissions,
+          { type: 'or' }
+        )
       ),
     [userData?.results]
   );
@@ -713,7 +717,7 @@ const InviteModal = ({
                                                 } relative cursor-default select-none py-2 pl-8 pr-4 rounded-md`}
                                               >
                                                 <span
-                                                  className={`$${
+                                                  className={`${
                                                     selected
                                                       ? 'font-semibold'
                                                       : 'font-normal'

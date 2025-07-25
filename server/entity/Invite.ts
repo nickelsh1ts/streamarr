@@ -120,20 +120,19 @@ export class Invite {
 
   @ManyToOne(() => User, (user) => user.createdInvites, {
     eager: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   public createdBy: User;
 
   @OneToMany(() => User, (user) => user.redeemedInvite, {
     eager: true,
-    onDelete: 'CASCADE',
   })
   public redeemedBy: User[];
 
   @ManyToOne(() => User, (user) => user.modifiedInvites, {
     eager: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   public updatedBy: User;

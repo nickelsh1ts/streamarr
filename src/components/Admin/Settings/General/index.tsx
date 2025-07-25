@@ -8,7 +8,7 @@ import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
-import useLocale from '@app/hooks/useLocal';
+import useLocale from '@app/hooks/useLocale';
 import { useUser } from '@app/hooks/useUser';
 import {
   CheckBadgeIcon,

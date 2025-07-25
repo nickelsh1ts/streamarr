@@ -63,8 +63,9 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
           <div className="flex w-full items-start overflow-hidden">
             <div className="pt-2">
               <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60">
-                {Array.isArray(invite?.redeemedBy) &&
-                invite.redeemedBy.length > 0 ? (
+                {(Array.isArray(invite?.redeemedBy) &&
+                  invite.redeemedBy.length > 0) ||
+                invite?.status === InviteStatus.REDEEMED ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"

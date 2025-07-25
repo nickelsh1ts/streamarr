@@ -107,7 +107,9 @@ class TheMovieDb extends ExternalAPI {
     super(
       'https://api.themoviedb.org/3',
       {
-        api_key: process.env.NEXT_PUBLIC_MOVIEDB_API_KEY || '',
+        api_key:
+          process.env.NEXT_PUBLIC_MOVIEDB_API_KEY ||
+          '83dbb3f0b4cf011613d3621dbb8e20ea',
       },
       {
         nodeCache: cacheManager.getCache('tmdb').data,

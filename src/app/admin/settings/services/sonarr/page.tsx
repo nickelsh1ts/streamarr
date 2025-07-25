@@ -1,6 +1,6 @@
-import SettingsServices from '@app/components/Admin/Settings/Services/Sonarr';
+import SettingsServicesSonarr from '@app/components/Admin/Settings/Services/Sonarr';
 
 const ServicesSonarrPage = () => {
-  return <SettingsServices />;
+  return <SettingsServicesSonarr />;
 };
 export default ServicesSonarrPage;

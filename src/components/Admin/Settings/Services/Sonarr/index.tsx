@@ -11,7 +11,7 @@ import useSWR, { mutate } from 'swr';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ServerInstance } from '@app/components/Admin/Settings/Services/Radarr';
 
-const SettingsServices = () => {
+const SettingsServicesSonarr = () => {
   const {
     data: sonarrData,
     error: sonarrError,
@@ -156,4 +156,4 @@ const SettingsServices = () => {
   );
 };
 
-export default SettingsServices;
+export default SettingsServicesSonarr;

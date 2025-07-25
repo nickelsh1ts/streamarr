@@ -216,6 +216,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           selectedPreset: undefined,
           webAppUrl: data?.webAppUrl,
         }}
+        enableReinitialize
         validationSchema={PlexSettingsSchema}
         onSubmit={async (values) => {
           let toastId: string | undefined;

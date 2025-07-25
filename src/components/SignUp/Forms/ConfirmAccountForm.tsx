@@ -60,10 +60,10 @@ const ConfirmAccountForm = ({
   } = useSWR(user ? `/api/v1/user/${user.id}/settings/notifications` : null);
 
   // Set up global values from API response
-  const globalSharedLibraries = data.globalSharedLibraries;
-  const globalInviteQuotaDays = data.globalInviteQuotaDays;
-  const globalInviteQuotaLimit = data.globalInviteQuotaLimit;
-  const defaultLocale = data.locale || 'en';
+  const globalSharedLibraries = data?.globalSharedLibraries;
+  const globalInviteQuotaDays = data?.globalInviteQuotaDays;
+  const globalInviteQuotaLimit = data?.globalInviteQuotaLimit;
+  const defaultLocale = data?.locale || 'en';
 
   // Password validation schema: make password fields optional
   const PasswordChangeSchema = Yup.object().shape({
@@ -147,14 +147,14 @@ const ConfirmAccountForm = ({
   // Only render form if user and all settings are loaded and user is authed
   if (
     !user ||
+    !user.id ||
     !currentUser ||
     !currentUser.id ||
     (!data && !error) ||
     (!passwordData && !passwordError) ||
     (!notificationsData && !notificationsError)
   ) {
-    return;
-    <LoadingEllipsis />;
+    return <LoadingEllipsis />;
   }
 
   return (
