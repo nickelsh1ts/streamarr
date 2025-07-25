@@ -12,6 +12,9 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
+//TODO: Update share modal button config
+//TODO: Update QR code on url copy for new invites
+
 interface InviteShareModalProps {
   show: boolean;
   isNew: boolean;

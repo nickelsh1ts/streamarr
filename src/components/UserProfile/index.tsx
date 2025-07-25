@@ -13,6 +13,7 @@ import useSWR from 'swr';
 import ProgressCircle from '@app/components/Common/ProgressCircle';
 
 //TODO create a request more invites feature
+//TODO: Update profile layout with recent invites etc.
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();

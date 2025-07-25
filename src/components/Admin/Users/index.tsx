@@ -34,6 +34,8 @@ import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
+//TODO: Add invited by column to user list
+
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
 const AdminUsers = () => {

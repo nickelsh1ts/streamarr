@@ -31,6 +31,9 @@ import type Invite from '@server/entity/Invite';
 import Toast from '@app/components/Toast';
 import InviteShareModal from '@app/components/InviteList/InviteShareModal';
 
+//TODO: Update invite route to be accessible with permissions and add disable logic to creation based on signup enabled.
+//TODO: Add bottom margin to layout
+
 enum Filter {
   ALL = 'all',
   ACTIVE = 'active',

@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import useSWR from 'swr';
 
+//TODO: Disable this component if Overseerr is not enabled in settings.
+
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
     type: 'or',

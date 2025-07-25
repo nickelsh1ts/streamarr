@@ -25,6 +25,8 @@ import Link from 'next/link';
 import type { JSX } from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
 
+//TODO: Add discover and watchlist menu items in place of invites and release schedule if they're disabled.
+
 interface MenuLink {
   href: string;
   svgIcon: JSX.Element;

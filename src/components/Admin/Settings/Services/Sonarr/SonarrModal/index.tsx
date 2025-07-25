@@ -8,6 +8,8 @@ import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 
+//TODO: Add support for Sonarr Calendar options in settings
+
 interface TestResponse {
   urlBase?: string;
 }

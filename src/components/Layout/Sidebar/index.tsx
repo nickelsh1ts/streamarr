@@ -23,6 +23,8 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 
+//TODO: Add more options to settings dropdown
+
 interface MenuLinksProps {
   href: string;
   title: string;

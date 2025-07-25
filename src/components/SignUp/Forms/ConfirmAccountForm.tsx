@@ -31,6 +31,8 @@ import {
 import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
+//TODO: Hide password settings if local user signin disabled
+
 const ConfirmAccountForm = ({
   onComplete,
   user,

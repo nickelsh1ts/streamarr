@@ -8,6 +8,8 @@ import { XCircleIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@app/hooks/useUser';
 
+//TODO: Add local user creation support
+
 const SignUpAuthForm = ({
   onComplete,
   inviteCode,
