@@ -6,6 +6,12 @@ FROM base AS deps
 COPY . /app
 WORKDIR /app
 
+RUN apk add --no-cache python3 py3-pip
+
+RUN if [ -f server/python/requirements.txt ]; then \
+    pip install --no-cache-dir -r server/python/requirements.txt; \
+fi
+
 RUN corepack enable
 RUN yarn set version stable
 
@@ -15,4 +21,4 @@ FROM deps AS runner
 
 WORKDIR /app
 
-CMD ["/bin/sh", "-c", "FLASK_ENV=development python3 server/python/plex_invite.py & yarn dev"]
+CMD ["/bin/sh", "-c", "python3 server/python/plex_invite.py & yarn dev"]

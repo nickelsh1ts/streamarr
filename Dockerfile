@@ -1,6 +1,6 @@
 FROM node:24-alpine AS base
 
-ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production YARN_VERSION=4.4.0
+ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production YARN_VERSION=4.9.2
 
 RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini python3 py3-pip && rm -rf /tmp/*
 
@@ -14,49 +14,42 @@ FROM base AS builder
 WORKDIR /app
 
 COPY package.json yarn.lock* ./
-COPY  example.env ./.env
+COPY example.env ./.env
 
 RUN echo 'nodeLinker: "node-modules"' > ./.yarnrc.yml
 RUN yarn --immutable --network-timeout 1000000
 
-ENV NEXT_PRIVATE_STANDALONE=true
-
 COPY src ./src
 COPY public ./public
-COPY next.config.mjs tsconfig.json tailwind.config.ts postcss.config.js ./
-COPY server/python ./server/python
+COPY next.config.mjs tsconfig.json tailwind.config.ts postcss.config.js streamarr-api.yml ./
+COPY server ./server
 
-# Install Python requirements if present
-RUN if [ -f server/python/requirements.txt ]; then pip install --no-cache-dir -r server/python/requirements.txt; fi
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-ARG COMMIT_TAG
-ENV COMMIT_TAG=${COMMIT_TAG}
+RUN if [ -f server/python/requirements.txt ]; then \
+    python3 -m venv /app/venv && \
+    . /app/venv/bin/activate && \
+    pip install --no-cache-dir -r server/python/requirements.txt; \
+fi
 
 RUN yarn build
 
+ARG COMMIT_TAG
 RUN echo "{\"commitTag\": \"${COMMIT_TAG}\"}" > committag.json
 
 FROM base AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/.env ./.env
-COPY --from=builder --chown=nextjs:nodejs /app/server/python ./server/python
+COPY --from=builder --chown=nextjs:nodejs /app ./
+RUN mkdir -p /app/config && chown -R nextjs:nodejs /app/config
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 3000 5005
 ENV PORT=3000
 
 ENTRYPOINT [ "/sbin/tini", "--" ]
 
-CMD ["/bin/sh", "-c", "gunicorn -w 2 -b 0.0.0.0:5005 server.python.plex_invite:app & node server.js"]
+CMD ["/bin/sh", "-c", "./venv/bin/gunicorn -w 2 -b 0.0.0.0:5005 server.python.plex_invite:app & yarn start"]
