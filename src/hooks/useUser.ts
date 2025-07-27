@@ -23,6 +23,14 @@ export interface User {
   inviteQuotaDays?: number;
   inviteCount: number;
   settings?: UserSettings;
+  redeemedInvite?: {
+    id: number;
+    createdBy?: {
+      id: number;
+      displayName: string;
+      avatar: string;
+    };
+  };
 }
 
 type NotificationAgentTypes = Record<NotificationAgentKey, number>;

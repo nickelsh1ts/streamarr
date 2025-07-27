@@ -26,17 +26,22 @@ router.get('/', async (req, res, next) => {
   try {
     const pageSize = req.query.take ? Number(req.query.take) : 10;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
-    let query = getRepository(User).createQueryBuilder('user');
+    let query = getRepository(User)
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.redeemedInvite', 'redeemedInvite')
+      .leftJoinAndSelect('redeemedInvite.createdBy', 'invitedBy');
 
     switch (req.query.sort) {
       case 'updated':
         query = query.orderBy('user.updatedAt', 'DESC');
         break;
       case 'displayname':
-        query = query.orderBy(
-          "(CASE WHEN (user.username IS NULL OR user.username = '') THEN (CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN user.email ELSE LOWER(user.plexUsername) END) ELSE LOWER(user.username) END)",
-          'ASC'
-        );
+        query = query
+          .addSelect(
+            "CASE WHEN (user.username IS NULL OR user.username = '') THEN CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN LOWER(user.email) ELSE LOWER(user.plexUsername) END ELSE LOWER(user.username) END",
+            'displayNameSort'
+          )
+          .orderBy('displayNameSort', 'ASC');
         break;
       case 'invites':
         query = query
@@ -128,7 +133,10 @@ router.post(
       await userRepository.save(user);
 
       if (generatedPassword) {
-        const { applicationTitle, applicationUrl } = getSettings().main;
+        const { applicationTitle, applicationUrl, customLogo } =
+          getSettings().main;
+        const logoUrl = customLogo || '/logo_full.png';
+
         try {
           logger.info(`Sending generated password email for ${user.email}`, {
             label: 'User Management',
@@ -147,6 +155,7 @@ router.post(
               applicationUrl,
               applicationTitle,
               recipientName: user.username,
+              logoUrl,
             },
           });
         } catch (e) {

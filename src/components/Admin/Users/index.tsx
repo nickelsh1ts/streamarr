@@ -34,8 +34,6 @@ import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
-//TODO: Add invited by column to user list
-
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
 const AdminUsers = () => {
@@ -463,6 +461,7 @@ const AdminUsers = () => {
             <Table.TH>Type</Table.TH>
             <Table.TH>Role</Table.TH>
             <Table.TH>Joined</Table.TH>
+            <Table.TH>Invited By</Table.TH>
             <Table.TH className="text-right">
               {(data.results ?? []).length >= 1 && (
                 <Button
@@ -562,6 +561,19 @@ const AdminUsers = () => {
                     : 'User'}
               </Table.TD>
               <Table.TD>{new Date(user.createdAt).toDateString()}</Table.TD>
+              <Table.TD>
+                {user.redeemedInvite?.createdBy?.id &&
+                user.redeemedInvite?.createdBy?.displayName ? (
+                  <Link
+                    className="transition duration-300 hover:underline"
+                    href={`/admin/users/${user.redeemedInvite.createdBy.id}`}
+                  >
+                    {user.redeemedInvite.createdBy.displayName}
+                  </Link>
+                ) : user.redeemedInvite ? (
+                  <span className="text-gray-400 italic">Unknown User</span>
+                ) : null}
+              </Table.TD>
               <Table.TD alignText="right" className="space-y-2">
                 <Button
                   buttonSize="sm"
