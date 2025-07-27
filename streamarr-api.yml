@@ -156,6 +156,41 @@ components:
         - id
         - name
         - enabled
+    LibraryLink:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the library
+          example: '1'
+        name:
+          type: string
+          description: The display name of the library
+          example: 'Movies'
+        type:
+          type: string
+          enum: [movie, show]
+          description: The type of media in the library
+          example: 'movie'
+        mediaCount:
+          type: integer
+          description: The total number of media items in the library
+          example: 1250
+        href:
+          type: string
+          description: The Plex web URL for accessing the library
+          example: '/watch/web/index.html#!/media/123456789/com.plexapp.plugins.library?source=1'
+        regExp:
+          type: string
+          description: Regular expression pattern for URL matching
+          example: '(?=(\\/(.*)=\\1&pivot))'
+      required:
+        - id
+        - name
+        - type
+        - mediaCount
+        - href
+        - regExp
     PlexSettings:
       type: object
       properties:
@@ -1748,7 +1783,41 @@ paths:
         - settings
       responses:
         '200':
-          description: Public libraries returned
+          description: List of enabled libraries with media counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlexLibrary'
+  /libraries/items:
+    get:
+      summary: Get library links for authenticated user
+      description: Returns library links with Plex URLs for libraries the authenticated user has access to. Only accessible to authenticated users.
+      tags:
+        - settings
+      parameters:
+        - name: sort
+          in: query
+          description: Sort order for the library links
+          required: false
+          schema:
+            type: string
+            enum: [id, name, type]
+            default: id
+      responses:
+        '200':
+          description: List of library links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LibraryLink'
+        '401':
+          description: Unauthorized - user not authenticated
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:

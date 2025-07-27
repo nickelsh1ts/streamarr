@@ -142,6 +142,111 @@ router.get('/libraries', async (req, res, next) => {
     });
   }
 });
+
+router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
+  const settings = getSettings();
+  const userRepository = getRepository(User);
+  try {
+    const admin = await userRepository.findOneOrFail({
+      select: { id: true, plexToken: true },
+      where: { id: 1 },
+    });
+
+    const isOwner = req.user?.id === 1;
+    let enabledLibraries = settings.plex.libraries.filter((lib) => lib.enabled);
+    
+    if (!isOwner) {
+      const userSharedLibraries = req.user?.settings?.sharedLibraries;
+
+      if (userSharedLibraries === 'all') {
+        // User has access to all enabled libraries (no filtering needed)
+      } else if (
+        !userSharedLibraries ||
+        userSharedLibraries === 'server' ||
+        userSharedLibraries === ''
+      ) {
+        const defaultLibs = settings.main.sharedLibraries;
+
+        if (defaultLibs === 'all' || !defaultLibs) {
+          // Server default is "All Libraries" (no filtering needed)
+        } else {
+          const adminConfiguredLibs = defaultLibs
+            .split(/[,|]/)
+            .map((id) => id.trim())
+            .filter((id) => id !== '');
+
+          enabledLibraries = enabledLibraries.filter((lib) =>
+            adminConfiguredLibs.includes(lib.id)
+          );
+        }
+      } else if (typeof userSharedLibraries === 'string') {
+        const requestedLibs = userSharedLibraries
+          .split(/[,|]/)
+          .map((id) => id.trim())
+          .filter((id) => id !== '');
+
+        enabledLibraries = enabledLibraries.filter((lib) =>
+          requestedLibs.includes(lib.id)
+        );
+      } else {
+        res.status(200).json([]);
+        return;
+      }
+    }
+
+    // Handle sorting
+    const sortBy = req.query.sort as string;
+    if (sortBy === 'id') {
+      enabledLibraries = enabledLibraries.sort(
+        (a, b) => parseInt(a.id) - parseInt(b.id)
+      );
+    } else if (sortBy === 'name') {
+      enabledLibraries = enabledLibraries.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+    } else if (sortBy === 'type') {
+      enabledLibraries = enabledLibraries.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      );
+    }
+
+    const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+    const machineId = settings.plex.machineId;
+
+    // Build library links with proper Plex URLs
+    const results = await Promise.all(
+      enabledLibraries.map(async (lib) => {
+        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
+          size: 0,
+        });
+
+        const plexUrl = `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=${lib.id}`;
+        const regExp = `source=${lib.id}&`;
+
+        return {
+          id: lib.id,
+          name: lib.name,
+          type: lib.type,
+          mediaCount: totalSize,
+          href: plexUrl,
+          regExp: regExp,
+        };
+      })
+    );
+
+    res.status(200).json(results);
+  } catch (e) {
+    logger.error('Something went wrong getting plex library links', {
+      label: 'API',
+      errorMessage: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Unable to retrieve Plex library links.',
+    });
+  }
+});
+
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
 router.use('/invite', isAuthenticated(), inviteRoutes);
 router.use('/service', isAuthenticated(), serviceRoutes);

@@ -1,5 +1,6 @@
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
+import useLibraryLinks from '@app/hooks/useLibraryLinks';
 import {
   FilmIcon,
   BookmarkIcon,
@@ -21,15 +22,15 @@ interface MenuLinksProps {
   href: string;
   title: string;
   icon: React.ReactNode;
-  regExp: RegExp;
+  regExp: string;
   hidden?: boolean;
 }
 
 interface LibraryLinksProps {
   href: string;
   title: string;
-  type: 'movies' | 'TV shows' | 'music' | 'live TV' | 'photos' | 'other';
-  regExp: RegExp;
+  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  regExp: string;
 }
 
 interface LibraryMenuProps {
@@ -37,71 +38,6 @@ interface LibraryMenuProps {
   setIsOpen?: (value: SetStateAction<boolean>) => void;
   isMobile?: boolean;
 }
-
-const LibraryLinks: LibraryLinksProps[] = [
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=1',
-    title: 'movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=1&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=10',
-    title: 'kids movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=10&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=4',
-    title: 'retro: movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=4&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=11',
-    title: 'retro: Kids movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=11&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=2',
-    title: 'TV shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=2&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=8',
-    title: 'kids shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=8&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=5',
-    title: 'retro: TV shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=5&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=7',
-    title: 'retro: Kids shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=7&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=9',
-    title: 'music',
-    type: 'music',
-    regExp: /(?=(\/(.*)=9&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/live-tv',
-    title: 'live TV',
-    type: 'live TV',
-    regExp: /^\/watch\/web\/index\.html#!\/live-tv\/?(.)*?$/,
-  },
-];
-
-//TODO Implement api calls and logic to render library menu items from plex integration
 
 const LibraryMenu = ({
   isOpen,
@@ -112,6 +48,8 @@ const LibraryMenu = ({
   const [currentUrl, setCurrentUrl] = useState(pathname);
   const { hasPermission } = useUser();
   const { currentSettings } = useSettings();
+  const { libraryLinks, loading } = useLibraryLinks('id');
+
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
     setCurrentUrl(lastUrl);
@@ -127,21 +65,39 @@ const LibraryMenu = ({
 
   const url = currentUrl;
 
-  const libraryTypes = [
-    'movies',
-    'TV shows',
-    'music',
-    'live TV',
-    'photos',
-    'other',
-  ];
+  // Group libraries by type
+  const groupedLibraries = libraryLinks.reduce(
+    (acc, lib) => {
+      if (!acc[lib.type]) {
+        acc[lib.type] = [];
+      }
+
+      acc[lib.type].push({
+        href: lib.href,
+        title: lib.name,
+        type: lib.type,
+        regExp: lib.regExp,
+      });
+      return acc;
+    },
+    {} as Record<string, LibraryLinksProps[]>
+  );
+
+  const libraryTypes: (
+    | 'movie'
+    | 'show'
+    | 'artist'
+    | 'live TV'
+    | 'photos'
+    | 'other'
+  )[] = ['movie', 'show', 'artist', 'live TV', 'photos', 'other'];
 
   const MenuLinks: MenuLinksProps[] = [
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
       title: 'Discover',
       icon: <NewspaperIcon className="w-7 h-7" />,
-      regExp: /(?=(\/(.*)=home&pivot=discover))/,
+      regExp: '=home&pivot=discover',
       hidden:
         isMobile &&
         !hasPermission(
@@ -158,7 +114,7 @@ const LibraryMenu = ({
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
       title: 'Watch List',
       icon: <BookmarkIcon className="w-7 h-7" />,
-      regExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
+      regExp: '=watchlist&pivot=discover',
       hidden:
         (isMobile && !currentSettings?.releaseSched) ||
         !hasPermission(
@@ -186,53 +142,72 @@ const LibraryMenu = ({
           regExp={item.regExp}
         />
       ))}
-      {libraryTypes.map((type) => {
-        const Links = LibraryLinks.filter((library) => library.type === type);
-        let icon = null;
-        switch (type) {
-          case 'movies':
-            icon = <FilmIcon className="size-7" />;
-            break;
-          case 'TV shows':
-            icon = <TvIcon className="size-7" />;
-            break;
-          case 'music':
-            icon = <MusicalNoteIcon className="size-7" />;
-            break;
-          case 'live TV':
-            icon = <VideoCameraIcon className="size-7" />;
-            break;
-          case 'photos':
-            icon = <PhotoIcon className="size-7" />;
-            break;
-          default:
-            icon = <RectangleGroupIcon className="size-7" />;
-            break;
-        }
-        return Links.length > 1 ? (
-          <MultiItem
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            title={type}
-            icon={icon}
-            LibraryLinks={Links}
-            defaultPivot={'library'}
-            liKey={type}
-            key={type}
-            url={url}
-          />
-        ) : Links.length === 1 ? (
-          <SingleItem
-            liKey={Links[0].title}
-            key={Links[0].title}
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            href={Links[0].href}
-            title={Links[0].title}
-            icon={icon}
-            url={url}
-            regExp={Links[0].regExp}
-          />
-        ) : null;
-      })}
+      {loading ? (
+        <SingleItem
+          liKey="loading"
+          key="loading"
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          href="#"
+          title="Loading libraries..."
+          icon={<RectangleGroupIcon className="size-7" />}
+          url={url}
+          regExp="undefined"
+        />
+      ) : (
+        libraryTypes.map((type) => {
+          const Links = groupedLibraries[type] || [];
+          let icon = null;
+          let multiTitle = null;
+          switch (type) {
+            case 'movie':
+              icon = <FilmIcon className="size-7" />;
+              multiTitle = 'Movies';
+              break;
+            case 'show':
+              icon = <TvIcon className="size-7" />;
+              multiTitle = 'Shows';
+              break;
+            case 'artist':
+              icon = <MusicalNoteIcon className="size-7" />;
+              multiTitle = 'Music';
+              break;
+            case 'live TV':
+              icon = <VideoCameraIcon className="size-7" />;
+              break;
+            case 'photos':
+              icon = <PhotoIcon className="size-7" />;
+              break;
+            default:
+              icon = <RectangleGroupIcon className="size-7" />;
+              break;
+          }
+          return Links.length > 1 ? (
+            <MultiItem
+              onClick={() => setIsOpen && setIsOpen(!isOpen)}
+              title={multiTitle ?? type}
+              icon={icon}
+              LibraryLinks={Links}
+              defaultPivot={'library'}
+              liKey={type}
+              key={type}
+              url={url}
+            />
+          ) : Links.length === 1 ? (
+            <SingleItem
+              liKey={Links[0].title}
+              key={Links[0].title}
+              onClick={() => setIsOpen && setIsOpen(!isOpen)}
+              href={Links[0].href}
+              title={Links[0].title}
+              icon={icon}
+              url={url}
+              regExp={Links[0].regExp}
+              type={Links[0].type}
+              defaultPivot={'library'}
+            />
+          ) : null;
+        })
+      )}
     </ul>
   );
 };
@@ -246,8 +221,15 @@ interface SingleItemProps {
   className?: string;
   linkclasses?: string;
   url: string;
-  regExp: RegExp;
+  regExp: string | RegExp;
+  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  defaultPivot?: string;
 }
+
+const matchesLibrarySource = (url: string, sourceId: string): boolean => {
+  const pattern = new RegExp(`[?&]source=${sourceId}(?=[&#]|$)`);
+  return pattern.test(url);
+};
 
 export const SingleItem = ({
   liKey,
@@ -259,8 +241,37 @@ export const SingleItem = ({
   linkclasses,
   url,
   regExp,
+  type,
+  defaultPivot = 'library',
 }: SingleItemProps) => {
-  const isActive = regExp.test(url);
+  const isActive =
+    typeof regExp === 'string'
+      ? regExp.includes('source=')
+        ? matchesLibrarySource(
+            url,
+            regExp.replace('source=', '').replace('&', '')
+          )
+        : url.includes(regExp)
+      : regExp.test(url);
+
+  // Determine pivot list based on type
+  let pivotList: string[] | null = null;
+  if (type) {
+    switch (type) {
+      case 'movie':
+        pivotList = ['library', 'collections', 'categories'];
+        break;
+      case 'show':
+        pivotList = ['library', 'collections', 'categories'];
+        break;
+      case 'artist':
+        pivotList = ['library', 'playlists'];
+        break;
+      default:
+        pivotList = null;
+        break;
+    }
+  }
 
   return (
     <li
@@ -269,12 +280,32 @@ export const SingleItem = ({
     >
       <Link
         onClick={onClick}
-        href={href}
+        href={
+          href && pivotList && type ? href + '&pivot=' + defaultPivot : href
+        }
         className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
       </Link>
+      {isActive && pivotList && (
+        <ul className="flex flex-col gap-1 mt-1">
+          {pivotList.map((pivot) => (
+            <li key={pivot}>
+              <Link
+                onClick={onClick}
+                href={href && pivotList ? href + '&pivot=' + pivot : href}
+                className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+              >
+                <p className="capitalize">{pivot}</p>
+                {isActive && url.includes(`&pivot=${pivot}`) && (
+                  <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 };
@@ -302,7 +333,14 @@ export const MultiItem = ({
   return (
     <li className="pointer-events-auto" key={liKey}>
       <details
-        open={LibraryLinks.some((item) => url.includes(item.href))}
+        open={LibraryLinks.some((item) =>
+          item.regExp.includes('source=')
+            ? matchesLibrarySource(
+                url,
+                item.regExp.replace('source=', '').replace('&', '')
+              )
+            : url.includes(item.regExp)
+        )}
         className="group"
       >
         <summary className="active:!bg-primary/20 space-x-2 gap-0 text-zinc-300 hover:text-white group-open:text-white capitalize">
@@ -311,15 +349,21 @@ export const MultiItem = ({
         </summary>
         <ul className="flex flex-col gap-1 mt-1">
           {LibraryLinks.map((item) => {
-            const isActive = url.match(item.regExp);
+            const isActive = item.regExp.includes('source=')
+              ? matchesLibrarySource(
+                  url,
+                  item.regExp.replace('source=', '').replace('&', '')
+                )
+              : url.includes(item.regExp);
+
             switch (item.type) {
-              case 'movies':
+              case 'movie':
                 pivotList = ['library', 'collections', 'categories'];
                 break;
-              case 'TV shows':
+              case 'show':
                 pivotList = ['library', 'collections', 'categories'];
                 break;
-              case 'music':
+              case 'artist':
                 pivotList = ['library', 'playlists'];
                 break;
               default:
@@ -350,10 +394,10 @@ export const MultiItem = ({
                               ? item.href + '&pivot=' + pivot
                               : item.href
                           }
-                          className={`active:!bg-white/15 ${url.includes(item.href + '&pivot=' + pivot) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+                          className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
                         >
                           <p className="capitalize">{pivot}</p>
-                          {url.includes(item.href + '&pivot=' + pivot) && (
+                          {isActive && url.includes(`&pivot=${pivot}`) && (
                             <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
                           )}
                         </Link>
