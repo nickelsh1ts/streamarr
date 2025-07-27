@@ -31,8 +31,6 @@ import {
 import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
-//TODO: Hide password settings if local user signin disabled
-
 const ConfirmAccountForm = ({
   onComplete,
   user,
@@ -374,89 +372,90 @@ const ConfirmAccountForm = ({
                   </div>
                 </>
               )}
-            {/* Password fields */}
-            <div className="mb-6 mt-3">
-              <h3 className="text-2xl font-extrabold mb-2">Password</h3>
-              {!passwordData.hasPassword && (
-                <Alert
-                  type="warning"
-                  title={
-                    'Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a "local user" using your email address.'
-                  }
-                />
-              )}
-              <div className="max-w-6xl space-y-5">
-                {passwordData.hasPassword && user?.id === currentUser?.id && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 pb-6">
-                    <label htmlFor="currentPassword" className="col-span-1">
-                      Current Password
+            {currentSettings?.localLogin && (
+              <div className="mb-6 mt-3">
+                <h3 className="text-2xl font-extrabold mb-2">Password</h3>
+                {!passwordData.hasPassword && (
+                  <Alert
+                    type="warning"
+                    title={
+                      'Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a "local user" using your email address.'
+                    }
+                  />
+                )}
+                <div className="max-w-6xl space-y-5">
+                  {passwordData.hasPassword && user?.id === currentUser?.id && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 pb-6">
+                      <label htmlFor="currentPassword" className="col-span-1">
+                        Current Password
+                      </label>
+                      <div className="col-span-2">
+                        <div className="flex">
+                          <SensitiveInput
+                            as="field"
+                            id="currentPassword"
+                            buttonSize="sm"
+                            name="currentPassword"
+                            className="input input-sm input-primary w-full"
+                          />
+                        </div>
+                        {errors.currentPassword &&
+                          touched.currentPassword &&
+                          typeof errors.currentPassword === 'string' && (
+                            <div className="text-error">
+                              {errors.currentPassword}
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <label htmlFor="newPassword" className="col-span-1">
+                      New Password
                     </label>
                     <div className="col-span-2">
                       <div className="flex">
                         <SensitiveInput
                           as="field"
-                          id="currentPassword"
+                          id="newPassword"
                           buttonSize="sm"
-                          name="currentPassword"
+                          name="newPassword"
                           className="input input-sm input-primary w-full"
                         />
                       </div>
-                      {errors.currentPassword &&
-                        touched.currentPassword &&
-                        typeof errors.currentPassword === 'string' && (
+                      {errors.newPassword &&
+                        touched.newPassword &&
+                        typeof errors.newPassword === 'string' && (
+                          <div className="text-error">{errors.newPassword}</div>
+                        )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <label htmlFor="confirmPassword" className="col-span-1">
+                      Confirm Password
+                    </label>
+                    <div className="col-span-2">
+                      <div className="flex">
+                        <SensitiveInput
+                          as="field"
+                          id="confirmPassword"
+                          buttonSize="sm"
+                          name="confirmPassword"
+                          className="input input-sm input-primary w-full"
+                        />
+                      </div>
+                      {errors.confirmPassword &&
+                        touched.confirmPassword &&
+                        typeof errors.confirmPassword === 'string' && (
                           <div className="text-error">
-                            {errors.currentPassword}
+                            {errors.confirmPassword}
                           </div>
                         )}
                     </div>
                   </div>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <label htmlFor="newPassword" className="col-span-1">
-                    New Password
-                  </label>
-                  <div className="col-span-2">
-                    <div className="flex">
-                      <SensitiveInput
-                        as="field"
-                        id="newPassword"
-                        buttonSize="sm"
-                        name="newPassword"
-                        className="input input-sm input-primary w-full"
-                      />
-                    </div>
-                    {errors.newPassword &&
-                      touched.newPassword &&
-                      typeof errors.newPassword === 'string' && (
-                        <div className="text-error">{errors.newPassword}</div>
-                      )}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <label htmlFor="confirmPassword" className="col-span-1">
-                    Confirm Password
-                  </label>
-                  <div className="col-span-2">
-                    <div className="flex">
-                      <SensitiveInput
-                        as="field"
-                        id="confirmPassword"
-                        buttonSize="sm"
-                        name="confirmPassword"
-                        className="input input-sm input-primary w-full"
-                      />
-                    </div>
-                    {errors.confirmPassword &&
-                      touched.confirmPassword &&
-                      typeof errors.confirmPassword === 'string' && (
-                        <div className="text-error">
-                          {errors.confirmPassword}
-                        </div>
-                      )}
-                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="mb-6 mt-3">
               <h3 className="text-2xl font-extrabold mb-2">
                 Notification Settings
