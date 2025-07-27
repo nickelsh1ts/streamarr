@@ -76,7 +76,7 @@ const CalendarToolBar = ({
 
   return (
     <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
-      <div id="datePicker" className="text-primary z-50">
+      <div id="datePicker" className="text-primary">
         {view != Views.WEEK ? (
           <DatePicker
             dateFormat={dateFormat}

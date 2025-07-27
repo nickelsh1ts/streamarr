@@ -112,18 +112,12 @@ signupRoutes.post('/plexauth', async (req, res) => {
       try {
         const plexTvApi = new PlexTvAPI(mainUser.plexToken);
         alreadyOnPlex = await plexTvApi.checkUserAccess(plexUser.id);
-      } catch (error) {
-        // During signup, it's expected that new users don't exist on Plex shared list
-        // Only log if it's not the expected "user does not exist" scenario
-        if (
-          !error.message.includes(
-            "does not exist on the main Plex account's shared list"
-          )
-        ) {
+      } catch (e) {
+        {
           logger.warn('Plex access check failed', {
             label: 'SignUp',
             plexUserId: plexUser.id,
-            error: error.message,
+            error: e.message,
           });
         }
         alreadyOnPlex = false;
@@ -199,6 +193,8 @@ signupRoutes.post('/plexauth', async (req, res) => {
       label: 'SignUp',
       userId: user.id,
       email: user.email,
+      invitedBy: invite.createdBy ? invite.createdBy.displayName : 'Unknown',
+      inviteCode: invite.icode,
     });
 
     // Handle Plex server invitation immediately to avoid inconsistent state

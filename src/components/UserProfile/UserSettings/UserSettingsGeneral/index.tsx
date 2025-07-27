@@ -20,6 +20,8 @@ import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
 
+//TODO: Allow library selector to edit shared libraries in plex
+
 const UserSettingsGeneral = () => {
   const { locale, setLocale } = useLocale();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);

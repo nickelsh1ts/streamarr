@@ -229,9 +229,11 @@ class PlexTvAPI extends ExternalAPI {
       const users = Array.isArray(usersRaw) ? usersRaw : [usersRaw];
       const user = users.find((u) => parseInt(u.$.id) === userId);
       if (!user) {
-        throw new Error(
-          "This user does not exist on the main Plex account's shared list"
+        logger.warn(
+          "This user does not exist on the main Plex account's shared list",
+          { label: 'Plex.tv API', userId }
         );
+        return false;
       }
       const serversRaw = user.Server;
       const servers = Array.isArray(serversRaw)

@@ -185,6 +185,15 @@ inviteRoutes.post<
       return next({ status: 500, message: 'User missing from request.' });
     }
 
+    const settings = getSettings();
+    if (!settings.main.enableSignUp) {
+      return next({
+        status: 403,
+        message:
+          'Invite creation is disabled. Signup must be enabled to create invites.',
+      });
+    }
+
     const inviteRepository = getRepository(Invite);
 
     const invite = new Invite({

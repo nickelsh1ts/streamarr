@@ -32,7 +32,7 @@ h2.react-datepicker__current-month {
   background-image: none;
 }
 .react-datepicker-popper {
-  @apply max-xl:mx-1.5 !z-[5];
+  @apply max-xl:mx-1.5 !z-20;
 }
 .rbc-agenda-view {
   @apply overflow-visible;

@@ -24,6 +24,8 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import signupRoutes from './signup';
 
+//TODO: Create API endpoints for services and Plex instead of using reverse proxies
+
 export const createTmdbWithRegionLanguage = (): TheMovieDb => {
   return new TheMovieDb();
 };
@@ -97,6 +99,7 @@ router.get('/settings/public', async (req, res) => {
     res.status(200).json(settings.fullPublicSettings);
   }
 });
+
 router.get('/libraries', async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
