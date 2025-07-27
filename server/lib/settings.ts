@@ -41,9 +41,13 @@ export interface TautulliSettings {
 
 export interface ServiceSettings {
   enabled: boolean;
+  hostname?: string;
+  port?: number;
+  useSsl?: boolean;
   externalUrl?: string;
   urlBase?: string;
   id?: string;
+  apiKey?: string;
 }
 
 export interface DVRSettings {

@@ -1,6 +1,7 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
@@ -45,15 +46,23 @@ const ServicesOverseerr = () => {
       </div>
       <Formik
         initialValues={{
+          hostname: dataOverseerr?.hostname ?? '',
+          port: dataOverseerr?.port ?? 5055,
+          useSsl: dataOverseerr?.useSsl ?? false,
           enabled: dataOverseerr?.enabled ?? false,
           urlBase: dataOverseerr?.urlBase,
+          apiKey: dataOverseerr?.apiKey ?? '',
         }}
         validationSchema={SettingsSchema}
         onSubmit={async (values) => {
           try {
             await axios.post('/api/v1/settings/Overseerr', {
+              hostname: values.hostname,
+              port: values.port,
+              useSsl: values.useSsl,
               enabled: values.enabled,
               urlBase: values.urlBase,
+              apiKey: values.apiKey,
             } as ServiceSettings);
 
             Toast({
@@ -107,6 +116,69 @@ const ServicesOverseerr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="hostname">
+                  Hostname or IP Address
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
+                      {values.useSsl ? 'https://' : 'http://'}
+                    </span>
+                    <Field
+                      type="text"
+                      inputMode="url"
+                      id="hostname"
+                      name="hostname"
+                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
+                    />
+                  </div>
+                  {errors.hostname &&
+                    touched.hostname &&
+                    typeof errors.hostname === 'string' && (
+                      <div className="text-error">{errors.hostname}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="port">
+                  Port
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="text"
+                    inputMode="numeric"
+                    id="port"
+                    name="port"
+                    className="input input-sm input-primary w-1/6 rounded-md"
+                    autoComplete="off"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
+                  />
+                  {errors.port &&
+                    touched.port &&
+                    typeof errors.port === 'string' && (
+                      <div className="text-error">{errors.port}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="useSsl">Use SSL</label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="checkbox"
+                    id="useSsl"
+                    name="useSsl"
+                    onChange={() => {
+                      setFieldValue('useSsl', !values.useSsl);
+                    }}
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">URL Base</label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -121,6 +193,28 @@ const ServicesOverseerr = () => {
                   {errors.urlBase && touched.urlBase && (
                     <div className="text-error">{errors.urlBase}</div>
                   )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="apiKey" className="text-label">
+                  API Key
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex col-span-2">
+                    <SensitiveInput
+                      as="field"
+                      id="apiKey"
+                      name="apiKey"
+                      buttonSize="sm"
+                      className="input input-sm input-primary w-full"
+                    />
+                  </div>
+                  {errors.apiKey &&
+                    touched.apiKey &&
+                    typeof errors.apiKey === 'string' && (
+                      <div className="text-error">{errors.apiKey}</div>
+                    )}
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />
