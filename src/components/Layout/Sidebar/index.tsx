@@ -23,8 +23,6 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 
-//TODO: Add more options to settings dropdown
-
 interface MenuLinksProps {
   href: string;
   title: string;
@@ -35,6 +33,11 @@ interface MenuLinksProps {
 const Sidebar = () => {
   const [currentUrl, setCurrentUrl] = useState('');
   const { hasPermission } = useUser();
+  const { currentSettings } = useSettings();
+
+  // Use custom logo if available, otherwise fallback to default
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
+
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
     setCurrentUrl(lastUrl);
@@ -96,10 +99,11 @@ const Sidebar = () => {
           <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <Image
-                src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
+                src={logoSrc}
                 alt="logo"
                 width={176}
                 height={52}
+                unoptimized={true}
                 className="my-2 mx-4 h-auto w-44"
               />
               <button
@@ -147,6 +151,12 @@ const Sidebar = () => {
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/privacy"
+                      >
+                        Privacy
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/online-media-sources"
                         divide="before"
                       >
@@ -157,6 +167,18 @@ const Sidebar = () => {
                         href="/watch/web/index.html#!/settings/devices/all"
                       >
                         Authorized Devices
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/streaming-services"
+                      >
+                        Streaming Services
+                      </DropDownMenu.Item>
+                      <DropDownMenu.Item
+                        onClick={() => setIsOpen(!isOpen)}
+                        href="/watch/web/index.html#!/settings/manage-library-access"
+                      >
+                        Manage Library Access
                       </DropDownMenu.Item>
                     </DropDownMenu>
                   </div>
@@ -186,6 +208,12 @@ const Sidebar = () => {
                 Player
               </DropDownMenu.Item>
               <DropDownMenu.Item
+                onClick={() => setIsOpen(!isOpen)}
+                href="/watch/web/index.html#!/settings/privacy"
+              >
+                Privacy
+              </DropDownMenu.Item>
+              <DropDownMenu.Item
                 href="/watch/web/index.html#!/settings/online-media-sources"
                 divide="before"
               >
@@ -193,6 +221,18 @@ const Sidebar = () => {
               </DropDownMenu.Item>
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/devices/all">
                 Authorized Devices
+              </DropDownMenu.Item>
+              <DropDownMenu.Item
+                onClick={() => setIsOpen(!isOpen)}
+                href="/watch/web/index.html#!/settings/streaming-services"
+              >
+                Streaming Services
+              </DropDownMenu.Item>
+              <DropDownMenu.Item
+                onClick={() => setIsOpen(!isOpen)}
+                href="/watch/web/index.html#!/settings/manage-library-access"
+              >
+                Manage Library Access
               </DropDownMenu.Item>
             </DropDownMenu>
           </div>
@@ -277,67 +317,69 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             </AccordionContent>
             {hasPermission([Permission.REQUEST, Permission.STREAMARR], {
               type: 'or',
-            }) && (
-              <>
-                <div className="flex">
-                  <SingleItem
-                    className="flex-1"
-                    linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
-                    liKey={'request'}
-                    onClick={() => {
-                      onClick && onClick(!isOpen);
-                      handleClick(1);
-                    }}
-                    href={'/request'}
-                    title={'Request'}
-                    icon={
-                      <Image
-                        alt="Overseerr"
-                        width={28}
-                        height={28}
-                        src={'/external/os-icon.svg'}
-                      />
-                    }
-                    url={url}
-                    regExp={/\/request\/?$/}
-                  />
-                  <li className={`${openIndexes.includes(1) ? 'hidden' : ''}`}>
-                    <button
-                      onClick={() => handleClick(1)}
-                      className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+            }) &&
+              currentSettings?.enableRequest && (
+                <>
+                  <div className="flex">
+                    <SingleItem
+                      className="flex-1"
+                      linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
+                      liKey={'request'}
+                      onClick={() => {
+                        onClick && onClick(!isOpen);
+                        handleClick(1);
+                      }}
+                      href={'/request'}
+                      title={'Request'}
+                      icon={
+                        <Image
+                          alt="Overseerr"
+                          width={28}
+                          height={28}
+                          src={'/external/os-icon.svg'}
+                        />
+                      }
+                      url={url}
+                      regExp={/\/request\/?$/}
+                    />
+                    <li
+                      className={`${openIndexes.includes(1) ? 'hidden' : ''}`}
                     >
-                      <ChevronDownIcon className="size-5" />
-                    </button>
-                  </li>
-                </div>
-                <AccordionContent isOpen={openIndexes.includes(1)}>
-                  <RequestMenu onClick={onClick} url={url} />
-                </AccordionContent>
-              </>
-            )}
+                      <button
+                        onClick={() => handleClick(1)}
+                        className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                      >
+                        <ChevronDownIcon className="size-5" />
+                      </button>
+                    </li>
+                  </div>
+                  <AccordionContent isOpen={openIndexes.includes(1)}>
+                    <RequestMenu onClick={onClick} url={url} />
+                  </AccordionContent>
+                </>
+              )}
           </span>
         )}
       </Accordion>
-      {currentSettings.enableSignUp &&
-        hasPermission(
-          [
-            Permission.CREATE_INVITES,
-            Permission.MANAGE_INVITES,
-            Permission.VIEW_INVITES,
-            Permission.STREAMARR,
-          ],
-          { type: 'or' }
-        ) && (
-          <SingleItem
-            liKey={'invites'}
-            onClick={() => onClick && onClick(!isOpen)}
-            href={'/invites'}
-            title={'Invites'}
-            icon={<PaperAirplaneIcon className="size-7" />}
-            url={url}
-            regExp={/\/invites/}
-          />
-        )}
+      {hasPermission(
+        [
+          Permission.CREATE_INVITES,
+          Permission.MANAGE_INVITES,
+          Permission.VIEW_INVITES,
+          Permission.STREAMARR,
+        ],
+        { type: 'or' }
+      ) && (
+        <SingleItem
+          liKey={'invites'}
+          onClick={() => onClick && onClick(!isOpen)}
+          href={'/invites'}
+          title={'Invites'}
+          icon={<PaperAirplaneIcon className="size-7" />}
+          url={url}
+          regExp={/\/invites/}
+        />
+      )}
       {currentSettings.releaseSched &&
         hasPermission(
           [

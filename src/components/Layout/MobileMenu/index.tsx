@@ -12,6 +12,8 @@ import {
   EllipsisHorizontalIcon,
   HomeIcon,
   PaperAirplaneIcon,
+  NewspaperIcon,
+  BookmarkIcon,
 } from '@heroicons/react/24/outline';
 import {
   PaperAirplaneIcon as FilledPaperAirplaneIcon,
@@ -19,13 +21,13 @@ import {
   HomeIcon as FilledHomeIcon,
   XMarkIcon,
   Bars3Icon,
+  NewspaperIcon as FilledNewspaperIcon,
+  BookmarkIcon as FilledBookmarkIcon,
 } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { JSX } from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
-
-//TODO: Add discover and watchlist menu items in place of invites and release schedule if they're disabled.
 
 interface MenuLink {
   href: string;
@@ -68,6 +70,27 @@ const MobileMenu = () => {
 
   const toggle = () => setIsOpen(!isOpen);
 
+  const invitesDisabled = !hasPermission(
+    [
+      Permission.CREATE_INVITES,
+      Permission.MANAGE_INVITES,
+      Permission.VIEW_INVITES,
+      Permission.STREAMARR,
+    ],
+    { type: 'or' }
+  );
+
+  const scheduleDisabled =
+    !currentSettings?.releaseSched ||
+    !hasPermission(
+      [
+        Permission.VIEW_SCHEDULE,
+        Permission.CREATE_EVENTS,
+        Permission.STREAMARR,
+      ],
+      { type: 'or' }
+    );
+
   const menuLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!',
@@ -75,6 +98,22 @@ const MobileMenu = () => {
       svgIcon: <HomeIcon className="size-7" />,
       svgIconSelected: <FilledHomeIcon className="size-7" />,
       activeRegExp: /^\/watch\/web\/index\.html#!\/?$/,
+    },
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
+      content: 'Discover',
+      svgIcon: <NewspaperIcon className="w-7 h-7" />,
+      svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
+      activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
+      hidden: !invitesDisabled, // Show when invites is disabled
+    },
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
+      content: 'Watchlist',
+      svgIcon: <BookmarkIcon className="h-6 w-6" />,
+      svgIconSelected: <FilledBookmarkIcon className="h-6 w-6" />,
+      activeRegExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
+      hidden: !scheduleDisabled, // Show when schedule is disabled
     },
     {
       href: '/request',
@@ -106,17 +145,7 @@ const MobileMenu = () => {
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
-      hidden:
-        !currentSettings.enableSignUp ||
-        !hasPermission(
-          [
-            Permission.CREATE_INVITES,
-            Permission.MANAGE_INVITES,
-            Permission.VIEW_INVITES,
-            Permission.STREAMARR,
-          ],
-          { type: 'or' }
-        ),
+      hidden: invitesDisabled,
     },
     {
       href: '/schedule',
@@ -124,14 +153,7 @@ const MobileMenu = () => {
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
-      hidden: !hasPermission(
-        [
-          Permission.VIEW_SCHEDULE,
-          Permission.CREATE_EVENTS,
-          Permission.STREAMARR,
-        ],
-        { type: 'or' }
-      ),
+      hidden: scheduleDisabled,
     },
   ];
 
@@ -158,6 +180,13 @@ const MobileMenu = () => {
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/player\/?$/,
     },
     {
+      href: '/watch/web/index.html#!/settings/privacy',
+      content: 'Privacy',
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/privacy\/?$/,
+    },
+    {
       href: '/watch/web/index.html#!/settings/online-media-sources',
       content: 'Online Media Sources',
       svgIcon: null,
@@ -171,6 +200,22 @@ const MobileMenu = () => {
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/devices\/all\/?$/,
+    },
+    {
+      href: '/watch/web/index.html#!/settings/streaming-services',
+      content: 'Streaming Services',
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp:
+        /^\/watch\/web\/index\.html#!\/settings\/streaming-services\/?$/,
+    },
+    {
+      href: '/watch/web/index.html#!/settings/manage-library-access',
+      content: 'Manage Library Access',
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp:
+        /^\/watch\/web\/index\.html#!\/settings\/manage-library-access\/?$/,
     },
   ];
 
@@ -210,7 +255,7 @@ const MobileMenu = () => {
         ) : (
           <>
             {menuType === 'library' && (
-              <LibraryMenu isOpen={isOpen} setIsOpen={setIsOpen} />
+              <LibraryMenu isMobile isOpen={isOpen} setIsOpen={setIsOpen} />
             )}
             {menuType === 'request' && (
               <RequestMenu onClick={setIsOpen} url={url} />

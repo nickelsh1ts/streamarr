@@ -1,14 +1,11 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useRouteGuard from '@app/hooks/useRouteGuard';
+import useSettings from '@app/hooks/useSettings';
 import { Permission } from '@server/lib/permissions';
-import type { ServiceSettings } from '@server/lib/settings';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import useSWR from 'swr';
-
-//TODO: Disable this component if Overseerr is not enabled in settings.
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -17,8 +14,7 @@ const Request = ({ children, ...props }) => {
   const pathname = usePathname();
   const url = pathname.replace('/request', '');
   const router = useRouter();
-
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/overseerr');
+  const { currentSettings } = useSettings();
 
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
@@ -28,18 +24,25 @@ const Request = ({ children, ...props }) => {
   const [hostname, setHostname] = useState('');
 
   useEffect(() => {
-    if (!data?.urlBase) {
+    if (!currentSettings?.requestUrl) {
       setLoadingIframe(true);
     } else {
       innerFrame?.navigation?.addEventListener('navigate', () => {
         setLoadingIframe(true);
         setTimeout(() => {
           if (
-            url != innerFrame?.location?.pathname.replace(data?.urlBase, '') &&
+            url !=
+              innerFrame?.location?.pathname.replace(
+                currentSettings?.requestUrl,
+                ''
+              ) &&
             !innerFrame?.location?.pathname.includes('/search')
           ) {
             router.push(
-              innerFrame?.location?.pathname.replace(data?.urlBase, '/request')
+              innerFrame?.location?.pathname.replace(
+                currentSettings?.requestUrl,
+                '/request'
+              )
             );
           } else {
             setTimeout(() => setLoadingIframe(false), 600);
@@ -48,7 +51,7 @@ const Request = ({ children, ...props }) => {
       });
     }
   }, [
-    data?.urlBase,
+    currentSettings?.requestUrl,
     innerFrame?.location?.pathname,
     innerFrame?.navigation,
     router,
@@ -56,12 +59,12 @@ const Request = ({ children, ...props }) => {
   ]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && data?.urlBase) {
+    if (typeof window !== 'undefined' && currentSettings?.requestUrl) {
       setHostname(
-        `${window?.location?.protocol}//${window?.location?.host}${data?.urlBase}`
+        `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
       );
     }
-  }, [data?.urlBase, setHostname]);
+  }, [currentSettings?.requestUrl, setHostname]);
 
   return (
     <>

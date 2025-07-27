@@ -1,3 +1,5 @@
+import useSettings from '@app/hooks/useSettings';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
   FilmIcon,
   BookmarkIcon,
@@ -20,6 +22,7 @@ interface MenuLinksProps {
   title: string;
   icon: React.ReactNode;
   regExp: RegExp;
+  hidden?: boolean;
 }
 
 interface LibraryLinksProps {
@@ -32,22 +35,8 @@ interface LibraryLinksProps {
 interface LibraryMenuProps {
   isOpen?: boolean;
   setIsOpen?: (value: SetStateAction<boolean>) => void;
+  isMobile?: boolean;
 }
-
-const MenuLinks: MenuLinksProps[] = [
-  {
-    href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
-    title: 'Discover',
-    icon: <NewspaperIcon className="w-7 h-7" />,
-    regExp: /(?=(\/(.*)=home&pivot=discover))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
-    title: 'Watch List',
-    icon: <BookmarkIcon className="w-7 h-7" />,
-    regExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
-  },
-];
 
 const LibraryLinks: LibraryLinksProps[] = [
   {
@@ -114,9 +103,15 @@ const LibraryLinks: LibraryLinksProps[] = [
 
 //TODO Implement api calls and logic to render library menu items from plex integration
 
-const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
+const LibraryMenu = ({
+  isOpen,
+  setIsOpen,
+  isMobile = false,
+}: LibraryMenuProps) => {
   const pathname = usePathname();
   const [currentUrl, setCurrentUrl] = useState(pathname);
+  const { hasPermission } = useUser();
+  const { currentSettings } = useSettings();
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
     setCurrentUrl(lastUrl);
@@ -141,9 +136,45 @@ const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
     'other',
   ];
 
+  const MenuLinks: MenuLinksProps[] = [
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
+      title: 'Discover',
+      icon: <NewspaperIcon className="w-7 h-7" />,
+      regExp: /(?=(\/(.*)=home&pivot=discover))/,
+      hidden:
+        isMobile &&
+        !hasPermission(
+          [
+            Permission.CREATE_INVITES,
+            Permission.MANAGE_INVITES,
+            Permission.VIEW_INVITES,
+            Permission.STREAMARR,
+          ],
+          { type: 'or' }
+        ),
+    },
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
+      title: 'Watch List',
+      icon: <BookmarkIcon className="w-7 h-7" />,
+      regExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
+      hidden:
+        (isMobile && !currentSettings?.releaseSched) ||
+        !hasPermission(
+          [
+            Permission.VIEW_SCHEDULE,
+            Permission.CREATE_EVENTS,
+            Permission.STREAMARR,
+          ],
+          { type: 'or' }
+        ),
+    },
+  ];
+
   return (
     <ul className="menu m-0 p-0 space-y-1 mb-1 overflow-auto grid grid-col">
-      {MenuLinks.map((item) => (
+      {MenuLinks.filter((item) => !item.hidden).map((item) => (
         <SingleItem
           liKey={item.title}
           key={item.title}
