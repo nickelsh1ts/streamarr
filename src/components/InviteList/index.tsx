@@ -30,9 +30,8 @@ import axios from 'axios';
 import type Invite from '@server/entity/Invite';
 import Toast from '@app/components/Toast';
 import InviteShareModal from '@app/components/InviteList/InviteShareModal';
-
-//TODO: Update invite route to be accessible with permissions and add disable logic to creation based on signup enabled.
-//TODO: Add bottom margin to layout
+import useSettings from '@app/hooks/useSettings';
+import Alert from '@app/components/Common/Alert';
 
 enum Filter {
   ALL = 'all',
@@ -58,6 +57,7 @@ const InviteList = () => {
   );
   const router = useRouter();
   const pathname = usePathname();
+  const { currentSettings } = useSettings();
   const [editInviteModal, setEditInviteModal] = useState<{
     show: boolean;
     Invite?: Invite | null;
@@ -301,7 +301,8 @@ const InviteList = () => {
                 !hasPermission(
                   [Permission.CREATE_INVITES, Permission.STREAMARR],
                   { type: 'or' }
-                )
+                ) ||
+                !currentSettings?.enableSignUp
               }
             >
               Create Invite
@@ -345,6 +346,14 @@ const InviteList = () => {
           isNew={shareInviteModal.isNew}
         />
         <div className="mt-4 w-full">
+          {!currentSettings?.enableSignUp && (
+            <Alert type="warning" title="Sign Up Disabled">
+              <p className="ml-3 text-sm leading-5">
+                The admin has currently disabled the sign up feature. No new
+                invites can be created.
+              </p>
+            </Alert>
+          )}
           <ul id="invitesList">
             {data?.results.map((invite) => {
               return (
@@ -384,7 +393,7 @@ const InviteList = () => {
           )}
         </div>
       )}
-      <div className="mt-8 border-t border-primary pt-5">
+      <div className="mt-8 mb-4 border-t border-primary pt-5">
         <nav
           className="flex flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
           aria-label="Pagination"

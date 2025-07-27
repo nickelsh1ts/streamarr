@@ -11,11 +11,13 @@ const CopyButton = ({
   itemTitle,
   size = 'md',
   grouped = true,
+  onCopy,
 }: {
   textToCopy: string;
   itemTitle?: string;
   size?: 'sm' | 'md' | 'lg';
   grouped?: boolean;
+  onCopy?: () => void;
 }) => {
   const [isCopied, setCopied] = useClipboard(textToCopy, {
     successDuration: 1000,
@@ -42,6 +44,9 @@ const CopyButton = ({
         onClick={(e) => {
           e.preventDefault();
           setCopied();
+          if (onCopy) {
+            onCopy();
+          }
         }}
         className={`btn btn-primary btn-${size} ${grouped && 'rounded-none only:rounded-md last:rounded-r-md'}`}
       >

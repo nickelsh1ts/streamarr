@@ -12,9 +12,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
-//TODO: Update share modal button config
-//TODO: Update QR code on url copy for new invites
-
 interface InviteShareModalProps {
   show: boolean;
   isNew: boolean;
@@ -32,6 +29,7 @@ const InviteShareModal = ({
 }: InviteShareModalProps) => {
   const { user: currentUser, hasPermission } = useUser();
   const { currentSettings } = useSettings();
+  const [isCopied, setIsCopied] = useState(false);
   const [qrCodeBlobUrl, setQrCodeBlobUrl] = useState<string | null>(null);
   const [loadingShare, setLoadingShare] = useState(false);
   const userQuery = useParams<{ userid: string }>();
@@ -66,7 +64,7 @@ const InviteShareModal = ({
         });
       }
     };
-    if (!isNew && show) fetchQrCodeBlob();
+    if (show) fetchQrCodeBlob();
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
@@ -134,34 +132,17 @@ const InviteShareModal = ({
   return (
     <Modal
       show={show}
-      onOk={
-        isNew
-          ? onCreate
-          : () => {
-              handleShare();
-              onCancel();
-            }
-      }
-      okText={
-        isNew ? 'Create Another' : loadingShare ? 'Sharing...' : 'Share Invite'
-      }
+      onOk={() => {
+        handleShare();
+        onCancel();
+      }}
+      okText={loadingShare ? 'Sharing...' : 'Share Invite'}
       okButtonType="primary"
-      okDisabled={
-        isNew
-          ? !(
-              quota?.invite.limit === -1 ||
-              (quota?.invite.remaining ?? 0) > 0 ||
-              hasPermission(
-                [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
-                { type: 'and' }
-              )
-            )
-          : loadingShare
-      }
-      secondaryText={isNew ? 'Share Invite' : 'Create Another'}
+      okDisabled={loadingShare}
+      secondaryText={isNew ? 'Create Another' : 'Cancel'}
       secondaryButtonType="default"
       secondaryDisabled={
-        !isNew
+        isNew
           ? !(
               quota?.invite.limit === -1 ||
               (quota?.invite.remaining ?? 0) > 0 ||
@@ -170,16 +151,9 @@ const InviteShareModal = ({
                 { type: 'and' }
               )
             )
-          : loadingShare
+          : false
       }
-      onSecondary={
-        isNew
-          ? () => {
-              handleShare();
-              onCancel();
-            }
-          : onCreate
-      }
+      onSecondary={isNew ? onCreate : onCancel}
       onCancel={onCancel}
       title={isNew ? 'Invite Created' : 'Share Your Invite'}
       subtitle={
@@ -188,7 +162,7 @@ const InviteShareModal = ({
     >
       <div className="gap-y-4 border-t border-primary pt-4">
         <div className="text-center gap-y-4">
-          {isNew ? (
+          {isNew && !isCopied ? (
             <>
               <CheckIcon className="inline-block size-12 text-success" />
               <p className="text-lg mb-2">
@@ -216,6 +190,7 @@ const InviteShareModal = ({
               textToCopy={`${currentSettings?.applicationUrl}/signup?icode=${invite?.icode}`}
               itemTitle="Invite Link"
               size="md"
+              onCopy={() => setIsCopied(true)}
             />
           </div>
         </div>

@@ -91,8 +91,8 @@ const Layout = ({
 
     // Feature-disabled redirects
     if (
-      ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
-        (pathname.match(/invites/) && !currentSettings.enableSignUp)) &&
+      pathname.match(/schedule/) &&
+      !currentSettings.releaseSched &&
       user &&
       !loading
     ) {

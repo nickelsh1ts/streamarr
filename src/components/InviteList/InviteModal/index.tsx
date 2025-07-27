@@ -25,7 +25,7 @@ import { hasPermission } from '@server/lib/permissions';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { Field, Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
-import { useState, useMemo, useEffect, Fragment, useRef } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import useSWR from 'swr';
 import CachedImage from '@app/components/Common/CachedImage';
 import axios from 'axios';
@@ -68,16 +68,12 @@ const InviteModal = ({
       ? '/api/v1/user?take=1000&sort=displayname'
       : null
   );
-  const filteredUserData = useMemo(
-    () =>
-      userData?.results.filter((user) =>
-        hasPermission(
-          [Permission.CREATE_INVITES, Permission.STREAMARR],
-          user.permissions,
-          { type: 'or' }
-        )
-      ),
-    [userData?.results]
+  const filteredUserData = userData?.results.filter((user) =>
+    hasPermission(
+      [Permission.CREATE_INVITES, Permission.STREAMARR],
+      user.permissions,
+      { type: 'or' }
+    )
   );
 
   useEffect(() => {
