@@ -2,7 +2,7 @@
 import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
-import { LifebuoyIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -143,7 +143,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                           className="btn-block"
                           disabled={isSubmitting || !isValid}
                         >
-                          <LifebuoyIcon className="size-7 mr-2" />
+                          <ArrowDownTrayIcon className="size-7 mr-2" />
                           <span>
                             {isSubmitting ? 'Saving...' : 'Save changes'}
                           </span>

@@ -92,7 +92,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
               <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate space-y-1">
                 <button
                   type="button"
-                  className="font-bold text-lg uppercase cursor-pointer select-all bg-transparent border-none p-0 m-0 align-top"
+                  className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 align-top"
                   title="Click to copy invite code"
                   tabIndex={0}
                   onClick={(e) => {

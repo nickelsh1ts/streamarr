@@ -324,7 +324,7 @@ const InviteModal = ({
                       type="text"
                       placeholder="STRMRR"
                       disabled={invite}
-                      className="input input-primary w-full py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset ring-primary uppercase"
+                      className="input input-primary w-full py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset ring-primary"
                     />
                   </div>
                 </div>
