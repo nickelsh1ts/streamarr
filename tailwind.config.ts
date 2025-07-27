@@ -76,7 +76,7 @@ export default {
           success: '#84cc16',
           'success-content': '#fff',
           warning: '#ffc107',
-          'warning-content': '#130c00',
+          'warning-content': '#fff',
           error: '#b91c1c',
           'error-content': '#fff',
         },
