@@ -32,6 +32,8 @@ export interface PublicSettingsResponse {
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  enableRequest: boolean;
+  requestUrl: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
@@ -40,6 +42,8 @@ export interface PublicSettingsResponse {
   statsUrl: string;
   statusUrl: string;
   statusEnabled: boolean;
+  customLogo?: string;
+  customLogoSmall?: string;
 }
 
 export interface CacheItem {

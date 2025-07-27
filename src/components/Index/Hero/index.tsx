@@ -13,7 +13,7 @@ const scrollToSection = (id: string) => {
 };
 
 export default function Hero() {
-  const settings = useSettings();
+  const { currentSettings } = useSettings();
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
     refreshInterval: 0,
     refreshWhenHidden: false,
@@ -26,6 +26,7 @@ export default function Hero() {
     revalidateOnFocus: false,
   });
 
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,10 +43,11 @@ export default function Hero() {
       <div className="grid grid-flow-row min-h-lvh md:ps-12 md:text-start text-center relative">
         <div className="md:ps-4 mt-auto pt-24">
           <Image
-            src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
+            src={logoSrc}
             alt="logo"
             width={448}
             height={100}
+            unoptimized={true}
             className="mb-10 mt-5 h-auto w-[448px] mx-auto md:mx-0 px-5 md:px-0"
           />
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">
@@ -54,7 +56,7 @@ export default function Hero() {
           <p className="text-sm md:text-base tracking-wide mb-12">
             Watch anywhere, anytime for free. The future is now.
           </p>
-          {settings.currentSettings.enableSignUp && (
+          {currentSettings.enableSignUp && (
             <form
               action=""
               className="w-fit mx-auto md:mx-0"
@@ -166,7 +168,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">
-          {settings.currentSettings.extendedHome && (
+          {currentSettings.extendedHome && (
             <button className="" onClick={() => scrollToSection('requesting')}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

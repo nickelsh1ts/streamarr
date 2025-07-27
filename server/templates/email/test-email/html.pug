@@ -22,7 +22,7 @@ div(style='display: block; background-color: #1f1f1f; padding: 2.5rem 0;')
       td(style="text-align: center;")
         if applicationUrl
           a(href=applicationUrl style='margin: 0 1rem;')
-            img(src=applicationUrl +'/logo_full.png' style='width: 26rem; image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;')
+            img(src=applicationUrl + logoUrl style='width: 26rem; image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;')
         else
           div(style='margin: 0 1rem 2.5rem; font-size: 3em; font-weight: 700;')
             | #{applicationTitle}

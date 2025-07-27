@@ -22,6 +22,7 @@ import { Permission } from '@server/lib/permissions';
 import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
+import Image from 'next/image';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 
@@ -90,11 +91,14 @@ const GeneralSettings = () => {
           supportUrl: data?.supportUrl,
           supportEmail: data?.supportEmail,
           extendedHome: data?.extendedHome,
+          customLogo: null as File | null,
+          customLogoSmall: null as File | null,
         }}
         enableReinitialize
         validationSchema={MainSettingsSchema}
         onSubmit={async (values) => {
           try {
+            // First, save the main settings
             await axios.post('/api/v1/settings/main', {
               applicationTitle: values.applicationTitle,
               applicationUrl: values.applicationUrl,
@@ -108,6 +112,31 @@ const GeneralSettings = () => {
               supportEmail: values.supportEmail,
               extendedHome: values.extendedHome,
             });
+
+            // Then, upload logos if any were selected
+            if (values.customLogo || values.customLogoSmall) {
+              try {
+                const formData = new FormData();
+                if (values.customLogo) {
+                  formData.append('customLogo', values.customLogo);
+                }
+                if (values.customLogoSmall) {
+                  formData.append('customLogoSmall', values.customLogoSmall);
+                }
+
+                await axios.post('/api/v1/settings/logos/upload', formData);
+              } catch (logoError) {
+                console.error('Logo upload error:', logoError);
+                Toast({
+                  title: `Failed to upload logos: ${logoError.response?.data?.message || logoError.message || 'Unknown error'}`,
+                  icon: <XCircleIcon className="size-7" />,
+                  type: 'error',
+                });
+                return; // Exit early if logo upload fails
+              }
+            }
+
+            mutate('/api/v1/settings/main');
             mutate('/api/v1/settings/public');
             mutate('/api/v1/status');
 
@@ -124,9 +153,10 @@ const GeneralSettings = () => {
               icon: <CheckBadgeIcon className="size-7" />,
               type: 'success',
             });
-          } catch {
+          } catch (error) {
+            console.error('Settings save error:', error);
             Toast({
-              title: 'Something went wrong while saving settings.',
+              title: `Something went wrong while saving settings: ${error.response?.data?.message || error.message || 'Unknown error'}`,
               icon: <XCircleIcon className="size-7" />,
               type: 'error',
             });
@@ -227,6 +257,235 @@ const GeneralSettings = () => {
                           {errors.applicationUrl}
                         </div>
                       )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="customLogo" className="col-span-1">
+                    <span className="mr-2">Custom Logo</span>
+                    <p className="text-sm text-neutral-500">
+                      Upload a custom logo(recommended: 190x55px)
+                    </p>
+                  </label>
+                  <div className="col-span-2 space-y-2">
+                    {data?.customLogo && (
+                      <div className="flex items-center space-x-2">
+                        <Image
+                          src={data.customLogo}
+                          alt="Current logo"
+                          width={96}
+                          height={48}
+                          unoptimized
+                          className="h-12 w-auto border border-gray-300 rounded"
+                        />
+                        <Button
+                          buttonSize="sm"
+                          buttonType="error"
+                          onClick={async () => {
+                            try {
+                              await axios.delete(
+                                '/api/v1/settings/logos/delete',
+                                {
+                                  data: { type: 'logo' },
+                                }
+                              );
+                              revalidate();
+                              mutate('/api/v1/settings/public'); // Update public settings for DynamicLogo
+                              Toast({
+                                title: 'Logo deleted successfully!',
+                                icon: <CheckBadgeIcon className="size-7" />,
+                                type: 'success',
+                              });
+                            } catch {
+                              Toast({
+                                title: 'Failed to delete logo.',
+                                icon: <XCircleIcon className="size-7" />,
+                                type: 'error',
+                              });
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    )}
+                    <input
+                      id="customLogo"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        // File validation
+                        const allowedTypes = [
+                          'image/jpeg',
+                          'image/jpg',
+                          'image/png',
+                          'image/gif',
+                          'image/svg+xml',
+                        ];
+                        const allowedExtensions = [
+                          '.jpg',
+                          '.jpeg',
+                          '.png',
+                          '.gif',
+                          '.svg',
+                        ];
+                        const fileExtension =
+                          file.name.toLowerCase().match(/\.[^.]*$/)?.[0] || '';
+                        const maxSize = 5 * 1024 * 1024; // 5MB
+
+                        if (!allowedTypes.includes(file.type)) {
+                          Toast({
+                            title:
+                              'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        if (!allowedExtensions.includes(fileExtension)) {
+                          Toast({
+                            title:
+                              'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        if (file.size > maxSize) {
+                          Toast({
+                            title: 'File size must be less than 5MB',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        setFieldValue('customLogo', file);
+                      }}
+                      className="file-input file-input-primary file-input-sm w-full"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="customLogoSmall" className="col-span-1">
+                    <span className="mr-2">Custom Logo (mobile)</span>
+                    <p className="text-sm text-neutral-500">
+                      Upload a custom logo for mobile screens (recommended:
+                      square aspect ratio, 45x45px)
+                    </p>
+                  </label>
+                  <div className="col-span-2 space-y-2">
+                    {data?.customLogoSmall && (
+                      <div className="flex items-center space-x-2">
+                        <Image
+                          src={data.customLogoSmall}
+                          alt="Current small logo"
+                          width={48}
+                          height={48}
+                          unoptimized
+                          className="h-12 w-12 border border-gray-300 rounded object-cover"
+                        />
+                        <Button
+                          buttonSize="sm"
+                          buttonType="error"
+                          onClick={async () => {
+                            try {
+                              await axios.delete(
+                                '/api/v1/settings/logos/delete',
+                                {
+                                  data: { type: 'logoSmall' },
+                                }
+                              );
+                              revalidate();
+                              mutate('/api/v1/settings/public'); // Update public settings for DynamicLogo
+                              Toast({
+                                title: 'Small logo deleted successfully!',
+                                icon: <CheckBadgeIcon className="size-7" />,
+                                type: 'success',
+                              });
+                            } catch {
+                              Toast({
+                                title: 'Failed to delete small logo.',
+                                icon: <XCircleIcon className="size-7" />,
+                                type: 'error',
+                              });
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    )}
+                    <input
+                      id="customLogoSmall"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        // File validation
+                        const allowedTypes = [
+                          'image/jpeg',
+                          'image/jpg',
+                          'image/png',
+                          'image/gif',
+                          'image/svg+xml',
+                        ];
+                        const allowedExtensions = [
+                          '.jpg',
+                          '.jpeg',
+                          '.png',
+                          '.gif',
+                          '.svg',
+                        ];
+                        const fileExtension =
+                          file.name.toLowerCase().match(/\.[^.]*$/)?.[0] || '';
+                        const maxSize = 5 * 1024 * 1024; // 5MB
+
+                        if (!allowedTypes.includes(file.type)) {
+                          Toast({
+                            title:
+                              'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        if (!allowedExtensions.includes(fileExtension)) {
+                          Toast({
+                            title:
+                              'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        if (file.size > maxSize) {
+                          Toast({
+                            title: 'File size must be less than 5MB',
+                            icon: <XCircleIcon className="size-7" />,
+                            type: 'error',
+                          });
+                          e.target.value = ''; // Clear the input
+                          return;
+                        }
+
+                        setFieldValue('customLogoSmall', file);
+                      }}
+                      className="file-input file-input-primary file-input-sm w-full"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">

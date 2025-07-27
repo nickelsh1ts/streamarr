@@ -179,6 +179,9 @@ export class User {
         label: 'User Management',
       });
       const email = new PreparedEmail(getSettings().notifications.agents.email);
+      const { customLogo } = getSettings().main;
+      const logoUrl = customLogo || '/logo_full.png';
+
       await email.send({
         template: path.join(__dirname, '../templates/email/resetpassword'),
         message: { to: this.email },
@@ -188,6 +191,7 @@ export class User {
           applicationTitle,
           recipientName: this.displayName,
           recipientEmail: this.email,
+          logoUrl,
         },
       });
     } catch (e) {

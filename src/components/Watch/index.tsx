@@ -27,6 +27,11 @@ const Watch = ({ children, ...props }) => {
   const [iframeUrl, setIframeUrl] = useState('');
   const { currentSettings } = useSettings();
 
+  // Use custom logos if available, otherwise fallback to defaults
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
+  const logoSmallSrc =
+    currentSettings.customLogoSmall || '/streamarr-logo-512x512.png';
+
   // Track the parent window's location for the iframe src
   useEffect(() => {
     let lastParentUrl = window.location.pathname + window.location.hash;
@@ -116,18 +121,8 @@ const Watch = ({ children, ...props }) => {
 
   useEffect(() => {
     if (mountNode) {
-      mountNode.style.setProperty(
-        '--logo-image-url',
-        (process.env.NEXT_PUBLIC_LOGO &&
-          `url("${process.env.NEXT_PUBLIC_LOGO}")`) ||
-          'url("/logo_full.png")'
-      );
-      mountNode.style.setProperty(
-        '--logo-sm-url',
-        (process.env.NEXT_PUBLIC_LOGO_SM &&
-          `url("${process.env.NEXT_PUBLIC_LOGO_SM}")`) ||
-          'url("/streamarr-logo-512x512.png")'
-      );
+      mountNode.style.setProperty('--logo-image-url', `url("${logoSrc}")`);
+      mountNode.style.setProperty('--logo-sm-url', `url("${logoSmallSrc}")`);
     }
   });
 

@@ -1,25 +1,33 @@
+import useSettings from '@app/hooks/useSettings';
 import Image from 'next/image';
 
-//TODO create an app setting and upload of custom logo functionality instead of using environment variables
-
 const DynamicLogo = () => {
+  const { currentSettings } = useSettings();
+
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
+  const logoSmallSrc =
+    currentSettings.customLogoSmall || '/streamarr-logo-512x512.png';
+
   return (
     <>
       <Image
-        src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
+        src={logoSrc}
         alt="logo"
         width={190}
-        height={55}
-        className="w-40 sm:w-[190px] h-auto max-md:hidden"
+        height={35}
+        unoptimized
+        className="h-[45px] w-[190px] max-md:hidden object-contain object-left"
       />
       <Image
-        src={`${process.env.NEXT_PUBLIC_LOGO_SM ? process.env.NEXT_PUBLIC_LOGO_SM : '/streamarr-logo-512x512.png'}`}
+        src={logoSmallSrc}
         alt="logo"
         width={45}
         height={45}
-        className="w-[36px] sm:w-[45px] h-auto md:hidden"
+        unoptimized
+        className="w-[45px] h-[45px] md:hidden object-contain object-left"
       />
     </>
   );
 };
+
 export default DynamicLogo;

@@ -115,7 +115,7 @@ components:
           example: Streamarr
         applicationUrl:
           type: string
-          example: https://os.example.com
+          example: https://example.com
         trustProxy:
           type: boolean
           example: true
@@ -131,6 +131,16 @@ components:
         defaultPermissions:
           type: number
           example: 32
+        customLogo:
+          type: string
+          nullable: true
+          description: URL path to custom uploaded logo file
+          example: '/logos/logo_full.png'
+        customLogoSmall:
+          type: string
+          nullable: true
+          description: URL path to custom uploaded small logo file
+          example: '/logos/logo_sm.png'
     PlexLibrary:
       type: object
       properties:
@@ -479,6 +489,16 @@ components:
         initialized:
           type: boolean
           example: false
+        customLogo:
+          type: string
+          nullable: true
+          description: URL path to custom uploaded logo file
+          example: '/logos/logo_full.png'
+        customLogoSmall:
+          type: string
+          nullable: true
+          description: URL path to custom uploaded small logo file
+          example: '/logos/logo_sm.png'
     Invites:
       type: object
       properties:
@@ -931,6 +951,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MainSettings'
+  /settings/logos/upload:
+    post:
+      summary: Upload custom logos
+      description: Uploads custom logo files for the application.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                customLogo:
+                  type: string
+                  format: binary
+                  description: Custom logo file for desktop (recommended 190x55px)
+                customLogoSmall:
+                  type: string
+                  format: binary
+                  description: Custom logo file for mobile (recommended 45x45px)
+      responses:
+        '200':
+          description: Logos uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Logos uploaded successfully'
+        '400':
+          description: Bad request - invalid file format or missing files
+        '500':
+          description: Internal server error
+  /settings/logos/delete:
+    delete:
+      summary: Delete custom logos
+      description: Deletes uploaded custom logo files.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [logo, logoSmall]
+                  description: Type of logo to delete
+              required:
+                - type
+      responses:
+        '200':
+          description: Logo deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Logo deleted successfully'
+        '400':
+          description: Bad request - invalid logo type
+        '404':
+          description: Logo file not found
+        '500':
+          description: Internal server error
   /settings/plex:
     get:
       summary: Get Plex settings

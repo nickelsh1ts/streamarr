@@ -105,6 +105,8 @@ export interface MainSettings {
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
+  customLogo?: string;
+  customLogoSmall?: string;
 }
 
 interface PublicSettings {
@@ -121,9 +123,13 @@ interface FullPublicSettings extends PublicSettings {
   locale: string;
   emailEnabled: boolean;
   newPlexLogin: boolean;
+  enableRequest: boolean;
+  requestUrl: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
+  customLogo?: string;
+  customLogoSmall?: string;
   enableSignUp: boolean;
   statsUrl: string;
   releaseSched: boolean;
@@ -432,7 +438,11 @@ class Settings {
       supportUrl: this.data.main.supportUrl,
       supportEmail: this.data.main.supportEmail,
       extendedHome: this.data.main.extendedHome,
+      customLogo: this.data.main.customLogo,
+      customLogoSmall: this.data.main.customLogoSmall,
       enableSignUp: this.data.main.enableSignUp,
+      enableRequest: this.data.overseerr.enabled,
+      requestUrl: this.data.overseerr.urlBase,
       statsUrl: this.data.tautulli.externalUrl,
       releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,

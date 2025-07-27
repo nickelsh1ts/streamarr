@@ -8,6 +8,7 @@ import SettingsPlex from '@app/components/Admin/Settings/Plex';
 import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
+import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
@@ -22,6 +23,10 @@ const Setup = () => {
   const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
   const { locale } = useLocale();
   const { revalidate } = useUser();
+  const { currentSettings } = useSettings();
+
+  // Use custom logo if available, otherwise fallback to default
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
 
   const finishSetup = async () => {
     setIsUpdating(true);
@@ -67,11 +72,12 @@ const Setup = () => {
       </div>
       <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl">
         <Image
-          src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
+          src={logoSrc}
           className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
           alt="Logo"
           width={448}
           height={196}
+          unoptimized={true}
         />
         <AppDataWarning />
         <nav className="relative z-50">

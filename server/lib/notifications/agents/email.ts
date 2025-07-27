@@ -45,7 +45,10 @@ class EmailAgent
     recipientEmail: string,
     recipientName?: string
   ): EmailOptions | undefined {
-    const { applicationUrl, applicationTitle } = getSettings().main;
+    const { applicationUrl, applicationTitle, customLogo } = getSettings().main;
+
+    // Use custom logo if available, otherwise fallback to default
+    const logoUrl = customLogo || '/logo_full.png';
 
     if (type === Notification.TEST_NOTIFICATION) {
       return {
@@ -57,6 +60,7 @@ class EmailAgent
           applicationTitle,
           recipientName,
           recipientEmail,
+          logoUrl,
         },
       };
     }

@@ -39,12 +39,14 @@ import notificationRoutes from './notifications';
 import Invite from '@server/entity/Invite';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
+import logoSettingsRoutes from './logos';
 
 const settingsRoutes = Router();
 
 settingsRoutes.use('/notifications', notificationRoutes);
 settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
+settingsRoutes.use('/logos', logoSettingsRoutes);
 
 const filteredMainSettings = (
   user: User,
@@ -67,13 +69,21 @@ settingsRoutes.get('/main', (req, res, next) => {
   res.status(200).json(filteredMainSettings(req.user, settings.main));
 });
 
-settingsRoutes.post('/main', (req, res) => {
-  const settings = getSettings();
+settingsRoutes.post('/main', (req, res, next) => {
+  try {
+    const settings = getSettings();
 
-  settings.main = merge(settings.main, req.body);
-  settings.save();
+    // Filter out file objects and other non-serializable data
+    const filteredBody = omit(req.body, ['customLogo', 'customLogoSmall']);
 
-  res.status(200).json(settings.main);
+    settings.main = merge(settings.main, filteredBody);
+    settings.save();
+
+    res.status(200).json(settings.main);
+  } catch (error) {
+    logger.error('Error saving main settings:', error);
+    next({ status: 500, message: 'Failed to save settings' });
+  }
 });
 
 settingsRoutes.post('/main/regenerate', (req, res, next) => {

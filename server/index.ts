@@ -11,6 +11,7 @@ import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
 import routes from '@server/routes';
 import imageproxy from '@server/routes/imageproxy';
+import logoRoutes from '@server/routes/logo';
 import { getAppVersion } from '@server/utils/appVersion';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
@@ -77,8 +78,21 @@ app
       server.enable('trust proxy');
     }
     server.use(cookieParser());
-    server.use(express.json());
-    server.use(express.urlencoded({ extended: true }));
+
+    // Conditional body parsing - skip for file upload routes
+    server.use((req, res, next) => {
+      if (req.path.includes('/settings/logos/upload')) {
+        return next();
+      }
+      express.json({ limit: '50mb' })(req, res, next);
+    });
+
+    server.use((req, res, next) => {
+      if (req.path.includes('/settings/logos/upload')) {
+        return next();
+      }
+      express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
+    });
     if (settings.main.csrfProtection) {
       server.use(
         csurf({ cookie: { httpOnly: true, sameSite: true, secure: !dev } })
@@ -113,12 +127,14 @@ app
       })
     );
     server.use('/imageproxy', clearCookies, imageproxy);
+    server.use('/logo', clearCookies, logoRoutes);
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
+        ignorePaths: (path) => path.includes('/settings/logos/upload'),
       })
     );
     server.use((_req, res, next) => {
