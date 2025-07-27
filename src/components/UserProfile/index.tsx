@@ -11,9 +11,10 @@ import { useParams } from 'next/navigation';
 import Error from '@app/app/error';
 import useSWR from 'swr';
 import ProgressCircle from '@app/components/Common/ProgressCircle';
+import Slider from '@app/components/Common/Slider';
+import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 
 //TODO create a request more invites feature
-//TODO: Update profile layout with recent invites etc.
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
@@ -65,7 +66,7 @@ const UserProfile = () => {
             { type: 'and' }
           )) && (
           <div className="relative">
-            <dl className="grid grid-cols-2 gap-5 lg:grid-cols-3">
+            <dl className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
                 <dt className="truncate text-sm font-bold text-gray-300">
                   Total Invites
@@ -153,6 +154,17 @@ const UserProfile = () => {
                 <ArrowRightCircleIcon className="size-5" />
               </Link>
             </div>
+            <Slider
+              sliderKey="invites"
+              isLoading={!invites}
+              items={(invites?.results ?? []).map((invite) => (
+                <RecentInvite
+                  key={`invite-slider-item-${invite.id}`}
+                  invite={invite}
+                />
+              ))}
+              placeholder={<RecentInvite.Placeholder />}
+            />
           </>
         )}
     </>
