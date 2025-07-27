@@ -54,8 +54,6 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
     }
   }, [invite?.icode, isCopied]);
 
-  console.log(invite?.redeemedBy);
-
   return (
     <li className="mb-2">
       <div className="flex w-full flex-col justify-between xl:flex-row border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">

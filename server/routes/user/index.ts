@@ -326,7 +326,7 @@ router.get<{ id: string }, UserInvitesResponse>(
 
       const [invites, inviteCount] = await getRepository(Invite)
         .createQueryBuilder('invite')
-        .leftJoinAndSelect('invite.modifiedBy', 'modifiedBy')
+        .leftJoinAndSelect('invite.updatedBy', 'updatedBy')
         .leftJoinAndSelect('invite.createdBy', 'createdBy')
         .andWhere('createdBy.id = :id', {
           id: user.id,
