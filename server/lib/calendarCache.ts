@@ -22,8 +22,10 @@ function buildCalendarUrl(
   const port = settings.port;
   const basePath = settings.baseUrl ? settings.baseUrl.replace(/\/$/, '') : '';
   const apiKey = settings.apiKey;
+  const pastDays = settings.pastDays ?? 7;
+  const futureDays = settings.futureDays ?? 28;
   const calendarFile = type === 'sonarr' ? 'Sonarr.ics' : 'Radarr.ics';
-  return `${protocol}://${host}:${port}${basePath}/feed/v3/calendar/${calendarFile}?apikey=${apiKey}`;
+  return `${protocol}://${host}:${port}${basePath}/feed/v3/calendar/${calendarFile}?apikey=${apiKey}&pastDays=${pastDays}&futureDays=${futureDays}`;
 }
 
 export async function getOrFetchCalendar(

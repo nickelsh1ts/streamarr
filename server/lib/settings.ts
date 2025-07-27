@@ -62,6 +62,8 @@ export interface DVRSettings {
   isDefault: boolean;
   externalUrl?: string;
   syncEnabled: boolean;
+  pastDays?: number;
+  futureDays?: number;
   preventSearch?: boolean;
   tagRequests?: boolean;
 }

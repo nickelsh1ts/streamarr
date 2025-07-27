@@ -8,8 +8,6 @@ import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 
-//TODO: Add support for Radarr Calendar options in settings
-
 interface TestResponse {
   urlBase?: string;
 }
@@ -129,6 +127,8 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         isDefault: radarr?.isDefault ?? false,
         is4k: radarr?.is4k ?? false,
         syncEnabled: radarr?.syncEnabled ?? false,
+        pastDays: radarr?.pastDays ?? 7,
+        futureDays: radarr?.futureDays ?? 28,
       }}
       validationSchema={RadarrSettingsSchema}
       onSubmit={async (values) => {
@@ -143,6 +143,8 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
             is4k: values.is4k,
             isDefault: values.isDefault,
             syncEnabled: values.syncEnabled,
+            pastDays: values.pastDays ?? 7,
+            futureDays: values.futureDays ?? 28,
           };
           if (!radarr) {
             await axios.post('/api/v1/settings/radarr', submission);
@@ -385,9 +387,9 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="syncEnabled">
-                  Enable Scan
+                  Enable Calendar Sync
                   <span className="text-sm block font-light text-neutral-300">
-                    Automatically scan Radarr for events
+                    Automatically sync Radarr events to the calendar
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -396,6 +398,42 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                     className="checkbox checkbox-primary"
                     id="syncEnabled"
                     name="syncEnabled"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="pastDays">
+                  Past Days
+                  <span className="text-sm block font-light text-neutral-300">
+                    Sync events from the past X days
+                  </span>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="number"
+                    className="input input-primary input-sm rounded-r-md w-full"
+                    id="pastDays"
+                    name="pastDays"
+                    disabled={!values.syncEnabled}
+                    min={7}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="futureDays">
+                  Future Days
+                  <span className="text-sm block font-light text-neutral-300">
+                    Sync events for the next X days
+                  </span>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="number"
+                    className="input input-primary input-sm rounded-r-md w-full"
+                    id="futureDays"
+                    name="futureDays"
+                    disabled={!values.syncEnabled}
+                    min={28}
                   />
                 </div>
               </div>
