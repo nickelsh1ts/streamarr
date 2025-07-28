@@ -154,7 +154,7 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
 
     const isOwner = req.user?.id === 1;
     let enabledLibraries = settings.plex.libraries.filter((lib) => lib.enabled);
-    
+
     if (!isOwner) {
       const userSharedLibraries = req.user?.settings?.sharedLibraries;
 

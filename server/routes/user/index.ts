@@ -328,6 +328,7 @@ router.get<{ id: string }, UserInvitesResponse>(
         .createQueryBuilder('invite')
         .leftJoinAndSelect('invite.updatedBy', 'updatedBy')
         .leftJoinAndSelect('invite.createdBy', 'createdBy')
+        .leftJoinAndSelect('invite.redeemedBy', 'redeemedBy')
         .andWhere('createdBy.id = :id', {
           id: user.id,
         })

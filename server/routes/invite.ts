@@ -77,7 +77,7 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
       .createQueryBuilder('invite')
       .leftJoinAndSelect('invite.createdBy', 'createdBy')
       .leftJoinAndSelect('invite.updatedBy', 'updatedBy')
-      .leftJoinAndSelect('invite.redeemedBy', 'redeemedBy') // Ensure redeemedBy is populated
+      .leftJoinAndSelect('invite.redeemedBy', 'redeemedBy')
       .where('invite.status IN (:...InviteStatus)', {
         InviteStatus: statusFilter,
       });
