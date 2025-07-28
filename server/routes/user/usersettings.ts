@@ -7,10 +7,12 @@ import type {
 } from '@server/interfaces/api/userSettingsInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
+import { plexSync } from '@server/lib/plexSync';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { canMakePermissionsChange } from '@server/routes/user';
+import { UserType } from '@server/constants/user';
 
 const isOwnProfileOrAdmin = () => {
   const authMiddleware = (req, res, next) => {
@@ -55,6 +57,27 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         return next({ status: 404, message: 'User not found.' });
       }
 
+      let sharedLibraries: string;
+      try {
+        const currentPlexLibraries =
+          await plexSync.getCurrentPlexLibraries(user);
+
+        if (currentPlexLibraries.length > 0) {
+          sharedLibraries = currentPlexLibraries.join('|');
+        } else {
+          sharedLibraries = user.settings?.sharedLibraries || 'server';
+        }
+      } catch (error) {
+        logger.warn(
+          `Could not fetch current Plex libraries for user ${user.email}`,
+          {
+            userId: user.id,
+            error: error.message,
+          }
+        );
+        sharedLibraries = user.settings?.sharedLibraries || 'server';
+      }
+
       res.status(200).json({
         username: user.username,
         locale: user.settings?.locale,
@@ -68,7 +91,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalAllowDownloads: downloads,
         globalLiveTv: liveTv,
         globalPlexHome: plexHome,
-        sharedLibraries: user.settings?.sharedLibraries,
+        sharedLibraries: sharedLibraries,
         globalSharedLibraries: defaultSharedLibraries,
       });
     } catch (e) {
@@ -101,6 +124,13 @@ userSettingsRoutes.post<
       });
     }
 
+    // Store previous sharedLibraries value to detect changes
+    const previousSharedLibraries = user.settings?.sharedLibraries;
+    const newSharedLibraries =
+      req.body.sharedLibraries === '' || req.body.sharedLibraries === 'server'
+        ? null
+        : req.body.sharedLibraries;
+
     user.username = req.body.username;
 
     // Update quota values only if the user has the correct permissions
@@ -116,14 +146,43 @@ userSettingsRoutes.post<
       user.settings = new UserSettings({
         user: req.user,
         locale: req.body.locale,
-        sharedLibraries: req.body.sharedLibraries,
+        sharedLibraries: newSharedLibraries,
+        allowDownloads: req.body.allowDownloads ?? false,
+        allowLiveTv: req.body.allowLiveTv ?? false,
       });
     } else {
       user.settings.locale = req.body.locale;
-      user.settings.sharedLibraries = req.body.sharedLibraries;
+      user.settings.sharedLibraries = newSharedLibraries;
+      user.settings.allowDownloads = req.body.allowDownloads ?? false;
+      user.settings.allowLiveTv = req.body.allowLiveTv ?? false;
     }
 
     await userRepository.save(user);
+
+    // Sync with Plex if sharedLibraries changed and user has permissions to manage users
+    if (
+      req.user?.hasPermission(Permission.MANAGE_USERS) &&
+      previousSharedLibraries !== newSharedLibraries &&
+      user.email &&
+      user.userType === UserType.PLEX
+    ) {
+      try {
+        const syncValue = newSharedLibraries || 'server';
+        await plexSync.syncUserLibraries(user, syncValue, {
+          allowSync: req.body.allowDownloads ?? false,
+          allowCameraUpload: false,
+          allowChannels: req.body.allowLiveTv ?? false,
+          plexHome: false,
+        });
+      } catch (syncError) {
+        logger.error('Failed to sync user libraries with Plex', {
+          label: 'Plex Sync',
+          userId: user.id,
+          email: user.email,
+          error: syncError.message,
+        });
+      }
+    }
 
     res.status(200).json({
       username: user.username,

@@ -16,11 +16,14 @@ import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import Toast from '@app/components/Toast';
-import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
+import {
+  ArrowDownTrayIcon,
+  CheckBadgeIcon,
+  CheckIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
-
-//TODO: Allow library selector to edit shared libraries in plex
 
 const UserSettingsGeneral = () => {
   const { locale, setLocale } = useLocale();
@@ -75,14 +78,37 @@ const UserSettingsGeneral = () => {
           inviteQuotaDays:
             data?.inviteQuotaDays ?? data?.globalInviteQuotaDays ?? 0,
           sharedLibraries:
-            data?.sharedLibraries && data?.sharedLibraries !== ''
-              ? data.sharedLibraries
-              : 'server',
+            data?.sharedLibraries === null
+              ? 'server'
+              : data?.sharedLibraries && data?.sharedLibraries !== ''
+                ? data.sharedLibraries
+                : 'server',
+          allowDownloads: data?.allowDownloads ?? false,
+          allowLiveTv: data?.allowLiveTv ?? false,
         }}
         enableReinitialize
         onSubmit={async (values) => {
+          // Handle previous values correctly to detect changes
+          const previousSharedLibraries =
+            data?.sharedLibraries === null
+              ? 'server'
+              : data?.sharedLibraries && data?.sharedLibraries !== ''
+                ? data.sharedLibraries
+                : 'server';
+
+          const newSharedLibraries =
+            values.sharedLibraries === 'server' || values.sharedLibraries === ''
+              ? 'server'
+              : values.sharedLibraries;
+
+          const librariesChanged =
+            previousSharedLibraries !== (newSharedLibraries || 'server');
+
+          const isPlexUser = user?.userType === UserType.PLEX;
+          const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
+
           try {
-            await axios.post(`/api/v1/user/${user?.id}/settings/main`, {
+            const submitData = {
               username: values.displayName,
               locale: values.locale,
               inviteQuotaLimit: inviteQuotaEnabled
@@ -91,10 +117,15 @@ const UserSettingsGeneral = () => {
               inviteQuotaDays: inviteQuotaEnabled
                 ? values.inviteQuotaDays
                 : null,
-              sharedLibraries: values.sharedLibraries
-                ? values.sharedLibraries
-                : null,
-            });
+              sharedLibraries: newSharedLibraries,
+              allowDownloads: values.allowDownloads,
+              allowLiveTv: values.allowLiveTv,
+            };
+
+            await axios.post(
+              `/api/v1/user/${user?.id}/settings/main`,
+              submitData
+            );
 
             if (currentUser?.id === user?.id && setLocale) {
               setLocale(
@@ -108,6 +139,10 @@ const UserSettingsGeneral = () => {
               title: 'Settings Saved Successfully!',
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
+              message:
+                isPlexUser && canManageUsers && librariesChanged
+                  ? 'Settings have been synced with Plex.'
+                  : undefined,
             });
           } catch (e) {
             Toast({
@@ -212,19 +247,160 @@ const UserSettingsGeneral = () => {
                 {currentHasPermission(Permission.MANAGE_USERS) &&
                   !hasPermission(Permission.MANAGE_USERS) && (
                     <>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                        <label htmlFor="sharedLibraries" className="col-span-1">
-                          Shared Libraries
-                        </label>
-                        <div className="col-span-2">
-                          <LibrarySelector
-                            value={values.sharedLibraries}
-                            serverValue={data.globalSharedLibraries}
-                            isUserSettings
-                            setFieldValue={setFieldValue}
-                          />
-                        </div>
-                      </div>
+                      {user?.userType === UserType.PLEX && (
+                        <>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                            <label
+                              htmlFor="sharedLibraries"
+                              className="col-span-1"
+                            >
+                              Shared Libraries
+                              <span className="block text-xs text-gray-400 mt-1">
+                                Changes will sync with Plex automatically on
+                                save.
+                              </span>
+                            </label>
+                            <div className="col-span-2">
+                              <LibrarySelector
+                                value={values.sharedLibraries}
+                                serverValue={data.globalSharedLibraries}
+                                isUserSettings
+                                setFieldValue={setFieldValue}
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                            <label
+                              htmlFor="allowDownloads"
+                              className="col-span-1"
+                            >
+                              Plex Access
+                              <span className="block text-xs text-gray-400 mt-1">
+                                Changes will sync with Plex automatically on
+                                save.
+                              </span>
+                            </label>
+                            <div className="inline-flex items-center space-x-2">
+                              <span
+                                id="allowDownloads"
+                                role="checkbox"
+                                tabIndex={0}
+                                aria-checked={values.allowDownloads}
+                                onClick={() =>
+                                  setFieldValue(
+                                    'allowDownloads',
+                                    !values.allowDownloads
+                                  )
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === 'Space') {
+                                    e.preventDefault();
+                                    setFieldValue(
+                                      'allowDownloads',
+                                      !values.allowDownloads
+                                    );
+                                  }
+                                }}
+                                className={`${
+                                  values.allowDownloads
+                                    ? 'bg-primary'
+                                    : 'bg-neutral-700'
+                                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className={`${
+                                    values.allowDownloads
+                                      ? 'translate-x-5'
+                                      : 'translate-x-0'
+                                  } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
+                                >
+                                  <span
+                                    className={`${
+                                      values.allowDownloads
+                                        ? 'opacity-0 duration-100 ease-out'
+                                        : 'opacity-100 duration-200 ease-in'
+                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                  >
+                                    <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                                  </span>
+                                  <span
+                                    className={`${
+                                      values.allowDownloads
+                                        ? 'opacity-100 duration-200 ease-in'
+                                        : 'opacity-0 duration-100 ease-out'
+                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                  >
+                                    <CheckIcon className="h-3 w-3 text-primary" />
+                                  </span>
+                                </span>
+                              </span>
+                              <label htmlFor="allowDownloads">
+                                Allow Downloads
+                              </label>
+                            </div>
+                            <div className="inline-flex items-center space-x-2">
+                              <span
+                                id="allowLiveTv"
+                                role="checkbox"
+                                tabIndex={0}
+                                aria-checked={values.allowLiveTv}
+                                onClick={() =>
+                                  setFieldValue(
+                                    'allowLiveTv',
+                                    !values.allowLiveTv
+                                  )
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === 'Space') {
+                                    e.preventDefault();
+                                    setFieldValue(
+                                      'allowLiveTv',
+                                      !values.allowLiveTv
+                                    );
+                                  }
+                                }}
+                                className={`${
+                                  values.allowLiveTv
+                                    ? 'bg-primary'
+                                    : 'bg-neutral-700'
+                                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className={`${
+                                    values.allowLiveTv
+                                      ? 'translate-x-5'
+                                      : 'translate-x-0'
+                                  } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
+                                >
+                                  <span
+                                    className={`${
+                                      values.allowLiveTv
+                                        ? 'opacity-0 duration-100 ease-out'
+                                        : 'opacity-100 duration-200 ease-in'
+                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                  >
+                                    <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                                  </span>
+                                  <span
+                                    className={`${
+                                      values.allowLiveTv
+                                        ? 'opacity-100 duration-200 ease-in'
+                                        : 'opacity-0 duration-100 ease-out'
+                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                  >
+                                    <CheckIcon className="h-3 w-3 text-primary" />
+                                  </span>
+                                </span>
+                              </span>
+                              <label htmlFor="allowLiveTv">
+                                Allow Live TV Access
+                              </label>
+                            </div>
+                          </div>
+                        </>
+                      )}
                       <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                         <div className="col-span-1">
                           <span>Invite Quota</span>

@@ -42,6 +42,12 @@ export class UserSettings {
   @Column({ nullable: true })
   public sharedLibraries?: string;
 
+  @Column({ default: false })
+  public allowDownloads: boolean;
+
+  @Column({ default: false })
+  public allowLiveTv: boolean;
+
   @Column({
     type: 'text',
     nullable: true,

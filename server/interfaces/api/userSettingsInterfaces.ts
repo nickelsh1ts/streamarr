@@ -14,6 +14,8 @@ export interface UserSettingsGeneralResponse {
   globalLiveTv?: boolean;
   globalPlexHome?: boolean;
   sharedLibraries?: string;
+  allowDownloads?: boolean;
+  allowLiveTv?: boolean;
   globalSharedLibraries?: string;
 }
 
