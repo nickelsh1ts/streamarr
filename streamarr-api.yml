@@ -3447,6 +3447,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/SignupPlexAuthResponse'
 
+  /signup/localauth:
+    post:
+      tags:
+        - public
+      summary: Create local user account with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                username:
+                  type: string
+                  description: Desired username
+                  minLength: 3
+                  maxLength: 20
+                  pattern: '^[a-zA-Z0-9_-]+$'
+                password:
+                  type: string
+                  description: User's password
+                  minLength: 8
+                confirmPassword:
+                  type: string
+                  description: Password confirmation
+                icode:
+                  type: string
+                  description: Invite code
+              required:
+                - email
+                - username
+                - password
+                - confirmPassword
+                - icode
+      responses:
+        '200':
+          description: Local account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupPlexAuthResponse'
+        '400':
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+
   /signup/complete:
     post:
       tags:

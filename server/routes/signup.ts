@@ -6,8 +6,10 @@ import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import { getSettings } from '@server/lib/settings';
 import { InviteStatus } from '@server/constants/invite';
+import { UserType } from '@server/constants/user';
 import axios from 'axios';
 import logger from '@server/logger';
+import crypto from 'crypto';
 
 const signupRoutes = Router();
 
@@ -175,7 +177,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
       plexUsername: plexUser.username,
       displayName: plexUser.username, // Set display name immediately
       avatar: plexUser.thumb,
-      userType: 1, // UserType.PLEX
+      userType: UserType.PLEX,
       permissions: settings.main.defaultPermissions, // Assign default permissions from admin settings
     });
 
@@ -485,8 +487,197 @@ signupRoutes.post('/plexauth', async (req, res) => {
         message: 'Internal server error during signup.',
       });
     }
-    // Don't call next(e) to avoid double response
     logger.error('Error in signup/plexauth:', {
+      label: 'SignUp',
+      error: e.message,
+    });
+  }
+});
+
+// Step 2b: Local user creation
+signupRoutes.post('/localauth', async (req, res) => {
+  try {
+    const appSettings = getSettings();
+
+    // Check if local login is enabled
+    if (!appSettings.main.localLogin) {
+      res.status(400).json({
+        success: false,
+        message: 'Local user creation is disabled.',
+      });
+      return;
+    }
+
+    const { email, username, password, confirmPassword, icode } = req.body;
+
+    if (!email || !username || !password || !confirmPassword || !icode) {
+      res.status(400).json({
+        success: false,
+        message:
+          'Email, username, password, confirm password, and invite code are required.',
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      res.status(400).json({
+        success: false,
+        message: 'Passwords do not match.',
+      });
+      return;
+    }
+
+    if (password.length < 8) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters long.',
+      });
+      return;
+    }
+
+    // Validate invite code first
+    const inviteRepository = getRepository(Invite);
+    const invite = await inviteRepository.findOne({
+      where: { icode },
+      relations: ['redeemedBy'],
+    });
+    if (!invite) {
+      res.status(404).json({ success: false, message: 'Invite not found.' });
+      return;
+    }
+
+    // Check if invite is active
+    if (invite.status !== InviteStatus.ACTIVE) {
+      res
+        .status(400)
+        .json({ success: false, message: 'Invite code is not active.' });
+      return;
+    }
+
+    // Check invite expiry
+    let isExpired = false;
+    let expiryDate;
+    if (invite.expiresAt) {
+      expiryDate = new Date(invite.expiresAt);
+    } else if (invite.expiryLimit !== 0) {
+      let msPerUnit = 86400000;
+      if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
+      if (invite.expiryTime === 'months') msPerUnit = 2629800000;
+      expiryDate = new Date(
+        invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
+      );
+    }
+    if (expiryDate && Date.now() > expiryDate.getTime()) {
+      isExpired = true;
+    }
+    if (isExpired) {
+      invite.status = InviteStatus.EXPIRED;
+      await inviteRepository.save(invite);
+      res
+        .status(400)
+        .json({ success: false, message: 'Invite code has expired.' });
+      return;
+    }
+
+    const userRepository = getRepository(User);
+
+    // Check if user already exists
+    let user = await userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email.toLowerCase() })
+      .orWhere('user.plexUsername = :username', { username })
+      .getOne();
+
+    if (user) {
+      res.status(400).json({
+        success: false,
+        message:
+          'User with this email or username already exists. Please sign in instead.',
+      });
+      return;
+    }
+
+    // Check usage limit before creating user
+    if (
+      typeof invite.usageLimit === 'number' &&
+      invite.usageLimit > 0 &&
+      invite.uses >= invite.usageLimit
+    ) {
+      res.status(400).json({
+        success: false,
+        message: 'Invite has reached its usage limit.',
+      });
+      return;
+    }
+
+    // Generate Gravatar avatar URL
+    const avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
+
+    // Create new local user
+    user = new User({
+      email: email.toLowerCase(),
+      username: username,
+      displayName: username,
+      plexToken: '',
+      avatar: avatar,
+      userType: UserType.LOCAL,
+      permissions: appSettings.main.defaultPermissions,
+    });
+
+    // Set password
+    await user.setPassword(password);
+
+    // Set up user settings with invite libraries
+    if (invite.sharedLibraries) {
+      user.settings = new UserSettings({
+        sharedLibraries: invite.sharedLibraries,
+        user,
+      });
+    }
+
+    await userRepository.save(user);
+
+    logger.info('Local user created successfully', {
+      label: 'SignUp',
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+      invitedBy: invite.createdBy ? invite.createdBy.displayName : 'Unknown',
+      inviteCode: invite.icode,
+    });
+
+    // Update invite usage
+    invite.uses = (invite.uses || 0) + 1;
+    if (!invite.redeemedBy) invite.redeemedBy = [];
+    if (!invite.redeemedBy.some((u) => u.id === user.id)) {
+      invite.redeemedBy.push(user);
+    }
+
+    // Mark as redeemed if usage limit reached
+    if (
+      typeof invite.usageLimit === 'number' &&
+      invite.usageLimit > 0 &&
+      invite.uses >= invite.usageLimit
+    ) {
+      invite.status = InviteStatus.REDEEMED;
+    }
+    invite.updatedBy = user;
+    await inviteRepository.save(invite);
+
+    // Set session for the user (log them in after successful creation)
+    if (req.session) {
+      req.session.userId = user.id;
+    }
+
+    res.status(200).json(user.filter());
+  } catch (e) {
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error during local signup.',
+      });
+    }
+    logger.error('Error in signup/localauth:', {
       label: 'SignUp',
       error: e.message,
     });

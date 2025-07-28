@@ -61,13 +61,13 @@ const Join = () => {
           >
             <SetupSteps
               stepNumber={1}
-              description="Enter invite code"
+              description="Enter Invite Code"
               active={currentStep === 1}
               completed={currentStep > 1}
             />
             <SetupSteps
               stepNumber={2}
-              description="Sign in with Plex"
+              description="Create Account"
               active={currentStep === 2}
               completed={currentStep > 2}
             />
@@ -96,8 +96,14 @@ const Join = () => {
           {currentStep === 2 && (
             <div>
               <p className="mb-2 text-center pb-6">
-                Please sign in with your Plex account to continue the
-                registration process.
+                Please sign in with your Plex account{' '}
+                {currentSettings?.localLogin && (
+                  <>or enter local account details </>
+                )}
+                to continue the registration process.{' '}
+                {currentSettings?.localLogin && (
+                  <> (Plex is recommended for the best experience)</>
+                )}
               </p>
               <SignUpAuthForm
                 inviteCode={inviteCode}
