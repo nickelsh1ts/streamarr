@@ -240,10 +240,7 @@ export default function BigCalendar({ events }: BigCalendarProps) {
               {selectedEvent.categories &&
                 selectedEvent.categories.length > 0 && (
                   <div className="flex items-center text-neutral-400">
-                    <span className="font-semibold">Categories:</span>
-                    <span className="ml-2">
-                      {selectedEvent.categories.join(', ')}
-                    </span>
+                    <span>{selectedEvent.categories.join(', ')}</span>
                   </div>
                 )}
               {selectedEvent.description && (

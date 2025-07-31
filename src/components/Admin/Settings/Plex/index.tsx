@@ -323,7 +323,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   >
                     <ArrowPathIcon
                       className={`size-5 ${isRefreshingPresets ? 'animate-spin' : ''}`}
-                      style={{ animationDirection: 'reverse' }}
                     />
                   </button>
                 </div>

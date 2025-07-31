@@ -424,8 +424,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 </button>
               )}
             {(moment(invite?.expiresAt).isAfter(moment()) ||
-              !invite?.expiresAt ||
-              hasPermission(Permission.ADMIN)) &&
+              !invite?.expiresAt) &&
               (invite?.createdBy?.id === currentUser?.id ||
                 hasPermission(Permission.MANAGE_INVITES)) && (
                 <button
@@ -444,8 +443,9 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   Edit Invite
                 </button>
               )}
-            {Array.isArray(invite?.redeemedBy) &&
-              invite.redeemedBy.length === 0 &&
+            {((Array.isArray(invite?.redeemedBy) &&
+              invite.redeemedBy.length === 0) ||
+              hasPermission(Permission.ADMIN)) &&
               (invite?.createdBy?.id === currentUser?.id ||
                 hasPermission(Permission.MANAGE_INVITES)) && (
                 <ConfirmButton

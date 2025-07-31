@@ -58,24 +58,26 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
       }
 
       let sharedLibraries: string;
-      try {
-        const currentPlexLibraries =
-          await plexSync.getCurrentPlexLibraries(user);
+      if (user.userType === UserType.PLEX && user.id !== 1) {
+        try {
+          const currentPlexLibraries =
+            await plexSync.getCurrentPlexLibraries(user);
 
-        if (currentPlexLibraries.length > 0) {
-          sharedLibraries = currentPlexLibraries.join('|');
-        } else {
+          if (currentPlexLibraries.length > 0) {
+            sharedLibraries = currentPlexLibraries.join('|');
+          } else {
+            sharedLibraries = user.settings?.sharedLibraries || 'server';
+          }
+        } catch (error) {
+          logger.warn(
+            `Could not fetch current Plex libraries for user ${user.email}`,
+            {
+              userId: user.id,
+              error: error.message,
+            }
+          );
           sharedLibraries = user.settings?.sharedLibraries || 'server';
         }
-      } catch (error) {
-        logger.warn(
-          `Could not fetch current Plex libraries for user ${user.email}`,
-          {
-            userId: user.id,
-            error: error.message,
-          }
-        );
-        sharedLibraries = user.settings?.sharedLibraries || 'server';
       }
 
       res.status(200).json({
@@ -91,7 +93,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalAllowDownloads: downloads,
         globalLiveTv: liveTv,
         globalPlexHome: plexHome,
-        sharedLibraries: sharedLibraries,
+        sharedLibraries: sharedLibraries ?? 'server',
+        allowDownloads: user.settings?.allowDownloads ?? false,
+        allowLiveTv: user.settings?.allowLiveTv ?? false,
         globalSharedLibraries: defaultSharedLibraries,
       });
     } catch (e) {
@@ -126,10 +130,14 @@ userSettingsRoutes.post<
 
     // Store previous sharedLibraries value to detect changes
     const previousSharedLibraries = user.settings?.sharedLibraries;
+    const previousAllowDownloads = user.settings?.allowDownloads;
+    const previousAllowLiveTv = user.settings?.allowLiveTv;
     const newSharedLibraries =
       req.body.sharedLibraries === '' || req.body.sharedLibraries === 'server'
         ? null
         : req.body.sharedLibraries;
+    const newAllowDownloads = req.body.allowDownloads;
+    const newAllowLiveTv = req.body.allowLiveTv;
 
     user.username = req.body.username;
 
@@ -162,16 +170,18 @@ userSettingsRoutes.post<
     // Sync with Plex if sharedLibraries changed and user has permissions to manage users
     if (
       req.user?.hasPermission(Permission.MANAGE_USERS) &&
-      previousSharedLibraries !== newSharedLibraries &&
+      (previousSharedLibraries !== newSharedLibraries ||
+        previousAllowDownloads !== newAllowDownloads ||
+        previousAllowLiveTv !== newAllowLiveTv) &&
       user.email &&
       user.userType === UserType.PLEX
     ) {
       try {
         const syncValue = newSharedLibraries || 'server';
         await plexSync.syncUserLibraries(user, syncValue, {
-          allowSync: req.body.allowDownloads ?? false,
+          allowSync: req.body.allowDownloads,
           allowCameraUpload: false,
-          allowChannels: req.body.allowLiveTv ?? false,
+          allowChannels: req.body.allowLiveTv,
           plexHome: false,
         });
       } catch (syncError) {

@@ -8,7 +8,7 @@ import json
 
 log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
 class JSONLineLogger:
-    def __init__(self, label='Signup'):
+    def __init__(self, label='Plex Sync'):
         self.label = label
         self.log_path = log_path
     def _write(self, level, message, data=None):
@@ -176,9 +176,9 @@ def libraries():
             # Update user library access
             data = request.json
             libraries = data.get('libraries', [])
-            allow_sync = data.get('allow_sync', False)
-            allow_camera_upload = data.get('allow_camera_upload', False)
-            allow_channels = data.get('allow_channels', False)
+            allow_sync = data.get('allow_sync', None)
+            allow_camera_upload = data.get('allow_camera_upload', None)
+            allow_channels = data.get('allow_channels', None)
 
             try:
                 server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
@@ -215,7 +215,7 @@ def libraries():
                 account.updateFriend(
                     user=target_user,
                     server=plex_server,
-                    sections=selected_sections,
+                    sections=section_names,
                     allowSync=allow_sync,
                     allowCameraUpload=allow_camera_upload,
                     allowChannels=allow_channels

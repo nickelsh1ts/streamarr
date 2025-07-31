@@ -23,12 +23,14 @@ import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
 import Image from 'next/image';
+import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 
 const GeneralSettings = () => {
   const { user: currentUser, hasPermission: userHasPermission } = useUser();
   const { setLocale } = useLocale();
+  const [isRotating, setIsRotating] = useState(false);
   const {
     data,
     error,
@@ -53,6 +55,7 @@ const GeneralSettings = () => {
   });
 
   const regenerate = async () => {
+    setIsRotating(true);
     try {
       await axios.post('/api/v1/settings/main/regenerate');
 
@@ -68,6 +71,9 @@ const GeneralSettings = () => {
         icon: <XCircleIcon className="size-7" />,
         type: 'error',
       });
+    } finally {
+      // Reset rotation after animation completes
+      setTimeout(() => setIsRotating(false), 500);
     }
   };
 
@@ -212,7 +218,11 @@ const GeneralSettings = () => {
                           buttonType="warning"
                           className="rounded-none only:rounded-md last:rounded-r-md"
                         >
-                          <ArrowPathIcon className="size-5" />
+                          <ArrowPathIcon
+                            className={`size-5 transition-transform duration-500 ${
+                              isRotating ? 'animate-spin' : ''
+                            }`}
+                          />
                         </Button>
                       </Tooltip>
                     </div>
