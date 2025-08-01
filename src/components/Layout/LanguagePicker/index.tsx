@@ -5,30 +5,33 @@ import useLocale from '@app/hooks/useLocale';
 import { Transition } from '@headlessui/react';
 import { LanguageIcon } from '@heroicons/react/24/solid';
 import { useRef, useState } from 'react';
-
-//TODO Implement actual language change functionality and persist the selected language in user settings
+import { FormattedMessage } from 'react-intl';
 
 const LanguagePicker = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { locale, setLocale } = useLocale();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+
   useClickOutside(dropdownRef, () => setDropdownOpen(false));
+
+  const handleLanguageChange = (newLocale: AvailableLocale) => {
+    setLocale?.(newLocale);
+    setDropdownOpen(false);
+  };
 
   return (
     <div className="relative z-10">
-      <div>
-        <button
-          className={`rounded-full p-1 hover:bg-primary/70 hover:text-white focus:bg-primary/80 focus:text-white focus:outline-none focus:ring-1 focus:ring-primary sm:p-2 ${
-            isDropdownOpen ? 'bg-primary/60 text-white' : 'text-neutral-300'
-          }`}
-          aria-label="Language Picker"
-          onClick={() => setDropdownOpen(true)}
-        >
-          <LanguageIcon className="h-6 w-6" />
-        </button>
-      </div>
+      <button
+        className={`rounded-full p-1 hover:bg-primary/70 hover:text-white focus:bg-primary/80 focus:text-white focus:outline-none focus:ring-1 focus:ring-primary sm:p-2 ${
+          isDropdownOpen ? 'bg-primary/60 text-white' : 'text-neutral-300'
+        }`}
+        aria-label="Language Picker"
+        onClick={() => setDropdownOpen(!isDropdownOpen)}
+      >
+        <LanguageIcon className="h-6 w-6" />
+      </button>
+
       <Transition
-        as="div"
         show={isDropdownOpen}
         enter="transition ease-out duration-100"
         enterFrom="opacity-0 scale-95"
@@ -42,35 +45,31 @@ const LanguagePicker = () => {
           ref={dropdownRef}
         >
           <div className="rounded-md bg-[#1f1f1f] px-3 py-2 ring-1 ring-black ring-opacity-5">
-            <div>
-              <label
-                htmlFor="language"
-                className="block pb-2 text-sm font-bold leading-5 text-neutral-300"
-              >
-                Display Language
-              </label>
-              <select
-                id="language"
-                className="rounded-md select select-sm select-primary w-full"
-                onChange={(e) =>
-                  setLocale && setLocale(e.target.value as AvailableLocale)
-                }
-                onBlur={(e) =>
-                  setLocale && setLocale(e.target.value as AvailableLocale)
-                }
-                defaultValue={locale}
-              >
-                {(
-                  Object.keys(
-                    availableLanguages
-                  ) as (keyof typeof availableLanguages)[]
-                ).map((key) => (
-                  <option key={key} value={availableLanguages[key].code}>
-                    {availableLanguages[key].display}
+            <label
+              htmlFor="language"
+              className="block pb-2 text-sm font-bold leading-5 text-neutral-300"
+            >
+              <FormattedMessage
+                id="language.displayLanguage"
+                defaultMessage="Display Language"
+              />
+            </label>
+            <select
+              id="language"
+              className="rounded-md select select-sm select-primary w-full"
+              onChange={(e) =>
+                handleLanguageChange(e.target.value as AvailableLocale)
+              }
+              value={locale}
+            >
+              {Object.entries(availableLanguages).map(
+                ([key, { code, display }]) => (
+                  <option key={key} value={code}>
+                    {display}
                   </option>
-                ))}
-              </select>
-            </div>
+                )
+              )}
+            </select>
           </div>
         </div>
       </Transition>

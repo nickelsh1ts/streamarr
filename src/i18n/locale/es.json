@@ -1,1 +1,134 @@
-{}
+{
+  "auth.signin": {
+    "defaultMessage": "Iniciar sesión"
+  },
+  "auth.signup": {
+    "defaultMessage": "Regístrate ahora"
+  },
+  "common.all": {
+    "defaultMessage": "Todos"
+  },
+  "common.approve": {
+    "defaultMessage": "Aprobar"
+  },
+  "common.approved": {
+    "defaultMessage": "Aprobado"
+  },
+  "common.areyousure": {
+    "defaultMessage": "¿Estás seguro?"
+  },
+  "common.available": {
+    "defaultMessage": "Disponible"
+  },
+  "common.back": {
+    "defaultMessage": "Atrás"
+  },
+  "common.cancel": {
+    "defaultMessage": "Cancelar"
+  },
+  "common.canceling": {
+    "defaultMessage": "Cancelando…"
+  },
+  "common.close": {
+    "defaultMessage": "Cerrar"
+  },
+  "common.decline": {
+    "defaultMessage": "Rechazar"
+  },
+  "common.declined": {
+    "defaultMessage": "Rechazado"
+  },
+  "common.delete": {
+    "defaultMessage": "Eliminar"
+  },
+  "common.deleting": {
+    "defaultMessage": "Eliminando…"
+  },
+  "common.delimitedlist": {
+    "defaultMessage": "{a}, {b}"
+  },
+  "common.edit": {
+    "defaultMessage": "Editar"
+  },
+  "common.failed": {
+    "defaultMessage": "Fallido"
+  },
+  "common.loading": {
+    "defaultMessage": "Cargando…"
+  },
+  "common.next": {
+    "defaultMessage": "Siguiente"
+  },
+  "common.noresults": {
+    "defaultMessage": "No hay resultados."
+  },
+  "common.open": {
+    "defaultMessage": "Abrir"
+  },
+  "common.pending": {
+    "defaultMessage": "Pendiente"
+  },
+  "common.previous": {
+    "defaultMessage": "Anterior"
+  },
+  "common.processing": {
+    "defaultMessage": "Procesando"
+  },
+  "common.resolved": {
+    "defaultMessage": "Resuelto"
+  },
+  "common.resultsperpage": {
+    "defaultMessage": "Mostrar {pageSize} resultados por página"
+  },
+  "common.retry": {
+    "defaultMessage": "Reintentar"
+  },
+  "common.retrying": {
+    "defaultMessage": "Reintentando…"
+  },
+  "common.save": {
+    "defaultMessage": "Guardar cambios"
+  },
+  "common.saving": {
+    "defaultMessage": "Guardando…"
+  },
+  "common.showingresults": {
+    "defaultMessage": "Mostrando <strong>{from}</strong> a <strong>{to}</strong> de <strong>{total}</strong> resultados"
+  },
+  "common.status": {
+    "defaultMessage": "Estado"
+  },
+  "common.test": {
+    "defaultMessage": "Probar"
+  },
+  "common.testing": {
+    "defaultMessage": "Probando…"
+  },
+  "common.unavailable": {
+    "defaultMessage": "No disponible"
+  },
+  "common.view": {
+    "defaultMessage": "Ver"
+  },
+  "hero.error.emptyCode": {
+    "defaultMessage": "Por favor, introduce un código de invitación válido."
+  },
+  "hero.getStarted": {
+    "defaultMessage": "¡Empecemos!"
+  },
+  "hero.inviteCode": {
+    "defaultMessage": "Introduce tu código de invitación para comenzar"
+  },
+  "hero.more": {
+    "defaultMessage": "+ más"
+  },
+  "hero.subtitle": {
+    "defaultMessage": "Mira en cualquier lugar, en cualquier momento y gratis. El futuro es ahora."
+  },
+  "hero.title": {
+    "defaultMessage": "Películas y series ilimitadas"
+  },
+  "language.displayLanguage": {
+    "defaultMessage": "Idioma de visualización"
+  }
+}

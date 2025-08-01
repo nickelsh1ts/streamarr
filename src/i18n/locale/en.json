@@ -1,1 +1,134 @@
-{}
+{
+  "auth.signin": {
+    "defaultMessage": "Sign in"
+  },
+  "auth.signup": {
+    "defaultMessage": "Sign up now"
+  },
+  "common.all": {
+    "defaultMessage": "All"
+  },
+  "common.approve": {
+    "defaultMessage": "Approve"
+  },
+  "common.approved": {
+    "defaultMessage": "Approved"
+  },
+  "common.areyousure": {
+    "defaultMessage": "Are you sure?"
+  },
+  "common.available": {
+    "defaultMessage": "Available"
+  },
+  "common.back": {
+    "defaultMessage": "Back"
+  },
+  "common.cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "common.canceling": {
+    "defaultMessage": "Canceling…"
+  },
+  "common.close": {
+    "defaultMessage": "Close"
+  },
+  "common.decline": {
+    "defaultMessage": "Decline"
+  },
+  "common.declined": {
+    "defaultMessage": "Declined"
+  },
+  "common.delete": {
+    "defaultMessage": "Delete"
+  },
+  "common.deleting": {
+    "defaultMessage": "Deleting…"
+  },
+  "common.delimitedlist": {
+    "defaultMessage": "{a}, {b}"
+  },
+  "common.edit": {
+    "defaultMessage": "Edit"
+  },
+  "common.failed": {
+    "defaultMessage": "Failed"
+  },
+  "common.loading": {
+    "defaultMessage": "Loading…"
+  },
+  "common.next": {
+    "defaultMessage": "Next"
+  },
+  "common.noresults": {
+    "defaultMessage": "No results."
+  },
+  "common.open": {
+    "defaultMessage": "Open"
+  },
+  "common.pending": {
+    "defaultMessage": "Pending"
+  },
+  "common.previous": {
+    "defaultMessage": "Previous"
+  },
+  "common.processing": {
+    "defaultMessage": "Processing"
+  },
+  "common.resolved": {
+    "defaultMessage": "Resolved"
+  },
+  "common.resultsperpage": {
+    "defaultMessage": "Display {pageSize} results per page"
+  },
+  "common.retry": {
+    "defaultMessage": "Retry"
+  },
+  "common.retrying": {
+    "defaultMessage": "Retrying…"
+  },
+  "common.save": {
+    "defaultMessage": "Save Changes"
+  },
+  "common.saving": {
+    "defaultMessage": "Saving…"
+  },
+  "common.showingresults": {
+    "defaultMessage": "Showing <strong>{from}</strong> to <strong>{to}</strong> of <strong>{total}</strong> results"
+  },
+  "common.status": {
+    "defaultMessage": "Status"
+  },
+  "common.test": {
+    "defaultMessage": "Test"
+  },
+  "common.testing": {
+    "defaultMessage": "Testing…"
+  },
+  "common.unavailable": {
+    "defaultMessage": "Unavailable"
+  },
+  "common.view": {
+    "defaultMessage": "View"
+  },
+  "hero.error.emptyCode": {
+    "defaultMessage": "Please enter a valid invite code."
+  },
+  "hero.getStarted": {
+    "defaultMessage": "Let's Get Started!"
+  },
+  "hero.inviteCode": {
+    "defaultMessage": "Enter your invite code to get started"
+  },
+  "hero.more": {
+    "defaultMessage": "+ more"
+  },
+  "hero.subtitle": {
+    "defaultMessage": "Watch anywhere, anytime for free. The future is now."
+  },
+  "hero.title": {
+    "defaultMessage": "Unlimited movies and TV shows"
+  },
+  "language.displayLanguage": {
+    "defaultMessage": "Display Language"
+  }
+}

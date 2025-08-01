@@ -3,6 +3,7 @@ import NextTopLoader from 'nextjs-toploader';
 import PWAHeader from '@app/components/PWAHeader';
 import ServiceWorkerSetup from '@app/components/ServiceWorkerSetup';
 import { InteractionProvider } from '@app/context/InteractionContext';
+import { LanguageProvider } from '@app/context/LanguageContext';
 import 'styles/globals.css';
 import { Toaster } from 'react-hot-toast';
 import NotificationProvider from '@app/context/NotificationContext';
@@ -20,7 +21,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  // Fetch settings from the API
   const res = await fetch(
     `http://${process.env.HOST || 'localhost'}:${
       process.env.PORT || 3000
@@ -29,29 +29,26 @@ export default async function RootLayout({
   );
   const currentSettings: PublicSettingsResponse = await res.json();
 
-  // Only fetch user if running in a server context (not during static export)
   let user: User | undefined = undefined;
-  if (typeof window === 'undefined' && process.env.NEXT_RUNTIME !== 'edge') {
-    try {
-      const cookieStore = await cookies();
-      const cookieHeader = cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join('; ');
-      const res = await fetch(
-        `http://${process.env.HOST || 'localhost'}:${
-          process.env.PORT || 3000
-        }/api/v1/auth/me`,
-        {
-          headers: { cookie: cookieHeader || undefined },
-        }
-      );
-      if (res.ok) {
-        user = await res.json();
+  try {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join('; ');
+    const res = await fetch(
+      `http://${process.env.HOST || 'localhost'}:${
+        process.env.PORT || 3000
+      }/api/v1/auth/me`,
+      {
+        headers: { cookie: cookieHeader || undefined },
       }
-    } catch {
-      // ignore
+    );
+    if (res.ok) {
+      user = await res.json();
     }
+  } catch {
+    // ignore
   }
 
   const initialized = currentSettings.initialized;
@@ -65,16 +62,18 @@ export default async function RootLayout({
         <NextTopLoader color="#974ede" />
         <PullToRefresh />
         <Toaster />
-        <SettingsProvider currentSettings={currentSettings}>
-          <InteractionProvider>
-            <UserContext initialUser={user}>
-              <NotificationProvider>
-                <Notifications />
-                <Layout initialized={initialized}>{children}</Layout>
-              </NotificationProvider>
-            </UserContext>
-          </InteractionProvider>
-        </SettingsProvider>
+        <LanguageProvider>
+          <SettingsProvider currentSettings={currentSettings}>
+            <InteractionProvider>
+              <UserContext initialUser={user}>
+                <NotificationProvider>
+                  <Notifications />
+                  <Layout initialized={initialized}>{children}</Layout>
+                </NotificationProvider>
+              </UserContext>
+            </InteractionProvider>
+          </SettingsProvider>
+        </LanguageProvider>
         <ServiceWorkerSetup />
       </body>
     </html>
