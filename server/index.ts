@@ -75,7 +75,7 @@ app
     startJobs();
     const server = express();
     if (settings.main.trustProxy) {
-      server.enable('trust proxy');
+      server.set('trust proxy', 1);
     }
     server.use(cookieParser());
 
