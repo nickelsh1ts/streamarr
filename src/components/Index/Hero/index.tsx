@@ -7,6 +7,7 @@ import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -43,6 +44,9 @@ export default function Hero() {
         }
       />
       <div className="grid grid-flow-row min-h-lvh md:ps-12 md:text-start text-center relative">
+        <div className="absolute top-20 right-4">
+          <LanguagePicker />
+        </div>
         <div className="md:ps-4 mt-auto pt-24">
           <Image
             src={logoSrc}
