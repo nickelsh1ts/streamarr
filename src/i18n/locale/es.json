@@ -99,13 +99,13 @@
     "defaultMessage": "Guardar Cambios"
   },
   "common.settingsSaveError": {
-    "defaultMessage": "Error al guardar la configuración"
+    "defaultMessage": "Error al guardar la configuración por {appName}"
   },
   "common.settingsSaveSuccess": {
-    "defaultMessage": "Configuración guardada exitosamente"
+    "defaultMessage": "Configuración guardada exitosamente por {appName}"
   },
   "common.showingResults": {
-    "defaultMessage": "Mostrando resultados"
+    "defaultMessage": "Mostrando {start} a {end} de {total} resultados"
   },
   "common.user": {
     "defaultMessage": "Usuario"
@@ -282,7 +282,7 @@
     "defaultMessage": "Invitaciones"
   },
   "invite.defaultLibraries": {
-    "defaultMessage": "Bibliotecas por Defecto"
+    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
   },
   "invite.inviteToPlexHome": {
     "defaultMessage": "Invitar a Plex Home"
@@ -300,7 +300,7 @@
     "defaultMessage": "Compartir Invitación"
   },
   "invite.sharedLibraries": {
-    "defaultMessage": "Bibliotecas Compartidas"
+    "defaultMessage": "Bibliotecas Compartidas:"
   },
   "invite.statusChanged": {
     "defaultMessage": "Estado Cambiado"

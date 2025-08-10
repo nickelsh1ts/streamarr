@@ -381,13 +381,13 @@
     "defaultMessage": "Server Name"
   },
   "common.settingsEnable": {
-    "defaultMessage": "Enable {appName}"
+    "defaultMessage": "Enable"
   },
   "common.settingsSaveError": {
-    "defaultMessage": "Failed to save settings"
+    "defaultMessage": "{appName} settings failed to save"
   },
   "common.settingsSaveSuccess": {
-    "defaultMessage": "Settings saved successfully!"
+    "defaultMessage": "{appName} settings saved successfully!"
   },
   "common.showAll": {
     "defaultMessage": "Show All"
