@@ -119,7 +119,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 </button>
                 <p className="text-xs truncate w-full text-warning">
                   {invite?.expiresAt != null ? (
-                    `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'invite.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                    `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
                   ) : (
                     <FormattedMessage
                       id="invite.neverExpires"
@@ -242,28 +242,28 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
               {invite?.status === InviteStatus.ACTIVE ? (
                 <Badge badgeType="success" className="capitalize">
                   <FormattedMessage
-                    id="invite.active"
+                    id="common.active"
                     defaultMessage="Active"
                   />
                 </Badge>
               ) : invite?.status === InviteStatus.EXPIRED ? (
                 <Badge badgeType="error" className="capitalize">
                   <FormattedMessage
-                    id="invite.expired"
+                    id="common.expired"
                     defaultMessage="Expired"
                   />
                 </Badge>
               ) : invite?.status === InviteStatus.REDEEMED ? (
                 <Badge badgeType="primary" className="capitalize">
                   <FormattedMessage
-                    id="invite.redeemed"
+                    id="common.redeemed"
                     defaultMessage="Redeemed"
                   />
                 </Badge>
               ) : (
                 <Badge badgeType="warning" className="capitalize">
                   <FormattedMessage
-                    id="invite.inactive"
+                    id="common.inactive"
                     defaultMessage="Inactive"
                   />
                 </Badge>

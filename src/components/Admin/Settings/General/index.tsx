@@ -59,7 +59,7 @@ const GeneralSettings = () => {
       .test(
         'no-trailing-slash',
         intl.formatMessage({
-          id: 'generalSettings.validation.applicationUrl.noTrailingSlash',
+          id: 'servicesSettings.validation.urlNoTrailingSlash',
           defaultMessage: 'URL must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
@@ -192,7 +192,7 @@ const GeneralSettings = () => {
 
             Toast({
               title: intl.formatMessage({
-                id: 'settings.saveSuccess',
+                id: 'common.settingsSaveSuccess',
                 defaultMessage: 'Settings saved successfully!',
               }),
               icon: <CheckBadgeIcon className="size-7" />,

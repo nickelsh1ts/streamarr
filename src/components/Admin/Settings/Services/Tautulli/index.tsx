@@ -52,14 +52,14 @@ const ServicesTautulli = () => {
             return schema
               .typeError(
                 intl.formatMessage({
-                  id: 'plexSettings.validation.port',
+                  id: 'generalSettings.validation.port',
                   defaultMessage: 'You must provide a valid port number',
                 })
               )
               .nullable()
               .required(
                 intl.formatMessage({
-                  id: 'plexSettings.validation.port',
+                  id: 'generalSettings.validation.port',
                   defaultMessage: 'You must provide a valid port number',
                 })
               );
@@ -67,7 +67,7 @@ const ServicesTautulli = () => {
           return schema
             .typeError(
               intl.formatMessage({
-                id: 'plexSettings.validation.port',
+                id: 'generalSettings.validation.port',
                 defaultMessage: 'You must provide a valid port number',
               })
             )

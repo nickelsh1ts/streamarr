@@ -110,7 +110,7 @@ const LogsSettings = () => {
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
         title: intl.formatMessage(
           {
-            id: 'common.copied',
+            id: 'common.copiedToClipboard',
           },
           {
             item: intl.formatMessage({

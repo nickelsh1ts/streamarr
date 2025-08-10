@@ -48,7 +48,7 @@ const UserSettingsNotifications = ({
       content: (
         <span className="flex">
           <CloudIcon className="size-5 mr-2" />{' '}
-          <FormattedMessage id="common.webpush" defaultMessage="Web Push" />
+          <FormattedMessage id="common.webPush" defaultMessage="Web Push" />
         </span>
       ),
       hidden: !data?.webPushEnabled,

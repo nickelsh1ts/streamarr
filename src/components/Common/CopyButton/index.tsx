@@ -32,7 +32,7 @@ const CopyButton = ({
         title: itemTitle
           ? intl.formatMessage(
               {
-                id: 'common.copied',
+                id: 'common.copiedToClipboard',
                 defaultMessage: 'Copied {item} to clipboard!',
               },
               { item: itemTitle }

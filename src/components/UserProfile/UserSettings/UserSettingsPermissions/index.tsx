@@ -48,7 +48,7 @@ const UserPermissions = () => {
         <div className="mb-6 mt-3">
           <h3 className="text-2xl font-extrabold">
             <FormattedMessage
-              id="userSettings.permissions"
+              id="settings.permissions"
               defaultMessage="Permissions"
             />
           </h3>
@@ -70,7 +70,7 @@ const UserPermissions = () => {
     <div className="mb-6 mt-3">
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage
-          id="userSettings.permissions"
+          id="settings.permissions"
           defaultMessage="Permissions"
         />
       </h3>
@@ -96,7 +96,7 @@ const UserPermissions = () => {
           } catch (e) {
             Toast({
               title: intl.formatMessage({
-                id: 'userSettings.permissionsSaveError',
+                id: 'settings.saveError',
                 defaultMessage: 'Something went wrong while saving settings.',
               }),
               type: 'error',

@@ -48,7 +48,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
       .nullable()
       .required(
         intl.formatMessage({
-          id: 'plexSettings.validation.port',
+          id: 'generalSettings.validation.port',
         })
       ),
     apiKey: Yup.string().required(

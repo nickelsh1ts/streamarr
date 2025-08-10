@@ -144,7 +144,7 @@ const UserSettingsGeneral = () => {
 
             Toast({
               title: intl.formatMessage({
-                id: 'settings.saveSuccess',
+                id: 'common.settingsSaveSuccess',
                 defaultMessage: 'Settings saved successfully!',
               }),
               type: 'success',

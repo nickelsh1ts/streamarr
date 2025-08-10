@@ -114,10 +114,13 @@ const InviteShareModal = ({
           `${shareSubject}\n${shareText}\nQR: ${inviteUrl}`
         );
         Toast({
-          title: intl.formatMessage({
-            id: 'inviteShare.linkCopied',
-            defaultMessage: 'Invite link copied to clipboard!',
-          }),
+          title: intl.formatMessage(
+            {
+              id: 'common.copiedToClipboard',
+              defaultMessage: 'Copied {item} to clipboard!',
+            },
+            { item: 'Invite link' }
+          ),
           type: 'success',
           message: intl.formatMessage({
             id: 'inviteShare.shareWithFriends',

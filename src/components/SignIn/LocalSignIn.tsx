@@ -22,7 +22,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
       .email()
       .required(
         intl.formatMessage({
-          id: 'signIn.emailRequired',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       ),

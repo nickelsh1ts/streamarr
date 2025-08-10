@@ -39,7 +39,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
         title: intl.formatMessage(
           {
-            id: 'common.copied',
+            id: 'common.copiedToClipboard',
             defaultMessage: 'Copied {item} to Clipboard!',
           },
           { item: 'Invite Code' }
@@ -58,7 +58,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
             <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate">
               <p className="text-xs truncate w-full text-warning">
                 {invite?.expiresAt != null
-                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires' }) : intl.formatMessage({ id: 'invite.expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires' }) : intl.formatMessage({ id: 'common.expired' })} ${moment(invite?.expiresAt).fromNow()}`
                   : intl.formatMessage({ id: 'invite.neverExpires' })}
               </p>
               <button

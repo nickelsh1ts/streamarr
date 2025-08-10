@@ -17,13 +17,13 @@ const ResetPassword = () => {
     email: Yup.string()
       .email(
         intl.formatMessage({
-          id: 'resetPassword.email.invalid',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       )
       .required(
         intl.formatMessage({
-          id: 'resetPassword.email.required',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       ),

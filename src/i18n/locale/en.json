@@ -152,14 +152,17 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
+  "common.active": {
+    "defaultMessage": "Active"
+  },
   "common.addserver": {
     "defaultMessage": "Add {arrApp} Server"
   },
   "common.admin": {
     "defaultMessage": "Admin"
   },
-  "common.adminCenter": {
-    "defaultMessage": "Admin Center"
+  "common.adminCentre": {
+    "defaultMessage": "Admin Centre"
   },
   "common.advanced": {
     "defaultMessage": "Advanced"
@@ -175,9 +178,6 @@
   },
   "common.areYouSure": {
     "defaultMessage": "Are you sure?"
-  },
-  "common.areyousure": {
-    "defaultMessage": "Are You Sure?"
   },
   "common.arrAdd4k": {
     "defaultMessage": "Add 4K {arrApp} Server"
@@ -206,8 +206,14 @@
   "common.confirmPassword": {
     "defaultMessage": "Confirm Password"
   },
+  "common.continue": {
+    "defaultMessage": "Continue"
+  },
   "common.copied": {
     "defaultMessage": "Copied to clipboard"
+  },
+  "common.copiedToClipboard": {
+    "defaultMessage": "Copied {item} to clipboard!"
   },
   "common.currentPassword": {
     "defaultMessage": "Current Password"
@@ -239,6 +245,9 @@
   "common.emailAddress": {
     "defaultMessage": "Email Address"
   },
+  "common.expired": {
+    "defaultMessage": "Expired"
+  },
   "common.expires": {
     "defaultMessage": "Expires"
   },
@@ -260,6 +269,9 @@
   "common.hostname": {
     "defaultMessage": "Hostname"
   },
+  "common.inactive": {
+    "defaultMessage": "Inactive"
+  },
   "common.invite": {
     "defaultMessage": "Invite"
   },
@@ -274,6 +286,9 @@
   },
   "common.lifetime": {
     "defaultMessage": "Life time"
+  },
+  "common.loading": {
+    "defaultMessage": "Loading"
   },
   "common.localUser": {
     "defaultMessage": "Local User"
@@ -329,6 +344,9 @@
   "common.print": {
     "defaultMessage": "Print"
   },
+  "common.redeemed": {
+    "defaultMessage": "Redeemed"
+  },
   "common.releaseSchedule": {
     "defaultMessage": "Release Schedule"
   },
@@ -356,29 +374,35 @@
   "common.schedule": {
     "defaultMessage": "Schedule"
   },
+  "common.selectTab": {
+    "defaultMessage": "Select a Tab"
+  },
   "common.servername": {
     "defaultMessage": "Server Name"
   },
   "common.settingsEnable": {
-    "defaultMessage": "Enable Settings"
+    "defaultMessage": "Enable {appName}"
   },
   "common.settingsSaveError": {
     "defaultMessage": "Failed to save settings"
   },
   "common.settingsSaveSuccess": {
-    "defaultMessage": "Settings saved successfully"
+    "defaultMessage": "Settings saved successfully!"
   },
   "common.showAll": {
     "defaultMessage": "Show All"
   },
   "common.showingResults": {
-    "defaultMessage": "Showing results"
+    "defaultMessage": "Showing {start} to {end} of {total} results"
   },
   "common.shows": {
     "defaultMessage": "Shows"
   },
   "common.signIn": {
     "defaultMessage": "Sign In"
+  },
+  "common.signingIn": {
+    "defaultMessage": "Signing In..."
   },
   "common.ssl": {
     "defaultMessage": "SSL"
@@ -419,7 +443,7 @@
   "common.webApp": {
     "defaultMessage": "Web App"
   },
-  "common.webpush": {
+  "common.webPush": {
     "defaultMessage": "Web Push"
   },
   "confirmAccount.disableWebPush": {
@@ -442,9 +466,6 @@
   },
   "confirmAccount.subscriptionFailed": {
     "defaultMessage": "Failed to subscribe to web push notifications"
-  },
-  "confirmAccount.webPush": {
-    "defaultMessage": "WebPush"
   },
   "confirmAccount.webPushDisableError": {
     "defaultMessage": "Failed to disable web push notifications"
@@ -547,9 +568,6 @@
   },
   "emailNotifications.validation.pgpPrivateKey.passwordRequired": {
     "defaultMessage": "You must provide a PGP password if you set a private key"
-  },
-  "footer.adminCentre": {
-    "defaultMessage": "Admin Centre"
   },
   "footer.contactUs": {
     "defaultMessage": "Contact Us"
@@ -671,11 +689,8 @@
   "generalSettings.validation.applicationTitle": {
     "defaultMessage": "You must provide an application title"
   },
-  "generalSettings.validation.applicationUrl.noTrailingSlash": {
-    "defaultMessage": "URL must not end in a trailing slash"
-  },
   "generalSettings.validation.supportUrl": {
-    "defaultMessage": "Invalid support URL"
+    "defaultMessage": "You must provide a valid URL"
   },
   "help.githubLink": {
     "defaultMessage": "GitHub"
@@ -725,9 +740,6 @@
   "hero.title": {
     "defaultMessage": "Unlimited movies and TV shows"
   },
-  "iCodeForm.inviteCodePlaceholder": {
-    "defaultMessage": "Enter your invite code"
-  },
   "iCodeForm.inviteCodeRequired": {
     "defaultMessage": "Invite code is required"
   },
@@ -755,9 +767,6 @@
   "imageCache.title": {
     "defaultMessage": "Image Cache"
   },
-  "invite.active": {
-    "defaultMessage": "Active"
-  },
   "invite.advancedSettings": {
     "defaultMessage": "Advanced Settings"
   },
@@ -773,9 +782,6 @@
   "invite.code": {
     "defaultMessage": "Invite Code"
   },
-  "invite.copiedToClipboard": {
-    "defaultMessage": "Copied Invite Code to Clipboard!"
-  },
   "invite.create": {
     "defaultMessage": "Create Invite"
   },
@@ -789,7 +795,7 @@
     "defaultMessage": "Invite created successfully!"
   },
   "invite.defaultLibraries": {
-    "defaultMessage": "Default Libraries"
+    "defaultMessage": "Default ({libraries})"
   },
   "invite.defaultLibrariesAll": {
     "defaultMessage": "Default (All Libraries)"
@@ -818,12 +824,6 @@
   "invite.expiration": {
     "defaultMessage": "Expiration"
   },
-  "invite.expired": {
-    "defaultMessage": "Expired"
-  },
-  "invite.inactive": {
-    "defaultMessage": "Inactive"
-  },
   "invite.inviteAs": {
     "defaultMessage": "Invite As"
   },
@@ -838,9 +838,6 @@
   },
   "invite.plexHome": {
     "defaultMessage": "Plex Home"
-  },
-  "invite.redeemed": {
-    "defaultMessage": "Redeemed"
   },
   "invite.shareInvite": {
     "defaultMessage": "Share Invite"
@@ -898,9 +895,6 @@
   },
   "inviteShare.inviteLink": {
     "defaultMessage": "Invite Link"
-  },
-  "inviteShare.linkCopied": {
-    "defaultMessage": "Invite link copied to clipboard!"
   },
   "inviteShare.qrCodeAlt": {
     "defaultMessage": "Invite QR Code"
@@ -1104,16 +1098,16 @@
     "defaultMessage": "Libraries"
   },
   "moreHelp.checkHelpSection": {
-    "defaultMessage": "Check the help section"
+    "defaultMessage": "Check out the help section on Plex or reach out below!"
   },
   "moreHelp.needMoreHelp": {
     "defaultMessage": "Need more help?"
   },
   "moreHelp.needToChat": {
-    "defaultMessage": "Need to chat with someone?"
+    "defaultMessage": "Need to chat with us?"
   },
   "moreHelp.plexHelpDescription": {
-    "defaultMessage": "Visit Plex support for help with Plex-related issues"
+    "defaultMessage": "Take a look at the Plex Help section or browse their forums for even more assistance."
   },
   "moreHelp.plexSupport": {
     "defaultMessage": "Plex Support"
@@ -1141,12 +1135,6 @@
   },
   "plex.login.button": {
     "defaultMessage": "Sign in with"
-  },
-  "plex.login.loading": {
-    "defaultMessage": "Loading..."
-  },
-  "plex.login.signingIn": {
-    "defaultMessage": "Signing In..."
   },
   "plexImport.error": {
     "defaultMessage": "Something went wrong while importing Plex users."
@@ -1238,7 +1226,7 @@
   "plexSettings.urlBaseTooltip": {
     "defaultMessage": "It is recommended to leave this as the default value"
   },
-  "plexSettings.validation.port": {
+  "generalSettings.validation.port": {
     "defaultMessage": "Invalid port number"
   },
   "plexSettings.validation.webAppUrl.leadingSlash": {
@@ -1309,6 +1297,27 @@
   },
   "resetPassword.description": {
     "defaultMessage": "Please enter a new password for your local account."
+  },
+  "resetPassword.email.label": {
+    "defaultMessage": "Please enter the email address associated to your Local account."
+  },
+  "resetPassword.email.note": {
+    "defaultMessage": "Note that Plex users must reset their password from the {plexLogo} login window."
+  },
+  "email.required": {
+    "defaultMessage": "You must provide a valid email address"
+  },
+  "resetPassword.email.sent": {
+    "defaultMessage": "Check your email"
+  },
+  "resetPassword.email.sent.label": {
+    "defaultMessage": "Please check your email to access the reset password link."
+  },
+  "resetPassword.email.sent.note": {
+    "defaultMessage": "If you do not receive it, your address may be incorrect or not associated to an existing account."
+  },
+  "resetPassword.help": {
+    "defaultMessage": "Wait, I need more help"
   },
   "resetPassword.passwordTooShort": {
     "defaultMessage": "Password is too short; should be a minimum of 8 characters"
@@ -1383,10 +1392,10 @@
     "defaultMessage": "Uptime Settings"
   },
   "servicesSettings.urlBase.leadingSlash": {
-    "defaultMessage": "URL base should start with /"
+    "defaultMessage": "URL Base must have a leading slash"
   },
   "servicesSettings.urlBase.noTrailingSlash": {
-    "defaultMessage": "URL base should not end with /"
+    "defaultMessage": "URL Base must not end in a trailing slash"
   },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "You must provide an API key"
@@ -1395,13 +1404,13 @@
     "defaultMessage": "API key is required"
   },
   "servicesSettings.validation.hostname": {
-    "defaultMessage": "Hostname is required"
+    "defaultMessage": "You must provide a valid hostname or IP address"
   },
   "servicesSettings.validation.servername": {
-    "defaultMessage": "Server name is required"
+    "defaultMessage": "You must provide a valid server name"
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
-    "defaultMessage": "URL should not end with /"
+    "defaultMessage": "URL must not end in a trailing slash"
   },
   "settings.accountType": {
     "defaultMessage": "Account Type"
@@ -1418,8 +1427,17 @@
   "settings.notifications": {
     "defaultMessage": "Notification Settings"
   },
+  "settings.notifications.description": {
+    "defaultMessage": "Configure and enable notification agents."
+  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Override Global Limit"
+  },
+  "settings.permissions": {
+    "defaultMessage": "Permissions"
+  },
+  "settings.permissions.error": {
+    "defaultMessage": "You do not have permission to modify this user's settings."
   },
   "settings.plexAccess": {
     "defaultMessage": "Plex Access"
@@ -1429,9 +1447,6 @@
   },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
-  },
-  "settings.saveSuccess": {
-    "defaultMessage": "Settings saved successfully!"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
@@ -1453,9 +1468,6 @@
   },
   "setup.configureServices": {
     "defaultMessage": "Configure Services"
-  },
-  "setup.continue": {
-    "defaultMessage": "Continue"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completing setup"
@@ -1511,23 +1523,41 @@
   "sidebar.streamingServices": {
     "defaultMessage": "Streaming Services"
   },
-  "signIn.emailRequired": {
-    "defaultMessage": "You must provide a valid email address"
+  "signIn.description": {
+    "defaultMessage": "You will use this account to log into {applicationTitle} to watch your favourite movies and TV Shows."
   },
   "signIn.forgotPassword": {
     "defaultMessage": "Wait, I forgot my password"
   },
+  "signIn.localAccount": {
+    "defaultMessage": "Sign in with {applicationTitle}"
+  },
   "signIn.loginError": {
     "defaultMessage": "Something went wrong while trying to sign in."
+  },
+  "signIn.loginFailed": {
+    "defaultMessage": "Login failed! Something went wrong, let's try again!"
+  },
+  "signIn.newUser": {
+    "defaultMessage": "New to {applicationTitle}? {signUpLink}"
   },
   "signIn.passwordRequired": {
     "defaultMessage": "You must provide a password"
   },
+  "signIn.plexAccount": {
+    "defaultMessage": "Use your {plex} account"
+  },
   "signIn.rememberMe": {
     "defaultMessage": "Remember me"
   },
+  "signIn.signUp": {
+    "defaultMessage": "Sign up"
+  },
   "signIn.signingIn": {
     "defaultMessage": "Signing In…"
+  },
+  "signIn.title": {
+    "defaultMessage": "Sign in to continue"
   },
   "signUp.confirmAccount": {
     "defaultMessage": "Confirm Account"
@@ -1551,7 +1581,7 @@
     "defaultMessage": "Get started by entering your invite code below."
   },
   "signUp.loginWithPlex": {
-    "defaultMessage": "Login with Plex"
+    "defaultMessage": "Sign up with your {plexLogo} account"
   },
   "signUp.orEnterLocalAccount": {
     "defaultMessage": "or enter local account details"
@@ -1688,6 +1718,9 @@
   "userSettings.browser": {
     "defaultMessage": "Browser"
   },
+  "userSettings.cannotModifyOwnPermissions": {
+    "defaultMessage": "You cannot modify your own permissions"
+  },
   "userSettings.defaultPermissions": {
     "defaultMessage": "Default Permissions"
   },
@@ -1792,6 +1825,9 @@
   },
   "userSettings.password.saveSuccess": {
     "defaultMessage": "Password saved successfully!"
+  },
+  "userSettings.permissionsSaved": {
+    "defaultMessage": "Permissions saved successfully!"
   },
   "userSettings.pgpPublicKey": {
     "defaultMessage": "PGP Public Key"

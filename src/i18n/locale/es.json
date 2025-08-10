@@ -41,9 +41,6 @@
   "common.all": {
     "defaultMessage": "Todos"
   },
-  "common.areyousure": {
-    "defaultMessage": "¿Estás seguro?"
-  },
   "common.cancel": {
     "defaultMessage": "Cancelar"
   },
@@ -284,12 +281,6 @@
   "common.invites": {
     "defaultMessage": "Invitaciones"
   },
-  "invite.expired": {
-    "defaultMessage": "Expiró"
-  },
-  "invite.redeemed": {
-    "defaultMessage": "Canjeada"
-  },
   "invite.defaultLibraries": {
     "defaultMessage": "Bibliotecas por Defecto"
   },
@@ -410,9 +401,6 @@
   "userSettings.notifications.enableWebPush": {
     "defaultMessage": "Habilitar notificaciones web"
   },
-  "invite.active": {
-    "defaultMessage": "Activa"
-  },
   "invite.advancedSettings": {
     "defaultMessage": "Configuración avanzada"
   },
@@ -427,9 +415,6 @@
   },
   "invite.code": {
     "defaultMessage": "Código de invitación"
-  },
-  "invite.copiedToClipboard": {
-    "defaultMessage": "¡Código de invitación copiado al portapapeles!"
   },
   "invite.create": {
     "defaultMessage": "Crear invitación"
@@ -469,9 +454,6 @@
   },
   "invite.expiration": {
     "defaultMessage": "Expiración"
-  },
-  "invite.inactive": {
-    "defaultMessage": "Inactiva"
   },
   "invite.inviteAs": {
     "defaultMessage": "Invitar como"
@@ -653,9 +635,6 @@
   "emailNotifications.validation.pgpPrivateKey.passwordRequired": {
     "defaultMessage": "Debes proporcionar una contraseña PGP si estableces una clave privada"
   },
-  "footer.adminCentre": {
-    "defaultMessage": "Centro de Administración"
-  },
   "footer.contactUs": {
     "defaultMessage": "Contáctanos"
   },
@@ -667,9 +646,6 @@
   },
   "footer.termsOfUse": {
     "defaultMessage": "Términos de Uso"
-  },
-  "iCodeForm.inviteCodePlaceholder": {
-    "defaultMessage": "Introduce tu código de invitación"
   },
   "iCodeForm.inviteCodeRequired": {
     "defaultMessage": "El código de invitación es requerido"
@@ -736,12 +712,6 @@
   },
   "plex.login.button": {
     "defaultMessage": "Iniciar sesión con"
-  },
-  "plex.login.loading": {
-    "defaultMessage": "Cargando..."
-  },
-  "plex.login.signingIn": {
-    "defaultMessage": "Iniciando Sesión..."
   },
   "sidebar.authorizedDevices": {
     "defaultMessage": "Dispositivos Autorizados"
@@ -1013,9 +983,6 @@
   "inviteShare.inviteLink": {
     "defaultMessage": "Enlace de Invitación"
   },
-  "inviteShare.linkCopied": {
-    "defaultMessage": "Enlace Copiado"
-  },
   "inviteShare.qrCodeAlt": {
     "defaultMessage": "Código QR de la Invitación"
   },
@@ -1132,9 +1099,6 @@
   },
   "confirmAccount.subscriptionFailed": {
     "defaultMessage": "Error al suscribirse a las notificaciones web push"
-  },
-  "confirmAccount.webPush": {
-    "defaultMessage": "WebPush"
   },
   "confirmAccount.webPushDisableError": {
     "defaultMessage": "Error al deshabilitar las notificaciones web push"
@@ -1451,9 +1415,6 @@
   "settings.saveError": {
     "defaultMessage": "Algo salió mal al guardar la configuración."
   },
-  "settings.saveSuccess": {
-    "defaultMessage": "¡Configuración guardada exitosamente!"
-  },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
   },
@@ -1474,9 +1435,6 @@
   },
   "setup.configureServices": {
     "defaultMessage": "Configurar Servicios"
-  },
-  "setup.continue": {
-    "defaultMessage": "Continuar"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completando la configuración"
@@ -1504,9 +1462,6 @@
   },
   "setup.welcomeTo": {
     "defaultMessage": "Bienvenido a {appName}"
-  },
-  "signIn.emailRequired": {
-    "defaultMessage": "Debes proporcionar una dirección de correo electrónico válida"
   },
   "signIn.forgotPassword": {
     "defaultMessage": "Espera, olvidé mi contraseña"
@@ -1685,9 +1640,6 @@
   "plexSettings.urlBaseTooltip": {
     "defaultMessage": "Se recomienda dejar esto como el valor predeterminado"
   },
-  "plexSettings.validation.port": {
-    "defaultMessage": "Debes proporcionar un número de puerto válido"
-  },
   "plexSettings.validation.webAppUrl.leadingSlash": {
     "defaultMessage": "La URL base debe tener una barra diagonal inicial"
   },
@@ -1705,9 +1657,6 @@
   },
   "generalSettings.customLogo.validation.fileType": {
     "defaultMessage": "Tipo de archivo no válido"
-  },
-  "common.adminCenter": {
-    "defaultMessage": "Centro de Administración"
   },
   "common.advanced": {
     "defaultMessage": "Avanzado"
@@ -1814,9 +1763,6 @@
   "common.webApp": {
     "defaultMessage": "Aplicación Web"
   },
-  "common.webpush": {
-    "defaultMessage": "Web Push"
-  },
   "notFound.notFound": {
     "defaultMessage": "No encontrado"
   },
@@ -1895,14 +1841,135 @@
   "generalSettings.validation.applicationTitle": {
     "defaultMessage": "Debe proporcionar un título de aplicación"
   },
-  "generalSettings.validation.applicationUrl.noTrailingSlash": {
-    "defaultMessage": "La URL no debe terminar con una barra diagonal"
-  },
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "Debe proporcionar una URL válida"
   },
   "library.liveTV": {
     "defaultMessage": "TV en Vivo",
     "description": "Translation restored after checkpoint"
+  },
+  "common.active": {
+    "defaultMessage": "Activo",
+    "description": "Spanish translation"
+  },
+  "common.adminCentre": {
+    "defaultMessage": "Centro de Administración",
+    "description": "Spanish translation"
+  },
+  "common.continue": {
+    "defaultMessage": "Continuar",
+    "description": "Spanish translation"
+  },
+  "common.copiedToClipboard": {
+    "defaultMessage": "¡{item} copiado al portapapeles!",
+    "description": "Spanish translation"
+  },
+  "common.expired": {
+    "defaultMessage": "Expirado",
+    "description": "Spanish translation"
+  },
+  "common.inactive": {
+    "defaultMessage": "Inactivo",
+    "description": "Spanish translation"
+  },
+  "common.loading": {
+    "defaultMessage": "Cargando",
+    "description": "Spanish translation"
+  },
+  "common.redeemed": {
+    "defaultMessage": "Canjeado",
+    "description": "Spanish translation"
+  },
+  "common.selectTab": {
+    "defaultMessage": "Seleccionar una Pestaña",
+    "description": "Spanish translation"
+  },
+  "common.signingIn": {
+    "defaultMessage": "Iniciando Sesión...",
+    "description": "Spanish translation"
+  },
+  "common.webPush": {
+    "defaultMessage": "Notificaciones Web",
+    "description": "Professional Spanish translation"
+  },
+  "generalSettings.validation.port": {
+    "defaultMessage": "Número de puerto inválido",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.label": {
+    "defaultMessage": "Por favor, introduce la dirección de correo electrónico asociada a tu cuenta local.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.note": {
+    "defaultMessage": "Ten en cuenta que los usuarios de Plex deben restablecer su contraseña desde la ventana de inicio de sesión de {plexLogo}.",
+    "description": "Professional Spanish translation"
+  },
+  "email.required": {
+    "defaultMessage": "Debes proporcionar una dirección de correo electrónico válida",
+    "description": "Spanish translation"
+  },
+  "resetPassword.email.sent": {
+    "defaultMessage": "Revisa tu correo electrónico",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.sent.label": {
+    "defaultMessage": "Por favor, revisa tu correo electrónico para acceder al enlace de restablecimiento de contraseña.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.sent.note": {
+    "defaultMessage": "Si no lo recibes, tu dirección puede ser incorrecta o no estar asociada a una cuenta existente.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.help": {
+    "defaultMessage": "Espera, necesito más ayuda",
+    "description": "Professional Spanish translation"
+  },
+  "settings.notifications.description": {
+    "defaultMessage": "Configurar y habilitar agentes de notificación.",
+    "description": "Professional Spanish translation"
+  },
+  "settings.permissions": {
+    "defaultMessage": "Permisos",
+    "description": "Spanish translation"
+  },
+  "settings.permissions.error": {
+    "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.description": {
+    "defaultMessage": "Usarás esta cuenta para iniciar sesión en {applicationTitle} y ver tus películas y series favoritas.",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.localAccount": {
+    "defaultMessage": "Iniciar sesión con {applicationTitle}",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.loginFailed": {
+    "defaultMessage": "¡Error de inicio de sesión! Algo salió mal, ¡intentemos de nuevo!",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.newUser": {
+    "defaultMessage": "¿Nuevo en {applicationTitle}? {signUpLink}",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.plexAccount": {
+    "defaultMessage": "Usa tu cuenta de {plex}",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.signUp": {
+    "defaultMessage": "Regístrate",
+    "description": "Professional Spanish translation"
+  },
+  "signIn.title": {
+    "defaultMessage": "Inicia sesión para continuar",
+    "description": "Professional Spanish translation"
+  },
+  "userSettings.cannotModifyOwnPermissions": {
+    "defaultMessage": "No puedes modificar tus propios permisos",
+    "description": "Professional Spanish translation"
+  },
+  "userSettings.permissionsSaved": {
+    "defaultMessage": "Permisos de usuario guardados exitosamente",
+    "description": "Spanish translation"
   }
 }

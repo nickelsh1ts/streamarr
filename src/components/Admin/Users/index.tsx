@@ -181,13 +181,13 @@ const AdminUsers = () => {
     email: Yup.string()
       .required(
         intl.formatMessage({
-          id: 'signIn.emailRequired',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       )
       .email(
         intl.formatMessage({
-          id: 'signIn.emailRequired',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       ),

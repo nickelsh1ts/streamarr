@@ -69,7 +69,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
       .nullable()
       .required(
         intl.formatMessage({
-          id: 'plexSettings.validation.port',
+          id: 'generalSettings.validation.port',
           defaultMessage: 'You must provide a valid port number',
         })
       ),
@@ -77,7 +77,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
       .test(
         'leading-slash',
         intl.formatMessage({
-          id: 'plexSettings.validation.webAppUrl.leadingSlash',
+          id: 'servicesSettings.urlBase.leadingSlash',
           defaultMessage: 'URL base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
@@ -85,7 +85,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
       .test(
         'no-trailing-slash',
         intl.formatMessage({
-          id: 'plexSettings.validation.webAppUrl.noTrailingSlash',
+          id: 'servicesSettings.urlBase.noTrailingSlash',
           defaultMessage: 'URL base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')

@@ -32,7 +32,7 @@ const EmailNotifications = () => {
         enabled
           ? schema.nullable().required(
               intl.formatMessage({
-                id: 'signIn.emailRequired',
+                id: 'email.required',
                 defaultMessage: 'You must provide a valid email address',
               })
             )
@@ -40,7 +40,7 @@ const EmailNotifications = () => {
       )
       .email(
         intl.formatMessage({
-          id: 'signIn.emailRequired',
+          id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
         })
       ),
@@ -67,7 +67,7 @@ const EmailNotifications = () => {
       enabled
         ? schema.nullable().required(
             intl.formatMessage({
-              id: 'plexSettings.validation.port',
+              id: 'generalSettings.validation.port',
               defaultMessage: 'You must provide a valid port number',
             })
           )

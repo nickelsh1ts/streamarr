@@ -48,7 +48,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       .nullable()
       .required(
         intl.formatMessage({
-          id: 'plexSettings.validation.port',
+          id: 'generalSettings.validation.port',
         })
       ),
     apiKey: Yup.string().required(

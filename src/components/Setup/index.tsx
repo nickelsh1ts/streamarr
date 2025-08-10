@@ -151,7 +151,7 @@ const Setup = () => {
                       onClick={() => setCurrentStep(3)}
                     >
                       <FormattedMessage
-                        id="setup.continue"
+                        id="common.continue"
                         defaultMessage="Continue"
                       />
                     </Button>
