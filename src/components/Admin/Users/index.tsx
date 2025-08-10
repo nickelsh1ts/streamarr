@@ -11,9 +11,11 @@ import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Table from '@app/components/Common/Table';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
   PencilIcon,
   ChevronLeftIcon,
@@ -37,6 +39,7 @@ import * as Yup from 'yup';
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
 const AdminUsers = () => {
+  const intl = useIntl();
   const router = useRouter();
   const pathname = usePathname();
   const settings = useSettings();
@@ -147,14 +150,20 @@ const AdminUsers = () => {
       await axios.delete(`/api/v1/user/${deleteModal.user?.id}`);
 
       Toast({
-        title: 'User Deleted Successfully!',
+        title: intl.formatMessage({
+          id: 'users.deleteUserSuccess',
+          defaultMessage: 'User deleted successfully!',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
       setDeleteModal({ isOpen: false, user: deleteModal.user });
     } catch {
       Toast({
-        title: 'Something went wrong while deleting the user.',
+        title: intl.formatMessage({
+          id: 'users.deleteUserError',
+          defaultMessage: 'Failed to delete user.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
@@ -170,14 +179,28 @@ const AdminUsers = () => {
 
   const CreateUserSchema = Yup.object().shape({
     email: Yup.string()
-      .required('You must provide a valid email address')
-      .email('You must provide a valid email address'),
+      .required(
+        intl.formatMessage({
+          id: 'signIn.emailRequired',
+          defaultMessage: 'You must provide a valid email address',
+        })
+      )
+      .email(
+        intl.formatMessage({
+          id: 'signIn.emailRequired',
+          defaultMessage: 'You must provide a valid email address',
+        })
+      ),
     password: Yup.lazy((value) =>
       !value
         ? Yup.string()
         : Yup.string().min(
             8,
-            'Password is too short; should be a minimum of 8 characters'
+            intl.formatMessage({
+              id: 'resetPassword.passwordTooShort',
+              defaultMessage:
+                'Password is too short; should be a minimum of 8 characters',
+            })
           )
     ),
   });
@@ -197,18 +220,35 @@ const AdminUsers = () => {
     <div className="mx-4">
       <Modal
         onOk={() => deleteUser()}
-        okText={isDeleting ? 'Deleting...' : 'Delete'}
+        okText={
+          isDeleting
+            ? intl.formatMessage({
+                id: 'users.deleting',
+                defaultMessage: 'Deleting...',
+              })
+            : intl.formatMessage({
+                id: 'common.delete',
+                defaultMessage: 'Delete',
+              })
+        }
         okDisabled={isDeleting}
         okButtonType="error"
         onCancel={() =>
           setDeleteModal({ isOpen: false, user: deleteModal.user })
         }
-        title={'Delete User'}
+        title={intl.formatMessage({
+          id: 'users.deleteUser',
+          defaultMessage: 'Delete User',
+        })}
         subtitle={deleteModal.user?.displayName}
         show={deleteModal.isOpen}
       >
-        Are you sure you want to delete this user? All of their data will be
-        permanently removed. This cannot be undone.
+        <FormattedMessage
+          id="users.deleteUserConfirmation"
+          defaultMessage={
+            'Are you sure you want to delete this user? All of their data will be permanently removed. This cannot be undone.'
+          }
+        />
       </Modal>
       <Formik
         initialValues={{
@@ -226,7 +266,10 @@ const AdminUsers = () => {
               password: values.genpassword ? null : values.password,
             });
             Toast({
-              title: 'User created successfully!',
+              title: intl.formatMessage({
+                id: 'users.createUserSuccess',
+                defaultMessage: 'User created successfully!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
@@ -234,8 +277,16 @@ const AdminUsers = () => {
           } catch (e) {
             Toast({
               title: e.response.data.errors?.includes('USER_EXISTS')
-                ? 'The provided email address is already in use by another user.'
-                : 'Something went wrong while creating the user.',
+                ? intl.formatMessage({
+                    id: 'users.emailAlreadyInUse',
+                    defaultMessage:
+                      'The provided emaail address is already in use by another user.',
+                  })
+                : intl.formatMessage({
+                    id: 'users.createUserError',
+                    defaultMessage:
+                      'Something went wrong while creating the user.',
+                  }),
               type: 'error',
             });
           } finally {
@@ -254,9 +305,22 @@ const AdminUsers = () => {
         }) => {
           return (
             <Modal
-              title={'Create Local User'}
+              title={intl.formatMessage({
+                id: 'users.createLocalUser',
+                defaultMessage: 'Create Local User',
+              })}
               onOk={() => handleSubmit()}
-              okText={isSubmitting ? 'Creating...' : 'Create'}
+              okText={
+                isSubmitting
+                  ? intl.formatMessage({
+                      id: 'users.creating',
+                      defaultMessage: 'Creating...',
+                    })
+                  : intl.formatMessage({
+                      id: 'users.create',
+                      defaultMessage: 'Create',
+                    })
+              }
               okDisabled={isSubmitting || !isValid}
               okButtonType="primary"
               onCancel={() => setCreateModal({ isOpen: false })}
@@ -264,24 +328,30 @@ const AdminUsers = () => {
             >
               {!settings.currentSettings.localLogin && (
                 <Alert
-                  title={
-                    'The Enable Local Sign-In setting is currently disabled.'
-                  }
+                  title={intl.formatMessage({
+                    id: 'users.localSignInDisabled',
+                    defaultMessage:
+                      'The Enable Local Sign-In setting is currently disabled.',
+                  })}
                   type="warning"
                 />
               )}
               {currentHasPermission(Permission.ADMIN) &&
                 !passwordGenerationEnabled && (
                   <Alert
-                    title={
-                      'Configure an application URL and enable email notifications to allow automatic password generation.'
-                    }
+                    title={intl.formatMessage({
+                      id: 'users.configurePasswordGeneration',
+                      defaultMessage:
+                        'Configure an application URL and enable email notifications to allow automatic password generation.',
+                    })}
                     type="info"
                   />
                 )}
               <Form className="mt-5 max-w-6xl space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <label htmlFor="displayName">Display name</label>
+                  <label htmlFor="displayName">
+                    <FormattedMessage id="common.displayName" />
+                  </label>
                   <div className="sm:col-span-2">
                     <div className="flex">
                       <Field
@@ -295,7 +365,7 @@ const AdminUsers = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="email">
-                    Email Address
+                    <FormattedMessage id="common.emailAddress" />
                     <span className="ml-1 text-error">*</span>
                   </label>
                   <div className="sm:col-span-2">
@@ -325,9 +395,15 @@ const AdminUsers = () => {
                   }`}
                 >
                   <label htmlFor="genpassword">
-                    Automatically Generate Password
+                    <FormattedMessage
+                      id="users.automaticallyGeneratePassword"
+                      defaultMessage="Automatically Generate Password"
+                    />
                     <span className="block text-sm text-neutral-500">
-                      Email a server-generated password to the user
+                      <FormattedMessage
+                        id="users.emailGeneratedPassword"
+                        defaultMessage="Email a server-generated password to the user"
+                      />
                     </span>
                   </label>
                   <div className="sm:col-span-2">
@@ -347,7 +423,7 @@ const AdminUsers = () => {
                   }`}
                 >
                   <label htmlFor="password">
-                    Password
+                    <FormattedMessage id="common.password" />
                     {!values.genpassword && (
                       <span className="ml-1 text-error">*</span>
                     )}
@@ -394,7 +470,9 @@ const AdminUsers = () => {
         }}
       />
       <div className="flex flex-col justify-between lg:flex-row lg:items-end">
-        <Header>User List</Header>
+        <Header>
+          <FormattedMessage id="users.title" defaultMessage="User List" />
+        </Header>
         <div className="mt-2 flex flex-grow flex-col lg:flex-grow-0 lg:flex-row">
           <div className="mb-2 flex flex-grow flex-col justify-between sm:flex-row lg:mb-0 lg:flex-grow-0">
             <Button
@@ -404,7 +482,12 @@ const AdminUsers = () => {
               onClick={() => setCreateModal({ isOpen: true })}
             >
               <UserPlusIcon className="size-7 mr-2" />
-              <span>Create Local User</span>
+              <span>
+                <FormattedMessage
+                  id="users.createLocalUser"
+                  defaultMessage="Create Local User"
+                />
+              </span>
             </Button>
             {currentHasPermission(Permission.ADMIN) && (
               <Button
@@ -414,7 +497,12 @@ const AdminUsers = () => {
                 onClick={() => setShowImportModal(true)}
               >
                 <InboxArrowDownIcon className="size-7 mr-2" />
-                <span>Import Plex Users</span>
+                <span>
+                  <FormattedMessage
+                    id="plexImport.title"
+                    defaultMessage="Import Plex Users"
+                  />
+                </span>
               </Button>
             )}
           </div>
@@ -432,9 +520,24 @@ const AdminUsers = () => {
               value={currentSort as string}
               className="select select-sm select-primary rounded-md rounded-l-none w-full disabled:border disabled:border-primary"
             >
-              <option value="created">Join Date</option>
-              <option value="invites">Invite Count</option>
-              <option value="displayname">Display Name</option>
+              <option value="created">
+                <FormattedMessage
+                  id="users.sortJoinDate"
+                  defaultMessage="Join Date"
+                />
+              </option>
+              <option value="invites">
+                <FormattedMessage
+                  id="users.sortInviteCount"
+                  defaultMessage="Invite Count"
+                />
+              </option>
+              <option value="displayname">
+                <FormattedMessage
+                  id="common.displayName"
+                  defaultMessage="Display Name"
+                />
+              </option>
             </select>
           </div>
         </div>
@@ -456,12 +559,27 @@ const AdminUsers = () => {
                 />
               )}
             </Table.TH>
-            <Table.TH>User</Table.TH>
-            <Table.TH>Invites</Table.TH>
-            <Table.TH>Type</Table.TH>
-            <Table.TH>Role</Table.TH>
-            <Table.TH>Joined</Table.TH>
-            <Table.TH>Invited By</Table.TH>
+            <Table.TH>
+              <FormattedMessage id="common.user" defaultMessage="User" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage id="common.invites" defaultMessage="Invites" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage id="common.type" defaultMessage="Type" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage id="common.role" defaultMessage="Role" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage id="common.joined" defaultMessage="Joined" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage
+                id="users.invitedBy"
+                defaultMessage="Invited By"
+              />
+            </Table.TH>
             <Table.TH className="text-right">
               {(data.results ?? []).length >= 1 && (
                 <Button
@@ -472,7 +590,12 @@ const AdminUsers = () => {
                   disabled={selectedUsers.length === 0}
                 >
                   <PencilIcon className="size-4 mr-2" />
-                  <span>Bulk Edit</span>
+                  <span>
+                    <FormattedMessage
+                      id="users.bulkEdit"
+                      defaultMessage="Bulk Edit"
+                    />
+                  </span>
                 </Button>
               )}
             </Table.TH>
@@ -547,20 +670,24 @@ const AdminUsers = () => {
                     className="bg-accent/70 text-accent-content"
                     badgeType="warning"
                   >
-                    Plex User
+                    <FormattedMessage id="common.plexUser" />
                   </Badge>
                 ) : (
-                  <Badge badgeType="default">Local User</Badge>
+                  <Badge badgeType="default">
+                    <FormattedMessage id="common.localUser" />
+                  </Badge>
                 )}
               </Table.TD>
               <Table.TD>
                 {user.id === 1
-                  ? 'Owner'
+                  ? intl.formatMessage({ id: 'common.owner' })
                   : hasPermission(Permission.ADMIN, user.permissions)
-                    ? 'Admin'
-                    : 'User'}
+                    ? intl.formatMessage({ id: 'common.admin' })
+                    : intl.formatMessage({ id: 'common.userRole' })}
               </Table.TD>
-              <Table.TD>{new Date(user.createdAt).toDateString()}</Table.TD>
+              <Table.TD>
+                {moment(user.createdAt).format('lll').toString()}
+              </Table.TD>
               <Table.TD>
                 {user.redeemedInvite?.createdBy?.id &&
                 user.redeemedInvite?.createdBy?.displayName ? (
@@ -571,7 +698,12 @@ const AdminUsers = () => {
                     {user.redeemedInvite.createdBy.displayName}
                   </Link>
                 ) : user.redeemedInvite ? (
-                  <span className="text-gray-400 italic">Unknown User</span>
+                  <span className="text-gray-400 italic">
+                    <FormattedMessage
+                      id="common.unknownUser"
+                      defaultMessage="Unknown User"
+                    />
+                  </span>
                 ) : null}
               </Table.TD>
               <Table.TD alignText="right" className="space-y-2">
@@ -584,7 +716,7 @@ const AdminUsers = () => {
                     router.push(`/admin/users/${user.id}/settings`)
                   }
                 >
-                  Edit
+                  <FormattedMessage id="common.edit" />
                 </Button>
                 <Button
                   buttonType="error"
@@ -597,7 +729,7 @@ const AdminUsers = () => {
                   }
                   onClick={() => setDeleteModal({ isOpen: true, user })}
                 >
-                  Delete
+                  <FormattedMessage id="common.delete" />
                 </Button>
               </Table.TD>
             </tr>
@@ -612,36 +744,48 @@ const AdminUsers = () => {
                   <p className="text-sm">
                     {data.results.length > 0 && (
                       <span className="font-medium">
-                        Showing {pageIndex * currentPageSize + 1} to{' '}
-                        {data.results.length < currentPageSize
-                          ? pageIndex * currentPageSize + data.results.length
-                          : (pageIndex + 1) * currentPageSize}{' '}
-                        of {data.pageInfo.results} results
+                        <FormattedMessage
+                          id="common.showingResults"
+                          values={{
+                            from: pageIndex * currentPageSize + 1,
+                            to:
+                              data.results.length < currentPageSize
+                                ? pageIndex * currentPageSize +
+                                  data.results.length
+                                : (pageIndex + 1) * currentPageSize,
+                            total: data.pageInfo.results,
+                          }}
+                        />
                       </span>
                     )}
                   </p>
                 </div>
                 <div className="flex justify-center sm:flex-1 sm:justify-start lg:justify-center">
                   <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 lg:ml-0">
-                    Display
-                    <select
-                      id="pageSize"
-                      name="pageSize"
-                      onChange={(e) => {
-                        setCurrentPageSize(Number(e.target.value));
-                        router.push(pathname);
-                        window.scrollTo(0, 0);
+                    <FormattedMessage
+                      id="common.resultsDisplay"
+                      values={{
+                        select: (
+                          <select
+                            id="pageSize"
+                            name="pageSize"
+                            onChange={(e) => {
+                              setCurrentPageSize(Number(e.target.value));
+                              router.push(pathname);
+                              window.scrollTo(0, 0);
+                            }}
+                            defaultValue={currentPageSize}
+                            className="select select-primary select-sm mx-1 inline"
+                          >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                          </select>
+                        ),
                       }}
-                      defaultValue={currentPageSize}
-                      className="select select-primary select-sm mx-1 inline"
-                    >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    Results per page
+                    />
                   </span>
                 </div>
                 <div className="flex flex-auto justify-center space-x-2 sm:flex-1 sm:justify-end">
@@ -654,7 +798,9 @@ const AdminUsers = () => {
                     }
                   >
                     <ChevronLeftIcon className="size-4" />
-                    <span>Previous</span>
+                    <span>
+                      <FormattedMessage id="common.previous" />
+                    </span>
                   </Button>
                   <Button
                     buttonSize="sm"
@@ -664,7 +810,9 @@ const AdminUsers = () => {
                       updateQueryParams('page', (page + 1).toString())
                     }
                   >
-                    <span>Next</span>
+                    <span>
+                      <FormattedMessage id="common.next" />
+                    </span>
                     <ChevronRightIcon className="size-4" />
                   </Button>
                 </div>

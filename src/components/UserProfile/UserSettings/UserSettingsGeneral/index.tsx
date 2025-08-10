@@ -14,6 +14,7 @@ import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSet
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import Toast from '@app/components/Toast';
 import {
@@ -26,6 +27,7 @@ import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
 
 const UserSettingsGeneral = () => {
+  const intl = useIntl();
   const { locale, setLocale } = useLocale();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const searchParams = useParams<{ userid: string }>();
@@ -68,7 +70,12 @@ const UserSettingsGeneral = () => {
 
   return (
     <div className="mb-6 mt-3">
-      <h3 className="text-2xl font-extrabold">General Settings</h3>
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="generalSettings.title"
+          defaultMessage="General Settings"
+        />
+      </h3>
       <Formik
         initialValues={{
           displayName: data?.username ?? '',
@@ -136,17 +143,26 @@ const UserSettingsGeneral = () => {
             }
 
             Toast({
-              title: 'Settings Saved Successfully!',
+              title: intl.formatMessage({
+                id: 'settings.saveSuccess',
+                defaultMessage: 'Settings saved successfully!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
               message:
                 isPlexUser && canManageUsers && librariesChanged
-                  ? 'Settings have been synced with Plex.'
+                  ? intl.formatMessage({
+                      id: 'settings.librariesSynced',
+                      defaultMessage: 'Libraries have been synced with Plex.',
+                    })
                   : undefined,
             });
           } catch (e) {
             Toast({
-              title: 'Something went wrong while saving settings.',
+              title: intl.formatMessage({
+                id: 'settings.saveError',
+                defaultMessage: 'Something went wrong while saving settings.',
+              }),
               type: 'error',
               message: e.message,
               icon: <XCircleIcon className="size-7" />,
@@ -169,32 +185,63 @@ const UserSettingsGeneral = () => {
             <Form className="mt-5">
               <div className="max-w-6xl space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <div className="col-span-1">Account Type</div>
+                  <div className="col-span-1">
+                    <FormattedMessage
+                      id="settings.accountType"
+                      defaultMessage="Account Type"
+                    />
+                  </div>
                   <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
                     <div className="flex max-w-lg items-center">
                       {user?.userType === UserType.PLEX ? (
-                        <Badge badgeType="warning">Plex User</Badge>
+                        <Badge badgeType="warning">
+                          <FormattedMessage
+                            id="common.plexUser"
+                            defaultMessage="Plex User"
+                          />
+                        </Badge>
                       ) : (
-                        <Badge badgeType="default">Local User</Badge>
+                        <Badge badgeType="default">
+                          <FormattedMessage
+                            id="common.localUser"
+                            defaultMessage="Local User"
+                          />
+                        </Badge>
                       )}
                     </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <div className="col-span-1">Role</div>
+                  <div className="col-span-1">
+                    <FormattedMessage id="common.role" defaultMessage="Role" />
+                  </div>
                   <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
                     <div className="flex max-w-lg items-center">
-                      {user?.id === 1
-                        ? 'Owner'
-                        : hasPermission(Permission.ADMIN)
-                          ? 'Admin'
-                          : 'User'}
+                      {user?.id === 1 ? (
+                        <FormattedMessage
+                          id="common.owner"
+                          defaultMessage="Owner"
+                        />
+                      ) : hasPermission(Permission.ADMIN) ? (
+                        <FormattedMessage
+                          id="common.admin"
+                          defaultMessage="Admin"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.user"
+                          defaultMessage="User"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="displayName" className="col-span-1">
-                    Display Name
+                    <FormattedMessage
+                      id="common.displayName"
+                      defaultMessage="Display Name"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -215,7 +262,10 @@ const UserSettingsGeneral = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="locale" className="col-span-1">
-                    Display Language
+                    <FormattedMessage
+                      id="common.displayLanguage"
+                      defaultMessage="Display Language"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -225,8 +275,11 @@ const UserSettingsGeneral = () => {
                       className="select select-primary select-sm w-full"
                     >
                       <option value="" lang={locale}>
-                        Default (
-                        {availableLanguages[currentSettings.locale].display})
+                        <FormattedMessage
+                          id="common.default"
+                          defaultMessage="Default"
+                        />{' '}
+                        ({availableLanguages[currentSettings.locale].display})
                       </option>
                       {(
                         Object.keys(
@@ -250,14 +303,16 @@ const UserSettingsGeneral = () => {
                       {user?.userType === UserType.PLEX && (
                         <>
                           <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                            <label
-                              htmlFor="sharedLibraries"
-                              className="col-span-1"
-                            >
-                              Shared Libraries
+                            <label htmlFor="plexAccess" className="col-span-1">
+                              <FormattedMessage
+                                id="settings.plexAccess"
+                                defaultMessage="Plex Access"
+                              />
                               <span className="block text-xs text-gray-400 mt-1">
-                                Changes will sync with Plex automatically on
-                                save.
+                                <FormattedMessage
+                                  id="settings.plexAccessDescription"
+                                  defaultMessage="Changes will sync with Plex automatically on save."
+                                />
                               </span>
                             </label>
                             <div className="col-span-2">
@@ -270,16 +325,7 @@ const UserSettingsGeneral = () => {
                             </div>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                            <label
-                              htmlFor="allowDownloads"
-                              className="col-span-1"
-                            >
-                              Plex Access
-                              <span className="block text-xs text-gray-400 mt-1">
-                                Changes will sync with Plex automatically on
-                                save.
-                              </span>
-                            </label>
+                            <div className="col-span-1"></div>
                             <div className="inline-flex items-center space-x-2">
                               <span
                                 id="allowDownloads"
@@ -336,7 +382,10 @@ const UserSettingsGeneral = () => {
                                 </span>
                               </span>
                               <label htmlFor="allowDownloads">
-                                Allow Downloads
+                                <FormattedMessage
+                                  id="invite.allowDownloads"
+                                  defaultMessage="Allow Downloads"
+                                />
                               </label>
                             </div>
                             <div className="inline-flex items-center space-x-2">
@@ -395,7 +444,10 @@ const UserSettingsGeneral = () => {
                                 </span>
                               </span>
                               <label htmlFor="allowLiveTv">
-                                Allow Live TV Access
+                                <FormattedMessage
+                                  id="settings.allowLiveTv"
+                                  defaultMessage="Allow Live TV Access"
+                                />
                               </label>
                             </div>
                           </div>
@@ -403,7 +455,12 @@ const UserSettingsGeneral = () => {
                       )}
                       <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                         <div className="col-span-1">
-                          <span>Invite Quota</span>
+                          <span>
+                            <FormattedMessage
+                              id="settings.inviteQuota"
+                              defaultMessage="Invite Quota"
+                            />
+                          </span>
                         </div>
                         <div className="col-span-2">
                           <div className="mb-4 flex items-center">
@@ -418,7 +475,10 @@ const UserSettingsGeneral = () => {
                               htmlFor="globalOverride"
                               className="ml-2 text-gray-300"
                             >
-                              Override Global Limit
+                              <FormattedMessage
+                                id="settings.overrideGlobalLimit"
+                                defaultMessage="Override Global Limit"
+                              />
                             </label>
                           </div>
                           <QuotaSelector
@@ -454,7 +514,19 @@ const UserSettingsGeneral = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving..."
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

@@ -15,13 +15,14 @@ import {
   Views,
   DateLocalizer,
 } from 'react-big-calendar';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import 'moment-timezone';
 import TimezoneSelect from './TimezoneSelect';
 import './index.css';
 import CalendarToolBar from '@app/components/Common/BigCalendar/CalendarToolBar';
 import Modal from '@app/components/Common/Modal';
 import { Permission, useUser } from '@app/hooks/useUser';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface eventProps {
   id: number;
@@ -47,6 +48,7 @@ function getDate(str, momentObj) {
 }
 
 export default function BigCalendar({ events }: BigCalendarProps) {
+  const intl = useIntl();
   const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
   const { hasPermission } = useUser();
   const [timezone, setTimezone] = useState(defaultTZ);
@@ -101,10 +103,21 @@ export default function BigCalendar({ events }: BigCalendarProps) {
   const { messages } = useMemo(
     () => ({
       messages: {
-        event: 'New Release or Event',
+        event: intl.formatMessage({
+          id: 'calendar.event',
+          defaultMessage: 'New Release or Event',
+        }),
+        time: intl.formatMessage({
+          id: 'calendar.time',
+          defaultMessage: 'Time',
+        }),
+        date: intl.formatMessage({
+          id: 'calendar.date',
+          defaultMessage: 'Date',
+        }),
       },
     }),
-    []
+    [intl]
   );
 
   const clickRef = useRef<number | null>(null);
@@ -250,20 +263,35 @@ export default function BigCalendar({ events }: BigCalendarProps) {
               )}
               {selectedEvent.status && (
                 <div>
-                  <span className="font-semibold">Status:</span>
+                  <span className="font-semibold">
+                    <FormattedMessage
+                      id="calendar.status"
+                      defaultMessage="Status:"
+                    />
+                  </span>
                   <span className="ml-2">{selectedEvent.status}</span>
                 </div>
               )}
               {selectedEvent.id &&
                 hasPermission([Permission.ADMIN], { type: 'or' }) && (
                   <div className="flex items-center place-content-end text-xs mt-2 text-neutral-400">
-                    <span className="font-semibold">UID:</span>
+                    <span className="font-semibold">
+                      <FormattedMessage
+                        id="calendar.uid"
+                        defaultMessage="UID:"
+                      />
+                    </span>
                     <span className="ml-2">{selectedEvent.id}</span>
                   </div>
                 )}
             </div>
           ) : (
-            <span>No event selected.</span>
+            <span>
+              <FormattedMessage
+                id="calendar.noEventSelected"
+                defaultMessage="No event selected."
+              />
+            </span>
           )}
         </Modal>
       </div>

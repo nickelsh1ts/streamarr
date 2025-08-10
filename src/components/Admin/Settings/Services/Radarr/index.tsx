@@ -7,6 +7,7 @@ import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import RadarrModal from '@app/components/Admin/Settings/Services/Radarr/RadarrModal';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { FormattedMessage, useIntl } from 'react-intl';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { useState } from 'react';
@@ -58,13 +59,34 @@ export const ServerInstance = ({
                 {name}
               </a>
             </h3>
-            {isDefault && !is4k && <Badge>Default</Badge>}
-            {isDefault && is4k && <Badge>Default 4K</Badge>}
-            {!isDefault && is4k && <Badge badgeType="warning">4K</Badge>}
-            {isSSL && <Badge badgeType="success">SSL</Badge>}
+            {isDefault && !is4k && (
+              <Badge>
+                <FormattedMessage id="common.default" />
+              </Badge>
+            )}
+            {isDefault && is4k && (
+              <Badge>
+                <FormattedMessage
+                  id="common.default4k"
+                  defaultMessage="Default 4K"
+                />
+              </Badge>
+            )}
+            {!isDefault && is4k && (
+              <Badge badgeType="warning">
+                <FormattedMessage id="common.4k" defaultMessage="4K" />
+              </Badge>
+            )}
+            {isSSL && (
+              <Badge badgeType="success">
+                <FormattedMessage id="common.ssl" defaultMessage="SSL" />
+              </Badge>
+            )}
           </div>
           <p className="mt-1 truncate text-sm leading-5 text-gray-300">
-            <span className="mr-2 font-bold">Address</span>
+            <span className="mr-2 font-bold">
+              <FormattedMessage id="common.hostname" />
+            </span>
             <a
               href={internalUrl}
               target="_blank"
@@ -75,7 +97,9 @@ export const ServerInstance = ({
             </a>
           </p>
           <p className="mt-1 truncate text-sm leading-5 text-gray-300">
-            <span className="mr-2 font-bold">URL Base</span>
+            <span className="mr-2 font-bold">
+              <FormattedMessage id="common.urlBase" />
+            </span>
             {urlBase}
           </p>
         </div>
@@ -100,7 +124,9 @@ export const ServerInstance = ({
               className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 text-gray-200 transition duration-150 ease-in-out hover:text-white bg-primary bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <PencilIcon className="mr-2 h-5 w-5" />
-              <span>Edit</span>
+              <span>
+                <FormattedMessage id="common.edit" />
+              </span>
             </button>
           </div>
           <div className="-ml-px flex w-0 flex-1">
@@ -109,7 +135,9 @@ export const ServerInstance = ({
               className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 text-gray-200 transition duration-150 ease-in-out hover:text-white bg-primary bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <TrashIcon className="mr-2 h-5 w-5" />
-              <span>Delete</span>
+              <span>
+                <FormattedMessage id="common.delete" />
+              </span>
             </button>
           </div>
         </div>
@@ -119,6 +147,7 @@ export const ServerInstance = ({
 };
 
 const SettingsServicesRadarr = () => {
+  const intl = useIntl();
   const {
     data: radarrData,
     error: radarrError,
@@ -153,12 +182,17 @@ const SettingsServicesRadarr = () => {
   return (
     <>
       <div className="mb-6 max-w-6xl">
-        <h3 className="text-2xl font-extrabold">Radarr Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="radarrSettings.title"
+            defaultMessage="Radarr Settings"
+          />
+        </h3>
         <p className="description">
-          Configure your Radarr server(s) below. You can connect multiple Radarr
-          servers, but only two of them can be marked as defaults (one non-4K
-          and one 4K). Administrators are able to override the server(s) used to
-          process new events.
+          <FormattedMessage
+            id="radarrSettings.description"
+            defaultMessage="Configure your Radarr server(s) below. You can connect multiple Radarr servers, but only two of them can be marked as defaults (one non-4K and one 4K). Administrators are able to override the server(s) used to process new events."
+          />
         </p>
       </div>
       <RadarrModal
@@ -172,7 +206,7 @@ const SettingsServicesRadarr = () => {
         show={editRadarrModal.open}
       />
       <Modal
-        okText={'Delete'}
+        okText={intl.formatMessage({ id: 'common.delete' })}
         okButtonType="error"
         show={deleteServerModal.open}
         onOk={() => deleteServer()}
@@ -183,9 +217,15 @@ const SettingsServicesRadarr = () => {
             type: 'radarr',
           })
         }
-        title={'Delete Radarr Server'}
+        title={intl.formatMessage({
+          id: 'radarrSettings.deleteTitle',
+          defaultMessage: 'Delete Radarr Server',
+        })}
       >
-        Are you sure you want to delete this server?
+        <FormattedMessage
+          id="radarrSettings.deleteconfirm"
+          defaultMessage="Are you sure you want to delete this server?"
+        />
       </Modal>
       <div className="section">
         {!radarrData && !radarrError && <LoadingEllipsis />}
@@ -195,17 +235,21 @@ const SettingsServicesRadarr = () => {
               {radarrData.length > 0 &&
                 (!radarrData.some((radarr) => radarr.isDefault) ? (
                   <Alert
-                    title={
-                      'At least one Radarr server must be marked as default in order for movie events to be processed.'
-                    }
+                    title={intl.formatMessage({
+                      id: 'radarrSettings.noDefaultServer',
+                      defaultMessage:
+                        'At least one Radarr server must be marked as default in order for movie events to be processed.',
+                    })}
                   />
                 ) : !radarrData.some(
                     (radarr) => radarr.isDefault && !radarr.is4k
                   ) ? (
                   <Alert
-                    title={
-                      'If you only have a single Radarr server for both non-4K and 4K content (or if you only download 4K content), your Radarr server should NOT be designated as a 4K server.'
-                    }
+                    title={intl.formatMessage({
+                      id: 'radarrSettings.single4kWarning',
+                      defaultMessage:
+                        'If you only have a single Radarr server for both non-4K and 4K content (or if you only download 4K content), your Radarr server should NOT be designated as a 4K server.',
+                    })}
                   />
                 ) : (
                   radarrData.some((radarr) => radarr.is4k) &&
@@ -213,9 +257,11 @@ const SettingsServicesRadarr = () => {
                     (radarr) => radarr.isDefault && radarr.is4k
                   ) && (
                     <Alert
-                      title={
-                        'A 4K Radarr server must be marked as default in order to enable new 4K Radarr events.'
-                      }
+                      title={intl.formatMessage({
+                        id: 'radarrSettings.no4kdefault',
+                        defaultMessage:
+                          'A 4K Radarr server must be marked as default in order to enable new 4K Radarr events.',
+                      })}
                     />
                   )
                 ))}
@@ -251,7 +297,12 @@ const SettingsServicesRadarr = () => {
                     }
                   >
                     <PlusIcon className="size-7 mr-2" />
-                    <span>Add Radarr Server</span>
+                    <span>
+                      <FormattedMessage
+                        id="radarrSettings.addserver"
+                        defaultMessage="Add Radarr Server"
+                      />
+                    </span>
                   </Button>
                 </div>
               </li>

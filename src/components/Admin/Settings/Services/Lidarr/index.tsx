@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -15,6 +16,7 @@ import useSWR from 'swr';
 import * as Yup from 'yup';
 
 const ServicesLidarr = () => {
+  const intl = useIntl();
   const { data: dataLidarr, mutate: revalidateLidarr } =
     useSWR<ServiceSettings>('/api/v1/settings/lidarr');
 
@@ -22,12 +24,16 @@ const ServicesLidarr = () => {
     urlBase: Yup.string()
       .test(
         'leading-slash',
-        'URL base must have a leading slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -39,9 +45,19 @@ const ServicesLidarr = () => {
   return (
     <div className="max-w-6xl mb-10">
       <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">Lidarr Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="servicesSettings.lidarr.title"
+            defaultMessage={'Lidarr Settings'}
+          />
+        </h3>
         <p className="mb-5">
-          Optionally configure the settings for your Lidarr server.
+          <FormattedMessage
+            id="servicesSettings.lidarr.description"
+            defaultMessage={
+              'Optionally configure the settings for your Lidarr server.'
+            }
+          />
         </p>
       </div>
       <Formik
@@ -66,13 +82,23 @@ const ServicesLidarr = () => {
             } as ServiceSettings);
 
             Toast({
-              title: 'Lidarr settings saved successfully!',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                },
+                { appname: 'Lidarr' }
+              ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving Lidarr settings.',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                },
+                { appname: 'Lidarr' }
+              ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -94,7 +120,8 @@ const ServicesLidarr = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="service">
-                  Enable Lidarr<span className="ml-1 text-error">*</span>
+                  <FormattedMessage id="common.settingsEnable" />
+                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -117,7 +144,7 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -142,7 +169,7 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -165,7 +192,9 @@ const ServicesLidarr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">Use SSL</label>
+                <label htmlFor="useSsl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -179,7 +208,9 @@ const ServicesLidarr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">URL Base</label>
+                <label htmlFor="urlBase">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -197,7 +228,7 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -227,7 +258,13 @@ const ServicesLidarr = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

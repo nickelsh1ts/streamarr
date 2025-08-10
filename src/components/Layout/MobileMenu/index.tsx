@@ -28,6 +28,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { JSX } from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLink {
   href: string;
@@ -41,6 +42,7 @@ interface MenuLink {
 }
 
 const MobileMenu = () => {
+  const intl = useIntl();
   const { currentSettings } = useSettings();
   const { hasPermission } = useUser();
   const ref = useRef<HTMLDivElement>(null);
@@ -94,14 +96,20 @@ const MobileMenu = () => {
   const menuLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!',
-      content: 'Home',
+      content: intl.formatMessage({
+        id: 'common.home',
+        defaultMessage: 'Home',
+      }),
       svgIcon: <HomeIcon className="size-7" />,
       svgIconSelected: <FilledHomeIcon className="size-7" />,
       activeRegExp: /^\/watch\/web\/index\.html#!\/?$/,
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
-      content: 'Discover',
+      content: intl.formatMessage({
+        id: 'library.discover',
+        defaultMessage: 'Discover',
+      }),
       svgIcon: <NewspaperIcon className="w-7 h-7" />,
       svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
@@ -109,7 +117,10 @@ const MobileMenu = () => {
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
-      content: 'Watchlist',
+      content: intl.formatMessage({
+        id: 'library.watchlist',
+        defaultMessage: 'Watch List',
+      }),
       svgIcon: <BookmarkIcon className="h-6 w-6" />,
       svgIconSelected: <FilledBookmarkIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
@@ -117,7 +128,10 @@ const MobileMenu = () => {
     },
     {
       href: '/request',
-      content: 'Request',
+      content: intl.formatMessage({
+        id: 'common.request',
+        defaultMessage: 'Request',
+      }),
       svgIcon: (
         <Image
           alt="Overseerr"
@@ -141,7 +155,10 @@ const MobileMenu = () => {
     },
     {
       href: '/invites',
-      content: 'Invite',
+      content: intl.formatMessage({
+        id: 'common.invite',
+        defaultMessage: 'Invite',
+      }),
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
@@ -149,7 +166,10 @@ const MobileMenu = () => {
     },
     {
       href: '/schedule',
-      content: 'Schedule',
+      content: intl.formatMessage({
+        id: 'common.schedule',
+        defaultMessage: 'Schedule',
+      }),
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
@@ -160,35 +180,50 @@ const MobileMenu = () => {
   const settingsLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!/settings/web/general',
-      content: 'General',
+      content: intl.formatMessage({
+        id: 'sidebar.general',
+        defaultMessage: 'General',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/general\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/web/quality',
-      content: 'Quality',
+      content: intl.formatMessage({
+        id: 'sidebar.quality',
+        defaultMessage: 'Quality',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/quality\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/web/player',
-      content: 'Player',
+      content: intl.formatMessage({
+        id: 'sidebar.player',
+        defaultMessage: 'Player',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/player\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/privacy',
-      content: 'Privacy',
+      content: intl.formatMessage({
+        id: 'sidebar.privacy',
+        defaultMessage: 'Privacy',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/privacy\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/online-media-sources',
-      content: 'Online Media Sources',
+      content: intl.formatMessage({
+        id: 'sidebar.onlineMediaSources',
+        defaultMessage: 'Online Media Sources',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp:
@@ -196,14 +231,20 @@ const MobileMenu = () => {
     },
     {
       href: '/watch/web/index.html#!/settings/devices/all',
-      content: 'Authorized Devices',
+      content: intl.formatMessage({
+        id: 'sidebar.authorizedDevices',
+        defaultMessage: 'Authorized Devices',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/devices\/all\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/streaming-services',
-      content: 'Streaming Services',
+      content: intl.formatMessage({
+        id: 'sidebar.streamingServices',
+        defaultMessage: 'Streaming Services',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp:
@@ -211,7 +252,10 @@ const MobileMenu = () => {
     },
     {
       href: '/watch/web/index.html#!/settings/manage-library-access',
-      content: 'Manage Library Access',
+      content: intl.formatMessage({
+        id: 'sidebar.manageLibraryAccess',
+        defaultMessage: 'Manage Library Access',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp:
@@ -284,20 +328,29 @@ const MobileMenu = () => {
                   onClick={() => setMenuType('library')}
                   className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  Libraries
+                  <FormattedMessage
+                    id="mobileMenu.libraries"
+                    defaultMessage="Libraries"
+                  />
                 </button>
                 <button
                   onClick={() => setMenuType('request')}
                   className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  Request
+                  <FormattedMessage
+                    id="common.request"
+                    defaultMessage="Request"
+                  />
                 </button>
                 {url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/) && (
                   <button
                     onClick={() => setMenuType('settings')}
                     className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
-                    Settings
+                    <FormattedMessage
+                      id="sidebar.settings"
+                      defaultMessage="Settings"
+                    />
                   </button>
                 )}
               </li>

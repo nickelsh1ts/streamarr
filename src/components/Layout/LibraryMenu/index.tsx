@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLinksProps {
   href: string;
@@ -44,6 +45,7 @@ const LibraryMenu = ({
   setIsOpen,
   isMobile = false,
 }: LibraryMenuProps) => {
+  const intl = useIntl();
   const pathname = usePathname();
   const [currentUrl, setCurrentUrl] = useState(pathname);
   const { hasPermission } = useUser();
@@ -95,7 +97,10 @@ const LibraryMenu = ({
   const MenuLinks: MenuLinksProps[] = [
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
-      title: 'Discover',
+      title: intl.formatMessage({
+        id: 'library.discover',
+        defaultMessage: 'Discover',
+      }),
       icon: <NewspaperIcon className="w-7 h-7" />,
       regExp: '=home&pivot=discover',
       hidden:
@@ -112,7 +117,10 @@ const LibraryMenu = ({
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
-      title: 'Watch List',
+      title: intl.formatMessage({
+        id: 'library.watchlist',
+        defaultMessage: 'Watch List',
+      }),
       icon: <BookmarkIcon className="w-7 h-7" />,
       regExp: '=watchlist&pivot=discover',
       hidden:
@@ -129,7 +137,7 @@ const LibraryMenu = ({
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1 overflow-auto grid grid-col">
+    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col">
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
         <SingleItem
           liKey={item.title}
@@ -148,7 +156,10 @@ const LibraryMenu = ({
           key="loading"
           onClick={() => setIsOpen && setIsOpen(!isOpen)}
           href="#"
-          title="Loading libraries..."
+          title={intl.formatMessage({
+            id: 'library.loading',
+            defaultMessage: 'Loading libraries...',
+          })}
           icon={<RectangleGroupIcon className="size-7" />}
           url={url}
           regExp="undefined"
@@ -161,21 +172,36 @@ const LibraryMenu = ({
           switch (type) {
             case 'movie':
               icon = <FilmIcon className="size-7" />;
-              multiTitle = 'Movies';
+              multiTitle = (
+                <FormattedMessage id="common.movies" defaultMessage="Movies" />
+              );
               break;
             case 'show':
               icon = <TvIcon className="size-7" />;
-              multiTitle = 'Shows';
+              multiTitle = (
+                <FormattedMessage id="common.shows" defaultMessage="Shows" />
+              );
               break;
             case 'artist':
               icon = <MusicalNoteIcon className="size-7" />;
-              multiTitle = 'Music';
+              multiTitle = (
+                <FormattedMessage id="library.music" defaultMessage="Music" />
+              );
               break;
             case 'live TV':
               icon = <VideoCameraIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage
+                  id="library.liveTV"
+                  defaultMessage="Live TV"
+                />
+              );
               break;
             case 'photos':
               icon = <PhotoIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage id="library.photos" defaultMessage="Photos" />
+              );
               break;
             default:
               icon = <RectangleGroupIcon className="size-7" />;
@@ -283,7 +309,7 @@ export const SingleItem = ({
         href={
           href && pivotList && type ? href + '&pivot=' + defaultPivot : href
         }
-        className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
+        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
@@ -379,7 +405,7 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>

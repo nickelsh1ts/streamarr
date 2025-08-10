@@ -11,9 +11,11 @@ import Error from '@app/app/error';
 import Toast from '@app/components/Toast';
 import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const UserPermissions = () => {
   const searchParams = useParams<{ userid: string }>();
+  const intl = useIntl();
   const { user: currentUser } = useUser();
   const { user, revalidate: revalidateUser } = useUser({
     id: Number(searchParams.userid),
@@ -44,16 +46,34 @@ const UserPermissions = () => {
     return (
       <>
         <div className="mb-6 mt-3">
-          <h3 className="text-2xl font-extrabold">Permissions</h3>
+          <h3 className="text-2xl font-extrabold">
+            <FormattedMessage
+              id="userSettings.permissions"
+              defaultMessage="Permissions"
+            />
+          </h3>
         </div>
-        <Alert title={'You cannot modify your own permissions.'} type="error" />
+        <Alert
+          title={
+            <FormattedMessage
+              id="userSettings.cannotModifyOwnPermissions"
+              defaultMessage="You cannot modify your own permissions"
+            />
+          }
+          type="error"
+        />
       </>
     );
   }
 
   return (
     <div className="mb-6 mt-3">
-      <h3 className="text-2xl font-extrabold">Permissions</h3>
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="userSettings.permissions"
+          defaultMessage="Permissions"
+        />
+      </h3>
       <Formik
         initialValues={{
           currentPermissions: data?.permissions,
@@ -66,13 +86,19 @@ const UserPermissions = () => {
             });
 
             Toast({
-              title: 'Permissions saved successfully!',
+              title: intl.formatMessage({
+                id: 'userSettings.permissionsSaved',
+                defaultMessage: 'Permissions saved successfully!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch (e) {
             Toast({
-              title: 'Something went wrong while saving settings.',
+              title: intl.formatMessage({
+                id: 'userSettings.permissionsSaveError',
+                defaultMessage: 'Something went wrong while saving settings.',
+              }),
               type: 'error',
               message: e.message,
             });
@@ -105,7 +131,13 @@ const UserPermissions = () => {
                     disabled={isSubmitting}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

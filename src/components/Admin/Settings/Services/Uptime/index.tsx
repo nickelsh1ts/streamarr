@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -15,15 +16,22 @@ import useSWR from 'swr';
 import * as Yup from 'yup';
 
 const ServicesUptime = () => {
+  const intl = useIntl();
   const { data: dataUptime, mutate: revalidateUptime } =
     useSWR<ServiceSettings>('/api/v1/settings/uptime');
 
   const SettingsSchema = Yup.object().shape({
     externalUrl: Yup.string()
-      .url('You must provide a valid URL')
+      .url(
+        intl.formatMessage({
+          id: 'generalSettings.validation.supportUrl',
+        })
+      )
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.validation.urlNoTrailingSlash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -35,10 +43,19 @@ const ServicesUptime = () => {
   return (
     <div className="max-w-6xl mb-10">
       <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">Uptime Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="servicesSettings.uptime.title"
+            defaultMessage={'Uptime Settings'}
+          />
+        </h3>
         <p className="mb-5">
-          Optionally configure the settings for your Uptime server. Streamarr
-          presents your uptime link via the help centre.
+          <FormattedMessage
+            id="servicesSettings.uptime.description"
+            defaultMessage={
+              'Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre.'
+            }
+          />
         </p>
       </div>
       <Formik
@@ -64,13 +81,23 @@ const ServicesUptime = () => {
             } as ServiceSettings);
 
             Toast({
-              title: 'Uptime settings saved successfully!',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                },
+                { appname: 'Uptime' }
+              ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving Uptime settings.',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                },
+                { appname: 'Uptime' }
+              ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -92,7 +119,11 @@ const ServicesUptime = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="service">
-                  Enable Uptime<span className="ml-1 text-error">*</span>
+                  <FormattedMessage
+                    id="common.settingsEnable"
+                    values={{ appname: 'Uptime' }}
+                  />
+                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -115,7 +146,7 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -140,7 +171,7 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -163,7 +194,9 @@ const ServicesUptime = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">Use SSL</label>
+                <label htmlFor="useSsl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -177,7 +210,9 @@ const ServicesUptime = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">URL Base</label>
+                <label htmlFor="urlBase">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -195,7 +230,7 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -216,7 +251,12 @@ const ServicesUptime = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="externalUrl">External URL</label>
+                <label htmlFor="externalUrl">
+                  <FormattedMessage
+                    id="common.externalUrl"
+                    defaultMessage={'External URL'}
+                  />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -246,7 +286,13 @@ const ServicesUptime = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

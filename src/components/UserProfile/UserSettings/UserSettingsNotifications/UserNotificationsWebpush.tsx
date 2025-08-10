@@ -23,6 +23,7 @@ import {
   InformationCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import { FormattedMessage, useIntl } from 'react-intl';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
@@ -31,6 +32,7 @@ import { useEffect, useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 
 const UserWebPushSettings = () => {
+  const intl = useIntl();
   const searchParams = useParams<{ userid: string }>();
   const { user } = useUser({ id: Number(searchParams.userid) });
   const { currentSettings } = useSettings();
@@ -66,7 +68,10 @@ const UserWebPushSettings = () => {
         localStorage.setItem('pushNotificationsEnabled', 'true');
         setWebPushEnabled(true);
         Toast({
-          title: 'Web push has been enabled.',
+          title: intl.formatMessage({
+            id: 'userSettings.notifications.webpushEnabled',
+            defaultMessage: 'Web push has been enabled.',
+          }),
           type: 'success',
           icon: <CheckBadgeIcon className="size-7" />,
         });
@@ -75,7 +80,10 @@ const UserWebPushSettings = () => {
       }
     } catch (e) {
       Toast({
-        title: 'Something went wrong while enabling web push.',
+        title: intl.formatMessage({
+          id: 'userSettings.notifications.webpushEnableError',
+          defaultMessage: 'Something went wrong while enabling web push.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -94,13 +102,19 @@ const UserWebPushSettings = () => {
       localStorage.setItem('pushNotificationsEnabled', 'false');
       setWebPushEnabled(false);
       Toast({
-        title: 'Web push has been disabled.',
+        title: intl.formatMessage({
+          id: 'userSettings.notifications.webpushDisabled',
+          defaultMessage: 'Web push has been disabled.',
+        }),
         type: 'info',
         icon: <InformationCircleIcon className="size-7" />,
       });
     } catch (e) {
       Toast({
-        title: 'Something went wrong while disabling web push.',
+        title: intl.formatMessage({
+          id: 'userSettings.notifications.webpushDisableError',
+          defaultMessage: 'Something went wrong while disabling web push.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -119,13 +133,20 @@ const UserWebPushSettings = () => {
       );
 
       Toast({
-        title: 'Subscription Deleted Successfully.',
+        title: intl.formatMessage({
+          id: 'userSettings.notifications.subscriptionDeleted',
+          defaultMessage: 'Subscription Deleted Successfully.',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
     } catch (e) {
       Toast({
-        title: 'Something went wrong while deleting the user subscription.',
+        title: intl.formatMessage({
+          id: 'userSettings.notifications.subscriptionDeleteError',
+          defaultMessage:
+            'Something went wrong while deleting the user subscription.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -215,13 +236,21 @@ const UserWebPushSettings = () => {
             );
             mutate('/api/v1/settings/public');
             Toast({
-              title: 'Web push notification settings saved successfully!',
+              title: intl.formatMessage({
+                id: 'webpushNotifications.saveSuccess',
+                defaultMessage:
+                  'Web push notification settings saved successfully!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch (e) {
             Toast({
-              title: 'Web push notification settings failed to save.',
+              title: intl.formatMessage({
+                id: 'webpushNotifications.saveError',
+                defaultMessage:
+                  'Web push notification settings failed to save.',
+              }),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
               message: e.message,
@@ -274,7 +303,17 @@ const UserWebPushSettings = () => {
                       <CloudArrowUpIcon className="size-4 mr-2" />
                     )}
                     <span>
-                      {webPushEnabled ? 'Disable web push' : 'Enable web push'}
+                      {webPushEnabled ? (
+                        <FormattedMessage
+                          id="userSettings.notifications.disableWebPush"
+                          defaultMessage="Disable web push"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="userSettings.notifications.enableWebPush"
+                          defaultMessage="Enable web push"
+                        />
+                      )}
                     </span>
                   </Button>
                 </span>
@@ -286,7 +325,13 @@ const UserWebPushSettings = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>
@@ -295,7 +340,12 @@ const UserWebPushSettings = () => {
         }}
       </Formik>
       <div className="mt-10 mb-6">
-        <h3 className="text-2xl font-extrabold mb-2">Manage Devices</h3>
+        <h3 className="text-2xl font-extrabold mb-2">
+          <FormattedMessage
+            id="userSettings.manageDevices"
+            defaultMessage="Manage Devices"
+          />
+        </h3>
         <div className="section">
           {sortedDevices?.length ? (
             sortedDevices.map((device) => (
@@ -312,7 +362,12 @@ const UserWebPushSettings = () => {
           ) : (
             <>
               <Alert
-                title={'You have no web push subscriptions to show.'}
+                title={
+                  <FormattedMessage
+                    id="userSettings.noWebPushSubscriptions"
+                    defaultMessage="You have no web push subscriptions to show."
+                  />
+                }
                 type="info"
               />
             </>

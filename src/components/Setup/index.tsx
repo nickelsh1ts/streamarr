@@ -16,6 +16,9 @@ import Image from 'next/image';
 import SettingsServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
 import SettingsServicesSonarr from '@app/components/Admin/Settings/Services/Sonarr';
 import { useUser } from '@app/hooks/useUser';
+import { FormattedMessage, useIntl } from 'react-intl';
+import Toast from '@app/components/Toast';
+import { XCircleIcon } from '@heroicons/react/24/solid';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -24,8 +27,7 @@ const Setup = () => {
   const { locale } = useLocale();
   const { revalidate } = useUser();
   const { currentSettings } = useSettings();
-
-  // Use custom logo if available, otherwise fallback to default
+  const intl = useIntl();
   const logoSrc = currentSettings.customLogo || '/logo_full.png';
 
   const finishSetup = async () => {
@@ -44,8 +46,16 @@ const Setup = () => {
         // Redirect to admin page
         window.location.href = '/admin';
       }
-    } catch (error) {
-      console.error('Error finishing setup:', error);
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'setup.errorDuringSetup',
+          defaultMessage: 'Error completing setup',
+        }),
+        message: e.message,
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -87,19 +97,28 @@ const Setup = () => {
           >
             <SetupSteps
               stepNumber={1}
-              description="Sign in with Plex"
+              description={intl.formatMessage({
+                id: 'setup.signInWithPlex',
+                defaultMessage: 'Sign in with Plex',
+              })}
               active={currentStep === 1}
               completed={currentStep > 1}
             />
             <SetupSteps
               stepNumber={2}
-              description="Configure Plex"
+              description={intl.formatMessage({
+                id: 'setup.configurePlex',
+                defaultMessage: 'Configure Plex',
+              })}
               active={currentStep === 2}
               completed={currentStep > 2}
             />
             <SetupSteps
               stepNumber={3}
-              description="Configure Services"
+              description={intl.formatMessage({
+                id: 'setup.configureServices',
+                defaultMessage: 'Configure Services',
+              })}
               active={currentStep === 3}
               isLastStep
             />
@@ -114,10 +133,14 @@ const Setup = () => {
               <SettingsPlex onComplete={() => setPlexSettingsComplete(true)} />
               <div className="mt-4 text-sm text-neutral-300">
                 <span className="mr-2">
-                  <Badge>Tip</Badge>
+                  <Badge>
+                    <FormattedMessage id="setup.tip" defaultMessage="Tip" />
+                  </Badge>
                 </span>
-                Only libraries that are enabled will be accessible from
-                Streamarr.
+                <FormattedMessage
+                  id="setup.onlyEnabledLibraries"
+                  defaultMessage="Only enabled libraries will be scanned."
+                />
               </div>
               <div className="actions">
                 <div className="flex justify-end">
@@ -127,7 +150,10 @@ const Setup = () => {
                       disabled={!plexSettingsComplete}
                       onClick={() => setCurrentStep(3)}
                     >
-                      Continue
+                      <FormattedMessage
+                        id="setup.continue"
+                        defaultMessage="Continue"
+                      />
                     </Button>
                   </span>
                 </div>
@@ -146,7 +172,17 @@ const Setup = () => {
                       onClick={() => finishSetup()}
                       disabled={isUpdating}
                     >
-                      {isUpdating ? 'Finishing...' : 'Finish Setup'}
+                      {isUpdating ? (
+                        <FormattedMessage
+                          id="setup.finishing"
+                          defaultMessage="Finishing setup..."
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="setup.finishSetup"
+                          defaultMessage="Finish Setup"
+                        />
+                      )}
                     </Button>
                   </span>
                 </div>

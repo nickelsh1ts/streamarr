@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface LocalSignupFormProps {
   onSubmit: (values: {
@@ -20,28 +21,86 @@ const LocalSignupForm = ({
   isSubmitting,
   error,
 }: LocalSignupFormProps) => {
+  const intl = useIntl();
+
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Please enter a valid email address')
-      .required('Email address is required'),
+      .email(
+        intl.formatMessage({
+          id: 'localSignup.emailInvalid',
+          defaultMessage: 'Please enter a valid email address',
+        })
+      )
+      .required(
+        intl.formatMessage({
+          id: 'localSignup.emailRequired',
+          defaultMessage: 'Email address is required',
+        })
+      ),
     username: Yup.string()
-      .min(3, 'Username must be at least 3 characters')
-      .max(20, 'Username must be less than 20 characters')
+      .min(
+        3,
+        intl.formatMessage({
+          id: 'localSignup.usernameMinLength',
+          defaultMessage: 'Username must be at least 3 characters',
+        })
+      )
+      .max(
+        20,
+        intl.formatMessage({
+          id: 'localSignup.usernameMaxLength',
+          defaultMessage: 'Username must be less than 20 characters',
+        })
+      )
       .matches(
         /^[a-zA-Z0-9_-]+$/,
-        'Username can only contain letters, numbers, underscores, and dashes'
+        intl.formatMessage({
+          id: 'localSignup.usernameInvalidChars',
+          defaultMessage:
+            'Username can only contain letters, numbers, underscores, and hyphens',
+        })
       )
-      .required('Username is required'),
+      .required(
+        intl.formatMessage({
+          id: 'localSignup.usernameRequired',
+          defaultMessage: 'Username is required',
+        })
+      ),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
+      .min(
+        8,
+        intl.formatMessage({
+          id: 'localSignup.passwordMinLength',
+          defaultMessage: 'Password must be at least 8 characters',
+        })
+      )
       .matches(
         /^(?=.*[a-z]).*$/,
-        'Password must contain at least one lowercase letter'
+        intl.formatMessage({
+          id: 'localSignup.passwordLowercase',
+          defaultMessage: 'Password must contain at least one lowercase letter',
+        })
       )
-      .required('Password is required'),
+      .required(
+        intl.formatMessage({
+          id: 'localSignup.passwordRequired',
+          defaultMessage: 'Password is required',
+        })
+      ),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Please confirm your password'),
+      .oneOf(
+        [Yup.ref('password'), null],
+        intl.formatMessage({
+          id: 'localSignup.passwordsMatch',
+          defaultMessage: 'Passwords must match',
+        })
+      )
+      .required(
+        intl.formatMessage({
+          id: 'localSignup.confirmPasswordRequired',
+          defaultMessage: 'Please confirm your password',
+        })
+      ),
   });
 
   return (
@@ -74,7 +133,10 @@ const LocalSignupForm = ({
                     name="username"
                     type="text"
                     className="grow"
-                    placeholder="Display Name"
+                    placeholder={intl.formatMessage({
+                      id: 'common.displayName',
+                      defaultMessage: 'Display Name',
+                    })}
                   />
                 </div>
                 {errors.username && touched.username && (
@@ -98,7 +160,10 @@ const LocalSignupForm = ({
                     type="email"
                     inputMode="email"
                     className="grow"
-                    placeholder="Email address"
+                    placeholder={intl.formatMessage({
+                      id: 'common.emailAddress',
+                      defaultMessage: 'Email Address',
+                    })}
                   />
                 </div>
                 {errors.email && touched.email && (
@@ -124,7 +189,10 @@ const LocalSignupForm = ({
                     className="grow w-full"
                     id="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder={intl.formatMessage({
+                      id: 'common.password',
+                      defaultMessage: 'Password',
+                    })}
                   />
                 </div>
                 {errors.password && touched.password && (
@@ -150,7 +218,10 @@ const LocalSignupForm = ({
                     className="grow w-full"
                     id="confirmPassword"
                     name="confirmPassword"
-                    placeholder="Confirm Password"
+                    placeholder={intl.formatMessage({
+                      id: 'common.confirmPassword',
+                      defaultMessage: 'Confirm Password',
+                    })}
                   />
                 </div>
                 {errors.confirmPassword && touched.confirmPassword && (
@@ -171,7 +242,17 @@ const LocalSignupForm = ({
                 disabled={isSubmitting || !isValid}
               >
                 <span>
-                  {isSubmitting ? 'Creating Account…' : 'Create Account'}
+                  {isSubmitting ? (
+                    <FormattedMessage
+                      id="localSignup.creatingAccount"
+                      defaultMessage="Creating Account..."
+                    />
+                  ) : (
+                    <FormattedMessage
+                      id="signUp.createAccount"
+                      defaultMessage="Create Account"
+                    />
+                  )}
                 </span>
               </Button>
             </Form>

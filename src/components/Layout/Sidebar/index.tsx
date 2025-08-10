@@ -22,6 +22,7 @@ import UserDropdown from '@app/components/Layout/UserDropdown';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLinksProps {
   href: string;
@@ -34,8 +35,7 @@ const Sidebar = () => {
   const [currentUrl, setCurrentUrl] = useState('');
   const { hasPermission } = useUser();
   const { currentSettings } = useSettings();
-
-  // Use custom logo if available, otherwise fallback to default
+  const intl = useIntl();
   const logoSrc = currentSettings.customLogo || '/logo_full.png';
 
   useEffect(() => {
@@ -125,8 +125,14 @@ const Sidebar = () => {
                       dropUp
                       toolTip
                       ttplacement="top"
-                      title="settings"
-                      tiptitle="settings"
+                      title={intl.formatMessage({
+                        id: 'sidebar.settings',
+                        defaultMessage: 'Settings',
+                      })}
+                      tiptitle={intl.formatMessage({
+                        id: 'sidebar.settings',
+                        defaultMessage: 'Settings',
+                      })}
                       dropdownIcon={
                         <WrenchIcon className="w-6 h-6 scale-x-[-1]" />
                       }
@@ -135,50 +141,74 @@ const Sidebar = () => {
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/web/general"
                       >
-                        General
+                        <FormattedMessage
+                          id="sidebar.general"
+                          defaultMessage="General"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/web/quality"
                       >
-                        Quality
+                        <FormattedMessage
+                          id="sidebar.quality"
+                          defaultMessage="Quality"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/web/player"
                       >
-                        Player
+                        <FormattedMessage
+                          id="sidebar.player"
+                          defaultMessage="Player"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/privacy"
                       >
-                        Privacy
+                        <FormattedMessage
+                          id="sidebar.privacy"
+                          defaultMessage="Privacy"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/online-media-sources"
                         divide="before"
                       >
-                        Online Media Sources
+                        <FormattedMessage
+                          id="sidebar.onlineMediaSources"
+                          defaultMessage="Online Media Sources"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/devices/all"
                       >
-                        Authorized Devices
+                        <FormattedMessage
+                          id="sidebar.authorizedDevices"
+                          defaultMessage="Authorized Devices"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/streaming-services"
                       >
-                        Streaming Services
+                        <FormattedMessage
+                          id="sidebar.streamingServices"
+                          defaultMessage="Streaming Services"
+                        />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
                         onClick={() => setIsOpen(!isOpen)}
                         href="/watch/web/index.html#!/settings/manage-library-access"
                       >
-                        Manage Library Access
+                        <FormattedMessage
+                          id="sidebar.manageLibraryAccess"
+                          defaultMessage="Manage Library Access"
+                        />
                       </DropDownMenu.Item>
                     </DropDownMenu>
                   </div>
@@ -192,47 +222,74 @@ const Sidebar = () => {
         <div className="fixed top-0 right-0 mt-2 me-2 z-[1000] lg:flex lg:flex-shrink-0 flex-nowrap pointer-events-none">
           <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
             <DropDownMenu
-              title="settings"
-              tiptitle="settings"
+              title={intl.formatMessage({
+                id: 'sidebar.settings',
+                defaultMessage: 'Settings',
+              })}
+              tiptitle={intl.formatMessage({
+                id: 'sidebar.settings',
+                defaultMessage: 'Settings',
+              })}
               toolTip
               ttplacement="bottom"
               dropdownIcon={<WrenchIcon className="w-6 h-6 scale-x-[-1]" />}
             >
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/general">
-                General
+                <FormattedMessage
+                  id="sidebar.general"
+                  defaultMessage="General"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/quality">
-                Quality
+                <FormattedMessage
+                  id="sidebar.quality"
+                  defaultMessage="Quality"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/player">
-                Player
+                <FormattedMessage id="sidebar.player" defaultMessage="Player" />
               </DropDownMenu.Item>
               <DropDownMenu.Item
                 onClick={() => setIsOpen(!isOpen)}
                 href="/watch/web/index.html#!/settings/privacy"
               >
-                Privacy
+                <FormattedMessage
+                  id="sidebar.privacy"
+                  defaultMessage="Privacy"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item
                 href="/watch/web/index.html#!/settings/online-media-sources"
                 divide="before"
               >
-                Online Media Sources
+                <FormattedMessage
+                  id="sidebar.onlineMediaSources"
+                  defaultMessage="Online Media Sources"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/devices/all">
-                Authorized Devices
+                <FormattedMessage
+                  id="sidebar.authorizedDevices"
+                  defaultMessage="Authorized Devices"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item
                 onClick={() => setIsOpen(!isOpen)}
                 href="/watch/web/index.html#!/settings/streaming-services"
               >
-                Streaming Services
+                <FormattedMessage
+                  id="sidebar.streamingServices"
+                  defaultMessage="Streaming Services"
+                />
               </DropDownMenu.Item>
               <DropDownMenu.Item
                 onClick={() => setIsOpen(!isOpen)}
                 href="/watch/web/index.html#!/settings/manage-library-access"
               >
-                Manage Library Access
+                <FormattedMessage
+                  id="sidebar.manageLibraryAccess"
+                  defaultMessage="Manage Library Access"
+                />
               </DropDownMenu.Item>
             </DropDownMenu>
           </div>
@@ -266,6 +323,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const { hasPermission } = useUser();
   const pathname = usePathname();
   const [url, setCurrentUrl] = useState(pathname);
+  const intl = useIntl();
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
     setCurrentUrl(lastUrl);
@@ -280,7 +338,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   }, []);
 
   return (
-    <div className="space-y-1 mb-1">
+    <div className="space-y-1 mb-1 w-full">
       <Accordion
         single
         atLeastOne
@@ -298,7 +356,10 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                   handleClick(0);
                 }}
                 href={'/watch/web/index.html#!'}
-                title={'Home'}
+                title={intl.formatMessage({
+                  id: 'common.home',
+                  defaultMessage: 'Home',
+                })}
                 icon={<HomeIcon className="size-7" />}
                 url={url}
                 regExp={/\/watch\/web\/index\.html(#!)?\/?$/}
@@ -330,7 +391,10 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                         handleClick(1);
                       }}
                       href={'/request'}
-                      title={'Request'}
+                      title={intl.formatMessage({
+                        id: 'common.request',
+                        defaultMessage: 'Request',
+                      })}
                       icon={
                         <Image
                           alt="Overseerr"
@@ -374,7 +438,10 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
           liKey={'invites'}
           onClick={() => onClick && onClick(!isOpen)}
           href={'/invites'}
-          title={'Invites'}
+          title={intl.formatMessage({
+            id: 'common.invites',
+            defaultMessage: 'Invites',
+          })}
           icon={<PaperAirplaneIcon className="size-7" />}
           url={url}
           regExp={/\/invites/}
@@ -393,7 +460,10 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             liKey={'schedule'}
             onClick={() => onClick && onClick(!isOpen)}
             href={'/schedule'}
-            title={'Release Schedule'}
+            title={intl.formatMessage({
+              id: 'common.releaseSchedule',
+              defaultMessage: 'Release Schedule',
+            })}
             icon={<CalendarDateRangeIcon className="size-7" />}
             url={url}
             regExp={/\/schedule/}
@@ -411,28 +481,41 @@ export const RequestMenu = ({
   onClick,
   url,
 }: RequestMenuProps & { url: string }) => {
+  const intl = useIntl();
   const RequestLinks: MenuLinksProps[] = [
     {
       href: '/request/discover/movies',
-      title: 'Movies',
+      title: intl.formatMessage({
+        id: 'common.movies',
+        defaultMessage: 'Movies',
+      }),
       icon: <FilmIcon className="w-7 h-7" />,
       regExp: /\/request\/discover\/movies/,
     },
     {
       href: '/request/discover/tv',
-      title: 'Series',
+      title: intl.formatMessage({
+        id: 'common.shows',
+        defaultMessage: 'Shows',
+      }),
       icon: <TvIcon className="w-7 h-7" />,
       regExp: /\/request\/discover\/tv/,
     },
     {
       href: '/request/requests',
-      title: 'Requests',
+      title: intl.formatMessage({
+        id: 'common.requests',
+        defaultMessage: 'Requests',
+      }),
       icon: <ClockIcon className="w-7 h-7" />,
       regExp: /\/request\/requests/,
     },
     {
       href: '/request/issues',
-      title: 'Issues',
+      title: intl.formatMessage({
+        id: 'common.issues',
+        defaultMessage: 'Issues',
+      }),
       icon: <ExclamationTriangleIcon className="w-7 h-7" />,
       regExp: /\/request\/issues/,
     },

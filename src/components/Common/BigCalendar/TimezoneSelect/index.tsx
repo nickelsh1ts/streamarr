@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import 'moment-timezone';
 
 const allZones = moment.tz.names();

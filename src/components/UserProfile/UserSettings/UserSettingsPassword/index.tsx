@@ -6,14 +6,20 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
 import { Permission, useUser } from '@app/hooks/useUser';
-import { ArrowDownTrayIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import {
+  ArrowDownTrayIcon,
+  CheckBadgeIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const UserPasswordChange = () => {
+  const intl = useIntl();
   const searchParams = useParams<{ userid: string }>();
   const { user: currentUser } = useUser();
   const { user, hasPermission } = useUser({
@@ -30,15 +36,43 @@ const UserPasswordChange = () => {
   const PasswordChangeSchema = Yup.object().shape({
     currentPassword: Yup.lazy(() =>
       data?.hasPassword && currentUser?.id === user?.id
-        ? Yup.string().required('You must provide your current password')
+        ? Yup.string().required(
+            intl.formatMessage({
+              id: 'userSettings.password.currentRequired',
+              defaultMessage: 'You must provide your current password',
+            })
+          )
         : Yup.mixed().optional()
     ),
     newPassword: Yup.string()
-      .required('You must provide a new password')
-      .min(8, 'Password is too short; should be a minimum of 8 characters'),
+      .required(
+        intl.formatMessage({
+          id: 'userSettings.password.newRequired',
+          defaultMessage: 'You must provide a new password',
+        })
+      )
+      .min(
+        8,
+        intl.formatMessage({
+          id: 'resetPassword.passwordTooShort',
+          defaultMessage:
+            'Password is too short; should be a minimum of 8 characters',
+        })
+      ),
     confirmPassword: Yup.string()
-      .required('You must confirm the new password')
-      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
+      .required(
+        intl.formatMessage({
+          id: 'userSettings.password.confirmRequired',
+          defaultMessage: 'You must confirm the new password',
+        })
+      )
+      .oneOf(
+        [Yup.ref('newPassword'), null],
+        intl.formatMessage({
+          id: 'localSignup.passwordsMatch',
+          defaultMessage: 'Passwords must match',
+        })
+      ),
   });
 
   if (!data && !error) {
@@ -57,10 +91,16 @@ const UserPasswordChange = () => {
     return (
       <>
         <div className="mb-6 mt-3">
-          <h3 className="text-2xl font-extrabold">Password</h3>
+          <h3 className="text-2xl font-extrabold">
+            <FormattedMessage id="common.password" defaultMessage="Password" />
+          </h3>
         </div>
         <Alert
-          title={"You do not have permission to modify this user's password."}
+          title={intl.formatMessage({
+            id: 'userSettings.password.noPermission',
+            defaultMessage:
+              "You do not have permission to modify this user's password.",
+          })}
           type="error"
         />
       </>
@@ -69,7 +109,9 @@ const UserPasswordChange = () => {
 
   return (
     <div className="mb-6 mt-3">
-      <h3 className="text-2xl font-extrabold mb-2">Password</h3>
+      <h3 className="text-2xl font-extrabold mb-2">
+        <FormattedMessage id="common.password" defaultMessage="Password" />
+      </h3>
       <Formik
         initialValues={{
           currentPassword: '',
@@ -86,13 +128,28 @@ const UserPasswordChange = () => {
               confirmPassword: values.confirmPassword,
             });
 
-            Toast({ title: 'Password saved successfully!' });
+            Toast({
+              title: intl.formatMessage({
+                id: 'userSettings.password.saveSuccess',
+                defaultMessage: 'Password saved successfully!',
+              }),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
           } catch (e) {
             Toast({
               title:
                 data.hasPassword && user?.id === currentUser?.id
-                  ? 'Something went wrong while saving the password. Was your current password entered correctly?'
-                  : 'Something went wrong while saving the password.',
+                  ? intl.formatMessage({
+                      id: 'userSettings.password.saveError',
+                      defaultMessage:
+                        'Something went wrong while saving the password. Was your current password entered correctly?',
+                    })
+                  : intl.formatMessage({
+                      id: 'userSettings.password.saveErrorGeneric',
+                      defaultMessage:
+                        'Something went wrong while saving the password.',
+                    }),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
               message: e.message,
@@ -110,9 +167,21 @@ const UserPasswordChange = () => {
                 <Alert
                   type="warning"
                   title={
-                    user?.id === currentUser?.id
-                      ? 'Your account currently does not have a password set. Configure a password below to enable sign-in as a "local user" using your email address.'
-                      : 'This user account currently does not have a password set. Configure a password below to enable this account to sign in as a "local user."'
+                    user?.id === currentUser?.id ? (
+                      <FormattedMessage
+                        id="userSettings.password.noPasswordCurrentUser"
+                        defaultMessage={
+                          'Your account currently does not have a password set. Configure a password below to enable sign-in as a "local user" using your email address.'
+                        }
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="userSettings.password.noPasswordOtherUser"
+                        defaultMessage={
+                          'This user account currently does not have a password set. Configure a password below to enable this account to sign in as a "local user."'
+                        }
+                      />
+                    )
                   }
                 />
               )}
@@ -120,7 +189,10 @@ const UserPasswordChange = () => {
                 {data.hasPassword && user?.id === currentUser?.id && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 pb-6">
                     <label htmlFor="currentPassword" className="col-span-1">
-                      Current Password
+                      <FormattedMessage
+                        id="common.currentPassword"
+                        defaultMessage="Current Password"
+                      />
                     </label>
                     <div className="col-span-2">
                       <div className="flex">
@@ -144,7 +216,10 @@ const UserPasswordChange = () => {
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="newPassword" className="col-span-1">
-                    New Password
+                    <FormattedMessage
+                      id="common.newPassword"
+                      defaultMessage="New Password"
+                    />
                   </label>
                   <div className="col-span-2">
                     <div className="flex">
@@ -165,7 +240,10 @@ const UserPasswordChange = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="confirmPassword" className="col-span-1">
-                    Confirm Password
+                    <FormattedMessage
+                      id="common.confirmPassword"
+                      defaultMessage="Confirm Password"
+                    />
                   </label>
                   <div className="col-span-2">
                     <div className="flex">
@@ -197,7 +275,13 @@ const UserPasswordChange = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

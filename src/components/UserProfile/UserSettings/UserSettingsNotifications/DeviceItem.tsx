@@ -8,6 +8,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/solid';
 import { UAParser } from 'ua-parser-js';
+import { FormattedMessage } from 'react-intl';
+import useLocale from '@app/hooks/useLocale';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 
 interface DeviceItemProps {
   deletePushSubscriptionFromBackend: (endpoint: string) => void;
@@ -26,6 +29,7 @@ const DeviceItem = ({
   device,
   subEndpoint,
 }: DeviceItemProps) => {
+  const { locale } = useLocale();
   const parsedUserAgent = UAParser(device.userAgent);
 
   return (
@@ -42,35 +46,51 @@ const DeviceItem = ({
           <div className="flex flex-col justify-center overflow-hidden pl-2 xl:pl-4">
             <div className="pt-0.5 text-xs font-medium text-white sm:pt-1">
               {device.createdAt
-                ? new Date(device.createdAt).toLocaleDateString('en-us', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })
+                ? moment(device.createdAt).locale(locale).format('LL')
                 : 'N/A'}
             </div>
             <div className="mr-2 min-w-0 truncate text-lg font-bold text-white hover:underline xl:text-xl">
-              {device.userAgent && parsedUserAgent.device.model
-                ? parsedUserAgent.device.model
-                : 'Unknown'}
+              {device.userAgent && parsedUserAgent.device.model ? (
+                parsedUserAgent.device.model
+              ) : (
+                <FormattedMessage
+                  id="common.unknown"
+                  defaultMessage="Unknown"
+                />
+              )}
             </div>
           </div>
         </div>
         <div className="z-10 mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:ml-2 sm:mt-0 xl:flex-1 xl:pr-0">
           <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">Operating System</span>
+            <span className="mr-2 ">
+              <FormattedMessage
+                id="userSettings.operatingSystem"
+                defaultMessage="Operating System"
+              />
+            </span>
             <span className="flex truncate text-sm text-gray-300">
               {device.userAgent ? parsedUserAgent.os.name : 'N/A'}
             </span>
           </div>
           <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">Browser</span>
+            <span className="mr-2 ">
+              <FormattedMessage
+                id="userSettings.browser"
+                defaultMessage="Browser"
+              />
+            </span>
             <span className="flex truncate text-sm text-gray-300">
               {device.userAgent ? parsedUserAgent.browser.name : 'N/A'}
             </span>
           </div>
           <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">Engine</span>
+            <span className="mr-2 ">
+              <FormattedMessage
+                id="userSettings.engine"
+                defaultMessage="Engine"
+              />
+            </span>
             <span className="flex truncate text-sm text-gray-300">
               {device.userAgent ? parsedUserAgent.engine.name : 'N/A'}
             </span>
@@ -86,16 +106,31 @@ const DeviceItem = ({
             disabled
           >
             <LockClosedIcon className="size-7 mr-2" />{' '}
-            <span>Active Subscription</span>
+            <span>
+              <FormattedMessage
+                id="userSettings.notifications.subscriptionActive"
+                defaultMessage="Active Subscription"
+              />
+            </span>
           </Button>
         ) : (
           <ConfirmButton
             onClick={() => deletePushSubscriptionFromBackend(device.endpoint)}
-            confirmText={'Are You Sure?'}
+            confirmText={
+              <FormattedMessage
+                id="common.areYouSure"
+                defaultMessage="Are you sure?"
+              />
+            }
             className="w-full"
           >
             <TrashIcon className="size-7 mr-2" />
-            <span>Delete Subscription</span>
+            <span>
+              <FormattedMessage
+                id="userSettings.notifications.deleteSubscription"
+                defaultMessage="Delete Subscription"
+              />
+            </span>
           </ConfirmButton>
         )}
       </div>

@@ -18,9 +18,11 @@ import {
   CheckBadgeIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useParams } from 'next/navigation';
 
 const UserEmailSettings = () => {
+  const intl = useIntl();
   const searchParams = useParams<{ userid: string }>();
   const { user } = useUser({ id: Number(searchParams.userid) });
   const {
@@ -61,13 +63,19 @@ const UserEmailSettings = () => {
             },
           });
           Toast({
-            title: 'Email notification settings saved successfully!',
+            title: intl.formatMessage({
+              id: 'emailNotifications.saveSuccess',
+              defaultMessage: 'Email notification settings saved successfully!',
+            }),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
         } catch (e) {
           Toast({
-            title: 'Email notification settings failed to save.',
+            title: intl.formatMessage({
+              id: 'emailNotifications.saveError',
+              defaultMessage: 'Email notification settings failed to save.',
+            }),
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
             message: e.message,
@@ -91,17 +99,29 @@ const UserEmailSettings = () => {
             <div className="max-w-6xl space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="pgpKey" className="col-span-1">
-                  <span className="mr-2">PGP Public Key</span>
+                  <span className="mr-2">
+                    <FormattedMessage
+                      id="userSettings.pgpPublicKey"
+                      defaultMessage="PGP Public Key"
+                    />
+                  </span>
                   <SettingsBadge badgeType="advanced" />
                   <p className="text-sm text-neutral-500">
-                    Encrypt email messages using{' '}
-                    <a
-                      href="https://www.openpgp.org/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      OpenPGP
-                    </a>
+                    <FormattedMessage
+                      id="userSettings.pgpPublicKeyDescription"
+                      defaultMessage="Encrypt email messages using {openPGP}."
+                      values={{
+                        openPGP: (
+                          <a
+                            href="https://www.openpgp.org/"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            OpenPGP
+                          </a>
+                        ),
+                      }}
+                    />
                   </p>
                 </label>
                 <div className="col-span-2">
@@ -145,7 +165,13 @@ const UserEmailSettings = () => {
                   disabled={isSubmitting || !isValid}
                 >
                   <ArrowDownTrayIcon className="size-4 mr-2" />
-                  <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                  <span>
+                    {isSubmitting ? (
+                      <FormattedMessage id="common.saving" />
+                    ) : (
+                      <FormattedMessage id="common.saveChanges" />
+                    )}
+                  </span>
                 </Button>
               </span>
             </div>

@@ -20,6 +20,7 @@ import { orderBy } from 'lodash';
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import { useIntl, FormattedMessage } from 'react-intl';
 interface PresetServerDisplay {
   name: string;
   ssl: boolean;
@@ -36,6 +37,7 @@ interface SettingsPlexProps {
 }
 
 const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
+  const intl = useIntl();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isRefreshingPresets, setIsRefreshingPresets] = useState(false);
   const [availableServers, setAvailableServers] = useState<PlexDevice[] | null>(
@@ -50,23 +52,42 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const PlexSettingsSchema = Yup.object().shape({
     hostname: Yup.string()
       .nullable()
-      .required('You must provide a valid hostname or IP address')
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
+        })
+      )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-        'You must provide a valid hostname or IP address'
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
+        })
       ),
     port: Yup.number()
       .nullable()
-      .required('You must provide a valid port number'),
+      .required(
+        intl.formatMessage({
+          id: 'plexSettings.validation.port',
+          defaultMessage: 'You must provide a valid port number',
+        })
+      ),
     webAppUrl: Yup.string()
       .test(
         'leading-slash',
-        'URL base must have a leading slash',
+        intl.formatMessage({
+          id: 'plexSettings.validation.webAppUrl.leadingSlash',
+          defaultMessage: 'URL base must have a leading slash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'URL base must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'plexSettings.validation.webAppUrl.noTrailingSlash',
+          defaultMessage: 'URL base must not end in a trailing slash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -120,7 +141,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
     try {
       Toast(
         {
-          title: 'Retrieving server list from Plex…',
+          title: intl.formatMessage({
+            id: 'plexSettings.retrievingServers',
+            defaultMessage: 'Retrieving server list from Plex…',
+          }),
           type: 'warning',
           icon: <ArrowPathIcon className="size-7 animate-spin" />,
         },
@@ -136,14 +160,20 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         dismissToast(toastId);
       }
       Toast({
-        title: 'Plex server list retrieved successfully!',
+        title: intl.formatMessage({
+          id: 'plexSettings.retrieveServersSuccess',
+          defaultMessage: 'Plex server list retrieved successfully!',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
     } catch {
       if (toastId) dismissToast(toastId);
       Toast({
-        title: 'Failed to retrieve Plex server list.',
+        title: intl.formatMessage({
+          id: 'plexSettings.retrieveServersError',
+          defaultMessage: 'Failed to retrieve Plex server list.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
@@ -184,26 +214,37 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   return (
     <>
       <div className="my-6">
-        <h3 className="text-2xl font-extrabold">Plex Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="plexSettings.title"
+            defaultMessage="Plex Settings"
+          />
+        </h3>
         <p className="mb-5">
-          Configure the settings for your Plex server. Streamarr scans your Plex
-          libraries to generate menus and share to invited users.
+          <FormattedMessage
+            id="plexSettings.description"
+            defaultMessage="Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
+          />
         </p>
         {!!onComplete && (
           <Alert title="" type="primary">
             <div className="ms-4">
-              To set up Plex, you can either enter the details manually or
-              select a server retrieved from{' '}
-              <a
-                href="https://plex.tv"
-                className="text-white transition duration-300 hover:underline inline-flex"
-                target="_blank"
-                rel="noreferrer"
-              >
-                plex.tv
-              </a>
-              . Press the button to the right of the dropdown to fetch the list
-              of available servers.
+              <FormattedMessage
+                id="plexSettings.setupInstructions"
+                defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
+                values={{
+                  plexLink: (
+                    <a
+                      href="https://plex.tv"
+                      className="text-white transition duration-300 hover:underline inline-flex"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      plex.tv
+                    </a>
+                  ),
+                }}
+              />
             </div>
           </Alert>
         )}
@@ -223,7 +264,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           try {
             Toast(
               {
-                title: 'Attempting to connect to Plex…',
+                title: intl.formatMessage({
+                  id: 'plexSettings.connecting',
+                  defaultMessage: 'Attempting to connect to Plex…',
+                }),
                 type: 'warning',
                 icon: <ArrowPathIcon className="size-7 animate-spin" />,
               },
@@ -243,7 +287,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             dismissToast(toastId);
 
             Toast({
-              title: 'Plex connection established successfully!',
+              title: intl.formatMessage({
+                id: 'plexSettings.connectionSuccess',
+                defaultMessage: 'Plex connection established successfully!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
@@ -253,7 +300,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             }
           } catch {
             Toast({
-              title: 'Failed to connect to Plex.',
+              title: intl.formatMessage({
+                id: 'plexSettings.connectionError',
+                defaultMessage: 'Failed to connect to Plex.',
+              }),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -272,7 +322,12 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="preset">Server</label>
+                <label htmlFor="preset">
+                  <FormattedMessage
+                    id="plexSettings.server"
+                    defaultMessage="Server"
+                  />
+                </label>
                 <div className="flex col-span-2">
                   <select
                     id="preset"
@@ -294,9 +349,19 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     <option value="manual">
                       {availableServers || isRefreshingPresets
                         ? isRefreshingPresets
-                          ? 'Retrieving servers…'
-                          : 'Manual configuration'
-                        : 'Press the button to load available servers'}
+                          ? intl.formatMessage({
+                              id: 'plexSettings.retrievingServersOption',
+                              defaultMessage: 'Retrieving servers…',
+                            })
+                          : intl.formatMessage({
+                              id: 'plexSettings.manualConfiguration',
+                              defaultMessage: 'Manual configuration',
+                            })
+                        : intl.formatMessage({
+                            id: 'plexSettings.loadServersPrompt',
+                            defaultMessage:
+                              'Press the button to load available servers',
+                          })}
                     </option>
                     {availablePresets.map((server, index) => (
                       <option
@@ -304,13 +369,35 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                         value={index}
                         disabled={!server.status}
                       >
-                        {`
-                            ${server.name} (${server.address})
-                            [${server.local ? 'local' : 'remote'}]${
-                              server.ssl ? '[secure]' : ''
-                            }
-                            ${server.status ? '' : '(' + server.message + ')'}
-                          `}
+                        {intl.formatMessage(
+                          {
+                            id: 'plexSettings.serverOption',
+                            defaultMessage:
+                              '{name} ({address}) [{location}]{secure}{status}',
+                          },
+                          {
+                            name: server.name,
+                            address: server.address,
+                            location: server.local
+                              ? intl.formatMessage({
+                                  id: 'plexSettings.local',
+                                  defaultMessage: 'local',
+                                })
+                              : intl.formatMessage({
+                                  id: 'plexSettings.remote',
+                                  defaultMessage: 'remote',
+                                }),
+                            secure: server.ssl
+                              ? `[${intl.formatMessage({
+                                  id: 'plexSettings.secure',
+                                  defaultMessage: 'secure',
+                                })}]`
+                              : '',
+                            status: !server.status
+                              ? ` (${server.message})`
+                              : '',
+                          }
+                        )}
                       </option>
                     ))}
                   </select>
@@ -329,7 +416,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -354,7 +444,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -373,7 +463,12 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="ssl">Use SSL</label>
+                <label htmlFor="ssl">
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -394,21 +489,34 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     rel="noreferrer"
                     className="link-hover hover:cursor-help"
                   >
-                    Web App
+                    <FormattedMessage
+                      id="common.webApp"
+                      defaultMessage="Web App"
+                    />
                   </a>{' '}
-                  URL Base{' '}
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />{' '}
                   <Tooltip
-                    content={
-                      'It is recommended to leave this as the default value'
-                    }
+                    content={intl.formatMessage({
+                      id: 'plexSettings.urlBaseTooltip',
+                      defaultMessage:
+                        'It is recommended to leave this as the default value',
+                    })}
                   >
                     <Badge badgeType="error" className="ml-2">
-                      Advanced
+                      <FormattedMessage
+                        id="common.advanced"
+                        defaultMessage="Advanced"
+                      />
                     </Badge>
                   </Tooltip>
                   <span className="block text-neutral-300 text-sm">
-                    The Plex web app must be located on the same domain as to
-                    avoid cross-origin issues.
+                    <FormattedMessage
+                      id="plexSettings.webAppDescription"
+                      defaultMessage="The Plex web app must be located on the same domain as to avoid cross-origin issues."
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -439,7 +547,13 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>
@@ -448,10 +562,17 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         }}
       </Formik>
       <div className="mt-10 mb-6">
-        <h3 className="text-2xl font-extrabold">Plex Libraries</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="plexSettings.libraries.title"
+            defaultMessage="Plex Libraries"
+          />
+        </h3>
         <p className="mb-5">
-          The libraries Streamarr will use. Set up and save your Plex connection
-          settings, then click the button below if no libraries are listed.
+          <FormattedMessage
+            id="plexSettings.libraries.description"
+            defaultMessage="The libraries Streamarr will use. Set up and save your Plex connection settings, then click the button below if no libraries are listed."
+          />
         </p>
       </div>
       <div className="max-w-6xl mb-10">
@@ -466,7 +587,19 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               className={`size-5 mr-2 ${isSyncing ? 'animate-spin' : ''}`}
               style={{ animationDirection: 'reverse' }}
             />
-            <span>{isSyncing ? 'Syncing…' : 'Sync Libraries'}</span>
+            <span>
+              {isSyncing ? (
+                <FormattedMessage
+                  id="plexSettings.libraries.syncing"
+                  defaultMessage="Syncing…"
+                />
+              ) : (
+                <FormattedMessage
+                  id="plexSettings.libraries.syncLibraries"
+                  defaultMessage="Sync Libraries"
+                />
+              )}
+            </span>
           </Button>
           <ul className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {data?.libraries.map((library) => (

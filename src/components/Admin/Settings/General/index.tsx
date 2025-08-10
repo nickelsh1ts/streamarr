@@ -26,8 +26,10 @@ import Image from 'next/image';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const GeneralSettings = () => {
+  const intl = useIntl();
   const { user: currentUser, hasPermission: userHasPermission } = useUser();
   const { setLocale } = useLocale();
   const [isRotating, setIsRotating] = useState(false);
@@ -42,16 +44,32 @@ const GeneralSettings = () => {
 
   const MainSettingsSchema = Yup.object().shape({
     applicationTitle: Yup.string().required(
-      'You must provide an application title'
+      intl.formatMessage({
+        id: 'generalSettings.validation.applicationTitle',
+        defaultMessage: 'You must provide an application title',
+      })
     ),
     applicationUrl: Yup.string()
-      .url('You must provide a valid URL')
+      .url(
+        intl.formatMessage({
+          id: 'generalSettings.validation.supportUrl',
+          defaultMessage: 'You must provide a valid URL',
+        })
+      )
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'generalSettings.validation.applicationUrl.noTrailingSlash',
+          defaultMessage: 'URL must not end in a trailing slash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
-    supportUrl: Yup.string().url('You must provide a valid URL'),
+    supportUrl: Yup.string().url(
+      intl.formatMessage({
+        id: 'generalSettings.validation.supportUrl',
+        defaultMessage: 'You must provide a valid URL',
+      })
+    ),
   });
 
   const regenerate = async () => {
@@ -61,13 +79,20 @@ const GeneralSettings = () => {
 
       revalidate();
       Toast({
-        title: 'New API key generated successfully!',
+        title: intl.formatMessage({
+          id: 'generalSettings.apiKey.regenerateSuccess',
+          defaultMessage: 'New API key generated successfully!',
+        }),
         icon: <ExclamationTriangleIcon className="size-7" />,
         type: 'warning',
       });
     } catch {
       Toast({
-        title: 'Something went wrong while generating a new API key.',
+        title: intl.formatMessage({
+          id: 'generalSettings.apiKey.regenerateError',
+          defaultMessage:
+            'Something went wrong while generating a new API key.',
+        }),
         icon: <XCircleIcon className="size-7" />,
         type: 'error',
       });
@@ -82,8 +107,18 @@ const GeneralSettings = () => {
   }
   return (
     <div className="mb-6">
-      <h3 className="text-2xl font-extrabold">General Settings</h3>
-      <p className="mb-5">Configure global and default Streamarr settings</p>
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="generalSettings.title"
+          defaultMessage="General Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="generalSettings.description"
+          defaultMessage="Configure global and default Streamarr settings"
+        />
+      </p>
       <Formik
         initialValues={{
           applicationTitle: data?.applicationTitle,
@@ -104,7 +139,6 @@ const GeneralSettings = () => {
         validationSchema={MainSettingsSchema}
         onSubmit={async (values) => {
           try {
-            // First, save the main settings
             await axios.post('/api/v1/settings/main', {
               applicationTitle: values.applicationTitle,
               applicationUrl: values.applicationUrl,
@@ -118,8 +152,6 @@ const GeneralSettings = () => {
               supportEmail: values.supportEmail,
               extendedHome: values.extendedHome,
             });
-
-            // Then, upload logos if any were selected
             if (values.customLogo || values.customLogoSmall) {
               try {
                 const formData = new FormData();
@@ -132,13 +164,17 @@ const GeneralSettings = () => {
 
                 await axios.post('/api/v1/settings/logos/upload', formData);
               } catch (logoError) {
-                console.error('Logo upload error:', logoError);
                 Toast({
-                  title: `Failed to upload logos: ${logoError.response?.data?.message || logoError.message || 'Unknown error'}`,
+                  title: intl.formatMessage({
+                    id: 'generalSettings.logo.uploadError',
+                    defaultMessage: 'Failed to upload logos',
+                  }),
+                  message:
+                    logoError.response?.data?.message || logoError.message,
                   icon: <XCircleIcon className="size-7" />,
                   type: 'error',
                 });
-                return; // Exit early if logo upload fails
+                return;
               }
             }
 
@@ -155,14 +191,20 @@ const GeneralSettings = () => {
             }
 
             Toast({
-              title: 'Settings saved successfully!',
+              title: intl.formatMessage({
+                id: 'settings.saveSuccess',
+                defaultMessage: 'Settings saved successfully!',
+              }),
               icon: <CheckBadgeIcon className="size-7" />,
               type: 'success',
             });
           } catch (error) {
-            console.error('Settings save error:', error);
             Toast({
-              title: `Something went wrong while saving settings: ${error.response?.data?.message || error.message || 'Unknown error'}`,
+              title: intl.formatMessage({
+                id: 'settings.saveError',
+                defaultMessage: 'Something went wrong while saving settings',
+              }),
+              message: error.response?.data?.message || error.message,
               icon: <XCircleIcon className="size-7" />,
               type: 'error',
             });
@@ -185,7 +227,10 @@ const GeneralSettings = () => {
                 {userHasPermission(Permission.ADMIN) && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                     <label htmlFor="apiKey" className="col-span-1">
-                      API Key
+                      <FormattedMessage
+                        id="common.apiKey"
+                        defaultMessage="API Key"
+                      />
                     </label>
                     <div className="flex col-span-2">
                       <SensitiveInput
@@ -198,12 +243,18 @@ const GeneralSettings = () => {
                       />
                       <CopyButton
                         size="sm"
-                        itemTitle="API Key"
+                        itemTitle={intl.formatMessage({
+                          id: 'common.apiKey',
+                          defaultMessage: 'API Key',
+                        })}
                         textToCopy={data?.apiKey ?? ''}
                         key={data?.apiKey}
                       />
                       <Tooltip
-                        content="Regenerate API Key"
+                        content={intl.formatMessage({
+                          id: 'generalSettings.apiKey.regenerateTooltip',
+                          defaultMessage: 'Regenerate API Key',
+                        })}
                         tooltipConfig={{
                           followCursor: true,
                           placement: 'top-end',
@@ -230,7 +281,10 @@ const GeneralSettings = () => {
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="applicationTitle" className="col-span-1">
-                    Application Title
+                    <FormattedMessage
+                      id="generalSettings.applicationTitle.label"
+                      defaultMessage="Application Title"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -250,7 +304,10 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="applicationUrl" className="col-span-1">
-                    Application URL
+                    <FormattedMessage
+                      id="generalSettings.applicationUrl.label"
+                      defaultMessage="Application URL"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -271,9 +328,17 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="customLogo" className="col-span-1">
-                    <span className="mr-2">Custom Logo</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.customLogo.label"
+                        defaultMessage="Custom Logo"
+                      />
+                    </span>
                     <p className="text-sm text-neutral-500">
-                      Upload a custom logo(recommended: 190x55px)
+                      <FormattedMessage
+                        id="generalSettings.customLogo.description"
+                        defaultMessage="Upload a custom logo (recommended: 190x55px)"
+                      />
                     </p>
                   </label>
                   <div className="col-span-2 space-y-2">
@@ -281,7 +346,10 @@ const GeneralSettings = () => {
                       <div className="flex items-center space-x-2">
                         <Image
                           src={data.customLogo}
-                          alt="Current logo"
+                          alt={intl.formatMessage({
+                            id: 'generalSettings.customLogo.currentAlt',
+                            defaultMessage: 'Current logo',
+                          })}
                           width={96}
                           height={48}
                           unoptimized
@@ -301,20 +369,29 @@ const GeneralSettings = () => {
                               revalidate();
                               mutate('/api/v1/settings/public'); // Update public settings for DynamicLogo
                               Toast({
-                                title: 'Logo deleted successfully!',
+                                title: intl.formatMessage({
+                                  id: 'generalSettings.customLogo.deleteSuccess',
+                                  defaultMessage: 'Logo deleted successfully!',
+                                }),
                                 icon: <CheckBadgeIcon className="size-7" />,
                                 type: 'success',
                               });
                             } catch {
                               Toast({
-                                title: 'Failed to delete logo.',
+                                title: intl.formatMessage({
+                                  id: 'generalSettings.customLogo.deleteError',
+                                  defaultMessage: 'Failed to delete logo.',
+                                }),
                                 icon: <XCircleIcon className="size-7" />,
                                 type: 'error',
                               });
                             }
                           }}
                         >
-                          Delete
+                          <FormattedMessage
+                            id="common.delete"
+                            defaultMessage="Delete"
+                          />
                         </Button>
                       </div>
                     )}
@@ -347,8 +424,11 @@ const GeneralSettings = () => {
 
                         if (!allowedTypes.includes(file.type)) {
                           Toast({
-                            title:
-                              'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileType',
+                              defaultMessage:
+                                'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -358,8 +438,11 @@ const GeneralSettings = () => {
 
                         if (!allowedExtensions.includes(fileExtension)) {
                           Toast({
-                            title:
-                              'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileExtension',
+                              defaultMessage:
+                                'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -369,7 +452,10 @@ const GeneralSettings = () => {
 
                         if (file.size > maxSize) {
                           Toast({
-                            title: 'File size must be less than 5MB',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileSize',
+                              defaultMessage: 'File size must be less than 5MB',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -385,10 +471,17 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="customLogoSmall" className="col-span-1">
-                    <span className="mr-2">Custom Logo (mobile)</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.customLogoSmall.label"
+                        defaultMessage="Custom Logo (mobile)"
+                      />
+                    </span>
                     <p className="text-sm text-neutral-500">
-                      Upload a custom logo for mobile screens (recommended:
-                      square aspect ratio, 45x45px)
+                      <FormattedMessage
+                        id="generalSettings.customLogoSmall.description"
+                        defaultMessage="Upload a custom logo for mobile screens (recommended: square aspect ratio, 45x45px)"
+                      />
                     </p>
                   </label>
                   <div className="col-span-2 space-y-2">
@@ -396,7 +489,10 @@ const GeneralSettings = () => {
                       <div className="flex items-center space-x-2">
                         <Image
                           src={data.customLogoSmall}
-                          alt="Current small logo"
+                          alt={intl.formatMessage({
+                            id: 'generalSettings.customLogoSmall.currentAlt',
+                            defaultMessage: 'Current small logo',
+                          })}
                           width={48}
                           height={48}
                           unoptimized
@@ -416,20 +512,31 @@ const GeneralSettings = () => {
                               revalidate();
                               mutate('/api/v1/settings/public'); // Update public settings for DynamicLogo
                               Toast({
-                                title: 'Small logo deleted successfully!',
+                                title: intl.formatMessage({
+                                  id: 'generalSettings.customLogoSmall.deleteSuccess',
+                                  defaultMessage:
+                                    'Small logo deleted successfully!',
+                                }),
                                 icon: <CheckBadgeIcon className="size-7" />,
                                 type: 'success',
                               });
                             } catch {
                               Toast({
-                                title: 'Failed to delete small logo.',
+                                title: intl.formatMessage({
+                                  id: 'generalSettings.customLogoSmall.deleteError',
+                                  defaultMessage:
+                                    'Failed to delete small logo.',
+                                }),
                                 icon: <XCircleIcon className="size-7" />,
                                 type: 'error',
                               });
                             }
                           }}
                         >
-                          Delete
+                          <FormattedMessage
+                            id="common.delete"
+                            defaultMessage="Delete"
+                          />
                         </Button>
                       </div>
                     )}
@@ -462,8 +569,11 @@ const GeneralSettings = () => {
 
                         if (!allowedTypes.includes(file.type)) {
                           Toast({
-                            title:
-                              'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileType',
+                              defaultMessage:
+                                'Only image files (JPG, PNG, GIF, SVG) are allowed',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -473,8 +583,11 @@ const GeneralSettings = () => {
 
                         if (!allowedExtensions.includes(fileExtension)) {
                           Toast({
-                            title:
-                              'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileExtension',
+                              defaultMessage:
+                                'Invalid file extension. Only JPG, PNG, GIF, SVG are allowed',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -484,7 +597,10 @@ const GeneralSettings = () => {
 
                         if (file.size > maxSize) {
                           Toast({
-                            title: 'File size must be less than 5MB',
+                            title: intl.formatMessage({
+                              id: 'generalSettings.customLogo.validation.fileSize',
+                              defaultMessage: 'File size must be less than 5MB',
+                            }),
                             icon: <XCircleIcon className="size-7" />,
                             type: 'error',
                           });
@@ -500,10 +616,17 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="enableSignUp" className="col-span-1">
-                    <span className="mr-2">Enable Signup</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.enableSignUp.label"
+                        defaultMessage="Enable Signup"
+                      />
+                    </span>
                     <p className="text-sm text-neutral-500">
-                      Allow new users to signup. This will also enable invite
-                      management.
+                      <FormattedMessage
+                        id="generalSettings.enableSignUp.description"
+                        defaultMessage="Allow new users to signup. This will also enable invite management."
+                      />
                     </p>
                   </label>
                   <div className="col-span-2">
@@ -520,7 +643,12 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="releaseSched" className="col-span-1">
-                    <span className="mr-2">Enable Release Schedule</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.releaseSched.label"
+                        defaultMessage="Enable Release Schedule"
+                      />
+                    </span>
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -536,11 +664,18 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="trustProxy" className="col-span-1">
-                    <span className="mr-2">Enable Proxy Support</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.trustProxy.label"
+                        defaultMessage="Enable Proxy Support"
+                      />
+                    </span>
                     <SettingsBadge badgeType="restartRequired" />
                     <p className="text-sm text-neutral-500">
-                      Allow Streamarr to correctly register client IP addresses
-                      behind a proxy
+                      <FormattedMessage
+                        id="generalSettings.trustProxy.description"
+                        defaultMessage="Allow Streamarr to correctly register client IP addresses behind a proxy"
+                      />
                     </p>
                   </label>
                   <div className="col-span-2">
@@ -557,17 +692,27 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="csrfProtection" className="col-span-1">
-                    <span className="mr-2">Enable CSRF Protection</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.csrfProtection.label"
+                        defaultMessage="Enable CSRF Protection"
+                      />
+                    </span>
                     <SettingsBadge badgeType="advanced" className="mr-2" />
                     <SettingsBadge badgeType="restartRequired" />
                     <p className="text-sm text-neutral-500">
-                      Set external API access to read-only (requires HTTPS)
+                      <FormattedMessage
+                        id="generalSettings.csrfProtection.description"
+                        defaultMessage="Set external API access to read-only (requires HTTPS)"
+                      />
                     </p>
                   </label>
                   <Tooltip
-                    content={
-                      'Do NOT enable this setting unless you understand what you are doing!'
-                    }
+                    content={intl.formatMessage({
+                      id: 'generalSettings.csrfProtection.tooltip',
+                      defaultMessage:
+                        'Do NOT enable this setting unless you understand what you are doing!',
+                    })}
                   >
                     <Field
                       type="checkbox"
@@ -582,10 +727,17 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="cacheImages" className="col-span-1">
-                    <span className="mr-2">Enable Image Caching</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.cacheImages.label"
+                        defaultMessage="Enable Image Caching"
+                      />
+                    </span>
                     <p className="text-sm text-neutral-500">
-                      Cache externally sourced images (requires extra disk
-                      space)
+                      <FormattedMessage
+                        id="generalSettings.cacheImages.description"
+                        defaultMessage="Cache externally sourced images (requires extra disk space)"
+                      />
                     </p>
                   </label>
                   <Field
@@ -600,7 +752,10 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="locale" className="col-span-1">
-                    Display Language
+                    <FormattedMessage
+                      id="common.displayLanguage"
+                      defaultMessage="Display Language"
+                    />
                   </label>
                   <div>
                     <Field
@@ -627,7 +782,10 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="supportUrl" className="col-span-1">
-                    Get Support URL
+                    <FormattedMessage
+                      id="generalSettings.supportUrl.label"
+                      defaultMessage="Get Support URL"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -646,7 +804,10 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="supportEmail" className="col-span-1">
-                    Support Email
+                    <FormattedMessage
+                      id="generalSettings.supportEmail.label"
+                      defaultMessage="Support Email"
+                    />
                   </label>
                   <div className="col-span-2">
                     <Field
@@ -660,9 +821,17 @@ const GeneralSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="extendedHome" className="col-span-1">
-                    <span className="mr-2">Enable Extended Homepage</span>
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.extendedHome.label"
+                        defaultMessage="Enable Extended Homepage"
+                      />
+                    </span>
                     <p className="text-sm text-neutral-500">
-                      Enable the extended homepage with FAQs
+                      <FormattedMessage
+                        id="generalSettings.extendedHome.description"
+                        defaultMessage="Enable the extended homepage with FAQs"
+                      />
                     </p>
                   </label>
                   <Field
@@ -685,7 +854,19 @@ const GeneralSettings = () => {
                       disabled={isSubmitting || !isValid}
                     >
                       <ArrowDownTrayIcon className="size-4 mr-2" />
-                      <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                      <span>
+                        {isSubmitting ? (
+                          <FormattedMessage
+                            id="common.saving"
+                            defaultMessage="Saving..."
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="common.saveChanges"
+                            defaultMessage="Save Changes"
+                          />
+                        )}
+                      </span>
                     </Button>
                   </span>
                 </div>

@@ -8,6 +8,7 @@ import Table from '@app/components/Common/Table';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import useDebouncedState from '@app/hooks/useDebouncedState';
+import { useIntl, FormattedMessage } from 'react-intl';
 import {
   MagnifyingGlassIcon,
   PauseIcon,
@@ -21,7 +22,7 @@ import type {
   LogMessage,
   LogsResultsResponse,
 } from '@server/interfaces/api/settingsInterfaces';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
@@ -29,6 +30,7 @@ import useSWR from 'swr';
 type Filter = 'debug' | 'info' | 'warn' | 'error';
 
 const LogsSettings = () => {
+  const intl = useIntl();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -106,20 +108,31 @@ const LogsSettings = () => {
       await navigator.clipboard.writeText(msg);
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
-        title: `Copied log message to clipboard!`,
+        title: intl.formatMessage(
+          {
+            id: 'common.copied',
+          },
+          {
+            item: intl.formatMessage({
+              id: 'logs.logMessage',
+              defaultMessage: 'Log Message',
+            }),
+          }
+        ),
         type: 'primary',
       });
     } catch {
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
-        title: `Failed to copy log message.`,
+        title: intl.formatMessage({
+          id: 'logs.copyError',
+          defaultMessage: 'Failed to copy log message.',
+        }),
         type: 'error',
       });
     }
   };
 
-  // check if there's no data and no errors in the table
-  // so as to show loading inside the table and not refresh the whole component
   if (!data && error) {
     throw new Error(error);
   }
@@ -130,16 +143,27 @@ const LogsSettings = () => {
   return (
     <div className="my-6">
       <Modal
-        title={'Log Details'}
+        title={intl.formatMessage({
+          id: 'logs.modal.title',
+          defaultMessage: 'Log Details',
+        })}
         onCancel={() => setActiveLog({ log: activeLog.log, isOpen: false })}
         onOk={() => handleCopyLog(copyLogString(activeLog.log))}
-        okText={'Copy to Clipboard'}
+        okText={intl.formatMessage({
+          id: 'copyButton.tooltip',
+          defaultMessage: 'Copy to Clipboard',
+        })}
         show={activeLog.isOpen}
       >
         {activeLog && (
           <>
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
-              <div>Timestamp</div>
+              <div>
+                <FormattedMessage
+                  id="logs.modal.timestamp"
+                  defaultMessage="Timestamp"
+                />
+              </div>
               <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {moment(activeLog.log?.timestamp).format('lll').toString()}
@@ -147,7 +171,12 @@ const LogsSettings = () => {
               </div>
             </div>
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
-              <div>Severity</div>
+              <div>
+                <FormattedMessage
+                  id="logs.modal.severity"
+                  defaultMessage="Severity"
+                />
+              </div>
               <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   <Badge
@@ -167,7 +196,12 @@ const LogsSettings = () => {
               </div>
             </div>
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
-              <div>Label</div>
+              <div>
+                <FormattedMessage
+                  id="logs.modal.label"
+                  defaultMessage="Label"
+                />
+              </div>
               <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.label}
@@ -175,7 +209,12 @@ const LogsSettings = () => {
               </div>
             </div>
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
-              <div>Message</div>
+              <div>
+                <FormattedMessage
+                  id="logs.modal.message"
+                  defaultMessage="Message"
+                />
+              </div>
               <div className="col-span-2 mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.message}
@@ -184,7 +223,12 @@ const LogsSettings = () => {
             </div>
             {activeLog.log?.data && (
               <div className="grid grid-cols-1 space-y-4 mt-5">
-                <div>Additional Data</div>
+                <div>
+                  <FormattedMessage
+                    id="logs.modal.additionalData"
+                    defaultMessage="Additional Data"
+                  />
+                </div>
                 <div className="col-span-2 mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
                   <code className="block max-h-64 w-full overflow-auto text-clip whitespace-pre bg-neutral-800 px-6 py-4 ring-1 ring-neutral-700">
                     {JSON.stringify(activeLog.log?.data, null, ' ')}
@@ -195,12 +239,23 @@ const LogsSettings = () => {
           </>
         )}
       </Modal>
-      <h3 className="text-2xl font-extrabold">Logs</h3>
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage id="logs.title" defaultMessage="Logs" />
+      </h3>
       <p className="mb-5 overflow-hidden w-full">
-        You can also view these logs directly via <code>stdout</code>, or in{' '}
-        <code className="max-sm:block overflow-hidden text-ellipsis">
-          ${appData ? appData.appDataPath : '/app/config'}/logs/streamarr.log
-        </code>
+        <FormattedMessage
+          id="logs.description"
+          defaultMessage="You can also view these logs directly via {stdout}, or in {logPath}"
+          values={{
+            stdout: <code>stdout</code>,
+            logPath: (
+              <code className="max-sm:block overflow-hidden text-ellipsis">
+                ${appData ? appData.appDataPath : '/app/config'}
+                /logs/streamarr.log
+              </code>
+            ),
+          }}
+        />
       </p>
       <div className="mt-2 flex flex-grow flex-col md:flex-grow-0 sm:flex-row sm:justify-end">
         <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
@@ -227,7 +282,13 @@ const LogsSettings = () => {
             ) : (
               <PlayIcon className="size-5 font-bold" />
             )}
-            <span className="ml-2">{refreshInterval ? 'Pause' : 'Resume'}</span>
+            <span className="ml-2">
+              {refreshInterval ? (
+                <FormattedMessage id="logs.pause" defaultMessage="Pause" />
+              ) : (
+                <FormattedMessage id="logs.resume" defaultMessage="Resume" />
+              )}
+            </span>
           </Button>
           <div className="flex flex-grow">
             <span className="btn btn-sm rounded-md btn-primary rounded-r-none pointer-events-none">
@@ -242,10 +303,30 @@ const LogsSettings = () => {
               }}
               className="select select-sm select-primary rounded-l-none rounded-md flex-1"
             >
-              <option value="debug">Debug</option>
-              <option value="info">Info</option>
-              <option value="warn">Warn</option>
-              <option value="error">Error</option>
+              <option value="debug">
+                {intl.formatMessage({
+                  id: 'logs.filter.debug',
+                  defaultMessage: 'Debug',
+                })}
+              </option>
+              <option value="info">
+                {intl.formatMessage({
+                  id: 'logs.filter.info',
+                  defaultMessage: 'Info',
+                })}
+              </option>
+              <option value="warn">
+                {intl.formatMessage({
+                  id: 'logs.filter.warn',
+                  defaultMessage: 'Warn',
+                })}
+              </option>
+              <option value="error">
+                {intl.formatMessage({
+                  id: 'logs.filter.error',
+                  defaultMessage: 'Error',
+                })}
+              </option>
             </select>
           </div>
         </div>
@@ -253,10 +334,27 @@ const LogsSettings = () => {
       <Table>
         <thead>
           <tr>
-            <Table.TH>Timestamp</Table.TH>
-            <Table.TH>Severity</Table.TH>
-            <Table.TH>Label</Table.TH>
-            <Table.TH>Message</Table.TH>
+            <Table.TH>
+              <FormattedMessage
+                id="logs.modal.timestamp"
+                defaultMessage="Timestamp"
+              />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage
+                id="logs.modal.severity"
+                defaultMessage="Severity"
+              />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage id="logs.modal.label" defaultMessage="Label" />
+            </Table.TH>
+            <Table.TH>
+              <FormattedMessage
+                id="logs.modal.message"
+                defaultMessage="Message"
+              />
+            </Table.TH>
             <Table.TH></Table.TH>
           </tr>
         </thead>
@@ -298,7 +396,10 @@ const LogsSettings = () => {
                   <Table.TD className="-m-1 flex flex-wrap items-center justify-end gap-1">
                     {row.data && (
                       <Tooltip
-                        content="View Details"
+                        content={intl.formatMessage({
+                          id: 'logs.table.viewDetails',
+                          defaultMessage: 'View Details',
+                        })}
                         tooltipConfig={{
                           placement: 'top-end',
                           followCursor: true,
@@ -316,13 +417,19 @@ const LogsSettings = () => {
                       </Tooltip>
                     )}
                     <Tooltip
-                      content="Copy to clipboard"
+                      content={intl.formatMessage({
+                        id: 'logs.table.copyToClipboard',
+                        defaultMessage: 'Copy to clipboard',
+                      })}
                       tooltipConfig={{ placement: 'top' }}
                     >
                       <CopyButton
                         grouped={false}
                         textToCopy={copyLogString(row)}
-                        itemTitle="log message"
+                        itemTitle={intl.formatMessage({
+                          id: 'logs.table.logMessage',
+                          defaultMessage: 'log message',
+                        })}
                         size="sm"
                       />
                     </Tooltip>
@@ -335,7 +442,12 @@ const LogsSettings = () => {
             <tr className="relative h-24 p-2">
               <Table.TD colSpan={5} noPadding>
                 <div className="flex w-screen flex-col items-center justify-center p-6 md:w-full">
-                  <span className="text-base">No Results</span>
+                  <span className="text-base">
+                    <FormattedMessage
+                      id="common.noResults"
+                      defaultMessage="No Results"
+                    />
+                  </span>
                   {currentFilter !== 'debug' && (
                     <div className="mt-4">
                       <Button
@@ -343,7 +455,10 @@ const LogsSettings = () => {
                         buttonType="primary"
                         onClick={() => setCurrentFilter('debug')}
                       >
-                        Show All
+                        <FormattedMessage
+                          id="common.showAll"
+                          defaultMessage="Show All"
+                        />
                       </Button>
                     </div>
                   )}
@@ -360,32 +475,46 @@ const LogsSettings = () => {
                 <div className="hidden lg:flex lg:flex-1">
                   <p className="text-sm">
                     {(data?.results.length ?? 0) > 0 &&
-                      `Showing ${pageIndex * currentPageSize + 1} to ${
-                        (data?.results.length ?? 0 < currentPageSize)
-                          ? pageIndex * currentPageSize +
-                            (data?.results.length ?? 0)
-                          : (pageIndex + 1) * currentPageSize
-                      } of ${data?.pageInfo.results ?? 0} results`}
+                      intl.formatMessage(
+                        {
+                          id: 'common.showingResults',
+                        },
+                        {
+                          start: pageIndex * currentPageSize + 1,
+                          end:
+                            (data?.results.length ?? 0 < currentPageSize)
+                              ? pageIndex * currentPageSize +
+                                (data?.results.length ?? 0)
+                              : (pageIndex + 1) * currentPageSize,
+                          total: data?.pageInfo.results ?? 0,
+                        }
+                      )}
                   </p>
                 </div>
                 <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
                   <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
-                    Display
-                    <select
-                      id="pageSize"
-                      name="pageSize"
-                      onChange={(e) => {
-                        setCurrentPageSize(Number(e.target.value));
+                    <FormattedMessage
+                      id="common.resultsDisplay"
+                      defaultMessage="Display {select} results per page"
+                      values={{
+                        select: (
+                          <select
+                            id="pageSize"
+                            name="pageSize"
+                            onChange={(e) => {
+                              setCurrentPageSize(Number(e.target.value));
+                            }}
+                            value={currentPageSize}
+                            className="select select-sm select-primary mx-1"
+                          >
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                          </select>
+                        ),
                       }}
-                      value={currentPageSize}
-                      className="select select-sm select-primary mx-1"
-                    >
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    results per page
+                    />
                   </span>
                 </div>
                 <div className="flex flex-auto justify-center space-x-2 sm:flex-1 sm:justify-end">
@@ -398,7 +527,12 @@ const LogsSettings = () => {
                     }
                   >
                     <ChevronLeftIcon className="size-5" />
-                    <span>Previous</span>
+                    <span>
+                      <FormattedMessage
+                        id="common.previous"
+                        defaultMessage="Previous"
+                      />
+                    </span>
                   </Button>
                   <Button
                     buttonSize="sm"
@@ -408,7 +542,12 @@ const LogsSettings = () => {
                       updateQueryParams('page', (page + 1).toString())
                     }
                   >
-                    <span>Next</span>
+                    <span>
+                      <FormattedMessage
+                        id="common.next"
+                        defaultMessage="Next"
+                      />
+                    </span>
                     <ChevronRightIcon className="size-5" />
                   </Button>
                 </div>

@@ -5,6 +5,7 @@ import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 import useClipboard from 'react-use-clipboard';
+import { useIntl } from 'react-intl';
 
 const CopyButton = ({
   textToCopy,
@@ -22,22 +23,35 @@ const CopyButton = ({
   const [isCopied, setCopied] = useClipboard(textToCopy, {
     successDuration: 1000,
   });
+  const intl = useIntl();
 
   useEffect(() => {
     if (isCopied) {
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
         title: itemTitle
-          ? `Copied ${itemTitle} to clipboard!`
-          : 'Copied to clipboard',
+          ? intl.formatMessage(
+              {
+                id: 'common.copied',
+                defaultMessage: 'Copied {item} to clipboard!',
+              },
+              { item: itemTitle }
+            )
+          : intl.formatMessage({
+              id: 'common.copied',
+              defaultMessage: 'Copied to clipboard',
+            }),
         type: 'primary',
       });
     }
-  }, [isCopied, itemTitle]);
+  }, [isCopied, itemTitle, intl]);
 
   return (
     <Tooltip
-      content="Copy to Clipboard"
+      content={intl.formatMessage({
+        id: 'copyButton.tooltip',
+        defaultMessage: 'Copy to Clipboard',
+      })}
       tooltipConfig={{ followCursor: true, placement: 'top-end' }}
     >
       <button

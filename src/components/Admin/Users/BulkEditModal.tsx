@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Toast from '@app/components/Toast';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import { useIntl } from 'react-intl';
 
 interface BulkEditProps {
   selectedUserIds: number[];
@@ -26,6 +27,7 @@ const BulkEditModal = ({
   onSaving,
 }: BulkEditProps) => {
   const { user: currentUser } = useUser();
+  const intl = useIntl();
   const [currentPermission, setCurrentPermission] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -46,13 +48,19 @@ const BulkEditModal = ({
         onComplete(updated);
       }
       Toast({
-        title: 'User permissions saved successfully!',
+        title: intl.formatMessage({
+          id: 'userPermissions.success',
+          defaultMessage: 'User permissions saved successfully!',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
     } catch {
       Toast({
-        title: 'Something went wrong while saving user permissions.',
+        title: intl.formatMessage({
+          id: 'userPermissions.error',
+          defaultMessage: 'Something went wrong while saving user permissions.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
@@ -81,12 +89,17 @@ const BulkEditModal = ({
 
   return (
     <Modal
-      title={'Edit User Permissions'}
+      title={intl.formatMessage({
+        id: 'userPermissions.title',
+        defaultMessage: 'Edit User Permissions',
+      })}
       onOk={() => {
         updateUsers();
       }}
       okDisabled={isSaving}
-      okText={'Save'}
+      okText={intl.formatMessage({
+        id: 'common.saveChanges',
+      })}
       onCancel={onCancel}
       show={show}
     >

@@ -1,14 +1,18 @@
+'use client';
 import {
   CalendarDateRangeIcon,
   CalendarDaysIcon,
   CalendarIcon,
   QueueListIcon,
 } from '@heroicons/react/24/solid';
-import moment from 'moment';
-import { useCallback } from 'react';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { useCallback, useEffect } from 'react';
 import { Views } from 'react-big-calendar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FormattedMessage } from 'react-intl';
+import useLocale from '@app/hooks/useLocale';
+import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
 
 function convertUTCToLocalDate(date) {
   if (!date) {
@@ -29,6 +33,14 @@ const CalendarToolBar = ({
   oneMonth,
   setView,
 }) => {
+  const { locale } = useLocale();
+
+  useEffect(() => {
+    registerDatePickerLocale(locale);
+  }, [locale]);
+
+  const datePickerLocale = locale !== 'en' ? locale : undefined;
+
   let dateFormat = '';
   const to = ' - ';
   if (view === 'month') {
@@ -81,6 +93,7 @@ const CalendarToolBar = ({
           <DatePicker
             dateFormat={dateFormat}
             selected={convertUTCToLocalDate(date)}
+            locale={datePickerLocale}
             showIcon
             toggleCalendarOnIconClick
             closeOnScroll
@@ -112,6 +125,7 @@ const CalendarToolBar = ({
           <DatePicker
             dateFormat={dateFormat}
             selected={date}
+            locale={datePickerLocale}
             startDate={startOfWeek}
             endDate={endOfWeek}
             showIcon
@@ -174,7 +188,7 @@ const CalendarToolBar = ({
             onClick={() => setDate(moment().toDate())}
             className="btn btn-sm btn-primary rounded-none flex-1 basis-1/2"
           >
-            Today
+            <FormattedMessage id="calendar.today" defaultMessage="Today" />
           </button>
           <button
             id="next"
@@ -213,10 +227,18 @@ const CalendarToolBar = ({
             value={view}
             className="select select-sm select-primary rounded-md rounded-l-none flex-1"
           >
-            <option value="month">Month</option>
-            <option value="week">Week</option>
-            <option value="day">Day</option>
-            <option value="agenda">Agenda</option>
+            <option value="month">
+              <FormattedMessage id="calendar.month" defaultMessage="Month" />
+            </option>
+            <option value="week">
+              <FormattedMessage id="calendar.week" defaultMessage="Week" />
+            </option>
+            <option value="day">
+              <FormattedMessage id="calendar.day" defaultMessage="Day" />
+            </option>
+            <option value="agenda">
+              <FormattedMessage id="calendar.agenda" defaultMessage="Agenda" />
+            </option>
           </select>
         </div>
       </div>

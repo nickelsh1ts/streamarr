@@ -6,6 +6,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as Yup from 'yup';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast from '@app/components/Toast';
@@ -15,6 +16,7 @@ import { Formik, Field } from 'formik';
 import useSWR from 'swr';
 
 const ServicesTautulli = () => {
+  const intl = useIntl();
   const { data: dataTautulli, mutate: revalidateTautulli } =
     useSWR<TautulliSettings>('/api/v1/settings/tautulli');
 
@@ -25,56 +27,97 @@ const ServicesTautulli = () => {
           ['tautulliPort', 'tautulliApiKey'],
           ([tautulliPort, tautulliApiKey], schema) => {
             if (tautulliPort || tautulliApiKey) {
-              return schema
-                .nullable()
-                .required('You must provide a valid hostname or IP address');
+              return schema.nullable().required(
+                intl.formatMessage({
+                  id: 'servicesSettings.validation.hostname',
+                  defaultMessage:
+                    'You must provide a valid hostname or IP address',
+                })
+              );
             }
             return schema.nullable();
           }
         )
         .matches(
           /^(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-          'You must provide a valid hostname or IP address'
+          intl.formatMessage({
+            id: 'servicesSettings.validation.hostname',
+            defaultMessage: 'You must provide a valid hostname or IP address',
+          })
         ),
       tautulliPort: Yup.number().when(
         ['tautulliHostname', 'tautulliApiKey'],
         ([tautulliHostname, tautulliApiKey], schema) => {
           if (tautulliHostname || tautulliApiKey) {
             return schema
-              .typeError('You must provide a valid port number')
+              .typeError(
+                intl.formatMessage({
+                  id: 'plexSettings.validation.port',
+                  defaultMessage: 'You must provide a valid port number',
+                })
+              )
               .nullable()
-              .required('You must provide a valid port number');
+              .required(
+                intl.formatMessage({
+                  id: 'plexSettings.validation.port',
+                  defaultMessage: 'You must provide a valid port number',
+                })
+              );
           }
           return schema
-            .typeError('You must provide a valid port number')
+            .typeError(
+              intl.formatMessage({
+                id: 'plexSettings.validation.port',
+                defaultMessage: 'You must provide a valid port number',
+              })
+            )
             .nullable();
         }
       ),
       tautulliUrlBase: Yup.string()
         .test(
           'leading-slash',
-          'URL base must have a leading slash',
+          intl.formatMessage({
+            id: 'servicesSettings.urlBase.leadingSlash',
+            defaultMessage: 'URL base must have a leading slash',
+          }),
           (value) => !value || value.startsWith('/')
         )
         .test(
           'no-trailing-slash',
-          'URL base must not end in a trailing slash',
+          intl.formatMessage({
+            id: 'servicesSettings.urlBase.noTrailingSlash',
+            defaultMessage: 'URL base must not end in a trailing slash',
+          }),
           (value) => !value || !value.endsWith('/')
         ),
       tautulliApiKey: Yup.string().when(
         ['tautulliHostname', 'tautulliPort'],
         ([tautulliHostname, tautulliPort], schema) => {
           if (tautulliHostname || tautulliPort) {
-            return schema.nullable().required('You must provide an API key');
+            return schema.nullable().required(
+              intl.formatMessage({
+                id: 'servicesSettings.validation.apiKeyRequired',
+                defaultMessage: 'You must provide an API key',
+              })
+            );
           }
           return schema.nullable();
         }
       ),
       tautulliExternalUrl: Yup.string()
-        .url('You must provide a valid URL')
+        .url(
+          intl.formatMessage({
+            id: 'generalSettings.validation.supportUrl',
+            defaultMessage: 'You must provide a valid URL',
+          })
+        )
         .test(
           'no-trailing-slash',
-          'URL must not end in a trailing slash',
+          intl.formatMessage({
+            id: 'servicesSettings.validation.urlNoTrailingSlash',
+            defaultMessage: 'URL must not end in a trailing slash',
+          }),
           (value) => !value || !value.endsWith('/')
         ),
     },
@@ -92,10 +135,17 @@ const ServicesTautulli = () => {
   return (
     <div className="max-w-6xl mb-10">
       <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">Tautulli Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="servicesSettings.tautulli.title"
+            defaultMessage="Tautulli Settings"
+          />
+        </h3>
         <p className="mb-5">
-          Optionally configure the settings for your Tautulli server. Streamarr
-          fetches watch history data for your Plex media from Tautulli.
+          <FormattedMessage
+            id="servicesSettings.tautulli.description"
+            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr fetches watch history data for your Plex media from Tautulli."
+          />
         </p>
       </div>
       <Formik
@@ -120,13 +170,25 @@ const ServicesTautulli = () => {
             } as TautulliSettings);
 
             Toast({
-              title: 'Tautulli settings saved successfully!',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                },
+                { appName: 'Tautulli' }
+              ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving Tautulli settings.',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
+                },
+                { appName: 'Tautulli' }
+              ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -148,7 +210,7 @@ const ServicesTautulli = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliHostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -175,7 +237,7 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliPort">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -198,7 +260,9 @@ const ServicesTautulli = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="tautulliUseSsl">Use SSL</label>
+                <label htmlFor="tautulliUseSsl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -213,7 +277,7 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliUrlBase" className="text-label">
-                  URL Base
+                  <FormattedMessage id="common.urlBase" />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="form-input-field">
@@ -238,7 +302,7 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliApiKey" className="text-label">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -259,7 +323,9 @@ const ServicesTautulli = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="tautulliExternalUrl">External URL</label>
+                <label htmlFor="tautulliExternalUrl">
+                  <FormattedMessage id="common.externalUrl" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -292,7 +358,15 @@ const ServicesTautulli = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting
+                        ? intl.formatMessage({
+                            id: 'common.saving',
+                          })
+                        : intl.formatMessage({
+                            id: 'common.saveChanges',
+                          })}
+                    </span>
                   </Button>
                 </span>
               </div>

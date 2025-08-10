@@ -1,12 +1,16 @@
 'use client';
 import CachedImage from '@app/components/Common/CachedImage';
+import { FormattedMessage } from 'react-intl';
 
 function Devices() {
   return (
     <section id="devices" className="min-h-lvh place-content-center py-16">
       <div className="container mx-auto text-center">
         <p className="text-3xl font-extrabold pb-10 px-5">
-          Available on all your favourite devices
+          <FormattedMessage
+            id="devices.availableOnDevices"
+            defaultMessage="Available on all your favourite devices"
+          />
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5">
           <div>
@@ -17,9 +21,11 @@ function Devices() {
               width={200}
               height={120}
             />
-            <p className="py-6 text-2xl font-extrabold">TV</p>
+            <p className="py-6 text-2xl font-extrabold">
+              <FormattedMessage id="devices.tv" defaultMessage="TV" />
+            </p>
             <p>Amazon Fire TV</p>
-            <p>Android TV devices</p>
+            <p>Android TV</p>
             <p>Apple TV</p>
             <p>Chromecast</p>
             <p>Roku</p>
@@ -33,7 +39,12 @@ function Devices() {
               width={200}
               height={120}
             />
-            <p className="py-6 text-2xl font-extrabold">Computer</p>
+            <p className="py-6 text-2xl font-extrabold">
+              <FormattedMessage
+                id="devices.computer"
+                defaultMessage="Computer"
+              />
+            </p>
             <p>Windows PC</p>
             <p>MacOS</p>
             <p>Chrome OS</p>
@@ -46,7 +57,12 @@ function Devices() {
               width={200}
               height={120}
             />
-            <p className="py-6 text-2xl font-extrabold">Mobile & Tablet</p>
+            <p className="py-6 text-2xl font-extrabold">
+              <FormattedMessage
+                id="devices.mobileTablet"
+                defaultMessage="Mobile & Tablet"
+              />
+            </p>
             <p>Android Phones & Tablets</p>
             <p>iPhones & iPads</p>
             <p>Amazon Fire Tablets</p>
@@ -59,7 +75,12 @@ function Devices() {
               width={200}
               height={120}
             />
-            <p className="py-6 text-2xl font-extrabold">Game Consoles</p>
+            <p className="py-6 text-2xl font-extrabold">
+              <FormattedMessage
+                id="devices.gameConsoles"
+                defaultMessage="Game Consoles"
+              />
+            </p>
             <p>Xbox One</p>
             <p>Xbox X/S</p>
             <p>Playstation 4/5</p>

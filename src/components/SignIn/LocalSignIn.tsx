@@ -6,6 +6,7 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useState } from 'react';
 import * as Yup from 'yup';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface LocalLoginProps {
   revalidate: () => void;
@@ -14,12 +15,23 @@ interface LocalLoginProps {
 const LocalLogin = ({ revalidate }: LocalLoginProps) => {
   const settings = useSettings();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const intl = useIntl();
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email()
-      .required('You must provide a valid email address'),
-    password: Yup.string().required('You must provide a password'),
+      .required(
+        intl.formatMessage({
+          id: 'signIn.emailRequired',
+          defaultMessage: 'You must provide a valid email address',
+        })
+      ),
+    password: Yup.string().required(
+      intl.formatMessage({
+        id: 'signIn.passwordRequired',
+        defaultMessage: 'You must provide a password',
+      })
+    ),
   });
 
   const passwordResetEnabled =
@@ -40,7 +52,12 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
             password: values.password,
           });
         } catch {
-          setLoginError('Something went wrong while trying to sign in.');
+          setLoginError(
+            intl.formatMessage({
+              id: 'signIn.loginError',
+              defaultMessage: 'Something went wrong while trying to sign in.',
+            })
+          );
         } finally {
           revalidate();
         }
@@ -68,7 +85,10 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     inputMode="email"
                     data-testid="email"
                     className="grow"
-                    placeholder="Email address"
+                    placeholder={intl.formatMessage({
+                      id: 'common.emailAddress',
+                      defaultMessage: 'Email address',
+                    })}
                   />
                 </div>
                 {errors.email &&
@@ -96,7 +116,9 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     className="grow w-full"
                     id="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder={intl.formatMessage({
+                      id: 'common.password',
+                    })}
                   />
                 </div>
                 {errors.password &&
@@ -113,7 +135,12 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       defaultChecked
                       className="checkbox checkbox-primary checkbox-xs me-2 rounded-md"
                     />
-                    <span className="label-text">Remember me</span>
+                    <span className="label-text">
+                      <FormattedMessage
+                        id="signIn.rememberMe"
+                        defaultMessage="Remember me"
+                      />
+                    </span>
                   </label>
                 </div>
                 {loginError && (
@@ -129,12 +156,29 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                 disabled={isSubmitting || !isValid}
                 data-testid="local-signin-button"
               >
-                <span>{isSubmitting ? 'Signing In…' : 'Sign In'}</span>
+                <span>
+                  {isSubmitting ? (
+                    <FormattedMessage
+                      id="signIn.signingIn"
+                      defaultMessage="Signing In…"
+                    />
+                  ) : (
+                    <FormattedMessage
+                      id="common.signIn"
+                      defaultMessage="Sign In"
+                    />
+                  )}
+                </span>
               </Button>
               {passwordResetEnabled && (
                 <p className="mt-1 text-center">
                   <Link href="/resetpassword" className="text-warning text-sm">
-                    <span>Wait, I forgot my password</span>
+                    <span>
+                      <FormattedMessage
+                        id="signIn.forgotPassword"
+                        defaultMessage="Wait, I forgot my password"
+                      />
+                    </span>
                   </Link>
                 </p>
               )}

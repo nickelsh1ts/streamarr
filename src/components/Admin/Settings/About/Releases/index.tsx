@@ -7,7 +7,8 @@ import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import useSWR from 'swr';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false,
@@ -41,16 +42,26 @@ interface ReleaseProps {
 }
 
 const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
+  const intl = useIntl();
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="flex w-full flex-col space-y-3 rounded-md bg-secondary px-4 py-2 shadow-md ring-1 ring-primary sm:flex-row sm:space-y-0 sm:space-x-3">
       <Modal
         onCancel={() => setModalOpen(false)}
-        title={`${release.tag_name} Changelog`}
+        title={intl.formatMessage(
+          {
+            id: 'aboutReleases.changelogTitle',
+            defaultMessage: '{version} Changelog',
+          },
+          { version: release.tag_name }
+        )}
         subtitle={release.name}
         show={isModalOpen}
-        okText={'View on GitHub'}
+        okText={intl.formatMessage({
+          id: 'aboutReleases.viewOnGitHub',
+          defaultMessage: 'View on GitHub',
+        })}
         onOk={() => {
           window.open(release.html_url, '_blank');
         }}
@@ -66,9 +77,21 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
           </span>
           {release.tag_name}
         </span>
-        {isLatest && <Badge badgeType="success">Latest Version</Badge>}
+        {isLatest && (
+          <Badge badgeType="success">
+            <FormattedMessage
+              id="aboutReleases.latestVersion"
+              defaultMessage="Latest Version"
+            />
+          </Badge>
+        )}
         {release.name.includes(currentVersion) && (
-          <Badge badgeType="primary">Current Version</Badge>
+          <Badge badgeType="primary">
+            <FormattedMessage
+              id="aboutReleases.currentVersion"
+              defaultMessage="Current Version"
+            />
+          </Badge>
         )}
       </div>
       <Button
@@ -78,7 +101,10 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
         onClick={() => setModalOpen(true)}
       >
         <DocumentTextIcon className="size-6 mr-2" />
-        <span>View Changelog</span>
+        <FormattedMessage
+          id="aboutReleases.viewChangelog"
+          defaultMessage="View Changelog"
+        />
       </Button>
     </div>
   );
@@ -97,13 +123,20 @@ const Releases = ({ currentVersion }: ReleasesProps) => {
 
   if (!data) {
     return (
-      <div className="text-gray-300">Release data is currently unavailable</div>
+      <div className="text-gray-300">
+        <FormattedMessage
+          id="aboutReleases.dataUnavailable"
+          defaultMessage="Release data is currently unavailable"
+        />
+      </div>
     );
   }
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">Releases</h3>
+      <h3 className="text-2xl font-bold">
+        <FormattedMessage id="aboutReleases.title" defaultMessage="Releases" />
+      </h3>
       <div className="mt-6 mb-10 space-y-3">
         {data.map((release, index) => {
           return (

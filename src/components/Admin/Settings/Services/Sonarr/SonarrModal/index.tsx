@@ -1,6 +1,7 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import type { SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
@@ -20,31 +21,54 @@ interface SonarrModalProps {
 }
 
 const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
+  const intl = useIntl();
   const initialLoad = useRef(false);
   const [isValidated, setIsValidated] = useState(sonarr ? true : false);
   const [isTesting, setIsTesting] = useState(false);
   const [testResponse, setTestResponse] = useState<TestResponse>();
   const SonarrSettingsSchema = Yup.object().shape({
-    name: Yup.string().required('You must provide a server name'),
+    name: Yup.string().required(
+      intl.formatMessage({
+        id: 'servicesSettings.validation.servername',
+      })
+    ),
     hostname: Yup.string()
-      .required('You must provide a valid hostname or IP address')
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+        })
+      )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-        'You must provide a valid hostname or IP address'
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+        })
       ),
     port: Yup.number()
       .nullable()
-      .required('You must provide a valid port number'),
-    apiKey: Yup.string().required('You must provide an API key'),
+      .required(
+        intl.formatMessage({
+          id: 'plexSettings.validation.port',
+        })
+      ),
+    apiKey: Yup.string().required(
+      intl.formatMessage({
+        id: 'servicesSettings.validation.apikey',
+      })
+    ),
     baseUrl: Yup.string()
       .test(
         'leading-slash',
-        'Base URL must have a leading slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'Base URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -80,7 +104,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         setTestResponse(response.data);
         if (initialLoad.current) {
           Toast({
-            title: 'Sonarr connection established successfully!',
+            title: intl.formatMessage({
+              id: 'servicesSettings.sonarr.testsuccess',
+              defaultMessage: 'Sonarr connection established successfully!',
+            }),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
@@ -89,7 +116,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         setIsValidated(false);
         if (initialLoad.current) {
           Toast({
-            title: 'Failed to connect to Sonarr.',
+            title: intl.formatMessage({
+              id: 'servicesSettings.sonarr.testfailed',
+              defaultMessage: 'Failed to connect to Sonarr.',
+            }),
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
           });
@@ -99,7 +129,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         initialLoad.current = true;
       }
     },
-    []
+    [intl]
   );
 
   useEffect(() => {
@@ -153,8 +183,18 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
           }
 
           onSave();
-        } catch {
-          //
+        } catch (e) {
+          Toast({
+            title: intl.formatMessage(
+              {
+                id: 'common.settingsSaveError',
+              },
+              { appName: 'Sonarr' }
+            ),
+            message: e.message,
+            type: 'error',
+            icon: <XCircleIcon className="size-7" />,
+          });
         }
       }}
     >
@@ -174,13 +214,27 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
             okButtonType="primary"
             okText={
               isSubmitting
-                ? 'Saving...'
+                ? intl.formatMessage({ id: 'common.saving' })
                 : sonarr
-                  ? 'Save Changes'
-                  : 'Add Server'
+                  ? intl.formatMessage({ id: 'common.saveChanges' })
+                  : intl.formatMessage(
+                      {
+                        id: 'common.addserver',
+                        defaultMessage: 'Add {arrApp} Server',
+                      },
+                      { arrApp: 'Sonarr' }
+                    )
             }
             secondaryButtonType="warning"
-            secondaryText={isTesting ? 'Testing...' : 'Test'}
+            secondaryText={
+              isTesting
+                ? intl.formatMessage({
+                    id: 'common.testing',
+                  })
+                : intl.formatMessage({
+                    id: 'common.test',
+                  })
+            }
             onSecondary={() => {
               if (values.apiKey && values.hostname && values.port) {
                 testConnection({
@@ -207,17 +261,51 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
             title={
               !sonarr
                 ? values.is4k
-                  ? 'Add New 4K Sonarr Server'
-                  : 'Add New Sonarr Server'
+                  ? intl.formatMessage(
+                      {
+                        id: 'common.arrAdd4k',
+                        defaultMessage: 'Add 4K {arrApp} Server',
+                      },
+                      { arrApp: 'Sonarr' }
+                    )
+                  : intl.formatMessage(
+                      {
+                        id: 'common.addserver',
+                        defaultMessage: 'Add {arrApp} Server',
+                      },
+                      { arrApp: 'Sonarr' }
+                    )
                 : values.is4k
-                  ? 'Edit 4K Sonarr Server'
-                  : 'Edit Sonarr Server'
+                  ? intl.formatMessage(
+                      {
+                        id: 'common.arrEdit4k',
+                        defaultMessage: 'Edit 4K {arrApp} Server',
+                      },
+                      { arrApp: 'Sonarr' }
+                    )
+                  : intl.formatMessage(
+                      {
+                        id: 'common.arrEdit',
+                        defaultMessage: 'Edit {arrApp} Server',
+                      },
+                      { arrApp: 'Sonarr' }
+                    )
             }
           >
             <div className="mb-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="isDefault">
-                  {values.is4k ? 'Default 4K Server' : 'Default Server'}
+                  {values.is4k ? (
+                    <FormattedMessage
+                      id="common.default4k"
+                      defaultMessage="Default 4K Server"
+                    />
+                  ) : (
+                    <FormattedMessage
+                      id="common.defaultserver"
+                      defaultMessage="Default Server"
+                    />
+                  )}
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -229,7 +317,12 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="is4k">4K Server</label>
+                <label htmlFor="is4k">
+                  <FormattedMessage
+                    id="common.4kserver"
+                    defaultMessage="4K Server"
+                  />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -241,7 +334,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="name">
-                  Server Name
+                  <FormattedMessage
+                    id="common.servername"
+                    defaultMessage={'Server Name'}
+                  />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -270,7 +366,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -299,7 +395,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -322,7 +418,9 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="ssl">Use SSL</label>
+                <label htmlFor="ssl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -338,7 +436,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -363,7 +461,9 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="baseUrl">URL Base</label>
+                <label htmlFor="baseUrl">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -387,9 +487,18 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="syncEnabled">
-                  Enable Calendar Sync
+                  <FormattedMessage
+                    id="common.calendarSync"
+                    defaultMessage={'Enable Calendar Sync'}
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Automatically sync Sonarr events to the calendar
+                    <FormattedMessage
+                      id="common.calendarSync.description"
+                      defaultMessage={
+                        'Automatically sync {arrApp} events to the calendar'
+                      }
+                      values={{ arrApp: 'Sonarr' }}
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -403,9 +512,15 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="pastDays">
-                  Past Days
+                  <FormattedMessage
+                    id="common.pastdays"
+                    defaultMessage="Past Days"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Sync events from the past X days
+                    <FormattedMessage
+                      id="common.pastdays.description"
+                      defaultMessage="Sync events from the past X days"
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -421,9 +536,15 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="futureDays">
-                  Future Days
+                  <FormattedMessage
+                    id="common.futuredays"
+                    defaultMessage="Future Days"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Sync events for the next X days
+                    <FormattedMessage
+                      id="common.futuredays.description"
+                      defaultMessage="Sync events for the next X days"
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">

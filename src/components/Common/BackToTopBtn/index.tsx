@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface ScrollProps {
   full?: boolean;
@@ -38,7 +39,12 @@ const ScrollToTopBtn = ({ full = false }: ScrollProps) => {
       className={`btn btn-outline btn-primary m-auto ${full ? 'h-auto min-h-min p-2 rounded-md' : 'btn-circle'}${isVisible ? '' : ' hidden'}`}
       onClick={scrollToTop}
     >
-      {full && 'Back up top'}{' '}
+      {full && (
+        <FormattedMessage
+          id="backToTop.backUpTop"
+          defaultMessage="Back up top"
+        />
+      )}{' '}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

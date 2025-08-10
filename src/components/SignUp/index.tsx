@@ -11,6 +11,7 @@ import type { User } from '@server/entity/User';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const Join = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -18,6 +19,7 @@ const Join = () => {
   const [user, setUser] = useState<User>(null);
   const router = useRouter();
   const { currentSettings } = useSettings();
+  const intl = useIntl();
 
   // Step 3: Finalize signup
   const finishSignup = async () => {
@@ -30,10 +32,17 @@ const Join = () => {
       router.push('/watch/web/index.html#!/settings/manage-library-access');
     } catch (e) {
       Toast({
-        title: 'Error during signup',
+        title: intl.formatMessage({
+          id: 'signUp.errorDuringSignup',
+          defaultMessage: 'Error during signup',
+        }),
         message:
           e.response?.data?.message ||
-          'An error occurred during signup. Please try again.',
+          intl.formatMessage({
+            id: 'signUp.errorDuringSignupFallback',
+            defaultMessage:
+              'An error occurred during signup. Please try again.',
+          }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
@@ -48,10 +57,17 @@ const Join = () => {
       <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
           <div className="mb-2 flex justify-center text-3xl font-bold">
-            Welcome to {currentSettings.applicationTitle}
+            <FormattedMessage
+              id="signUp.welcomeTo"
+              defaultMessage={'Welcome to {applicationTitle}'}
+              values={{ applicationTitle: currentSettings.applicationTitle }}
+            />
           </div>
           <div className="mb-2 text-center">
-            Registration is by invite only.
+            <FormattedMessage
+              id="signUp.registrationByInvite"
+              defaultMessage={'Registration is by invite only.'}
+            />
           </div>
         </div>
         <nav className="relative w-full">
@@ -61,19 +77,28 @@ const Join = () => {
           >
             <SetupSteps
               stepNumber={1}
-              description="Enter Invite Code"
+              description={intl.formatMessage({
+                id: 'signUp.enterInviteCode',
+                defaultMessage: 'Enter Invite Code',
+              })}
               active={currentStep === 1}
               completed={currentStep > 1}
             />
             <SetupSteps
               stepNumber={2}
-              description="Create Account"
+              description={intl.formatMessage({
+                id: 'signUp.createAccount',
+                defaultMessage: 'Create Account',
+              })}
               active={currentStep === 2}
               completed={currentStep > 2}
             />
             <SetupSteps
               stepNumber={3}
-              description="Confirm Account"
+              description={intl.formatMessage({
+                id: 'signUp.confirmAccount',
+                defaultMessage: 'Confirm Account',
+              })}
               active={currentStep === 3}
               isLastStep
             />
@@ -83,7 +108,12 @@ const Join = () => {
           {currentStep === 1 && (
             <div>
               <p className="mb-2 text-center pb-6">
-                Get started by entering your invite code below.
+                <FormattedMessage
+                  id="signUp.getStartedInviteCode"
+                  defaultMessage={
+                    'Get started by entering your invite code below.'
+                  }
+                />
               </p>
               <ICodeForm
                 onComplete={(code) => {
@@ -96,20 +126,33 @@ const Join = () => {
           {currentStep === 2 && (
             <div>
               <p className="mb-2 text-center pb-6">
-                Please sign in with your Plex account{' '}
-                {currentSettings?.localLogin && (
-                  <>or enter local account details </>
-                )}
-                to continue the registration process.{' '}
-                {currentSettings?.localLogin && (
-                  <> (Plex is recommended for the best experience)</>
-                )}
+                <FormattedMessage
+                  id="signUp.signInWithPlex"
+                  defaultMessage={
+                    'Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}.'
+                  }
+                  values={{
+                    localLoginOption: currentSettings?.localLogin ? (
+                      <FormattedMessage
+                        id="signUp.orEnterLocalAccount"
+                        defaultMessage={'or enter local account details'}
+                      />
+                    ) : null,
+                    plexRecommended: currentSettings?.localLogin ? (
+                      <FormattedMessage
+                        id="signUp.plexRecommended"
+                        defaultMessage={
+                          '(Plex is recommended for the best experience)'
+                        }
+                      />
+                    ) : null,
+                  }}
+                />
               </p>
               <SignUpAuthForm
                 inviteCode={inviteCode}
                 onComplete={(plexUser) => {
                   setUser(plexUser);
-                  // Always proceed to step 3 for account confirmation
                   setCurrentStep(3);
                 }}
               />
@@ -118,7 +161,12 @@ const Join = () => {
           {currentStep === 3 && (
             <div>
               <p className="mb-2 text-center pb-6">
-                Review your details below and confirm your account.
+                <FormattedMessage
+                  id="signUp.reviewDetailsConfirm"
+                  defaultMessage={
+                    'Review your details below and confirm your account.'
+                  }
+                />
               </p>
               <ConfirmAccountForm user={user} onComplete={finishSignup} />
             </div>

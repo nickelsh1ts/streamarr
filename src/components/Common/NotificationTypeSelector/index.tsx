@@ -3,6 +3,7 @@ import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { sortBy } from 'lodash';
 import { useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export const hasNotificationType = (
   types: Notification | Notification[],
@@ -77,14 +78,21 @@ const NotificationTypeSelector = ({
 }: NotificationTypeSelectorProps) => {
   const { hasPermission } = useUser({ id: user?.id });
   const [allowedTypes, setAllowedTypes] = useState(enabledTypes);
+  const intl = useIntl();
 
   const availableTypes = useMemo(() => {
     const types: NotificationItem[] = [
       {
         id: 'invite-used-successfully',
-        name: 'Invite Successfully Redeemed',
-        description:
-          'Get notified when an invite you sent has been successfully redeemed',
+        name: intl.formatMessage({
+          id: 'notification.inviteUsedSuccessfully',
+          defaultMessage: 'Invite Redeemed Successfully',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.inviteUsedSuccessfully.description',
+          defaultMessage:
+            'Get notified when an invite you sent has been successfully redeemed',
+        }),
         value: Notification.INVITE_REDEEMED,
         hidden:
           !user ||
@@ -107,7 +115,7 @@ const NotificationTypeSelector = ({
     return user
       ? sortBy(filteredTypes, 'hasNotifyUser', 'DESC')
       : filteredTypes;
-  }, [user, hasPermission, allowedTypes, enabledTypes]);
+  }, [intl, user, hasPermission, allowedTypes, enabledTypes]);
 
   if (!availableTypes.length) {
     return null;
@@ -118,7 +126,10 @@ const NotificationTypeSelector = ({
       <div className="mt-5 max-w-6xl space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
           <span id="group-label" className="group-label">
-            Notification Types
+            <FormattedMessage
+              id="common.notificationTypes"
+              defaultMessage="Notification Types"
+            />
             {!user && <span className="text-error ml-2">*</span>}
           </span>
           <div className="form-input-area">

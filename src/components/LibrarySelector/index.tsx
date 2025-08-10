@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import type { CSSObjectWithLabel } from 'react-select';
 import Select from 'react-select';
 import useSWR from 'swr';
+import { useIntl } from 'react-intl';
 
 export type OptionType = {
   value: string;
@@ -34,6 +35,7 @@ const LibrarySelector = ({
   isUserSettings = false,
 }: LibrarySelectorProps) => {
   const { data: Libraries } = useSWR<Library[]>('/api/v1/libraries');
+  const intl = useIntl();
 
   const sortedLibraries = useMemo(() => {
     return sortBy(Libraries, 'name');
@@ -59,15 +61,27 @@ const LibrarySelector = ({
     options.unshift({
       value: 'server',
       label: serverLibraryNames
-        ? `Default Libraries (${serverLibraryNames})`
-        : 'Default Libraries (All)',
+        ? intl.formatMessage(
+            {
+              id: 'librarySelector.defaultLibrariesWith',
+              defaultMessage: 'Default Libraries ({libraries})',
+            },
+            { libraries: serverLibraryNames }
+          )
+        : intl.formatMessage({
+            id: 'librarySelector.defaultLibrariesAll',
+            defaultMessage: 'Default Libraries (All)',
+          }),
       isFixed: true,
     });
   }
 
   options.unshift({
     value: 'all',
-    label: 'All Libraries',
+    label: intl.formatMessage({
+      id: 'invite.allLibraries',
+      defaultMessage: 'All Libraries',
+    }),
     isFixed: true,
   });
 

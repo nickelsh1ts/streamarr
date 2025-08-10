@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import React from 'react';
 import { ChevronRightIcon, PrinterIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { FormattedMessage } from 'react-intl';
 
 type TBreadCrumbProps = {
   homeElement: ReactNode;
@@ -62,7 +63,8 @@ const Breadcrumbs = ({
           }}
           className="btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase ms-auto"
         >
-          <PrinterIcon className="w-5 h-5" /> print
+          <PrinterIcon className="w-5 h-5" />{' '}
+          <FormattedMessage id="common.print" defaultMessage="Print" />
         </button>
       )}
     </div>

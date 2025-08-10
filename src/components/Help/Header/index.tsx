@@ -1,6 +1,7 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
 import Header from '@app/components/Layout/Header';
+import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
 
 const HelpHeader = () => {
@@ -25,7 +26,10 @@ const HelpHeader = () => {
         />
         <div className="container max-w-screen-xl mx-auto h-44 content-center z-0">
           <h2 className="text-center font-extrabold text-3xl my-4">
-            Help Centre
+            <FormattedMessage
+              id="help.helpCentre"
+              defaultMessage="Help Centre"
+            />
           </h2>
         </div>
       </div>

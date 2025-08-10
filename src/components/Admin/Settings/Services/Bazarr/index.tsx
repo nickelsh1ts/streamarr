@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -15,6 +16,7 @@ import useSWR from 'swr';
 import * as Yup from 'yup';
 
 const ServicesBazarr = () => {
+  const intl = useIntl();
   const { data: dataBazarr, mutate: revalidateBazarr } =
     useSWR<ServiceSettings>('/api/v1/settings/bazarr');
 
@@ -22,12 +24,18 @@ const ServicesBazarr = () => {
     urlBase: Yup.string()
       .test(
         'leading-slash',
-        'URL base must have a leading slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -39,9 +47,19 @@ const ServicesBazarr = () => {
   return (
     <div className="max-w-6xl mb-10">
       <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">Bazarr Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="servicesSettings.bazarr.title"
+            defaultMessage={'Bazarr Settings'}
+          />
+        </h3>
         <p className="mb-5">
-          Optionally configure the settings for your Bazarr server.
+          <FormattedMessage
+            id="servicesSettings.bazarr.description"
+            defaultMessage={
+              'Optionally configure the settings for your Bazarr server.'
+            }
+          />
         </p>
       </div>
       <Formik
@@ -66,13 +84,24 @@ const ServicesBazarr = () => {
             } as ServiceSettings);
 
             Toast({
-              title: 'Bazarr settings saved successfully!',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
+                },
+                { appName: 'Bazarr' }
+              ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving Bazarr settings.',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                },
+                { appName: 'Bazarr' }
+              ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -94,7 +123,12 @@ const ServicesBazarr = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="service">
-                  Enable Bazarr<span className="ml-1 text-error">*</span>
+                  <FormattedMessage
+                    id="common.settingsEnable"
+                    defaultMessage="Enable {appName}"
+                    values={{ appName: 'Bazarr' }}
+                  />
+                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -117,7 +151,7 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -142,7 +176,7 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -165,7 +199,9 @@ const ServicesBazarr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">Use SSL</label>
+                <label htmlFor="useSsl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -179,7 +215,9 @@ const ServicesBazarr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">URL Base</label>
+                <label htmlFor="urlBase">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -197,7 +235,7 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -227,7 +265,15 @@ const ServicesBazarr = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting
+                        ? intl.formatMessage({
+                            id: 'common.saving',
+                          })
+                        : intl.formatMessage({
+                            id: 'common.saveChanges',
+                          })}
+                    </span>
                   </Button>
                 </span>
               </div>

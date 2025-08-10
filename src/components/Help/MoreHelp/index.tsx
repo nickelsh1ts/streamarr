@@ -6,6 +6,7 @@ import {
   EnvelopeOpenIcon,
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { FormattedMessage } from 'react-intl';
 
 const MoreHelp = () => {
   const { currentSettings } = useSettings();
@@ -14,11 +15,10 @@ const MoreHelp = () => {
     <div className="bg-zinc-200 py-20 print:hidden">
       <div className="container max-w-screen-xl mx-auto px-4">
         <h1 className="text-neutral font-extrabold text-center text-4xl">
-          Need more help?
+          <FormattedMessage id="moreHelp.needMoreHelp" />
         </h1>
         <p className="text-center text-neutral text-lg my-4">
-          Check out the help section on Plex or reach out below! We&apos;re
-          available during EST hours.
+          <FormattedMessage id="moreHelp.checkHelpSection" />
         </p>
       </div>
       <div className="container max-w-screen-xl mx-auto py-4 place-content-center flex flex-wrap gap-5 px-5">
@@ -28,9 +28,11 @@ const MoreHelp = () => {
               <div className="flex place-items-center">
                 <ChatBubbleLeftRightIcon className="w-20 h-20 flex-none" />
                 <div className="my-auto ms-4">
-                  <h5 className="card-title">Contact Us</h5>
+                  <h5 className="card-title">
+                    <FormattedMessage id="footer.contactUs" />
+                  </h5>
                   <p className="">
-                    Need to chat with us? We&apos;re available on Discord!
+                    <FormattedMessage id="moreHelp.needToChat" />
                   </p>
                   <div className="flex flex-wrap mt-4">
                     {currentSettings.supportUrl && (
@@ -41,7 +43,7 @@ const MoreHelp = () => {
                         className="btn btn-sm btn-primary hover:btn-secondary me-1 mb-2 rounded-md text-base min-h-9"
                         rel="noreferrer"
                       >
-                        Support{' '}
+                        <FormattedMessage id="moreHelp.support" />{' '}
                         <svg
                           className="h-7"
                           viewBox="0 0 24 24"
@@ -62,7 +64,8 @@ const MoreHelp = () => {
                         className="btn btn-sm btn-outline btn-primary mx-1 mb-2 rounded-md text-base min-h-9"
                         rel="noreferrer"
                       >
-                        Email <EnvelopeOpenIcon className="h-7" />
+                        <FormattedMessage id="common.email" />{' '}
+                        <EnvelopeOpenIcon className="h-7" />
                       </Link>
                     )}
                   </div>
@@ -76,10 +79,11 @@ const MoreHelp = () => {
             <div className="flex place-items-center">
               <BookOpenIcon className="w-20 h-20 flex-none" />
               <div className="my-auto ms-4">
-                <h5 className="card-title">Visit Plex</h5>
+                <h5 className="card-title">
+                  <FormattedMessage id="moreHelp.visitPlex" />
+                </h5>
                 <p className="mb-4">
-                  Take a look at the Plex Help section or browse their forums
-                  for even more assistance.
+                  <FormattedMessage id="moreHelp.plexHelpDescription" />
                 </p>
                 <Link
                   target="_blank"
@@ -88,7 +92,7 @@ const MoreHelp = () => {
                   className="btn btn-sm btn-accent rounded-md text-base min-h-9"
                   rel="noreferrer"
                 >
-                  Plex Support
+                  <FormattedMessage id="moreHelp.plexSupport" />
                 </Link>
               </div>
             </div>

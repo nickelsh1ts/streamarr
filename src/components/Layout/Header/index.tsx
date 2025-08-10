@@ -7,6 +7,7 @@ import BackButton from '@app/components/Layout/BackButton';
 import DynamicLogo from '@app/components/Layout/DynamicLogo';
 import { useUser } from '@app/hooks/useUser';
 import useSettings from '@app/hooks/useSettings';
+import { FormattedMessage } from 'react-intl';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
@@ -36,7 +37,7 @@ const Header = ({ isInView = true }) => {
               id="signup"
               className={`btn btn-outline btn-sm md:btn-md text-xs btn-warning rounded-md gap-0.5 md:tracking-widest md:text-lg uppercase no-animation transition-opacity duration-500 ${!isInView && 'opacity-0 pointer-events-none'}`}
             >
-              Sign up now
+              <FormattedMessage id="auth.signup" defaultMessage="Sign up now" />
             </Link>
           )}
           {user ? (
@@ -54,7 +55,7 @@ const Header = ({ isInView = true }) => {
                 id="signin"
                 className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
               >
-                Sign in{' '}
+                <FormattedMessage id="auth.signin" defaultMessage="Sign in" />
               </Link>
             )
           )}

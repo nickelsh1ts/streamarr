@@ -1,5 +1,4 @@
 'use client';
-// import ComingSoon from '@app/components/Common/ComingSoon';
 import ImageFader from '@app/components/Common/ImageFader';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
@@ -54,7 +53,6 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
         <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
       )}
       {children}
-      {/* <ComingSoon /> */}
     </div>
   );
 };

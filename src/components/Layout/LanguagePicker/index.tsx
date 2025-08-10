@@ -50,7 +50,7 @@ const LanguagePicker = () => {
               className="block pb-2 text-sm font-bold leading-5 text-neutral-300"
             >
               <FormattedMessage
-                id="language.displayLanguage"
+                id="common.displayLanguage"
                 defaultMessage="Display Language"
               />
             </label>

@@ -5,22 +5,30 @@ import type { FormikHelpers, FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-
-const validate = (values: { icode: string }) => {
-  const errors: { icode?: string } = {};
-  if (!values.icode || values.icode.trim() === '') {
-    errors.icode = 'Invite code is required.';
-  } else if (values.icode.length < 4) {
-    errors.icode = 'Invite code is too short.';
-  }
-  return errors;
-};
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
   const searchParams = useSearchParams();
   const icode = searchParams.get('icode');
   const [error, setError] = useState<string | null>(null);
   const formikRef = useRef<FormikProps<{ icode: string }> | null>(null);
+  const intl = useIntl();
+
+  const validate = (values: { icode: string }) => {
+    const errors: { icode?: string } = {};
+    if (!values.icode || values.icode.trim() === '') {
+      errors.icode = intl.formatMessage({
+        id: 'iCodeForm.inviteCodeRequired',
+        defaultMessage: 'Invite code is required',
+      });
+    } else if (values.icode.length < 4) {
+      errors.icode = intl.formatMessage({
+        id: 'iCodeForm.inviteCodeTooShort',
+        defaultMessage: 'Invite code is too short',
+      });
+    }
+    return errors;
+  };
 
   useEffect(() => {
     if (
@@ -89,8 +97,14 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
                   name="icode"
                   type="text"
                   className="grow"
-                  aria-label="Invite Code"
-                  placeholder="Invite code"
+                  aria-label={intl.formatMessage({
+                    id: 'invite.code',
+                    defaultMessage: 'Invite Code',
+                  })}
+                  placeholder={intl.formatMessage({
+                    id: 'invite.code',
+                    defaultMessage: 'Invite code',
+                  })}
                   defaultValue={values.icode}
                   required
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,9 +123,17 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
               className="w-full"
               onClick={() => handleSubmit()}
             >
-              {isSubmitting
-                ? 'Validating Invite Code...'
-                : "Let's Get Started!"}
+              {isSubmitting ? (
+                <FormattedMessage
+                  id="iCodeForm.validatingInviteCode"
+                  defaultMessage="Validating Invite Code..."
+                />
+              ) : (
+                <FormattedMessage
+                  id="iCodeForm.letsGetStarted"
+                  defaultMessage="Let's Get Started"
+                />
+              )}
             </Button>
           </div>
         </Form>

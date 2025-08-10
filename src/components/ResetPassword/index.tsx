@@ -7,19 +7,45 @@ import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const ResetPassword = ({ guid }: { guid: string }) => {
   const [hasSubmitted, setSubmitted] = useState(false);
+  const intl = useIntl();
 
   const ResetSchema = Yup.object().shape({
     password: Yup.string()
-      .required('You must provide a password')
-      .min(8, 'Password is too short; should be a minimum of 8 characters'),
+      .required(
+        intl.formatMessage({
+          id: 'signIn.passwordRequired',
+          defaultMessage: 'You must provide a password',
+        })
+      )
+      .min(
+        8,
+        intl.formatMessage({
+          id: 'resetPassword.passwordTooShort',
+          defaultMessage:
+            'Password is too short; should be a minimum of 8 characters',
+        })
+      ),
     confirmPassword: Yup.string()
-      .required('Passwords must match')
-      .test('passwords-match', 'Passwords must match', function (value) {
-        return this.parent.password === value;
-      }),
+      .required(
+        intl.formatMessage({
+          id: 'localSignup.passwordsMatch',
+          defaultMessage: 'Passwords must match',
+        })
+      )
+      .test(
+        'passwords-match',
+        intl.formatMessage({
+          id: 'localSignup.passwordsMatch',
+          defaultMessage: 'Passwords must match',
+        }),
+        function (value) {
+          return this.parent.password === value;
+        }
+      ),
   });
 
   return (
@@ -29,9 +55,17 @@ const ResetPassword = ({ guid }: { guid: string }) => {
       </div>
       <div className="container max-w-lg mx-auto py-14 px-4">
         <div className="text-start px-2 mb-4 relative">
-          <h2 className="text-2xl font-extrabold mb-2">Reset your password</h2>
+          <h2 className="text-2xl font-extrabold mb-2">
+            <FormattedMessage
+              id="resetPassword.title"
+              defaultMessage="Reset your password"
+            />
+          </h2>
           <p className="text-sm">
-            Please enter a new password for your local account.
+            <FormattedMessage
+              id="resetPassword.description"
+              defaultMessage="Please enter a new password for your local account."
+            />
           </p>
         </div>
         <div className="bg-secondary backdrop-blur-md bg-opacity-50 shadow rounded-lg border border-secondary">
@@ -39,7 +73,10 @@ const ResetPassword = ({ guid }: { guid: string }) => {
             {hasSubmitted ? (
               <>
                 <p className="text-md font-bold mb-2 mt-4">
-                  Password reset successfully!
+                  <FormattedMessage
+                    id="resetPassword.success"
+                    defaultMessage="Password reset successfully!"
+                  />
                 </p>
                 <span className="my-4 flex justify-center rounded-md shadow-sm">
                   <Button
@@ -48,7 +85,12 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                     buttonType="primary"
                     className="btn-block"
                   >
-                    <span>Back to Sign in</span>
+                    <span>
+                      <FormattedMessage
+                        id="resetPassword.backToSignIn"
+                        defaultMessage="Back to Sign in"
+                      />
+                    </span>
                   </Button>
                 </span>
               </>
@@ -95,7 +137,10 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                               className="grow w-full"
                               id="password"
                               name="password"
-                              placeholder="Password"
+                              placeholder={intl.formatMessage({
+                                id: 'common.password',
+                                defaultMessage: 'Password',
+                              })}
                             />
                           </div>
                           {errors.password &&
@@ -125,7 +170,10 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                               className="grow w-full"
                               id="confirmPassword"
                               name="confirmPassword"
-                              placeholder="Confirm password"
+                              placeholder={intl.formatMessage({
+                                id: 'common.confirmPassword',
+                                defaultMessage: 'Confirm password',
+                              })}
                             />
                           </div>
                           {errors.confirmPassword &&
@@ -145,7 +193,11 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                         >
                           <ArrowDownTrayIcon className="size-7 mr-2" />
                           <span>
-                            {isSubmitting ? 'Saving...' : 'Save changes'}
+                            {isSubmitting ? (
+                              <FormattedMessage id="common.saving" />
+                            ) : (
+                              <FormattedMessage id="common.saveChanges" />
+                            )}
                           </span>
                         </Button>
                       </div>

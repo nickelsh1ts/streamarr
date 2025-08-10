@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface InviteShareModalProps {
   show: boolean;
@@ -27,6 +28,7 @@ const InviteShareModal = ({
   onCreate,
   onCancel,
 }: InviteShareModalProps) => {
+  const intl = useIntl();
   const { user: currentUser, hasPermission } = useUser();
   const { currentSettings } = useSettings();
   const [isCopied, setIsCopied] = useState(false);
@@ -57,7 +59,7 @@ const InviteShareModal = ({
         setQrCodeBlobUrl(url);
       } catch (e) {
         Toast({
-          title: 'Error fetching QR code:',
+          title: intl.formatMessage({ id: 'inviteShare.qrCodeError' }),
           type: 'error',
           message: e.message,
           icon: <XCircleIcon className="size-7" />,
@@ -68,7 +70,7 @@ const InviteShareModal = ({
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [invite?.id, invite?.icode, isNew, show]);
+  }, [invite?.id, invite?.icode, isNew, show, intl]);
 
   const handleShare = async () => {
     if (!invite?.id || !invite?.icode) return;
@@ -112,15 +114,24 @@ const InviteShareModal = ({
           `${shareSubject}\n${shareText}\nQR: ${inviteUrl}`
         );
         Toast({
-          title: 'Invite link copied!',
+          title: intl.formatMessage({
+            id: 'inviteShare.linkCopied',
+            defaultMessage: 'Invite link copied to clipboard!',
+          }),
           type: 'success',
-          message: 'Share it with your friends!',
+          message: intl.formatMessage({
+            id: 'inviteShare.shareWithFriends',
+            defaultMessage: 'Share it with your friends!',
+          }),
           icon: <CheckIcon className="size-7" />,
         });
       }
     } catch (e) {
       Toast({
-        title: 'Failed to share QR code',
+        title: intl.formatMessage({
+          id: 'inviteShare.qrShareError',
+          defaultMessage: 'Failed to share QR code',
+        }),
         type: 'error',
         message: e?.message,
         icon: <XCircleIcon className="size-7" />,
@@ -136,10 +147,30 @@ const InviteShareModal = ({
         handleShare();
         onCancel();
       }}
-      okText={loadingShare ? 'Sharing...' : 'Share Invite'}
+      okText={
+        loadingShare
+          ? intl.formatMessage({
+              id: 'inviteShare.sharing',
+              defaultMessage: 'Sharing...',
+            })
+          : intl.formatMessage({
+              id: 'invite.shareInvite',
+              defaultMessage: 'Share Invite',
+            })
+      }
       okButtonType="primary"
       okDisabled={loadingShare}
-      secondaryText={isNew ? 'Create Another' : 'Cancel'}
+      secondaryText={
+        isNew
+          ? intl.formatMessage({
+              id: 'inviteShare.createAnother',
+              defaultMessage: 'Create Another',
+            })
+          : intl.formatMessage({
+              id: 'common.cancel',
+              defaultMessage: 'Cancel',
+            })
+      }
       secondaryButtonType="default"
       secondaryDisabled={
         isNew
@@ -155,10 +186,21 @@ const InviteShareModal = ({
       }
       onSecondary={isNew ? onCreate : onCancel}
       onCancel={onCancel}
-      title={isNew ? 'Invite Created' : 'Share Your Invite'}
-      subtitle={
-        'Share this invite link or QR code with your friends to have them signup!'
+      title={
+        isNew
+          ? intl.formatMessage({
+              id: 'inviteShare.inviteCreated',
+              defaultMessage: 'Invite Created',
+            })
+          : intl.formatMessage({
+              id: 'inviteShare.shareYourInvite',
+              defaultMessage: 'Share Your Invite',
+            })
       }
+      subtitle={intl.formatMessage({
+        id: 'inviteShare.shareDescription',
+        defaultMessage: 'Share this invite link or QR code with your friends!',
+      })}
     >
       <div className="gap-y-4 border-t border-primary pt-4">
         <div className="text-center gap-y-4">
@@ -166,14 +208,20 @@ const InviteShareModal = ({
             <>
               <CheckIcon className="inline-block size-12 text-success" />
               <p className="text-lg mb-2">
-                Successfully generated a new invite!
+                <FormattedMessage
+                  id="inviteShare.successMessage"
+                  defaultMessage="Successfully generated a new invite!"
+                />
               </p>
             </>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={qrCodeBlobUrl}
-              alt="Invite QR Code"
+              alt={intl.formatMessage({
+                id: 'inviteShare.qrCodeAlt',
+                defaultMessage: 'Invite QR Code',
+              })}
               width={228}
               height={228}
               className="mx-auto mb-4"
@@ -188,7 +236,10 @@ const InviteShareModal = ({
             />
             <CopyButton
               textToCopy={`${currentSettings?.applicationUrl}/signup?icode=${invite?.icode}`}
-              itemTitle="Invite Link"
+              itemTitle={intl.formatMessage({
+                id: 'inviteShare.inviteLink',
+                defaultMessage: 'Invite Link',
+              })}
               size="md"
               onCopy={() => setIsCopied(true)}
             />

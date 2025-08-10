@@ -2,6 +2,7 @@
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -14,6 +15,7 @@ import useSWR from 'swr';
 import * as Yup from 'yup';
 
 const ServicesDownloads = () => {
+  const intl = useIntl();
   const { data: dataDownloads, mutate: revalidateDownloads } =
     useSWR<ServiceSettings>('/api/v1/settings/downloads');
 
@@ -21,12 +23,16 @@ const ServicesDownloads = () => {
     urlBase: Yup.string()
       .test(
         'leading-slash',
-        'URL base must have a leading slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'URL must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -38,9 +44,17 @@ const ServicesDownloads = () => {
   return (
     <div className="max-w-6xl mb-10">
       <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">Downloads Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="servicesSettings.downloads.title"
+            defaultMessage={'Downloads Settings'}
+          />
+        </h3>
         <p className="mb-5">
-          Optionally configure the settings for your Downloads server.
+          <FormattedMessage
+            id="servicesSettings.downloads.description"
+            defaultMessage={'Configure the settings for the downloads service.'}
+          />
         </p>
       </div>
       <Formik
@@ -63,13 +77,23 @@ const ServicesDownloads = () => {
             } as ServiceSettings);
 
             Toast({
-              title: 'Downloads settings saved successfully!',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                },
+                { appname: 'Downloads' }
+              ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving Downloads settings.',
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                },
+                { appname: 'Downloads' }
+              ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
@@ -91,7 +115,8 @@ const ServicesDownloads = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="service">
-                  Enable Downloads<span className="ml-1 text-error">*</span>
+                  <FormattedMessage id="common.settingsEnable" />
+                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -114,7 +139,7 @@ const ServicesDownloads = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -139,7 +164,7 @@ const ServicesDownloads = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -162,7 +187,9 @@ const ServicesDownloads = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">Use SSL</label>
+                <label htmlFor="useSsl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -176,7 +203,9 @@ const ServicesDownloads = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">URL Base</label>
+                <label htmlFor="urlBase">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -202,7 +231,13 @@ const ServicesDownloads = () => {
                     disabled={isSubmitting || !isValid}
                   >
                     <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

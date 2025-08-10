@@ -32,6 +32,8 @@ import axios from 'axios';
 import Toast from '@app/components/Toast';
 import type Invite from '@server/entity/Invite';
 import { InviteStatus } from '@server/constants/invite';
+import { useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 interface InviteModalProps {
   invite: Invite | null;
@@ -46,6 +48,7 @@ const InviteModal = ({
   onCancel,
   invite,
 }: InviteModalProps) => {
+  const intl = useIntl();
   const searchParams = useParams<{ userid: string }>();
   const { user } = useUser({
     id: Number(searchParams.userid),
@@ -108,7 +111,7 @@ const InviteModal = ({
         const buttonRect = buttonRef.current.getBoundingClientRect();
         const spaceBelow = window.innerHeight - buttonRect.bottom;
         const spaceAbove = buttonRect.top;
-        const margin = 8; // 0.5rem = 8px
+        const margin = 8;
         if (dropdownRect.height > spaceBelow && spaceAbove > spaceBelow) {
           setDropdownPos((prev) => ({
             ...prev,
@@ -201,7 +204,10 @@ const InviteModal = ({
           if (invite) {
             await axios.put(`/api/v1/invite/${invite.id}`, submission);
             Toast({
-              title: `Invite Updated Successfully!`,
+              title: intl.formatMessage({
+                id: 'invite.updatedSuccessfully',
+                defaultMessage: 'Invite updated successfully!',
+              }),
               icon: <CheckBadgeIcon className="size-7" />,
               type: 'success',
             });
@@ -209,7 +215,10 @@ const InviteModal = ({
           } else {
             const response = await axios.post('/api/v1/invite', submission);
             Toast({
-              title: `Invite Created Successfully!`,
+              title: intl.formatMessage({
+                id: 'invite.createdSuccessfully',
+                defaultMessage: 'Invite created successfully!',
+              }),
               icon: <CheckBadgeIcon className="size-7" />,
               type: 'success',
             });
@@ -217,7 +226,15 @@ const InviteModal = ({
           }
         } catch (e) {
           Toast({
-            title: `Something went wrong while ${invite ? 'updating' : 'creating'} the invite.`,
+            title: intl.formatMessage(
+              {
+                id: 'invite.error',
+                defaultMessage: `Something went wrong while {action} the invite.`,
+              },
+              {
+                action: invite ? 'updating' : 'creating',
+              }
+            ),
             message: e.message,
             icon: <XCircleIcon className="size-7" />,
             type: 'error',
@@ -236,10 +253,17 @@ const InviteModal = ({
                 { type: 'or' }
               ) || !invite
                 ? isSubmitting
-                  ? 'Saving...'
+                  ? intl.formatMessage({
+                      id: 'common.saving',
+                    })
                   : invite
-                    ? 'Save Changes'
-                    : 'Create Invite'
+                    ? intl.formatMessage({
+                        id: 'common.saveChanges',
+                      })
+                    : intl.formatMessage({
+                        id: 'invite.create',
+                        defaultMessage: 'Create Invite',
+                      })
                 : null
             }
             okButtonType={
@@ -251,17 +275,29 @@ const InviteModal = ({
                 : null
             }
             okDisabled={isSubmitting || !isValid}
-            cancelText="Cancel"
+            cancelText={intl.formatMessage({
+              id: 'common.cancel',
+              defaultMessage: 'Cancel',
+            })}
             cancelButtonType="default"
             show={show}
             onOk={() => handleSubmit()}
             onCancel={onCancel}
-            title="Create an Invite"
+            title={intl.formatMessage({
+              id: 'invite.createTitle',
+              defaultMessage: 'Create an Invite',
+            })}
             secondaryText={
               invite && invite.status === InviteStatus.ACTIVE
-                ? 'Disable Invite'
+                ? intl.formatMessage({
+                    id: 'invite.disable',
+                    defaultMessage: 'Disable Invite',
+                  })
                 : invite && invite.status === InviteStatus.INACTIVE
-                  ? 'Enable Invite'
+                  ? intl.formatMessage({
+                      id: 'invite.enable',
+                      defaultMessage: 'Enable Invite',
+                    })
                   : null
             }
             secondaryButtonType={
@@ -275,7 +311,6 @@ const InviteModal = ({
               invite
                 ? async () => {
                     if (!invite) return;
-                    console.log(invite.status);
                     const newStatus =
                       invite.status === InviteStatus.ACTIVE
                         ? 'inactive'
@@ -285,15 +320,29 @@ const InviteModal = ({
                         `/api/v1/invite/${invite.id}/${newStatus}`
                       );
                       Toast({
-                        title: `Invite ${invite.status === InviteStatus.ACTIVE ? 'Disabled' : 'Enabled'} Successfully!`,
+                        title: intl.formatMessage(
+                          {
+                            id: 'invite.statusChanged',
+                            defaultMessage: `Invite {status} Successfully!`,
+                          },
+                          {
+                            status:
+                              invite.status === InviteStatus.ACTIVE
+                                ? 'Disabled'
+                                : 'Enabled',
+                          }
+                        ),
                         icon: <CheckBadgeIcon className="size-7" />,
                         type: 'success',
                       });
                       onComplete();
                     } catch (e) {
                       Toast({
-                        title:
-                          'Something went wrong while disabling the invite.',
+                        title: intl.formatMessage({
+                          id: 'invite.disabledError',
+                          defaultMessage:
+                            'Something went wrong while disabling the invite.',
+                        }),
                         message: e.message,
                         icon: <XCircleIcon className="size-7" />,
                         type: 'error',
@@ -312,9 +361,19 @@ const InviteModal = ({
                     htmlFor="icode"
                     className="block text-sm font-medium leading-6 text-left"
                   >
-                    Invite Code{' '}
+                    <FormattedMessage
+                      id="invite.code"
+                      defaultMessage="Invite Code"
+                    />
                     {invite ? null : (
-                      <span className="text-neutral-500">(optional)</span>
+                      <span className="text-neutral-500">
+                        (
+                        <FormattedMessage
+                          id="common.optional"
+                          defaultMessage="optional"
+                        />
+                        )
+                      </span>
                     )}
                   </label>
                   <div className="">
@@ -333,11 +392,20 @@ const InviteModal = ({
                     htmlFor="inviteExpiryLimit"
                     className="block text-sm font-medium leading-6 text-left"
                   >
-                    Expiration
+                    <FormattedMessage
+                      id="invite.expiration"
+                      defaultMessage="Expiration"
+                    />
                   </label>
                   <div className="space-x-2">
                     <span>
-                      Expires {values.inviteExpiryLimit > 0 && 'after'}
+                      <FormattedMessage id="common.expires" />{' '}
+                      {values.inviteExpiryLimit > 0 && (
+                        <FormattedMessage
+                          id="common.after"
+                          defaultMessage="after"
+                        />
+                      )}
                     </span>
                     <Field
                       as="select"
@@ -360,7 +428,12 @@ const InviteModal = ({
                         )
                       }
                     >
-                      <option value={0}>Never</option>
+                      <option value={0}>
+                        <FormattedMessage
+                          id="common.never"
+                          defaultMessage="Never"
+                        />
+                      </option>
                       {[...Array(100)].map((_item, i) => (
                         <option value={i + 1} key={`$invite-expiry-${i + 1}`}>
                           {i + 1}
@@ -387,13 +460,25 @@ const InviteModal = ({
                         }
                       >
                         <option value={'days'}>
-                          Day{values.inviteExpiryLimit > 1 && 's'}
+                          <FormattedMessage
+                            id="invite.timeUnit.day"
+                            defaultMessage="{count, plural, one {Day} other {Days}}"
+                            values={{ count: values.inviteExpiryLimit }}
+                          />
                         </option>
                         <option value={'weeks'}>
-                          Week{values.inviteExpiryLimit > 1 && 's'}
+                          <FormattedMessage
+                            id="invite.timeUnit.week"
+                            defaultMessage="{count, plural, one {Week} other {Weeks}}"
+                            values={{ count: values.inviteExpiryLimit }}
+                          />
                         </option>
                         <option value={'months'}>
-                          Month{values.inviteExpiryLimit > 1 && 's'}
+                          <FormattedMessage
+                            id="invite.timeUnit.month"
+                            defaultMessage="{count, plural, one {Month} other {Months}}"
+                            values={{ count: values.inviteExpiryLimit }}
+                          />
                         </option>
                       </Field>
                     )}
@@ -405,7 +490,10 @@ const InviteModal = ({
                 ) && (
                   <>
                     <div className="text-sm font-medium leading-6">
-                      Advanced Settings
+                      <FormattedMessage
+                        id="invite.advancedSettings"
+                        defaultMessage="Advanced Settings"
+                      />
                       <div className="divider divider-primary my-0 col-span-full" />
                     </div>
                     <div className="space-y-2">
@@ -413,7 +501,10 @@ const InviteModal = ({
                         htmlFor="inviteUsageLimit"
                         className="block text-sm font-medium leading-6 text-left"
                       >
-                        Invite Usage Limit
+                        <FormattedMessage
+                          id="invite.usageLimit"
+                          defaultMessage="Invite Usage Limit"
+                        />
                       </label>
                       <Field
                         as="select"
@@ -427,7 +518,12 @@ const InviteModal = ({
                           )
                         }
                       >
-                        <option value={0}>Unlimited</option>
+                        <option value={0}>
+                          <FormattedMessage
+                            id="common.unlimited"
+                            defaultMessage="Unlimited"
+                          />
+                        </option>
                         {[...Array(100)].map((_item, i) => {
                           const value = i + 1;
                           if (invite && value < (invite.uses ?? 0)) return null;
@@ -442,10 +538,11 @@ const InviteModal = ({
                         })}
                       </Field>
                       <span className="ml-4">
-                        use
-                        {(values.inviteUsageLimit > 1 ||
-                          values.inviteUsageLimit < 1) &&
-                          's'}
+                        <FormattedMessage
+                          id="invite.usageUnit"
+                          defaultMessage="{count, plural, one {use} other {uses}}"
+                          values={{ count: values.inviteUsageLimit }}
+                        />
                       </span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 col-span-2 gap-2">
@@ -496,7 +593,12 @@ const InviteModal = ({
                             </span>
                           </span>
                         </span>
-                        <label htmlFor="downloads">Allow Downloads</label>
+                        <label htmlFor="downloads">
+                          <FormattedMessage
+                            id="invite.allowDownloads"
+                            defaultMessage="Allow Downloads"
+                          />
+                        </label>
                       </div>
                       <div className="inline-flex items-center space-x-2">
                         <span
@@ -543,7 +645,12 @@ const InviteModal = ({
                             </span>
                           </span>
                         </span>
-                        <label htmlFor="liveTv">Allow Live TV Access</label>
+                        <label htmlFor="liveTv">
+                          <FormattedMessage
+                            id="settings.allowLiveTv"
+                            defaultMessage="Allow Live TV Access"
+                          />
+                        </label>
                       </div>
                       {currentHasPermission(Permission.ADMIN) && (
                         <div className="inline-flex items-center space-x-2">
@@ -602,7 +709,10 @@ const InviteModal = ({
                             </span>
                           </span>
                           <label htmlFor="plexHome" className="ml-2">
-                            Invite to Plex Home
+                            <FormattedMessage
+                              id="invite.inviteToPlexHome"
+                              defaultMessage="Invite to Plex Home"
+                            />
                           </label>
                         </div>
                       )}
@@ -612,7 +722,10 @@ const InviteModal = ({
                         htmlFor="sharedLibraries"
                         className="block text-sm my-0 font-medium leading-6 text-left"
                       >
-                        Shared Libraries
+                        <FormattedMessage
+                          id="invite.sharedLibraries"
+                          defaultMessage="Shared Libraries"
+                        />
                       </label>
                       <div className="col-span-2">
                         <LibrarySelector
@@ -643,7 +756,10 @@ const InviteModal = ({
                             return (
                               <>
                                 <Label className="block text-sm font-medium leading-6 text-left">
-                                  Invite As
+                                  <FormattedMessage
+                                    id="invite.inviteAs"
+                                    defaultMessage="Invite As"
+                                  />
                                 </Label>
                                 <div className="relative">
                                   <span className="inline-block w-full relative rounded-md shadow-sm">

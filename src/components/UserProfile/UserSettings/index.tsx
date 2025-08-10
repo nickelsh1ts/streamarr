@@ -8,9 +8,11 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import { useParams, usePathname } from 'next/navigation';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
+  const intl = useIntl();
   const settings = useSettings();
   const { user: currentUser } = useUser();
   const params = useParams<{ userid: string }>();
@@ -32,12 +34,18 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
 
   const computedRoutes = [
     {
-      text: 'General',
+      text: intl.formatMessage({
+        id: 'sidebar.general',
+        defaultMessage: 'General',
+      }),
       route: '/settings/general',
       regex: /\/settings(\/general)?$/,
     },
     {
-      text: 'Password',
+      text: intl.formatMessage({
+        id: 'common.password',
+        defaultMessage: 'Password',
+      }),
       route: '/settings/password',
       regex: /\/settings\/password/,
       hidden:
@@ -48,14 +56,20 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
           hasPermission(Permission.ADMIN, user?.permissions ?? 0)),
     },
     {
-      text: 'Notifications',
+      text: intl.formatMessage({
+        id: 'settings.notifications',
+        defaultMessage: 'Notifications',
+      }),
       route: data?.emailEnabled
         ? '/settings/notifications/email'
         : '/settings/notifications/webpush',
       regex: /\/settings\/notifications/,
     },
     {
-      text: 'Permissions',
+      text: intl.formatMessage({
+        id: 'settings.permissions',
+        defaultMessage: 'Permissions',
+      }),
       route: '/settings/permissions',
       regex: /\/settings\/permissions/,
       requiredPermission: Permission.MANAGE_USERS,
@@ -73,7 +87,11 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
       <>
         <div className="mt-6">
           <Alert
-            title={"You do not have permission to modify this user's settings."}
+            title={intl.formatMessage({
+              id: 'settings.permissions.error',
+              defaultMessage:
+                "You do not have permission to modify this user's settings.",
+            })}
             type="error"
           />
         </div>

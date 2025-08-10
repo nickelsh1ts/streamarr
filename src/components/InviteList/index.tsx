@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { Permission } from '@server/lib/permissions';
 import { useUser } from '@app/hooks/useUser';
+import { FormattedMessage, useIntl } from 'react-intl';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import useSWR from 'swr';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -80,6 +81,7 @@ const InviteList = () => {
     id: Number(userQuery?.userid),
   });
   const { user: currentUser, hasPermission } = useUser();
+  const intl = useIntl();
   const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
   const [currentSort, setCurrentSort] = useState<Sort>('created');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
@@ -125,13 +127,19 @@ const InviteList = () => {
       await axios.delete(`/api/v1/invite/${inviteId}/qrcode`);
       await axios.delete(`/api/v1/invite/${inviteId}`);
       Toast({
-        title: 'Invite Deleted Successfully',
+        title: intl.formatMessage({
+          id: 'inviteList.inviteDeletedSuccess',
+          defaultMessage: 'Invite Deleted Successfully',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
     } catch (e) {
       Toast({
-        title: 'Something went wrong while deleting the invite.',
+        title: intl.formatMessage({
+          id: 'inviteList.inviteDeleteError',
+          defaultMessage: 'Something went wrong while deleting the invite.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -201,12 +209,20 @@ const InviteList = () => {
                   <span className="font-semibold">
                     {quota?.invite.remaining} / {quota?.invite.limit}
                   </span>{' '}
-                  remaining
+                  <FormattedMessage
+                    id="common.remaining"
+                    defaultMessage="remaining"
+                  />
                 </div>
               </span>
             ) : (
               <span className="font-semibold">
-                {quota?.invite.limit === -1 ? 'Unlimited' : 'No invites left'}
+                {quota?.invite.limit === -1 && (
+                  <FormattedMessage
+                    id="common.unlimited"
+                    defaultMessage="Unlimited"
+                  />
+                )}
               </span>
             )}
           </div>,
@@ -228,12 +244,20 @@ const InviteList = () => {
                   <span className="font-semibold">
                     {quota?.invite.remaining} of {quota?.invite.limit}
                   </span>{' '}
-                  remaining
+                  <FormattedMessage
+                    id="common.remaining"
+                    defaultMessage="remaining"
+                  />
                 </div>
               </div>
             ) : (
               <span className="font-semibold">
-                {quota?.invite.limit === -1 ? 'Unlimited' : 'No invites left'}
+                {quota?.invite.limit === -1 && (
+                  <FormattedMessage
+                    id="common.unlimited"
+                    defaultMessage="Unlimited"
+                  />
+                )}
               </span>
             )}
           </>,
@@ -250,7 +274,10 @@ const InviteList = () => {
               </div>
             ))}
           >
-            Invite a Friend
+            <FormattedMessage
+              id="inviteList.inviteAFriend"
+              defaultMessage="Invite a Friend"
+            />
           </Header>
           <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
             <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
@@ -266,11 +293,33 @@ const InviteList = () => {
                 }}
                 className="select select-sm select-primary rounded-l-none w-full flex-1"
               >
-                <option value="all">All</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="expired">Expired</option>
-                <option value="redeemed">Redeemed</option>
+                <option value="all">
+                  <FormattedMessage id="common.all" defaultMessage="All" />
+                </option>
+                <option value="active">
+                  <FormattedMessage
+                    id="common.active"
+                    defaultMessage="Active"
+                  />
+                </option>
+                <option value="inactive">
+                  <FormattedMessage
+                    id="common.inactive"
+                    defaultMessage="Inactive"
+                  />
+                </option>
+                <option value="expired">
+                  <FormattedMessage
+                    id="common.expired"
+                    defaultMessage="Expired"
+                  />
+                </option>
+                <option value="redeemed">
+                  <FormattedMessage
+                    id="common.redeemed"
+                    defaultMessage="Redeemed"
+                  />
+                </option>
               </select>
             </div>
             <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0 sm:mr-2">
@@ -286,8 +335,18 @@ const InviteList = () => {
                 value={currentSort}
                 className="select select-sm select-primary rounded-l-none block w-full flex-1"
               >
-                <option value="created">Most Recent</option>
-                <option value="modified">Last Modified</option>
+                <option value="created">
+                  <FormattedMessage
+                    id="inviteList.sortMostRecent"
+                    defaultMessage="Most Recent"
+                  />
+                </option>
+                <option value="modified">
+                  <FormattedMessage
+                    id="inviteList.sortLastModified"
+                    defaultMessage="Last Modified"
+                  />
+                </option>
               </select>
             </div>
             <Button
@@ -305,7 +364,10 @@ const InviteList = () => {
                 !currentSettings?.enableSignUp
               }
             >
-              Create Invite
+              <FormattedMessage
+                id="invite.create"
+                defaultMessage="Create Invite"
+              />
             </Button>
           </div>
         </div>
@@ -347,10 +409,18 @@ const InviteList = () => {
         />
         <div className="mt-4 w-full">
           {!currentSettings?.enableSignUp && (
-            <Alert type="warning" title="Sign Up Disabled">
+            <Alert
+              type="warning"
+              title={intl.formatMessage({
+                id: 'inviteList.signUpDisabled',
+                defaultMessage: 'Sign Up Disabled',
+              })}
+            >
               <p className="ml-3 text-sm leading-5">
-                The admin has currently disabled the sign up feature. No new
-                invites can be created.
+                <FormattedMessage
+                  id="inviteList.signUpDisabledMessage"
+                  defaultMessage="The admin has currently disabled the sign up feature. No new invites can be created."
+                />
               </p>
             </Alert>
           )}
@@ -379,7 +449,12 @@ const InviteList = () => {
       </div>
       {data?.results.length === 0 && (
         <div className="flex flex-col items-center justify-center p-6 md:w-full">
-          <span className="text-base">No Results</span>
+          <span className="text-base">
+            <FormattedMessage
+              id="common.noResults"
+              defaultMessage="No Results"
+            />
+          </span>
           {currentFilter !== Filter.ALL && (
             <div className="mt-4">
               <Button
@@ -387,7 +462,10 @@ const InviteList = () => {
                 buttonType="primary"
                 onClick={() => setCurrentFilter(Filter.ALL)}
               >
-                Show All
+                <FormattedMessage
+                  id="common.showAll"
+                  defaultMessage="Show All"
+                />
               </Button>
             </div>
           )}
@@ -400,33 +478,48 @@ const InviteList = () => {
         >
           <div className="hidden lg:flex lg:flex-1">
             <p className="text-sm">
-              {(data?.results.length ?? 0) > 0 &&
-                `Showing ${pageIndex * currentPageSize + 1} to ${
-                  (data?.results.length ?? 0 < currentPageSize)
-                    ? pageIndex * currentPageSize + (data?.results.length ?? 0)
-                    : (pageIndex + 1) * currentPageSize
-                } of ${data?.pageInfo.results ?? 0} results`}
+              {(data?.results.length ?? 0) > 0 && (
+                <FormattedMessage
+                  id="common.showingResults"
+                  defaultMessage="Showing {start} to {end} of {total} results"
+                  values={{
+                    start: pageIndex * currentPageSize + 1,
+                    end:
+                      (data?.results.length ?? 0 < currentPageSize)
+                        ? pageIndex * currentPageSize +
+                          (data?.results.length ?? 0)
+                        : (pageIndex + 1) * currentPageSize,
+                    total: data?.pageInfo.results ?? 0,
+                  }}
+                />
+              )}
             </p>
           </div>
           <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
             <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
-              Display
-              <select
-                id="pageSize"
-                name="pageSize"
-                onChange={(e) => {
-                  setCurrentPageSize(Number(e.target.value));
+              <FormattedMessage
+                id="common.resultsDisplay"
+                defaultMessage="Display {select} results per page"
+                values={{
+                  select: (
+                    <select
+                      id="pageSize"
+                      name="pageSize"
+                      onChange={(e) => {
+                        setCurrentPageSize(Number(e.target.value));
+                      }}
+                      value={currentPageSize}
+                      className="select select-sm select-primary mx-1"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  ),
                 }}
-                value={currentPageSize}
-                className="select select-sm select-primary mx-1"
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              results per page
+              />
             </span>
           </div>
           <div className="flex flex-auto justify-center space-x-2 sm:flex-1 sm:justify-end">
@@ -437,7 +530,12 @@ const InviteList = () => {
               onClick={() => updateQueryParams('page', (page - 1).toString())}
             >
               <ChevronLeftIcon className="size-5" />
-              <span>Previous</span>
+              <span>
+                <FormattedMessage
+                  id="common.previous"
+                  defaultMessage="Previous"
+                />
+              </span>
             </Button>
             <Button
               buttonSize="sm"
@@ -445,7 +543,9 @@ const InviteList = () => {
               disabled={!hasNextPage}
               onClick={() => updateQueryParams('page', (page + 1).toString())}
             >
-              <span>Next</span>
+              <span>
+                <FormattedMessage id="common.next" defaultMessage="Next" />
+              </span>
               <ChevronRightIcon className="size-5" />
             </Button>
           </div>

@@ -19,9 +19,10 @@ import type {
 } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import cronstrue from 'cronstrue';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { useEffect, useReducer, useState } from 'react';
 import useSWR from 'swr';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 interface Job {
   id: string;
@@ -79,6 +80,7 @@ const jobModalReducer = (
 };
 
 const JobsCacheSettings = () => {
+  const intl = useIntl();
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -116,7 +118,20 @@ const JobsCacheSettings = () => {
   const runJob = async (job: Job) => {
     await axios.post(`/api/v1/settings/jobs/${job.id}/run`);
     Toast({
-      title: `${job.name ?? 'Unknown Job'} Started`,
+      title: intl.formatMessage(
+        {
+          id: 'jobs.started',
+          defaultMessage: '{jobName} Started',
+        },
+        {
+          jobName:
+            job.name ??
+            intl.formatMessage({
+              id: 'jobs.unknownJob',
+              defaultMessage: 'Unknown Job',
+            }),
+        }
+      ),
       type: 'success',
       icon: <CheckBadgeIcon className="size-7" />,
     });
@@ -126,7 +141,20 @@ const JobsCacheSettings = () => {
   const cancelJob = async (job: Job) => {
     await axios.post(`/api/v1/settings/jobs/${job.id}/cancel`);
     Toast({
-      title: `${job.name ?? 'Unknown Job'} Canceled`,
+      title: intl.formatMessage(
+        {
+          id: 'jobs.canceled',
+          defaultMessage: '{jobName} Canceled',
+        },
+        {
+          jobName:
+            job.name ??
+            intl.formatMessage({
+              id: 'jobs.unknownJob',
+              defaultMessage: 'Unknown Job',
+            }),
+        }
+      ),
       type: 'error',
       icon: <XCircleIcon className="size-7" />,
     });
@@ -136,7 +164,13 @@ const JobsCacheSettings = () => {
   const flushCache = async (cache: CacheItem) => {
     await axios.post(`/api/v1/settings/cache/${cache.id}/flush`);
     Toast({
-      title: `${cache.name} cache flushed.`,
+      title: intl.formatMessage(
+        {
+          id: 'cache.flushed',
+          defaultMessage: '{cacheName} cache flushed.',
+        },
+        { cacheName: cache.name }
+      ),
       type: 'success',
       icon: <CheckBadgeIcon className="size-7" />,
     });
@@ -167,7 +201,10 @@ const JobsCacheSettings = () => {
       );
 
       Toast({
-        title: 'Job Edited Successfully!',
+        title: intl.formatMessage({
+          id: 'jobs.editSuccess',
+          defaultMessage: 'Job Edited Successfully!',
+        }),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
@@ -176,7 +213,10 @@ const JobsCacheSettings = () => {
       revalidate();
     } catch {
       Toast({
-        title: 'Something went wrong while saving the job.',
+        title: intl.formatMessage({
+          id: 'jobs.editError',
+          defaultMessage: 'Something went wrong while saving the job.',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
@@ -188,8 +228,19 @@ const JobsCacheSettings = () => {
   return (
     <>
       <Modal
-        title={'Modify Job'}
-        okText={isSaving ? 'Saving...' : 'Save Changes'}
+        title={intl.formatMessage({
+          id: 'jobs.modifyTitle',
+          defaultMessage: 'Modify Job',
+        })}
+        okText={
+          isSaving
+            ? intl.formatMessage({
+                id: 'common.saving',
+              })
+            : intl.formatMessage({
+                id: 'common.saveChanges',
+              })
+        }
         onCancel={() => dispatch({ type: 'close' })}
         okDisabled={isSaving}
         onOk={() => scheduleJob()}
@@ -198,7 +249,12 @@ const JobsCacheSettings = () => {
         <div className="mt-5 max-w-6xl space-y-5">
           <form className="mb-6 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-              <label htmlFor="frequency">Current Frequency</label>
+              <label htmlFor="frequency">
+                <FormattedMessage
+                  id="jobs.currentFrequency"
+                  defaultMessage="Current Frequency"
+                />
+              </label>
               <div id="frequency" className="col-span-2 mt-2 mb-1">
                 <div>
                   {jobModalState.job &&
@@ -210,7 +266,12 @@ const JobsCacheSettings = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-              <label htmlFor="jobSchedule">New Frequency</label>
+              <label htmlFor="jobSchedule">
+                <FormattedMessage
+                  id="jobs.newFrequency"
+                  defaultMessage="New Frequency"
+                />
+              </label>
               <div className="col-span-2">
                 {jobModalState.job?.interval === 'seconds' ? (
                   <select
@@ -226,7 +287,11 @@ const JobsCacheSettings = () => {
                   >
                     {[30, 45, 60].map((v) => (
                       <option value={v} key={`jobScheduleSeconds-${v}`}>
-                        {`Every ${v} second${v > 1 ? 's' : ''}`}
+                        <FormattedMessage
+                          id="jobs.everySeconds"
+                          defaultMessage="Every {count, plural, one {# second} other {# seconds}}"
+                          values={{ count: v }}
+                        />
                       </option>
                     ))}
                   </select>
@@ -244,7 +309,11 @@ const JobsCacheSettings = () => {
                   >
                     {[5, 10, 15, 20, 30, 60].map((v) => (
                       <option value={v} key={`jobScheduleMinutes-${v}`}>
-                        {`Every ${v} minute${v > 1 ? 's' : ''}`}
+                        <FormattedMessage
+                          id="jobs.everyMinutes"
+                          defaultMessage="Every {count, plural, one {# minute} other {# minutes}}"
+                          values={{ count: v }}
+                        />
                       </option>
                     ))}
                   </select>
@@ -262,7 +331,11 @@ const JobsCacheSettings = () => {
                   >
                     {[1, 2, 3, 4, 6, 8, 12, 24, 48, 72].map((v) => (
                       <option value={v} key={`jobScheduleHours-${v}`}>
-                        {`Every ${v > 1 ? v : ''} hour${v > 1 ? 's' : ''}`}
+                        <FormattedMessage
+                          id="jobs.everyHours"
+                          defaultMessage="Every {count, plural, one {hour} other {# hours}}"
+                          values={{ count: v }}
+                        />
                       </option>
                     ))}
                   </select>
@@ -273,18 +346,33 @@ const JobsCacheSettings = () => {
         </div>
       </Modal>
       <div className="mt-6">
-        <h3 className="text-2xl font-extrabold">Jobs</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage id="jobs.title" defaultMessage="Jobs" />
+        </h3>
         <p className="mb-5">
-          Streamarr performs certain maintenance tasks as regularly-scheduled
-          jobs, but they can also be manually triggered below. Manually running
-          a job will not alter its schedule.
+          <FormattedMessage
+            id="jobs.description"
+            defaultMessage="Streamarr performs certain maintenance tasks as regularly-scheduled jobs, but they can also be manually triggered below. Manually running a job will not alter its schedule."
+          />
         </p>
         <Table>
           <thead>
             <tr>
-              <Table.TH>Job Name</Table.TH>
-              <Table.TH>Type</Table.TH>
-              <Table.TH>Next Execution</Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="jobs.table.jobName"
+                  defaultMessage="Job Name"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage id="common.type" defaultMessage="Type" />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="jobs.table.nextExecution"
+                  defaultMessage="Next Execution"
+                />
+              </Table.TH>
               <Table.TH></Table.TH>
             </tr>
           </thead>
@@ -293,7 +381,13 @@ const JobsCacheSettings = () => {
               <tr key={`job-list-${job.id}`}>
                 <Table.TD>
                   <div className="flex items-center text-sm leading-5 text-white">
-                    <span>{job.name ?? 'Unknown Job'}</span>
+                    <span>
+                      {job.name ??
+                        intl.formatMessage({
+                          id: 'jobs.unknownJob',
+                          defaultMessage: 'Unknown Job',
+                        })}
+                    </span>
                     {job.running && <LoadingEllipsis />}
                   </div>
                 </Table.TD>
@@ -302,7 +396,17 @@ const JobsCacheSettings = () => {
                     badgeType={job.type === 'process' ? 'primary' : 'warning'}
                     className="uppercase"
                   >
-                    {job.type === 'process' ? 'Process' : 'Command'}
+                    {job.type === 'process' ? (
+                      <FormattedMessage
+                        id="jobs.type.process"
+                        defaultMessage="Process"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="jobs.type.command"
+                        defaultMessage="Command"
+                      />
+                    )}
                   </Badge>
                 </Table.TD>
                 <Table.TD>
@@ -320,7 +424,10 @@ const JobsCacheSettings = () => {
                       onClick={() => dispatch({ type: 'open', job })}
                     >
                       <PencilIcon className="size-5 mr-2" />
-                      Edit
+                      <FormattedMessage
+                        id="common.edit"
+                        defaultMessage="Edit"
+                      />
                     </Button>
                   )}
                   {job.running ? (
@@ -331,7 +438,10 @@ const JobsCacheSettings = () => {
                       onClick={() => cancelJob(job)}
                     >
                       <StopIcon className="size-5 mr-2" />
-                      Cancel Job
+                      <FormattedMessage
+                        id="jobs.cancelJob"
+                        defaultMessage="Cancel Job"
+                      />
                     </Button>
                   ) : (
                     <Button
@@ -342,7 +452,10 @@ const JobsCacheSettings = () => {
                       onClick={() => runJob(job)}
                     >
                       <PlayIcon className="size-5 mr-2" />
-                      Run Now
+                      <FormattedMessage
+                        id="jobs.runNow"
+                        defaultMessage="Run Now"
+                      />
                     </Button>
                   )}
                 </Table.TD>
@@ -352,20 +465,51 @@ const JobsCacheSettings = () => {
         </Table>
       </div>
       <div className="my-6">
-        <h3 className="text-2xl font-extrabold">Cache</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage id="cache.title" defaultMessage="Cache" />
+        </h3>
         <p className="mb-5">
-          Streamarr caches requests to external API endpoints to optimize
-          performance and avoid making unnecessary API calls.
+          <FormattedMessage
+            id="cache.description"
+            defaultMessage="Streamarr caches requests to external API endpoints to optimize performance and avoid making unnecessary API calls."
+          />
         </p>
         <Table>
           <thead>
             <tr>
-              <Table.TH>Cache Name</Table.TH>
-              <Table.TH>Hits</Table.TH>
-              <Table.TH>Misses</Table.TH>
-              <Table.TH>Total keys</Table.TH>
-              <Table.TH>Key Size</Table.TH>
-              <Table.TH>Value Size</Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.cacheName"
+                  defaultMessage="Cache Name"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage id="cache.table.hits" defaultMessage="Hits" />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.misses"
+                  defaultMessage="Misses"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.totalKeys"
+                  defaultMessage="Total keys"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.keySize"
+                  defaultMessage="Key Size"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.valueSize"
+                  defaultMessage="Value Size"
+                />
+              </Table.TH>
               <Table.TH></Table.TH>
             </tr>
           </thead>
@@ -386,7 +530,10 @@ const JobsCacheSettings = () => {
                     onClick={() => flushCache(cache)}
                   >
                     <TrashIcon className="size-5 mr-2" />
-                    <span>Flush Cache</span>
+                    <FormattedMessage
+                      id="cache.flushCache"
+                      defaultMessage="Flush Cache"
+                    />
                   </Button>
                 </Table.TD>
               </tr>
@@ -395,23 +542,49 @@ const JobsCacheSettings = () => {
         </Table>
       </div>
       <div>
-        <h3 className="text-2xl font-extrabold">Image Cache</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="imageCache.title"
+            defaultMessage="Image Cache"
+          />
+        </h3>
         <p className="mb-5 overflow-hidden w-full">
-          Streamarr will proxy and cache images from pre-configured external
-          sources. Cached images are saved into your config folder. You can find
-          the files in{' '}
-          <code className="max-sm:block overflow-hidden text-ellipsis">
-            {appData ? appData.appDataPath : '/app/config'}/cache/images
-          </code>
+          <FormattedMessage
+            id="imageCache.description"
+            defaultMessage="Streamarr will proxy and cache images from pre-configured external sources. Cached images are saved into your config folder. You can find the files in <code>{cachePath}</code>"
+            values={{
+              cachePath: `${appData ? appData.appDataPath : '/app/config'}/cache/images`,
+              code: (chunks: React.ReactNode) => (
+                <code className="max-sm:block overflow-hidden text-ellipsis">
+                  {chunks}
+                </code>
+              ),
+            }}
+          />
         </p>
       </div>
       <div className="mb-10">
         <Table>
           <thead>
             <tr>
-              <Table.TH>Cache Name</Table.TH>
-              <Table.TH>Images Cached</Table.TH>
-              <Table.TH>Total Cache Size</Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="cache.table.cacheName"
+                  defaultMessage="Cache Name"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="imageCache.table.imagesCached"
+                  defaultMessage="Images Cached"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="imageCache.table.totalCacheSize"
+                  defaultMessage="Total Cache Size"
+                />
+              </Table.TH>
             </tr>
           </thead>
           <Table.TBody>
@@ -423,7 +596,12 @@ const JobsCacheSettings = () => {
               </Table.TD>
             </tr>
             <tr>
-              <Table.TD>Invite QR Codes</Table.TD>
+              <Table.TD>
+                <FormattedMessage
+                  id="imageCache.qrcode"
+                  defaultMessage="Invite QR Codes"
+                />
+              </Table.TD>
               <Table.TD>
                 {cacheData?.imageCache.qrcode?.imageCount ?? 0}
               </Table.TD>

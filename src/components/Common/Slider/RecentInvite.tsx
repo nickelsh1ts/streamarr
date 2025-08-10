@@ -6,10 +6,11 @@ import { withProperties } from '@app/utils/typeHelpers';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/solid';
 import { InviteStatus } from '@server/constants/invite';
 import type Invite from '@server/entity/Invite';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import useClipboard from 'react-use-clipboard';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const InviteCardPlaceholder = () => {
   return (
@@ -27,6 +28,7 @@ interface RecentInviteProps {
 
 const RecentInvite = ({ invite }: RecentInviteProps) => {
   const { hasPermission } = useUser();
+  const intl = useIntl();
   const [isCopied, setCopied] = useClipboard(invite?.icode ?? '', {
     successDuration: 1000,
   });
@@ -35,12 +37,18 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
     if (isCopied) {
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
-        title: 'Copied Invite Code to Clipboard!',
+        title: intl.formatMessage(
+          {
+            id: 'common.copied',
+            defaultMessage: 'Copied {item} to Clipboard!',
+          },
+          { item: 'Invite Code' }
+        ),
         message: invite?.icode,
         type: 'primary',
       });
     }
-  }, [invite?.icode, isCopied]);
+  }, [invite?.icode, isCopied, intl]);
 
   return (
     <div className="flex w-full justify-between flex-col border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
@@ -50,13 +58,15 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
             <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate">
               <p className="text-xs truncate w-full text-warning">
                 {invite?.expiresAt != null
-                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? 'Expires' : 'Expired'} ${moment(invite?.expiresAt).fromNow()}`
-                  : 'Never expires'}
+                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires' }) : intl.formatMessage({ id: 'invite.expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                  : intl.formatMessage({ id: 'invite.neverExpires' })}
               </p>
               <button
                 type="button"
                 className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 mb-2 align-top"
-                title="Click to copy invite code"
+                title={intl.formatMessage({
+                  id: 'invite.clickToCopy',
+                })}
                 tabIndex={0}
                 onClick={(e) => {
                   e.preventDefault();
@@ -85,26 +95,28 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                 <span className="truncate text-sm font-semibold">
                   {invite?.createdBy?.displayName ||
                     invite?.createdBy?.email ||
-                    'Unknown'}
+                    intl.formatMessage({ id: 'common.unknown' })}
                 </span>
               </span>
               <div className="py-1 flex items-center truncate leading-5">
-                <span className="font-extrabold mr-2">Status</span>
+                <span className="font-extrabold mr-2">
+                  <FormattedMessage id="common.status" />
+                </span>
                 {invite?.status === InviteStatus.ACTIVE ? (
                   <Badge badgeType="success" className="capitalize">
-                    Active
+                    <FormattedMessage id="common.active" />
                   </Badge>
                 ) : invite?.status === InviteStatus.EXPIRED ? (
                   <Badge badgeType="error" className="capitalize">
-                    Expired
+                    <FormattedMessage id="common.expired" />
                   </Badge>
                 ) : invite?.status === InviteStatus.REDEEMED ? (
                   <Badge badgeType="primary" className="capitalize">
-                    Redeemed
+                    <FormattedMessage id="common.redeemed" />
                   </Badge>
                 ) : (
                   <Badge badgeType="warning" className="capitalize">
-                    Inactive
+                    <FormattedMessage id="common.inactive" />
                   </Badge>
                 )}
               </div>
@@ -142,7 +154,10 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
       <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
         {Array.isArray(invite?.redeemedBy) && invite.redeemedBy.length > 0 ? (
           <div className="inline-flex items-center">
-            <span className="font-extrabold mr-2">Redeemed</span> by
+            <span className="font-extrabold mr-2">
+              <FormattedMessage id="common.redeemed" />
+            </span>
+            <FormattedMessage id="common.by" />
             <span className="ml-1 flex -space-x-2">
               {invite.redeemedBy.map((user, idx) =>
                 hasPermission(Permission.MANAGE_USERS) ? (
@@ -150,7 +165,11 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                     key={user?.id || idx}
                     href={`/admin/users/${user?.id}`}
                     className="group"
-                    title={user?.displayName || user?.email || 'Unknown'}
+                    title={
+                      user?.displayName ||
+                      user?.email ||
+                      intl.formatMessage({ id: 'common.unknown' })
+                    }
                   >
                     <CachedImage
                       src={user?.avatar}
@@ -163,7 +182,11 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                 ) : (
                   <span
                     key={user?.id || idx}
-                    title={user?.displayName || user?.email || 'Unknown'}
+                    title={
+                      user?.displayName ||
+                      user?.email ||
+                      intl.formatMessage({ id: 'common.unknown' })
+                    }
                   >
                     <CachedImage
                       src={user?.avatar}

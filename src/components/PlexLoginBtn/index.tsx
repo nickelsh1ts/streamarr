@@ -1,6 +1,7 @@
-import CachedImage from '@app/components/Common/CachedImage';
+import PlexLogo from '@app/assets/services/plex.svg';
 import PlexOAuth from '@app/utils/plex';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 const plexOAuth = new PlexOAuth();
 
@@ -43,19 +44,22 @@ const PlexLoginButton = ({
       >
         <span className="font-extrabold text-lg">
           {loading ? (
-            'loading...'
+            <FormattedMessage
+              id="common.loading"
+              defaultMessage="Loading..."
+            />
           ) : isProcessing ? (
-            'Signing In...'
+            <FormattedMessage
+              id="common.signingIn"
+              defaultMessage="Signing In..."
+            />
           ) : (
             <>
-              Sign In with{' '}
-              <CachedImage
-                alt="Plex"
-                src="https://www.plex.tv/wp-content/themes/plex/assets/img/plex-logo.svg"
-                className="inline-flex w-10 h-auto"
-                width={40}
-                height={40}
+              <FormattedMessage
+                id="plex.login.button"
+                defaultMessage="Sign in with"
               />
+              <PlexLogo className="inline-flex size-10 ml-2" />
             </>
           )}
         </span>

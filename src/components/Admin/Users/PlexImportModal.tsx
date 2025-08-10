@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import useSWR from 'swr';
 import { useUser, Permission } from '@app/hooks/useUser';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 interface PlexImportProps {
   onCancel?: () => void;
@@ -19,6 +20,7 @@ interface PlexImportProps {
 
 const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
   const { hasPermission } = useUser();
+  const intl = useIntl();
   const isAdmin = hasPermission(Permission.ADMIN);
   const settings = useSettings();
   const [isImporting, setImporting] = useState(false);
@@ -45,11 +47,23 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
       );
 
       if (!createdUsers.length) {
-        throw new Error('No users were imported from Plex.');
+        throw new Error(
+          intl.formatMessage({
+            id: 'plexImport.noUsers',
+            defaultMessage: 'No users were imported from Plex.',
+          })
+        );
       }
 
       Toast({
-        title: `${createdUsers.length} Plex user${createdUsers.length > 1 || createdUsers.length === 0 ? 's' : ''} imported successfully!`,
+        title: intl.formatMessage(
+          {
+            id: 'plexImport.success',
+            defaultMessage:
+              '{count, plural, one {# Plex user} other {# Plex users}} imported successfully!',
+          },
+          { count: createdUsers.length }
+        ),
         type: 'success',
         icon: <CheckBadgeIcon className="size-7" />,
       });
@@ -59,7 +73,10 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
       }
     } catch {
       Toast({
-        title: 'Something went wrong while importing Plex users.',
+        title: intl.formatMessage({
+          id: 'plexImport.error',
+          defaultMessage: 'Something went wrong while importing Plex users.',
+        }),
         type: 'error',
       });
     } finally {
@@ -99,12 +116,25 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
   return (
     <Modal
       loading={!data && !error}
-      title={'Import Plex Users'}
+      title={intl.formatMessage({
+        id: 'plexImport.title',
+        defaultMessage: 'Import Plex Users',
+      })}
       onOk={() => {
         importUsers();
       }}
       okDisabled={isImporting || !selectedUsers.length}
-      okText={isImporting ? 'Importing...' : 'Import'}
+      okText={
+        isImporting
+          ? intl.formatMessage({
+              id: 'plexImport.importing',
+              defaultMessage: 'Importing...',
+            })
+          : intl.formatMessage({
+              id: 'plexImport.import',
+              defaultMessage: 'Import',
+            })
+      }
       onCancel={onCancel}
       show={show}
     >
@@ -113,11 +143,15 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
           {settings.currentSettings.newPlexLogin && (
             <Alert
               title={
-                <span>
-                  The <strong>Enable New Plex Sign-In</strong> setting is
-                  currently enabled. Plex users with library access do not need
-                  to be imported in order to sign in.
-                </span>
+                <FormattedMessage
+                  id="plexImport.newSignIn.warning"
+                  defaultMessage="The <strong>Enable New Plex Sign-In</strong> setting is currently enabled. Plex users with library access do not need to be imported in order to sign in."
+                  values={{
+                    strong: (chunks: React.ReactNode) => (
+                      <strong>{chunks}</strong>
+                    ),
+                  }}
+                />
               }
               type="info"
             />
@@ -157,7 +191,10 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                           </span>
                         </th>
                         <th className="bg-neutral-700 px-1 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-neutral-200 md:px-6">
-                          User
+                          <FormattedMessage
+                            id="common.user"
+                            defaultMessage="User"
+                          />
                         </th>
                       </tr>
                     </thead>
@@ -228,7 +265,15 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
           </div>
         </>
       ) : (
-        <Alert title={'There are no Plex users to import.'} type="info" />
+        <Alert
+          title={
+            <FormattedMessage
+              id="plexImport.noUsersToImport"
+              defaultMessage="There are no Plex users to import."
+            />
+          }
+          type="info"
+        />
       )}
     </Modal>
   );

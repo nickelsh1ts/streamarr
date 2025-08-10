@@ -5,11 +5,12 @@ import { useUser, Permission } from '@app/hooks/useUser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 function Footer() {
   const [currentYear] = useState(() => new Date().getFullYear());
   const { currentSettings } = useSettings();
-  const { user, loading, hasPermission } = useUser();
+  const { hasPermission } = useUser();
 
   return (
     <footer
@@ -96,30 +97,42 @@ function Footer() {
             className="link-neutral text-decoration-none"
             href="/help/legal/termsofuse"
           >
-            Terms of Use
+            <FormattedMessage
+              id="footer.termsOfUse"
+              defaultMessage="Terms of Use"
+            />
           </Link>
           <Link
             className="link-neutral text-decoration-none"
             href="/help/legal/privacy"
           >
-            Privacy Policy
+            <FormattedMessage
+              id="footer.privacyPolicy"
+              defaultMessage="Privacy Policy"
+            />
           </Link>
           <Link
             className="link-neutral text-decoration-none"
             href="/help/legal/privacy#cookies"
           >
-            Cookie Preferences
+            <FormattedMessage
+              id="footer.cookiePreferences"
+              defaultMessage="Cookie Preferences"
+            />
           </Link>
           <div></div>
           <Link className="link-neutral text-decoration-none" href="/help/">
-            Help Centre
+            <FormattedMessage
+              id="help.helpCentre"
+              defaultMessage="Help Centre"
+            />
           </Link>
           {currentSettings.statusEnabled && currentSettings.statsUrl && (
             <Link
               className="link-neutral text-decoration-none"
               href={currentSettings.statusUrl}
             >
-              Status
+              <FormattedMessage id="common.status" defaultMessage="Status" />
             </Link>
           )}
           {currentSettings.supportEmail && (
@@ -127,12 +140,18 @@ function Footer() {
               className="link-neutral text-decoration-none"
               href={`mailto:${currentSettings.supportEmail}`}
             >
-              Contact Us
+              <FormattedMessage
+                id="footer.contactUs"
+                defaultMessage="Contact Us"
+              />
             </Link>
           )}
-          {((!user && !loading) || hasPermission(Permission.ADMIN)) && (
+          {hasPermission(Permission.ADMIN) && (
             <Link className="link-neutral text-decoration-none" href="/admin">
-              Admin Centre
+              <FormattedMessage
+                id="common.adminCentre"
+                defaultMessage="Admin Centre"
+              />
             </Link>
           )}
         </nav>

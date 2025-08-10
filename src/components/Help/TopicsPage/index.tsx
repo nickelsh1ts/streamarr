@@ -1,5 +1,7 @@
+'use client';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { FormattedMessage } from 'react-intl';
 
 type LinksProps = {
   href: string;
@@ -18,7 +20,12 @@ const TopicsPage = ({ heading, subheading, links }: TopicsPageProps) => {
       <div className="text-4xl font-extrabold my-7">{heading}</div>
       <div className="">{subheading}</div>
       <div className="grid grid-cols-1 my-6 gap-2 border rounded-md border-zinc-300 p-4 border-t-8 border-t-primary">
-        <p className="font-extrabold mb-2">Related Articles</p>
+        <p className="font-extrabold mb-2">
+          <FormattedMessage
+            id="help.relatedArticles"
+            defaultMessage="Related Articles"
+          />
+        </p>
         {links?.map((link, i) => {
           return (
             <Link

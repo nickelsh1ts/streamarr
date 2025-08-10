@@ -13,6 +13,7 @@ import useSWR from 'swr';
 import ProgressCircle from '@app/components/Common/ProgressCircle';
 import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
+import { FormattedMessage } from 'react-intl';
 
 //TODO create a request more invites feature
 
@@ -69,7 +70,10 @@ const UserProfile = () => {
             <dl className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
                 <dt className="truncate text-sm font-bold text-gray-300">
-                  Total Invites
+                  <FormattedMessage
+                    id="profile.totalInvites"
+                    defaultMessage="Total Invites"
+                  />
                 </dt>
                 <dd className="mt-1 text-3xl font-semibold text-white">
                   <Link
@@ -80,7 +84,12 @@ const UserProfile = () => {
                         : `/admin/users/${user?.id}/invites?filter=all`
                     }
                   >
-                    {user.inviteCount || 'None'}
+                    {user.inviteCount || (
+                      <FormattedMessage
+                        id="common.none"
+                        defaultMessage="None"
+                      />
+                    )}
                   </Link>
                 </dd>
               </div>
@@ -96,9 +105,25 @@ const UserProfile = () => {
                     quota.invite.restricted ? 'text-red-500' : 'text-gray-300'
                   }`}
                 >
-                  {quota.invite.limit
-                    ? `Invites (${quota.invite.days === 0 || quota.invite.limit === -1 ? 'Lifetime' : `past ${quota?.invite.days} day${quota.invite.days > 1 ? 's' : ''}`})`
-                    : 'Invites'}
+                  {quota.invite.limit ? (
+                    quota.invite.days === 0 || quota.invite.limit === -1 ? (
+                      <FormattedMessage
+                        id="profile.invitesLifetime"
+                        defaultMessage="Invites (Lifetime)"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="profile.invitesPastDays"
+                        defaultMessage="Invites (past {days} {days, plural, one {day} other {days}})"
+                        values={{ days: quota.invite.days }}
+                      />
+                    )
+                  ) : (
+                    <FormattedMessage
+                      id="common.invites"
+                      defaultMessage="Invites"
+                    />
+                  )}
                 </dt>
                 <dd
                   className={`mt-1 text-sm font-semibold items-center flex text-white ${
@@ -118,14 +143,30 @@ const UserProfile = () => {
                       />
                       <div>
                         <span className="text-3xl font-semibold">
-                          {quota.invite.remaining} of {quota.invite.limit}
-                        </span>{' '}
-                        remaining
+                          <FormattedMessage
+                            id="profile.invitesRemaining"
+                            defaultMessage="{remaining} of {limit} remaining"
+                            values={{
+                              remaining: quota.invite.remaining,
+                              limit: quota.invite.limit,
+                            }}
+                          />
+                        </span>
                       </div>
                     </>
                   ) : (
                     <span className="text-3xl font-semibold">
-                      {quota.invite.limit === -1 ? 'Unlimited' : 'None'}
+                      {quota.invite.limit === -1 ? (
+                        <FormattedMessage
+                          id="common.unlimited"
+                          defaultMessage="Unlimited"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.none"
+                          defaultMessage="None"
+                        />
+                      )}
                     </span>
                   )}
                 </dd>
@@ -150,7 +191,12 @@ const UserProfile = () => {
                     : `/admin/users/${user?.id}/invites?filter=all`
                 }
               >
-                <span className="text-2xl font-bold">Recent Invites</span>
+                <span className="text-2xl font-bold">
+                  <FormattedMessage
+                    id="profile.recentInvites"
+                    defaultMessage="Recent Invites"
+                  />
+                </span>
                 <ArrowRightCircleIcon className="size-5" />
               </Link>
             </div>

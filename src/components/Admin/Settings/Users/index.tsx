@@ -16,8 +16,10 @@ import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import useSWR, { mutate } from 'swr';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const UserSettings = () => {
+  const intl = useIntl();
   const {
     data,
     error,
@@ -30,8 +32,18 @@ const UserSettings = () => {
 
   return (
     <div className="mb-6">
-      <h3 className="text-2xl font-extrabold">User Settings</h3>
-      <p className="mb-5">Configure global and default user settings.</p>
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="userSettings.title"
+          defaultMessage="User Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="userSettings.description"
+          defaultMessage="Configure global and default user settings."
+        />
+      </p>
       <Formik
         initialValues={{
           localLogin: data?.localLogin,
@@ -72,13 +84,19 @@ const UserSettings = () => {
             mutate('/api/v1/settings/public');
 
             Toast({
-              title: 'User settings saved successfully!',
+              title: intl.formatMessage({
+                id: 'userSettings.saveSuccess',
+                defaultMessage: 'User settings saved successfully!',
+              }),
               icon: <CheckBadgeIcon className="size-7" />,
               type: 'success',
             });
           } catch {
             Toast({
-              title: 'Something went wrong while saving settings.',
+              title: intl.formatMessage({
+                id: 'settings.saveError',
+                defaultMessage: 'Something went wrong while saving settings.',
+              }),
               icon: <XCircleIcon className="size-7" />,
               type: 'error',
             });
@@ -95,10 +113,15 @@ const UserSettings = () => {
                   htmlFor="localLogin"
                   className="font-bold block mt-2 sm:mt-5"
                 >
-                  Enable Local Sign-in
+                  <FormattedMessage
+                    id="userSettings.localLogin"
+                    defaultMessage="Enable Local Sign-in"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Allow users to sign in using their email address and
-                    password, instead of Plex OAuth
+                    <FormattedMessage
+                      id="userSettings.localLoginDescription"
+                      defaultMessage="Allow users to sign in using their email address and password, instead of Plex OAuth"
+                    />
                   </span>
                 </label>
                 <div className="col-span-2">
@@ -113,9 +136,15 @@ const UserSettings = () => {
                   />
                 </div>
                 <label htmlFor="plexLogin" className="font-bold block">
-                  Enable New Plex Sign-in
+                  <FormattedMessage
+                    id="userSettings.plexLogin"
+                    defaultMessage="Enable New Plex Sign-in"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Allow Plex users to sign in without first being imported
+                    <FormattedMessage
+                      id="userSettings.plexLoginDescription"
+                      defaultMessage="Allow Plex users to sign in without first being imported"
+                    />
                   </span>
                 </label>
                 <div className="col-span-2">
@@ -130,7 +159,16 @@ const UserSettings = () => {
                   />
                 </div>
                 <label htmlFor="inviteLimit" className="font-bold block">
-                  Default Invite Quotas
+                  <FormattedMessage
+                    id="userSettings.inviteLimit"
+                    defaultMessage="Default Invite Limit"
+                  />
+                  <span className="text-sm block font-light text-neutral-300">
+                    <FormattedMessage
+                      id="userSettings.inviteLimitDescription"
+                      defaultMessage="Set the default invite limit for new users."
+                    />
+                  </span>
                 </label>
                 <div className="col-span-2">
                   <QuotaSelector
@@ -152,7 +190,9 @@ const UserSettings = () => {
                       setFieldValue('inviteUsageLimit', Number(e.target.value))
                     }
                   >
-                    <option value={0}>Unlimited</option>
+                    <option value={0}>
+                      <FormattedMessage id="common.unlimited" />
+                    </option>
                     {[...Array(100)].map((_item, i) => (
                       <option value={i + 1} key={`$invite-limit-${i + 1}`}>
                         {i + 1}
@@ -160,16 +200,23 @@ const UserSettings = () => {
                     ))}
                   </Field>
                   <span>
-                    use
-                    {(values.inviteUsageLimit > 1 ||
-                      values.inviteUsageLimit === 0) &&
-                      's'}{' '}
-                    per invite
+                    <FormattedMessage
+                      id="userSettings.inviteUsageLimit"
+                      defaultMessage="{count, plural, one {use per invite} other {uses per invite}}"
+                      values={{
+                        count: values.inviteUsageLimit,
+                      }}
+                    />
                   </span>
                 </div>
                 <div className="" />
                 <div className="col-span-2 space-x-2">
-                  <span>Expires {values.inviteExpiryLimit > 0 && 'after'}</span>
+                  <span>
+                    <FormattedMessage id="common.expires" />{' '}
+                    {values.inviteExpiryLimit > 0 && (
+                      <FormattedMessage id="common.after" />
+                    )}
+                  </span>
                   <Field
                     as="select"
                     name="inviteExpiryLimit"
@@ -179,7 +226,9 @@ const UserSettings = () => {
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
                   >
-                    <option value={0}>Never</option>
+                    <option value={0}>
+                      <FormattedMessage id="common.never" />
+                    </option>
                     {[...Array(100)].map((_item, i) => (
                       <option value={i + 1} key={`$invite-expiry-${i + 1}`}>
                         {i + 1}
@@ -197,21 +246,39 @@ const UserSettings = () => {
                       }
                     >
                       <option value={'days'}>
-                        Day{values.inviteExpiryLimit > 1 && 's'}
+                        <FormattedMessage
+                          id="invite.timeUnit.day"
+                          defaultMessage="{count, plural, one {Day} other {Days}}"
+                          values={{ count: values.inviteExpiryLimit }}
+                        />
                       </option>
                       <option value={'weeks'}>
-                        Week{values.inviteExpiryLimit > 1 && 's'}
+                        <FormattedMessage
+                          id="invite.timeUnit.week"
+                          defaultMessage="{count, plural, one {Week} other {Weeks}}"
+                          values={{ count: values.inviteExpiryLimit }}
+                        />
                       </option>
                       <option value={'months'}>
-                        Month{values.inviteExpiryLimit > 1 && 's'}
+                        <FormattedMessage
+                          id="invite.timeUnit.month"
+                          defaultMessage="{count, plural, one {Month} other {Months}}"
+                          values={{ count: values.inviteExpiryLimit }}
+                        />
                       </option>
                     </Field>
                   )}
                 </div>
                 <span id="group-label" className="block font-bold">
-                  Default Invite Settings
+                  <FormattedMessage
+                    id="userSettings.InviteSettings"
+                    defaultMessage="Default Invite Settings"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Initial settings associated to new invites
+                    <FormattedMessage
+                      id="userSettings.InviteSettingsDescription"
+                      defaultMessage="Initial settings associated to new invites"
+                    />
                   </span>
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 col-span-2 gap-2">
@@ -260,7 +327,12 @@ const UserSettings = () => {
                         </span>
                       </span>
                     </span>
-                    <label htmlFor="downloads">Allow Downloads</label>
+                    <label htmlFor="downloads">
+                      <FormattedMessage
+                        id="invite.allowDownloads"
+                        defaultMessage="Allow Downloads"
+                      />
+                    </label>
                   </div>
                   <div className="inline-flex items-center space-x-2">
                     <span
@@ -305,7 +377,12 @@ const UserSettings = () => {
                         </span>
                       </span>
                     </span>
-                    <label htmlFor="liveTv">Allow Live TV Access</label>
+                    <label htmlFor="liveTv">
+                      <FormattedMessage
+                        id="settings.allowLiveTv"
+                        defaultMessage="Allow Live TV Access"
+                      />
+                    </label>
                   </div>
                   <Tooltip content="Admin only: per invite.">
                     <div className="inline-flex items-center space-x-2">
@@ -347,14 +424,25 @@ const UserSettings = () => {
                           </span>
                         </span>
                       </span>
-                      <label htmlFor="plexHome">Invite to Plex Home</label>
+                      <label htmlFor="plexHome">
+                        <FormattedMessage
+                          id="invite.inviteToPlexHome"
+                          defaultMessage="Invite to Plex Home"
+                        />
+                      </label>
                     </div>
                   </Tooltip>
                 </div>
                 <span id="group-label" className="block font-bold">
-                  Default Shared Libraries
+                  <FormattedMessage
+                    id="userSettings.defaultSharedLibraries"
+                    defaultMessage="Default Shared Libraries"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Initial libraries shared with new users
+                    <FormattedMessage
+                      id="userSettings.defaultSharedLibrariesDescription"
+                      defaultMessage="Initial libraries shared with new users"
+                    />
                   </span>
                 </span>
                 <div className="col-span-2">
@@ -364,9 +452,15 @@ const UserSettings = () => {
                   />
                 </div>
                 <span id="group-label" className="block font-bold">
-                  Default Permissions
+                  <FormattedMessage
+                    id="userSettings.defaultPermissions"
+                    defaultMessage="Default Permissions"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Initial permissions assigned to new users
+                    <FormattedMessage
+                      id="userSettings.defaultPermissionsDescription"
+                      defaultMessage="Initial permissions assigned to new users"
+                    />
                   </span>
                 </span>
                 <div className="col-span-2">
@@ -389,7 +483,13 @@ const UserSettings = () => {
                   disabled={isSubmitting}
                 >
                   <ArrowDownTrayIcon className="size-4 mr-2" />
-                  <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                  <span>
+                    {isSubmitting ? (
+                      <FormattedMessage id="common.saving" />
+                    ) : (
+                      <FormattedMessage id="common.saveChanges" />
+                    )}
+                  </span>
                 </Button>
               </div>
             </Form>

@@ -10,6 +10,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 const UserCard = () => {
   const { user } = useUser();
@@ -52,7 +53,7 @@ const UserCard = () => {
           href={'/watch'}
         >
           <HomeIcon className="size-5" />
-          Home
+          <FormattedMessage id="common.home" defaultMessage="Home" />
         </Link>
       )}
       {hasPermission(Permission.ADMIN) ? (
@@ -61,7 +62,10 @@ const UserCard = () => {
           href="/admin"
         >
           <LockClosedIcon className="size-5 inline-flex" />
-          Admin Center
+          <FormattedMessage
+            id="common.adminCenter"
+            defaultMessage="Admin Center"
+          />
         </Link>
       ) : hasPermission(Permission.MANAGE_USERS) ? (
         <Link
@@ -69,7 +73,10 @@ const UserCard = () => {
           href="/admin/users"
         >
           <LockClosedIcon className="size-5 inline-flex" />
-          Manage Users
+          <FormattedMessage
+            id="common.manageUsers"
+            defaultMessage="Manage Users"
+          />
         </Link>
       ) : null}
     </div>

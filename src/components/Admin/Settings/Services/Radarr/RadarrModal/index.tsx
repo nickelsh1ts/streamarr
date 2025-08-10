@@ -1,6 +1,7 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
@@ -20,31 +21,54 @@ interface RadarrModalProps {
 }
 
 const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
+  const intl = useIntl();
   const initialLoad = useRef(false);
   const [isValidated, setIsValidated] = useState(radarr ? true : false);
   const [isTesting, setIsTesting] = useState(false);
   const [testResponse, setTestResponse] = useState<TestResponse>();
   const RadarrSettingsSchema = Yup.object().shape({
-    name: Yup.string().required('You must provide a server name'),
+    name: Yup.string().required(
+      intl.formatMessage({
+        id: 'servicesSettings.validation.servername',
+      })
+    ),
     hostname: Yup.string()
-      .required('You must provide a valid hostname or IP address')
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+        })
+      )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-        'You must provide a valid hostname or IP address'
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+        })
       ),
     port: Yup.number()
       .nullable()
-      .required('You must provide a valid port number'),
-    apiKey: Yup.string().required('You must provide an API key'),
+      .required(
+        intl.formatMessage({
+          id: 'plexSettings.validation.port',
+        })
+      ),
+    apiKey: Yup.string().required(
+      intl.formatMessage({
+        id: 'servicesSettings.validation.apikey',
+      })
+    ),
     baseUrl: Yup.string()
       .test(
         'leading-slash',
-        'URL base must have a leading slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+        }),
         (value) => !value || value.startsWith('/')
       )
       .test(
         'no-trailing-slash',
-        'URL base must not end in a trailing slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+        }),
         (value) => !value || !value.endsWith('/')
       ),
   });
@@ -80,7 +104,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         setTestResponse(response.data);
         if (initialLoad.current) {
           Toast({
-            title: 'Radarr connection established successfully!',
+            title: intl.formatMessage({
+              id: 'servicesSettings.radarr.testsuccess',
+              defaultMessage: 'Radarr connection established successfully!',
+            }),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
@@ -89,7 +116,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         setIsValidated(false);
         if (initialLoad.current) {
           Toast({
-            title: 'Failed to connect to Radarr.',
+            title: intl.formatMessage({
+              id: 'servicesSettings.radarr.testfailed',
+              defaultMessage: 'Failed to connect to Radarr.',
+            }),
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
           });
@@ -99,7 +129,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         initialLoad.current = true;
       }
     },
-    []
+    [intl]
   );
 
   useEffect(() => {
@@ -154,7 +184,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
           onSave();
         } catch (e) {
           Toast({
-            title: 'Failed to save Radarr settings',
+            title: intl.formatMessage(
+              {
+                id: 'common.settingsSaveError',
+              },
+              { appName: 'Radarr' }
+            ),
             message: e.message,
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
@@ -178,13 +213,26 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
             show={show}
             okText={
               isSubmitting
-                ? 'Saving...'
+                ? intl.formatMessage({ id: 'common.saving' })
                 : radarr
-                  ? 'Save Changes'
-                  : 'Add Server'
+                  ? intl.formatMessage({ id: 'common.saveChanges' })
+                  : intl.formatMessage(
+                      {
+                        id: 'common.addserver',
+                      },
+                      { arrApp: 'Radarr' }
+                    )
             }
             secondaryButtonType="warning"
-            secondaryText={isTesting ? 'Testing...' : 'Test'}
+            secondaryText={
+              isTesting
+                ? intl.formatMessage({
+                    id: 'common.testing',
+                  })
+                : intl.formatMessage({
+                    id: 'common.test',
+                  })
+            }
             onSecondary={() => {
               if (values.apiKey && values.hostname && values.port) {
                 testConnection({
@@ -211,17 +259,41 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
             title={
               !radarr
                 ? values.is4k
-                  ? 'Add New 4K Radarr Server'
-                  : 'Add New Radarr Server'
+                  ? intl.formatMessage(
+                      {
+                        id: 'common.arrAdd4k',
+                      },
+                      { arrApp: 'Radarr' }
+                    )
+                  : intl.formatMessage(
+                      {
+                        id: 'common.addserver',
+                      },
+                      { arrApp: 'Radarr' }
+                    )
                 : values.is4k
-                  ? 'Edit 4K Radarr Server'
-                  : 'Edit Radarr Server'
+                  ? intl.formatMessage(
+                      {
+                        id: 'common.arrEdit4k',
+                      },
+                      { arrApp: 'Radarr' }
+                    )
+                  : intl.formatMessage(
+                      {
+                        id: 'common.arrEdit',
+                      },
+                      { arrApp: 'Radarr' }
+                    )
             }
           >
             <div className="mb-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="isDefault">
-                  {values.is4k ? 'Default 4K Server' : 'Default Server'}
+                  {values.is4k ? (
+                    <FormattedMessage id="common.default4k" />
+                  ) : (
+                    <FormattedMessage id="common.defaultserver" />
+                  )}
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -233,7 +305,9 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="is4k">4K Server</label>
+                <label htmlFor="is4k">
+                  <FormattedMessage id="common.4kserver" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -245,7 +319,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="name">
-                  Server Name
+                  <FormattedMessage id="common.servername" />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -270,7 +344,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  Hostname or IP Address
+                  <FormattedMessage id="common.hostname" />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -299,7 +373,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  Port
+                  <FormattedMessage id="common.port" />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -322,7 +396,9 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="ssl">Use SSL</label>
+                <label htmlFor="ssl">
+                  <FormattedMessage id="common.useSsl" />
+                </label>
                 <div className="sm:col-span-2">
                   <Field
                     type="checkbox"
@@ -338,7 +414,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey">
-                  API Key
+                  <FormattedMessage id="common.apiKey" />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -363,7 +439,9 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="baseUrl">URL Base</label>
+                <label htmlFor="baseUrl">
+                  <FormattedMessage id="common.urlBase" />
+                </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
@@ -387,9 +465,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="syncEnabled">
-                  Enable Calendar Sync
+                  <FormattedMessage id="common.calendarSync" />
                   <span className="text-sm block font-light text-neutral-300">
-                    Automatically sync Radarr events to the calendar
+                    <FormattedMessage
+                      id="common.calendarSync.description"
+                      values={{ appName: 'Radarr' }}
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -403,9 +484,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="pastDays">
-                  Past Days
+                  <FormattedMessage
+                    id="common.pastdays"
+                    defaultMessage="Past Days"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    Sync events from the past X days
+                    <FormattedMessage id="common.pastdays.description" />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -421,9 +505,9 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="futureDays">
-                  Future Days
+                  <FormattedMessage id="common.futuredays" />
                   <span className="text-sm block font-light text-neutral-300">
-                    Sync events for the next X days
+                    <FormattedMessage id="common.futuredays.description" />
                   </span>
                 </label>
                 <div className="sm:col-span-2">

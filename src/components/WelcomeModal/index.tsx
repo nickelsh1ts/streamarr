@@ -5,6 +5,7 @@ import useSettings from '@app/hooks/useSettings';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
+import { FormattedMessage } from 'react-intl';
 
 const key = 'welcomeModalClosed';
 const initialValue = false;
@@ -35,22 +36,35 @@ const WelcomeModal = () => {
         </div>
         <div className="mb-8">
           <p className="text-4xl">
-            <span className="font-bold">Welcome to</span>{' '}
+            <span className="font-bold">
+              <FormattedMessage
+                id="welcome.welcomeTo"
+                defaultMessage="Welcome to"
+              />
+            </span>{' '}
             <span className="font-extralight">
               {currentSettings.applicationTitle}
             </span>
           </p>
         </div>
         <div className="mb-8 text-justify">
-          <p className="mb-2">Hey there - Just a little heads up!</p>
+          <p className="mb-2">
+            <FormattedMessage
+              id="welcome.headsUp"
+              defaultMessage="Hey there - Just a little heads up!"
+            />
+          </p>
           <p className="mb-6">
-            This is still very much a work in progress and missing some
-            features. If you encounter issues, please keep trying or reach out
-            to nickelsh1ts.
+            <FormattedMessage
+              id="welcome.workInProgress"
+              defaultMessage="This is still very much a work in progress and missing some features. If you encounter issues, please keep trying or reach out to nickelsh1ts."
+            />
           </p>
           <p className="">
-            There&apos;s a lot more to come, so stay tuned and check back again
-            later!
+            <FormattedMessage
+              id="welcome.moreToCome"
+              defaultMessage="There's a lot more to come, so stay tuned and check back again later!"
+            />
           </p>
         </div>
         <div>
@@ -60,7 +74,10 @@ const WelcomeModal = () => {
                 setValue(true);
               }}
             >
-              Acknowledge
+              <FormattedMessage
+                id="welcome.acknowledge"
+                defaultMessage="Acknowledge"
+              />
             </Button>
           </div>
         </div>

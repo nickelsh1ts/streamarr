@@ -2,6 +2,7 @@
 import type React from 'react';
 import { useState, useEffect, useCallback, createContext } from 'react';
 import { IntlProvider } from 'react-intl';
+import { setMomentLocale } from '@app/utils/momentLocale';
 
 export type AvailableLocale = 'en' | 'es';
 
@@ -72,9 +73,11 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     }
   }, []);
 
-  // Initialize messages on mount
+  // Initialize messages and moment locale on mount
   useEffect(() => {
     loadMessages(locale);
+    // Synchronize moment.js locale with current locale
+    setMomentLocale(locale);
   }, [loadMessages, locale]);
 
   // Function to change locale
@@ -87,6 +90,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
           localStorage.setItem('streamarr-locale', newLocale);
         }
         loadMessages(newLocale);
+        // Synchronize moment.js locale with new locale
+        setMomentLocale(newLocale);
       }
     },
     [locale, loadMessages]

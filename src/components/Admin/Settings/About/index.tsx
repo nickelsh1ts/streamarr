@@ -11,8 +11,10 @@ import type {
   StatusResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import useSWR from 'swr';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const AboutSettings = () => {
+  const intl = useIntl();
   const { data, error } = useSWR<SettingsAboutResponse>(
     '/api/v1/settings/about'
   );
@@ -38,9 +40,10 @@ const AboutSettings = () => {
       <Alert type="primary">
         <div className="ml-3 flex-1 md:flex md:justify-between">
           <p className="text-sm leading-5">
-            This is PRE-ALPHA software and currently under active development.
-            Features may be broken and/or unstable. Please check GitHub for
-            status updates.
+            <FormattedMessage
+              id="aboutSettings.preAlphaWarning"
+              defaultMessage="This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+            />
           </p>
           <p className="mt-3 text-sm leading-5 md:mt-0 md:ml-6">
             <a
@@ -55,20 +58,32 @@ const AboutSettings = () => {
         </div>
       </Alert>
       <div className="mt-6">
-        <List title={'About Streamarr'}>
+        <List
+          title={intl.formatMessage({
+            id: 'aboutSettings.title',
+            defaultMessage: 'About Streamarr',
+          })}
+        >
           <div className="mt-4">
             {data.version.startsWith('develop-') && (
               <Alert>
                 <p className="ml-3 text-sm leading-5">
-                  You are running the <code>develop</code> branch of Streamarr,
-                  which is only recommended for those contributing to
-                  development or assisting with bleeding-edge testing.
+                  <FormattedMessage
+                    id="aboutSettings.developWarning"
+                    defaultMessage="You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
+                    values={{
+                      code: (chunks: React.ReactNode) => <code>{chunks}</code>,
+                    }}
+                  />
                 </p>
               </Alert>
             )}
           </div>
           <List.Item
-            title={'Version'}
+            title={intl.formatMessage({
+              id: 'aboutSettings.version',
+              defaultMessage: 'Version',
+            })}
             className="flex flex-row items-center truncate"
           >
             <code>{data.version.replace('develop-', '')}</code>
@@ -87,7 +102,10 @@ const AboutSettings = () => {
                     badgeType="warning"
                     className="ml-2 !cursor-pointer transition hover:bg-yellow-400"
                   >
-                    Out of date
+                    <FormattedMessage
+                      id="aboutSettings.outOfDate"
+                      defaultMessage="Out of date"
+                    />
                   </Badge>
                 </a>
               ) : (
@@ -104,30 +122,63 @@ const AboutSettings = () => {
                     badgeType="success"
                     className="ml-2 !cursor-pointer transition hover:bg-green-400"
                   >
-                    Up to date
+                    <FormattedMessage
+                      id="aboutSettings.upToDate"
+                      defaultMessage="Up to date"
+                    />
                   </Badge>
                 </a>
               ))}
           </List.Item>
-          <List.Item title="Total Users">
+          <List.Item
+            title={intl.formatMessage({
+              id: 'aboutSettings.totalUsers',
+              defaultMessage: 'Total Users',
+            })}
+          >
             <code>{data.totalUsers}</code>
           </List.Item>
-          <List.Item title="Total Invites">
+          <List.Item
+            title={intl.formatMessage({
+              id: 'profile.totalInvites',
+              defaultMessage: 'Total Invites',
+            })}
+          >
             <code>{data.totalInvites}</code>
           </List.Item>
-          <List.Item title="Data Directory">
+          <List.Item
+            title={intl.formatMessage({
+              id: 'aboutSettings.dataDirectory',
+              defaultMessage: 'Data Directory',
+            })}
+          >
             <code>{data.appDataPath}</code>
           </List.Item>
           {data.tz && (
-            <List.Item title="Time Zone">
+            <List.Item
+              title={intl.formatMessage({
+                id: 'aboutSettings.timeZone',
+                defaultMessage: 'Time Zone',
+              })}
+            >
               <code>{data.tz}</code>
             </List.Item>
           )}
         </List>
       </div>
       <div className="mt-6">
-        <List title="Getting Support">
-          <List.Item title="Documentation">
+        <List
+          title={intl.formatMessage({
+            id: 'aboutSettings.gettingSupport',
+            defaultMessage: 'Getting Support',
+          })}
+        >
+          <List.Item
+            title={intl.formatMessage({
+              id: 'aboutSettings.documentation',
+              defaultMessage: 'Documentation',
+            })}
+          >
             <a
               href="https://docs.streamarr.dev"
               target="_blank"
@@ -137,7 +188,12 @@ const AboutSettings = () => {
               https://docs.streamarr.dev
             </a>
           </List.Item>
-          <List.Item title="GitHub Discussions">
+          <List.Item
+            title={intl.formatMessage({
+              id: 'aboutSettings.githubDiscussions',
+              defaultMessage: 'GitHub Discussions',
+            })}
+          >
             <a
               href="https://github.com/nickelsh1ts/streamarr/discussions"
               target="_blank"
@@ -160,8 +216,18 @@ const AboutSettings = () => {
         </List>
       </div>
       <div className="mt-6">
-        <List title="Support Streamarr">
-          <List.Item title="Help Pay for Coffee ☕️">
+        <List
+          title={intl.formatMessage({
+            id: 'aboutSettings.supportStreamarr',
+            defaultMessage: 'Support Streamarr',
+          })}
+        >
+          <List.Item
+            title={intl.formatMessage({
+              id: 'aboutSettings.helpPayForCoffee',
+              defaultMessage: 'Help Pay for Coffee ☕️',
+            })}
+          >
             <a
               href="https://github.com/sponsors/nickelsh1ts"
               target="_blank"
@@ -170,7 +236,12 @@ const AboutSettings = () => {
             >
               https://github.com/sponsors/nickelsh1ts
             </a>
-            <Badge className="ml-2">Preferred</Badge>
+            <Badge className="ml-2">
+              <FormattedMessage
+                id="aboutSettings.preferred"
+                defaultMessage="Preferred"
+              />
+            </Badge>
           </List.Item>
           <List.Item title="">
             <a

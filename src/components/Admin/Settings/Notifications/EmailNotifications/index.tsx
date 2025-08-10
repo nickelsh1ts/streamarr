@@ -15,8 +15,10 @@ import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const EmailNotifications = () => {
+  const intl = useIntl();
   const [isTesting, setIsTesting] = useState(false);
   const {
     data,
@@ -28,32 +30,58 @@ const EmailNotifications = () => {
     emailFrom: Yup.string()
       .when('enabled', (enabled, schema) =>
         enabled
-          ? schema.nullable().required('You must provide a valid email address')
+          ? schema.nullable().required(
+              intl.formatMessage({
+                id: 'signIn.emailRequired',
+                defaultMessage: 'You must provide a valid email address',
+              })
+            )
           : schema.nullable()
       )
-      .email('You must provide a valid email address'),
+      .email(
+        intl.formatMessage({
+          id: 'signIn.emailRequired',
+          defaultMessage: 'You must provide a valid email address',
+        })
+      ),
     smtpHost: Yup.string()
       .when('enabled', (enabled, schema) =>
         enabled
-          ? schema
-              .nullable()
-              .required('You must provide a valid hostname or IP address')
+          ? schema.nullable().required(
+              intl.formatMessage({
+                id: 'servicesSettings.validation.hostname',
+                defaultMessage:
+                  'You must provide a valid hostname or IP address',
+              })
+            )
           : schema.nullable()
       )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
-        'You must provide a valid hostname or IP address'
+        intl.formatMessage({
+          id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
+        })
       ),
     smtpPort: Yup.number().when('enabled', (enabled, schema) =>
       enabled
-        ? schema.nullable().required('You must provide a valid port number')
+        ? schema.nullable().required(
+            intl.formatMessage({
+              id: 'plexSettings.validation.port',
+              defaultMessage: 'You must provide a valid port number',
+            })
+          )
         : schema.nullable()
     ),
     pgpPrivateKey: Yup.string()
       .nullable()
       .test(
         'pgp-pair',
-        'You must provide a PGP password if you set a private key',
+        intl.formatMessage({
+          id: 'emailNotifications.validation.pgpPrivateKey.passwordRequired',
+          defaultMessage:
+            'You must provide a PGP password if you set a private key',
+        }),
         function (value) {
           const { pgpPassword } = this.parent;
           if (!value && !pgpPassword) return true; // both empty: valid
@@ -63,13 +91,20 @@ const EmailNotifications = () => {
       )
       .matches(
         /^$|-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/,
-        'You must provide a valid PGP private key'
+        intl.formatMessage({
+          id: 'emailNotifications.validation.pgpPrivateKey.format',
+          defaultMessage: 'You must provide a valid PGP private key',
+        })
       ),
     pgpPassword: Yup.string()
       .nullable()
       .test(
         'pgp-pair',
-        'You must provide a PGP private key if you set a password',
+        intl.formatMessage({
+          id: 'emailNotifications.validation.pgpPassword.keyRequired',
+          defaultMessage:
+            'You must provide a PGP private key if you set a password',
+        }),
         function (value) {
           const { pgpPrivateKey } = this.parent;
           if (!value && !pgpPrivateKey) return true; // both empty: valid
@@ -129,13 +164,19 @@ const EmailNotifications = () => {
           mutate('/api/v1/settings/public');
 
           Toast({
-            title: 'Email notification settings saved successfully!',
+            title: intl.formatMessage({
+              id: 'emailNotifications.saveSuccess',
+              defaultMessage: 'Email notification settings saved successfully!',
+            }),
             icon: <CheckBadgeIcon className="size-7" />,
             type: 'success',
           });
         } catch {
           Toast({
-            title: 'Email notification settings failed to save.',
+            title: intl.formatMessage({
+              id: 'emailNotifications.saveError',
+              defaultMessage: 'Email notification settings failed to save.',
+            }),
             icon: <XMarkIcon className="size-7" />,
             type: 'error',
           });
@@ -149,7 +190,10 @@ const EmailNotifications = () => {
           setIsTesting(true);
           try {
             Toast({
-              title: 'Sending email test notification…',
+              title: intl.formatMessage({
+                id: 'emailNotifications.testSending',
+                defaultMessage: 'Sending email test notification…',
+              }),
               icon: <BeakerIcon className="size-7" />,
               type: 'warning',
             });
@@ -172,13 +216,19 @@ const EmailNotifications = () => {
             });
 
             Toast({
-              title: 'Email test notification sent!',
+              title: intl.formatMessage({
+                id: 'emailNotifications.testSuccess',
+                defaultMessage: 'Email test notification sent!',
+              }),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
           } catch {
             Toast({
-              title: 'Email test notification failed to send.',
+              title: intl.formatMessage({
+                id: 'emailNotifications.testError',
+                defaultMessage: 'Email test notification failed to send.',
+              }),
               type: 'error',
               icon: <XMarkIcon className="size-7" />,
             });
@@ -190,7 +240,11 @@ const EmailNotifications = () => {
           <Form>
             <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
               <label htmlFor="preset">
-                Enable Agent<span className="ml-1 text-error">*</span>
+                <FormattedMessage
+                  id="emailNotifications.enableAgent"
+                  defaultMessage="Enable Agent"
+                />
+                <span className="ml-1 text-error">*</span>
               </label>
               <div className="sm:col-span-2">
                 <div className="flex">
@@ -202,7 +256,12 @@ const EmailNotifications = () => {
                   />
                 </div>
               </div>
-              <label htmlFor="senderName">Sender Name</label>
+              <label htmlFor="senderName">
+                <FormattedMessage
+                  id="emailNotifications.senderName"
+                  defaultMessage="Sender Name"
+                />
+              </label>
               <div className="sm:col-span-2">
                 <div className="flex">
                   <Field
@@ -214,7 +273,10 @@ const EmailNotifications = () => {
                 </div>
               </div>
               <label htmlFor="emailFrom">
-                Sender Address
+                <FormattedMessage
+                  id="emailNotifications.senderAddress"
+                  defaultMessage="Sender Address"
+                />
                 <span className="ml-1 text-error">*</span>
               </label>
               <div className="sm:col-span-2">
@@ -238,7 +300,10 @@ const EmailNotifications = () => {
                   )}
               </div>
               <label htmlFor="smtpHost">
-                SMTP Host
+                <FormattedMessage
+                  id="emailNotifications.smtpHost"
+                  defaultMessage="SMTP Host"
+                />
                 <span className="ml-1 text-error">*</span>
               </label>
               <div className="sm:col-span-2">
@@ -262,7 +327,10 @@ const EmailNotifications = () => {
                   )}
               </div>
               <label htmlFor="smtpPort">
-                SMTP Port
+                <FormattedMessage
+                  id="emailNotifications.smtpPort"
+                  defaultMessage="SMTP Port"
+                />
                 <span className="ml-1 text-error">*</span>
               </label>
               <div className="sm:col-span-2">
@@ -284,11 +352,16 @@ const EmailNotifications = () => {
                   )}
               </div>
               <label htmlFor="encryption">
-                Encryption Method
+                <FormattedMessage
+                  id="emailNotifications.encryptionMethod"
+                  defaultMessage="Encryption Method"
+                />
                 <span className="ml-1 text-error">*</span>
                 <span className="block text-sm text-neutral-500">
-                  In most cases, Implicit TLS uses port 465 and STARTTLS uses
-                  port 587
+                  <FormattedMessage
+                    id="emailNotifications.encryptionMethodDescription"
+                    defaultMessage="In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
+                  />
                 </span>
               </label>
               <div className="sm:col-span-2">
@@ -299,15 +372,38 @@ const EmailNotifications = () => {
                     name="encryption"
                     className="select select-sm select-primary rounded-md w-full"
                   >
-                    <option value="none">None</option>
-                    <option value="default">Use STARTTLS if available</option>
-                    <option value="opportunistic">Always use STARTTLS</option>
-                    <option value="implicit">Use Implicit TLS</option>
+                    <option value="none">
+                      {intl.formatMessage({
+                        id: 'common.none',
+                        defaultMessage: 'None',
+                      })}
+                    </option>
+                    <option value="default">
+                      {intl.formatMessage({
+                        id: 'emailNotifications.encryption.default',
+                        defaultMessage: 'Use STARTTLS if available',
+                      })}
+                    </option>
+                    <option value="opportunistic">
+                      {intl.formatMessage({
+                        id: 'emailNotifications.encryption.opportunistic',
+                        defaultMessage: 'Always use STARTTLS',
+                      })}
+                    </option>
+                    <option value="implicit">
+                      {intl.formatMessage({
+                        id: 'emailNotifications.encryption.implicit',
+                        defaultMessage: 'Use Implicit TLS',
+                      })}
+                    </option>
                   </Field>
                 </div>
               </div>
               <label htmlFor="allowSelfSigned" className="checkbox-label">
-                Allow Self-Signed Certificates
+                <FormattedMessage
+                  id="emailNotifications.allowSelfSigned"
+                  defaultMessage="Allow Self-Signed Certificates"
+                />
               </label>
               <div className="sm:col-span-2">
                 <Field
@@ -317,7 +413,12 @@ const EmailNotifications = () => {
                   className="checkbox checkbox-sm checkbox-primary rounded-md w-full"
                 />
               </div>
-              <label htmlFor="authUser">SMTP Username</label>
+              <label htmlFor="authUser">
+                <FormattedMessage
+                  id="emailNotifications.smtpUsername"
+                  defaultMessage="SMTP Username"
+                />
+              </label>
               <div className="sm:col-span-2">
                 <div className="flex">
                   <Field
@@ -328,7 +429,12 @@ const EmailNotifications = () => {
                   />
                 </div>
               </div>
-              <label htmlFor="authPass">SMTP Password</label>
+              <label htmlFor="authPass">
+                <FormattedMessage
+                  id="emailNotifications.smtpPassword"
+                  defaultMessage="SMTP Password"
+                />
+              </label>
               <div className="sm:col-span-2">
                 <div className="flex">
                   <SensitiveInput
@@ -341,17 +447,29 @@ const EmailNotifications = () => {
                 </div>
               </div>
               <label htmlFor="pgpPrivateKey">
-                <span className="mr-2">PGP Private Key</span>
+                <span className="mr-2">
+                  <FormattedMessage
+                    id="emailNotifications.pgpPrivateKey"
+                    defaultMessage="PGP Private Key"
+                  />
+                </span>
                 <SettingsBadge badgeType="advanced" />
                 <span className="block text-sm text-neutral-500">
-                  Sign encrypted email messages using{' '}
-                  <a
-                    href="https://www.openpgp.org/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    OpenPGP
-                  </a>
+                  <FormattedMessage
+                    id="emailNotifications.pgpPasswordDescription"
+                    defaultMessage="Sign encrypted email messages using {link}"
+                    values={{
+                      link: (
+                        <a
+                          href="https://www.openpgp.org/"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          OpenPGP
+                        </a>
+                      ),
+                    }}
+                  />
                 </span>
               </label>
               <div className="sm:col-span-2">
@@ -371,17 +489,29 @@ const EmailNotifications = () => {
                   )}
               </div>
               <label htmlFor="pgpPassword">
-                <span className="mr-2">PGP Password</span>
+                <span className="mr-2">
+                  <FormattedMessage
+                    id="emailNotifications.pgpPassword"
+                    defaultMessage="PGP Password"
+                  />
+                </span>
                 <SettingsBadge badgeType="advanced" />
                 <p className="text-sm text-neutral-500">
-                  Sign encrypted email messages using{' '}
-                  <a
-                    href="https://www.openpgp.org/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    OpenPGP
-                  </a>
+                  <FormattedMessage
+                    id="emailNotifications.pgpPasswordDescription"
+                    defaultMessage="Sign encrypted email messages using {link}"
+                    values={{
+                      link: (
+                        <a
+                          href="https://www.openpgp.org/"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          OpenPGP
+                        </a>
+                      ),
+                    }}
+                  />
                 </p>
               </label>
               <div className="sm:col-span-2">
@@ -414,7 +544,19 @@ const EmailNotifications = () => {
                     className="disabled:bg-warning/30"
                   >
                     <BeakerIcon className="size-5 mr-2" />
-                    <span>{isTesting ? 'Testing...' : 'Test'}</span>
+                    <span>
+                      {isTesting ? (
+                        <FormattedMessage
+                          id="common.testing"
+                          defaultMessage="Testing..."
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.test"
+                          defaultMessage="Test"
+                        />
+                      )}
+                    </span>
                   </Button>
                 </span>
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
@@ -425,7 +567,13 @@ const EmailNotifications = () => {
                     disabled={isSubmitting || !isValid || isTesting}
                   >
                     <ArrowDownTrayIcon className="size-5 mr-2" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage id="common.saving" />
+                      ) : (
+                        <FormattedMessage id="common.saveChanges" />
+                      )}
+                    </span>
                   </Button>
                 </span>
               </div>

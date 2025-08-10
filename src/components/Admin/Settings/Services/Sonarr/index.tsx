@@ -10,8 +10,10 @@ import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ServerInstance } from '@app/components/Admin/Settings/Services/Radarr';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const SettingsServicesSonarr = () => {
+  const intl = useIntl();
   const {
     data: sonarrData,
     error: sonarrError,
@@ -46,12 +48,17 @@ const SettingsServicesSonarr = () => {
   return (
     <>
       <div className="mb-6 max-w-6xl">
-        <h3 className="text-2xl font-extrabold">Sonarr Settings</h3>
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="sonarrSettings.title"
+            defaultMessage="Sonarr Settings"
+          />
+        </h3>
         <p className="description">
-          Configure your Sonarr server(s) below. You can connect multiple Sonarr
-          servers, but only two of them can be marked as defaults (one non-4K
-          and one 4K). Administrators are able to override the server(s) used to
-          process new events.
+          <FormattedMessage
+            id="sonarrSettings.description"
+            defaultMessage="Configure your Sonarr server(s) below. You can connect multiple Sonarr servers, but only two of them can be marked as defaults (one non-4K and one 4K). Administrators are able to override the server(s) used to process new events."
+          />
         </p>
       </div>
       <SonarrModal
@@ -65,7 +72,10 @@ const SettingsServicesSonarr = () => {
         show={editSonarrModal.open}
       />
       <Modal
-        okText={'Delete'}
+        okText={intl.formatMessage({
+          id: 'common.delete',
+          defaultMessage: 'Delete',
+        })}
         okButtonType="error"
         show={deleteServerModal.open}
         onOk={() => deleteServer()}
@@ -76,9 +86,15 @@ const SettingsServicesSonarr = () => {
             type: 'sonarr',
           })
         }
-        title={'Delete Sonarr Server'}
+        title={intl.formatMessage({
+          id: 'sonarrSettings.deleteTitle',
+          defaultMessage: 'Delete Sonarr Server',
+        })}
       >
-        Are you sure you want to delete this server?
+        <FormattedMessage
+          id="radarrSettings.deleteconfirm"
+          defaultMessage="Are you sure you want to delete this server?"
+        />
       </Modal>
       <div className="section">
         {!sonarrData && !sonarrError && <LoadingEllipsis />}
@@ -89,7 +105,10 @@ const SettingsServicesSonarr = () => {
                 (!sonarrData.some((sonarr) => sonarr.isDefault) ? (
                   <Alert
                     title={
-                      'At least one Sonarr server must be marked as default in order for tv show events to be processed.'
+                      <FormattedMessage
+                        id="sonarrSettings.noDefaultServer"
+                        defaultMessage="At least one Sonarr server must be marked as default in order for tv show events to be processed."
+                      />
                     }
                   />
                 ) : !sonarrData.some(
@@ -97,7 +116,10 @@ const SettingsServicesSonarr = () => {
                   ) ? (
                   <Alert
                     title={
-                      'If you only have a single sonarr server for both non-4K and 4K content (or if you only download 4K content), your Sonarr server should NOT be designated as a 4K server.'
+                      <FormattedMessage
+                        id="sonarrSettings.single4kWarning"
+                        defaultMessage="If you only have a single sonarr server for both non-4K and 4K content (or if you only download 4K content), your Sonarr server should NOT be designated as a 4K server."
+                      />
                     }
                   />
                 ) : (
@@ -107,7 +129,10 @@ const SettingsServicesSonarr = () => {
                   ) && (
                     <Alert
                       title={
-                        'A 4K Sonarr server must be marked as default in order to enable new 4K Sonarr events.'
+                        <FormattedMessage
+                          id="sonarrSettings.no4kDefault"
+                          defaultMessage="A 4K Sonarr server must be marked as default in order to enable new 4K Sonarr events."
+                        />
                       }
                     />
                   )
@@ -144,7 +169,10 @@ const SettingsServicesSonarr = () => {
                     }
                   >
                     <PlusIcon className="size-7 mr-2" />
-                    <span>Add Sonarr Server</span>
+                    <FormattedMessage
+                      id="sonarrSettings.addServer"
+                      defaultMessage="Add Sonarr Server"
+                    />
                   </Button>
                 </div>
               </li>

@@ -6,6 +6,7 @@ import { type Library } from '@server/lib/settings';
 import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -13,6 +14,7 @@ const scrollToSection = (id: string) => {
 };
 
 export default function Hero() {
+  const intl = useIntl();
   const { currentSettings } = useSettings();
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
     refreshInterval: 0,
@@ -51,10 +53,16 @@ export default function Hero() {
             className="mb-10 mt-5 h-auto w-[448px] mx-auto md:mx-0 px-5 md:px-0"
           />
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">
-            Unlimited movies and TV shows
+            <FormattedMessage
+              id="hero.title"
+              defaultMessage="Unlimited movies and TV shows"
+            />
           </h1>
           <p className="text-sm md:text-base tracking-wide mb-12">
-            Watch anywhere, anytime for free. The future is now.
+            <FormattedMessage
+              id="hero.subtitle"
+              defaultMessage="Watch anywhere, anytime for free. The future is now."
+            />
           </p>
           {currentSettings.enableSignUp && (
             <form
@@ -68,7 +76,10 @@ export default function Hero() {
                   htmlFor="icode"
                   className="label-text mb-2 text-sm md:text-base"
                 >
-                  Get started by entering your invite code below.
+                  <FormattedMessage
+                    id="hero.inviteCode"
+                    defaultMessage="Enter your invite code to get started"
+                  />
                 </label>
               </div>
               {error && (
@@ -100,7 +111,10 @@ export default function Hero() {
                     className="input text-xl rounded-none rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none w-full pl-12 sm:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:outline-warning/30"
                     name="icode"
                     aria-label="Invite Code"
-                    placeholder="Invite code"
+                    placeholder={intl.formatMessage({
+                      id: 'invite.code',
+                      defaultMessage: 'Invite Code',
+                    })}
                     required
                     onChange={() => setError(null)}
                   />
@@ -114,12 +128,20 @@ export default function Hero() {
                       setError(null);
                       window.location.href = `/signup?icode=${encodeURIComponent(code)}`;
                     } else {
-                      setError('A valid invite code is required.');
+                      setError(
+                        intl.formatMessage({
+                          id: 'hero.error.emptyCode',
+                          defaultMessage: 'Please enter a valid invite code.',
+                        })
+                      );
                     }
                   }}
                 >
                   <span className="text-lg text-center rounded-lg cursor-pointe font-bold">
-                    Let&apos;s Get Started!
+                    <FormattedMessage
+                      id="hero.getStarted"
+                      defaultMessage="Let's Get Started!"
+                    />
                   </span>
                 </button>
               </div>
@@ -157,7 +179,12 @@ export default function Hero() {
                       </p>
                     ))}
                     {mediaLibraries.length > 4 && (
-                      <p className="first:pl-0 pl-4 font-bold">+ more</p>
+                      <p className="first:pl-0 pl-4 font-bold">
+                        <FormattedMessage
+                          id="hero.more"
+                          defaultMessage="+ more"
+                        />
+                      </p>
                     )}
                   </>
                 );

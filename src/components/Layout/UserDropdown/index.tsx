@@ -4,6 +4,7 @@ import DropDownMenu from '@app/components/Common/DropDownMenu';
 import UserCard from '@app/components/Layout/UserCard';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface UserDropdownProps {
   dropUp?: boolean;
@@ -16,13 +17,17 @@ const UserDropdown = ({
 }: UserDropdownProps) => {
   const { user } = useUser();
   const { currentSettings } = useSettings();
+  const intl = useIntl();
 
   return (
     <div className="indicator">
       <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block !hidden" />
       <DropDownMenu
         toolTip={tooltip}
-        tiptitle="Account"
+        tiptitle={intl.formatMessage({
+          id: 'userDropdown.account',
+          defaultMessage: 'Account',
+        })}
         dropdownIcon={
           <CachedImage
             className="h-9 w-9 rounded-full mr-1"
@@ -40,23 +45,34 @@ const UserDropdown = ({
           divide="before"
           href="/profile"
         >
-          View Profile
+          <FormattedMessage
+            id="profile.viewProfile"
+            defaultMessage="View Profile"
+          />
         </DropDownMenu.Item>
         <DropDownMenu.Item
           activeRegEx={/^\/profile\/settings\/?/}
           href="/profile/settings"
         >
-          Account Settings
+          <FormattedMessage
+            id="userDropdown.accountSettings"
+            defaultMessage="Account Settings"
+          />
         </DropDownMenu.Item>
         {currentSettings?.statsUrl && (
           <DropDownMenu.Item
             href={currentSettings?.statsUrl.toLowerCase()}
             target="_blank"
           >
-            Watch History
+            <FormattedMessage
+              id="userDropdown.watchHistory"
+              defaultMessage="Watch History"
+            />
           </DropDownMenu.Item>
         )}
-        <DropDownMenu.Item href="/help">Help Centre</DropDownMenu.Item>
+        <DropDownMenu.Item href="/help">
+          <FormattedMessage id="help.helpCentre" defaultMessage="Help Centre" />
+        </DropDownMenu.Item>
         {(currentSettings.supportUrl || currentSettings.supportEmail) && (
           <DropDownMenu.Item
             href={
@@ -66,11 +82,18 @@ const UserDropdown = ({
             }
             target="_blank"
           >
-            Get Support
+            <FormattedMessage
+              id="userDropdown.getSupport"
+              defaultMessage="Get Support"
+            />
           </DropDownMenu.Item>
         )}
         <DropDownMenu.Item href="/logout" divide="before">
-          Sign Out of {currentSettings.applicationTitle}
+          <FormattedMessage
+            id="userDropdown.signOut"
+            defaultMessage="Sign Out of {applicationTitle}"
+            values={{ applicationTitle: currentSettings.applicationTitle }}
+          />
         </DropDownMenu.Item>
       </DropDownMenu>
     </div>

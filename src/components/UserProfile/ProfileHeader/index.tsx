@@ -4,6 +4,7 @@ import { useUser } from '@app/hooks/useUser';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
 import { Permission } from '@server/lib/permissions';
 import Link from 'next/link';
+import { FormattedDate, FormattedMessage } from 'react-intl';
 
 type User = {
   id: number;
@@ -22,17 +23,33 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
   const { user: loggedInUser, hasPermission } = useUser();
   const subtextItems: React.ReactNode[] = [
     <>
-      Joined{' '}
-      {new Date(user.createdAt).toLocaleDateString('en-us', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}
+      <FormattedMessage
+        id="profile.joined"
+        defaultMessage="Joined {date}"
+        values={{
+          date: (
+            <FormattedDate
+              value={user.createdAt}
+              year="numeric"
+              month="long"
+              day="numeric"
+            />
+          ),
+        }}
+      />
     </>,
   ];
 
   if (hasPermission(Permission.MANAGE_INVITES)) {
-    subtextItems.push(<span>User ID: {user.id}</span>);
+    subtextItems.push(
+      <span>
+        <FormattedMessage
+          id="profile.userId"
+          defaultMessage="User ID: {userId}"
+          values={{ userId: user.id }}
+        />
+      </span>
+    );
   }
 
   return (
@@ -98,7 +115,12 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               className="max-lg:w-full"
             >
               <CogIcon className="size-5" />
-              <span>Edit Settings</span>
+              <span>
+                <FormattedMessage
+                  id="profile.editSettings"
+                  defaultMessage="Edit Settings"
+                />
+              </span>
             </Button>
           </Link>
         ) : (
@@ -117,7 +139,12 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
                 className="max-lg:w-full"
               >
                 <UserIcon className="size-5" />
-                <span>View Profile</span>
+                <span>
+                  <FormattedMessage
+                    id="profile.viewProfile"
+                    defaultMessage="View Profile"
+                  />
+                </span>
               </Button>
             </Link>
           )

@@ -4,15 +4,13 @@ import { Form, Formik, Field } from 'formik';
 import Button from '@app/components/Common/Button';
 import Toast from '@app/components/Toast';
 import {
-  CheckBadgeIcon,
   CloudArrowDownIcon,
   CloudArrowUpIcon,
   InformationCircleIcon,
   XCircleIcon,
+  CheckBadgeIcon,
 } from '@heroicons/react/24/solid';
 import Badge from '@app/components/Common/Badge';
-import QuotaSelector from '@app/components/QuotaSelector';
-import LibrarySelector from '@app/components/LibrarySelector';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import { availableLanguages } from '@app/context/LanguageContext';
 import { useState } from 'react';
@@ -30,6 +28,7 @@ import {
 } from '@app/utils/pushSubscriptionHelpers';
 import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const ConfirmAccountForm = ({
   onComplete,
@@ -38,10 +37,10 @@ const ConfirmAccountForm = ({
   user: User;
   onComplete: () => Promise<void> | void;
 }) => {
-  const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [webPushEnabled, setWebPushEnabled] = useState(false);
   const { currentSettings } = useSettings();
   const { hasPermission: currentHasPermission, user: currentUser } = useUser();
+  const intl = useIntl();
   // Fetch user settings data for initial values and global defaults
   const { data, error } = useSWR(
     user ? `/api/v1/user/${user.id}/settings/main` : null
@@ -58,11 +57,6 @@ const ConfirmAccountForm = ({
     error: notificationsError,
     mutate: revalidateNotifications,
   } = useSWR(user ? `/api/v1/user/${user.id}/settings/notifications` : null);
-
-  // Set up global values from API response
-  const globalSharedLibraries = data?.globalSharedLibraries;
-  const globalInviteQuotaDays = data?.globalInviteQuotaDays;
-  const globalInviteQuotaLimit = data?.globalInviteQuotaLimit;
   const defaultLocale = data?.locale || 'en';
 
   // Password validation schema: make password fields optional
@@ -76,17 +70,33 @@ const ConfirmAccountForm = ({
           currentUser?.id === user?.id
         ) {
           return Yup.string().required(
-            'You must provide your current password'
+            intl.formatMessage({
+              id: 'userSettings.password.currentRequired',
+              defaultMessage: 'You must provide your current password',
+            })
           );
         }
         return Yup.string().optional();
       }
     ),
     newPassword: Yup.string()
-      .min(8, 'Password is too short; should be a minimum of 8 characters')
+      .min(
+        8,
+        intl.formatMessage({
+          id: 'resetPassword.passwordTooShort',
+          defaultMessage:
+            'Password is too short; should be a minimum of 8 characters',
+        })
+      )
       .notRequired(),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
+      .oneOf(
+        [Yup.ref('newPassword'), null],
+        intl.formatMessage({
+          id: 'localSignup.passwordsMatch',
+          defaultMessage: 'Passwords must match',
+        })
+      )
       .notRequired(),
   });
   const CombinedSchema = PasswordChangeSchema;
@@ -104,16 +114,29 @@ const ConfirmAccountForm = ({
         localStorage.setItem('pushNotificationsEnabled', 'true');
         setWebPushEnabled(true);
         Toast({
-          title: 'Web push has been enabled.',
+          title: intl.formatMessage({
+            id: 'confirmAccount.webPushEnabled',
+            defaultMessage: 'Web Push Notifications Enabled',
+          }),
           type: 'success',
           icon: <CheckBadgeIcon className="size-7" />,
         });
       } else {
-        throw new Error('Subscription failed');
+        Toast({
+          title: intl.formatMessage({
+            id: 'confirmAccount.subscriptionFailed',
+            defaultMessage: 'Failed to subscribe to web push notifications',
+          }),
+          type: 'error',
+          icon: <XCircleIcon className="size-7" />,
+        });
       }
     } catch (e) {
       Toast({
-        title: 'Something went wrong while enabling web push.',
+        title: intl.formatMessage({
+          id: 'confirmAccount.webPushEnableError',
+          defaultMessage: 'Failed to enable web push notifications',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -130,13 +153,19 @@ const ConfirmAccountForm = ({
       localStorage.setItem('pushNotificationsEnabled', 'false');
       setWebPushEnabled(false);
       Toast({
-        title: 'Web push has been disabled.',
+        title: intl.formatMessage({
+          id: 'confirmAccount.webPushDisabled',
+          defaultMessage: 'Web push has been disabled',
+        }),
         type: 'info',
         icon: <InformationCircleIcon className="size-7" />,
       });
     } catch (e) {
       Toast({
-        title: 'Something went wrong while disabling web push.',
+        title: intl.formatMessage({
+          id: 'confirmAccount.webPushDisableError',
+          defaultMessage: 'Failed to disable web push notifications',
+        }),
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
         message: e.message,
@@ -147,9 +176,7 @@ const ConfirmAccountForm = ({
   // Only render form if user and all settings are loaded and user is authed
   if (
     !user ||
-    !user.id ||
     !currentUser ||
-    !currentUser.id ||
     (!data && !error) ||
     (!passwordData && !passwordError) ||
     (!notificationsData && !notificationsError)
@@ -188,10 +215,6 @@ const ConfirmAccountForm = ({
           await axios.post(`/api/v1/user/${user.id}/settings/main`, {
             username: values.displayName,
             locale: values.locale,
-            inviteQuotaLimit: inviteQuotaEnabled
-              ? values.inviteQuotaLimit
-              : null,
-            inviteQuotaDays: inviteQuotaEnabled ? values.inviteQuotaDays : null,
             sharedLibraries: values.sharedLibraries
               ? values.sharedLibraries
               : null,
@@ -212,15 +235,21 @@ const ConfirmAccountForm = ({
             },
           });
           Toast({
-            title: 'Account settings saved successfully!',
+            title: intl.formatMessage({
+              id: 'confirmAccount.settingsSaved',
+              defaultMessage: 'Account settings saved successfully!',
+            }),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
           await onComplete();
         } catch (e) {
           Toast({
-            title: 'Error',
-            message: e?.message || 'Failed to confirm account.',
+            title: intl.formatMessage({
+              id: 'confirmAccount.error',
+              defaultMessage: 'Failed to confirm account.',
+            }),
+            message: e.message,
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
           });
@@ -243,32 +272,61 @@ const ConfirmAccountForm = ({
         <Form>
           <div className="max-w-6xl space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-              <div className="col-span-1">Account Type</div>
+              <div className="col-span-1">
+                <FormattedMessage
+                  id="settings.accountType"
+                  defaultMessage="Account Type"
+                />
+              </div>
               <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {user?.userType === UserType.PLEX ? (
-                    <Badge badgeType="warning">Plex User</Badge>
+                    <Badge badgeType="warning">
+                      <FormattedMessage
+                        id="common.plexUser"
+                        defaultMessage="Plex User"
+                      />
+                    </Badge>
                   ) : (
-                    <Badge badgeType="default">Local User</Badge>
+                    <Badge badgeType="default">
+                      <FormattedMessage
+                        id="common.localUser"
+                        defaultMessage="Local User"
+                      />
+                    </Badge>
                   )}
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-              <div className="col-span-1">Role</div>
+              <div className="col-span-1">
+                <FormattedMessage id="common.role" defaultMessage="Role" />
+              </div>
               <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {user?.id === 1
-                    ? 'Owner'
+                    ? intl.formatMessage({
+                        id: 'common.owner',
+                        defaultMessage: 'Owner',
+                      })
                     : currentHasPermission(Permission.ADMIN)
-                      ? 'Admin'
-                      : 'User'}
+                      ? intl.formatMessage({
+                          id: 'common.admin',
+                          defaultMessage: 'Admin',
+                        })
+                      : intl.formatMessage({
+                          id: 'common.user',
+                          defaultMessage: 'User',
+                        })}
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
               <label htmlFor="displayName" className="col-span-1">
-                Display Name
+                <FormattedMessage
+                  id="common.displayName"
+                  defaultMessage="Display Name"
+                />
               </label>
               <div className="col-span-2">
                 <Field
@@ -289,7 +347,10 @@ const ConfirmAccountForm = ({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
               <label htmlFor="locale" className="col-span-1">
-                Display Language
+                <FormattedMessage
+                  id="common.displayLanguage"
+                  defaultMessage="Display Language"
+                />
               </label>
               <div className="col-span-2">
                 <Field
@@ -299,8 +360,11 @@ const ConfirmAccountForm = ({
                   className="select select-primary select-sm w-full"
                 >
                   <option value="" lang={defaultLocale}>
-                    Default (
-                    {availableLanguages[defaultLocale]?.display || 'English'})
+                    {intl.formatMessage({
+                      id: 'common.default',
+                      defaultMessage: 'Default',
+                    })}{' '}
+                    ({availableLanguages[defaultLocale]?.display})
                   </option>
                   {Object.keys(availableLanguages).map((key) => (
                     <option
@@ -314,80 +378,32 @@ const ConfirmAccountForm = ({
                 </Field>
               </div>
             </div>
-            {currentHasPermission(Permission.MANAGE_USERS) &&
-              !currentHasPermission(Permission.MANAGE_USERS) && (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                    <label htmlFor="sharedLibraries" className="col-span-1">
-                      Shared Libraries
-                    </label>
-                    <div className="col-span-2">
-                      <LibrarySelector
-                        value={values.sharedLibraries}
-                        serverValue={globalSharedLibraries}
-                        isUserSettings
-                        setFieldValue={setFieldValue}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                    <div className="col-span-1">
-                      <span>Invite Quota</span>
-                    </div>
-                    <div className="col-span-2">
-                      <div className="mb-4 flex items-center">
-                        <input
-                          type="checkbox"
-                          id="globalOverride"
-                          className="checkbox checkbox-primary"
-                          checked={inviteQuotaEnabled}
-                          onChange={() => setInviteQuotaEnabled((s) => !s)}
-                        />
-                        <label
-                          htmlFor="globalOverride"
-                          className="ml-2 text-gray-300"
-                        >
-                          Override Global Limit
-                        </label>
-                      </div>
-                      <QuotaSelector
-                        isDisabled={!inviteQuotaEnabled}
-                        dayFieldName="inviteQuotaDays"
-                        limitFieldName="inviteQuotaLimit"
-                        onChange={setFieldValue}
-                        defaultDays={values.inviteQuotaDays}
-                        defaultLimit={values.inviteQuotaLimit}
-                        dayOverride={
-                          !inviteQuotaEnabled
-                            ? globalInviteQuotaDays
-                            : undefined
-                        }
-                        limitOverride={
-                          !inviteQuotaEnabled
-                            ? globalInviteQuotaLimit
-                            : undefined
-                        }
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
             {currentSettings?.localLogin && (
               <div className="mb-6 mt-3">
-                <h3 className="text-2xl font-extrabold mb-2">Password</h3>
+                <h3 className="text-2xl font-extrabold mb-2">
+                  <FormattedMessage
+                    id="common.password"
+                    defaultMessage="Password"
+                  />
+                </h3>
                 {!passwordData.hasPassword && (
                   <Alert
                     type="warning"
-                    title={
-                      'Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a "local user" using your email address.'
-                    }
+                    title={intl.formatMessage({
+                      id: 'confirmAccount.plexOAuthWarning',
+                      defaultMessage:
+                        'Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a "local user" using your email address.',
+                    })}
                   />
                 )}
                 <div className="max-w-6xl space-y-5">
                   {passwordData.hasPassword && user?.id === currentUser?.id && (
                     <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 pb-6">
                       <label htmlFor="currentPassword" className="col-span-1">
-                        Current Password
+                        <FormattedMessage
+                          id="common.currentPassword"
+                          defaultMessage="Current Password"
+                        />
                       </label>
                       <div className="col-span-2">
                         <div className="flex">
@@ -411,7 +427,10 @@ const ConfirmAccountForm = ({
                   )}
                   <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                     <label htmlFor="newPassword" className="col-span-1">
-                      New Password
+                      <FormattedMessage
+                        id="common.newPassword"
+                        defaultMessage="New Password"
+                      />
                     </label>
                     <div className="col-span-2">
                       <div className="flex">
@@ -432,7 +451,10 @@ const ConfirmAccountForm = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                     <label htmlFor="confirmPassword" className="col-span-1">
-                      Confirm Password
+                      <FormattedMessage
+                        id="common.confirmPassword"
+                        defaultMessage="Confirm Password"
+                      />
                     </label>
                     <div className="col-span-2">
                       <div className="flex">
@@ -458,9 +480,14 @@ const ConfirmAccountForm = ({
             )}
             <div className="mb-6 mt-3">
               <h3 className="text-2xl font-extrabold mb-2">
-                Notification Settings
+                <FormattedMessage
+                  id="settings.notifications"
+                  defaultMessage="Notification Settings"
+                />
               </h3>
-              <h4 className="text-xl font-semibold mb-1">Email</h4>
+              <h4 className="text-xl font-semibold mb-1">
+                <FormattedMessage id="common.email" defaultMessage="Email" />
+              </h4>
               <div className="max-w-6xl space-y-2">
                 <NotificationTypeSelector
                   user={user}
@@ -475,7 +502,12 @@ const ConfirmAccountForm = ({
                       : undefined
                   }
                 />
-                <h4 className="text-xl font-semibold mb-1">WebPush</h4>
+                <h4 className="text-xl font-semibold mb-1">
+                  <FormattedMessage
+                    id="common.webPush"
+                    defaultMessage="Web Push"
+                  />
+                </h4>
                 <div className="flex col-span-3 mt-4">
                   <span className="inline-flex rounded-md shadow-sm">
                     <Button
@@ -495,8 +527,14 @@ const ConfirmAccountForm = ({
                       )}
                       <span>
                         {webPushEnabled
-                          ? 'Disable web push'
-                          : 'Enable web push'}
+                          ? intl.formatMessage({
+                              id: 'confirmAccount.disableWebPush',
+                              defaultMessage: 'Disable Web Push',
+                            })
+                          : intl.formatMessage({
+                              id: 'confirmAccount.enableWebPush',
+                              defaultMessage: 'Enable Web Push',
+                            })}
                       </span>
                     </Button>
                   </span>
@@ -523,7 +561,15 @@ const ConfirmAccountForm = ({
             className="w-full mt-4"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Finalizing Account...' : 'Confirm Account'}
+            {isSubmitting
+              ? intl.formatMessage({
+                  id: 'confirmAccount.finalizingAccount',
+                  defaultMessage: 'Finalizing Account...',
+                })
+              : intl.formatMessage({
+                  id: 'signUp.confirmAccount',
+                  defaultMessage: 'Confirm Account',
+                })}
           </Button>
         </Form>
       )}

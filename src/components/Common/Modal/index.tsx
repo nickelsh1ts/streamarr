@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 import type React from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
   subtitle?: string;
@@ -75,7 +76,7 @@ export default function Modal({
                 onClick={onCancel}
               >
                 <span className="absolute w-1 h-1 p-0 -m-1 whitespace-nowrap border-0 sr-only">
-                  Close
+                  <FormattedMessage id="common.close" />
                 </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +164,7 @@ export default function Modal({
                             className="ml-3 sm:ml-0"
                             data-testid="modal-cancel-button"
                           >
-                            {cancelText ? cancelText : 'Cancel'}
+                            {cancelText}
                           </Button>
                         )}
                       </div>
