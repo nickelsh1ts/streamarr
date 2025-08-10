@@ -116,6 +116,7 @@ const SignUpAuthForm = ({
           >
             <FormattedMessage
               id="signUp.loginWithPlex"
+              defaultMessage="Sign up with your {plexLogo} account"
               values={{
                 plexLogo: <PlexLogo className="inline-block size-9 mr-2" />,
               }}
@@ -176,7 +177,7 @@ const SignUpAuthForm = ({
               >
                 <FormattedMessage
                   id="signUp.createLocalAccount"
-                  defaultMessage={'Create {applicationTitle} account'}
+                  defaultMessage="Create {applicationTitle} account"
                   values={{
                     applicationTitle: currentSettings.applicationTitle,
                   }}

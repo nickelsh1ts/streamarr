@@ -79,7 +79,7 @@ const ServicesTautulli = () => {
           'leading-slash',
           intl.formatMessage({
             id: 'servicesSettings.urlBase.leadingSlash',
-            defaultMessage: 'URL base must have a leading slash',
+            defaultMessage: 'URL Base must have a leading slash',
           }),
           (value) => !value || value.startsWith('/')
         )
@@ -87,7 +87,7 @@ const ServicesTautulli = () => {
           'no-trailing-slash',
           intl.formatMessage({
             id: 'servicesSettings.urlBase.noTrailingSlash',
-            defaultMessage: 'URL base must not end in a trailing slash',
+            defaultMessage: 'URL Base must not end in a trailing slash',
           }),
           (value) => !value || !value.endsWith('/')
         ),
@@ -173,6 +173,7 @@ const ServicesTautulli = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
                 },
                 { appName: 'Tautulli' }
               ),
@@ -210,7 +211,10 @@ const ServicesTautulli = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliHostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -237,7 +241,7 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliPort">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -261,7 +265,10 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliUseSsl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -277,7 +284,10 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliUrlBase" className="text-label">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="form-input-field">
@@ -302,7 +312,10 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliApiKey" className="text-label">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -324,7 +337,10 @@ const ServicesTautulli = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliExternalUrl">
-                  <FormattedMessage id="common.externalUrl" />
+                  <FormattedMessage
+                    id="common.externalUrl"
+                    defaultMessage="External URL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -362,9 +378,11 @@ const ServicesTautulli = () => {
                       {isSubmitting
                         ? intl.formatMessage({
                             id: 'common.saving',
+                            defaultMessage: 'Saving...',
                           })
                         : intl.formatMessage({
                             id: 'common.saveChanges',
+                            defaultMessage: 'Save Changes',
                           })}
                     </span>
                   </Button>

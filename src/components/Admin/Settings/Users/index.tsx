@@ -191,7 +191,10 @@ const UserSettings = () => {
                     }
                   >
                     <option value={0}>
-                      <FormattedMessage id="common.unlimited" />
+                      <FormattedMessage
+                        id="common.unlimited"
+                        defaultMessage="Unlimited"
+                      />
                     </option>
                     {[...Array(100)].map((_item, i) => (
                       <option value={i + 1} key={`$invite-limit-${i + 1}`}>
@@ -212,9 +215,15 @@ const UserSettings = () => {
                 <div className="" />
                 <div className="col-span-2 space-x-2">
                   <span>
-                    <FormattedMessage id="common.expires" />{' '}
+                    <FormattedMessage
+                      id="common.expires"
+                      defaultMessage="Expires"
+                    />{' '}
                     {values.inviteExpiryLimit > 0 && (
-                      <FormattedMessage id="common.after" />
+                      <FormattedMessage
+                        id="common.after"
+                        defaultMessage="After"
+                      />
                     )}
                   </span>
                   <Field
@@ -227,7 +236,10 @@ const UserSettings = () => {
                     }
                   >
                     <option value={0}>
-                      <FormattedMessage id="common.never" />
+                      <FormattedMessage
+                        id="common.never"
+                        defaultMessage="Never"
+                      />
                     </option>
                     {[...Array(100)].map((_item, i) => (
                       <option value={i + 1} key={`$invite-expiry-${i + 1}`}>
@@ -485,9 +497,15 @@ const UserSettings = () => {
                   <ArrowDownTrayIcon className="size-4 mr-2" />
                   <span>
                     {isSubmitting ? (
-                      <FormattedMessage id="common.saving" />
+                      <FormattedMessage
+                        id="common.saving"
+                        defaultMessage="Saving..."
+                      />
                     ) : (
-                      <FormattedMessage id="common.saveChanges" />
+                      <FormattedMessage
+                        id="common.saveChanges"
+                        defaultMessage="Save Changes"
+                      />
                     )}
                   </span>
                 </Button>

@@ -90,7 +90,7 @@ const ResetPassword = () => {
                     <span>
                       <FormattedMessage
                         id="resetPassword.backToSignIn"
-                        defaultMessage="Back to Signin"
+                        defaultMessage="Back to Sign in"
                       />
                     </span>
                   </Button>
@@ -149,7 +149,7 @@ const ResetPassword = () => {
                               className="grow"
                               placeholder={intl.formatMessage({
                                 id: 'common.emailAddress',
-                                defaultMessage: 'Email address',
+                                defaultMessage: 'Email Address',
                               })}
                             />
                           </div>

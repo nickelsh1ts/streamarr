@@ -76,7 +76,7 @@ export default function Modal({
                 onClick={onCancel}
               >
                 <span className="absolute w-1 h-1 p-0 -m-1 whitespace-nowrap border-0 sr-only">
-                  <FormattedMessage id="common.close" />
+                  <FormattedMessage id="common.close" defaultMessage="Close" />
                 </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

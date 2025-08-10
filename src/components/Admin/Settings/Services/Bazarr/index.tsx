@@ -50,15 +50,13 @@ const ServicesBazarr = () => {
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.bazarr.title"
-            defaultMessage={'Bazarr Settings'}
+            defaultMessage="Bazarr Settings"
           />
         </h3>
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.bazarr.description"
-            defaultMessage={
-              'Optionally configure the settings for your Bazarr server.'
-            }
+            defaultMessage="Optionally configure the settings for your Bazarr server."
           />
         </p>
       </div>
@@ -99,6 +97,8 @@ const ServicesBazarr = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
                 },
                 { appName: 'Bazarr' }
               ),
@@ -125,8 +125,7 @@ const ServicesBazarr = () => {
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
-                    defaultMessage="Enable {appName}"
-                    values={{ appName: 'Bazarr' }}
+                    defaultMessage="Enable"
                   />
                   <span className="ml-1 text-error">*</span>
                 </label>
@@ -151,7 +150,10 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -176,7 +178,7 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -200,7 +202,10 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="useSsl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -216,7 +221,10 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -235,7 +243,10 @@ const ServicesBazarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -269,9 +280,11 @@ const ServicesBazarr = () => {
                       {isSubmitting
                         ? intl.formatMessage({
                             id: 'common.saving',
+                            defaultMessage: 'Saving...',
                           })
                         : intl.formatMessage({
                             id: 'common.saveChanges',
+                            defaultMessage: 'Save Changes',
                           })}
                     </span>
                   </Button>

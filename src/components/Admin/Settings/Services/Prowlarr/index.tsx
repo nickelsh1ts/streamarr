@@ -26,6 +26,7 @@ const ServicesProwlarr = () => {
         'leading-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
       )
@@ -33,6 +34,7 @@ const ServicesProwlarr = () => {
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -48,15 +50,13 @@ const ServicesProwlarr = () => {
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.prowlarr.title"
-            defaultMessage={'Prowlarr Settings'}
+            defaultMessage="Prowlarr Settings"
           />
         </h3>
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.prowlarr.description"
-            defaultMessage={
-              'Optionally configure the settings for your Prowlarr server.'
-            }
+            defaultMessage="Optionally configure the settings for your Prowlarr server."
           />
         </p>
       </div>
@@ -85,8 +85,9 @@ const ServicesProwlarr = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
                 },
-                { appname: 'Prowlarr' }
+                { appName: 'Prowlarr' }
               ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
@@ -96,8 +97,10 @@ const ServicesProwlarr = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
                 },
-                { appname: 'Prowlarr' }
+                { appName: 'Prowlarr' }
               ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
@@ -122,7 +125,7 @@ const ServicesProwlarr = () => {
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
-                    values={{ appname: 'Prowlarr' }}
+                    defaultMessage="Enable"
                   />
                   <span className="ml-1 text-error">*</span>
                 </label>
@@ -147,7 +150,10 @@ const ServicesProwlarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -172,7 +178,7 @@ const ServicesProwlarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -196,7 +202,10 @@ const ServicesProwlarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="useSsl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -212,7 +221,10 @@ const ServicesProwlarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -231,7 +243,10 @@ const ServicesProwlarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -265,9 +280,11 @@ const ServicesProwlarr = () => {
                       {isSubmitting
                         ? intl.formatMessage({
                             id: 'common.saving',
+                            defaultMessage: 'Saving...',
                           })
                         : intl.formatMessage({
                             id: 'common.saveChanges',
+                            defaultMessage: 'Save Changes',
                           })}
                     </span>
                   </Button>

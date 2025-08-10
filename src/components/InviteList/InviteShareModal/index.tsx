@@ -59,7 +59,10 @@ const InviteShareModal = ({
         setQrCodeBlobUrl(url);
       } catch (e) {
         Toast({
-          title: intl.formatMessage({ id: 'inviteShare.qrCodeError' }),
+          title: intl.formatMessage({
+            id: 'inviteShare.qrCodeError',
+            defaultMessage: 'Error generating QR code',
+          }),
           type: 'error',
           message: e.message,
           icon: <XCircleIcon className="size-7" />,
@@ -117,7 +120,7 @@ const InviteShareModal = ({
           title: intl.formatMessage(
             {
               id: 'common.copiedToClipboard',
-              defaultMessage: 'Copied {item} to clipboard!',
+              defaultMessage: 'Copied {item} to Clipboard!',
             },
             { item: 'Invite link' }
           ),

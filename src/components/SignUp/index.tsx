@@ -59,14 +59,14 @@ const Join = () => {
           <div className="mb-2 flex justify-center text-3xl font-bold">
             <FormattedMessage
               id="signUp.welcomeTo"
-              defaultMessage={'Welcome to {applicationTitle}'}
+              defaultMessage="Welcome to {applicationTitle}"
               values={{ applicationTitle: currentSettings.applicationTitle }}
             />
           </div>
           <div className="mb-2 text-center">
             <FormattedMessage
               id="signUp.registrationByInvite"
-              defaultMessage={'Registration is by invite only.'}
+              defaultMessage="Registration is by invite only."
             />
           </div>
         </div>
@@ -110,9 +110,7 @@ const Join = () => {
               <p className="mb-2 text-center pb-6">
                 <FormattedMessage
                   id="signUp.getStartedInviteCode"
-                  defaultMessage={
-                    'Get started by entering your invite code below.'
-                  }
+                  defaultMessage="Get started by entering your invite code below."
                 />
               </p>
               <ICodeForm
@@ -128,22 +126,18 @@ const Join = () => {
               <p className="mb-2 text-center pb-6">
                 <FormattedMessage
                   id="signUp.signInWithPlex"
-                  defaultMessage={
-                    'Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}.'
-                  }
+                  defaultMessage="Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}."
                   values={{
                     localLoginOption: currentSettings?.localLogin ? (
                       <FormattedMessage
                         id="signUp.orEnterLocalAccount"
-                        defaultMessage={'or enter local account details'}
+                        defaultMessage="or enter local account details"
                       />
                     ) : null,
                     plexRecommended: currentSettings?.localLogin ? (
                       <FormattedMessage
                         id="signUp.plexRecommended"
-                        defaultMessage={
-                          '(Plex is recommended for the best experience)'
-                        }
+                        defaultMessage="(Plex is recommended for the best experience)"
                       />
                     ) : null,
                   }}
@@ -163,9 +157,7 @@ const Join = () => {
               <p className="mb-2 text-center pb-6">
                 <FormattedMessage
                   id="signUp.reviewDetailsConfirm"
-                  defaultMessage={
-                    'Review your details below and confirm your account.'
-                  }
+                  defaultMessage="Review your details below and confirm your account."
                 />
               </p>
               <ConfirmAccountForm user={user} onComplete={finishSignup} />

@@ -255,10 +255,12 @@ const InviteModal = ({
                 ? isSubmitting
                   ? intl.formatMessage({
                       id: 'common.saving',
+                      defaultMessage: 'Saving...',
                     })
                   : invite
                     ? intl.formatMessage({
                         id: 'common.saveChanges',
+                        defaultMessage: 'Save Changes',
                       })
                     : intl.formatMessage({
                         id: 'invite.create',
@@ -366,7 +368,7 @@ const InviteModal = ({
                       defaultMessage="Invite Code"
                     />
                     {invite ? null : (
-                      <span className="text-neutral-500">
+                      <span className="text-neutral-500 ml-2">
                         (
                         <FormattedMessage
                           id="common.optional"
@@ -399,11 +401,14 @@ const InviteModal = ({
                   </label>
                   <div className="space-x-2">
                     <span>
-                      <FormattedMessage id="common.expires" />{' '}
+                      <FormattedMessage
+                        id="common.expires"
+                        defaultMessage="Expires"
+                      />{' '}
                       {values.inviteExpiryLimit > 0 && (
                         <FormattedMessage
                           id="common.after"
-                          defaultMessage="after"
+                          defaultMessage="After"
                         />
                       )}
                     </span>
@@ -724,7 +729,7 @@ const InviteModal = ({
                       >
                         <FormattedMessage
                           id="invite.sharedLibraries"
-                          defaultMessage="Shared Libraries"
+                          defaultMessage="Shared Libraries:"
                         />
                       </label>
                       <div className="col-span-2">

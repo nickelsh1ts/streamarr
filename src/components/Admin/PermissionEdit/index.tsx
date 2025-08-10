@@ -22,10 +22,7 @@ const PermissionEdit = ({
   const permissionList: PermissionItem[] = [
     {
       id: 'admin',
-      name: intl.formatMessage({
-        id: 'common.admin',
-        defaultMessage: 'Admin',
-      }),
+      name: intl.formatMessage({ id: 'common.admin', defaultMessage: 'Admin' }),
       description: intl.formatMessage({
         id: 'userPermissions.admin.description',
         defaultMessage:

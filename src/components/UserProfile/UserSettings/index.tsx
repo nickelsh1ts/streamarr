@@ -57,7 +57,7 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
     },
     {
       text: intl.formatMessage({
-        id: 'settings.notifications',
+        id: 'common.notifications',
         defaultMessage: 'Notifications',
       }),
       route: data?.emailEnabled

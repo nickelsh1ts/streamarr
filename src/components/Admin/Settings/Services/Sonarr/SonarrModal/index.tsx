@@ -30,18 +30,21 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
     name: Yup.string().required(
       intl.formatMessage({
         id: 'servicesSettings.validation.servername',
+        defaultMessage: 'You must provide a valid server name',
       })
     ),
     hostname: Yup.string()
       .required(
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
         })
       )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
         })
       ),
     port: Yup.number()
@@ -49,11 +52,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
       .required(
         intl.formatMessage({
           id: 'generalSettings.validation.port',
+          defaultMessage: 'You must provide a valid port number',
         })
       ),
     apiKey: Yup.string().required(
       intl.formatMessage({
         id: 'servicesSettings.validation.apikey',
+        defaultMessage: 'API key is required',
       })
     ),
     baseUrl: Yup.string()
@@ -61,6 +66,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         'leading-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
       )
@@ -68,6 +74,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -188,6 +195,8 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
             title: intl.formatMessage(
               {
                 id: 'common.settingsSaveError',
+                defaultMessage:
+                  'Something went wrong while saving {appName} settings.',
               },
               { appName: 'Sonarr' }
             ),
@@ -214,9 +223,15 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
             okButtonType="primary"
             okText={
               isSubmitting
-                ? intl.formatMessage({ id: 'common.saving' })
+                ? intl.formatMessage({
+                    id: 'common.saving',
+                    defaultMessage: 'Saving...',
+                  })
                 : sonarr
-                  ? intl.formatMessage({ id: 'common.saveChanges' })
+                  ? intl.formatMessage({
+                      id: 'common.saveChanges',
+                      defaultMessage: 'Save Changes',
+                    })
                   : intl.formatMessage(
                       {
                         id: 'common.addserver',
@@ -230,9 +245,11 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
+                    defaultMessage: 'Testing...',
                   })
                 : intl.formatMessage({
                     id: 'common.test',
+                    defaultMessage: 'Test',
                   })
             }
             onSecondary={() => {
@@ -336,7 +353,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 <label htmlFor="name">
                   <FormattedMessage
                     id="common.servername"
-                    defaultMessage={'Server Name'}
+                    defaultMessage="Server Name"
                   />
                   <span className="text-error">*</span>
                 </label>
@@ -366,7 +383,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -395,7 +415,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -419,7 +439,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="ssl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -436,7 +459,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -462,7 +488,10 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="baseUrl">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -489,14 +518,12 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 <label htmlFor="syncEnabled">
                   <FormattedMessage
                     id="common.calendarSync"
-                    defaultMessage={'Enable Calendar Sync'}
+                    defaultMessage="Enable Calendar Sync"
                   />
                   <span className="text-sm block font-light text-neutral-300">
                     <FormattedMessage
                       id="common.calendarSync.description"
-                      defaultMessage={
-                        'Automatically sync {arrApp} events to the calendar'
-                      }
+                      defaultMessage="Automatically sync {arrApp} events to the calendar"
                       values={{ arrApp: 'Sonarr' }}
                     />
                   </span>

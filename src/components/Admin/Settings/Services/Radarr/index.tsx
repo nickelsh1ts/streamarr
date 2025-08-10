@@ -61,14 +61,17 @@ export const ServerInstance = ({
             </h3>
             {isDefault && !is4k && (
               <Badge>
-                <FormattedMessage id="common.default" />
+                <FormattedMessage
+                  id="common.default"
+                  defaultMessage="Default"
+                />
               </Badge>
             )}
             {isDefault && is4k && (
               <Badge>
                 <FormattedMessage
                   id="common.default4k"
-                  defaultMessage="Default 4K"
+                  defaultMessage="Default 4K Server"
                 />
               </Badge>
             )}
@@ -85,7 +88,10 @@ export const ServerInstance = ({
           </div>
           <p className="mt-1 truncate text-sm leading-5 text-gray-300">
             <span className="mr-2 font-bold">
-              <FormattedMessage id="common.hostname" />
+              <FormattedMessage
+                id="common.hostname"
+                defaultMessage="Hostname or IP Address"
+              />
             </span>
             <a
               href={internalUrl}
@@ -98,7 +104,7 @@ export const ServerInstance = ({
           </p>
           <p className="mt-1 truncate text-sm leading-5 text-gray-300">
             <span className="mr-2 font-bold">
-              <FormattedMessage id="common.urlBase" />
+              <FormattedMessage id="common.urlBase" defaultMessage="URL Base" />
             </span>
             {urlBase}
           </p>
@@ -125,7 +131,7 @@ export const ServerInstance = ({
             >
               <PencilIcon className="mr-2 h-5 w-5" />
               <span>
-                <FormattedMessage id="common.edit" />
+                <FormattedMessage id="common.edit" defaultMessage="Edit" />
               </span>
             </button>
           </div>
@@ -136,7 +142,7 @@ export const ServerInstance = ({
             >
               <TrashIcon className="mr-2 h-5 w-5" />
               <span>
-                <FormattedMessage id="common.delete" />
+                <FormattedMessage id="common.delete" defaultMessage="Delete" />
               </span>
             </button>
           </div>
@@ -206,7 +212,10 @@ const SettingsServicesRadarr = () => {
         show={editRadarrModal.open}
       />
       <Modal
-        okText={intl.formatMessage({ id: 'common.delete' })}
+        okText={intl.formatMessage({
+          id: 'common.delete',
+          defaultMessage: 'Delete',
+        })}
         okButtonType="error"
         show={deleteServerModal.open}
         onOk={() => deleteServer()}

@@ -103,7 +103,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
                   })}
                   placeholder={intl.formatMessage({
                     id: 'invite.code',
-                    defaultMessage: 'Invite code',
+                    defaultMessage: 'Invite Code',
                   })}
                   defaultValue={values.icode}
                   required

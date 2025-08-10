@@ -192,7 +192,7 @@ const GeneralSettings = () => {
 
             Toast({
               title: intl.formatMessage({
-                id: 'common.settingsSaveSuccess',
+                id: 'common.saveSuccess',
                 defaultMessage: 'Settings saved successfully!',
               }),
               icon: <CheckBadgeIcon className="size-7" />,
@@ -202,7 +202,7 @@ const GeneralSettings = () => {
             Toast({
               title: intl.formatMessage({
                 id: 'settings.saveError',
-                defaultMessage: 'Something went wrong while saving settings',
+                defaultMessage: 'Something went wrong while saving settings.',
               }),
               message: error.response?.data?.message || error.message,
               icon: <XCircleIcon className="size-7" />,

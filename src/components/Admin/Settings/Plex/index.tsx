@@ -78,7 +78,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         'leading-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.leadingSlash',
-          defaultMessage: 'URL base must have a leading slash',
+          defaultMessage: 'URL Base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
       )
@@ -86,7 +86,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.noTrailingSlash',
-          defaultMessage: 'URL base must not end in a trailing slash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -549,9 +549,15 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     <ArrowDownTrayIcon className="size-4 mr-2" />
                     <span>
                       {isSubmitting ? (
-                        <FormattedMessage id="common.saving" />
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving..."
+                        />
                       ) : (
-                        <FormattedMessage id="common.saveChanges" />
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
                       )}
                     </span>
                   </Button>

@@ -99,6 +99,7 @@ const BulkEditModal = ({
       okDisabled={isSaving}
       okText={intl.formatMessage({
         id: 'common.saveChanges',
+        defaultMessage: 'Save Changes',
       })}
       onCancel={onCancel}
       show={show}

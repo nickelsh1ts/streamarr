@@ -1,8 +1,10 @@
 'use client';
 import AdminTabs from '@app/components/Common/AdminTabs';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
+  const intl = useIntl();
+
   const ServicesTabs = [
     {
       text: 'Overseerr',
@@ -45,7 +47,10 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/tautulli\/?/,
     },
     {
-      text: 'Downloads',
+      text: intl.formatMessage({
+        id: 'common.downloads',
+        defaultMessage: 'Downloads',
+      }),
       route: '/admin/settings/services/downloads',
       regex: /^\/admin\/settings\/services\/downloads\/?/,
     },

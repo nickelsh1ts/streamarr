@@ -67,7 +67,7 @@ const QuotaSelector = ({
               values={{ count: quotaLimit }}
             />
           ) : quotaLimit < 0 ? (
-            <FormattedMessage id="common.invites" defaultMessage="invites" />
+            <FormattedMessage id="common.invites" defaultMessage="Invites" />
           ) : (
             ''
           )}
@@ -96,7 +96,7 @@ const QuotaSelector = ({
               {quotaDays > 0 && (
                 <FormattedMessage
                   id="invite.timeUnit.day"
-                  defaultMessage="{count, plural, one {day} other {days}}"
+                  defaultMessage="{count, plural, one {Day} other {Days}}"
                   values={{ count: quotaDays }}
                 />
               )}

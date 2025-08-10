@@ -25,12 +25,14 @@ const ServicesUptime = () => {
       .url(
         intl.formatMessage({
           id: 'generalSettings.validation.supportUrl',
+          defaultMessage: 'You must provide a valid URL',
         })
       )
       .test(
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.validation.urlNoTrailingSlash',
+          defaultMessage: 'URL must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -46,15 +48,13 @@ const ServicesUptime = () => {
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.uptime.title"
-            defaultMessage={'Uptime Settings'}
+            defaultMessage="Uptime Settings"
           />
         </h3>
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.uptime.description"
-            defaultMessage={
-              'Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre.'
-            }
+            defaultMessage="Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre."
           />
         </p>
       </div>
@@ -84,8 +84,9 @@ const ServicesUptime = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
                 },
-                { appname: 'Uptime' }
+                { appName: 'Uptime' }
               ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
@@ -95,8 +96,10 @@ const ServicesUptime = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
                 },
-                { appname: 'Uptime' }
+                { appName: 'Uptime' }
               ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
@@ -121,7 +124,7 @@ const ServicesUptime = () => {
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
-                    values={{ appname: 'Uptime' }}
+                    defaultMessage="Enable"
                   />
                   <span className="ml-1 text-error">*</span>
                 </label>
@@ -146,7 +149,10 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -171,7 +177,7 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -195,7 +201,10 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="useSsl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -211,7 +220,10 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -230,7 +242,10 @@ const ServicesUptime = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -254,7 +269,7 @@ const ServicesUptime = () => {
                 <label htmlFor="externalUrl">
                   <FormattedMessage
                     id="common.externalUrl"
-                    defaultMessage={'External URL'}
+                    defaultMessage="External URL"
                   />
                 </label>
                 <div className="sm:col-span-2">
@@ -288,9 +303,15 @@ const ServicesUptime = () => {
                     <ArrowDownTrayIcon className="size-4 mr-2" />
                     <span>
                       {isSubmitting ? (
-                        <FormattedMessage id="common.saving" />
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving..."
+                        />
                       ) : (
-                        <FormattedMessage id="common.saveChanges" />
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
                       )}
                     </span>
                   </Button>

@@ -152,6 +152,9 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
+  "common.about": {
+    "defaultMessage": "About"
+  },
   "common.active": {
     "defaultMessage": "Active"
   },
@@ -213,7 +216,7 @@
     "defaultMessage": "Copied to clipboard"
   },
   "common.copiedToClipboard": {
-    "defaultMessage": "Copied {item} to clipboard!"
+    "defaultMessage": "Copied {item} to Clipboard!"
   },
   "common.currentPassword": {
     "defaultMessage": "Current Password"
@@ -235,6 +238,12 @@
   },
   "common.displayName": {
     "defaultMessage": "Display Name"
+  },
+  "common.downloading": {
+    "defaultMessage": "Downloading"
+  },
+  "common.downloads": {
+    "defaultMessage": "Downloads"
   },
   "common.edit": {
     "defaultMessage": "Edit"
@@ -260,6 +269,9 @@
   "common.futuredays.description": {
     "defaultMessage": "Sync events for the next X days"
   },
+  "common.general": {
+    "defaultMessage": "General"
+  },
   "common.goBack": {
     "defaultMessage": "Go back"
   },
@@ -267,10 +279,13 @@
     "defaultMessage": "Home"
   },
   "common.hostname": {
-    "defaultMessage": "Hostname"
+    "defaultMessage": "Hostname or IP Address"
   },
   "common.inactive": {
     "defaultMessage": "Inactive"
+  },
+  "common.indexers": {
+    "defaultMessage": "Indexers"
   },
   "common.invite": {
     "defaultMessage": "Invite"
@@ -280,6 +295,9 @@
   },
   "common.issues": {
     "defaultMessage": "Issues"
+  },
+  "common.jobsAndCache": {
+    "defaultMessage": "Jobs & Cache"
   },
   "common.joined": {
     "defaultMessage": "Joined"
@@ -293,11 +311,17 @@
   "common.localUser": {
     "defaultMessage": "Local User"
   },
+  "common.logs": {
+    "defaultMessage": "Logs"
+  },
   "common.manageUsers": {
     "defaultMessage": "Manage Users"
   },
   "common.movies": {
     "defaultMessage": "Movies"
+  },
+  "common.music": {
+    "defaultMessage": "Music"
   },
   "common.never": {
     "defaultMessage": "Never"
@@ -317,6 +341,9 @@
   "common.notificationTypes": {
     "defaultMessage": "Notification Types"
   },
+  "common.notifications": {
+    "defaultMessage": "Notifications"
+  },
   "common.optional": {
     "defaultMessage": "optional"
   },
@@ -331,6 +358,9 @@
   },
   "common.pastdays.description": {
     "defaultMessage": "Sync events from the past X days"
+  },
+  "common.plex": {
+    "defaultMessage": "Plex"
   },
   "common.plexUser": {
     "defaultMessage": "Plex User"
@@ -368,6 +398,9 @@
   "common.saveChanges": {
     "defaultMessage": "Save Changes"
   },
+  "common.saveSuccess": {
+    "defaultMessage": "Settings saved successfully!"
+  },
   "common.saving": {
     "defaultMessage": "Saving..."
   },
@@ -380,14 +413,20 @@
   "common.servername": {
     "defaultMessage": "Server Name"
   },
+  "common.services": {
+    "defaultMessage": "Services"
+  },
+  "common.settings": {
+    "defaultMessage": "Settings"
+  },
   "common.settingsEnable": {
     "defaultMessage": "Enable"
   },
   "common.settingsSaveError": {
-    "defaultMessage": "{appName} settings failed to save"
+    "defaultMessage": "Something went wrong while saving {appName} settings."
   },
   "common.settingsSaveSuccess": {
-    "defaultMessage": "{appName} settings saved successfully!"
+    "defaultMessage": "{appName} settings saved successfully"
   },
   "common.showAll": {
     "defaultMessage": "Show All"
@@ -410,11 +449,20 @@
   "common.status": {
     "defaultMessage": "Status"
   },
+  "common.subtitles": {
+    "defaultMessage": "Subtitles"
+  },
   "common.test": {
     "defaultMessage": "Test"
   },
   "common.testing": {
     "defaultMessage": "Testing..."
+  },
+  "common.transcoding": {
+    "defaultMessage": "Transcoding"
+  },
+  "common.tvShows": {
+    "defaultMessage": "TV Shows"
   },
   "common.type": {
     "defaultMessage": "Type"
@@ -439,6 +487,9 @@
   },
   "common.userRole": {
     "defaultMessage": "User Role"
+  },
+  "common.users": {
+    "defaultMessage": "Users"
   },
   "common.webApp": {
     "defaultMessage": "Web App"
@@ -496,6 +547,9 @@
   },
   "devices.tv": {
     "defaultMessage": "TV"
+  },
+  "email.required": {
+    "defaultMessage": "You must provide a valid email address"
   },
   "emailNotifications.allowSelfSigned": {
     "defaultMessage": "Allow Self-Signed Certificates"
@@ -688,6 +742,9 @@
   },
   "generalSettings.validation.applicationTitle": {
     "defaultMessage": "You must provide an application title"
+  },
+  "generalSettings.validation.port": {
+    "defaultMessage": "You must provide a valid port number"
   },
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "You must provide a valid URL"
@@ -1226,15 +1283,6 @@
   "plexSettings.urlBaseTooltip": {
     "defaultMessage": "It is recommended to leave this as the default value"
   },
-  "generalSettings.validation.port": {
-    "defaultMessage": "Invalid port number"
-  },
-  "plexSettings.validation.webAppUrl.leadingSlash": {
-    "defaultMessage": "URL base must have a leading slash"
-  },
-  "plexSettings.validation.webAppUrl.noTrailingSlash": {
-    "defaultMessage": "URL base must not end in a trailing slash"
-  },
   "plexSettings.webAppDescription": {
     "defaultMessage": "The Plex web app must be located on the same domain as to avoid cross-origin issues."
   },
@@ -1304,9 +1352,6 @@
   "resetPassword.email.note": {
     "defaultMessage": "Note that Plex users must reset their password from the {plexLogo} login window."
   },
-  "email.required": {
-    "defaultMessage": "You must provide a valid email address"
-  },
   "resetPassword.email.sent": {
     "defaultMessage": "Check your email"
   },
@@ -1326,7 +1371,7 @@
     "defaultMessage": "Password reset successfully!"
   },
   "resetPassword.title": {
-    "defaultMessage": "Reset your password"
+    "defaultMessage": "Identify your account"
   },
   "schedule.untitled": {
     "defaultMessage": "Untitled"

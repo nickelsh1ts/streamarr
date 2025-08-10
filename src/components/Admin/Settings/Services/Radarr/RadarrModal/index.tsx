@@ -30,18 +30,21 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
     name: Yup.string().required(
       intl.formatMessage({
         id: 'servicesSettings.validation.servername',
+        defaultMessage: 'You must provide a valid server name',
       })
     ),
     hostname: Yup.string()
       .required(
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
         })
       )
       .matches(
         /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
+          defaultMessage: 'You must provide a valid hostname or IP address',
         })
       ),
     port: Yup.number()
@@ -49,11 +52,13 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       .required(
         intl.formatMessage({
           id: 'generalSettings.validation.port',
+          defaultMessage: 'You must provide a valid port number',
         })
       ),
     apiKey: Yup.string().required(
       intl.formatMessage({
         id: 'servicesSettings.validation.apikey',
+        defaultMessage: 'API key is required',
       })
     ),
     baseUrl: Yup.string()
@@ -61,6 +66,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         'leading-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
       )
@@ -68,6 +74,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -187,6 +194,8 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
             title: intl.formatMessage(
               {
                 id: 'common.settingsSaveError',
+                defaultMessage:
+                  'Something went wrong while saving {appName} settings.',
               },
               { appName: 'Radarr' }
             ),
@@ -213,12 +222,19 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
             show={show}
             okText={
               isSubmitting
-                ? intl.formatMessage({ id: 'common.saving' })
+                ? intl.formatMessage({
+                    id: 'common.saving',
+                    defaultMessage: 'Saving...',
+                  })
                 : radarr
-                  ? intl.formatMessage({ id: 'common.saveChanges' })
+                  ? intl.formatMessage({
+                      id: 'common.saveChanges',
+                      defaultMessage: 'Save Changes',
+                    })
                   : intl.formatMessage(
                       {
                         id: 'common.addserver',
+                        defaultMessage: 'Add {arrApp} Server',
                       },
                       { arrApp: 'Radarr' }
                     )
@@ -228,9 +244,11 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
+                    defaultMessage: 'Testing...',
                   })
                 : intl.formatMessage({
                     id: 'common.test',
+                    defaultMessage: 'Test',
                   })
             }
             onSecondary={() => {
@@ -262,12 +280,14 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                   ? intl.formatMessage(
                       {
                         id: 'common.arrAdd4k',
+                        defaultMessage: 'Add 4K {arrApp} Server',
                       },
                       { arrApp: 'Radarr' }
                     )
                   : intl.formatMessage(
                       {
                         id: 'common.addserver',
+                        defaultMessage: 'Add {arrApp} Server',
                       },
                       { arrApp: 'Radarr' }
                     )
@@ -275,12 +295,14 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                   ? intl.formatMessage(
                       {
                         id: 'common.arrEdit4k',
+                        defaultMessage: 'Edit 4K {arrApp} Server',
                       },
                       { arrApp: 'Radarr' }
                     )
                   : intl.formatMessage(
                       {
                         id: 'common.arrEdit',
+                        defaultMessage: 'Edit {arrApp} Server',
                       },
                       { arrApp: 'Radarr' }
                     )
@@ -290,9 +312,15 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="isDefault">
                   {values.is4k ? (
-                    <FormattedMessage id="common.default4k" />
+                    <FormattedMessage
+                      id="common.default4k"
+                      defaultMessage="Default 4K Server"
+                    />
                   ) : (
-                    <FormattedMessage id="common.defaultserver" />
+                    <FormattedMessage
+                      id="common.defaultserver"
+                      defaultMessage="Default Server"
+                    />
                   )}
                 </label>
                 <div className="sm:col-span-2">
@@ -306,7 +334,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="is4k">
-                  <FormattedMessage id="common.4kserver" />
+                  <FormattedMessage
+                    id="common.4kserver"
+                    defaultMessage="4K Server"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -319,7 +350,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="name">
-                  <FormattedMessage id="common.servername" />
+                  <FormattedMessage
+                    id="common.servername"
+                    defaultMessage="Server Name"
+                  />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -344,7 +378,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -373,7 +410,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -397,7 +434,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="ssl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -414,7 +454,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="text-error ml-2">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -440,7 +483,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="baseUrl">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -465,11 +511,15 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="syncEnabled">
-                  <FormattedMessage id="common.calendarSync" />
+                  <FormattedMessage
+                    id="common.calendarSync"
+                    defaultMessage="Enable Calendar Sync"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
                     <FormattedMessage
                       id="common.calendarSync.description"
-                      values={{ appName: 'Radarr' }}
+                      defaultMessage="Automatically sync {arrApp} events to the calendar"
+                      values={{ arrApp: 'Radarr' }}
                     />
                   </span>
                 </label>
@@ -489,7 +539,10 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                     defaultMessage="Past Days"
                   />
                   <span className="text-sm block font-light text-neutral-300">
-                    <FormattedMessage id="common.pastdays.description" />
+                    <FormattedMessage
+                      id="common.pastdays.description"
+                      defaultMessage="Sync events from the past X days"
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">
@@ -505,9 +558,15 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="futureDays">
-                  <FormattedMessage id="common.futuredays" />
+                  <FormattedMessage
+                    id="common.futuredays"
+                    defaultMessage="Future Days"
+                  />
                   <span className="text-sm block font-light text-neutral-300">
-                    <FormattedMessage id="common.futuredays.description" />
+                    <FormattedMessage
+                      id="common.futuredays.description"
+                      defaultMessage="Sync events for the next X days"
+                    />
                   </span>
                 </label>
                 <div className="sm:col-span-2">

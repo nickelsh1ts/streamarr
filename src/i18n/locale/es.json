@@ -38,6 +38,9 @@
   "auth.signup": {
     "defaultMessage": "Regístrate ahora"
   },
+  "common.about": {
+    "defaultMessage": "Acerca de"
+  },
   "common.all": {
     "defaultMessage": "Todos"
   },
@@ -49,6 +52,12 @@
   },
   "common.delete": {
     "defaultMessage": "Eliminar"
+  },
+  "common.downloading": {
+    "defaultMessage": "Descargando"
+  },
+  "common.downloads": {
+    "defaultMessage": "Descargas"
   },
   "common.edit": {
     "defaultMessage": "Editar"
@@ -68,17 +77,35 @@
   "common.saving": {
     "defaultMessage": "Guardando…"
   },
+  "common.services": {
+    "defaultMessage": "Servicios"
+  },
+  "common.settings": {
+    "defaultMessage": "Configuración"
+  },
   "common.status": {
     "defaultMessage": "Estado"
+  },
+  "common.subtitles": {
+    "defaultMessage": "Subtítulos"
   },
   "common.test": {
     "defaultMessage": "Probar"
   },
+  "common.transcoding": {
+    "defaultMessage": "Transcodificación"
+  },
   "common.testing": {
     "defaultMessage": "Probando…"
   },
+  "common.tvShows": {
+    "defaultMessage": "Series de TV"
+  },
   "common.type": {
     "defaultMessage": "Tipo"
+  },
+  "common.users": {
+    "defaultMessage": "Usuarios"
   },
   "common.admin": {
     "defaultMessage": "Administrador"
@@ -92,11 +119,17 @@
   "common.owner": {
     "defaultMessage": "Propietario"
   },
+  "common.plex": {
+    "defaultMessage": "Plex"
+  },
   "common.plexUser": {
     "defaultMessage": "Usuario de Plex"
   },
   "common.saveChanges": {
     "defaultMessage": "Guardar Cambios"
+  },
+  "common.saveSuccess": {
+    "defaultMessage": "Configuración guardada exitosamente"
   },
   "common.settingsSaveError": {
     "defaultMessage": "Error al guardar la configuración por {appName}"
@@ -1694,23 +1727,41 @@
   "common.futuredays.description": {
     "defaultMessage": "Sincronizar eventos para los próximos X días"
   },
+  "common.general": {
+    "defaultMessage": "General"
+  },
   "common.goBack": {
     "defaultMessage": "Volver"
   },
   "common.invite": {
     "defaultMessage": "Invitación"
   },
+  "common.indexers": {
+    "defaultMessage": "Indexadores"
+  },
   "common.issues": {
     "defaultMessage": "Problemas"
+  },
+  "common.jobsAndCache": {
+    "defaultMessage": "Trabajos y Cache"
   },
   "common.lifetime": {
     "defaultMessage": "De por vida"
   },
+  "common.logs": {
+    "defaultMessage": "Registros"
+  },
   "common.manageUsers": {
     "defaultMessage": "Administrar Usuarios"
   },
+  "common.music": {
+    "defaultMessage": "Música"
+  },
   "common.newPassword": {
     "defaultMessage": "Nueva Contraseña"
+  },
+  "common.notifications": {
+    "defaultMessage": "Notificaciones"
   },
   "common.noResults": {
     "defaultMessage": "Sin Resultados"

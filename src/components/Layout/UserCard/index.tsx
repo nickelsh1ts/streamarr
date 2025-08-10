@@ -63,8 +63,8 @@ const UserCard = () => {
         >
           <LockClosedIcon className="size-5 inline-flex" />
           <FormattedMessage
-            id="common.adminCenter"
-            defaultMessage="Admin Center"
+            id="common.adminCentre"
+            defaultMessage="Admin Centre"
           />
         </Link>
       ) : hasPermission(Permission.MANAGE_USERS) ? (

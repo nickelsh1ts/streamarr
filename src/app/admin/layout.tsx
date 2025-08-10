@@ -8,6 +8,7 @@ import { Permission } from '@server/lib/permissions';
 import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import { type ServiceSettings } from '@server/lib/settings';
 import { useRouter } from 'next/navigation';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 type AdminLayoutProps = {
@@ -15,6 +16,7 @@ type AdminLayoutProps = {
 };
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const intl = useIntl();
   const router = useRouter();
   const { hasPermission } = useUser();
   const isAdmin = hasPermission(Permission.ADMIN);
@@ -33,29 +35,38 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const AdminRoutes: AdminRoute[] = [
     {
-      text: 'Settings',
+      text: intl.formatMessage({
+        id: 'common.settings',
+        defaultMessage: 'Settings',
+      }),
       route: '/admin/settings',
       regex: /^\/admin(\/settings\/?(.*)?)?$/,
     },
     {
-      text: 'Users',
+      text: intl.formatMessage({ id: 'common.users', defaultMessage: 'Users' }),
       route: '/admin/users',
       regex: /^\/admin\/users/,
     },
     {
-      text: 'Movies',
+      text: intl.formatMessage({
+        id: 'common.movies',
+        defaultMessage: 'Movies',
+      }),
       route: '/admin/movies',
       regex: /^\/admin\/movies/,
       hidden: !radarrData?.some((d) => d.isDefault),
     },
     {
-      text: 'TV Shows',
+      text: intl.formatMessage({
+        id: 'common.tvShows',
+        defaultMessage: 'TV Shows',
+      }),
       route: '/admin/tv',
       regex: /^\/admin\/tv/,
       hidden: !sonarrData?.some((d) => d.isDefault),
     },
     {
-      text: 'Music',
+      text: intl.formatMessage({ id: 'common.music', defaultMessage: 'Music' }),
       route: '/admin/music',
       regex: /^\/admin\/music/,
       hidden: data?.some(
@@ -63,7 +74,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       ),
     },
     {
-      text: 'Indexers',
+      text: intl.formatMessage({
+        id: 'common.indexers',
+        defaultMessage: 'Indexers',
+      }),
       route: '/admin/indexers',
       regex: /^\/admin\/indexers/,
       hidden: data?.some(
@@ -71,7 +85,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       ),
     },
     {
-      text: 'Subtitles',
+      text: intl.formatMessage({
+        id: 'common.subtitles',
+        defaultMessage: 'Subtitles',
+      }),
       route: '/admin/srt/series',
       regex: /^\/admin\/srt/,
       hidden: data?.some(
@@ -79,7 +96,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       ),
     },
     {
-      text: 'Transcoding',
+      text: intl.formatMessage({
+        id: 'common.transcoding',
+        defaultMessage: 'Transcoding',
+      }),
       route: '/admin/transcode',
       regex: /^\/admin\/transcode/,
       hidden: data?.some(
@@ -87,7 +107,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       ),
     },
     {
-      text: 'Downloading',
+      text: intl.formatMessage({
+        id: 'common.downloading',
+        defaultMessage: 'Downloading',
+      }),
       route: '/admin/downloads',
       regex: /^\/admin\/downloads/,
       hidden: data?.some(

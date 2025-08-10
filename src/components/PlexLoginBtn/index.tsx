@@ -44,10 +44,7 @@ const PlexLoginButton = ({
       >
         <span className="font-extrabold text-lg">
           {loading ? (
-            <FormattedMessage
-              id="common.loading"
-              defaultMessage="Loading..."
-            />
+            <FormattedMessage id="common.loading" defaultMessage="Loading" />
           ) : isProcessing ? (
             <FormattedMessage
               id="common.signingIn"

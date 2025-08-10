@@ -58,14 +58,18 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
             <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate">
               <p className="text-xs truncate w-full text-warning">
                 {invite?.expiresAt != null
-                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires' }) : intl.formatMessage({ id: 'common.expired' })} ${moment(invite?.expiresAt).fromNow()}`
-                  : intl.formatMessage({ id: 'invite.neverExpires' })}
+                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                  : intl.formatMessage({
+                      id: 'invite.neverExpires',
+                      defaultMessage: 'Never expires',
+                    })}
               </p>
               <button
                 type="button"
                 className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 mb-2 align-top"
                 title={intl.formatMessage({
                   id: 'invite.clickToCopy',
+                  defaultMessage: 'Click to copy invite code',
                 })}
                 tabIndex={0}
                 onClick={(e) => {
@@ -95,28 +99,46 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                 <span className="truncate text-sm font-semibold">
                   {invite?.createdBy?.displayName ||
                     invite?.createdBy?.email ||
-                    intl.formatMessage({ id: 'common.unknown' })}
+                    intl.formatMessage({
+                      id: 'common.unknown',
+                      defaultMessage: 'Unknown',
+                    })}
                 </span>
               </span>
               <div className="py-1 flex items-center truncate leading-5">
                 <span className="font-extrabold mr-2">
-                  <FormattedMessage id="common.status" />
+                  <FormattedMessage
+                    id="common.status"
+                    defaultMessage="Status"
+                  />
                 </span>
                 {invite?.status === InviteStatus.ACTIVE ? (
                   <Badge badgeType="success" className="capitalize">
-                    <FormattedMessage id="common.active" />
+                    <FormattedMessage
+                      id="common.active"
+                      defaultMessage="Active"
+                    />
                   </Badge>
                 ) : invite?.status === InviteStatus.EXPIRED ? (
                   <Badge badgeType="error" className="capitalize">
-                    <FormattedMessage id="common.expired" />
+                    <FormattedMessage
+                      id="common.expired"
+                      defaultMessage="Expired"
+                    />
                   </Badge>
                 ) : invite?.status === InviteStatus.REDEEMED ? (
                   <Badge badgeType="primary" className="capitalize">
-                    <FormattedMessage id="common.redeemed" />
+                    <FormattedMessage
+                      id="common.redeemed"
+                      defaultMessage="Redeemed"
+                    />
                   </Badge>
                 ) : (
                   <Badge badgeType="warning" className="capitalize">
-                    <FormattedMessage id="common.inactive" />
+                    <FormattedMessage
+                      id="common.inactive"
+                      defaultMessage="Inactive"
+                    />
                   </Badge>
                 )}
               </div>
@@ -155,9 +177,12 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
         {Array.isArray(invite?.redeemedBy) && invite.redeemedBy.length > 0 ? (
           <div className="inline-flex items-center">
             <span className="font-extrabold mr-2">
-              <FormattedMessage id="common.redeemed" />
+              <FormattedMessage
+                id="common.redeemed"
+                defaultMessage="Redeemed"
+              />
             </span>
-            <FormattedMessage id="common.by" />
+            <FormattedMessage id="common.by" defaultMessage="by" />
             <span className="ml-1 flex -space-x-2">
               {invite.redeemedBy.map((user, idx) =>
                 hasPermission(Permission.MANAGE_USERS) ? (
@@ -168,7 +193,10 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                     title={
                       user?.displayName ||
                       user?.email ||
-                      intl.formatMessage({ id: 'common.unknown' })
+                      intl.formatMessage({
+                        id: 'common.unknown',
+                        defaultMessage: 'Unknown',
+                      })
                     }
                   >
                     <CachedImage
@@ -185,7 +213,10 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                     title={
                       user?.displayName ||
                       user?.email ||
-                      intl.formatMessage({ id: 'common.unknown' })
+                      intl.formatMessage({
+                        id: 'common.unknown',
+                        defaultMessage: 'Unknown',
+                      })
                     }
                   >
                     <CachedImage

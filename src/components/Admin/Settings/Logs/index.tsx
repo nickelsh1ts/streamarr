@@ -111,6 +111,7 @@ const LogsSettings = () => {
         title: intl.formatMessage(
           {
             id: 'common.copiedToClipboard',
+            defaultMessage: 'Copied {item} to Clipboard!',
           },
           {
             item: intl.formatMessage({
@@ -478,6 +479,8 @@ const LogsSettings = () => {
                       intl.formatMessage(
                         {
                           id: 'common.showingResults',
+                          defaultMessage:
+                            'Showing {start} to {end} of {total} results',
                         },
                         {
                           start: pageIndex * currentPageSize + 1,

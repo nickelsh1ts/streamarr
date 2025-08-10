@@ -1,3 +1,4 @@
+'use client';
 import { FormattedMessage } from 'react-intl';
 
 interface LoadingProps {

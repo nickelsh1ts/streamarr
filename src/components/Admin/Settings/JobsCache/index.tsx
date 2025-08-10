@@ -236,9 +236,11 @@ const JobsCacheSettings = () => {
           isSaving
             ? intl.formatMessage({
                 id: 'common.saving',
+                defaultMessage: 'Saving...',
               })
             : intl.formatMessage({
                 id: 'common.saveChanges',
+                defaultMessage: 'Save Changes',
               })
         }
         onCancel={() => dispatch({ type: 'close' })}

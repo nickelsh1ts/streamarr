@@ -569,9 +569,15 @@ const EmailNotifications = () => {
                     <ArrowDownTrayIcon className="size-5 mr-2" />
                     <span>
                       {isSubmitting ? (
-                        <FormattedMessage id="common.saving" />
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving..."
+                        />
                       ) : (
-                        <FormattedMessage id="common.saveChanges" />
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
                       )}
                     </span>
                   </Button>

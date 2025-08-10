@@ -58,7 +58,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
           <h2 className="text-2xl font-extrabold mb-2">
             <FormattedMessage
               id="resetPassword.title"
-              defaultMessage="Reset your password"
+              defaultMessage="Identify your account"
             />
           </h2>
           <p className="text-sm">
@@ -172,7 +172,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                               name="confirmPassword"
                               placeholder={intl.formatMessage({
                                 id: 'common.confirmPassword',
-                                defaultMessage: 'Confirm password',
+                                defaultMessage: 'Confirm Password',
                               })}
                             />
                           </div>
@@ -194,9 +194,15 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                           <ArrowDownTrayIcon className="size-7 mr-2" />
                           <span>
                             {isSubmitting ? (
-                              <FormattedMessage id="common.saving" />
+                              <FormattedMessage
+                                id="common.saving"
+                                defaultMessage="Saving..."
+                              />
                             ) : (
-                              <FormattedMessage id="common.saveChanges" />
+                              <FormattedMessage
+                                id="common.saveChanges"
+                                defaultMessage="Save Changes"
+                              />
                             )}
                           </span>
                         </Button>

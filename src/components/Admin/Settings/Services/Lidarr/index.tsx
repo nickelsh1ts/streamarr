@@ -26,6 +26,7 @@ const ServicesLidarr = () => {
         'leading-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
         }),
         (value) => !value || value.startsWith('/')
       )
@@ -33,6 +34,7 @@ const ServicesLidarr = () => {
         'no-trailing-slash',
         intl.formatMessage({
           id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
         }),
         (value) => !value || !value.endsWith('/')
       ),
@@ -48,15 +50,13 @@ const ServicesLidarr = () => {
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.lidarr.title"
-            defaultMessage={'Lidarr Settings'}
+            defaultMessage="Lidarr Settings"
           />
         </h3>
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.lidarr.description"
-            defaultMessage={
-              'Optionally configure the settings for your Lidarr server.'
-            }
+            defaultMessage="Optionally configure the settings for your Lidarr server."
           />
         </p>
       </div>
@@ -85,8 +85,9 @@ const ServicesLidarr = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
                 },
-                { appname: 'Lidarr' }
+                { appName: 'Lidarr' }
               ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
@@ -96,8 +97,10 @@ const ServicesLidarr = () => {
               title: intl.formatMessage(
                 {
                   id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
                 },
-                { appname: 'Lidarr' }
+                { appName: 'Lidarr' }
               ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
@@ -120,7 +123,10 @@ const ServicesLidarr = () => {
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="service">
-                  <FormattedMessage id="common.settingsEnable" />
+                  <FormattedMessage
+                    id="common.settingsEnable"
+                    defaultMessage="Enable"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -144,7 +150,10 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="hostname">
-                  <FormattedMessage id="common.hostname" />
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -169,7 +178,7 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="port">
-                  <FormattedMessage id="common.port" />
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -193,7 +202,10 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="useSsl">
-                  <FormattedMessage id="common.useSsl" />
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -209,7 +221,10 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">
-                  <FormattedMessage id="common.urlBase" />
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -228,7 +243,10 @@ const ServicesLidarr = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="apiKey" className="text-label">
-                  <FormattedMessage id="common.apiKey" />
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
                   <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
@@ -260,9 +278,15 @@ const ServicesLidarr = () => {
                     <ArrowDownTrayIcon className="size-4 mr-2" />
                     <span>
                       {isSubmitting ? (
-                        <FormattedMessage id="common.saving" />
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving..."
+                        />
                       ) : (
-                        <FormattedMessage id="common.saveChanges" />
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
                       )}
                     </span>
                   </Button>

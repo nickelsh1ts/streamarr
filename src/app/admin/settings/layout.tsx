@@ -4,27 +4,32 @@ import AdminTabs from '@app/components/Common/AdminTabs';
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { Permission } from '@server/lib/permissions';
 import type { ServiceSettings } from '@server/lib/settings';
+import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 type SettingsLayoutProps = { children: React.ReactNode };
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
+  const intl = useIntl();
   const { data } = useSWR<ServiceSettings[]>('/api/v1/settings/services');
   useRouteGuard(Permission.ADMIN);
 
   const AdminRoutes: AdminRoute[] = [
     {
-      text: 'General',
+      text: intl.formatMessage({
+        id: 'common.general',
+        defaultMessage: 'General',
+      }),
       route: '/admin/settings/general',
       regex: /^\/admin(\/settings)?(\/general)?$/,
     },
     {
-      text: 'Users',
+      text: intl.formatMessage({ id: 'common.users', defaultMessage: 'Users' }),
       route: '/admin/settings/users',
       regex: /^\/admin\/settings\/users/,
     },
     {
-      text: 'Plex',
+      text: intl.formatMessage({ id: 'common.plex', defaultMessage: 'Plex' }),
       route: '/admin/settings/plex',
       regex: /^\/admin\/settings\/plex/,
     },
@@ -37,27 +42,36 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       ),
     },
     {
-      text: 'Services',
+      text: intl.formatMessage({
+        id: 'common.services',
+        defaultMessage: 'Services',
+      }),
       route: '/admin/settings/services',
       regex: /^\/admin\/settings\/services/,
     },
     {
-      text: 'Notifications',
+      text: intl.formatMessage({
+        id: 'common.notifications',
+        defaultMessage: 'Notifications',
+      }),
       route: '/admin/settings/notifications',
       regex: /^\/admin\/settings\/notifications/,
     },
     {
-      text: 'Logs',
+      text: intl.formatMessage({ id: 'common.logs', defaultMessage: 'Logs' }),
       route: '/admin/settings/logs',
       regex: /^\/admin\/settings\/logs/,
     },
     {
-      text: 'Jobs & Cache',
+      text: intl.formatMessage({
+        id: 'common.jobsAndCache',
+        defaultMessage: 'Jobs & Cache',
+      }),
       route: '/admin/settings/jobs',
       regex: /^\/admin\/settings\/jobs/,
     },
     {
-      text: 'About',
+      text: intl.formatMessage({ id: 'common.about', defaultMessage: 'About' }),
       route: '/admin/settings/about',
       regex: /^\/admin\/settings\/about/,
     },

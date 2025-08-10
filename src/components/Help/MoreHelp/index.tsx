@@ -15,10 +15,16 @@ const MoreHelp = () => {
     <div className="bg-zinc-200 py-20 print:hidden">
       <div className="container max-w-screen-xl mx-auto px-4">
         <h1 className="text-neutral font-extrabold text-center text-4xl">
-          <FormattedMessage id="moreHelp.needMoreHelp" />
+          <FormattedMessage
+            id="moreHelp.needMoreHelp"
+            defaultMessage="Need more help?"
+          />
         </h1>
         <p className="text-center text-neutral text-lg my-4">
-          <FormattedMessage id="moreHelp.checkHelpSection" />
+          <FormattedMessage
+            id="moreHelp.checkHelpSection"
+            defaultMessage="Check out the help section on Plex or reach out below!"
+          />
         </p>
       </div>
       <div className="container max-w-screen-xl mx-auto py-4 place-content-center flex flex-wrap gap-5 px-5">
@@ -29,10 +35,16 @@ const MoreHelp = () => {
                 <ChatBubbleLeftRightIcon className="w-20 h-20 flex-none" />
                 <div className="my-auto ms-4">
                   <h5 className="card-title">
-                    <FormattedMessage id="footer.contactUs" />
+                    <FormattedMessage
+                      id="footer.contactUs"
+                      defaultMessage="Contact Us"
+                    />
                   </h5>
                   <p className="">
-                    <FormattedMessage id="moreHelp.needToChat" />
+                    <FormattedMessage
+                      id="moreHelp.needToChat"
+                      defaultMessage="Need to chat with us?"
+                    />
                   </p>
                   <div className="flex flex-wrap mt-4">
                     {currentSettings.supportUrl && (
@@ -43,7 +55,10 @@ const MoreHelp = () => {
                         className="btn btn-sm btn-primary hover:btn-secondary me-1 mb-2 rounded-md text-base min-h-9"
                         rel="noreferrer"
                       >
-                        <FormattedMessage id="moreHelp.support" />{' '}
+                        <FormattedMessage
+                          id="moreHelp.support"
+                          defaultMessage="Support"
+                        />{' '}
                         <svg
                           className="h-7"
                           viewBox="0 0 24 24"
@@ -64,7 +79,10 @@ const MoreHelp = () => {
                         className="btn btn-sm btn-outline btn-primary mx-1 mb-2 rounded-md text-base min-h-9"
                         rel="noreferrer"
                       >
-                        <FormattedMessage id="common.email" />{' '}
+                        <FormattedMessage
+                          id="common.email"
+                          defaultMessage="Email"
+                        />{' '}
                         <EnvelopeOpenIcon className="h-7" />
                       </Link>
                     )}
@@ -80,10 +98,16 @@ const MoreHelp = () => {
               <BookOpenIcon className="w-20 h-20 flex-none" />
               <div className="my-auto ms-4">
                 <h5 className="card-title">
-                  <FormattedMessage id="moreHelp.visitPlex" />
+                  <FormattedMessage
+                    id="moreHelp.visitPlex"
+                    defaultMessage="Visit Plex"
+                  />
                 </h5>
                 <p className="mb-4">
-                  <FormattedMessage id="moreHelp.plexHelpDescription" />
+                  <FormattedMessage
+                    id="moreHelp.plexHelpDescription"
+                    defaultMessage="Take a look at the Plex Help section or browse their forums for even more assistance."
+                  />
                 </p>
                 <Link
                   target="_blank"
@@ -92,7 +116,10 @@ const MoreHelp = () => {
                   className="btn btn-sm btn-accent rounded-md text-base min-h-9"
                   rel="noreferrer"
                 >
-                  <FormattedMessage id="moreHelp.plexSupport" />
+                  <FormattedMessage
+                    id="moreHelp.plexSupport"
+                    defaultMessage="Plex Support"
+                  />
                 </Link>
               </div>
             </div>

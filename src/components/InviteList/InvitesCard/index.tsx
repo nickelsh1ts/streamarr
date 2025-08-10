@@ -49,10 +49,13 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
     if (isCopied) {
       Toast({
         icon: <ClipboardDocumentCheckIcon className="size-7" />,
-        title: intl.formatMessage({
-          id: 'common.copiedToClipboard',
-          defaultMessage: 'Copied {item} to Clipboard!',
-        }, { item: 'Invite Code' }),
+        title: intl.formatMessage(
+          {
+            id: 'common.copiedToClipboard',
+            defaultMessage: 'Copied {item} to Clipboard!',
+          },
+          { item: 'Invite Code' }
+        ),
         message: invite?.icode,
         type: 'primary',
       });
@@ -209,7 +212,8 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           return defaultNames ? (
                             <FormattedMessage
                               id="invite.defaultLibraries"
-                              defaultMessage={`Default (${defaultNames})`}
+                              defaultMessage="Default ({libraries})"
+                              values={{ libraries: defaultNames }}
                             />
                           ) : (
                             <FormattedMessage
@@ -564,7 +568,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   buttonSize="sm"
                   confirmText={intl.formatMessage({
                     id: 'common.areYouSure',
-                    defaultMessage: 'Are You Sure?',
+                    defaultMessage: 'Are you sure?',
                   })}
                   className="w-full flex-1"
                 >

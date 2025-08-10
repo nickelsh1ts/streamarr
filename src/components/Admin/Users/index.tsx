@@ -245,9 +245,7 @@ const AdminUsers = () => {
       >
         <FormattedMessage
           id="users.deleteUserConfirmation"
-          defaultMessage={
-            'Are you sure you want to delete this user? All of their data will be permanently removed. This cannot be undone.'
-          }
+          defaultMessage="Are you sure you want to delete this user? All of their data will be permanently removed. This cannot be undone."
         />
       </Modal>
       <Formik
@@ -350,7 +348,10 @@ const AdminUsers = () => {
               <Form className="mt-5 max-w-6xl space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="displayName">
-                    <FormattedMessage id="common.displayName" />
+                    <FormattedMessage
+                      id="common.displayName"
+                      defaultMessage="Display Name"
+                    />
                   </label>
                   <div className="sm:col-span-2">
                     <div className="flex">
@@ -365,7 +366,10 @@ const AdminUsers = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="email">
-                    <FormattedMessage id="common.emailAddress" />
+                    <FormattedMessage
+                      id="common.emailAddress"
+                      defaultMessage="Email Address"
+                    />
                     <span className="ml-1 text-error">*</span>
                   </label>
                   <div className="sm:col-span-2">
@@ -423,7 +427,10 @@ const AdminUsers = () => {
                   }`}
                 >
                   <label htmlFor="password">
-                    <FormattedMessage id="common.password" />
+                    <FormattedMessage
+                      id="common.password"
+                      defaultMessage="Password"
+                    />
                     {!values.genpassword && (
                       <span className="ml-1 text-error">*</span>
                     )}
@@ -670,20 +677,35 @@ const AdminUsers = () => {
                     className="bg-accent/70 text-accent-content"
                     badgeType="warning"
                   >
-                    <FormattedMessage id="common.plexUser" />
+                    <FormattedMessage
+                      id="common.plexUser"
+                      defaultMessage="Plex User"
+                    />
                   </Badge>
                 ) : (
                   <Badge badgeType="default">
-                    <FormattedMessage id="common.localUser" />
+                    <FormattedMessage
+                      id="common.localUser"
+                      defaultMessage="Local User"
+                    />
                   </Badge>
                 )}
               </Table.TD>
               <Table.TD>
                 {user.id === 1
-                  ? intl.formatMessage({ id: 'common.owner' })
+                  ? intl.formatMessage({
+                      id: 'common.owner',
+                      defaultMessage: 'Owner',
+                    })
                   : hasPermission(Permission.ADMIN, user.permissions)
-                    ? intl.formatMessage({ id: 'common.admin' })
-                    : intl.formatMessage({ id: 'common.userRole' })}
+                    ? intl.formatMessage({
+                        id: 'common.admin',
+                        defaultMessage: 'Admin',
+                      })
+                    : intl.formatMessage({
+                        id: 'common.userRole',
+                        defaultMessage: 'User Role',
+                      })}
               </Table.TD>
               <Table.TD>
                 {moment(user.createdAt).format('lll').toString()}
@@ -716,7 +738,7 @@ const AdminUsers = () => {
                     router.push(`/admin/users/${user.id}/settings`)
                   }
                 >
-                  <FormattedMessage id="common.edit" />
+                  <FormattedMessage id="common.edit" defaultMessage="Edit" />
                 </Button>
                 <Button
                   buttonType="error"
@@ -729,7 +751,10 @@ const AdminUsers = () => {
                   }
                   onClick={() => setDeleteModal({ isOpen: true, user })}
                 >
-                  <FormattedMessage id="common.delete" />
+                  <FormattedMessage
+                    id="common.delete"
+                    defaultMessage="Delete"
+                  />
                 </Button>
               </Table.TD>
             </tr>
@@ -746,9 +771,10 @@ const AdminUsers = () => {
                       <span className="font-medium">
                         <FormattedMessage
                           id="common.showingResults"
+                          defaultMessage="Showing {start} to {end} of {total} results"
                           values={{
-                            from: pageIndex * currentPageSize + 1,
-                            to:
+                            start: pageIndex * currentPageSize + 1,
+                            end:
                               data.results.length < currentPageSize
                                 ? pageIndex * currentPageSize +
                                   data.results.length
@@ -764,6 +790,7 @@ const AdminUsers = () => {
                   <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 lg:ml-0">
                     <FormattedMessage
                       id="common.resultsDisplay"
+                      defaultMessage="Display {select} results per page"
                       values={{
                         select: (
                           <select
@@ -799,7 +826,10 @@ const AdminUsers = () => {
                   >
                     <ChevronLeftIcon className="size-4" />
                     <span>
-                      <FormattedMessage id="common.previous" />
+                      <FormattedMessage
+                        id="common.previous"
+                        defaultMessage="Previous"
+                      />
                     </span>
                   </Button>
                   <Button
@@ -811,7 +841,10 @@ const AdminUsers = () => {
                     }
                   >
                     <span>
-                      <FormattedMessage id="common.next" />
+                      <FormattedMessage
+                        id="common.next"
+                        defaultMessage="Next"
+                      />
                     </span>
                     <ChevronRightIcon className="size-4" />
                   </Button>

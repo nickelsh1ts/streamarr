@@ -87,7 +87,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     className="grow"
                     placeholder={intl.formatMessage({
                       id: 'common.emailAddress',
-                      defaultMessage: 'Email address',
+                      defaultMessage: 'Email Address',
                     })}
                   />
                 </div>
@@ -118,6 +118,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     name="password"
                     placeholder={intl.formatMessage({
                       id: 'common.password',
+                      defaultMessage: 'Password',
                     })}
                   />
                 </div>
