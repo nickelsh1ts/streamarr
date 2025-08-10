@@ -35,7 +35,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="max-sm:mb-14 px-4">
+    <div className="max-sm:mb-16 px-4">
       {pathname.match(/\/(profile|admin\/users\/(\d)*?)\/?$/) && (
         <div className="absolute left-0 right-0 -top-18 z-0 h-96">
           <ImageFader

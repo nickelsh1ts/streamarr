@@ -59,7 +59,7 @@ const UserProfile = () => {
   }
 
   return (
-    <>
+    <div className="mb-4">
       {quota &&
         (user.id === currentUser?.id ||
           currentHasPermission(
@@ -213,7 +213,7 @@ const UserProfile = () => {
             />
           </>
         )}
-    </>
+    </div>
   );
 };
 

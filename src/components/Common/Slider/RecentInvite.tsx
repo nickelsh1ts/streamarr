@@ -52,7 +52,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
 
   return (
     <div className="flex w-full justify-between flex-col border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
-      <div className="flex justify-between items-center space-x-7 flex-row w-full">
+      <div className="flex justify-between items-center space-x-12 flex-row w-full">
         <div className="flex w-full items-start overflow-hidden">
           <div className="flex flex-row justify-center overflow-hidden">
             <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate">
