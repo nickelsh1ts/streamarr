@@ -7,6 +7,7 @@ import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import useSWR from 'swr';
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 
 interface imageArrayProps {
   src: string;
@@ -51,8 +52,7 @@ const DeviceTabs = () => {
             {' '}
             {currentSettings.applicationTitle}
           </span>{' '}
-          on your TV with the Ple<span className="link-accent">x</span>&trade;
-          app.
+          on your TV with the <PlexLogo className="inline-block size-9" /> app.
         </>
       ),
       imageArray: [
@@ -71,11 +71,11 @@ const DeviceTabs = () => {
       heading: 'BUILT-IN APP CONNECTION',
       paragraph: (
         <>
-          Enjoy Ple<span className="text-accent">x</span>&apos;s&trade; gorgeous
-          interface on your big screen with the Ple
-          <span className="text-accent">x</span> Smart TV app, available in most
-          smart TV app stores, and access
-          <span className="tet-primary">
+          Enjoy <PlexLogo className="inline-block size-9" />
+          &apos;s gorgeous interface on your big screen with the{' '}
+          <PlexLogo className="inline-block size-9" /> Smart TV app, available
+          in most smart TV app stores, and access
+          <span className="text-primary">
             {' '}
             {currentSettings.applicationTitle}
           </span>{' '}
@@ -116,8 +116,8 @@ const DeviceTabs = () => {
           <span className="text-primary">
             {currentSettings.applicationTitle}
           </span>{' '}
-          on a variety of game consoles with the Ple
-          <span className="link-warning">x</span>&trade; app.
+          on a variety of game consoles with the{' '}
+          <PlexLogo className="inline-block size-9" /> app.
         </>
       ),
       imageArray: [
@@ -146,16 +146,16 @@ const DeviceTabs = () => {
       paragraph: (
         <>
           It’s easy to watch <span className="text-purple">Nickflix</span>TV
-          from anywhere. If Ple<span className="link-warning">x</span>&trade;
-          isn’t already on your phone or tablet, you can download the free app
-          from the Apple App Store, Google Play, or the Windows Phone Store.
+          from anywhere. If <PlexLogo className="inline-block size-9" /> isn’t
+          already on your phone or tablet, you can download the free app from
+          the Apple App Store, Google Play, or the Windows Phone Store.
           <br />
           <br />
           <span className="text-xs text-neutral">
-            *The Ple<span className="link-warning">x</span>&trade; app currently
-            only offers free playback via the casting feature. To watch on the
-            app directly on your phone a small one-time fee is required. If you
-            wish not to pay the fee, you may use the newly mobile optimized{' '}
+            *The <PlexLogo className="inline-block size-9" /> app currently only
+            offers free playback via the casting feature. To watch on the app
+            directly on your phone a small one-time fee is required. If you wish
+            not to pay the fee, you may use the newly mobile optimized{' '}
             <span className="text-primary">
               {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
             </span>

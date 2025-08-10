@@ -1,4 +1,5 @@
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Link from 'next/link';
 
 function FAQs() {
@@ -37,7 +38,7 @@ function FAQs() {
           <div className="collapse collapse-arrow join-item bg-brand-dark ">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
-              What is Ple<span className="link-accent">x</span>&trade;?
+              What is <PlexLogo className="inline-block size-9" />?
             </div>
             <div className="collapse-content">
               <p className="mb-4">

@@ -2,6 +2,7 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 
 const HelpContent = () => {
   const { currentSettings } = useSettings();
@@ -58,8 +59,8 @@ const HelpContent = () => {
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
         <li>
-          In order to access {currentSettings.applicationTitle} services a Ple
-          <span className="text-accent">x</span>&trade; account is required
+          In order to access {currentSettings.applicationTitle} services a{' '}
+          <PlexLogo className="inline-block size-9" /> account is required
         </li>
         <li>
           Once you have successfully joined {currentSettings.applicationTitle},

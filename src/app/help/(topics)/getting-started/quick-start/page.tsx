@@ -2,6 +2,7 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 
 const anchors = [
   { href: '#first', title: 'First step' },
@@ -19,8 +20,8 @@ const HelpContent = () => {
         First things first
       </div>
       <p className="my-4">
-        Once you&apos;ve created your Ple<span className="text-accent">x</span>
-        &trade; account and registered for{' '}
+        Once you&apos;ve created your{' '}
+        <PlexLogo className="inline-block size-9" /> account and registered for{' '}
         <span className="text-primary font-bold">
           {currentSettings.applicationTitle}
         </span>{' '}
@@ -28,9 +29,9 @@ const HelpContent = () => {
       </p>
       <p className="italic text-sm my-4">
         <span className="text-error font-bold">Important Information</span>:
-        Until you accept this invite, your Ple
-        <span className="text-accent">x</span>&trade; account will not have
-        access to{' '}
+        Until you accept this invite, your{' '}
+        <PlexLogo className="inline-block size-9" />
+        account will not have access to{' '}
         <span className="text-primary font-bold">
           {currentSettings.applicationTitle}
         </span>{' '}
@@ -41,14 +42,15 @@ const HelpContent = () => {
       </div>
       <p className="my-4">
         You&apos;ll notice when signing in for the first time, that the Home
-        page currently lists a lot of content available from Ple
-        <span className="text-accent">x</span>&trade; and not{' '}
+        page currently lists a lot of content available from{' '}
+        <PlexLogo className="inline-block size-9" />
+        and not{' '}
         <span className="text-primary font-bold">
           {currentSettings.applicationTitle}
         </span>
-        . To change this, you need to log into app.ple
-        <span className="text-accent">x</span>
-        .tv and &quot;pin&quot;{' '}
+        . To change this, you need to log into app.
+        <PlexLogo className="inline-block size-9" />
+        `` .tv and &quot;pin&quot;{' '}
         <span className="text-primary font-bold">
           {currentSettings.applicationTitle}
         </span>{' '}
@@ -67,7 +69,7 @@ const HelpContent = () => {
         <span className="text-primary font-bold">
           {currentSettings.applicationTitle}
         </span>{' '}
-        content, not Ple<span className="text-accent">x</span>&trade;
+        content, not <PlexLogo className="inline-block size-9" />
       </div>
       <p className="my-4">
         From the Options menu in{' '}

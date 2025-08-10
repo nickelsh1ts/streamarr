@@ -4,11 +4,13 @@ import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
 import LocalLogin from '@app/components/SignIn/LocalSignIn';
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 const SignIn = () => {
   const [error, setError] = useState('');
@@ -56,13 +58,24 @@ const SignIn = () => {
       </div>
       <div className="container max-w-lg mx-auto py-14 px-4">
         <div className="text-start px-2 mb-4 relative">
-          <p className="text-2xl font-extrabold mb-2">Sign in to continue</p>
+          <p className="text-2xl font-extrabold mb-2">
+            <FormattedMessage
+              id="signIn.title"
+              defaultMessage="Sign in to continue"
+            />
+          </p>
           <p className="text-sm">
-            You will use this account to log into{' '}
-            <span className="text-primary font-semibold">
-              {currentSettings.applicationTitle}
-            </span>{' '}
-            to watch your favourite movies and TV Shows.
+            <FormattedMessage
+              id="signIn.description"
+              defaultMessage="You will use this account to log into {applicationTitle} to watch your favourite movies and TV Shows."
+              values={{
+                applicationTitle: (
+                  <span className="text-primary font-semibold">
+                    {currentSettings.applicationTitle}
+                  </span>
+                ),
+              }}
+            />
           </p>
         </div>
         <Accordion single atLeastOne>
@@ -75,8 +88,13 @@ const SignIn = () => {
                 }`}
                 onClick={() => handleClick(0)}
               >
-                Use your Ple<span className="text-accent">x</span>&trade;
-                account
+                <FormattedMessage
+                  id="signIn.plexAccount"
+                  defaultMessage="Use your {plex} account"
+                  values={{
+                    plex: <PlexLogo className="inline-block size-9" />,
+                  }}
+                />
               </button>
               <AccordionContent isOpen={openIndexes.includes(0)}>
                 <div
@@ -85,7 +103,10 @@ const SignIn = () => {
                   <div
                     className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
                   >
-                    Login failed! Something went wrong, let&apos;s try again!
+                    <FormattedMessage
+                      id="signIn.loginFailed"
+                      defaultMessage="Login failed! Something went wrong, let's try again!"
+                    />
                   </div>
                   <PlexLoginButton
                     isProcessing={isProcessing}
@@ -103,7 +124,13 @@ const SignIn = () => {
                     }`}
                     onClick={() => handleClick(1)}
                   >
-                    Sign in with {currentSettings.applicationTitle}
+                    <FormattedMessage
+                      id="signIn.localAccount"
+                      defaultMessage="Sign in with {applicationTitle}"
+                      values={{
+                        applicationTitle: currentSettings.applicationTitle,
+                      }}
+                    />
                   </button>
                   <AccordionContent isOpen={openIndexes.includes(1)}>
                     <LocalLogin revalidate={revalidate} />
@@ -115,14 +142,28 @@ const SignIn = () => {
         </Accordion>
         {currentSettings.enableSignUp && (
           <p className="mt-4 text-start text-sm px-2 relative">
-            New to{' '}
-            <span className="text-primary font-semibold">
-              {currentSettings.applicationTitle}
-            </span>
-            ?
-            <Link href="/signup" className="font-bold hover:brightness-75 ms-1">
-              Sign up
-            </Link>
+            <FormattedMessage
+              id="signIn.newUser"
+              defaultMessage="New to {applicationTitle}? {signUpLink}"
+              values={{
+                applicationTitle: (
+                  <span className="text-primary font-semibold">
+                    {currentSettings.applicationTitle}
+                  </span>
+                ),
+                signUpLink: (
+                  <Link
+                    href="/signup"
+                    className="font-bold hover:brightness-75 ms-1"
+                  >
+                    <FormattedMessage
+                      id="signIn.signUp"
+                      defaultMessage="Sign up"
+                    />
+                  </Link>
+                ),
+              }}
+            />
           </p>
         )}
       </div>

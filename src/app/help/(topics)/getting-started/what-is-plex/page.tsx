@@ -2,6 +2,7 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Link from 'next/link';
 
 const HelpContent = () => {
@@ -10,16 +11,17 @@ const HelpContent = () => {
   return (
     <>
       <p className="mb-4">
-        A one-stop destination to stream movies, TV shows, and music, Ple
-        <span className="text-accent">x</span>&trade; is the most comprehensive
+        A one-stop destination to stream movies, TV shows, and music,{' '}
+        <PlexLogo className="inline-block size-9" /> is the most comprehensive
         entertainment platform available today. Available on almost any device,
-        Ple<span className="text-accent">x</span>&trade; is the first-and-only
+        <PlexLogo className="inline-block size-9" /> is the first-and-only
         streaming platform to offer free ad-supported movies, shows, and live TV
         together with the ability to easily search—and add to your Watchlist—any
         title ever made, no matter which streaming service it lives on. Using
         the platform as their entertainment concierge, 17 million (and growing!)
-        monthly active users count on Ple<span className="text-accent">x</span>
-        &trade; for new discoveries and recommendations from all their favorite
+        monthly active users count on{' '}
+        <PlexLogo className="inline-block size-9" />
+        for new discoveries and recommendations from all their favorite
         streaming apps, personal media libraries, and beyond.
       </p>
       <p className="mb-4">
@@ -55,7 +57,7 @@ const HelpContent = () => {
 const Heading = () => {
   return (
     <>
-      What is Ple<span className="text-accent">x</span>&trade;?
+      What is <PlexLogo className="inline-block size-9" />?
     </>
   );
 };
@@ -63,10 +65,10 @@ const Heading = () => {
 const SubHeading = () => {
   return (
     <>
-      Ple<span className="text-accent">x</span>&trade; gives you one place to
-      find and access all the media that matters to you. From personal media on
-      your own server, to free and on-demand Movies & Shows, live TV, podcasts,
-      and web shows, to streaming music, you can enjoy it all in one app, on any
+      <PlexLogo className="inline-block size-9" /> gives you one place to find
+      and access all the media that matters to you. From personal media on your
+      own server, to free and on-demand Movies & Shows, live TV, podcasts, and
+      web shows, to streaming music, you can enjoy it all in one app, on any
       device.
     </>
   );
