@@ -503,7 +503,7 @@ inviteRoutes.delete(
     try {
       const invite = await inviteRepository.findOneOrFail({
         where: { id: Number(req.params.inviteId) },
-        relations: { createdBy: true },
+        relations: { createdBy: true, redeemedBy: true },
       });
 
       if (
@@ -513,6 +513,16 @@ inviteRoutes.delete(
         return next({
           status: 401,
           message: 'You do not have permission to delete this invite.',
+        });
+      }
+
+      if (
+        invite.redeemedBy.length > 0 &&
+        !req.user?.hasPermission(Permission.MANAGE_INVITES)
+      ) {
+        return next({
+          status: 403,
+          message: 'Only administrators can delete redeemed invites.',
         });
       }
 

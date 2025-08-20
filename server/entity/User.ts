@@ -20,8 +20,8 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationCount,
   UpdateDateColumn,
+  VirtualColumn,
 } from 'typeorm';
 import { UserPushSubscription } from './UserPushSubscription';
 import { UserSettings } from './UserSettings';
@@ -85,7 +85,10 @@ export class User {
   @Column()
   public avatar: string;
 
-  @RelationCount((user: User) => user.createdInvites)
+  @VirtualColumn({
+    query: (alias) =>
+      `SELECT COUNT(*) FROM "invite" WHERE "invite"."createdById" = ${alias}.id`,
+  })
   public inviteCount: number;
 
   @Column({ nullable: true })
@@ -94,7 +97,10 @@ export class User {
   @OneToMany(() => Invite, (invite) => invite.createdBy)
   public createdInvites: Invite[];
 
-  @ManyToOne(() => Invite, (invite) => invite.redeemedBy)
+  @ManyToOne(() => Invite, (invite) => invite.redeemedBy, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   public redeemedInvite: Invite;
 
   @OneToMany(() => Invite, (invite) => invite.updatedBy)
