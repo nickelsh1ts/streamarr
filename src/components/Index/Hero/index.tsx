@@ -78,7 +78,7 @@ export default function Hero() {
               <div className="label">
                 <label
                   htmlFor="icode"
-                  className="label-text mb-2 text-sm md:text-base"
+                  className="label-text mb-2 text-sm md:text-base text-center md:text-start"
                 >
                   <FormattedMessage
                     id="hero.inviteCode"
