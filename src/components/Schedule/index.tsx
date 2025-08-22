@@ -3,6 +3,7 @@ import BigCalendar from '@app/components/Common/BigCalendar';
 import Header from '@app/components/Common/Header';
 import { FunnelIcon } from '@heroicons/react/24/solid';
 import { useState, useEffect, useMemo } from 'react';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -58,8 +59,8 @@ const Schedule = () => {
           id: 'schedule.untitled',
           defaultMessage: 'Untitled',
         }),
-      start: new Date(e.start),
-      end: new Date(e.end),
+      start: moment(e.start).toDate(),
+      end: moment(e.end).toDate(),
       description: e.description,
       categories: e.categories ?? [],
       status: e.status ?? 'unknown',

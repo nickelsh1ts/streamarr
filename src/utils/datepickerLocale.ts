@@ -27,10 +27,7 @@ const localeImports: Record<string, () => Promise<Locale>> = {
 export const registerDatePickerLocale = async (
   locale: AvailableLocale
 ): Promise<void> => {
-  // Skip if already registered or if it's English (default)
-  if (registeredLocales.has(locale) || locale === 'en') {
-    return;
-  }
+  if (registeredLocales.has(locale) || locale === 'en') return;
 
   // Only register if it's available in i18n AND we have a date-fns mapping
   if (availableLanguages[locale] && localeImports[locale]) {
@@ -45,4 +42,10 @@ export const registerDatePickerLocale = async (
       // Date picker will fall back to English if locale registration fails
     }
   }
+};
+
+export const getDatePickerLocale = (
+  locale: AvailableLocale
+): string | undefined => {
+  return locale !== 'en' && registeredLocales.has(locale) ? locale : 'en';
 };

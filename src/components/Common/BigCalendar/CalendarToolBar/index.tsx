@@ -15,14 +15,14 @@ import useLocale from '@app/hooks/useLocale';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
 import { Permission, useUser } from '@app/hooks/useUser';
 
-function convertUTCToLocalDate(date) {
-  if (!date) {
-    return date;
-  }
-  date = new Date(date);
-  date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-  return date;
-}
+// function convertUTCToLocalDate(date) {
+//   if (!date) {
+//     return date;
+//   }
+//   date = new Date(date);
+//   date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+//   return date;
+// }
 
 const CalendarToolBar = ({
   dateText,
@@ -98,14 +98,14 @@ const CalendarToolBar = ({
         {view != Views.WEEK ? (
           <DatePicker
             dateFormat={dateFormat}
-            selected={convertUTCToLocalDate(date)}
+            selected={moment(date).toDate()}
             locale={datePickerLocale}
             showIcon
             toggleCalendarOnIconClick
             closeOnScroll
             placeholderText={dateText}
             onChange={(date: Date) =>
-              date ? setDate(convertUTCToLocalDate(date)) : null
+              date ? setDate(moment(date).toDate()) : null
             }
             showYearDropdown
             yearDropdownItemNumber={2}
