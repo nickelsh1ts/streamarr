@@ -6,12 +6,13 @@ import { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 enum Filter {
   ALL = 'all',
   MOVIES = 'movies',
   SHOWS = 'shows',
+  LOCAL = 'local',
 }
 
 const Schedule = () => {
@@ -22,20 +23,35 @@ const Schedule = () => {
   // Fetch calendar events from API
   const { data: sonarrEvents } = useSWR('/api/v1/calendar/sonarr', fetcher);
   const { data: radarrEvents } = useSWR('/api/v1/calendar/radarr', fetcher);
+  const { data: localEvents, mutate: revalidateEvents } = useSWR(
+    '/api/v1/calendar/local',
+    fetcher
+  );
 
   // Combine and filter events as needed
   const events = useMemo(() => {
-    let allEvents = [...(sonarrEvents ?? []), ...(radarrEvents ?? [])];
+    let allEvents = [
+      ...(sonarrEvents ?? []),
+      ...(radarrEvents ?? []),
+      ...(localEvents ?? []),
+    ];
     if (currentFilter === Filter.MOVIES) {
       allEvents = radarrEvents ?? [];
     } else if (currentFilter === Filter.SHOWS) {
       allEvents = sonarrEvents ?? [];
+    } else if (currentFilter === Filter.LOCAL) {
+      allEvents = localEvents ?? [];
     } else {
-      allEvents = [...(sonarrEvents ?? []), ...(radarrEvents ?? [])];
+      allEvents = [
+        ...(sonarrEvents ?? []),
+        ...(radarrEvents ?? []),
+        ...(localEvents ?? []),
+      ];
     }
     // Map API event fields to BigCalendar eventProps
     return allEvents.map((e, idx) => ({
-      id: e.uid ?? idx,
+      id: e.id ?? idx,
+      uid: e.uid ?? `unknown-${idx}`,
       title:
         e.summary ??
         intl.formatMessage({
@@ -47,9 +63,15 @@ const Schedule = () => {
       description: e.description,
       categories: e.categories ?? [],
       status: e.status ?? 'unknown',
-      type: radarrEvents?.includes(e) ? 'movie' : 'show',
+      allDay: e.allDay ?? false,
+      createdBy: e.createdBy,
+      type: radarrEvents?.includes(e)
+        ? 'movie'
+        : sonarrEvents?.includes(e)
+          ? 'show'
+          : 'local',
     }));
-  }, [sonarrEvents, radarrEvents, currentFilter, intl]);
+  }, [sonarrEvents, radarrEvents, localEvents, currentFilter, intl]);
 
   // Restore last set filter values on component mount
   useEffect(() => {
@@ -104,11 +126,14 @@ const Schedule = () => {
               <option value="shows">
                 <FormattedMessage id="common.shows" defaultMessage="Shows" />
               </option>
+              <option value="local">
+                <FormattedMessage id="common.local" defaultMessage="Local" />
+              </option>
             </select>
           </div>
         </div>
       </div>
-      <BigCalendar events={events} />
+      <BigCalendar events={events} revalidateEvents={revalidateEvents} />
     </div>
   );
 };

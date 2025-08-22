@@ -44,20 +44,41 @@ const PermissionEdit = ({
       permission: Permission.MANAGE_USERS,
     },
     {
-      id: 'createevents',
+      id: 'manageevents',
       name: intl.formatMessage({
-        id: 'userPermissions.createEvents.name',
-        defaultMessage: 'Create Events',
+        id: 'common.manageEvents',
+        defaultMessage: 'Manage Events',
       }),
       description: intl.formatMessage({
-        id: 'userPermissions.createEvents.description',
-        defaultMessage: 'Grant permission to create custom events',
+        id: 'userPermissions.manageEvents.description',
+        defaultMessage:
+          'Grant permission to manage events. Users with this permission can edit or remove events made by others.',
       }),
-      permission: Permission.CREATE_EVENTS,
+      permission: Permission.MANAGE_EVENTS,
       requires: [
         {
           permissions: [Permission.VIEW_SCHEDULE, Permission.STREAMARR],
           type: 'or',
+        },
+      ],
+      children: [
+        {
+          id: 'createevents',
+          name: intl.formatMessage({
+            id: 'userPermissions.createEvents.name',
+            defaultMessage: 'Create Events',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.createEvents.description',
+            defaultMessage: 'Grant permission to create custom events.',
+          }),
+          permission: Permission.CREATE_EVENTS,
+          requires: [
+            {
+              permissions: [Permission.VIEW_SCHEDULE, Permission.STREAMARR],
+              type: 'or',
+            },
+          ],
         },
       ],
     },

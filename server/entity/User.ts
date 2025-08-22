@@ -29,6 +29,7 @@ import Invite from '@server/entity/Invite';
 import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import { AfterDate } from '@server/utils/dateHelpers';
 import { InviteStatus } from '@server/constants/invite';
+import Event from '@server/entity/Event';
 
 @Entity()
 export class User {
@@ -108,6 +109,12 @@ export class User {
 
   @Column({ nullable: true })
   public inviteQuotaDays?: number;
+
+  @OneToMany(() => Event, (event) => event.createdBy)
+  public createdEvents: Event[];
+
+  @OneToMany(() => Event, (event) => event.updatedBy)
+  public modifiedEvents: Event[];
 
   @OneToOne(() => UserSettings, (settings) => settings.user, {
     cascade: true,

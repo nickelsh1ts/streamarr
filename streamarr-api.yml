@@ -3393,6 +3393,120 @@ paths:
                 properties:
                   error:
                     type: string
+  /calendar/local:
+    get:
+      summary: Get local calendar events
+      description: Returns a list of cached local calendar events (requires VIEW_SCHEDULE permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of local calendar events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarEvent'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    post:
+      summary: Create local calendar Event
+      description: Creates a new local calendar event (requires CREATE_EVENTS permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarEvent'
+      responses:
+        '200':
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarEvent'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /calendar/local/{eventId}:
+    put:
+      summary: Update local calendar event
+      description: Updates a local calendar event (requires EDIT_EVENTS permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarEvent'
+      responses:
+        '200':
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarEvent'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Delete local calendar event
+      description: Deletes a local calendar event (requires DELETE_EVENTS permission).
+      tags:
+        - calendar
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '204':
+          description: Event deleted successfully
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   /signup/validate/{icode}:
     get:
       tags:

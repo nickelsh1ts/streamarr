@@ -20,24 +20,29 @@ import 'moment-timezone';
 import TimezoneSelect from './TimezoneSelect';
 import './index.css';
 import CalendarToolBar from '@app/components/Common/BigCalendar/CalendarToolBar';
-import Modal from '@app/components/Common/Modal';
-import { Permission, useUser } from '@app/hooks/useUser';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
+import EventModal from '@app/components/Common/BigCalendar/EventModal';
+import axios from 'axios';
+import type { User } from '@server/entity/User';
 
-interface eventProps {
+export interface eventProps {
   id: number;
+  uid: string;
   title: string;
   subtitle?: string;
   start: Date;
   end: Date;
   description?: string;
   type?: string;
-  categories?: string[];
+  categories?: string[] | string;
   status?: string;
+  allDay?: boolean;
+  createdBy?: User;
 }
 
 interface BigCalendarProps {
   events: eventProps[];
+  revalidateEvents: () => void;
 }
 
 const defaultTZ = moment.tz.guess();
@@ -47,10 +52,12 @@ function getDate(str, momentObj) {
   return momentObj(str, 'YYYY-MM-DD').toDate();
 }
 
-export default function BigCalendar({ events }: BigCalendarProps) {
+export default function BigCalendar({
+  events,
+  revalidateEvents,
+}: BigCalendarProps) {
   const intl = useIntl();
   const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const { hasPermission } = useUser();
   const [timezone, setTimezone] = useState(defaultTZ);
 
   const [date, setDate] = useState(defaultDateStr);
@@ -136,16 +143,18 @@ export default function BigCalendar({ events }: BigCalendarProps) {
     [setDate, setView]
   );
 
-  const [selectedEvent, setSelectedEvent] = useState<eventProps | undefined>(
-    undefined
-  );
-  const [modalState, setModalState] = useState(false);
+  const [editEventModal, setEditEventModal] = useState<{
+    open: boolean;
+    selectedEvent: eventProps | null;
+  }>({
+    open: false,
+    selectedEvent: null,
+  });
 
   const onSelectEvent = useCallback((calEvent: eventProps) => {
     window.clearTimeout(clickRef?.current);
     clickRef.current = window.setTimeout(() => {
-      setSelectedEvent(calEvent);
-      setModalState(true);
+      setEditEventModal({ open: true, selectedEvent: calEvent });
     }, 250);
   }, []);
 
@@ -185,16 +194,17 @@ export default function BigCalendar({ events }: BigCalendarProps) {
       date,
       dateText,
       setView,
+      setEditEventModal,
     }),
     [date, view, setDate, setView, dateText]
   );
 
   const modalSubtitle = useMemo(() => {
-    if (!selectedEvent) return '';
-    const isRadarr = selectedEvent.type === 'movie';
-    const isSonarr = selectedEvent.type === 'show';
-    const startMoment = moment(selectedEvent.start);
-    const endMoment = moment(selectedEvent.end);
+    if (!editEventModal.selectedEvent) return '';
+    const isRadarr = editEventModal.selectedEvent.type === 'movie';
+    const isSonarr = editEventModal.selectedEvent.type === 'show';
+    const startMoment = moment(editEventModal.selectedEvent.start);
+    const endMoment = moment(editEventModal.selectedEvent.end);
     const isAllDayRadarr =
       isRadarr && endMoment.diff(startMoment, 'days') === 1;
     if (isAllDayRadarr) {
@@ -206,10 +216,21 @@ export default function BigCalendar({ events }: BigCalendarProps) {
       const endTime = endMoment.format('h:mm A');
       return `${dateStr} ${startTime} to ${endTime}`;
     }
+    if (editEventModal.selectedEvent.allDay) {
+      return startMoment.format('dddd, MMMM DD');
+    }
     const startDate = startMoment.format('dddd, MMMM DD h:mm A');
     const endDate = endMoment.format('dddd, MMMM DD h:mm A');
     return `${startDate} to ${endDate}`;
-  }, [selectedEvent]);
+  }, [editEventModal.selectedEvent]);
+
+  const deleteEvent = async () => {
+    await axios.delete(
+      `/api/v1/calendar/local/${editEventModal.selectedEvent?.id}`
+    );
+    setEditEventModal({ open: false, selectedEvent: null });
+    revalidateEvents();
+  };
 
   return (
     <Fragment>
@@ -240,60 +261,19 @@ export default function BigCalendar({ events }: BigCalendarProps) {
           onDrillDown={onDrillDown}
           toolbar={false}
         />
-        <Modal
-          onCancel={() => {
-            setModalState(false);
-          }}
-          title={selectedEvent?.title}
+        <EventModal
+          selectedEvent={editEventModal.selectedEvent}
+          open={editEventModal.open}
+          onClose={() =>
+            setEditEventModal({ selectedEvent: null, open: false })
+          }
           subtitle={modalSubtitle}
-          show={modalState}
-        >
-          {selectedEvent ? (
-            <div className="space-y-2">
-              {selectedEvent.categories &&
-                selectedEvent.categories.length > 0 && (
-                  <div className="flex items-center text-neutral-400">
-                    <span>{selectedEvent.categories.join(', ')}</span>
-                  </div>
-                )}
-              {selectedEvent.description && (
-                <div className="text-primary-content">
-                  {selectedEvent.description}
-                </div>
-              )}
-              {selectedEvent.status && (
-                <div>
-                  <span className="font-semibold">
-                    <FormattedMessage
-                      id="calendar.status"
-                      defaultMessage="Status:"
-                    />
-                  </span>
-                  <span className="ml-2">{selectedEvent.status}</span>
-                </div>
-              )}
-              {selectedEvent.id &&
-                hasPermission([Permission.ADMIN], { type: 'or' }) && (
-                  <div className="flex items-center place-content-end text-xs mt-2 text-neutral-400">
-                    <span className="font-semibold">
-                      <FormattedMessage
-                        id="calendar.uid"
-                        defaultMessage="UID:"
-                      />
-                    </span>
-                    <span className="ml-2">{selectedEvent.id}</span>
-                  </div>
-                )}
-            </div>
-          ) : (
-            <span>
-              <FormattedMessage
-                id="calendar.noEventSelected"
-                defaultMessage="No event selected."
-              />
-            </span>
-          )}
-        </Modal>
+          onDelete={() => deleteEvent()}
+          onSave={() => {
+            revalidateEvents();
+            setEditEventModal({ selectedEvent: null, open: false });
+          }}
+        />
       </div>
       <TimezoneSelect
         defaultTZ={defaultTZ}

@@ -13,6 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FormattedMessage } from 'react-intl';
 import useLocale from '@app/hooks/useLocale';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
+import { Permission, useUser } from '@app/hooks/useUser';
 
 function convertUTCToLocalDate(date) {
   if (!date) {
@@ -32,8 +33,10 @@ const CalendarToolBar = ({
   startOfWeek,
   oneMonth,
   setView,
+  setEditEventModal,
 }) => {
   const { locale } = useLocale();
+  const { hasPermission } = useUser();
 
   useEffect(() => {
     registerDatePickerLocale(locale);
@@ -88,7 +91,10 @@ const CalendarToolBar = ({
 
   return (
     <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
-      <div id="datePicker" className="text-primary">
+      <div
+        id="datePicker"
+        className="text-primary flex flex-grow flex-col sm:flex-row lg:flex-grow-0 gap-2"
+      >
         {view != Views.WEEK ? (
           <DatePicker
             dateFormat={dateFormat}
@@ -158,6 +164,20 @@ const CalendarToolBar = ({
               </svg>
             }
           />
+        )}
+        {hasPermission([Permission.CREATE_EVENTS, Permission.MANAGE_EVENTS], {
+          type: 'or',
+        }) && (
+          <button
+            id="create-event"
+            onClick={() => setEditEventModal({ open: true, event: null })}
+            className="btn btn-sm btn-primary"
+          >
+            <FormattedMessage
+              id="calendar.createEvent"
+              defaultMessage="Create Event"
+            />
+          </button>
         )}
       </div>
       <div
