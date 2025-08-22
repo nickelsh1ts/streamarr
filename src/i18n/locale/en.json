@@ -116,14 +116,50 @@
   "calendar.agenda": {
     "defaultMessage": "Agenda"
   },
+  "calendar.createEvent": {
+    "defaultMessage": "Create Event"
+  },
+  "calendar.createdBy": {
+    "defaultMessage": "Created By:"
+  },
   "calendar.date": {
     "defaultMessage": "Date"
   },
   "calendar.day": {
     "defaultMessage": "Day"
   },
+  "calendar.deleteEvent": {
+    "defaultMessage": "Delete Event"
+  },
+  "calendar.editEvent": {
+    "defaultMessage": "Edit Event"
+  },
   "calendar.event": {
     "defaultMessage": "New Release or Event"
+  },
+  "calendar.eventAllDay": {
+    "defaultMessage": "All Day Event"
+  },
+  "calendar.eventCategories": {
+    "defaultMessage": "Categories"
+  },
+  "calendar.eventDate": {
+    "defaultMessage": "Date"
+  },
+  "calendar.eventDates": {
+    "defaultMessage": "Start & End Dates"
+  },
+  "calendar.eventDescription": {
+    "defaultMessage": "Description"
+  },
+  "calendar.eventId": {
+    "defaultMessage": "UID"
+  },
+  "calendar.eventStatus": {
+    "defaultMessage": "Status"
+  },
+  "calendar.eventSummary": {
+    "defaultMessage": "Summary"
   },
   "calendar.month": {
     "defaultMessage": "Month"
@@ -133,6 +169,15 @@
   },
   "calendar.status": {
     "defaultMessage": "Status:"
+  },
+  "calendar.statusCancelled": {
+    "defaultMessage": "Cancelled"
+  },
+  "calendar.statusConfirmed": {
+    "defaultMessage": "Confirmed"
+  },
+  "calendar.statusTentative": {
+    "defaultMessage": "Tentative"
   },
   "calendar.time": {
     "defaultMessage": "Time"
@@ -254,6 +299,12 @@
   "common.emailAddress": {
     "defaultMessage": "Email Address"
   },
+  "common.endTime": {
+    "defaultMessage": "End Time"
+  },
+  "common.eventError": {
+    "defaultMessage": "Something went wrong while saving the event"
+  },
   "common.expired": {
     "defaultMessage": "Expired"
   },
@@ -308,11 +359,17 @@
   "common.loading": {
     "defaultMessage": "Loading"
   },
+  "common.local": {
+    "defaultMessage": "Local"
+  },
   "common.localUser": {
     "defaultMessage": "Local User"
   },
   "common.logs": {
     "defaultMessage": "Logs"
+  },
+  "common.manageEvents": {
+    "defaultMessage": "Manage Events"
   },
   "common.manageUsers": {
     "defaultMessage": "Manage Users"
@@ -445,6 +502,9 @@
   },
   "common.ssl": {
     "defaultMessage": "SSL"
+  },
+  "common.startTime": {
+    "defaultMessage": "Start Time"
   },
   "common.status": {
     "defaultMessage": "Status"
@@ -622,6 +682,21 @@
   },
   "emailNotifications.validation.pgpPrivateKey.passwordRequired": {
     "defaultMessage": "You must provide a PGP password if you set a private key"
+  },
+  "event.categoriesRequired": {
+    "defaultMessage": "You must provide at least one category"
+  },
+  "event.descriptionRequired": {
+    "defaultMessage": "You must provide a valid description"
+  },
+  "event.endDateRequired": {
+    "defaultMessage": "You must provide a valid end date for non-all-day events"
+  },
+  "event.startDateRequired": {
+    "defaultMessage": "You must provide a valid start date"
+  },
+  "event.summaryRequired": {
+    "defaultMessage": "You must provide a valid summary"
   },
   "footer.contactUs": {
     "defaultMessage": "Contact Us"
@@ -1704,7 +1779,7 @@
     "defaultMessage": "Advanced Invite"
   },
   "userPermissions.createEvents.description": {
-    "defaultMessage": "Grant permission to create custom events"
+    "defaultMessage": "Grant permission to create custom events."
   },
   "userPermissions.createEvents.name": {
     "defaultMessage": "Create Events"
@@ -1717,6 +1792,9 @@
   },
   "userPermissions.error": {
     "defaultMessage": "Something went wrong while saving user permissions."
+  },
+  "userPermissions.manageEvents.description": {
+    "defaultMessage": "Grant permission to manage events. Users with this permission can edit or remove events made by others."
   },
   "userPermissions.manageInvites.description": {
     "defaultMessage": "Grant permission to manage invites. All invites made by a user with this permission can be modified."

@@ -32,6 +32,51 @@
   "backToTop.backUpTop": {
     "defaultMessage": "Volver arriba"
   },
+  "calendar.createEvent": {
+    "defaultMessage": "Crear Evento"
+  },
+  "calendar.createdBy": {
+    "defaultMessage": "Creado Por:"
+  },
+  "calendar.deleteEvent": {
+    "defaultMessage": "Eliminar Evento"
+  },
+  "calendar.editEvent": {
+    "defaultMessage": "Editar Evento"
+  },
+  "calendar.eventAllDay": {
+    "defaultMessage": "Evento de Todo el Día"
+  },
+  "calendar.eventCategories": {
+    "defaultMessage": "Categorías"
+  },
+  "calendar.eventDate": {
+    "defaultMessage": "Fecha"
+  },
+  "calendar.eventDates": {
+    "defaultMessage": "Fechas de Inicio y Fin"
+  },
+  "calendar.eventDescription": {
+    "defaultMessage": "Descripción"
+  },
+  "calendar.eventId": {
+    "defaultMessage": "UID"
+  },
+  "calendar.eventStatus": {
+    "defaultMessage": "Estado"
+  },
+  "calendar.eventSummary": {
+    "defaultMessage": "Resumen"
+  },
+  "calendar.statusCancelled": {
+    "defaultMessage": "Cancelado"
+  },
+  "calendar.statusConfirmed": {
+    "defaultMessage": "Confirmado"
+  },
+  "calendar.statusTentative": {
+    "defaultMessage": "Tentativo"
+  },
   "auth.signin": {
     "defaultMessage": "Iniciar sesión"
   },
@@ -62,8 +107,20 @@
   "common.edit": {
     "defaultMessage": "Editar"
   },
+  "common.endTime": {
+    "defaultMessage": "Hora de Fin"
+  },
+  "common.eventError": {
+    "defaultMessage": "Algo salió mal al guardar el evento"
+  },
   "common.joined": {
     "defaultMessage": "Se Unió"
+  },
+  "common.local": {
+    "defaultMessage": "Local"
+  },
+  "common.manageEvents": {
+    "defaultMessage": "Gestionar Eventos"
   },
   "common.next": {
     "defaultMessage": "Siguiente"
@@ -82,6 +139,9 @@
   },
   "common.settings": {
     "defaultMessage": "Configuración"
+  },
+  "common.startTime": {
+    "defaultMessage": "Hora de Inicio"
   },
   "common.status": {
     "defaultMessage": "Estado"
@@ -668,6 +728,21 @@
   "emailNotifications.validation.pgpPrivateKey.passwordRequired": {
     "defaultMessage": "Debes proporcionar una contraseña PGP si estableces una clave privada"
   },
+  "event.categoriesRequired": {
+    "defaultMessage": "Debes proporcionar al menos una categoría"
+  },
+  "event.descriptionRequired": {
+    "defaultMessage": "Debes proporcionar una descripción válida"
+  },
+  "event.endDateRequired": {
+    "defaultMessage": "Debes proporcionar una fecha de fin válida para eventos que no sean de todo el día"
+  },
+  "event.startDateRequired": {
+    "defaultMessage": "Debes proporcionar una fecha de inicio válida"
+  },
+  "event.summaryRequired": {
+    "defaultMessage": "Debes proporcionar un resumen válido"
+  },
   "footer.contactUs": {
     "defaultMessage": "Contáctanos"
   },
@@ -793,6 +868,9 @@
   },
   "userPermissions.error": {
     "defaultMessage": "Algo salió mal al guardar los permisos de usuario."
+  },
+  "userPermissions.manageEvents.description": {
+    "defaultMessage": "Conceder permiso para gestionar eventos. Los usuarios con este permiso pueden editar o eliminar eventos creados por otros."
   },
   "userPermissions.manageInvites.description": {
     "defaultMessage": "Conceder permiso para gestionar invitaciones. Todas las invitaciones hechas por un usuario con este permiso pueden ser modificadas."
