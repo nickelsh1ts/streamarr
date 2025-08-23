@@ -91,7 +91,7 @@ export class Invite {
   @Column({ type: 'datetime', nullable: true })
   public expiresAt: Date;
 
-  @Column()
+  @Column({ unique: true })
   public icode: string;
 
   @Column({ type: 'int', default: 0 })

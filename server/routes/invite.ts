@@ -196,35 +196,60 @@ inviteRoutes.post<
 
     const inviteRepository = getRepository(Invite);
 
-    const invite = new Invite({
-      createdBy: req.body.inviteAs ?? req.user,
-      updatedBy: req.user,
-      icode: req.body.icode || generateIcode(),
-      expiresAt:
-        req.body.expiryLimit > 0 && req.body.expiryTime
-          ? new Date(
-              Date.now() +
-                req.body.expiryLimit *
-                  {
-                    days: 86400000,
-                    weeks: 604800000,
-                    months: 2629800000,
-                  }[req.body.expiryTime]
-            )
-          : null,
-      status: req.body.status ?? InviteStatus.ACTIVE,
-      usageLimit: req.body.usageLimit ?? 1,
-      downloads: req.body.downloads ?? true,
-      liveTv: req.body.liveTv ?? false,
-      plexHome: req.body.plexHome ?? false,
-      sharedLibraries: req.body.sharedLibraries ?? '',
-      expiryLimit: req.body.expiryLimit ?? 1,
-      expiryTime: req.body.expiryTime ?? 'days',
-    });
+    try {
+      const existingInvite = await inviteRepository.findOne({
+        where: { icode: req.body.icode },
+      });
+      if (existingInvite) {
+        return next({
+          status: 409,
+          message: 'Duplicate invite codes are not permitted.',
+        });
+      }
+      if (req.body.icode.length < 8 && req.body.icode.length != 0) {
+        return next({
+          status: 400,
+          message: 'Invite code must be at least 8 characters.',
+        });
+      }
+      const invite = new Invite({
+        createdBy: req.body.inviteAs ?? req.user,
+        updatedBy: req.user,
+        icode: req.body.icode || generateIcode(),
+        expiresAt:
+          req.body.expiryLimit > 0 && req.body.expiryTime
+            ? new Date(
+                Date.now() +
+                  req.body.expiryLimit *
+                    {
+                      days: 86400000,
+                      weeks: 604800000,
+                      months: 2629800000,
+                    }[req.body.expiryTime]
+              )
+            : null,
+        status: req.body.status ?? InviteStatus.ACTIVE,
+        usageLimit: req.body.usageLimit ?? 1,
+        downloads: req.body.downloads ?? true,
+        liveTv: req.body.liveTv ?? false,
+        plexHome: req.body.plexHome ?? false,
+        sharedLibraries: req.body.sharedLibraries ?? '',
+        expiryLimit: req.body.expiryLimit ?? 1,
+        expiryTime: req.body.expiryTime ?? 'days',
+      });
+      const newinvite = await inviteRepository.save(invite);
 
-    const newinvite = await inviteRepository.save(invite);
-
-    res.status(200).json(newinvite);
+      res.status(200).json(newinvite);
+    } catch (e) {
+      logger.debug('Something went wrong creating invite.', {
+        label: 'API',
+        errorMessage: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Unable to create invite.',
+      });
+    }
   }
 );
 

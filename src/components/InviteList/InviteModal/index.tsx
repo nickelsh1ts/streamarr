@@ -34,6 +34,7 @@ import type Invite from '@server/entity/Invite';
 import { InviteStatus } from '@server/constants/invite';
 import { useIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
+import * as Yup from 'yup';
 
 interface InviteModalProps {
   invite: Invite | null;
@@ -78,6 +79,32 @@ const InviteModal = ({
       { type: 'or' }
     )
   );
+
+  const icodeValidation = Yup.object().shape({
+    icode: Yup.string()
+      .optional()
+      .min(
+        8,
+        intl.formatMessage({
+          id: 'invite.codeMin',
+          defaultMessage: 'Invite code must be at least 8 characters',
+        })
+      )
+      .max(
+        20,
+        intl.formatMessage({
+          id: 'invite.codeMax',
+          defaultMessage: 'Invite code must be less than 20 characters',
+        })
+      )
+      .matches(
+        /^[a-zA-Z0-9]+$/,
+        intl.formatMessage({
+          id: 'invite.codeInvalid',
+          defaultMessage: 'Invite code must only contain letters and numbers.',
+        })
+      ),
+  });
 
   useEffect(() => {
     if (filteredUserData && !user) {
@@ -187,6 +214,7 @@ const InviteModal = ({
             : 'server',
       }}
       enableReinitialize
+      validationSchema={icodeValidation}
       onSubmit={async (values) => {
         try {
           const submission = {
@@ -235,7 +263,7 @@ const InviteModal = ({
                 action: invite ? 'updating' : 'creating',
               }
             ),
-            message: e.message,
+            message: e?.response?.data?.message ?? e?.message,
             icon: <XCircleIcon className="size-7" />,
             type: 'error',
           });
@@ -244,7 +272,15 @@ const InviteModal = ({
         }
       }}
     >
-      {({ isSubmitting, isValid, values, setFieldValue, handleSubmit }) => {
+      {({
+        errors,
+        touched,
+        isSubmitting,
+        isValid,
+        values,
+        setFieldValue,
+        handleSubmit,
+      }) => {
         return (
           <Modal
             okText={
@@ -388,6 +424,11 @@ const InviteModal = ({
                       className="input input-primary w-full py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset ring-primary"
                     />
                   </div>
+                  {errors.icode && touched.icode && (
+                    <div className="text-start text-error my-2">
+                      {errors.icode}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label
