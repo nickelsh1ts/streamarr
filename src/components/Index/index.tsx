@@ -11,6 +11,8 @@ import { useInView } from '@app/hooks/useElementInView';
 import useSettings from '@app/hooks/useSettings';
 import { useRef } from 'react';
 
+//TODO: Update extended homepage and complete translations
+
 function Index() {
   const targetRef = useRef(null);
   const isInView = useInView(targetRef, 0.17);

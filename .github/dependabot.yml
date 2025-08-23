@@ -3,6 +3,8 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
+# TODO: Update Dependabot configuration
+
 version: 2
 updates:
   - package-ecosystem: 'npm'

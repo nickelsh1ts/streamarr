@@ -15,7 +15,7 @@ interface NotificationCardProps {
   createdDate?: Date;
 }
 
-//TODO Implement actual global and user notifications and management
+//TODO: Implement global and user notifications and management
 
 const NotificationCard = ({ icon, title, children, createdDate }) => {
   const { setIsOpen } = useContext(NotificationContext);

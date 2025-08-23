@@ -15,7 +15,7 @@ import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
 
-//TODO create a request more invites feature
+//TODO: Implement a request more invites feature
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();

@@ -14,6 +14,8 @@ import { Field, Formik } from 'formik';
 import useSWR from 'swr';
 import * as Yup from 'yup';
 
+//TODO: Allow multiple download servers (like sonarr/radarr)
+
 const ServicesDownloads = () => {
   const intl = useIntl();
   const { data: dataDownloads, mutate: revalidateDownloads } =

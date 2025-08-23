@@ -7,6 +7,8 @@ import type { ServiceSettings } from '@server/lib/settings';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
+//TODO: Add new newsletter management settings and feature
+
 type SettingsLayoutProps = { children: React.ReactNode };
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {

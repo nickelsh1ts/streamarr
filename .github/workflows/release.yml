@@ -1,3 +1,4 @@
+# TODO: Update release workflow
 name: Streamarr Release
 
 on:

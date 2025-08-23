@@ -8,7 +8,7 @@ import Footer from '@app/components/Layout/Footer';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { FormattedMessage } from 'react-intl';
 
-//TODO update help articles with current and up to date information
+//TODO: Complete rework of the help centre
 
 const Help = () => {
   return (
