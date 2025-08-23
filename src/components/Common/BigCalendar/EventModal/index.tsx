@@ -105,7 +105,7 @@ const DatePickerField = ({ values, ...props }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className=""
+                className="text-primary"
               >
                 <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
                 <path
@@ -135,7 +135,7 @@ const DatePickerField = ({ values, ...props }) => {
                 id: 'common.startTime',
                 defaultMessage: 'Start Time',
               })}
-              icon={<ClockIcon />}
+              icon={<ClockIcon className="text-primary" />}
             />
             <span className="text-primary text-xl font-bold mx-2"> - </span>
             <DatePicker
@@ -156,7 +156,7 @@ const DatePickerField = ({ values, ...props }) => {
                 id: 'common.endTime',
                 defaultMessage: 'End Time',
               })}
-              icon={<ClockIcon />}
+              icon={<ClockIcon className="text-primary" />}
             />
           </div>
         </>

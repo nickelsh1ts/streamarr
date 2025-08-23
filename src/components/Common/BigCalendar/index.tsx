@@ -60,6 +60,14 @@ export default function BigCalendar({
   const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
   const [timezone, setTimezone] = useState(defaultTZ);
 
+  // Set global moment timezone whenever timezone changes
+  useEffect(() => {
+    moment.tz.setDefault(timezone);
+    return () => {
+      moment.tz.setDefault();
+    };
+  }, [timezone]);
+
   const [date, setDate] = useState(defaultDateStr);
   const [view, setView] = useState<View>(Views.MONTH);
 
@@ -91,7 +99,6 @@ export default function BigCalendar({
 
   const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
     useMemo(() => {
-      moment.tz.setDefault(timezone);
       return {
         defaultDate: getDate(defaultDateStr, moment),
         getNow: () => moment().toDate(),
@@ -99,13 +106,7 @@ export default function BigCalendar({
         myEvents: events,
         scrollToTime: moment().toDate(),
       };
-    }, [events, timezone]);
-
-  useEffect(() => {
-    return () => {
-      moment.tz.setDefault();
-    };
-  }, []);
+    }, [events]);
 
   const { messages } = useMemo(
     () => ({
@@ -187,16 +188,17 @@ export default function BigCalendar({
   const calendarToolbarProps = useMemo(
     () => ({
       oneMonth: moment(date).add(30, 'days').format('M/DD/YYYY'),
-      startOfWeek: moment(date)?.startOf('week').format('MMMM DD'),
-      endOfWeek: moment(date)?.endOf('week').format('MMMM DD'),
+      startOfWeek: moment(date)?.startOf('week').toDate(),
+      endOfWeek: moment(date)?.endOf('week').toDate(),
       view,
       setDate,
       date,
       dateText,
       setView,
       setEditEventModal,
+      timezone,
     }),
-    [date, view, setDate, setView, dateText]
+    [date, view, setDate, setView, dateText, timezone]
   );
 
   const modalSubtitle = useMemo(() => {
