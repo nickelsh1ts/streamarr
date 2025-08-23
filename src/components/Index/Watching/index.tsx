@@ -24,11 +24,10 @@ function Watching() {
           <ul className="list-disc list-outside ps-5">
             <li className="mb-4">
               Host virtual movie nights with Watch Together. Pause, rewind and
-              react with your friends. To invite or be invited to join Watch
-              Together, membership is required.
+              react with your friends. Both users must be active members.
             </li>
             <li className="mb-4">
-              Download any movie or series and watch on-the-go.
+              Download any movie or series and watch on-the-go. *
             </li>
             <li className="mb-4">
               Limit your experience to{' '}
@@ -42,13 +41,10 @@ function Watching() {
               sound on compatible devices.
             </li>
             <li className="mb-4">
-              Stream on up to two devices at the same time.
-            </li>
-            <li className="mb-4">
               Request anything new, anywhere on the go with the Overseerr app.
             </li>
             <li className="mb-4">
-              Invite up to 5 of your closest friends to join the fun.
+              Invite some of your closest friends to join the fun.
             </li>
           </ul>
         </div>

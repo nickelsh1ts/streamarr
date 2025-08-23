@@ -147,6 +147,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           }),
           type: 'warning',
           icon: <ArrowPathIcon className="size-7 animate-spin" />,
+          duration: Infinity,
         },
         (id) => {
           toastId = id;
