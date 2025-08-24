@@ -17,7 +17,7 @@ jobs:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Enable Corepack
         run: corepack enable
       - name: set node
