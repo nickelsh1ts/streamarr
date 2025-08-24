@@ -201,8 +201,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
 
     // Handle Plex server invitation immediately to avoid inconsistent state
     if (
-      (invite.sharedLibraries || invite.sharedLibraries === '') &&
-      !alreadyOnPlex
+      (invite.sharedLibraries || invite.sharedLibraries === '')
     ) {
       const mainUser = await userRepository
         .createQueryBuilder('user')
