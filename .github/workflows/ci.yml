@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Prepare
-        run: yarn prepare
+        run: yarn format && yarn lint && yarn typecheck
       - name: Build
         run: yarn build
 

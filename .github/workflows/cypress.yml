@@ -29,7 +29,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: yarn build
-          start: NODE_ENV=production node dist/index.js
+          start: yarn start
           wait-on: 'http://localhost:3000'
           record: true
           parallel: true # Runs test in parallel using settings above
