@@ -509,6 +509,15 @@
   "invite.code": {
     "defaultMessage": "Código de invitación"
   },
+  "invite.codeInvalid": {
+    "defaultMessage": "El código de invitación solo debe contener letras y números."
+  },
+  "invite.codeMax": {
+    "defaultMessage": "El código de invitación debe tener menos de 20 caracteres"
+  },
+  "invite.codeMin": {
+    "defaultMessage": "El código de invitación debe tener al menos 8 caracteres"
+  },
   "invite.create": {
     "defaultMessage": "Crear invitación"
   },

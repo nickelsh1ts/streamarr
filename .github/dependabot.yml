@@ -8,24 +8,24 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: "monthly"
-      time: "07:00"
-      timezone: "America/New_York"
+      interval: 'monthly'
+      time: '07:00'
+      timezone: 'America/New_York'
     minimum-package-age:
       semver-major: 60 # days
-      semver-minor: 14  # days
-      semver-patch: 5  # days
+      semver-minor: 14 # days
+      semver-patch: 5 # days
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "08:00"
-      timezone: "America/New_York"
-  - package-ecosystem: "docker"
-    directory: "/"
+      interval: 'weekly'
+      day: 'sunday'
+      time: '08:00'
+      timezone: 'America/New_York'
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "09:00"
-      timezone: "America/New_York"
+      interval: 'weekly'
+      day: 'sunday'
+      time: '09:00'
+      timezone: 'America/New_York'
