@@ -7183,13 +7183,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"blueimp-md5@npm:^2.18.0":
-  version: 2.19.0
-  resolution: "blueimp-md5@npm:2.19.0"
-  checksum: 10c0/85d04343537dd99a288c62450341dcce7380d3454c81f8e5a971ddd80307d6f9ef51b5b92ad7d48aaaa92fd6d3a1f6b2f4fada068faae646887f7bfabc17a346
-  languageName: node
-  linkType: hard
-
 "bn.js@npm:^4.0.0":
   version: 4.12.2
   resolution: "bn.js@npm:4.12.2"
@@ -11305,16 +11298,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gravatar-url@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "gravatar-url@npm:4.0.1"
-  dependencies:
-    md5-hex: "npm:^4.0.0"
-    type-fest: "npm:^1.0.2"
-  checksum: 10c0/da1e76155bb00aec3fb6f177d46be3f537f6dd91fcf4c89bec8d55f9c1f41ea6c3b7f2faef49cf0ae4779a712d46a3683a4fd3510e26d6f71134c085a09e961d
-  languageName: node
-  linkType: hard
-
 "handlebars@npm:^4.7.7":
   version: 4.7.8
   resolution: "handlebars@npm:4.7.8"
@@ -13743,15 +13726,6 @@ __metadata:
   version: 2.1.3
   resolution: "mathml-tag-names@npm:2.1.3"
   checksum: 10c0/e2b094658a2618433efd2678a5a3e551645e09ba17c7c777783cd8dfa0178b0195fda0a5c46a6be5e778923662cf8dde891c894c869ff14fbb4ea3208c31bc4d
-  languageName: node
-  linkType: hard
-
-"md5-hex@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "md5-hex@npm:4.0.0"
-  dependencies:
-    blueimp-md5: "npm:^2.18.0"
-  checksum: 10c0/cea9112b352bc509d35e885f21400672069feaf4ec005d1e53ffd00f1142d59b8f9b778d6ed786a3546be20987f1f1967d188008940360249b9b254bb0ec33a2
   languageName: node
   linkType: hard
 
@@ -18818,7 +18792,6 @@ __metadata:
     express-rate-limit: "npm:^7.5.0"
     formik: "npm:^2.4.6"
     globals: "npm:^16.2.0"
-    gravatar-url: "npm:^4.0.1"
     ical: "npm:^0.8.0"
     jose: "npm:^6.0.11"
     lint-staged: "npm:16.1.2"
@@ -19922,7 +19895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^1.0.1, type-fest@npm:^1.0.2":
+"type-fest@npm:^1.0.1":
   version: 1.4.0
   resolution: "type-fest@npm:1.4.0"
   checksum: 10c0/a3c0f4ee28ff6ddf800d769eafafcdeab32efa38763c1a1b8daeae681920f6e345d7920bf277245235561d8117dab765cb5f829c76b713b4c9de0998a5397141
