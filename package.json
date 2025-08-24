@@ -66,7 +66,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.1.0",
     "react-animate-height": "^3.2.3",
-    "react-aria": "3.41.1",
+    "react-aria": "3.42.0",
     "react-big-calendar": "^1.19.4",
     "react-datepicker": "^8.4.0",
     "react-dom": "19.1.0",
