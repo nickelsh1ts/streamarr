@@ -2,8 +2,8 @@ import { UserType } from '@server/constants/user';
 import dataSource, { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { copyFileSync } from 'fs';
-import gravatarUrl from 'gravatar-url';
 import path from 'path';
+import crypto from 'crypto';
 
 const prepareDb = async () => {
   // Copy over test settings.json
@@ -46,10 +46,7 @@ const prepareDb = async () => {
   user.userType = UserType.PLEX;
   await user.setPassword('test1234');
   user.permissions = 2;
-  user.avatar = gravatarUrl('admin@streamarr.dev', {
-    default: 'mm',
-    size: 200,
-  });
+  user.avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update('admin@streamarr.dev'.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
   await userRepository.save(user);
 
   // Create the other user
@@ -65,10 +62,7 @@ const prepareDb = async () => {
   otherUser.userType = UserType.PLEX;
   await otherUser.setPassword('test1234');
   otherUser.permissions = 32;
-  otherUser.avatar = gravatarUrl('friend@streamarr.dev', {
-    default: 'mm',
-    size: 200,
-  });
+  otherUser.avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update('friend@streamarr.dev'.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
   await userRepository.save(otherUser);
 };
 
