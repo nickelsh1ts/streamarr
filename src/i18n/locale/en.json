@@ -914,6 +914,15 @@
   "invite.code": {
     "defaultMessage": "Invite Code"
   },
+  "invite.codeInvalid": {
+    "defaultMessage": "Invite code must only contain letters and numbers."
+  },
+  "invite.codeMax": {
+    "defaultMessage": "Invite code must be less than 20 characters"
+  },
+  "invite.codeMin": {
+    "defaultMessage": "Invite code must be at least 8 characters"
+  },
   "invite.create": {
     "defaultMessage": "Create Invite"
   },
