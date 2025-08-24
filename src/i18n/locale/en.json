@@ -1,1 +1,2066 @@
-{}
+{
+  "aboutReleases.changelogTitle": {
+    "defaultMessage": "{version} Changelog"
+  },
+  "aboutReleases.currentVersion": {
+    "defaultMessage": "Current Version"
+  },
+  "aboutReleases.dataUnavailable": {
+    "defaultMessage": "Release data is currently unavailable"
+  },
+  "aboutReleases.latestVersion": {
+    "defaultMessage": "Latest Version"
+  },
+  "aboutReleases.title": {
+    "defaultMessage": "Releases"
+  },
+  "aboutReleases.viewChangelog": {
+    "defaultMessage": "View Changelog"
+  },
+  "aboutReleases.viewOnGitHub": {
+    "defaultMessage": "View on GitHub"
+  },
+  "aboutSettings.dataDirectory": {
+    "defaultMessage": "Data Directory"
+  },
+  "aboutSettings.developWarning": {
+    "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
+  },
+  "aboutSettings.documentation": {
+    "defaultMessage": "Documentation"
+  },
+  "aboutSettings.gettingSupport": {
+    "defaultMessage": "Getting Support"
+  },
+  "aboutSettings.githubDiscussions": {
+    "defaultMessage": "GitHub Discussions"
+  },
+  "aboutSettings.helpPayForCoffee": {
+    "defaultMessage": "Help Pay for Coffee ☕️"
+  },
+  "aboutSettings.outOfDate": {
+    "defaultMessage": "Out of date"
+  },
+  "aboutSettings.preAlphaWarning": {
+    "defaultMessage": "This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+  },
+  "aboutSettings.preferred": {
+    "defaultMessage": "Preferred"
+  },
+  "aboutSettings.supportStreamarr": {
+    "defaultMessage": "Support Streamarr"
+  },
+  "aboutSettings.timeZone": {
+    "defaultMessage": "Time Zone"
+  },
+  "aboutSettings.title": {
+    "defaultMessage": "About Streamarr"
+  },
+  "aboutSettings.totalUsers": {
+    "defaultMessage": "Total Users"
+  },
+  "aboutSettings.upToDate": {
+    "defaultMessage": "Up to date"
+  },
+  "aboutSettings.version": {
+    "defaultMessage": "Version"
+  },
+  "admin.settings.services.description": {
+    "defaultMessage": "Configure your various services below."
+  },
+  "admin.settings.services.title": {
+    "defaultMessage": "Services"
+  },
+  "appData.warning": {
+    "defaultMessage": "The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
+  },
+  "auth.signin": {
+    "defaultMessage": "Sign in"
+  },
+  "auth.signup": {
+    "defaultMessage": "Sign up now"
+  },
+  "backToTop.backUpTop": {
+    "defaultMessage": "Back up top"
+  },
+  "cache.description": {
+    "defaultMessage": "Streamarr caches requests to external API endpoints to optimize performance and avoid making unnecessary API calls."
+  },
+  "cache.flushCache": {
+    "defaultMessage": "Flush Cache"
+  },
+  "cache.flushed": {
+    "defaultMessage": "{cacheName} cache flushed."
+  },
+  "cache.table.cacheName": {
+    "defaultMessage": "Cache Name"
+  },
+  "cache.table.hits": {
+    "defaultMessage": "Hits"
+  },
+  "cache.table.keySize": {
+    "defaultMessage": "Key Size"
+  },
+  "cache.table.misses": {
+    "defaultMessage": "Misses"
+  },
+  "cache.table.totalKeys": {
+    "defaultMessage": "Total keys"
+  },
+  "cache.table.valueSize": {
+    "defaultMessage": "Value Size"
+  },
+  "cache.title": {
+    "defaultMessage": "Cache"
+  },
+  "calendar.agenda": {
+    "defaultMessage": "Agenda"
+  },
+  "calendar.createEvent": {
+    "defaultMessage": "Create Event"
+  },
+  "calendar.createdBy": {
+    "defaultMessage": "Created By:"
+  },
+  "calendar.date": {
+    "defaultMessage": "Date"
+  },
+  "calendar.day": {
+    "defaultMessage": "Day"
+  },
+  "calendar.deleteEvent": {
+    "defaultMessage": "Delete Event"
+  },
+  "calendar.editEvent": {
+    "defaultMessage": "Edit Event"
+  },
+  "calendar.event": {
+    "defaultMessage": "New Release or Event"
+  },
+  "calendar.eventAllDay": {
+    "defaultMessage": "All Day Event"
+  },
+  "calendar.eventCategories": {
+    "defaultMessage": "Categories"
+  },
+  "calendar.eventDate": {
+    "defaultMessage": "Date"
+  },
+  "calendar.eventDates": {
+    "defaultMessage": "Start & End Dates"
+  },
+  "calendar.eventDescription": {
+    "defaultMessage": "Description"
+  },
+  "calendar.eventId": {
+    "defaultMessage": "UID"
+  },
+  "calendar.eventStatus": {
+    "defaultMessage": "Status"
+  },
+  "calendar.eventSummary": {
+    "defaultMessage": "Summary"
+  },
+  "calendar.month": {
+    "defaultMessage": "Month"
+  },
+  "calendar.noEventSelected": {
+    "defaultMessage": "No event selected."
+  },
+  "calendar.status": {
+    "defaultMessage": "Status:"
+  },
+  "calendar.statusCancelled": {
+    "defaultMessage": "Cancelled"
+  },
+  "calendar.statusConfirmed": {
+    "defaultMessage": "Confirmed"
+  },
+  "calendar.statusTentative": {
+    "defaultMessage": "Tentative"
+  },
+  "calendar.time": {
+    "defaultMessage": "Time"
+  },
+  "calendar.today": {
+    "defaultMessage": "Today"
+  },
+  "calendar.uid": {
+    "defaultMessage": "UID:"
+  },
+  "calendar.week": {
+    "defaultMessage": "Week"
+  },
+  "common.4k": {
+    "defaultMessage": "4K"
+  },
+  "common.4kserver": {
+    "defaultMessage": "4K Server"
+  },
+  "common.about": {
+    "defaultMessage": "About"
+  },
+  "common.active": {
+    "defaultMessage": "Active"
+  },
+  "common.addserver": {
+    "defaultMessage": "Add {arrApp} Server"
+  },
+  "common.admin": {
+    "defaultMessage": "Admin"
+  },
+  "common.adminCentre": {
+    "defaultMessage": "Admin Centre"
+  },
+  "common.advanced": {
+    "defaultMessage": "Advanced"
+  },
+  "common.after": {
+    "defaultMessage": "After"
+  },
+  "common.all": {
+    "defaultMessage": "All"
+  },
+  "common.apiKey": {
+    "defaultMessage": "API Key"
+  },
+  "common.areYouSure": {
+    "defaultMessage": "Are you sure?"
+  },
+  "common.arrAdd4k": {
+    "defaultMessage": "Add 4K {arrApp} Server"
+  },
+  "common.arrEdit": {
+    "defaultMessage": "Edit {arrApp} Server"
+  },
+  "common.arrEdit4k": {
+    "defaultMessage": "Edit 4K {arrApp} Server"
+  },
+  "common.by": {
+    "defaultMessage": "by"
+  },
+  "common.calendarSync": {
+    "defaultMessage": "Enable Calendar Sync"
+  },
+  "common.calendarSync.description": {
+    "defaultMessage": "Automatically sync {arrApp} events to the calendar"
+  },
+  "common.cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "common.close": {
+    "defaultMessage": "Close"
+  },
+  "common.confirmPassword": {
+    "defaultMessage": "Confirm Password"
+  },
+  "common.continue": {
+    "defaultMessage": "Continue"
+  },
+  "common.copied": {
+    "defaultMessage": "Copied to clipboard"
+  },
+  "common.copiedToClipboard": {
+    "defaultMessage": "Copied {item} to Clipboard!"
+  },
+  "common.currentPassword": {
+    "defaultMessage": "Current Password"
+  },
+  "common.default": {
+    "defaultMessage": "Default"
+  },
+  "common.default4k": {
+    "defaultMessage": "Default 4K Server"
+  },
+  "common.defaultserver": {
+    "defaultMessage": "Default Server"
+  },
+  "common.delete": {
+    "defaultMessage": "Delete"
+  },
+  "common.displayLanguage": {
+    "defaultMessage": "Display Language"
+  },
+  "common.displayName": {
+    "defaultMessage": "Display Name"
+  },
+  "common.downloading": {
+    "defaultMessage": "Downloading"
+  },
+  "common.downloads": {
+    "defaultMessage": "Downloads"
+  },
+  "common.edit": {
+    "defaultMessage": "Edit"
+  },
+  "common.email": {
+    "defaultMessage": "Email"
+  },
+  "common.emailAddress": {
+    "defaultMessage": "Email Address"
+  },
+  "common.endTime": {
+    "defaultMessage": "End Time"
+  },
+  "common.eventError": {
+    "defaultMessage": "Something went wrong while saving the event"
+  },
+  "common.expired": {
+    "defaultMessage": "Expired"
+  },
+  "common.expires": {
+    "defaultMessage": "Expires"
+  },
+  "common.externalUrl": {
+    "defaultMessage": "External URL"
+  },
+  "common.futuredays": {
+    "defaultMessage": "Future Days"
+  },
+  "common.futuredays.description": {
+    "defaultMessage": "Sync events for the next X days"
+  },
+  "common.general": {
+    "defaultMessage": "General"
+  },
+  "common.goBack": {
+    "defaultMessage": "Go back"
+  },
+  "common.home": {
+    "defaultMessage": "Home"
+  },
+  "common.hostname": {
+    "defaultMessage": "Hostname or IP Address"
+  },
+  "common.inactive": {
+    "defaultMessage": "Inactive"
+  },
+  "common.indexers": {
+    "defaultMessage": "Indexers"
+  },
+  "common.invite": {
+    "defaultMessage": "Invite"
+  },
+  "common.invites": {
+    "defaultMessage": "Invites"
+  },
+  "common.issues": {
+    "defaultMessage": "Issues"
+  },
+  "common.jobsAndCache": {
+    "defaultMessage": "Jobs & Cache"
+  },
+  "common.joined": {
+    "defaultMessage": "Joined"
+  },
+  "common.lifetime": {
+    "defaultMessage": "Life time"
+  },
+  "common.loading": {
+    "defaultMessage": "Loading"
+  },
+  "common.local": {
+    "defaultMessage": "Local"
+  },
+  "common.localUser": {
+    "defaultMessage": "Local User"
+  },
+  "common.logs": {
+    "defaultMessage": "Logs"
+  },
+  "common.manageEvents": {
+    "defaultMessage": "Manage Events"
+  },
+  "common.manageUsers": {
+    "defaultMessage": "Manage Users"
+  },
+  "common.movies": {
+    "defaultMessage": "Movies"
+  },
+  "common.music": {
+    "defaultMessage": "Music"
+  },
+  "common.never": {
+    "defaultMessage": "Never"
+  },
+  "common.newPassword": {
+    "defaultMessage": "New Password"
+  },
+  "common.next": {
+    "defaultMessage": "Next"
+  },
+  "common.noResults": {
+    "defaultMessage": "No Results"
+  },
+  "common.none": {
+    "defaultMessage": "None"
+  },
+  "common.notificationTypes": {
+    "defaultMessage": "Notification Types"
+  },
+  "common.notifications": {
+    "defaultMessage": "Notifications"
+  },
+  "common.optional": {
+    "defaultMessage": "optional"
+  },
+  "common.owner": {
+    "defaultMessage": "Owner"
+  },
+  "common.password": {
+    "defaultMessage": "Password"
+  },
+  "common.pastdays": {
+    "defaultMessage": "Past Days"
+  },
+  "common.pastdays.description": {
+    "defaultMessage": "Sync events from the past X days"
+  },
+  "common.plex": {
+    "defaultMessage": "Plex"
+  },
+  "common.plexUser": {
+    "defaultMessage": "Plex User"
+  },
+  "common.port": {
+    "defaultMessage": "Port"
+  },
+  "common.previous": {
+    "defaultMessage": "Previous"
+  },
+  "common.print": {
+    "defaultMessage": "Print"
+  },
+  "common.redeemed": {
+    "defaultMessage": "Redeemed"
+  },
+  "common.releaseSchedule": {
+    "defaultMessage": "Release Schedule"
+  },
+  "common.remaining": {
+    "defaultMessage": "remaining"
+  },
+  "common.request": {
+    "defaultMessage": "Request"
+  },
+  "common.requests": {
+    "defaultMessage": "Requests"
+  },
+  "common.resultsDisplay": {
+    "defaultMessage": "Display {select} results per page"
+  },
+  "common.role": {
+    "defaultMessage": "Role"
+  },
+  "common.saveChanges": {
+    "defaultMessage": "Save Changes"
+  },
+  "common.saveSuccess": {
+    "defaultMessage": "Settings saved successfully!"
+  },
+  "common.saving": {
+    "defaultMessage": "Saving..."
+  },
+  "common.schedule": {
+    "defaultMessage": "Schedule"
+  },
+  "common.selectTab": {
+    "defaultMessage": "Select a Tab"
+  },
+  "common.servername": {
+    "defaultMessage": "Server Name"
+  },
+  "common.services": {
+    "defaultMessage": "Services"
+  },
+  "common.settings": {
+    "defaultMessage": "Settings"
+  },
+  "common.settingsEnable": {
+    "defaultMessage": "Enable"
+  },
+  "common.settingsSaveError": {
+    "defaultMessage": "Something went wrong while saving {appName} settings."
+  },
+  "common.settingsSaveSuccess": {
+    "defaultMessage": "{appName} settings saved successfully"
+  },
+  "common.showAll": {
+    "defaultMessage": "Show All"
+  },
+  "common.showingResults": {
+    "defaultMessage": "Showing {start} to {end} of {total} results"
+  },
+  "common.shows": {
+    "defaultMessage": "Shows"
+  },
+  "common.signIn": {
+    "defaultMessage": "Sign In"
+  },
+  "common.signingIn": {
+    "defaultMessage": "Signing In..."
+  },
+  "common.ssl": {
+    "defaultMessage": "SSL"
+  },
+  "common.startTime": {
+    "defaultMessage": "Start Time"
+  },
+  "common.status": {
+    "defaultMessage": "Status"
+  },
+  "common.subtitles": {
+    "defaultMessage": "Subtitles"
+  },
+  "common.test": {
+    "defaultMessage": "Test"
+  },
+  "common.testing": {
+    "defaultMessage": "Testing..."
+  },
+  "common.transcoding": {
+    "defaultMessage": "Transcoding"
+  },
+  "common.tvShows": {
+    "defaultMessage": "TV Shows"
+  },
+  "common.type": {
+    "defaultMessage": "Type"
+  },
+  "common.unknown": {
+    "defaultMessage": "Unknown"
+  },
+  "common.unknownUser": {
+    "defaultMessage": "Unknown User"
+  },
+  "common.unlimited": {
+    "defaultMessage": "Unlimited"
+  },
+  "common.urlBase": {
+    "defaultMessage": "URL Base"
+  },
+  "common.useSsl": {
+    "defaultMessage": "Use SSL"
+  },
+  "common.user": {
+    "defaultMessage": "User"
+  },
+  "common.userRole": {
+    "defaultMessage": "User Role"
+  },
+  "common.users": {
+    "defaultMessage": "Users"
+  },
+  "common.webApp": {
+    "defaultMessage": "Web App"
+  },
+  "common.webPush": {
+    "defaultMessage": "Web Push"
+  },
+  "confirmAccount.disableWebPush": {
+    "defaultMessage": "Disable Web Push"
+  },
+  "confirmAccount.enableWebPush": {
+    "defaultMessage": "Enable Web Push"
+  },
+  "confirmAccount.error": {
+    "defaultMessage": "Failed to confirm account."
+  },
+  "confirmAccount.finalizingAccount": {
+    "defaultMessage": "Finalizing Account..."
+  },
+  "confirmAccount.plexOAuthWarning": {
+    "defaultMessage": "Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a \"local user\" using your email address."
+  },
+  "confirmAccount.settingsSaved": {
+    "defaultMessage": "Account settings saved successfully!"
+  },
+  "confirmAccount.subscriptionFailed": {
+    "defaultMessage": "Failed to subscribe to web push notifications"
+  },
+  "confirmAccount.webPushDisableError": {
+    "defaultMessage": "Failed to disable web push notifications"
+  },
+  "confirmAccount.webPushDisabled": {
+    "defaultMessage": "Web push has been disabled"
+  },
+  "confirmAccount.webPushEnableError": {
+    "defaultMessage": "Failed to enable web push notifications"
+  },
+  "confirmAccount.webPushEnabled": {
+    "defaultMessage": "Web Push Notifications Enabled"
+  },
+  "copyButton.tooltip": {
+    "defaultMessage": "Copy to Clipboard"
+  },
+  "devices.availableOnDevices": {
+    "defaultMessage": "Available on all your favourite devices"
+  },
+  "devices.computer": {
+    "defaultMessage": "Computer"
+  },
+  "devices.gameConsoles": {
+    "defaultMessage": "Game Consoles"
+  },
+  "devices.mobileTablet": {
+    "defaultMessage": "Mobile & Tablet"
+  },
+  "devices.tv": {
+    "defaultMessage": "TV"
+  },
+  "email.required": {
+    "defaultMessage": "You must provide a valid email address"
+  },
+  "emailNotifications.allowSelfSigned": {
+    "defaultMessage": "Allow Self-Signed Certificates"
+  },
+  "emailNotifications.enableAgent": {
+    "defaultMessage": "Enable Agent"
+  },
+  "emailNotifications.encryption.default": {
+    "defaultMessage": "Use STARTTLS if available"
+  },
+  "emailNotifications.encryption.implicit": {
+    "defaultMessage": "Use Implicit TLS"
+  },
+  "emailNotifications.encryption.opportunistic": {
+    "defaultMessage": "Always use STARTTLS"
+  },
+  "emailNotifications.encryptionMethod": {
+    "defaultMessage": "Encryption Method"
+  },
+  "emailNotifications.encryptionMethodDescription": {
+    "defaultMessage": "In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
+  },
+  "emailNotifications.pgpPassword": {
+    "defaultMessage": "PGP Password"
+  },
+  "emailNotifications.pgpPasswordDescription": {
+    "defaultMessage": "Sign encrypted email messages using {link}"
+  },
+  "emailNotifications.pgpPrivateKey": {
+    "defaultMessage": "PGP Private Key"
+  },
+  "emailNotifications.saveError": {
+    "defaultMessage": "Email notification settings failed to save."
+  },
+  "emailNotifications.saveSuccess": {
+    "defaultMessage": "Email notification settings saved successfully!"
+  },
+  "emailNotifications.senderAddress": {
+    "defaultMessage": "Sender Address"
+  },
+  "emailNotifications.senderName": {
+    "defaultMessage": "Sender Name"
+  },
+  "emailNotifications.smtpHost": {
+    "defaultMessage": "SMTP Host"
+  },
+  "emailNotifications.smtpPassword": {
+    "defaultMessage": "SMTP Password"
+  },
+  "emailNotifications.smtpPort": {
+    "defaultMessage": "SMTP Port"
+  },
+  "emailNotifications.smtpUsername": {
+    "defaultMessage": "SMTP Username"
+  },
+  "emailNotifications.testError": {
+    "defaultMessage": "Email test notification failed to send."
+  },
+  "emailNotifications.testSending": {
+    "defaultMessage": "Sending email test notification…"
+  },
+  "emailNotifications.testSuccess": {
+    "defaultMessage": "Email test notification sent!"
+  },
+  "emailNotifications.validation.pgpPassword.keyRequired": {
+    "defaultMessage": "You must provide a PGP private key if you set a password"
+  },
+  "emailNotifications.validation.pgpPrivateKey.format": {
+    "defaultMessage": "You must provide a valid PGP private key"
+  },
+  "emailNotifications.validation.pgpPrivateKey.passwordRequired": {
+    "defaultMessage": "You must provide a PGP password if you set a private key"
+  },
+  "event.categoriesRequired": {
+    "defaultMessage": "You must provide at least one category"
+  },
+  "event.descriptionRequired": {
+    "defaultMessage": "You must provide a valid description"
+  },
+  "event.endDateRequired": {
+    "defaultMessage": "You must provide a valid end date for non-all-day events"
+  },
+  "event.startDateRequired": {
+    "defaultMessage": "You must provide a valid start date"
+  },
+  "event.summaryRequired": {
+    "defaultMessage": "You must provide a valid summary"
+  },
+  "footer.contactUs": {
+    "defaultMessage": "Contact Us"
+  },
+  "footer.cookiePreferences": {
+    "defaultMessage": "Cookie Preferences"
+  },
+  "footer.privacyPolicy": {
+    "defaultMessage": "Privacy Policy"
+  },
+  "footer.termsOfUse": {
+    "defaultMessage": "Terms of Use"
+  },
+  "generalSettings.apiKey.regenerateError": {
+    "defaultMessage": "Something went wrong while generating a new API key."
+  },
+  "generalSettings.apiKey.regenerateSuccess": {
+    "defaultMessage": "New API key generated successfully!"
+  },
+  "generalSettings.apiKey.regenerateTooltip": {
+    "defaultMessage": "Regenerate API Key"
+  },
+  "generalSettings.applicationTitle.label": {
+    "defaultMessage": "Application Title"
+  },
+  "generalSettings.applicationUrl.label": {
+    "defaultMessage": "Application URL"
+  },
+  "generalSettings.cacheImages.description": {
+    "defaultMessage": "Cache externally sourced images (requires extra disk space)"
+  },
+  "generalSettings.cacheImages.label": {
+    "defaultMessage": "Enable Image Caching"
+  },
+  "generalSettings.csrfProtection.description": {
+    "defaultMessage": "Set external API access to read-only (requires HTTPS)"
+  },
+  "generalSettings.csrfProtection.label": {
+    "defaultMessage": "Enable CSRF Protection"
+  },
+  "generalSettings.csrfProtection.tooltip": {
+    "defaultMessage": "Do NOT enable this setting unless you understand what you are doing!"
+  },
+  "generalSettings.customLogo.currentAlt": {
+    "defaultMessage": "Current logo"
+  },
+  "generalSettings.customLogo.deleteError": {
+    "defaultMessage": "Failed to delete logo."
+  },
+  "generalSettings.customLogo.deleteSuccess": {
+    "defaultMessage": "Logo deleted successfully!"
+  },
+  "generalSettings.customLogo.description": {
+    "defaultMessage": "Upload a custom logo (recommended: 190x55px)"
+  },
+  "generalSettings.customLogo.label": {
+    "defaultMessage": "Custom Logo"
+  },
+  "generalSettings.customLogo.validation.fileExtension": {
+    "defaultMessage": "Invalid file extension. Only JPG, PNG, GIF, SVG are allowed"
+  },
+  "generalSettings.customLogo.validation.fileSize": {
+    "defaultMessage": "File size must be less than 5MB"
+  },
+  "generalSettings.customLogo.validation.fileType": {
+    "defaultMessage": "Only image files (JPG, PNG, GIF, SVG) are allowed"
+  },
+  "generalSettings.customLogoSmall.currentAlt": {
+    "defaultMessage": "Current small logo"
+  },
+  "generalSettings.customLogoSmall.deleteError": {
+    "defaultMessage": "Failed to delete small logo."
+  },
+  "generalSettings.customLogoSmall.deleteSuccess": {
+    "defaultMessage": "Small logo deleted successfully!"
+  },
+  "generalSettings.customLogoSmall.description": {
+    "defaultMessage": "Upload a custom logo for mobile screens (recommended: square aspect ratio, 45x45px)"
+  },
+  "generalSettings.customLogoSmall.label": {
+    "defaultMessage": "Custom Logo (mobile)"
+  },
+  "generalSettings.description": {
+    "defaultMessage": "Configure global and default Streamarr settings"
+  },
+  "generalSettings.enableSignUp.description": {
+    "defaultMessage": "Allow new users to signup. This will also enable invite management."
+  },
+  "generalSettings.enableSignUp.label": {
+    "defaultMessage": "Enable Signup"
+  },
+  "generalSettings.extendedHome.description": {
+    "defaultMessage": "Enable the extended homepage with FAQs"
+  },
+  "generalSettings.extendedHome.label": {
+    "defaultMessage": "Enable Extended Homepage"
+  },
+  "generalSettings.logo.uploadError": {
+    "defaultMessage": "Failed to upload logos"
+  },
+  "generalSettings.releaseSched.label": {
+    "defaultMessage": "Enable Release Schedule"
+  },
+  "generalSettings.supportEmail.label": {
+    "defaultMessage": "Support Email"
+  },
+  "generalSettings.supportUrl.label": {
+    "defaultMessage": "Get Support URL"
+  },
+  "generalSettings.title": {
+    "defaultMessage": "General Settings"
+  },
+  "generalSettings.trustProxy.description": {
+    "defaultMessage": "Allow Streamarr to correctly register client IP addresses behind a proxy"
+  },
+  "generalSettings.trustProxy.label": {
+    "defaultMessage": "Enable Proxy Support"
+  },
+  "generalSettings.validation.applicationTitle": {
+    "defaultMessage": "You must provide an application title"
+  },
+  "generalSettings.validation.port": {
+    "defaultMessage": "You must provide a valid port number"
+  },
+  "generalSettings.validation.supportUrl": {
+    "defaultMessage": "You must provide a valid URL"
+  },
+  "help.githubLink": {
+    "defaultMessage": "GitHub"
+  },
+  "help.helpCentre": {
+    "defaultMessage": "Help Centre"
+  },
+  "help.howToBecomeMember": {
+    "defaultMessage": "How to become a member"
+  },
+  "help.manageAccount": {
+    "defaultMessage": "Manage Account"
+  },
+  "help.popularTopics": {
+    "defaultMessage": "Popular topics"
+  },
+  "help.preReleaseWarning": {
+    "defaultMessage": "This is a pre-release preview and currently under active development. If you encounter issues please try again or reach out to {support} for further assistance. Please check GitHub for status updates."
+  },
+  "help.quickLinks": {
+    "defaultMessage": "Quick Links"
+  },
+  "help.relatedArticles": {
+    "defaultMessage": "Related Articles"
+  },
+  "help.requestingNewMedia": {
+    "defaultMessage": "Requesting new media"
+  },
+  "help.supportedDevices": {
+    "defaultMessage": "Supported devices"
+  },
+  "hero.error.emptyCode": {
+    "defaultMessage": "Please enter a valid invite code."
+  },
+  "hero.getStarted": {
+    "defaultMessage": "Let's Get Started!"
+  },
+  "hero.inviteCode": {
+    "defaultMessage": "Enter your invite code to get started"
+  },
+  "hero.more": {
+    "defaultMessage": "+ more"
+  },
+  "hero.subtitle": {
+    "defaultMessage": "Watch anywhere, anytime for free. The future is now."
+  },
+  "hero.title": {
+    "defaultMessage": "Unlimited movies and TV shows"
+  },
+  "iCodeForm.inviteCodeRequired": {
+    "defaultMessage": "Invite code is required"
+  },
+  "iCodeForm.inviteCodeTooShort": {
+    "defaultMessage": "Invite code is too short"
+  },
+  "iCodeForm.letsGetStarted": {
+    "defaultMessage": "Let's Get Started"
+  },
+  "iCodeForm.validatingInviteCode": {
+    "defaultMessage": "Validating Invite Code..."
+  },
+  "imageCache.description": {
+    "defaultMessage": "Streamarr will proxy and cache images from pre-configured external sources. Cached images are saved into your config folder. You can find the files in <code>{cachePath}</code>"
+  },
+  "imageCache.qrcode": {
+    "defaultMessage": "Invite QR Codes"
+  },
+  "imageCache.table.imagesCached": {
+    "defaultMessage": "Images Cached"
+  },
+  "imageCache.table.totalCacheSize": {
+    "defaultMessage": "Total Cache Size"
+  },
+  "imageCache.title": {
+    "defaultMessage": "Image Cache"
+  },
+  "invite.advancedSettings": {
+    "defaultMessage": "Advanced Settings"
+  },
+  "invite.allLibraries": {
+    "defaultMessage": "All Libraries"
+  },
+  "invite.allowDownloads": {
+    "defaultMessage": "Allow Downloads"
+  },
+  "invite.clickToCopy": {
+    "defaultMessage": "Click to copy invite code"
+  },
+  "invite.code": {
+    "defaultMessage": "Invite Code"
+  },
+  "invite.create": {
+    "defaultMessage": "Create Invite"
+  },
+  "invite.createTitle": {
+    "defaultMessage": "Create an Invite"
+  },
+  "invite.created": {
+    "defaultMessage": "Created"
+  },
+  "invite.createdSuccessfully": {
+    "defaultMessage": "Invite created successfully!"
+  },
+  "invite.defaultLibraries": {
+    "defaultMessage": "Default ({libraries})"
+  },
+  "invite.defaultLibrariesAll": {
+    "defaultMessage": "Default (All Libraries)"
+  },
+  "invite.deleteInvite": {
+    "defaultMessage": "Delete Invite"
+  },
+  "invite.disable": {
+    "defaultMessage": "Disable Invite"
+  },
+  "invite.disabledError": {
+    "defaultMessage": "Something went wrong while disabling the invite."
+  },
+  "invite.downloads": {
+    "defaultMessage": "Downloads"
+  },
+  "invite.editInvite": {
+    "defaultMessage": "Edit Invite"
+  },
+  "invite.enable": {
+    "defaultMessage": "Enable Invite"
+  },
+  "invite.error": {
+    "defaultMessage": "Something went wrong while {action} the invite."
+  },
+  "invite.expiration": {
+    "defaultMessage": "Expiration"
+  },
+  "invite.inviteAs": {
+    "defaultMessage": "Invite As"
+  },
+  "invite.inviteToPlexHome": {
+    "defaultMessage": "Invite to Plex Home"
+  },
+  "invite.modified": {
+    "defaultMessage": "Modified"
+  },
+  "invite.neverExpires": {
+    "defaultMessage": "Never expires"
+  },
+  "invite.plexHome": {
+    "defaultMessage": "Plex Home"
+  },
+  "invite.shareInvite": {
+    "defaultMessage": "Share Invite"
+  },
+  "invite.sharedLibraries": {
+    "defaultMessage": "Shared Libraries:"
+  },
+  "invite.statusChanged": {
+    "defaultMessage": "Invite {status} Successfully!"
+  },
+  "invite.timeUnit.day": {
+    "defaultMessage": "{count, plural, one {Day} other {Days}}"
+  },
+  "invite.timeUnit.month": {
+    "defaultMessage": "{count, plural, one {Month} other {Months}}"
+  },
+  "invite.timeUnit.week": {
+    "defaultMessage": "{count, plural, one {Week} other {Weeks}}"
+  },
+  "invite.updatedSuccessfully": {
+    "defaultMessage": "Invite updated successfully!"
+  },
+  "invite.usageLimit": {
+    "defaultMessage": "Invite Usage Limit"
+  },
+  "invite.usageUnit": {
+    "defaultMessage": "{count, plural, one {use} other {uses}}"
+  },
+  "inviteList.inviteAFriend": {
+    "defaultMessage": "Invite a Friend"
+  },
+  "inviteList.inviteDeleteError": {
+    "defaultMessage": "Something went wrong while deleting the invite."
+  },
+  "inviteList.inviteDeletedSuccess": {
+    "defaultMessage": "Invite Deleted Successfully"
+  },
+  "inviteList.signUpDisabled": {
+    "defaultMessage": "Sign Up Disabled"
+  },
+  "inviteList.signUpDisabledMessage": {
+    "defaultMessage": "The admin has currently disabled the sign up feature. No new invites can be created."
+  },
+  "inviteList.sortLastModified": {
+    "defaultMessage": "Last Modified"
+  },
+  "inviteList.sortMostRecent": {
+    "defaultMessage": "Most Recent"
+  },
+  "inviteShare.createAnother": {
+    "defaultMessage": "Create Another"
+  },
+  "inviteShare.inviteCreated": {
+    "defaultMessage": "Invite Created"
+  },
+  "inviteShare.inviteLink": {
+    "defaultMessage": "Invite Link"
+  },
+  "inviteShare.qrCodeAlt": {
+    "defaultMessage": "Invite QR Code"
+  },
+  "inviteShare.qrCodeError": {
+    "defaultMessage": "Error generating QR code"
+  },
+  "inviteShare.qrShareError": {
+    "defaultMessage": "Failed to share QR code"
+  },
+  "inviteShare.shareDescription": {
+    "defaultMessage": "Share this invite link or QR code with your friends!"
+  },
+  "inviteShare.shareWithFriends": {
+    "defaultMessage": "Share it with your friends!"
+  },
+  "inviteShare.shareYourInvite": {
+    "defaultMessage": "Share Your Invite"
+  },
+  "inviteShare.sharing": {
+    "defaultMessage": "Sharing..."
+  },
+  "inviteShare.successMessage": {
+    "defaultMessage": "Successfully generated a new invite!"
+  },
+  "jobs.cancelJob": {
+    "defaultMessage": "Cancel Job"
+  },
+  "jobs.canceled": {
+    "defaultMessage": "{jobName} Canceled"
+  },
+  "jobs.currentFrequency": {
+    "defaultMessage": "Current Frequency"
+  },
+  "jobs.description": {
+    "defaultMessage": "Streamarr performs certain maintenance tasks as regularly-scheduled jobs, but they can also be manually triggered below. Manually running a job will not alter its schedule."
+  },
+  "jobs.editError": {
+    "defaultMessage": "Something went wrong while saving the job."
+  },
+  "jobs.editSuccess": {
+    "defaultMessage": "Job Edited Successfully!"
+  },
+  "jobs.everyHours": {
+    "defaultMessage": "Every {count, plural, one {hour} other {# hours}}"
+  },
+  "jobs.everyMinutes": {
+    "defaultMessage": "Every {count, plural, one {# minute} other {# minutes}}"
+  },
+  "jobs.everySeconds": {
+    "defaultMessage": "Every {count, plural, one {# second} other {# seconds}}"
+  },
+  "jobs.modifyTitle": {
+    "defaultMessage": "Modify Job"
+  },
+  "jobs.newFrequency": {
+    "defaultMessage": "New Frequency"
+  },
+  "jobs.runNow": {
+    "defaultMessage": "Run Now"
+  },
+  "jobs.started": {
+    "defaultMessage": "{jobName} Started"
+  },
+  "jobs.table.jobName": {
+    "defaultMessage": "Job Name"
+  },
+  "jobs.table.nextExecution": {
+    "defaultMessage": "Next Execution"
+  },
+  "jobs.title": {
+    "defaultMessage": "Jobs"
+  },
+  "jobs.type.command": {
+    "defaultMessage": "Command"
+  },
+  "jobs.type.process": {
+    "defaultMessage": "Process"
+  },
+  "jobs.unknownJob": {
+    "defaultMessage": "Unknown Job"
+  },
+  "library.discover": {
+    "defaultMessage": "Discover"
+  },
+  "library.liveTV": {
+    "defaultMessage": "Live TV"
+  },
+  "library.loading": {
+    "defaultMessage": "Loading libraries..."
+  },
+  "library.music": {
+    "defaultMessage": "Music"
+  },
+  "library.photos": {
+    "defaultMessage": "Photos"
+  },
+  "library.watchlist": {
+    "defaultMessage": "Watch List"
+  },
+  "librarySelector.defaultLibrariesAll": {
+    "defaultMessage": "Default Libraries (All)"
+  },
+  "librarySelector.defaultLibrariesWith": {
+    "defaultMessage": "Default Libraries ({libraries})"
+  },
+  "localSignup.confirmPasswordRequired": {
+    "defaultMessage": "Please confirm your password"
+  },
+  "localSignup.creatingAccount": {
+    "defaultMessage": "Creating Account..."
+  },
+  "localSignup.emailInvalid": {
+    "defaultMessage": "Please enter a valid email address"
+  },
+  "localSignup.emailRequired": {
+    "defaultMessage": "Email address is required"
+  },
+  "localSignup.passwordLowercase": {
+    "defaultMessage": "Password must contain at least one lowercase letter"
+  },
+  "localSignup.passwordMinLength": {
+    "defaultMessage": "Password must be at least 8 characters"
+  },
+  "localSignup.passwordRequired": {
+    "defaultMessage": "Password is required"
+  },
+  "localSignup.passwordsMatch": {
+    "defaultMessage": "Passwords must match"
+  },
+  "localSignup.usernameInvalidChars": {
+    "defaultMessage": "Username can only contain letters, numbers, underscores, and hyphens"
+  },
+  "localSignup.usernameMaxLength": {
+    "defaultMessage": "Username must be less than 20 characters"
+  },
+  "localSignup.usernameMinLength": {
+    "defaultMessage": "Username must be at least 3 characters"
+  },
+  "localSignup.usernameRequired": {
+    "defaultMessage": "Username is required"
+  },
+  "logs.copyError": {
+    "defaultMessage": "Failed to copy log message."
+  },
+  "logs.description": {
+    "defaultMessage": "You can also view these logs directly via {stdout}, or in {logPath}"
+  },
+  "logs.filter.debug": {
+    "defaultMessage": "Debug"
+  },
+  "logs.filter.error": {
+    "defaultMessage": "Error"
+  },
+  "logs.filter.info": {
+    "defaultMessage": "Info"
+  },
+  "logs.filter.warn": {
+    "defaultMessage": "Warn"
+  },
+  "logs.logMessage": {
+    "defaultMessage": "Log Message"
+  },
+  "logs.modal.additionalData": {
+    "defaultMessage": "Additional Data"
+  },
+  "logs.modal.label": {
+    "defaultMessage": "Label"
+  },
+  "logs.modal.message": {
+    "defaultMessage": "Message"
+  },
+  "logs.modal.severity": {
+    "defaultMessage": "Severity"
+  },
+  "logs.modal.timestamp": {
+    "defaultMessage": "Timestamp"
+  },
+  "logs.modal.title": {
+    "defaultMessage": "Log Details"
+  },
+  "logs.pause": {
+    "defaultMessage": "Pause"
+  },
+  "logs.resume": {
+    "defaultMessage": "Resume"
+  },
+  "logs.table.copyToClipboard": {
+    "defaultMessage": "Copy to clipboard"
+  },
+  "logs.table.logMessage": {
+    "defaultMessage": "log message"
+  },
+  "logs.table.viewDetails": {
+    "defaultMessage": "View Details"
+  },
+  "logs.title": {
+    "defaultMessage": "Logs"
+  },
+  "mobileMenu.libraries": {
+    "defaultMessage": "Libraries"
+  },
+  "moreHelp.checkHelpSection": {
+    "defaultMessage": "Check out the help section on Plex or reach out below!"
+  },
+  "moreHelp.needMoreHelp": {
+    "defaultMessage": "Need more help?"
+  },
+  "moreHelp.needToChat": {
+    "defaultMessage": "Need to chat with us?"
+  },
+  "moreHelp.plexHelpDescription": {
+    "defaultMessage": "Take a look at the Plex Help section or browse their forums for even more assistance."
+  },
+  "moreHelp.plexSupport": {
+    "defaultMessage": "Plex Support"
+  },
+  "moreHelp.support": {
+    "defaultMessage": "Support"
+  },
+  "moreHelp.visitPlex": {
+    "defaultMessage": "Visit Plex"
+  },
+  "notFound.notFound": {
+    "defaultMessage": "Not found"
+  },
+  "notFound.page": {
+    "defaultMessage": "Page"
+  },
+  "notFound.quote": {
+    "defaultMessage": "There are places out there you can't find on any map. They're not gone, they're just lost."
+  },
+  "notification.inviteUsedSuccessfully": {
+    "defaultMessage": "Invite Redeemed Successfully"
+  },
+  "notification.inviteUsedSuccessfully.description": {
+    "defaultMessage": "Get notified when an invite you sent has been successfully redeemed"
+  },
+  "plex.login.button": {
+    "defaultMessage": "Sign in with"
+  },
+  "plexImport.error": {
+    "defaultMessage": "Something went wrong while importing Plex users."
+  },
+  "plexImport.import": {
+    "defaultMessage": "Import"
+  },
+  "plexImport.importing": {
+    "defaultMessage": "Importing..."
+  },
+  "plexImport.newSignIn.warning": {
+    "defaultMessage": "The <strong>Enable New Plex Sign-In</strong> setting is currently enabled. Plex users with library access do not need to be imported in order to sign in."
+  },
+  "plexImport.noUsers": {
+    "defaultMessage": "No users were imported from Plex."
+  },
+  "plexImport.noUsersToImport": {
+    "defaultMessage": "There are no Plex users to import."
+  },
+  "plexImport.success": {
+    "defaultMessage": "{count, plural, one {# Plex user} other {# Plex users}} imported successfully!"
+  },
+  "plexImport.title": {
+    "defaultMessage": "Import Plex Users"
+  },
+  "plexSettings.connecting": {
+    "defaultMessage": "Attempting to connect to Plex…"
+  },
+  "plexSettings.connectionError": {
+    "defaultMessage": "Failed to connect to Plex."
+  },
+  "plexSettings.connectionSuccess": {
+    "defaultMessage": "Plex connection established successfully!"
+  },
+  "plexSettings.description": {
+    "defaultMessage": "Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
+  },
+  "plexSettings.libraries.description": {
+    "defaultMessage": "The libraries Streamarr will use. Set up and save your Plex connection settings, then click the button below if no libraries are listed."
+  },
+  "plexSettings.libraries.syncLibraries": {
+    "defaultMessage": "Sync Libraries"
+  },
+  "plexSettings.libraries.syncing": {
+    "defaultMessage": "Syncing…"
+  },
+  "plexSettings.libraries.title": {
+    "defaultMessage": "Plex Libraries"
+  },
+  "plexSettings.loadServersPrompt": {
+    "defaultMessage": "Press the button to load available servers"
+  },
+  "plexSettings.local": {
+    "defaultMessage": "local"
+  },
+  "plexSettings.manualConfiguration": {
+    "defaultMessage": "Manual configuration"
+  },
+  "plexSettings.remote": {
+    "defaultMessage": "remote"
+  },
+  "plexSettings.retrieveServersError": {
+    "defaultMessage": "Failed to retrieve Plex server list."
+  },
+  "plexSettings.retrieveServersSuccess": {
+    "defaultMessage": "Plex server list retrieved successfully!"
+  },
+  "plexSettings.retrievingServers": {
+    "defaultMessage": "Retrieving server list from Plex…"
+  },
+  "plexSettings.retrievingServersOption": {
+    "defaultMessage": "Retrieving servers…"
+  },
+  "plexSettings.secure": {
+    "defaultMessage": "secure"
+  },
+  "plexSettings.server": {
+    "defaultMessage": "Server"
+  },
+  "plexSettings.serverOption": {
+    "defaultMessage": "{name} ({address}) [{location}]{secure}{status}"
+  },
+  "plexSettings.setupInstructions": {
+    "defaultMessage": "To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
+  },
+  "plexSettings.title": {
+    "defaultMessage": "Plex Settings"
+  },
+  "plexSettings.urlBaseTooltip": {
+    "defaultMessage": "It is recommended to leave this as the default value"
+  },
+  "plexSettings.webAppDescription": {
+    "defaultMessage": "The Plex web app must be located on the same domain as to avoid cross-origin issues."
+  },
+  "profile.editSettings": {
+    "defaultMessage": "Edit Settings"
+  },
+  "profile.invitesLifetime": {
+    "defaultMessage": "Invites (Lifetime)"
+  },
+  "profile.invitesPastDays": {
+    "defaultMessage": "Invites (past {days} {days, plural, one {day} other {days}})"
+  },
+  "profile.invitesRemaining": {
+    "defaultMessage": "{remaining} of {limit} remaining"
+  },
+  "profile.joined": {
+    "defaultMessage": "Joined {date}"
+  },
+  "profile.recentInvites": {
+    "defaultMessage": "Recent Invites"
+  },
+  "profile.totalInvites": {
+    "defaultMessage": "Total Invites"
+  },
+  "profile.userId": {
+    "defaultMessage": "User ID: {userId}"
+  },
+  "profile.viewProfile": {
+    "defaultMessage": "View Profile"
+  },
+  "quotaSelector.invitesPerPeriod": {
+    "defaultMessage": "{count, plural, one {invite per} other {invites per}}"
+  },
+  "radarrSettings.addserver": {
+    "defaultMessage": "Add Radarr Server"
+  },
+  "radarrSettings.deleteTitle": {
+    "defaultMessage": "Delete Radarr Server"
+  },
+  "radarrSettings.deleteconfirm": {
+    "defaultMessage": "Are you sure you want to delete this server?"
+  },
+  "radarrSettings.description": {
+    "defaultMessage": "Configure your Radarr server(s) below. You can connect multiple Radarr servers, but only two of them can be marked as defaults (one non-4K and one 4K). Administrators are able to override the server(s) used to process new events."
+  },
+  "radarrSettings.no4kdefault": {
+    "defaultMessage": "A 4K Radarr server must be marked as default in order to enable new 4K Radarr events."
+  },
+  "radarrSettings.noDefaultServer": {
+    "defaultMessage": "At least one Radarr server must be marked as default in order for movie events to be processed."
+  },
+  "radarrSettings.single4kWarning": {
+    "defaultMessage": "If you only have a single Radarr server for both non-4K and 4K content (or if you only download 4K content), your Radarr server should NOT be designated as a 4K server."
+  },
+  "radarrSettings.title": {
+    "defaultMessage": "Radarr Settings"
+  },
+  "resetPassword.backToSignIn": {
+    "defaultMessage": "Back to Sign in"
+  },
+  "resetPassword.description": {
+    "defaultMessage": "Please enter a new password for your local account."
+  },
+  "resetPassword.email.label": {
+    "defaultMessage": "Please enter the email address associated to your Local account."
+  },
+  "resetPassword.email.note": {
+    "defaultMessage": "Note that Plex users must reset their password from the {plexLogo} login window."
+  },
+  "resetPassword.email.sent": {
+    "defaultMessage": "Check your email"
+  },
+  "resetPassword.email.sent.label": {
+    "defaultMessage": "Please check your email to access the reset password link."
+  },
+  "resetPassword.email.sent.note": {
+    "defaultMessage": "If you do not receive it, your address may be incorrect or not associated to an existing account."
+  },
+  "resetPassword.help": {
+    "defaultMessage": "Wait, I need more help"
+  },
+  "resetPassword.passwordTooShort": {
+    "defaultMessage": "Password is too short; should be a minimum of 8 characters"
+  },
+  "resetPassword.success": {
+    "defaultMessage": "Password reset successfully!"
+  },
+  "resetPassword.title": {
+    "defaultMessage": "Identify your account"
+  },
+  "schedule.untitled": {
+    "defaultMessage": "Untitled"
+  },
+  "servicesSettings.bazarr.description": {
+    "defaultMessage": "Optionally configure the settings for your Bazarr server."
+  },
+  "servicesSettings.bazarr.title": {
+    "defaultMessage": "Bazarr Settings"
+  },
+  "servicesSettings.downloads.description": {
+    "defaultMessage": "Configure the settings for the downloads service."
+  },
+  "servicesSettings.downloads.title": {
+    "defaultMessage": "Downloads Settings"
+  },
+  "servicesSettings.lidarr.description": {
+    "defaultMessage": "Optionally configure the settings for your Lidarr server."
+  },
+  "servicesSettings.lidarr.title": {
+    "defaultMessage": "Lidarr Settings"
+  },
+  "servicesSettings.overseerr.description": {
+    "defaultMessage": "Optionally configure the settings for your Overseerr server."
+  },
+  "servicesSettings.overseerr.title": {
+    "defaultMessage": "Overseerr Settings"
+  },
+  "servicesSettings.prowlarr.description": {
+    "defaultMessage": "Optionally configure the settings for your Prowlarr server."
+  },
+  "servicesSettings.prowlarr.title": {
+    "defaultMessage": "Prowlarr Settings"
+  },
+  "servicesSettings.radarr.testfailed": {
+    "defaultMessage": "Failed to connect to Radarr."
+  },
+  "servicesSettings.radarr.testsuccess": {
+    "defaultMessage": "Radarr connection established successfully!"
+  },
+  "servicesSettings.sonarr.testfailed": {
+    "defaultMessage": "Failed to connect to Sonarr."
+  },
+  "servicesSettings.sonarr.testsuccess": {
+    "defaultMessage": "Sonarr connection established successfully!"
+  },
+  "servicesSettings.tautulli.description": {
+    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr fetches watch history data for your Plex media from Tautulli."
+  },
+  "servicesSettings.tautulli.title": {
+    "defaultMessage": "Tautulli Settings"
+  },
+  "servicesSettings.tdarr.description": {
+    "defaultMessage": "Configure the settings for your Tdarr server."
+  },
+  "servicesSettings.tdarr.title": {
+    "defaultMessage": "Tdarr Settings"
+  },
+  "servicesSettings.uptime.description": {
+    "defaultMessage": "Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre."
+  },
+  "servicesSettings.uptime.title": {
+    "defaultMessage": "Uptime Settings"
+  },
+  "servicesSettings.urlBase.leadingSlash": {
+    "defaultMessage": "URL Base must have a leading slash"
+  },
+  "servicesSettings.urlBase.noTrailingSlash": {
+    "defaultMessage": "URL Base must not end in a trailing slash"
+  },
+  "servicesSettings.validation.apiKeyRequired": {
+    "defaultMessage": "You must provide an API key"
+  },
+  "servicesSettings.validation.apikey": {
+    "defaultMessage": "API key is required"
+  },
+  "servicesSettings.validation.hostname": {
+    "defaultMessage": "You must provide a valid hostname or IP address"
+  },
+  "servicesSettings.validation.servername": {
+    "defaultMessage": "You must provide a valid server name"
+  },
+  "servicesSettings.validation.urlNoTrailingSlash": {
+    "defaultMessage": "URL must not end in a trailing slash"
+  },
+  "settings.accountType": {
+    "defaultMessage": "Account Type"
+  },
+  "settings.allowLiveTv": {
+    "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.inviteQuota": {
+    "defaultMessage": "Invite Quota"
+  },
+  "settings.librariesSynced": {
+    "defaultMessage": "Libraries have been synced with Plex."
+  },
+  "settings.notifications": {
+    "defaultMessage": "Notification Settings"
+  },
+  "settings.notifications.description": {
+    "defaultMessage": "Configure and enable notification agents."
+  },
+  "settings.overrideGlobalLimit": {
+    "defaultMessage": "Override Global Limit"
+  },
+  "settings.permissions": {
+    "defaultMessage": "Permissions"
+  },
+  "settings.permissions.error": {
+    "defaultMessage": "You do not have permission to modify this user's settings."
+  },
+  "settings.plexAccess": {
+    "defaultMessage": "Plex Access"
+  },
+  "settings.plexAccessDescription": {
+    "defaultMessage": "Changes will sync with Plex automatically on save."
+  },
+  "settings.saveError": {
+    "defaultMessage": "Something went wrong while saving settings."
+  },
+  "settingsBadge.advanced.tooltip": {
+    "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
+  },
+  "settingsBadge.experimental.label": {
+    "defaultMessage": "Experimental"
+  },
+  "settingsBadge.experimental.tooltip": {
+    "defaultMessage": "Enabling this setting may result in unexpected application behavior"
+  },
+  "settingsBadge.restartRequired.label": {
+    "defaultMessage": "Restart required"
+  },
+  "settingsBadge.restartRequired.tooltip": {
+    "defaultMessage": "Streamarr must be restarted for changes to this setting to take effect"
+  },
+  "setup.configurePlex": {
+    "defaultMessage": "Configure Plex"
+  },
+  "setup.configureServices": {
+    "defaultMessage": "Configure Services"
+  },
+  "setup.errorDuringSetup": {
+    "defaultMessage": "Error completing setup"
+  },
+  "setup.finishSetup": {
+    "defaultMessage": "Finish Setup"
+  },
+  "setup.finishing": {
+    "defaultMessage": "Finishing setup..."
+  },
+  "setup.getStartedPlex": {
+    "defaultMessage": "Get started by signing in with your Plex account"
+  },
+  "setup.loginError": {
+    "defaultMessage": "Login error"
+  },
+  "setup.onlyEnabledLibraries": {
+    "defaultMessage": "Only enabled libraries will be scanned."
+  },
+  "setup.signInWithPlex": {
+    "defaultMessage": "Sign in with Plex"
+  },
+  "setup.tip": {
+    "defaultMessage": "Tip"
+  },
+  "setup.welcomeTo": {
+    "defaultMessage": "Welcome to {appName}"
+  },
+  "sidebar.authorizedDevices": {
+    "defaultMessage": "Authorized Devices"
+  },
+  "sidebar.general": {
+    "defaultMessage": "General"
+  },
+  "sidebar.manageLibraryAccess": {
+    "defaultMessage": "Manage Library Access"
+  },
+  "sidebar.onlineMediaSources": {
+    "defaultMessage": "Online Media Sources"
+  },
+  "sidebar.player": {
+    "defaultMessage": "Player"
+  },
+  "sidebar.privacy": {
+    "defaultMessage": "Privacy"
+  },
+  "sidebar.quality": {
+    "defaultMessage": "Quality"
+  },
+  "sidebar.settings": {
+    "defaultMessage": "Settings"
+  },
+  "sidebar.streamingServices": {
+    "defaultMessage": "Streaming Services"
+  },
+  "signIn.description": {
+    "defaultMessage": "You will use this account to log into {applicationTitle} to watch your favourite movies and TV Shows."
+  },
+  "signIn.forgotPassword": {
+    "defaultMessage": "Wait, I forgot my password"
+  },
+  "signIn.localAccount": {
+    "defaultMessage": "Sign in with {applicationTitle}"
+  },
+  "signIn.loginError": {
+    "defaultMessage": "Something went wrong while trying to sign in."
+  },
+  "signIn.loginFailed": {
+    "defaultMessage": "Login failed! Something went wrong, let's try again!"
+  },
+  "signIn.newUser": {
+    "defaultMessage": "New to {applicationTitle}? {signUpLink}"
+  },
+  "signIn.passwordRequired": {
+    "defaultMessage": "You must provide a password"
+  },
+  "signIn.plexAccount": {
+    "defaultMessage": "Use your {plex} account"
+  },
+  "signIn.rememberMe": {
+    "defaultMessage": "Remember me"
+  },
+  "signIn.signUp": {
+    "defaultMessage": "Sign up"
+  },
+  "signIn.signingIn": {
+    "defaultMessage": "Signing In…"
+  },
+  "signIn.title": {
+    "defaultMessage": "Sign in to continue"
+  },
+  "signUp.confirmAccount": {
+    "defaultMessage": "Confirm Account"
+  },
+  "signUp.createAccount": {
+    "defaultMessage": "Create Account"
+  },
+  "signUp.createLocalAccount": {
+    "defaultMessage": "Create {applicationTitle} account"
+  },
+  "signUp.enterInviteCode": {
+    "defaultMessage": "Enter Invite Code"
+  },
+  "signUp.errorDuringSignup": {
+    "defaultMessage": "Error during signup"
+  },
+  "signUp.errorDuringSignupFallback": {
+    "defaultMessage": "An error occurred during signup. Please try again."
+  },
+  "signUp.getStartedInviteCode": {
+    "defaultMessage": "Get started by entering your invite code below."
+  },
+  "signUp.loginWithPlex": {
+    "defaultMessage": "Sign up with your {plexLogo} account"
+  },
+  "signUp.orEnterLocalAccount": {
+    "defaultMessage": "or enter local account details"
+  },
+  "signUp.plexAuthFailed": {
+    "defaultMessage": "Plex authentication failed"
+  },
+  "signUp.plexLoginError": {
+    "defaultMessage": "Plex login failed"
+  },
+  "signUp.plexLoginIncomplete": {
+    "defaultMessage": "Plex login incomplete"
+  },
+  "signUp.plexLoginIncompleteMessage": {
+    "defaultMessage": "Plex login was not completed. Please try again and ensure you finish signing in."
+  },
+  "signUp.plexRecommended": {
+    "defaultMessage": "(Plex is recommended for the best experience)"
+  },
+  "signUp.registrationByInvite": {
+    "defaultMessage": "Registration is by invite only."
+  },
+  "signUp.reviewDetailsConfirm": {
+    "defaultMessage": "Review your details below and confirm your account."
+  },
+  "signUp.signInWithPlex": {
+    "defaultMessage": "Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}."
+  },
+  "signUp.welcomeTo": {
+    "defaultMessage": "Welcome to {applicationTitle}"
+  },
+  "sonarrSettings.addServer": {
+    "defaultMessage": "Add Sonarr Server"
+  },
+  "sonarrSettings.deleteTitle": {
+    "defaultMessage": "Delete Sonarr Server"
+  },
+  "sonarrSettings.description": {
+    "defaultMessage": "Configure your Sonarr server(s) below. You can connect multiple Sonarr servers, but only two of them can be marked as defaults (one non-4K and one 4K). Administrators are able to override the server(s) used to process new events."
+  },
+  "sonarrSettings.no4kDefault": {
+    "defaultMessage": "A 4K Sonarr server must be marked as default in order to enable new 4K Sonarr events."
+  },
+  "sonarrSettings.noDefaultServer": {
+    "defaultMessage": "At least one Sonarr server must be marked as default in order for tv show events to be processed."
+  },
+  "sonarrSettings.single4kWarning": {
+    "defaultMessage": "If you only have a single sonarr server for both non-4K and 4K content (or if you only download 4K content), your Sonarr server should NOT be designated as a 4K server."
+  },
+  "sonarrSettings.title": {
+    "defaultMessage": "Sonarr Settings"
+  },
+  "userDropdown.account": {
+    "defaultMessage": "Account"
+  },
+  "userDropdown.accountSettings": {
+    "defaultMessage": "Account Settings"
+  },
+  "userDropdown.getSupport": {
+    "defaultMessage": "Get Support"
+  },
+  "userDropdown.signOut": {
+    "defaultMessage": "Sign Out of {applicationTitle}"
+  },
+  "userDropdown.watchHistory": {
+    "defaultMessage": "Watch History"
+  },
+  "userPermissions.admin.description": {
+    "defaultMessage": "Full administrator access. Bypasses all other permission checks."
+  },
+  "userPermissions.advancedInvites.description": {
+    "defaultMessage": "Grant permission to make invites with unlimited uses and never expire. Users with this permission can also modify the invites Plex downloads permission and code."
+  },
+  "userPermissions.advancedInvites.name": {
+    "defaultMessage": "Advanced Invite"
+  },
+  "userPermissions.createEvents.description": {
+    "defaultMessage": "Grant permission to create custom events."
+  },
+  "userPermissions.createEvents.name": {
+    "defaultMessage": "Create Events"
+  },
+  "userPermissions.createInvites.description": {
+    "defaultMessage": "Grant permission to create invites (in accordance to their quotas)."
+  },
+  "userPermissions.createInvites.name": {
+    "defaultMessage": "Create Invites"
+  },
+  "userPermissions.error": {
+    "defaultMessage": "Something went wrong while saving user permissions."
+  },
+  "userPermissions.manageEvents.description": {
+    "defaultMessage": "Grant permission to manage events. Users with this permission can edit or remove events made by others."
+  },
+  "userPermissions.manageInvites.description": {
+    "defaultMessage": "Grant permission to manage invites. All invites made by a user with this permission can be modified."
+  },
+  "userPermissions.manageInvites.name": {
+    "defaultMessage": "Manage Invites"
+  },
+  "userPermissions.manageUsers.description": {
+    "defaultMessage": "Grant permission to manage users. Users with this permission cannot modify users with or grant the Admin privilege."
+  },
+  "userPermissions.request.description": {
+    "defaultMessage": "Grant permission to access requests (note: access in overseerr must be granted as well)"
+  },
+  "userPermissions.streamarr.description": {
+    "defaultMessage": "Grant permission to watch, request, invite and view the schedule."
+  },
+  "userPermissions.streamarr.name": {
+    "defaultMessage": "Streamarr"
+  },
+  "userPermissions.success": {
+    "defaultMessage": "User permissions saved successfully!"
+  },
+  "userPermissions.title": {
+    "defaultMessage": "Edit User Permissions"
+  },
+  "userPermissions.viewInvites.description": {
+    "defaultMessage": "Grants permission to view invites from other users."
+  },
+  "userPermissions.viewInvites.name": {
+    "defaultMessage": "View Invites"
+  },
+  "userPermissions.viewSchedule.description": {
+    "defaultMessage": "Grant permission to view the release schedule."
+  },
+  "userPermissions.viewSchedule.name": {
+    "defaultMessage": "View Schedule"
+  },
+  "userSettings.InviteSettings": {
+    "defaultMessage": "Default Invite Settings"
+  },
+  "userSettings.InviteSettingsDescription": {
+    "defaultMessage": "Initial settings associated to new invites"
+  },
+  "userSettings.browser": {
+    "defaultMessage": "Browser"
+  },
+  "userSettings.cannotModifyOwnPermissions": {
+    "defaultMessage": "You cannot modify your own permissions"
+  },
+  "userSettings.defaultPermissions": {
+    "defaultMessage": "Default Permissions"
+  },
+  "userSettings.defaultPermissionsDescription": {
+    "defaultMessage": "Initial permissions assigned to new users"
+  },
+  "userSettings.defaultSharedLibraries": {
+    "defaultMessage": "Default Shared Libraries"
+  },
+  "userSettings.defaultSharedLibrariesDescription": {
+    "defaultMessage": "Initial libraries shared with new users"
+  },
+  "userSettings.description": {
+    "defaultMessage": "Configure global and default user settings."
+  },
+  "userSettings.engine": {
+    "defaultMessage": "Engine"
+  },
+  "userSettings.inviteLimit": {
+    "defaultMessage": "Default Invite Limit"
+  },
+  "userSettings.inviteLimitDescription": {
+    "defaultMessage": "Set the default invite limit for new users."
+  },
+  "userSettings.inviteUsageLimit": {
+    "defaultMessage": "{count, plural, one {use per invite} other {uses per invite}}"
+  },
+  "userSettings.localLogin": {
+    "defaultMessage": "Enable Local Sign-in"
+  },
+  "userSettings.localLoginDescription": {
+    "defaultMessage": "Allow users to sign in using their email address and password, instead of Plex OAuth"
+  },
+  "userSettings.manageDevices": {
+    "defaultMessage": "Manage Devices"
+  },
+  "userSettings.noWebPushSubscriptions": {
+    "defaultMessage": "You have no web push subscriptions to show."
+  },
+  "userSettings.notifications.deleteSubscription": {
+    "defaultMessage": "Delete Subscription"
+  },
+  "userSettings.notifications.disableWebPush": {
+    "defaultMessage": "Disable web push"
+  },
+  "userSettings.notifications.emailTitle": {
+    "defaultMessage": "Email Notifications"
+  },
+  "userSettings.notifications.enableWebPush": {
+    "defaultMessage": "Enable web push"
+  },
+  "userSettings.notifications.subscriptionActive": {
+    "defaultMessage": "Active Subscription"
+  },
+  "userSettings.notifications.subscriptionDeleteError": {
+    "defaultMessage": "Something went wrong while deleting the user subscription."
+  },
+  "userSettings.notifications.subscriptionDeleted": {
+    "defaultMessage": "Subscription Deleted Successfully."
+  },
+  "userSettings.notifications.webpushDisableError": {
+    "defaultMessage": "Something went wrong while disabling web push."
+  },
+  "userSettings.notifications.webpushDisabled": {
+    "defaultMessage": "Web push has been disabled."
+  },
+  "userSettings.notifications.webpushEnableError": {
+    "defaultMessage": "Something went wrong while enabling web push."
+  },
+  "userSettings.notifications.webpushEnabled": {
+    "defaultMessage": "Web push has been enabled."
+  },
+  "userSettings.notifications.webpushTitle": {
+    "defaultMessage": "Web Push Notifications"
+  },
+  "userSettings.operatingSystem": {
+    "defaultMessage": "Operating System"
+  },
+  "userSettings.password.confirmRequired": {
+    "defaultMessage": "You must confirm the new password"
+  },
+  "userSettings.password.currentRequired": {
+    "defaultMessage": "You must provide your current password"
+  },
+  "userSettings.password.newRequired": {
+    "defaultMessage": "You must provide a new password"
+  },
+  "userSettings.password.noPasswordCurrentUser": {
+    "defaultMessage": "Your account currently does not have a password set. Configure a password below to enable sign-in as a \"local user\" using your email address."
+  },
+  "userSettings.password.noPasswordOtherUser": {
+    "defaultMessage": "This user account currently does not have a password set. Configure a password below to enable this account to sign in as a \"local user.\""
+  },
+  "userSettings.password.noPermission": {
+    "defaultMessage": "You do not have permission to modify this user's password."
+  },
+  "userSettings.password.saveError": {
+    "defaultMessage": "Something went wrong while saving the password. Was your current password entered correctly?"
+  },
+  "userSettings.password.saveErrorGeneric": {
+    "defaultMessage": "Something went wrong while saving the password."
+  },
+  "userSettings.password.saveSuccess": {
+    "defaultMessage": "Password saved successfully!"
+  },
+  "userSettings.permissionsSaved": {
+    "defaultMessage": "Permissions saved successfully!"
+  },
+  "userSettings.pgpPublicKey": {
+    "defaultMessage": "PGP Public Key"
+  },
+  "userSettings.pgpPublicKeyDescription": {
+    "defaultMessage": "Encrypt email messages using {openPGP}."
+  },
+  "userSettings.plexLogin": {
+    "defaultMessage": "Enable New Plex Sign-in"
+  },
+  "userSettings.plexLoginDescription": {
+    "defaultMessage": "Allow Plex users to sign in without first being imported"
+  },
+  "userSettings.saveSuccess": {
+    "defaultMessage": "User settings saved successfully!"
+  },
+  "userSettings.title": {
+    "defaultMessage": "User Settings"
+  },
+  "users.automaticallyGeneratePassword": {
+    "defaultMessage": "Automatically Generate Password"
+  },
+  "users.bulkEdit": {
+    "defaultMessage": "Bulk Edit"
+  },
+  "users.configurePasswordGeneration": {
+    "defaultMessage": "Configure an application URL and enable email notifications to allow automatic password generation."
+  },
+  "users.create": {
+    "defaultMessage": "Create"
+  },
+  "users.createLocalUser": {
+    "defaultMessage": "Create Local User"
+  },
+  "users.createUserError": {
+    "defaultMessage": "Something went wrong while creating the user."
+  },
+  "users.createUserSuccess": {
+    "defaultMessage": "User created successfully!"
+  },
+  "users.creating": {
+    "defaultMessage": "Creating..."
+  },
+  "users.deleteUser": {
+    "defaultMessage": "Delete User"
+  },
+  "users.deleteUserConfirmation": {
+    "defaultMessage": "Are you sure you want to delete this user? All of their data will be permanently removed. This cannot be undone."
+  },
+  "users.deleteUserError": {
+    "defaultMessage": "Failed to delete user."
+  },
+  "users.deleteUserSuccess": {
+    "defaultMessage": "User deleted successfully!"
+  },
+  "users.deleting": {
+    "defaultMessage": "Deleting..."
+  },
+  "users.emailAlreadyInUse": {
+    "defaultMessage": "The provided emaail address is already in use by another user."
+  },
+  "users.emailGeneratedPassword": {
+    "defaultMessage": "Email a server-generated password to the user"
+  },
+  "users.invitedBy": {
+    "defaultMessage": "Invited By"
+  },
+  "users.localSignInDisabled": {
+    "defaultMessage": "The Enable Local Sign-In setting is currently disabled."
+  },
+  "users.sortInviteCount": {
+    "defaultMessage": "Invite Count"
+  },
+  "users.sortJoinDate": {
+    "defaultMessage": "Join Date"
+  },
+  "users.title": {
+    "defaultMessage": "User List"
+  },
+  "webpushNotifications.httpsRequired": {
+    "defaultMessage": "In order to receive web push notifications, Streamarr must be served over HTTPS."
+  },
+  "webpushNotifications.saveError": {
+    "defaultMessage": "Web push notification settings failed to save."
+  },
+  "webpushNotifications.saveSuccess": {
+    "defaultMessage": "Web push notification settings saved successfully!"
+  },
+  "webpushNotifications.testError": {
+    "defaultMessage": "Web push test notification failed to send."
+  },
+  "webpushNotifications.testSending": {
+    "defaultMessage": "Sending web push test notification…"
+  },
+  "webpushNotifications.testSuccess": {
+    "defaultMessage": "Web push test notification sent!"
+  },
+  "welcome.acknowledge": {
+    "defaultMessage": "Acknowledge"
+  },
+  "welcome.headsUp": {
+    "defaultMessage": "Hey there - Just a little heads up!"
+  },
+  "welcome.moreToCome": {
+    "defaultMessage": "There's a lot more to come, so stay tuned and check back again later!"
+  },
+  "welcome.welcomeTo": {
+    "defaultMessage": "Welcome to"
+  },
+  "welcome.workInProgress": {
+    "defaultMessage": "This is still very much a work in progress and missing some features. If you encounter issues, please keep trying or reach out to nickelsh1ts."
+  }
+}

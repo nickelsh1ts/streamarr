@@ -3,19 +3,33 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { Field } from 'formik';
 import { useState } from 'react';
 
-interface CustomInputProps extends React.ComponentProps<'input'> {
+interface SensitiveInputBaseProps {
+  buttonSize?: 'sm' | 'md' | 'lg';
+  id?: string;
+  name?: string;
+  className?: string;
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+interface CustomInputProps
+  extends React.ComponentProps<'input'>,
+    SensitiveInputBaseProps {
   as?: 'input';
 }
 
-interface CustomFieldProps extends React.ComponentProps<typeof Field> {
-  as?: 'field';
+interface CustomFieldProps
+  extends React.ComponentProps<typeof Field>,
+    SensitiveInputBaseProps {
+  as: 'field';
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 type SensitiveInputProps = CustomInputProps | CustomFieldProps;
 
 const SensitiveInput = ({
   as = 'input',
-  size = 'md',
+  buttonSize = 'md',
   ...props
 }: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
@@ -25,17 +39,25 @@ const SensitiveInput = ({
       ? props
       : {
           ...props,
-          as: props.type === 'textarea' && !isHidden ? 'textarea' : undefined,
+          as:
+            'type' in props && props.type === 'textarea' && !isHidden
+              ? 'textarea'
+              : undefined,
         };
   return (
     <>
       <Component
+        autoComplete="off"
+        data-1pignore="true"
+        data-lpignore="true"
+        data-bwignore="true"
         {...componentProps}
         className={`rounded-r-none ${componentProps.className ?? ''}`}
+        placeholder={componentProps.placeholder}
         type={
           isHidden
             ? 'password'
-            : props.type !== 'password'
+            : 'type' in props && props.type !== 'password'
               ? (props.type ?? 'text')
               : 'text'
         }
@@ -46,7 +68,7 @@ const SensitiveInput = ({
           setHidden(!isHidden);
         }}
         type="button"
-        className={`btn btn-primary btn-${size} rounded-none last:rounded-r-md`}
+        className={`btn btn-primary btn-${buttonSize} rounded-none last:rounded-r-md`}
       >
         {isHidden ? (
           <EyeSlashIcon className="size-5" />

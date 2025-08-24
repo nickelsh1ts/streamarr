@@ -1,75 +1,87 @@
 'use client';
-import type { AdminRoute } from '@app/components/Common/AdminTabs';
+import Error from '@app/app/error';
 import AdminTabs from '@app/components/Common/AdminTabs';
-import { EnvelopeIcon } from '@heroicons/react/24/outline';
-import { CloudIcon } from '@heroicons/react/24/solid';
-import moment from 'moment';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { useUser } from '@app/hooks/useUser';
+import { CloudIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useParams, usePathname } from 'next/navigation';
+import useSWR from 'swr';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const UserSettingsNotifications = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const intl = useIntl();
   const userQuery = useParams<{ userid: string }>();
-  let user;
-
-  if (!userQuery.userid) {
-    user = {
-      id: 1,
-      displayName: 'Nickelsh1ts',
-      avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
-  } else {
-    user = {
-      id: parseInt(userQuery.userid),
-      displayName: 'QueriedUser',
-      avatar: '/android-chrome-192x192.png',
-      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
-  }
+  const { user } = useUser({ id: Number(userQuery.userid) });
+  const { data, error } = useSWR<UserSettingsNotificationsResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+  );
 
   const pathname = usePathname();
-  const settingsRoutes: AdminRoute[] = [
+
+  const computedRoutes = [
     {
-      text: 'Email',
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.emailTitle',
+        defaultMessage: 'Email Notifications',
+      }),
+      route: '/settings/notifications/email',
       content: (
-        <span className="flex items-center">
-          <EnvelopeIcon className="mr-2 h-4" />
-          Email
+        <span className="flex">
+          <EnvelopeIcon className="size-5 mr-2" />{' '}
+          <FormattedMessage id="common.email" defaultMessage="Email" />
         </span>
       ),
-      route: '/settings/notifications/email',
-      regex: /\/settings\/notifications(\/email)?$/,
+      regex: /\/settings\/notifications\/email/,
+      hidden: !data?.emailEnabled,
     },
     {
-      text: 'Webpush',
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.webpushTitle',
+        defaultMessage: 'Web Push Notifications',
+      }),
+      route: '/settings/notifications/webpush',
       content: (
-        <span className="flex items-center">
-          <CloudIcon className="mr-2 h-4" />
-          Webpush
+        <span className="flex">
+          <CloudIcon className="size-5 mr-2" />{' '}
+          <FormattedMessage id="common.webPush" defaultMessage="Web Push" />
         </span>
       ),
-      route: '/settings/notifications/webpush',
+      hidden: !data?.webPushEnabled,
       regex: /\/settings\/notifications\/webpush/,
     },
-  ];
-
-  settingsRoutes.forEach((settingsRoute) => {
-    settingsRoute.route = pathname.includes('/profile')
+  ].map((settingsRoute) => ({
+    ...settingsRoute,
+    route: pathname.includes('/profile')
       ? `/profile${settingsRoute.route}`
-      : `/admin/users/${user?.id}${settingsRoute.route}`;
-  });
+      : `/admin/users/${user?.id}${settingsRoute.route}`,
+  }));
+
+  if (!data && !error) {
+    return <LoadingEllipsis />;
+  }
+
+  if (!data) {
+    return (
+      <Error statusCode={500} error={{ name: 'error' }} reset={() => {}} />
+    );
+  }
 
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="heading">Notification Settings</h3>
+      <div className="mb-6 mt-3">
+        <h3 className="text-2xl font-extrabold">
+          <FormattedMessage
+            id="settings.notifications"
+            defaultMessage="Notification Settings"
+          />
+        </h3>
       </div>
-      <AdminTabs tabType="button" AdminRoutes={settingsRoutes} />
+      <AdminTabs tabType="button" AdminRoutes={computedRoutes} />
       <div className="section">{children}</div>
     </div>
   );

@@ -1,6 +1,9 @@
 'use client';
+import useSettings from '@app/hooks/useSettings';
 import { ArrowLongRightIcon } from '@heroicons/react/24/solid';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Link from 'next/link';
+import { FormattedMessage } from 'react-intl';
 
 const Topics = () => {
   function openPopup({
@@ -54,6 +57,8 @@ const Topics = () => {
     }
   }
 
+  const { currentSettings } = useSettings();
+
   return (
     <div className="bg-zinc-100 text-black pb-10 px-5">
       <div className="container max-w-screen-xl mx-auto py-7">
@@ -71,7 +76,7 @@ const Topics = () => {
             >
               What is{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>
               ?
             </Link>
@@ -79,14 +84,14 @@ const Topics = () => {
               href="/help/getting-started/what-is-plex"
               className="hover:text-neutral-600 w-fit"
             >
-              What is Ple<span className="link-accent">x</span>&trade;?
+              What is <PlexLogo className="inline-block size-9" />?
             </Link>
             <Link
               href="/help/getting-started/download-plex"
               className="hover:text-neutral-600 w-fit"
             >
-              How to download the Ple<span className="link-accent">x</span>
-              &trade; app
+              How to download the <PlexLogo className="inline-block size-9" />{' '}
+              app
             </Link>
             <Link
               href="/help/getting-started/download-streamarr"
@@ -94,7 +99,7 @@ const Topics = () => {
             >
               How to download the{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               app
             </Link>
@@ -106,7 +111,12 @@ const Topics = () => {
             </Link>
           </div>
           <div className="flex flex-col gap-4">
-            <p className="font-extrabold text-xl">Manage Account</p>
+            <p className="font-extrabold text-xl">
+              <FormattedMessage
+                id="help.manageAccount"
+                defaultMessage="Manage Account"
+              />
+            </p>
             <Link
               href="/watch/web/index.html#!/settings/account"
               className="hover:text-neutral-600 w-fit"
@@ -125,7 +135,7 @@ const Topics = () => {
             >
               Turn on/off non-
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               content
             </Link>
@@ -137,7 +147,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>
             </Link>
             <Link
@@ -146,7 +156,7 @@ const Topics = () => {
             >
               Watching{' '}
               <span className="text-primary">
-                {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+                {currentSettings.applicationTitle}
               </span>{' '}
               on your TV
             </Link>
@@ -164,13 +174,17 @@ const Topics = () => {
             </Link>
           </div>
           <div className="flex flex-col gap-4">
-            <p className="font-extrabold text-xl">Quick Links</p>
+            <p className="font-extrabold text-xl">
+              <FormattedMessage
+                id="help.quickLinks"
+                defaultMessage="Quick Links"
+              />
+            </p>
             <button
               onClick={() => {
                 openPopup({ title: 'Plex Password Reset', w: 600, h: 700 });
               }}
               className="hover:text-neutral-600 text-start"
-              rel="noreferrer"
             >
               Reset Password
               <ArrowLongRightIcon className="link-error w-6 float-end" />
@@ -185,8 +199,8 @@ const Topics = () => {
               href="https://www.plex.tv"
               rel="noreferrer"
             >
-              Visit Ple<span className="link-accent">x</span>.tv{' '}
-              <ArrowLongRightIcon className="link-error w-6 float-end" />
+              Visit <PlexLogo className="inline-block size-9" />
+              .tv <ArrowLongRightIcon className="link-error w-6 float-end" />
             </Link>
           </div>
         </div>

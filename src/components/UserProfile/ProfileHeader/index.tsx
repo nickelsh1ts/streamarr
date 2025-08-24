@@ -1,6 +1,10 @@
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
+import { useUser } from '@app/hooks/useUser';
 import { CogIcon, UserIcon } from '@heroicons/react/24/solid';
+import { Permission } from '@server/lib/permissions';
 import Link from 'next/link';
+import { FormattedDate, FormattedMessage } from 'react-intl';
 
 type User = {
   id: number;
@@ -16,25 +20,49 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
+  const { user: loggedInUser, hasPermission } = useUser();
   const subtextItems: React.ReactNode[] = [
-    <>Joined {user.createdAt.toDateString()}</>,
+    <>
+      <FormattedMessage
+        id="profile.joined"
+        defaultMessage="Joined {date}"
+        values={{
+          date: (
+            <FormattedDate
+              value={user.createdAt}
+              year="numeric"
+              month="long"
+              day="numeric"
+            />
+          ),
+        }}
+      />
+    </>,
   ];
 
-  const loggedInUser = {
-    id: 1,
-  };
-
-  subtextItems.push(`User ID: ${user.id}`);
+  if (hasPermission(Permission.MANAGE_INVITES)) {
+    subtextItems.push(
+      <span>
+        <FormattedMessage
+          id="profile.userId"
+          defaultMessage="User ID: {userId}"
+          values={{ userId: user.id }}
+        />
+      </span>
+    );
+  }
 
   return (
     <div className="mt-6 pt-4 mb-12 lg:flex lg:items-end lg:justify-between lg:space-x-5 relative">
       <div className="flex items-end justify-items-end space-x-5">
         <div className="flex-shrink-0">
           <div className="relative">
-            <img
+            <CachedImage
               className="h-24 w-24 rounded-full bg-primary-content object-cover ring-1 ring-primary-content"
               src={user.avatar}
               alt=""
+              width={96}
+              height={96}
             />
             <span
               className="absolute inset-0 rounded-full shadow-inner"
@@ -61,10 +89,11 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
             )}
           </h1>
           <p className="text-sm font-medium text-neutral-300">
-            {subtextItems.reduce((prev, curr) => (
-              <>
-                {prev} | {curr}
-              </>
+            {subtextItems.map((item, idx) => (
+              <span key={idx}>
+                {idx > 0 && ' | '}
+                {item}
+              </span>
             ))}
           </p>
         </div>
@@ -80,9 +109,18 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
             }
             passHref
           >
-            <Button buttonSize="sm" className="max-lg:w-full">
+            <Button
+              buttonSize="sm"
+              buttonType="primary"
+              className="max-lg:w-full"
+            >
               <CogIcon className="size-5" />
-              <span>Edit Settings</span>
+              <span>
+                <FormattedMessage
+                  id="profile.editSettings"
+                  defaultMessage="Edit Settings"
+                />
+              </span>
             </Button>
           </Link>
         ) : (
@@ -95,9 +133,18 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               }
               passHref
             >
-              <Button buttonSize="sm" className="max-lg:w-full">
+              <Button
+                buttonSize="sm"
+                buttonType="primary"
+                className="max-lg:w-full"
+              >
                 <UserIcon className="size-5" />
-                <span>View Profile</span>
+                <span>
+                  <FormattedMessage
+                    id="profile.viewProfile"
+                    defaultMessage="View Profile"
+                  />
+                </span>
               </Button>
             </Link>
           )

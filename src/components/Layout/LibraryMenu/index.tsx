@@ -1,4 +1,6 @@
-import useHash from '@app/hooks/useHash';
+import useSettings from '@app/hooks/useSettings';
+import { Permission, useUser } from '@app/hooks/useUser';
+import useLibraryLinks from '@app/hooks/useLibraryLinks';
 import {
   FilmIcon,
   BookmarkIcon,
@@ -13,205 +15,247 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLinksProps {
   href: string;
   title: string;
   icon: React.ReactNode;
+  regExp: string;
+  hidden?: boolean;
 }
 
 interface LibraryLinksProps {
   href: string;
   title: string;
-  type: 'movies' | 'TV shows' | 'music' | 'live TV' | 'photos' | 'other';
-  regExp: RegExp;
+  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  regExp: string;
 }
 
 interface LibraryMenuProps {
   isOpen?: boolean;
   setIsOpen?: (value: SetStateAction<boolean>) => void;
+  isMobile?: boolean;
 }
 
-const MenuLinks: MenuLinksProps[] = [
-  {
-    href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
-    title: 'Discover',
-    icon: <NewspaperIcon className="w-7 h-7" />,
-  },
-  {
-    href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
-    title: 'Watch List',
-    icon: <BookmarkIcon className="w-7 h-7" />,
-  },
-];
+const LibraryMenu = ({
+  isOpen,
+  setIsOpen,
+  isMobile = false,
+}: LibraryMenuProps) => {
+  const intl = useIntl();
+  const pathname = usePathname();
+  const [currentUrl, setCurrentUrl] = useState(pathname);
+  const { hasPermission } = useUser();
+  const { currentSettings } = useSettings();
+  const { libraryLinks, loading } = useLibraryLinks('id');
 
-const LibraryLinks: LibraryLinksProps[] = [
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=1',
-    title: 'movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=1&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=10',
-    title: 'kids movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=10&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=4',
-    title: 'retro: movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=4&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=11',
-    title: 'retro: Kids movies',
-    type: 'movies',
-    regExp: /(?=(\/(.*)=11&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=2',
-    title: 'TV shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=2&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=8',
-    title: 'kids shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=8&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=5',
-    title: 'retro: TV shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=5&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=7',
-    title: 'retro: Kids shows',
-    type: 'TV shows',
-    regExp: /(?=(\/(.*)=7&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/media/65c8e6766fed4f8450771fbc9a6a9081c6ed698d/com.plexapp.plugins.library?source=9',
-    title: 'music',
-    type: 'music',
-    regExp: /(?=(\/(.*)=9&pivot))/,
-  },
-  {
-    href: '/watch/web/index.html#!/live-tv',
-    title: 'live TV',
-    type: 'live TV',
-    regExp: /^\/watch\/web\/index\.html#!\/live-tv\/?(.)*?$/,
-  },
-];
+  useEffect(() => {
+    let lastUrl = window.location.pathname + window.location.hash;
+    setCurrentUrl(lastUrl);
+    const interval = setInterval(() => {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (newUrl !== lastUrl) {
+        lastUrl = newUrl;
+        setCurrentUrl(newUrl);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
-const LibraryMenu = ({ isOpen, setIsOpen }: LibraryMenuProps) => {
-  const path = usePathname();
-  const hash = useHash();
+  const url = currentUrl;
 
-  const url = path + hash;
+  // Group libraries by type
+  const groupedLibraries = libraryLinks.reduce(
+    (acc, lib) => {
+      if (!acc[lib.type]) {
+        acc[lib.type] = [];
+      }
 
-  const libraryTypes = [
-    'movies',
-    'TV shows',
-    'music',
-    'live TV',
-    'photos',
-    'other',
+      acc[lib.type].push({
+        href: lib.href,
+        title: lib.name,
+        type: lib.type,
+        regExp: lib.regExp,
+      });
+      return acc;
+    },
+    {} as Record<string, LibraryLinksProps[]>
+  );
+
+  const libraryTypes: (
+    | 'movie'
+    | 'show'
+    | 'artist'
+    | 'live TV'
+    | 'photos'
+    | 'other'
+  )[] = ['movie', 'show', 'artist', 'live TV', 'photos', 'other'];
+
+  const MenuLinks: MenuLinksProps[] = [
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
+      title: intl.formatMessage({
+        id: 'library.discover',
+        defaultMessage: 'Discover',
+      }),
+      icon: <NewspaperIcon className="w-7 h-7" />,
+      regExp: '=home&pivot=discover',
+      hidden:
+        isMobile &&
+        !hasPermission(
+          [
+            Permission.CREATE_INVITES,
+            Permission.MANAGE_INVITES,
+            Permission.VIEW_INVITES,
+            Permission.STREAMARR,
+          ],
+          { type: 'or' }
+        ),
+    },
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
+      title: intl.formatMessage({
+        id: 'library.watchlist',
+        defaultMessage: 'Watch List',
+      }),
+      icon: <BookmarkIcon className="w-7 h-7" />,
+      regExp: '=watchlist&pivot=discover',
+      hidden:
+        (isMobile && !currentSettings?.releaseSched) ||
+        !hasPermission(
+          [
+            Permission.VIEW_SCHEDULE,
+            Permission.CREATE_EVENTS,
+            Permission.STREAMARR,
+          ],
+          { type: 'or' }
+        ),
+    },
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1 overflow-auto grid grid-col">
-      {MenuLinks.map((item) => {
-        const isActive =
-          (url.includes(item.href) &&
-            !item.href.match(/^\/watch\/web\/index\.html#!\/?$/)) ||
-          (url.match(/^\/watch\/web\/index\.html#?!?\/?$/) &&
-            item.href.match(/^\/watch\/web\/index\.html#?!?\/?$/));
-        return (
-          <SingleItem
-            liKey={item.title}
-            key={item.title}
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            href={item.href}
-            title={item.title}
-            icon={item.icon}
-            active={isActive}
-          />
-        );
-      })}
-      {libraryTypes.map((type) => {
-        const Links = LibraryLinks.filter((library) =>
-          library.type.includes(type)
-        );
-        const isActive = Links.map((libraries) => {
-          return url.match(libraries.regExp);
-        }).filter((library) => library)[0];
-
-        let icon = null;
-
-        switch (type) {
-          case 'movies':
-            icon = <FilmIcon className="size-7" />;
-            break;
-          case 'TV shows':
-            icon = <TvIcon className="size-7" />;
-            break;
-          case 'music':
-            icon = <MusicalNoteIcon className="size-7" />;
-            break;
-          case 'live TV':
-            icon = <VideoCameraIcon className="size-7" />;
-            break;
-          case 'photos':
-            icon = <PhotoIcon className="size-7" />;
-            break;
-          default:
-            icon = <RectangleGroupIcon className="size-7" />;
-            break;
-        }
-
-        return Links.length > 1 ? (
-          <MultiItem
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            title={type}
-            icon={icon}
-            LibraryLinks={Links}
-            defaultPivot={'library'}
-            liKey={type}
-            key={type}
-          />
-        ) : Links.length === 1 ? (
-          <SingleItem
-            liKey={Links[0].title}
-            key={Links[0].title}
-            onClick={() => setIsOpen && setIsOpen(!isOpen)}
-            href={Links[0].href}
-            title={Links[0].title}
-            icon={icon}
-            active={isActive}
-          />
-        ) : null;
-      })}
+    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col">
+      {MenuLinks.filter((item) => !item.hidden).map((item) => (
+        <SingleItem
+          liKey={item.title}
+          key={item.title}
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          href={item.href}
+          title={item.title}
+          icon={item.icon}
+          url={url}
+          regExp={item.regExp}
+        />
+      ))}
+      {loading ? (
+        <SingleItem
+          liKey="loading"
+          key="loading"
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          href="#"
+          title={intl.formatMessage({
+            id: 'library.loading',
+            defaultMessage: 'Loading libraries...',
+          })}
+          icon={<RectangleGroupIcon className="size-7" />}
+          url={url}
+          regExp="undefined"
+        />
+      ) : (
+        libraryTypes.map((type) => {
+          const Links = groupedLibraries[type] || [];
+          let icon = null;
+          let multiTitle = null;
+          switch (type) {
+            case 'movie':
+              icon = <FilmIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage id="common.movies" defaultMessage="Movies" />
+              );
+              break;
+            case 'show':
+              icon = <TvIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage id="common.shows" defaultMessage="Shows" />
+              );
+              break;
+            case 'artist':
+              icon = <MusicalNoteIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage id="library.music" defaultMessage="Music" />
+              );
+              break;
+            case 'live TV':
+              icon = <VideoCameraIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage
+                  id="library.liveTV"
+                  defaultMessage="Live TV"
+                />
+              );
+              break;
+            case 'photos':
+              icon = <PhotoIcon className="size-7" />;
+              multiTitle = (
+                <FormattedMessage id="library.photos" defaultMessage="Photos" />
+              );
+              break;
+            default:
+              icon = <RectangleGroupIcon className="size-7" />;
+              break;
+          }
+          return Links.length > 1 ? (
+            <MultiItem
+              onClick={() => setIsOpen && setIsOpen(!isOpen)}
+              title={multiTitle ?? type}
+              icon={icon}
+              LibraryLinks={Links}
+              defaultPivot={'library'}
+              liKey={type}
+              key={type}
+              url={url}
+            />
+          ) : Links.length === 1 ? (
+            <SingleItem
+              liKey={Links[0].title}
+              key={Links[0].title}
+              onClick={() => setIsOpen && setIsOpen(!isOpen)}
+              href={Links[0].href}
+              title={Links[0].title}
+              icon={icon}
+              url={url}
+              regExp={Links[0].regExp}
+              type={Links[0].type}
+              defaultPivot={'library'}
+            />
+          ) : null;
+        })
+      )}
     </ul>
   );
 };
 
 interface SingleItemProps {
   liKey: string;
-  onClick?: (value: SetStateAction<boolean>) => void;
+  onClick?: () => void;
   href: string;
   title: string;
   icon: React.ReactNode;
-  active: unknown;
   className?: string;
   linkclasses?: string;
-  isOpen?: boolean;
+  url: string;
+  regExp: string | RegExp;
+  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  defaultPivot?: string;
 }
+
+const matchesLibrarySource = (url: string, sourceId: string): boolean => {
+  const pattern = new RegExp(`[?&]source=${sourceId}(?=[&#]|$)`);
+  return pattern.test(url);
+};
 
 export const SingleItem = ({
   liKey,
@@ -219,28 +263,88 @@ export const SingleItem = ({
   href,
   title,
   icon,
-  active,
   className,
   linkclasses,
-  isOpen,
+  url,
+  regExp,
+  type,
+  defaultPivot = 'library',
 }: SingleItemProps) => {
-  const isActive = active;
+  const isActive =
+    typeof regExp === 'string'
+      ? regExp.includes('source=')
+        ? matchesLibrarySource(
+            url,
+            regExp.replace('source=', '').replace('&', '')
+          )
+        : url.includes(regExp)
+      : regExp.test(url);
+
+  // Determine pivot list based on type
+  let pivotList: string[] | null = null;
+  if (type) {
+    switch (type) {
+      case 'movie':
+        pivotList = ['library', 'collections', 'categories'];
+        break;
+      case 'show':
+        pivotList = ['library', 'collections', 'categories'];
+        break;
+      case 'artist':
+        pivotList = ['library', 'playlists'];
+        break;
+      default:
+        pivotList = null;
+        break;
+    }
+  }
+
   return (
     <li
       className={`pointer-events-auto ${className ? className : ''}`}
       key={liKey}
     >
       <Link
-        onClick={() => onClick && onClick(!isOpen)}
-        href={href}
-        className={`flex items-center flex-1 focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
+        onClick={onClick}
+        href={
+          href && pivotList && type ? href + '&pivot=' + defaultPivot : href
+        }
+        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
       </Link>
+      {isActive && pivotList && (
+        <ul className="flex flex-col gap-1 mt-1">
+          {pivotList.map((pivot) => (
+            <li key={pivot}>
+              <Link
+                onClick={onClick}
+                href={href && pivotList ? href + '&pivot=' + pivot : href}
+                className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+              >
+                <p className="capitalize">{pivot}</p>
+                {isActive && url.includes(`&pivot=${pivot}`) && (
+                  <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 };
+
+interface MultiItemProps {
+  onClick?: () => void;
+  title: string;
+  icon: React.ReactNode;
+  LibraryLinks: LibraryLinksProps[];
+  liKey: string;
+  defaultPivot: string;
+  url: string;
+}
 
 export const MultiItem = ({
   onClick,
@@ -249,22 +353,20 @@ export const MultiItem = ({
   LibraryLinks,
   liKey,
   defaultPivot,
-}) => {
-  const path = usePathname();
-  const hash = useHash();
-
-  const url = path + hash;
-
-  let pivotList = null;
-
+  url,
+}: MultiItemProps) => {
+  let pivotList: string[] | null = null;
   return (
     <li className="pointer-events-auto" key={liKey}>
       <details
-        open={
-          LibraryLinks.map((item) => {
-            return url.includes(item.href);
-          }).filter((item) => item)[0]
-        }
+        open={LibraryLinks.some((item) =>
+          item.regExp.includes('source=')
+            ? matchesLibrarySource(
+                url,
+                item.regExp.replace('source=', '').replace('&', '')
+              )
+            : url.includes(item.regExp)
+        )}
         className="group"
       >
         <summary className="active:!bg-primary/20 space-x-2 gap-0 text-zinc-300 hover:text-white group-open:text-white capitalize">
@@ -273,23 +375,27 @@ export const MultiItem = ({
         </summary>
         <ul className="flex flex-col gap-1 mt-1">
           {LibraryLinks.map((item) => {
-            const isActive = url.match(item.regExp);
+            const isActive = item.regExp.includes('source=')
+              ? matchesLibrarySource(
+                  url,
+                  item.regExp.replace('source=', '').replace('&', '')
+                )
+              : url.includes(item.regExp);
 
             switch (item.type) {
-              case 'movies':
+              case 'movie':
                 pivotList = ['library', 'collections', 'categories'];
                 break;
-              case 'TV shows':
+              case 'show':
                 pivotList = ['library', 'collections', 'categories'];
                 break;
-              case 'music':
+              case 'artist':
                 pivotList = ['library', 'playlists'];
                 break;
               default:
                 pivotList = null;
                 break;
             }
-
             return (
               <li key={item.title}>
                 <Link
@@ -299,36 +405,30 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>
                 {isActive && pivotList && (
                   <ul className="flex flex-col gap-1 mt-1">
-                    {pivotList.map((pivot) => {
-                      return (
-                        <li key={pivot}>
-                          <Link
-                            onClick={onClick}
-                            href={
-                              item.href && pivotList
-                                ? item.href + '&pivot=' + pivot
-                                : item.href
-                            }
-                            className={`active:!bg-white/15 ${url.includes(item.href + '&pivot=' + pivot) && 'bg-white/10 hover:bg-white/[0.05]'}`}
-                          >
-                            <p className="capitalize">{pivot}</p>
-                            {url.includes(
-                              item.href && pivotList
-                                ? item.href + '&pivot=' + pivot
-                                : item.href
-                            ) && (
-                              <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
-                            )}
-                          </Link>
-                        </li>
-                      );
-                    })}
+                    {pivotList.map((pivot) => (
+                      <li key={pivot}>
+                        <Link
+                          onClick={onClick}
+                          href={
+                            item.href && pivotList
+                              ? item.href + '&pivot=' + pivot
+                              : item.href
+                          }
+                          className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+                        >
+                          <p className="capitalize">{pivot}</p>
+                          {isActive && url.includes(`&pivot=${pivot}`) && (
+                            <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                          )}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 )}
               </li>

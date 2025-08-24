@@ -1,5 +1,6 @@
 import Alert from '@app/components/Common/Alert';
 import useSWR from 'swr';
+import { FormattedMessage } from 'react-intl';
 
 const AppDataWarning = () => {
   const { data, error } = useSWR<{ appData: boolean; appDataPath: string }>(
@@ -21,11 +22,14 @@ const AppDataWarning = () => {
       {!data.appData && (
         <Alert
           title={
-            <>
-              The <code>{appDataPath}</code> volume mount was not configured
-              properly. All data will be cleared when the container is stopped
-              or restarted.
-            </>
+            <FormattedMessage
+              id="appData.warning"
+              defaultMessage="The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
+              values={{
+                appDataPath,
+                code: (chunks: React.ReactNode) => <code>{chunks}</code>,
+              }}
+            />
           }
         />
       )}

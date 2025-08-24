@@ -1,48 +1,69 @@
 import PlexLoginButton from '@app/components/PlexLoginBtn';
+import Toast from '@app/components/Toast';
+import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
+import { XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface LoginWithPlexProps {
   onComplete: () => void;
 }
 
-const user = false;
-
 const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
+  const intl = useIntl();
   const [authToken, setAuthToken] = useState<string | undefined>(undefined);
-
-  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
-  // We take the token and attempt to login. If we get a success message, we will
-  // ask swr to revalidate the user which _shouid_ come back with a valid user.
+  const { user, revalidate } = useUser();
+  const { currentSettings } = useSettings();
 
   useEffect(() => {
     const login = async () => {
-      const response = await axios.post('/api/v1/auth/plex', { authToken });
+      try {
+        const response = await axios.post('/api/v1/auth/plex', { authToken });
 
-      if (response.data?.id) {
-        null;
+        if (response.data?.id) {
+          await revalidate();
+          onComplete();
+        }
+      } catch (error) {
+        Toast({
+          title: intl.formatMessage({
+            id: 'setup.loginError',
+            defaultMessage: 'Login error',
+          }),
+          message: error.message,
+          type: 'error',
+          icon: <XCircleIcon className="size-7" />,
+        });
+        setAuthToken(undefined);
       }
     };
     if (authToken) {
       login();
     }
-  }, [authToken]);
+  }, [authToken, intl, onComplete, revalidate]);
 
-  // Effect that is triggered whenever `useUser`'s user changes. If we get a new
-  // valid user, we call onComplete which will take us to the next step in Setup.
   useEffect(() => {
     if (user) {
       onComplete();
     }
-  }, [onComplete]);
+  }, [user, onComplete]);
 
   return (
     <form>
       <div className="mb-2 flex justify-center text-xl font-bold">
-        Welcome to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+        <FormattedMessage
+          id="setup.welcomeTo"
+          defaultMessage="Welcome to {appName}"
+          values={{ appName: currentSettings.applicationTitle }}
+        />
       </div>
       <div className="mb-2 flex justify-center pb-6 text-sm">
-        Get started by signing in with your Plex account
+        <FormattedMessage
+          id="setup.getStartedPlex"
+          defaultMessage="Get started by signing in with your Plex account"
+        />
       </div>
       <div className="flex items-center justify-center">
         <PlexLoginButton onAuthToken={(authToken) => setAuthToken(authToken)} />

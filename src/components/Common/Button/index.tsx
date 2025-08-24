@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ForwardedRef } from 'react';
+import type { ForwardedRef, JSX } from 'react';
 import React from 'react';
 
 export type ButtonType =
@@ -66,7 +66,7 @@ function Button<P extends ElementTypes = 'button'>(
       buttonStyle.push('btn-ghost');
       break;
     default:
-      buttonStyle.push('btn-primary');
+      buttonStyle.push('btn-neutral');
   }
 
   switch (buttonSize) {

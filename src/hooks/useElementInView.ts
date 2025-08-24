@@ -14,7 +14,7 @@ export const useInView = (
   const [isInView, setInView] = useState(false);
 
   // Use a single instance of IntersectionObserver
-  const observerRef = useRef<IntersectionObserver>();
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     if (observerRef.current) {

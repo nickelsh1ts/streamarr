@@ -1,30 +1,51 @@
 'use client';
-import Button from '@app/components/Common/Button';
-import ComingSoon from '@app/components/Common/ComingSoon';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SetupSteps from '@app/components/Setup/SetupSteps';
-import SignUpForm from '@app/components/SignUp/Form';
-import useLocale from '@app/hooks/useLocale';
+import ConfirmAccountForm from '@app/components/SignUp/Forms/ConfirmAccountForm';
+import ICodeForm from '@app/components/SignUp/Forms/ICodeForm';
+import SignUpAuthForm from '@app/components/SignUp/Forms/SignUpAuthForm';
+import Toast from '@app/components/Toast';
+import useSettings from '@app/hooks/useSettings';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import type { User } from '@server/entity/User';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const Join = () => {
-  const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [user, setUser] = useState<User>(null);
   const router = useRouter();
-  const { locale } = useLocale();
+  const { currentSettings } = useSettings();
+  const intl = useIntl();
 
+  // Step 3: Finalize signup
   const finishSignup = async () => {
-    setIsUpdating(true);
-    const response = await axios.post<{ initialized: boolean }>(
-      '/api/v1/signup/initialize'
-    );
-
-    setIsUpdating(false);
-    if (response.data.initialized) {
-      await axios.post('/api/v1/signup', { locale });
-      router.push('/');
+    if (!user || !inviteCode) return;
+    try {
+      await axios.post('/api/v1/signup/complete', {
+        userId: user.id,
+        icode: inviteCode,
+      });
+      router.push('/watch/web/index.html#!/settings/manage-library-access');
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'signUp.errorDuringSignup',
+          defaultMessage: 'Error during signup',
+        }),
+        message:
+          e.response?.data?.message ||
+          intl.formatMessage({
+            id: 'signUp.errorDuringSignupFallback',
+            defaultMessage:
+              'An error occurred during signup. Please try again.',
+          }),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
     }
   };
 
@@ -35,11 +56,18 @@ const Join = () => {
       </div>
       <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
-          <div className="mb-2 flex justify-center text-2xl font-bold">
-            Welcome to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          <div className="mb-2 flex justify-center text-3xl font-bold">
+            <FormattedMessage
+              id="signUp.welcomeTo"
+              defaultMessage="Welcome to {applicationTitle}"
+              values={{ applicationTitle: currentSettings.applicationTitle }}
+            />
           </div>
-          <div className="mb-2 text-center text-sm">
-            Registration is by invite only.
+          <div className="mb-2 text-center">
+            <FormattedMessage
+              id="signUp.registrationByInvite"
+              defaultMessage="Registration is by invite only."
+            />
           </div>
         </div>
         <nav className="relative w-full">
@@ -49,19 +77,28 @@ const Join = () => {
           >
             <SetupSteps
               stepNumber={1}
-              description="Enter invite code"
+              description={intl.formatMessage({
+                id: 'signUp.enterInviteCode',
+                defaultMessage: 'Enter Invite Code',
+              })}
               active={currentStep === 1}
               completed={currentStep > 1}
             />
             <SetupSteps
               stepNumber={2}
-              description="Sign in with Plex"
+              description={intl.formatMessage({
+                id: 'signUp.createAccount',
+                defaultMessage: 'Create Account',
+              })}
               active={currentStep === 2}
               completed={currentStep > 2}
             />
             <SetupSteps
               stepNumber={3}
-              description="Confirm Account"
+              description={intl.formatMessage({
+                id: 'signUp.confirmAccount',
+                defaultMessage: 'Confirm Account',
+              })}
               active={currentStep === 3}
               isLastStep
             />
@@ -69,34 +106,65 @@ const Join = () => {
         </nav>
         <div className="mt-10 w-full rounded-md border border-secondary bg-secondary bg-opacity-50 backdrop-blur p-4 text-white">
           {currentStep === 1 && (
-            <>
-              <div className="mb-2 text-center pb-6 text-sm">
-                Get started by entering your invite code below.
-              </div>
-              <SignUpForm onComplete={() => setCurrentStep(2)} />
-            </>
+            <div>
+              <p className="mb-2 text-center pb-6">
+                <FormattedMessage
+                  id="signUp.getStartedInviteCode"
+                  defaultMessage="Get started by entering your invite code below."
+                />
+              </p>
+              <ICodeForm
+                onComplete={(code) => {
+                  setInviteCode(code);
+                  setCurrentStep(2);
+                }}
+              />
+            </div>
+          )}
+          {currentStep === 2 && (
+            <div>
+              <p className="mb-2 text-center pb-6">
+                <FormattedMessage
+                  id="signUp.signInWithPlex"
+                  defaultMessage="Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}."
+                  values={{
+                    localLoginOption: currentSettings?.localLogin ? (
+                      <FormattedMessage
+                        id="signUp.orEnterLocalAccount"
+                        defaultMessage="or enter local account details"
+                      />
+                    ) : null,
+                    plexRecommended: currentSettings?.localLogin ? (
+                      <FormattedMessage
+                        id="signUp.plexRecommended"
+                        defaultMessage="(Plex is recommended for the best experience)"
+                      />
+                    ) : null,
+                  }}
+                />
+              </p>
+              <SignUpAuthForm
+                inviteCode={inviteCode}
+                onComplete={(plexUser) => {
+                  setUser(plexUser);
+                  setCurrentStep(3);
+                }}
+              />
+            </div>
           )}
           {currentStep === 3 && (
             <div>
-              <p>Settings Services</p>
-              <div className="actions">
-                <div className="flex justify-end">
-                  <span className="ml-3 inline-flex rounded-md shadow-sm">
-                    <Button
-                      buttonType="primary"
-                      onClick={() => finishSignup()}
-                      disabled={isUpdating}
-                    >
-                      {isUpdating ? 'Completing...' : 'Complete Signup'}
-                    </Button>
-                  </span>
-                </div>
-              </div>
+              <p className="mb-2 text-center pb-6">
+                <FormattedMessage
+                  id="signUp.reviewDetailsConfirm"
+                  defaultMessage="Review your details below and confirm your account."
+                />
+              </p>
+              <ConfirmAccountForm user={user} onComplete={finishSignup} />
             </div>
           )}
         </div>
       </div>
-      <ComingSoon />
     </div>
   );
 };

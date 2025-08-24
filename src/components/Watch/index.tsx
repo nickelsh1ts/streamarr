@@ -1,30 +1,79 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import useHash from '@app/hooks/useHash';
-import { usePathname, useRouter } from 'next/navigation';
+import useSettings from '@app/hooks/useSettings';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const Watch = ({ children, ...props }) => {
-  const pathname = usePathname();
-  const hash = useHash();
-  const url = `${pathname.replace('/watch', '')}${hash}`;
-  const router = useRouter();
-
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
-  const mountNode = contentRef?.contentWindow?.document?.body;
-  const innerFrame = contentRef?.contentWindow;
+  let mountNode = null;
+  let innerFrame = null;
+  try {
+    if (
+      contentRef?.contentWindow &&
+      contentRef?.contentWindow.location.origin === window.location.origin
+    ) {
+      mountNode = contentRef.contentWindow.document.body;
+      innerFrame = contentRef.contentWindow;
+    }
+  } catch {
+    // Cross-origin access error, ignore or handle gracefully
+    mountNode = null;
+    innerFrame = null;
+  }
 
   const [hostname, setHostname] = useState('');
+  const [iframeUrl, setIframeUrl] = useState('');
+  const { currentSettings } = useSettings();
+
+  // Use custom logos if available, otherwise fallback to defaults
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
+  const logoSmallSrc =
+    currentSettings.customLogoSmall || '/streamarr-logo-512x512.png';
+
+  // Track the parent window's location for the iframe src
+  useEffect(() => {
+    let lastParentUrl = window.location.pathname + window.location.hash;
+    let lastIframeUrl = '';
+    setIframeUrl(lastParentUrl.replace('/watch', ''));
+    const interval = setInterval(() => {
+      const parentUrl = window.location.pathname + window.location.hash;
+      const iframeUrlNow = innerFrame
+        ? innerFrame.location.pathname + innerFrame.location.hash
+        : '';
+
+      // If parent location changed (sidebar/menu navigation)
+      if (parentUrl !== lastParentUrl) {
+        lastParentUrl = parentUrl;
+        setIframeUrl(parentUrl.replace('/watch', ''));
+        // Don't update parent location here!
+      }
+      // If iframe location changed (user navigated inside iframe)
+      else if (iframeUrlNow && iframeUrlNow !== lastIframeUrl) {
+        lastIframeUrl = iframeUrlNow;
+        if ('/watch' + iframeUrlNow !== parentUrl) {
+          window.history.replaceState(null, '', '/watch' + iframeUrlNow);
+          setIframeUrl(iframeUrlNow.replace('/watch', ''));
+          lastParentUrl = '/watch' + iframeUrlNow;
+        }
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [innerFrame]);
 
   useEffect(() => {
     setTimeout(() => {
-      const div = document
-        ?.getElementsByTagName('iframe')[0]
-        ?.contentDocument?.querySelector(
-          "[class^='PlayerContainer-container-']"
-        );
+      let div = null;
+      try {
+        div = document
+          ?.getElementsByTagName('iframe')[0]
+          ?.contentDocument?.querySelector(
+            "[class^='PlayerContainer-container-']"
+          );
+      } catch {
+        // Cross-origin, div remains null
+      }
       const menu = document
         ?.getElementsByTagName('iframe')[0]
         ?.contentDocument?.getElementById('sidebarMenu');
@@ -41,7 +90,7 @@ const Watch = ({ children, ...props }) => {
               menu?.classList.add('mb-[6.5rem]');
             }
             if (pageTitle === 'Plex') {
-              document.title = `Now Streaming - ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`;
+              document.title = `Now Streaming - ${currentSettings.applicationTitle}`;
               menu?.classList.remove('mb-[6.5rem]');
             }
           }
@@ -71,27 +120,9 @@ const Watch = ({ children, ...props }) => {
   });
 
   useEffect(() => {
-    innerFrame?.addEventListener('hashchange', function () {
-      if (hash != innerFrame.location.hash) {
-        router.replace('/watch/web/index.html' + innerFrame.location.hash);
-      }
-    });
-  }, [hash, innerFrame, router]);
-
-  useEffect(() => {
     if (mountNode) {
-      mountNode.style.setProperty(
-        '--logo-image-url',
-        (process.env.NEXT_PUBLIC_LOGO &&
-          `url("${process.env.NEXT_PUBLIC_LOGO}")`) ||
-          'url("/logo_full.png")'
-      );
-      mountNode.style.setProperty(
-        '--logo-sm-url',
-        (process.env.NEXT_PUBLIC_LOGO_SM &&
-          `url("${process.env.NEXT_PUBLIC_LOGO_SM}")`) ||
-          'url("/streamarr-logo-512x512.png")'
-      );
+      mountNode.style.setProperty('--logo-image-url', `url("${logoSrc}")`);
+      mountNode.style.setProperty('--logo-sm-url', `url("${logoSmallSrc}")`);
     }
   });
 
@@ -100,6 +131,17 @@ const Watch = ({ children, ...props }) => {
       setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
     }
   }, [setHostname]);
+
+  useEffect(() => {
+    if (
+      contentRef &&
+      contentRef.src !==
+        `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`
+    ) {
+      contentRef.src = `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [iframeUrl, hostname]);
 
   return (
     <>
@@ -113,12 +155,11 @@ const Watch = ({ children, ...props }) => {
         }}
         ref={setContentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
-        src={`${process.env.NEXT_PUBLIC_BASE_DOMAIN || hostname}${url && url.replace('null', '')}`}
+        src={`${hostname}${iframeUrl && iframeUrl.replace('null', '')}`}
         allowFullScreen
         title="Plex"
-      >
-        {mountNode && createPortal(children, mountNode)}
-      </iframe>
+      />
+      {mountNode && createPortal(children, mountNode)}
       {loadingIframe ? <LoadingEllipsis fixed /> : null}
     </>
   );

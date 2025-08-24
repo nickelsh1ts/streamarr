@@ -2,9 +2,7 @@ interface PWAHeaderProps {
   applicationTitle?: string;
 }
 
-const PWAHeader = ({
-  applicationTitle = process.env.NEXT_PUBLIC_APP_NAME,
-}: PWAHeaderProps) => {
+const PWAHeader = ({ applicationTitle }: PWAHeaderProps) => {
   return (
     <>
       <link

@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Lint & Test Build
+    name: Prepare & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     container: node:24-alpine
@@ -21,10 +21,10 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
-      - name: Lint
-        run: yarn lint
+      - name: Prepare
+        run: yarn format && yarn lint && yarn typecheck
       - name: Build
-        run: yarn standalone
+        run: yarn build
 
   build_and_push:
     name: Build & Publish Docker Images

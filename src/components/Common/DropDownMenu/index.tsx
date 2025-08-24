@@ -120,7 +120,7 @@ const DropDownMenu = ({
         >
           <button
             type="button"
-            className={`relative inline-flex h-full items-center p-2 text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
+            className={`relative inline-flex h-full items-center text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={() => setIsOpen((state) => !state)}
             {...props}

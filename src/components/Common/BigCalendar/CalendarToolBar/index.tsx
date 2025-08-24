@@ -1,8 +1,19 @@
-import moment from 'moment';
-import { useCallback } from 'react';
+'use client';
+import {
+  CalendarDateRangeIcon,
+  CalendarDaysIcon,
+  CalendarIcon,
+  QueueListIcon,
+} from '@heroicons/react/24/solid';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { useCallback, useEffect } from 'react';
 import { Views } from 'react-big-calendar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FormattedMessage } from 'react-intl';
+import useLocale from '@app/hooks/useLocale';
+import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
+import { Permission, useUser } from '@app/hooks/useUser';
 
 function convertUTCToLocalDate(date) {
   if (!date) {
@@ -22,7 +33,17 @@ const CalendarToolBar = ({
   startOfWeek,
   oneMonth,
   setView,
+  setEditEventModal,
 }) => {
+  const { locale } = useLocale();
+  const { hasPermission } = useUser();
+
+  useEffect(() => {
+    registerDatePickerLocale(locale);
+  }, [locale]);
+
+  const datePickerLocale = locale !== 'en' ? locale : undefined;
+
   let dateFormat = '';
   const to = ' - ';
   if (view === 'month') {
@@ -70,11 +91,15 @@ const CalendarToolBar = ({
 
   return (
     <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
-      <div id="datePicker" className="text-primary">
+      <div
+        id="datePicker"
+        className="text-primary flex flex-grow flex-col sm:flex-row lg:flex-grow-0 gap-2"
+      >
         {view != Views.WEEK ? (
           <DatePicker
             dateFormat={dateFormat}
             selected={convertUTCToLocalDate(date)}
+            locale={datePickerLocale}
             showIcon
             toggleCalendarOnIconClick
             closeOnScroll
@@ -106,6 +131,7 @@ const CalendarToolBar = ({
           <DatePicker
             dateFormat={dateFormat}
             selected={date}
+            locale={datePickerLocale}
             startDate={startOfWeek}
             endDate={endOfWeek}
             showIcon
@@ -139,6 +165,20 @@ const CalendarToolBar = ({
             }
           />
         )}
+        {hasPermission([Permission.CREATE_EVENTS, Permission.MANAGE_EVENTS], {
+          type: 'or',
+        }) && (
+          <button
+            id="create-event"
+            onClick={() => setEditEventModal({ open: true, event: null })}
+            className="btn btn-sm btn-primary"
+          >
+            <FormattedMessage
+              id="calendar.createEvent"
+              defaultMessage="Create Event"
+            />
+          </button>
+        )}
       </div>
       <div
         id="view"
@@ -168,7 +208,7 @@ const CalendarToolBar = ({
             onClick={() => setDate(moment().toDate())}
             className="btn btn-sm btn-primary rounded-none flex-1 basis-1/2"
           >
-            Today
+            <FormattedMessage id="calendar.today" defaultMessage="Today" />
           </button>
           <button
             id="next"
@@ -190,16 +230,35 @@ const CalendarToolBar = ({
           </button>
         </div>
         <div className="flex flex-grow sm:mb-0 lg:flex-grow-0">
+          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
+            {view === 'month' ? (
+              <CalendarIcon className="size-6" />
+            ) : view === 'week' ? (
+              <CalendarDateRangeIcon className="size-6" />
+            ) : view === 'day' ? (
+              <CalendarDaysIcon className="size-6" />
+            ) : (
+              <QueueListIcon className="size-6" />
+            )}
+          </span>
           <select
             id="view"
             onChange={(view) => setView(view.target.value)}
             value={view}
-            className="select select-sm select-primary w-full flex-1"
+            className="select select-sm select-primary rounded-md rounded-l-none flex-1"
           >
-            <option value="month">Month</option>
-            <option value="week">Week</option>
-            <option value="day">Day</option>
-            <option value="agenda">Agenda</option>
+            <option value="month">
+              <FormattedMessage id="calendar.month" defaultMessage="Month" />
+            </option>
+            <option value="week">
+              <FormattedMessage id="calendar.week" defaultMessage="Week" />
+            </option>
+            <option value="day">
+              <FormattedMessage id="calendar.day" defaultMessage="Day" />
+            </option>
+            <option value="agenda">
+              <FormattedMessage id="calendar.agenda" defaultMessage="Agenda" />
+            </option>
           </select>
         </div>
       </div>

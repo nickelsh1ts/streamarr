@@ -5,13 +5,24 @@ import {
   ArrowLeftCircleIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid';
+import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-export const metadata: Metadata = {
-  title: `ERROR – ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const res = await fetch(
+    `http://${process.env.HOST || 'localhost'}:${
+      process.env.PORT || 3000
+    }/api/v1/settings/public`,
+    { cache: 'no-store' }
+  );
+  const currentSettings: PublicSettingsResponse = await res.json();
+
+  return {
+    title: `Error - ${currentSettings.applicationTitle}`,
+  };
+}
 
 export default function Error({
   error,

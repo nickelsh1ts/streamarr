@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { FormattedMessage } from 'react-intl';
 
 export interface AdminRoute {
   text: string;
@@ -77,7 +78,10 @@ const AdminTabs = ({
     <>
       <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">
-          Select a Tab
+          <FormattedMessage
+            id="common.selectTab"
+            defaultMessage="Select a Tab"
+          />
         </label>
         <select
           className="select select-primary w-full"

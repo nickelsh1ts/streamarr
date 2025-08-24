@@ -1,6 +1,7 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import { NotificationContext } from '@app/context/NotificationContext';
-import useIsAdmin from '@app/hooks/useIsAdmin';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
   BellAlertIcon,
   HomeIcon,
@@ -9,22 +10,14 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useContext } from 'react';
-
-interface UserType {
-  name: string;
-  email: string;
-}
-
-const user: UserType = {
-  name: `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} UI Preview`,
-  email: 'v0.00.1',
-};
+import { FormattedMessage } from 'react-intl';
 
 const UserCard = () => {
+  const { user } = useUser();
   const path = usePathname();
   const { setIsOpen } = useContext(NotificationContext);
 
-  const isAdmin = useIsAdmin();
+  const { hasPermission } = useUser();
 
   return (
     <div className="pointer-events-auto w-64 relative">
@@ -32,17 +25,19 @@ const UserCard = () => {
         href="/profile"
         className="flex flex-col items-center place-content-center gap-2 p-4 bg-slate-50/10 hover:bg-slate-50/20"
       >
-        <img
+        <CachedImage
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
-          src="/android-chrome-192x192.png"
+          src={user?.avatar}
           alt="user"
+          width={64}
+          height={64}
         />
         <div className="flex flex-col w-full place-content-start">
           <p className="text-lg text-center leading-tight truncate capitalize">
-            {user.name}
+            {user?.displayName}
           </p>
           <p className="text-xs text-center leading-tight truncate lowercase">
-            {user.email}
+            {user?.email}
           </p>
         </div>
       </Link>
@@ -58,18 +53,32 @@ const UserCard = () => {
           href={'/watch'}
         >
           <HomeIcon className="size-5" />
-          Home
+          <FormattedMessage id="common.home" defaultMessage="Home" />
         </Link>
       )}
-      {isAdmin && (
+      {hasPermission(Permission.ADMIN) ? (
         <Link
           className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
           href="/admin"
         >
           <LockClosedIcon className="size-5 inline-flex" />
-          Admin Center
+          <FormattedMessage
+            id="common.adminCentre"
+            defaultMessage="Admin Centre"
+          />
         </Link>
-      )}
+      ) : hasPermission(Permission.MANAGE_USERS) ? (
+        <Link
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
+          href="/admin/users"
+        >
+          <LockClosedIcon className="size-5 inline-flex" />
+          <FormattedMessage
+            id="common.manageUsers"
+            defaultMessage="Manage Users"
+          />
+        </Link>
+      ) : null}
     </div>
   );
 };

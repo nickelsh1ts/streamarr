@@ -1,6 +1,7 @@
+import PlexLogo from '@app/assets/services/plex.svg';
 import PlexOAuth from '@app/utils/plex';
-import { ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 const plexOAuth = new PlexOAuth();
 
@@ -41,20 +42,21 @@ const PlexLoginButton = ({
         disabled={loading || isProcessing}
         className="btn btn-accent btn-block font-extrabold disabled:bg-accent/40 disabled:cursor-progress disabled:pointer-events-auto disabled:hover:bg-accent/40 disabled:no-animation"
       >
-        <ArrowLeftEndOnRectangleIcon className="h-7 w-7" />
         <span className="font-extrabold text-lg">
           {loading ? (
-            'loading'
+            <FormattedMessage id="common.loading" defaultMessage="Loading" />
           ) : isProcessing ? (
-            'Signing In...'
+            <FormattedMessage
+              id="common.signingIn"
+              defaultMessage="Signing In..."
+            />
           ) : (
             <>
-              Sign In with{' '}
-              <img
-                alt="Plex"
-                src="https://www.plex.tv/wp-content/themes/plex/assets/img/plex-logo.svg"
-                className="inline-flex w-10 h-auto"
+              <FormattedMessage
+                id="plex.login.button"
+                defaultMessage="Sign in with"
               />
+              <PlexLogo className="inline-flex size-10 ml-2" />
             </>
           )}
         </span>

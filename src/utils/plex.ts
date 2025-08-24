@@ -1,4 +1,4 @@
-import { getAppVersion } from '@app/utils/appVersion';
+import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import Bowser from 'bowser';
 
@@ -36,13 +36,11 @@ const uuidv4 = (): string => {
 
 class PlexOAuth {
   private plexHeaders?: PlexHeaders;
-
   private pin?: PlexPin;
   private popup?: Window;
-
   private authToken?: string;
 
-  public initializeHeaders(): void {
+  public initializeHeaders(applicationTitle: string): void {
     if (!window) {
       throw new Error(
         'Window is not defined. Are you calling this in the browser?'
@@ -59,14 +57,14 @@ class PlexOAuth {
     const browser = Bowser.getParser(window.navigator.userAgent);
     this.plexHeaders = {
       Accept: 'application/json',
-      'X-Plex-Product': process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr',
-      'X-Plex-Version': getAppVersion(),
+      'X-Plex-Product': applicationTitle,
+      'X-Plex-Version': '0.00.1',
       'X-Plex-Client-Identifier': clientId,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
       'X-Plex-Device': browser.getOSName(),
-      'X-Plex-Device-Name': `${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} (${browser.getBrowserName()})`,
+      'X-Plex-Device-Name': `${browser.getBrowserName()} (${applicationTitle})`,
       'X-Plex-Device-Screen-Resolution':
         window.screen.width + 'x' + window.screen.height,
       'X-Plex-Language': 'en',
@@ -76,7 +74,7 @@ class PlexOAuth {
   public async getPin(): Promise<PlexPin> {
     if (!this.plexHeaders) {
       throw new Error(
-        'You must initialize the plex headers clientside to login'
+        'You must initialize the plex headers client side to login'
       );
     }
     const response = await axios.post(
@@ -95,7 +93,9 @@ class PlexOAuth {
   }
 
   public async login(): Promise<string> {
-    this.initializeHeaders();
+    const res = await fetch(`/api/v1/settings/public`, { cache: 'no-store' });
+    const currentSettings: PublicSettingsResponse = await res.json();
+    this.initializeHeaders(currentSettings.applicationTitle);
     await this.getPin();
 
     if (!this.plexHeaders || !this.pin) {

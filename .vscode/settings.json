@@ -24,7 +24,9 @@
     "MOVIEDB",
     "nextjs",
     "NICKFLIXTV",
+    "pxml",
     "rehype",
     "Streamarr"
-  ]
+  ],
+  "todo-tree.tree.scanMode": "workspace"
 }

@@ -1,95 +1,63 @@
 'use client';
 import Sidebar from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
-import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import BackButton from '@app/components/Layout/BackButton';
 import DynamicLogo from '@app/components/Layout/DynamicLogo';
-import { verifySession } from '@app/lib/dal';
-import { useEffect, useState } from 'react';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { useUser } from '@app/hooks/useUser';
+import useSettings from '@app/hooks/useSettings';
+import { FormattedMessage } from 'react-intl';
 
 const Header = ({ isInView = true }) => {
   const path = usePathname();
-  const [data, setData] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await verifySession();
-        if (!response) {
-          throw new Error('Failed to fetch');
-        }
-        const result = await response;
-        setData(result.isAuthed);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  if (error) {
-    console.log(error);
-  }
-
-  const isAuthed = data;
+  const { currentSettings } = useSettings();
+  const { user } = useUser();
 
   return (
     <header
       id="top"
-      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
+      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
-        {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && isAuthed && (
+        {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && user && (
           <Sidebar />
         )}
-        {(!path.match(/^\/$/) || isAuthed) && <BackButton />}
+        {(!path.match(/^\/$/) || user) && <BackButton />}
         <Link
-          href={isAuthed ? '/watch' : '/'}
+          href={user ? '/watch' : '/'}
           className={`hover:brightness-75 transition-opacity duration-500 ml-0.5 -mt-1 md:ml-0.5 md:-mt-0.5 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >
           <DynamicLogo />
         </Link>
         <div className={`ms-auto flex gap-2 place-items-center`}>
-          {path.match(/\/$/) && !isAuthed && (
+          {path.match(/\/$/) && !user && currentSettings.enableSignUp && (
             <Link
               href="/signup"
               id="signup"
               className={`btn btn-outline btn-sm md:btn-md text-xs btn-warning rounded-md gap-0.5 md:tracking-widest md:text-lg uppercase no-animation transition-opacity duration-500 ${!isInView && 'opacity-0 pointer-events-none'}`}
             >
-              Sign up now
+              <FormattedMessage id="auth.signup" defaultMessage="Sign up now" />
             </Link>
           )}
-          {!loading ? (
-            isAuthed ? (
-              !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
-                <div className="max-sm:hidden -mt-1">
-                  <UserDropdown />
-                </div>
-              ) : (
+          {user ? (
+            !path.match(/^\/(help\/?(.*)?|\/?$|signup\/?|signin\/?)/) ? (
+              <div className="max-sm:hidden -mt-1">
                 <UserDropdown />
-              )
+              </div>
             ) : (
-              !path.match(/^\/signin\/?$/) && (
-                <Link
-                  href="/signin"
-                  id="signin"
-                  className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
-                >
-                  Sign in{' '}
-                  <ArrowRightEndOnRectangleIcon className="size-4 md:size-6" />
-                </Link>
-              )
+              <UserDropdown />
             )
           ) : (
-            <LoadingEllipsis text="" />
+            !path.match(/^\/signin\/?$/) && (
+              <Link
+                href="/signin"
+                id="signin"
+                className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
+              >
+                <FormattedMessage id="auth.signin" defaultMessage="Sign in" />
+              </Link>
+            )
           )}
         </div>
       </div>

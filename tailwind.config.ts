@@ -3,12 +3,10 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import type { Config } from 'tailwindcss';
 
+// TODO: Implement custom theme and theme-picker functionality
+
 export default {
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './public/**/*.html'],
   darkMode: 'selector',
   theme: {
     extend: {
@@ -76,7 +74,7 @@ export default {
           success: '#84cc16',
           'success-content': '#fff',
           warning: '#ffc107',
-          'warning-content': '#130c00',
+          'warning-content': '#fff',
           error: '#b91c1c',
           'error-content': '#fff',
         },

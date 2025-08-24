@@ -8,25 +8,41 @@ import {
   useRef,
 } from 'react';
 import PropTypes from 'prop-types';
+import type { View } from 'react-big-calendar';
 import {
   Calendar,
   momentLocalizer,
   Views,
   DateLocalizer,
 } from 'react-big-calendar';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import 'moment-timezone';
 import TimezoneSelect from './TimezoneSelect';
 import './index.css';
 import CalendarToolBar from '@app/components/Common/BigCalendar/CalendarToolBar';
-import Modal from '@app/components/Common/Modal';
-import events from './DemoData';
+import { useIntl } from 'react-intl';
+import EventModal from '@app/components/Common/BigCalendar/EventModal';
+import axios from 'axios';
+import type { User } from '@server/entity/User';
 
-interface eventProps {
+export interface eventProps {
   id: number;
+  uid: string;
   title: string;
+  subtitle?: string;
   start: Date;
   end: Date;
+  description?: string;
+  type?: string;
+  categories?: string[] | string;
+  status?: string;
+  allDay?: boolean;
+  createdBy?: User;
+}
+
+interface BigCalendarProps {
+  events: eventProps[];
+  revalidateEvents: () => void;
 }
 
 const defaultTZ = moment.tz.guess();
@@ -37,47 +53,82 @@ function getDate(str, momentObj) {
 }
 
 export default function BigCalendar({
-  ReleaseEvents = events,
-}: {
-  ReleaseEvents?: typeof events;
-}) {
+  events,
+  revalidateEvents,
+}: BigCalendarProps) {
+  const intl = useIntl();
+  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
   const [timezone, setTimezone] = useState(defaultTZ);
 
+  // Set global moment timezone whenever timezone changes
+  useEffect(() => {
+    moment.tz.setDefault(timezone);
+    return () => {
+      moment.tz.setDefault();
+    };
+  }, [timezone]);
+
   const [date, setDate] = useState(defaultDateStr);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [view, setView] = useState<any>(Views.MONTH);
+  const [view, setView] = useState<View>(Views.MONTH);
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate]);
   const onView = useCallback((newView) => setView(newView), [setView]);
 
+  // Restore last set view values on component mount
+  useEffect(() => {
+    const viewString = window.localStorage.getItem('schedule-view-settings');
+    if (viewString) {
+      const viewSettings = JSON.parse(viewString);
+      setView(viewSettings.view);
+      setTimezone(viewSettings.timezone || defaultTZ);
+    }
+    setHasLoadedSettings(true);
+  }, []);
+
+  // Set view values to local storage any time they are changed
+  useEffect(() => {
+    if (!hasLoadedSettings) return;
+    window.localStorage.setItem(
+      'schedule-view-settings',
+      JSON.stringify({
+        view,
+        timezone,
+      })
+    );
+  }, [view, hasLoadedSettings, timezone]);
+
   const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
     useMemo(() => {
-      moment.tz.setDefault(timezone);
       return {
         defaultDate: getDate(defaultDateStr, moment),
         getNow: () => moment().toDate(),
         localizer: momentLocalizer(moment),
-        myEvents: ReleaseEvents,
+        myEvents: events,
         scrollToTime: moment().toDate(),
       };
-    }, [ReleaseEvents, timezone]);
-
-  useEffect(() => {
-    return () => {
-      moment.tz.setDefault();
-    };
-  }, []);
+    }, [events]);
 
   const { messages } = useMemo(
     () => ({
       messages: {
-        event: 'New Release or Event',
+        event: intl.formatMessage({
+          id: 'calendar.event',
+          defaultMessage: 'New Release or Event',
+        }),
+        time: intl.formatMessage({
+          id: 'calendar.time',
+          defaultMessage: 'Time',
+        }),
+        date: intl.formatMessage({
+          id: 'calendar.date',
+          defaultMessage: 'Date',
+        }),
       },
     }),
-    []
+    [intl]
   );
 
-  const clickRef = useRef(null);
+  const clickRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -93,14 +144,18 @@ export default function BigCalendar({
     [setDate, setView]
   );
 
-  const [selectedEvent, setSelectedEvent] = useState(undefined);
-  const [modalState, setModalState] = useState(false);
+  const [editEventModal, setEditEventModal] = useState<{
+    open: boolean;
+    selectedEvent: eventProps | null;
+  }>({
+    open: false,
+    selectedEvent: null,
+  });
 
   const onSelectEvent = useCallback((calEvent: eventProps) => {
     window.clearTimeout(clickRef?.current);
     clickRef.current = window.setTimeout(() => {
-      setSelectedEvent(calEvent);
-      setModalState(true);
+      setEditEventModal({ open: true, selectedEvent: calEvent });
     }, 250);
   }, []);
 
@@ -130,18 +185,58 @@ export default function BigCalendar({
     }
   }, [view, date]);
 
+  const calendarToolbarProps = useMemo(
+    () => ({
+      oneMonth: moment(date).add(30, 'days').format('M/DD/YYYY'),
+      startOfWeek: moment(date)?.startOf('week').toDate(),
+      endOfWeek: moment(date)?.endOf('week').toDate(),
+      view,
+      setDate,
+      date,
+      dateText,
+      setView,
+      setEditEventModal,
+      timezone,
+    }),
+    [date, view, setDate, setView, dateText, timezone]
+  );
+
+  const modalSubtitle = useMemo(() => {
+    if (!editEventModal.selectedEvent) return '';
+    const isRadarr = editEventModal.selectedEvent.type === 'movie';
+    const isSonarr = editEventModal.selectedEvent.type === 'show';
+    const startMoment = moment(editEventModal.selectedEvent.start);
+    const endMoment = moment(editEventModal.selectedEvent.end);
+    const isAllDayRadarr =
+      isRadarr && endMoment.diff(startMoment, 'days') === 1;
+    if (isAllDayRadarr) {
+      return startMoment.format('dddd, MMMM DD');
+    }
+    if (isSonarr) {
+      const dateStr = startMoment.format('dddd, MMMM DD');
+      const startTime = startMoment.format('h:mm A');
+      const endTime = endMoment.format('h:mm A');
+      return `${dateStr} ${startTime} to ${endTime}`;
+    }
+    if (editEventModal.selectedEvent.allDay) {
+      return startMoment.format('dddd, MMMM DD');
+    }
+    const startDate = startMoment.format('dddd, MMMM DD h:mm A');
+    const endDate = endMoment.format('dddd, MMMM DD h:mm A');
+    return `${startDate} to ${endDate}`;
+  }, [editEventModal.selectedEvent]);
+
+  const deleteEvent = async () => {
+    await axios.delete(
+      `/api/v1/calendar/local/${editEventModal.selectedEvent?.id}`
+    );
+    setEditEventModal({ open: false, selectedEvent: null });
+    revalidateEvents();
+  };
+
   return (
     <Fragment>
-      <CalendarToolBar
-        oneMonth={moment(date).add(30, 'days').format('M/DD/YYYY')}
-        startOfWeek={moment(date)?.startOf('week').format('MMMM DD')}
-        endOfWeek={moment(date)?.endOf('week').format('MMMM DD')}
-        view={view}
-        setDate={setDate}
-        date={date}
-        dateText={dateText}
-        setView={setView}
-      />
+      <CalendarToolBar {...calendarToolbarProps} />
       <div
         className={`px-4 ${view != Views.AGENDA ? 'h-[calc(100dvh-28rem)] min-h-80 sm:h-[calc(100dvh-16rem)] sm:min-h-[30rem]' : ''}`}
       >
@@ -168,28 +263,30 @@ export default function BigCalendar({
           onDrillDown={onDrillDown}
           toolbar={false}
         />
-        <Modal
-          onClose={() => {
-            setModalState(false);
-          }}
-          title={selectedEvent?.title}
-          subtitle={
-            moment(selectedEvent?.start).format('dddd, MMMM DD h:mm A') +
-            ' to ' +
-            moment(selectedEvent?.end).format('dddd, MMMM DD h:mm A')
+        <EventModal
+          selectedEvent={editEventModal.selectedEvent}
+          open={editEventModal.open}
+          onClose={() =>
+            setEditEventModal({ selectedEvent: null, open: false })
           }
-          show={modalState}
-          content={'THIS IS MY CONTENT'}
+          subtitle={modalSubtitle}
+          onDelete={() => deleteEvent()}
+          onSave={() => {
+            revalidateEvents();
+            setEditEventModal({ selectedEvent: null, open: false });
+          }}
         />
       </div>
       <TimezoneSelect
         defaultTZ={defaultTZ}
         setTimezone={setTimezone}
         timezone={timezone}
+        title={undefined}
       />
     </Fragment>
   );
 }
 BigCalendar.propTypes = {
   localizer: PropTypes.instanceOf(DateLocalizer),
+  events: PropTypes.array,
 };

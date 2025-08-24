@@ -1,6 +1,6 @@
-import ServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
+import SettingsServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
 
 const ServicesRadarrPage = () => {
-  return <ServicesRadarr />;
+  return <SettingsServicesRadarr />;
 };
 export default ServicesRadarrPage;

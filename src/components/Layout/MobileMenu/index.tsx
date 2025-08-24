@@ -3,7 +3,8 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
-import useHash from '@app/hooks/useHash';
+import useSettings from '@app/hooks/useSettings';
+import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
   Bars3BottomLeftIcon,
@@ -11,6 +12,8 @@ import {
   EllipsisHorizontalIcon,
   HomeIcon,
   PaperAirplaneIcon,
+  NewspaperIcon,
+  BookmarkIcon,
 } from '@heroicons/react/24/outline';
 import {
   PaperAirplaneIcon as FilledPaperAirplaneIcon,
@@ -18,11 +21,14 @@ import {
   HomeIcon as FilledHomeIcon,
   XMarkIcon,
   Bars3Icon,
+  NewspaperIcon as FilledNewspaperIcon,
+  BookmarkIcon as FilledBookmarkIcon,
 } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cloneElement, useRef, useState } from 'react';
+import type { JSX } from 'react';
+import { cloneElement, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLink {
   href: string;
@@ -32,13 +38,30 @@ interface MenuLink {
   activeRegExp: RegExp;
   as?: string;
   dataTestId?: string;
+  hidden?: boolean;
 }
 
 const MobileMenu = () => {
+  const intl = useIntl();
+  const { currentSettings } = useSettings();
+  const { hasPermission } = useUser();
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [menuType, setMenuType] = useState(null);
-  const pathname = usePathname() + useHash();
+  const [menuType, setMenuType] = useState<string | null>(null);
+  const [currentUrl, setCurrentUrl] = useState('');
+  useEffect(() => {
+    let lastUrl = window.location.pathname + window.location.hash;
+    setCurrentUrl(lastUrl);
+    const interval = setInterval(() => {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (newUrl !== lastUrl) {
+        lastUrl = newUrl;
+        setCurrentUrl(newUrl);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+  const url = currentUrl;
   useClickOutside(ref, () => {
     setTimeout(() => {
       if (isOpen) {
@@ -49,76 +72,158 @@ const MobileMenu = () => {
 
   const toggle = () => setIsOpen(!isOpen);
 
+  const invitesDisabled = !hasPermission(
+    [
+      Permission.CREATE_INVITES,
+      Permission.MANAGE_INVITES,
+      Permission.VIEW_INVITES,
+      Permission.STREAMARR,
+    ],
+    { type: 'or' }
+  );
+
+  const scheduleDisabled =
+    !currentSettings?.releaseSched ||
+    !hasPermission(
+      [
+        Permission.VIEW_SCHEDULE,
+        Permission.CREATE_EVENTS,
+        Permission.STREAMARR,
+      ],
+      { type: 'or' }
+    );
+
   const menuLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!',
-      content: 'Home',
+      content: intl.formatMessage({
+        id: 'common.home',
+        defaultMessage: 'Home',
+      }),
       svgIcon: <HomeIcon className="size-7" />,
       svgIconSelected: <FilledHomeIcon className="size-7" />,
       activeRegExp: /^\/watch\/web\/index\.html#!\/?$/,
     },
     {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
+      content: intl.formatMessage({
+        id: 'library.discover',
+        defaultMessage: 'Discover',
+      }),
+      svgIcon: <NewspaperIcon className="w-7 h-7" />,
+      svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
+      activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
+      hidden: !invitesDisabled, // Show when invites is disabled
+    },
+    {
+      href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
+      content: intl.formatMessage({
+        id: 'library.watchlist',
+        defaultMessage: 'Watch List',
+      }),
+      svgIcon: <BookmarkIcon className="h-6 w-6" />,
+      svgIconSelected: <FilledBookmarkIcon className="h-6 w-6" />,
+      activeRegExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
+      hidden: !scheduleDisabled, // Show when schedule is disabled
+    },
+    {
       href: '/request',
-      content: 'Request',
+      content: intl.formatMessage({
+        id: 'common.request',
+        defaultMessage: 'Request',
+      }),
       svgIcon: (
         <Image
           alt="Overseerr"
+          src={'/external/os-icon.svg'}
           width={24}
           height={24}
-          src={'/external/os-icon.svg'}
         />
       ),
       svgIconSelected: (
         <Image
           alt="Overseerr"
+          src={'/external/os-icon.svg'}
           width={24}
           height={24}
-          src={'/external/os-icon.svg'}
         />
       ),
       activeRegExp: /^\/request\/?$/,
+      hidden: !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
+        type: 'or',
+      }),
     },
     {
       href: '/invites',
-      content: 'Invite',
+      content: intl.formatMessage({
+        id: 'common.invite',
+        defaultMessage: 'Invite',
+      }),
       svgIcon: <PaperAirplaneIcon className="h-6 w-6" />,
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
+      hidden: invitesDisabled,
     },
     {
       href: '/schedule',
-      content: 'Schedule',
+      content: intl.formatMessage({
+        id: 'common.schedule',
+        defaultMessage: 'Schedule',
+      }),
       svgIcon: <CalendarDateRangeIcon className="h-6 w-6" />,
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
+      hidden: scheduleDisabled,
     },
   ];
 
   const settingsLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!/settings/web/general',
-      content: 'General',
+      content: intl.formatMessage({
+        id: 'sidebar.general',
+        defaultMessage: 'General',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/general\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/web/quality',
-      content: 'Quality',
+      content: intl.formatMessage({
+        id: 'sidebar.quality',
+        defaultMessage: 'Quality',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/quality\/?$/,
     },
     {
       href: '/watch/web/index.html#!/settings/web/player',
-      content: 'Player',
+      content: intl.formatMessage({
+        id: 'sidebar.player',
+        defaultMessage: 'Player',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/web\/player\/?$/,
     },
     {
+      href: '/watch/web/index.html#!/settings/privacy',
+      content: intl.formatMessage({
+        id: 'sidebar.privacy',
+        defaultMessage: 'Privacy',
+      }),
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/privacy\/?$/,
+    },
+    {
       href: '/watch/web/index.html#!/settings/online-media-sources',
-      content: 'Online Media Sources',
+      content: intl.formatMessage({
+        id: 'sidebar.onlineMediaSources',
+        defaultMessage: 'Online Media Sources',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp:
@@ -126,14 +231,39 @@ const MobileMenu = () => {
     },
     {
       href: '/watch/web/index.html#!/settings/devices/all',
-      content: 'Authorized Devices',
+      content: intl.formatMessage({
+        id: 'sidebar.authorizedDevices',
+        defaultMessage: 'Authorized Devices',
+      }),
       svgIcon: null,
       svgIconSelected: null,
       activeRegExp: /^\/watch\/web\/index\.html#!\/settings\/devices\/all\/?$/,
     },
+    {
+      href: '/watch/web/index.html#!/settings/streaming-services',
+      content: intl.formatMessage({
+        id: 'sidebar.streamingServices',
+        defaultMessage: 'Streaming Services',
+      }),
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp:
+        /^\/watch\/web\/index\.html#!\/settings\/streaming-services\/?$/,
+    },
+    {
+      href: '/watch/web/index.html#!/settings/manage-library-access',
+      content: intl.formatMessage({
+        id: 'sidebar.manageLibraryAccess',
+        defaultMessage: 'Manage Library Access',
+      }),
+      svgIcon: null,
+      svgIconSelected: null,
+      activeRegExp:
+        /^\/watch\/web\/index\.html#!\/settings\/manage-library-access\/?$/,
+    },
   ];
 
-  const filteredLinks = menuLinks;
+  const filteredLinks = menuLinks.filter((link) => !link.hidden);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]" ref={ref}>
@@ -144,7 +274,7 @@ const MobileMenu = () => {
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
-            const isActive = pathname.match(link.activeRegExp);
+            const isActive = url.match(link.activeRegExp);
             return (
               <Link
                 key={`mobile-menu-link-${link.href}`}
@@ -169,15 +299,15 @@ const MobileMenu = () => {
         ) : (
           <>
             {menuType === 'library' && (
-              <LibraryMenu isOpen={isOpen} setIsOpen={setIsOpen} />
+              <LibraryMenu isMobile isOpen={isOpen} setIsOpen={setIsOpen} />
             )}
             {menuType === 'request' && (
-              <RequestMenu isOpen={isOpen} onClick={setIsOpen} />
+              <RequestMenu onClick={setIsOpen} url={url} />
             )}
             {menuType === 'settings' && (
               <ul className="menu p-0 m-0 space-y-1">
                 {settingsLinks.map((link, i) => {
-                  const isActive = pathname.match(link.activeRegExp);
+                  const isActive = url.match(link.activeRegExp);
                   return (
                     <li key={i} className="">
                       <Link
@@ -198,22 +328,29 @@ const MobileMenu = () => {
                   onClick={() => setMenuType('library')}
                   className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  Libraries
+                  <FormattedMessage
+                    id="mobileMenu.libraries"
+                    defaultMessage="Libraries"
+                  />
                 </button>
                 <button
                   onClick={() => setMenuType('request')}
                   className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                 >
-                  Request
+                  <FormattedMessage
+                    id="common.request"
+                    defaultMessage="Request"
+                  />
                 </button>
-                {pathname.match(
-                  /^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/
-                ) && (
+                {url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/) && (
                   <button
                     onClick={() => setMenuType('settings')}
                     className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
-                    Settings
+                    <FormattedMessage
+                      id="sidebar.settings"
+                      defaultMessage="Settings"
+                    />
                   </button>
                 )}
               </li>
@@ -243,11 +380,11 @@ const MobileMenu = () => {
               }
               if (
                 !isOpen ||
-                (menuType === 'nav' && !pathname.match(/^\/request\/?(.*)?\/?/))
+                (menuType === 'nav' && !url.match(/^\/request\/?(.*)?\/?/))
               ) {
                 setMenuType('library');
               }
-              if (pathname.match(/^\/request\/?(.*)?\/?/)) {
+              if (url.match(/^\/request\/?(.*)?\/?/)) {
                 setMenuType('request');
               }
             }}
@@ -264,7 +401,7 @@ const MobileMenu = () => {
           {filteredLinks
             .slice(0, filteredLinks.length === 4 ? 4 : 3)
             .map((link) => {
-              const isActive = pathname.match(link.activeRegExp) && !isOpen;
+              const isActive = url.match(link.activeRegExp) && !isOpen;
               return (
                 <Link
                   key={`mobile-menu-link-${link.href}`}
@@ -281,9 +418,7 @@ const MobileMenu = () => {
                 >
                   {cloneElement(
                     isActive ? link.svgIconSelected : link.svgIcon,
-                    {
-                      className: 'h-7 w-7',
-                    }
+                    { className: 'h-7 w-7' }
                   )}
                 </Link>
               );

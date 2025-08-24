@@ -1,37 +1,41 @@
 'use client';
-import ComingSoon from '@app/components/Common/ComingSoon';
 import ImageFader from '@app/components/Common/ImageFader';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
-import useBackdrops from '@app/hooks/useBackdrops';
-import moment from 'moment';
+import { useUser } from '@app/hooks/useUser';
 import { useParams, usePathname } from 'next/navigation';
+import Error from '@app/app/error';
+import useSWR from 'swr';
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isSettingsPage = !!pathname.match(/\/settings/);
   const userQuery = useParams<{ userid: string }>();
-  const backdrops = useBackdrops();
-  let user;
+  const { user, error } = useUser({
+    id: Number(userQuery.userid) || undefined,
+  });
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
 
-  if (!userQuery.userid) {
-    user = {
-      id: 1,
-      displayName: 'Nickelsh1ts',
-      avatar: '/android-chrome-192x192.png',
-      email: `nickelsh1ts@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
-  } else {
-    user = {
-      id: parseInt(userQuery.userid),
-      displayName: 'QueriedUser',
-      avatar: '/android-chrome-192x192.png',
-      email: `query@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.dev`,
-      createdAt: moment().toDate(),
-    };
+  if (!user && !error) {
+    return <LoadingEllipsis />;
   }
+
+  if (!user) {
+    return (
+      <Error
+        statusCode={404}
+        error={{ name: '404', message: 'User not found' }}
+        reset={() => {}}
+      />
+    );
+  }
+
   return (
-    <div className="max-sm:mb-14 px-4">
+    <div className="max-sm:mb-16 px-4">
       {pathname.match(/\/(profile|admin\/users\/(\d)*?)\/?$/) && (
         <div className="absolute left-0 right-0 -top-18 z-0 h-96">
           <ImageFader
@@ -39,9 +43,8 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             gradient="bg-gradient-to-t from-[#1f1f1f] from-0% to-secondary/85 to-75%"
             backgroundImages={
               backdrops?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
-              ) ?? []
+                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+              ) ?? ['/img/people-cinema-watching.jpg']
             }
           />
         </div>
@@ -50,7 +53,6 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
         <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
       )}
       {children}
-      <ComingSoon />
     </div>
   );
 };

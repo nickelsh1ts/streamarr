@@ -1,4 +1,17 @@
+'use client';
+import useSettings from '@app/hooks/useSettings';
+import { useState, useEffect } from 'react';
+
 const Privacy = () => {
+  const { currentSettings } = useSettings();
+  const [hostname, setHostname] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(`${window?.location?.host}`);
+    }
+  }, [setHostname]);
+
   return (
     <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">
       <p className="text-4xl mb-6 font-extrabold">Privacy Statement</p>
@@ -6,30 +19,30 @@ const Privacy = () => {
         This Privacy Statement explains our practices, including your choices,
         regarding the collection, use, and disclosure of certain information,
         including your personal information in connection with the{' '}
-        {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
-        service.
+        {currentSettings.applicationTitle} service.
       </p>
       <p className="font-extrabold mt-10 text-xl mb-2">Contacting Us</p>
       <p>
         If you have general questions about your account or how to contact us
-        for assistance, please visit our online help center at
+        for assistance, please visit our online help center at{' '}
         <a
           className="text-decoration-none link-primary font-extrabold"
           href="/help"
         >
-          {' '}
-          {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
-          .com/help
+          {currentSettings.applicationUrl
+            .toLowerCase()
+            .replace('http://', '')
+            .replace('https://', '') || hostname}
+          /help
         </a>
         . For questions specifically about this Privacy Statement, or our use of
         your personal information, cookies or similar technologies, please
         contact us by email at{' '}
         <a
           className="text-decoration-none link-primary font-extrabold"
-          href={`mailto:privacy@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
+          href={`mailto:${currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}`}
         >
-          privacy@
-          {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com
+          {currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}
         </a>
         .
       </p>
@@ -65,22 +78,20 @@ const Privacy = () => {
           We collect information about you and your use of our service, your
           interactions with us, as well as information regarding your network,
           network devices, and your computer or other{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} capable devices you
-          might use to access our service (such as gaming systems, smart TVs,
-          mobile devices, set top boxes, and other streaming media devices).
-          This information includes:
+          {currentSettings.applicationTitle} capable devices you might use to
+          access our service (such as gaming systems, smart TVs, mobile devices,
+          set top boxes, and other streaming media devices). This information
+          includes:
         </li>
         <ul className="list-circle mx-5">
           <li className="my-5">
-            your activity on the{' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} service, such as
-            title selections and shows you have watched;
+            your activity on the {currentSettings.applicationTitle} service,
+            such as title selections and shows you have watched;
           </li>
           <li className="my-5">
             device IDs or other unique identifiers, including for your network
-            devices, and devices that are{' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} capable on your
-            Wi-Fi network;
+            devices, and devices that are {currentSettings.applicationTitle}{' '}
+            capable on your Wi-Fi network;
           </li>
           <li className="my-5">
             device and software characteristics (such as type and
@@ -108,16 +119,16 @@ const Privacy = () => {
           and help us quickly and efficiently respond to inquiries and requests;
         </li>
         <li className="my-5">
-          secure our systems, prevent fraud and help us protect the security of
-          [process.env.NEXT_PUBLIC_APP_NAME] accounts;
+          secure our systems, prevent fraud and help us protect the security of{' '}
+          {currentSettings.applicationTitle} accounts;
         </li>
         <li className="my-5">
           prevent, detect and investigate potentially prohibited or illegal
           activities, including fraud, and to enforce our terms (such as
-          determining whether and for which{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} signup offers you
-          are eligible and determining whether a particular device is permitted
-          to use the account consistent with our Terms of Use);
+          determining whether and for which {currentSettings.applicationTitle}{' '}
+          signup offers you are eligible and determining whether a particular
+          device is permitted to use the account consistent with our Terms of
+          Use);
         </li>
         <li className="my-5">
           analyze and understand our audience, improve our service (including
@@ -126,11 +137,11 @@ const Privacy = () => {
         </li>
         <li className="my-5">
           communicate with you concerning our service so that we can send you
-          news about {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}, details
-          about new features and content available on{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}, promotional
-          announcements. These communications may be by various methods, such as
-          email, push notifications and online messaging channels.
+          news about {currentSettings.applicationTitle}, details about new
+          features and content available on {currentSettings.applicationTitle},
+          promotional announcements. These communications may be by various
+          methods, such as email, push notifications and online messaging
+          channels.
         </li>
       </ul>
       <span className="font-extrabold">Last Updated:</span> July 12, 2024

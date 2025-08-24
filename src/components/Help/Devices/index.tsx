@@ -4,8 +4,10 @@ import { useState } from 'react';
 import ImageFader from '@app/components/Common/ImageFader';
 import { ComputerDesktopIcon, TvIcon } from '@heroicons/react/24/outline';
 import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
-import useBackdrops from '@app/hooks/useBackdrops';
 import Image from 'next/image';
+import useSWR from 'swr';
+import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 
 interface imageArrayProps {
   src: string;
@@ -22,6 +24,7 @@ interface TabProps {
 
 const DeviceTabs = () => {
   const [activeTab, setActive] = useState('tab-0');
+  const { currentSettings } = useSettings();
 
   const tabs: TabProps[] = [
     {
@@ -47,10 +50,9 @@ const DeviceTabs = () => {
           fast, easy, and affordable way to watch
           <span className="text-primary">
             {' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
-          on your TV with the Ple<span className="link-accent">x</span>&trade;
-          app.
+          on your TV with the <PlexLogo className="inline-block size-9" /> app.
         </>
       ),
       imageArray: [
@@ -69,13 +71,13 @@ const DeviceTabs = () => {
       heading: 'BUILT-IN APP CONNECTION',
       paragraph: (
         <>
-          Enjoy Ple<span className="text-accent">x</span>&apos;s&trade; gorgeous
-          interface on your big screen with the Ple
-          <span className="text-accent">x</span> Smart TV app, available in most
-          smart TV app stores, and access
-          <span className="tet-primary">
+          Enjoy <PlexLogo className="inline-block size-9" />
+          &apos;s gorgeous interface on your big screen with the{' '}
+          <PlexLogo className="inline-block size-9" /> Smart TV app, available
+          in most smart TV app stores, and access
+          <span className="text-primary">
             {' '}
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           directly on-screen.
         </>
@@ -112,10 +114,10 @@ const DeviceTabs = () => {
         <>
           You can also watch{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
-          on a variety of game consoles with the Ple
-          <span className="link-warning">x</span>&trade; app.
+          on a variety of game consoles with the{' '}
+          <PlexLogo className="inline-block size-9" /> app.
         </>
       ),
       imageArray: [
@@ -136,7 +138,7 @@ const DeviceTabs = () => {
         <>
           Take{' '}
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           with you
         </>
@@ -144,16 +146,16 @@ const DeviceTabs = () => {
       paragraph: (
         <>
           It’s easy to watch <span className="text-purple">Nickflix</span>TV
-          from anywhere. If Ple<span className="link-warning">x</span>&trade;
-          isn’t already on your phone or tablet, you can download the free app
-          from the Apple App Store, Google Play, or the Windows Phone Store.
+          from anywhere. If <PlexLogo className="inline-block size-9" /> isn’t
+          already on your phone or tablet, you can download the free app from
+          the Apple App Store, Google Play, or the Windows Phone Store.
           <br />
           <br />
           <span className="text-xs text-neutral">
-            *The Ple<span className="link-warning">x</span>&trade; app currently
-            only offers free playback via the casting feature. To watch on the
-            app directly on your phone a small one-time fee is required. If you
-            wish not to pay the fee, you may use the newly mobile optimized{' '}
+            *The <PlexLogo className="inline-block size-9" /> app currently only
+            offers free playback via the casting feature. To watch on the app
+            directly on your phone a small one-time fee is required. If you wish
+            not to pay the fee, you may use the newly mobile optimized{' '}
             <span className="text-primary">
               {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
             </span>
@@ -175,7 +177,7 @@ const DeviceTabs = () => {
       paragraph: (
         <>
           <span className="text-primary">
-            {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+            {currentSettings.applicationTitle}
           </span>{' '}
           is optimized for today&apos;s most popular browsers so you can watch
           on your PC or laptop.
@@ -184,7 +186,11 @@ const DeviceTabs = () => {
     },
   ];
 
-  const backdrops = useBackdrops();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
 
   return (
     <div className="grid">
@@ -208,36 +214,15 @@ const DeviceTabs = () => {
         })}
       </div>
       <div className="bg-zinc-200 relative min-h-[47.5vh]">
-        {backdrops ? (
-          <ImageFader
-            rotationSpeed={6000}
-            gradient="backdrop-blur-xl bg-black/70"
-            backgroundImages={
-              backdrops?.map(
-                (backdrop) =>
-                  `https://image.tmdb.org/t/p/original${backdrop.url}`
-              ) ?? []
-            }
-          />
-        ) : (
-          <div>
-            <div
-              className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
-            >
-              <Image
-                unoptimized
-                className="absolute inset-0 h-full w-full"
-                style={{ objectFit: 'cover' }}
-                alt=""
-                src={'/img/people-cinema-watching.jpg'}
-                fill
-              />
-              <div
-                className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
-              />
-            </div>
-          </div>
-        )}
+        <ImageFader
+          rotationSpeed={6000}
+          gradient="backdrop-blur-xl bg-black/70"
+          backgroundImages={
+            backdrops?.map(
+              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+            ) ?? ['/img/people-cinema-watching.jpg']
+          }
+        />
         {tabs?.map((tab, i) => {
           return (
             <div
@@ -258,10 +243,12 @@ const DeviceTabs = () => {
                         key={i}
                         className="border border-neutral bg-zinc-200 w-full h-36 p-4 place-content-center"
                       >
-                        <img
+                        <Image
                           className="w-auto h-auto"
                           src={image.src}
                           alt={image.alt}
+                          width={128}
+                          height={48}
                         />
                       </div>
                     );
@@ -274,7 +261,7 @@ const DeviceTabs = () => {
       </div>
       <div className="container mx-auto text-center py-10 px-5 text-black">
         <span className="text-primary font-extrabold">
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </span>{' '}
         membership and internet connection required.
       </div>

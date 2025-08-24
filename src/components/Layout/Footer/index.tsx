@@ -1,10 +1,17 @@
 'use client';
 import BackToTopBtn from '@app/components/Common/BackToTopBtn';
+import useSettings from '@app/hooks/useSettings';
+import { useUser, Permission } from '@app/hooks/useUser';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 function Footer() {
   const [currentYear] = useState(() => new Date().getFullYear());
+  const { currentSettings } = useSettings();
+  const { hasPermission } = useUser();
+
   return (
     <footer
       id="footer"
@@ -75,10 +82,12 @@ function Footer() {
               href="https://www.nickelsh1ts.com"
               rel="noreferrer"
             >
-              <img
+              <Image
                 alt="logo"
                 className="h-auto w-64"
                 src="/nickelsh1ts-full.png"
+                width={256}
+                height={64}
               />
             </a>
           </div>
@@ -88,39 +97,63 @@ function Footer() {
             className="link-neutral text-decoration-none"
             href="/help/legal/termsofuse"
           >
-            Terms of Use
+            <FormattedMessage
+              id="footer.termsOfUse"
+              defaultMessage="Terms of Use"
+            />
           </Link>
           <Link
             className="link-neutral text-decoration-none"
             href="/help/legal/privacy"
           >
-            Privacy Policy
+            <FormattedMessage
+              id="footer.privacyPolicy"
+              defaultMessage="Privacy Policy"
+            />
           </Link>
           <Link
             className="link-neutral text-decoration-none"
             href="/help/legal/privacy#cookies"
           >
-            Cookie Preferences
+            <FormattedMessage
+              id="footer.cookiePreferences"
+              defaultMessage="Cookie Preferences"
+            />
           </Link>
           <div></div>
           <Link className="link-neutral text-decoration-none" href="/help/">
-            Help Centre
+            <FormattedMessage
+              id="help.helpCentre"
+              defaultMessage="Help Centre"
+            />
           </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href={`//status.${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com/status/services`}
-          >
-            Status
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href={`mailto:info@${process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}.com`}
-          >
-            Contact Us
-          </Link>
-          <Link className="link-neutral text-decoration-none" href="/admin">
-            Admin Centre
-          </Link>
+          {currentSettings.statusEnabled && currentSettings.statsUrl && (
+            <Link
+              className="link-neutral text-decoration-none"
+              href={currentSettings.statusUrl}
+            >
+              <FormattedMessage id="common.status" defaultMessage="Status" />
+            </Link>
+          )}
+          {currentSettings.supportEmail && (
+            <Link
+              className="link-neutral text-decoration-none"
+              href={`mailto:${currentSettings.supportEmail}`}
+            >
+              <FormattedMessage
+                id="footer.contactUs"
+                defaultMessage="Contact Us"
+              />
+            </Link>
+          )}
+          {hasPermission(Permission.ADMIN) && (
+            <Link className="link-neutral text-decoration-none" href="/admin">
+              <FormattedMessage
+                id="common.adminCentre"
+                defaultMessage="Admin Centre"
+              />
+            </Link>
+          )}
         </nav>
       </div>
       <p

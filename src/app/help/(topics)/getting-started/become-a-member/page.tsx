@@ -1,7 +1,12 @@
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
+import useSettings from '@app/hooks/useSettings';
+import PlexLogo from '@app/assets/services/plex.svg';
 
 const HelpContent = () => {
+  const { currentSettings } = useSettings();
+
   return (
     <>
       <div className="mt-5 font-extrabold" id="inviteafriend">
@@ -9,8 +14,8 @@ const HelpContent = () => {
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li>
-          Sign in to {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} from your
-          preferred device
+          Sign in to {currentSettings.applicationTitle} from your preferred
+          device
         </li>
         <li>Look for and select the options menu</li>
         <li>Choose &quot;Invite a friend&quot;</li>
@@ -32,12 +37,12 @@ const HelpContent = () => {
         team and is not guaranteed.
       </p>
       <div className="mt-5 font-extrabold" id="joinstreamarr">
-        How to join {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}:
+        How to join {currentSettings.applicationTitle}:
       </div>
       <ul className="list list-decimal ms-14 my-4">
         <li>
           Navigate to the &quot;Home&quot; or &quot;Sign Up&quot; page on{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          {currentSettings.applicationTitle}
         </li>
         <li>In the provided text input, enter the invite code</li>
         <li>Select the &quot;Let&apos;s Get Started&quot; button to begin</li>
@@ -48,25 +53,23 @@ const HelpContent = () => {
         <li>
           If the information provided is valid and sign up is successful, you
           will need to accept your invite via email before you can access
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} services
+          {currentSettings.applicationTitle} services
         </li>
       </ul>
       <p className="italic text-sm my-4">Important Information</p>
       <ul className="list list-disc ms-14 my-4">
         <li>
-          In order to access {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}{' '}
-          services a Ple
-          <span className="text-accent">x</span>&trade; account is required
+          In order to access {currentSettings.applicationTitle} services a{' '}
+          <PlexLogo className="inline-block size-9" /> account is required
         </li>
         <li>
-          Once you have successfully joined{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}, you may not invite
-          your own friends until the 7 day trial period has ended
+          Once you have successfully joined {currentSettings.applicationTitle},
+          you may not invite your own friends until the 7 day trial period has
+          ended
         </li>
         <li>
           Failure to accept the invite email sent after registration will result
-          in an inability to access most of{' '}
-          {process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}
+          in an inability to access most of {currentSettings.applicationTitle}
           &apos;s services
         </li>
       </ul>
@@ -80,27 +83,29 @@ const HelpContent = () => {
   );
 };
 
-const anchors = [
-  { href: '#inviteafriend', title: 'Invite a Friend' },
-  {
-    href: '#joinstreamarr',
-    title: `Joining ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`,
-  },
-];
-
 const BecomeMember = () => {
+  const { currentSettings } = useSettings();
+
+  const anchors = [
+    { href: '#inviteafriend', title: 'Invite a Friend' },
+    {
+      href: '#joinstreamarr',
+      title: `Joining ${currentSettings.applicationTitle}`,
+    },
+  ];
+
   return (
     <section className="text-neutral bg-zinc-100 py-5">
       <Breadcrumbs
         paths="/getting-started/become-a-member"
         homeElement={'Help Centre'}
-        names={`Getting Started,how to become a member of ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
+        names={`Getting Started,how to become a member of ${currentSettings.applicationTitle}`}
       />
       <HelpCard
         anchors={anchors}
         content={<HelpContent />}
-        heading={`How to become a member of ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}`}
-        subheading={`${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'} is a private members access streaming service. Currently members can only be invited by an already active member of ${process.env.NEXT_PUBLIC_APP_NAME || 'Streamarr'}. Please reach out to a friend and ask them to send you an invite.`}
+        heading={`How to become a member of ${currentSettings.applicationTitle}`}
+        subheading={`${currentSettings.applicationTitle} is a private members access streaming service. Currently members can only be invited by an already active member of ${currentSettings.applicationTitle}. Please reach out to a friend and ask them to send you an invite.`}
       />
     </section>
   );

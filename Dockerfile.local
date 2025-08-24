@@ -6,6 +6,18 @@ FROM base AS deps
 COPY . /app
 WORKDIR /app
 
+RUN apk add --no-cache python3 py3-pip
+
+# Create and activate virtual environment, then install Python dependencies
+RUN if [ -f server/python/requirements.txt ]; then \
+    python3 -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --no-cache-dir -r server/python/requirements.txt; \
+fi
+
+# Make sure the virtual environment is in PATH
+ENV PATH="/opt/venv/bin:$PATH"
+
 RUN corepack enable
 RUN yarn set version stable
 
@@ -15,4 +27,4 @@ FROM deps AS runner
 
 WORKDIR /app
 
-CMD ["yarn", "dev"]
+CMD ["/bin/sh", "-c", "python3 server/python/plex_invite.py & yarn dev"]

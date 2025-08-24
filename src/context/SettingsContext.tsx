@@ -1,22 +1,35 @@
 'use client';
+import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import React from 'react';
 
-const defaultSettings = {
+const defaultSettings: PublicSettingsResponse = {
   initialized: false,
   applicationTitle: 'Streamarr',
   applicationUrl: '',
   localLogin: true,
   region: '',
-  originalLanguage: '',
   cacheImages: false,
   enablePushRegistration: false,
+  vapidPublic: '',
   locale: 'en',
   emailEnabled: false,
   newPlexLogin: true,
+  enableRequest: false,
+  requestUrl: '',
+  supportUrl: '',
+  supportEmail: '',
+  extendedHome: true,
+  releaseSched: false,
+  enableSignUp: false,
+  statsUrl: '',
+  statusUrl: '',
+  statusEnabled: false,
+  customLogo: undefined,
+  customLogoSmall: undefined,
 };
 
 export interface SettingsContextProps {
-  currentSettings: typeof defaultSettings;
+  currentSettings: PublicSettingsResponse;
   children?: React.ReactNode;
 }
 

@@ -1,4 +1,4 @@
-import Invite from '@app/components/Invite';
+import Invite from '@app/components/InviteList';
 
 const UsersInvitesPage = () => {
   return <Invite />;

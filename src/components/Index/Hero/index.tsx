@@ -1,6 +1,13 @@
+'use client';
 import ImageFader from '@app/components/Common/ImageFader';
-import useBackdrops from '@app/hooks/useBackdrops';
+import useSWR from 'swr';
 import Image from 'next/image';
+import { type Library } from '@server/lib/settings';
+import useSettings from '@app/hooks/useSettings';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -8,63 +15,84 @@ const scrollToSection = (id: string) => {
 };
 
 export default function Hero() {
-  const backdrops = useBackdrops();
+  const intl = useIntl();
+  const { currentSettings } = useSettings();
+  const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
+
+  const { data: mediaLibraries } = useSWR<Library[]>('/api/v1/libraries', {
+    refreshInterval: 0,
+    refreshWhenHidden: false,
+    revalidateOnFocus: false,
+  });
+
+  const logoSrc = currentSettings.customLogo || '/logo_full.png';
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <section id="promo" className="min-h-lvh -mt-20">
-      {backdrops ? (
-        <ImageFader
-          rotationSpeed={6000}
-          backgroundImages={
-            backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop.url}`
-            ) ?? []
-          }
-        />
-      ) : (
-        <div>
-          <div
-            className={`absolute-top-shift absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in`}
-          >
-            <Image
-              unoptimized
-              className="absolute inset-0 h-full w-full"
-              style={{ objectFit: 'cover' }}
-              alt=""
-              src={'/img/people-cinema-watching.jpg'}
-              fill
-            />
-            <div
-              className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0`}
-            />
-          </div>
-        </div>
-      )}
+      <ImageFader
+        rotationSpeed={6000}
+        backgroundImages={
+          backdrops?.map(
+            (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+          ) ?? ['/img/people-cinema-watching.jpg']
+        }
+      />
       <div className="grid grid-flow-row min-h-lvh md:ps-12 md:text-start text-center relative">
+        <div className="absolute top-20 right-4">
+          <LanguagePicker />
+        </div>
         <div className="md:ps-4 mt-auto pt-24">
-          <img
-            src={`${process.env.NEXT_PUBLIC_LOGO ? process.env.NEXT_PUBLIC_LOGO : '/logo_full.png'}`}
+          <Image
+            src={logoSrc}
             alt="logo"
-            className="mb-10 mt-5 h-auto w-82 mx-auto md:mx-0 px-5 md:px-0"
+            width={448}
+            height={100}
+            unoptimized={true}
+            className="mb-10 mt-5 h-auto w-[448px] mx-auto md:mx-0 px-5 md:px-0"
           />
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">
-            Unlimited movies and TV shows
+            <FormattedMessage
+              id="hero.title"
+              defaultMessage="Unlimited movies and TV shows"
+            />
           </h1>
           <p className="text-sm md:text-base tracking-wide mb-12">
-            Watch anywhere, anytime for free. The future is now.
+            <FormattedMessage
+              id="hero.subtitle"
+              defaultMessage="Watch anywhere, anytime for free. The future is now."
+            />
           </p>
-          <form action="" className="w-fit mx-auto md:mx-0" method="post">
-            <div className="label">
-              <label
-                htmlFor="icode"
-                className="label-text mb-2 text-sm md:text-base"
-              >
-                Invites are currently disabled. Please try again later.
-              </label>
-            </div>
-            <div className="flex items-end mb-3">
-              <div className="flex place-items-center w-full max-w-md mb-3">
-                <div className="relative w-full me-0 max-w-48">
+          {currentSettings.enableSignUp && (
+            <form
+              action=""
+              className="w-fit mx-auto md:mx-0"
+              method="post"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <div className="label">
+                <label
+                  htmlFor="icode"
+                  className="label-text mb-2 text-sm md:text-base text-center md:text-start"
+                >
+                  <FormattedMessage
+                    id="hero.inviteCode"
+                    defaultMessage="Enter your invite code to get started"
+                  />
+                </label>
+              </div>
+              {error && (
+                <div className="mb-2 text-error font-semibold text-sm md:text-base">
+                  {error}
+                </div>
+              )}
+              <div className="flex flex-col sm:flex-row items-end mb-6 w-full max-w-md">
+                <div className="relative w-full sm:max-w-48">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -83,60 +111,112 @@ export default function Hero() {
                   </div>
                   <input
                     id="icode"
-                    className="input text-xl rounded-none rounded-l-lg w-full pl-12 md:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:outline-warning/30"
+                    ref={inputRef}
+                    className="input text-xl rounded-none rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none w-full pl-12 sm:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:outline-warning/30"
                     name="icode"
                     aria-label="Invite Code"
-                    placeholder="Invite code"
-                    maxLength={6}
+                    placeholder={intl.formatMessage({
+                      id: 'invite.code',
+                      defaultMessage: 'Invite Code',
+                    })}
                     required
-                    disabled
+                    onChange={() => setError(null)}
                   />
                 </div>
                 <button
-                  type="submit"
-                  disabled
-                  className="btn btn-warning rounded-none rounded-r-lg"
+                  type="button"
+                  className="btn btn-warning rounded-none rounded-b-lg sm:rounded-r-lg sm:rounded-bl-none w-full sm:w-auto sm:mt-0 sm:ml-0"
+                  onClick={() => {
+                    const code = inputRef.current?.value.trim();
+                    if (code) {
+                      setError(null);
+                      window.location.href = `/signup?icode=${encodeURIComponent(code)}`;
+                    } else {
+                      setError(
+                        intl.formatMessage({
+                          id: 'hero.error.emptyCode',
+                          defaultMessage: 'Please enter a valid invite code.',
+                        })
+                      );
+                    }
+                  }}
                 >
                   <span className="text-lg text-center rounded-lg cursor-pointe font-bold">
-                    Let&apos;s Get Started!
+                    <FormattedMessage
+                      id="hero.getStarted"
+                      defaultMessage="Let's Get Started!"
+                    />
                   </span>
                 </button>
               </div>
-            </div>
-          </form>
+            </form>
+          )}
           <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
-            <p className="first:pl-0 pl-4">
-              <span className="font-bold">Movies: </span> 805
-            </p>
-            <p className="first:pl-0 pl-4">
-              <span className="font-bold">TV Shows: </span> 213
-            </p>
-            <p className="first:pl-0 pl-4">
-              <span className="font-bold">Retro Movies: </span> 184
-            </p>
-            <p className="first:pl-0 pl-4">
-              <span className="font-bold">Retro TV Shows: </span> 130
-            </p>
-            <p className="first:pl-0 pl-4 font-bold">+ more</p>
+            {mediaLibraries ? (
+              mediaLibraries.length > 0 &&
+              (() => {
+                // Separate and sort movies and shows by id
+                const movies = mediaLibraries
+                  .filter((lib) => lib.type === 'movie')
+                  .sort((a, b) => a.id.localeCompare(b.id));
+                const shows = mediaLibraries
+                  .filter((lib) => lib.type === 'show')
+                  .sort((a, b) => a.id.localeCompare(b.id));
+                // Alternate them
+                const alternated: typeof mediaLibraries = [];
+                let i = 0,
+                  j = 0;
+                while (
+                  alternated.length < 4 &&
+                  (i < movies.length || j < shows.length)
+                ) {
+                  if (i < movies.length) alternated.push(movies[i++]);
+                  if (alternated.length < 4 && j < shows.length)
+                    alternated.push(shows[j++]);
+                }
+                return (
+                  <>
+                    {alternated.map((lib) => (
+                      <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
+                        <span className="font-bold">{lib.name} </span>{' '}
+                        {lib.mediaCount}
+                      </p>
+                    ))}
+                    {mediaLibraries.length > 4 && (
+                      <p className="first:pl-0 pl-4 font-bold">
+                        <FormattedMessage
+                          id="hero.more"
+                          defaultMessage="+ more"
+                        />
+                      </p>
+                    )}
+                  </>
+                );
+              })()
+            ) : (
+              <LoadingEllipsis />
+            )}
           </div>
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">
-          <button className="" onClick={() => scrollToSection('requesting')}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={3.5}
-              stroke="currentColor"
-              className="size-9 fa-bounce"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </button>
+          {currentSettings.extendedHome && (
+            <button className="" onClick={() => scrollToSection('requesting')}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={3.5}
+                stroke="currentColor"
+                className="size-9 fa-bounce"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
     </section>

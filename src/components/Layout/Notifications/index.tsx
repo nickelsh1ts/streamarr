@@ -4,7 +4,7 @@ import useClickOutside from '@app/hooks/useClickOutside';
 import { Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
-import moment from 'moment';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { usePathname } from 'next/navigation';
 import { useContext, useRef } from 'react';
 
@@ -14,6 +14,8 @@ interface NotificationCardProps {
   children?: React.ReactNode;
   createdDate?: Date;
 }
+
+//TODO: Implement global and user notifications and management
 
 const NotificationCard = ({ icon, title, children, createdDate }) => {
   const { setIsOpen } = useContext(NotificationContext);
@@ -55,7 +57,7 @@ const currentNotifications: NotificationCardProps[] = [
 
 const Notifications = () => {
   const { isOpen, setIsOpen } = useContext(NotificationContext);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   useClickOutside(ref, () => setIsOpen(false));
 
