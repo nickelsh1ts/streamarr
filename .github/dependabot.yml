@@ -3,15 +3,29 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
-# TODO: Update Dependabot configuration
-
 version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: "monthly"
+      time: "07:00"
+      timezone: "America/New_York"
+    minimum-package-age:
+      semver-major: 60 # days
+      semver-minor: 14  # days
+      semver-patch: 5  # days
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
+      day: "sunday"
+      time: "08:00"
+      timezone: "America/New_York"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "09:00"
+      timezone: "America/New_York"

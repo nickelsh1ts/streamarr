@@ -4,9 +4,9 @@
 
 #### To-Dos
 
-- [ ] Successful build `yarn prepare && yarn standalone`
-- [ ] Successful `node server.js`
-- [ ] Successful docker image deploy
+- [ ] Successful build `yarn prepare && yarn build`
+- [ ] Translation keys `yarn i18n:extract`
+- [ ] Database migration (if applicable)
 
 #### Issues Fixed or Closed
 
