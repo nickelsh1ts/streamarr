@@ -1,3 +1,4 @@
+'use client';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -88,7 +89,7 @@ const PullToRefresh = () => {
   return (
     <div
       ref={refreshDiv}
-      className="absolute left-0 right-0 top-0 z-50 m-auto w-fit transition-all ease-out"
+      className="absolute left-0 right-0 top-0 z-50 m-auto w-fit transition-all ease-out pointer-events-none"
       id="refreshIcon"
       style={{
         top:
@@ -102,7 +103,7 @@ const PullToRefresh = () => {
       <div
         className={`${
           refreshDiv.current?.classList.contains('loading') && 'animate-spin'
-        } relative -top-24 h-9 w-9 rounded-full border-4 border-fox bg-fox shadow-md shadow-black ring-1 ring-zinc-700`}
+        } relative -top-24 h-9 w-9 rounded-full border-2 border-primary bg-secondary p-1 shadow-md shadow-black ring-1 ring-zinc-700`}
         style={{ animationDirection: 'reverse' }}
       >
         <ArrowPathIcon

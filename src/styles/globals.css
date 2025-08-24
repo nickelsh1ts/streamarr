@@ -1,10 +1,215 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@layer components {
+  .list-circle {
+    list-style-type: circle;
+  }
+  code {
+    @apply truncate bg-base-100/75 py-1 px-1.5 rounded-md;
+  }
+}
 
+@tailwind utilities;
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
 
+:root {
+  --fa-animation-duration: 2s;
+}
+
+.fa-bounce {
+  -webkit-animation-name: fa-bounce;
+  animation-name: fa-bounce;
+  -webkit-animation-delay: var(--fa-animation-delay, 0s);
+  animation-delay: var(--fa-animation-delay, 0s);
+  -webkit-animation-direction: var(--fa-animation-direction, normal);
+  animation-direction: var(--fa-animation-direction, normal);
+  -webkit-animation-duration: var(--fa-animation-duration, 1s);
+  animation-duration: var(--fa-animation-duration, 1s);
+  -webkit-animation-iteration-count: var(
+    --fa-animation-iteration-count,
+    infinite
+  );
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  -webkit-animation-timing-function: var(
+    --fa-animation-timing,
+    cubic-bezier(0.28, 0.84, 0.42, 1)
+  );
+  animation-timing-function: var(
+    --fa-animation-timing,
+    cubic-bezier(0.28, 0.84, 0.42, 1)
+  );
+}
+
+@keyframes fa-bounce {
+  0% {
+    -webkit-transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0);
+  }
+  10% {
+    -webkit-transform: scale(
+        var(--fa-bounce-start-scale-x, 1.1),
+        var(--fa-bounce-start-scale-y, 0.9)
+      )
+      translateY(0);
+    transform: scale(
+        var(--fa-bounce-start-scale-x, 1.1),
+        var(--fa-bounce-start-scale-y, 0.9)
+      )
+      translateY(0);
+  }
+  30% {
+    -webkit-transform: scale(
+        var(--fa-bounce-jump-scale-x, 0.9),
+        var(--fa-bounce-jump-scale-y, 1.1)
+      )
+      translateY(var(--fa-bounce-height, -0.5em));
+    transform: scale(
+        var(--fa-bounce-jump-scale-x, 0.9),
+        var(--fa-bounce-jump-scale-y, 1.1)
+      )
+      translateY(var(--fa-bounce-height, -0.5em));
+  }
+  50% {
+    -webkit-transform: scale(
+        var(--fa-bounce-land-scale-x, 1.05),
+        var(--fa-bounce-land-scale-y, 0.95)
+      )
+      translateY(0);
+    transform: scale(
+        var(--fa-bounce-land-scale-x, 1.05),
+        var(--fa-bounce-land-scale-y, 0.95)
+      )
+      translateY(0);
+  }
+  57% {
+    -webkit-transform: scale(1) translateY(var(--fa-bounce-rebound, -0.125em));
+    transform: scale(1) translateY(var(--fa-bounce-rebound, -0.125em));
+  }
+  64% {
+    -webkit-transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    -webkit-transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0);
+  }
+}
+*,
+[class*='Scroller-scroller-'],
+*:hover {
+  scrollbar-color: auto;
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 14px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsla(0, 0%, 100%, 0.2);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-thumb:active {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #1f1f1f;
+}
+::-webkit-scrollbar-track:active {
+  background: #1f1f1f;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@media all and (display-mode: browser) {
+  .pwa-only {
+    @apply hidden;
+  }
+}
+
+.react-select-container {
+  @apply w-full;
+}
+
+.react-select-container .react-select__control {
+  @apply bg-base-100 border border-primary rounded-md text-primary-content hover:border-primary shadow-none;
+}
+
+.react-select-container .react-select__input {
+  @apply !text-primary-content p-2;
+}
+
+.react-select__value-container {
+  @apply p-2 gap-2;
+}
+
+.react-select-container .react-select__multi-value {
+  @apply border border-primary rounded-md bg-primary;
+}
+
+.react-select__multi-value__label {
+  @apply !text-primary-content text-sm px-2 py-1;
+}
+
+.react-select__multi-value__remove {
+  @apply hover:!bg-secondary hover:!bg-opacity-70 hover:!text-error px-1 rounded-r-md;
+}
+
+.react-select-container .react-select__indicator-separator {
+  @apply bg-neutral-500 my-2 mx-2;
+}
+
+.react-select-container .react-select__indicator {
+  @apply text-white mx-2 hover:text-neutral-600 hover:cursor-pointer;
+}
+
+.react-select-container .react-select__menu {
+  @apply bg-base-100 rounded-md;
+}
+
+.react-select__menu-list {
+  @apply bg-base-100 border border-primary px-1 rounded-md mt-2 py-2 text-sm;
+}
+
+.react-select__option {
+  @apply p-2;
+}
+
+.react-select__option--is-focused {
+  @apply !bg-primary rounded-md text-primary-content;
+}
+
+.react-select__option--is-selected {
+  @apply !bg-primary text-primary-content;
+}
+
+.react-select__option:active {
+  @apply !bg-primary text-primary-content;
+}

@@ -21,8 +21,22 @@ const useClickOutside = (
     };
     document.body.addEventListener('click', handleBodyClick, { capture: true });
 
+    // Attach to all iframes
+    const iframes = Array.from(document.querySelectorAll('iframe'));
+    const attachedDocs: Document[] = [];
+    iframes.forEach((iframe) => {
+      const doc = iframe.contentDocument;
+      if (doc) {
+        doc.addEventListener('click', handleBodyClick, { capture: true });
+        attachedDocs.push(doc);
+      }
+    });
+
     return () => {
       document.body.removeEventListener('click', handleBodyClick);
+      attachedDocs.forEach((doc) => {
+        doc.removeEventListener('click', handleBodyClick);
+      });
     };
   }, [ref, callback]);
 };

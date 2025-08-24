@@ -12,5 +12,21 @@
   "files.associations": {
     "globals.css": "tailwindcss"
   },
-  "cSpell.words": ["Homelab", "nextjs", "NICKFLIXTV", "rehype", "Streamarr"]
+  "editor.codeActionsOnSave": {
+    "source.fixAll.stylelint": "always"
+  },
+  // Recommended config for the extension
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "cSpell.words": [
+    "Homelab",
+    "MOVIEDB",
+    "nextjs",
+    "NICKFLIXTV",
+    "pxml",
+    "rehype",
+    "Streamarr"
+  ],
+  "todo-tree.tree.scanMode": "workspace"
 }

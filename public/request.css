@@ -1,0 +1,164 @@
+@charset "utf-8";
+/* CSS Document */
+@import url(https://theme-park.dev/css/base/overseerr/overseerr-base.css);
+.react-chroma-dark {
+  --color-background-accent: #7E27D3;
+  --color-brand-accent: #974ede;
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: #974ede !important;
+  --button-color-hover: #974ede;
+  --accent-color: 151, 78, 222;
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: #7E27D3;
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: #7E27D3;
+  --color-background-accent-focus: #974ede ;
+  --bs-primary: #7E27D3 ;
+  --color-text-accent: #974ede;
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: #7E27D3;
+  --overseerr-gradient: linear-gradient(180deg, rgba(43, 11, 83, 0.47) 0%, rgba(31, 31, 31, 1) 100%);
+  --label-text-color: #fff;
+  --tw-ring-color: 7E27D3;
+}
+:root {
+  --color-background-accent: #7E27D3;
+  --color-brand-accent: #974ede;
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: #974ede;
+  --button-color-hover: #974ede;
+  --accent-color: 151, 78, 222;
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: #7E27D3;
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: #7E27D3;
+  --color-background-accent-focus: #974ede ;
+  --bs-primary: #7E27D3 ;
+  --color-text-accent: #974ede;
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: rgba(127, 17, 224, .15);
+  --overseerr-gradient: linear-gradient(180deg, rgba(43, 11, 83, 0.47) 0%, rgba(31, 31, 31, 1) 100%);
+  --label-text-color: #fff;
+  --tw-ring-color: #7E27D3!important;
+}
+/* Desktop Only */
+@media (min-width: 1024px) {
+
+}
+/* Except Desktop */
+@media (max-width: 1023px) {
+
+}
+/*Mobile Only*/
+@media (max-width: 639px) {
+  [aria-labelledby*="modal-headline"]{
+    padding-bottom: 4rem;
+  }
+  div.sm\:hidden:has(div.fixed) {
+    display: none!important;
+  }
+}
+div:has( > div.sidebar) {
+  display: none;
+}
+.lg\:ml-64 {
+  margin-left: 0;
+}
+.lg\:left-64 {
+  left: 0;
+}
+[aria-label*="Open sidebar"]{
+  display: none;
+}
+button.pwa-only {
+  display: none;
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 14px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsla(0, 0%, 100%, 0.2);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-thumb:active {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+#__next>div>div.relative.mb-16.flex.w-0.min-w-0.flex-1.flex-col.lg\:ml-64>main>div>div>div>div.hide-scrollbar.relative.-my-2.-ml-4.-mr-4.overflow-y-auto.overflow-x-scroll.overscroll-x-contain.whitespace-nowrap.px-2.py-2>div>a, #__next>div>div.relative.mb-16.flex.w-0.min-w-0.flex-1.flex-col.lg\:ml-64>main>div>div>div>div>div.hide-scrollbar.relative.-my-2.-ml-4.-mr-4.overflow-y-auto.overflow-x-scroll.overscroll-x-contain.whitespace-nowrap.px-2.py-2>div>a>div {
+  background: revert;
+}
+#__next>div>div.relative.flex.flex-col.flex-1.w-0.min-w-0.mb-16.lg\:ml-64>main>div>div>div>div>div.relative.px-2.py-2.-my-2.-ml-4.-mr-4.overflow-x-scroll.overflow-y-auto.whitespace-nowrap.hide-scrollbar.overscroll-x-contain>div>a>div:hover, #__next>div>div.relative.flex.flex-col.flex-1.w-0.min-w-0.mb-16.lg\:ml-64>main>div>div>ul>li>a>div:hover {
+  background: revert;
+}
+body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.h-full.w-full.items-center.justify-center.bg-gray-800.bg-opacity-70.opacity-100>div>div.absolute.top-0.left-0.right-0.z-0.h-64.max-h-full.w-full>span>img {
+  display: block!important;
+}
+body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.items-center.justify-center.w-full.h-full.bg-gray-800.bg-opacity-70.enter-done>div>div.absolute.top-0.left-0.right-0.z-0.w-full.h-64>div.absolute.inset-0, body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.items-center.justify-center.w-full.h-full.bg-gray-800.bg-opacity-70>div>div.absolute.top-0.left-0.right-0.z-0.w-full.h-64>div.absolute.inset-0 {
+  background: var(--overseerr-gradient)!important;
+}
+.bg-gray-800 {
+  background: rgba(31, 31, 31, .45);
+}
+body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.h-full.w-full.items-center.justify-center.bg-gray-800.bg-opacity-70.opacity-100>div>div.absolute.top-0.left-0.right-0.z-0.h-64.max-h-full.w-full>span>img {
+  display: block!important;
+}
+#__next>div>div.relative.flex.flex-col.flex-1.w-0.min-w-0.mb-16.lg\:ml-64>main>div>div>div.absolute.top-0.left-0.right-0.z-0.h-96>div>div>div.absolute.inset-0 {
+  background-image: var(--overseerr-gradient)!important;
+}
+.bg-indigo-500 {
+  background-color: var(--bs-primary);
+}
+.border-indigo-400 {
+  border-color: var(--color-background-accent-focus);
+}
+.bg-blue-600 {
+  background-color: var(--bs-primary);
+}
+.border-blue-500 {
+  border-color: var(--color-background-accent-focus);
+}
+.ring-gray-700 {
+  --tw-ring-color: rgb(127 17 224/var(--tw-ring-opacity));
+}
+.border-indigo-500 {
+  border-color: var(--color-background-accent-focus);
+}
+.hover\:bg-indigo-500:hover {
+  background-color: var(--color-background-accent-focus);
+}
+.text-yellow-100 {
+  color: var(--bs-text);
+}
