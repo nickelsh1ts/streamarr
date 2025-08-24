@@ -94,6 +94,10 @@ class LogoUpload {
   }
 
   public getLogoPath(filename: string): string {
+    // Defensive: prevent directory traversal in case function is misused
+    if (filename.includes('..') || path.basename(filename) !== filename) {
+      throw new Error('Invalid filename');
+    }
     return path.join(this.uploadsDir, filename);
   }
 }

@@ -10,12 +10,13 @@ const logoUpload = new LogoUpload();
 logoRoutes.get('/:filename', async (req, res) => {
   try {
     const { filename } = req.params;
-    const filePath = logoUpload.getLogoPath(filename);
-
-    if (!fs.existsSync(filePath)) {
+    // Only allow known filenames to prevent directory traversal and unauthorized access
+    const ALLOWED_FILENAMES = ['logo_full.png', 'logo_sm.png'];
+    if (!ALLOWED_FILENAMES.includes(filename)) {
       res.status(404).send('File not found');
       return;
     }
+    const filePath = logoUpload.getLogoPath(filename);
 
     const fileBuffer = fs.readFileSync(filePath);
     const ext = path.extname(filename).toLowerCase();
