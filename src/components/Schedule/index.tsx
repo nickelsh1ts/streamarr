@@ -42,12 +42,6 @@ const Schedule = () => {
       allEvents = sonarrEvents ?? [];
     } else if (currentFilter === Filter.LOCAL) {
       allEvents = localEvents ?? [];
-    } else {
-      allEvents = [
-        ...(sonarrEvents ?? []),
-        ...(radarrEvents ?? []),
-        ...(localEvents ?? []),
-      ];
     }
     // Map API event fields to BigCalendar eventProps
     return allEvents.map((e, idx) => ({
