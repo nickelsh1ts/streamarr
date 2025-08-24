@@ -12,9 +12,10 @@ updates:
       time: '07:00'
       timezone: 'America/New_York'
     cooldown:
-      - semver-major: 60 # days
-      - semver-minor: 14 # days
-      - semver-patch: 5 # days
+      default-days: 5
+      semver-major-days: 60
+      semver-minor-days: 14
+      semver-patch-days: 5
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
