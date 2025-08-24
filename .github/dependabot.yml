@@ -11,7 +11,7 @@ updates:
       interval: 'monthly'
       time: '07:00'
       timezone: 'America/New_York'
-    minimum-package-age:
+    cooldown:
       semver-major: 60 # days
       semver-minor: 14 # days
       semver-patch: 5 # days
