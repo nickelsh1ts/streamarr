@@ -1,6 +1,10 @@
 'use client';
 import AdminTabs from '@app/components/Common/AdminTabs';
-import { EnvelopeIcon, CloudIcon } from '@heroicons/react/24/solid';
+import {
+  EnvelopeIcon,
+  CloudIcon,
+  BellAlertIcon,
+} from '@heroicons/react/24/solid';
 import { FormattedMessage } from 'react-intl';
 
 type NotificationsLayoutProps = {
@@ -29,6 +33,17 @@ const notificationTabs = [
     ),
     route: '/admin/settings/notifications/webpush',
     regex: /^\/admin\/settings\/notifications\/webpush\/?/,
+  },
+  {
+    text: 'In-App',
+    content: (
+      <>
+        <BellAlertIcon className="size-4 inline-flex mb-0.5 mr-1" />{' '}
+        <FormattedMessage id="common.inApp" defaultMessage="In-App" />
+      </>
+    ),
+    route: '/admin/settings/notifications/inapp',
+    regex: /^\/admin\/settings\/notifications\/inapp\/?/,
   },
 ];
 

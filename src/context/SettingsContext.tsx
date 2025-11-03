@@ -13,6 +13,7 @@ const defaultSettings: PublicSettingsResponse = {
   vapidPublic: '',
   locale: 'en',
   emailEnabled: false,
+  inAppEnabled: false,
   newPlexLogin: true,
   enableRequest: false,
   requestUrl: '',

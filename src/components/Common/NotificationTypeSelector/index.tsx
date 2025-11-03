@@ -1,4 +1,5 @@
 import NotificationType from '@app/components/Common/NotificationTypeSelector/NotificationType';
+import { NotificationType as Notification } from '@server/constants/notification';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { sortBy } from 'lodash';
@@ -30,22 +31,6 @@ export const hasNotificationType = (
 
   return !!(value & total);
 };
-
-export enum Notification {
-  NONE = 0,
-  MEDIA_PENDING = 2,
-  MEDIA_APPROVED = 4,
-  MEDIA_AVAILABLE = 8,
-  MEDIA_FAILED = 16,
-  TEST_NOTIFICATION = 32,
-  MEDIA_DECLINED = 64,
-  MEDIA_AUTO_APPROVED = 128,
-  ISSUE_CREATED = 256,
-  ISSUE_COMMENT = 512,
-  ISSUE_RESOLVED = 1024,
-  ISSUE_REOPENED = 2048,
-  INVITE_REDEEMED = 4096,
-}
 
 export const ALL_NOTIFICATIONS = Object.values(Notification)
   .filter((v) => !isNaN(Number(v)))
@@ -99,6 +84,113 @@ const NotificationTypeSelector = ({
           !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
             type: 'or',
           }),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'friend-watching',
+        name: intl.formatMessage({
+          id: 'notification.friendWatching',
+          defaultMessage: 'Friend Watching',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.friendWatching.description',
+          defaultMessage: 'Get notified when a friend is watching a show',
+        }),
+        value: Notification.FRIEND_WATCHING,
+        hidden: !user || !hasPermission(Permission.STREAMARR),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'local-messages',
+        name: intl.formatMessage({
+          id: 'notification.localMessages',
+          defaultMessage: 'Streamarr Messages',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.localMessages.description',
+          defaultMessage:
+            'Get notified when you receive a message from Streamarr',
+        }),
+        value: Notification.LOCAL_MESSAGE,
+        hidden: !user,
+        hasNotifyUser: true,
+      },
+      {
+        id: 'new-event',
+        name: intl.formatMessage({
+          id: 'notification.newEvent',
+          defaultMessage: 'New Event',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.newEvent.description',
+          defaultMessage: 'Get notified when a new Streamarr event is created',
+        }),
+        value: Notification.NEW_EVENT,
+        hidden:
+          !user ||
+          !hasPermission([Permission.STREAMARR, Permission.VIEW_SCHEDULE], {
+            type: 'or',
+          }),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'invite-expired',
+        name: intl.formatMessage({
+          id: 'notification.inviteExpired',
+          defaultMessage: 'Invite Expired',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.inviteExpired.description',
+          defaultMessage: 'Get notified when an invite you created has expired',
+        }),
+        value: Notification.INVITE_EXPIRED,
+        hidden:
+          !user ||
+          !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
+            type: 'or',
+          }),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'system',
+        name: intl.formatMessage({
+          id: 'notification.system',
+          defaultMessage: 'System Notifications',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.system.description',
+          defaultMessage: 'Get notified about important system events',
+        }),
+        value: Notification.SYSTEM,
+        hidden: !user || !hasPermission(Permission.ADMIN),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'updates',
+        name: intl.formatMessage({
+          id: 'notification.updates',
+          defaultMessage: 'Updates',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.updates.description',
+          defaultMessage: 'Get notified about Streamarr updates',
+        }),
+        value: Notification.UPDATES,
+        hidden: !user || !hasPermission(Permission.ADMIN),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'user-created',
+        name: intl.formatMessage({
+          id: 'notification.userCreated',
+          defaultMessage: 'User Created',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.userCreated.description',
+          defaultMessage: 'Get notified when a new user is created',
+        }),
+        value: Notification.USER_CREATED,
+        hidden: !user || !hasPermission(Permission.ADMIN),
         hasNotifyUser: true,
       },
     ];

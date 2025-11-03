@@ -4,7 +4,12 @@ import DropDownMenu from '@app/components/Common/DropDownMenu';
 import UserCard from '@app/components/Layout/UserCard';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
+import { socket } from '@app/utils/webSocket';
+import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 interface UserDropdownProps {
   dropUp?: boolean;
@@ -18,10 +23,30 @@ const UserDropdown = ({
   const { user } = useUser();
   const { currentSettings } = useSettings();
   const intl = useIntl();
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
+
+  const { data, mutate: revalidate } = useSWR<NotificationResultsResponse>(
+    user ? `/api/v1/user/${user?.id}/notifications` : null
+  );
+  const unread = data?.results.filter((notification) => !notification.isRead);
+
+  useEffect(() => {
+    socket.on('newNotification', () => {
+      revalidate();
+    });
+  }, [revalidate]);
 
   return (
     <div className="indicator">
-      <span className="indicator-item indicator-bottom indicator-start left-2 bottom-2 badge badge-xs badge-error empty:block !hidden" />
+      {notificationSettings?.inAppEnabled && unread?.length > 0 && (
+        <div className="indicator-item indicator-bottom indicator-start left-2 bottom-2 content-center pointer-events-none">
+          <span className="absolute badge badge-xs badge-error text-xs top-1.5" />
+          <span className="badge badge-xs badge-error text-xs animate-ping opacity-75" />
+        </div>
+      )}
       <DropDownMenu
         toolTip={tooltip}
         tiptitle={intl.formatMessage({
@@ -39,7 +64,7 @@ const UserDropdown = ({
         }
         dropUp={dropUp}
       >
-        <UserCard />
+        <UserCard notifications={data} />
         <DropDownMenu.Item
           activeRegEx={/^\/profile\/?$/}
           divide="before"

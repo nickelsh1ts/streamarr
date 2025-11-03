@@ -10,6 +10,8 @@ import ImageFader from '@app/components/Common/ImageFader';
 import { useMemo } from 'react';
 import { publicRoutes } from '@app/middleware';
 import useSettings from '@app/hooks/useSettings';
+import Notifications from '@app/components/Layout/Notifications';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const Layout = ({
   children,
@@ -21,11 +23,12 @@ const Layout = ({
   const pathname = usePathname();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
-
-  // Use SWR to get the latest settings, which will update when mutated
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
   const { data: dynamicSettings } = useSWR('/api/v1/settings/public');
 
-  // Use dynamic settings first, then client context, then server-side as fallback
   const initialized =
     dynamicSettings?.initialized ??
     currentSettings.initialized ??
@@ -102,6 +105,7 @@ const Layout = ({
 
   return (
     <SWRConfig value={swrConfigValue}>
+      {notificationSettings?.inAppEnabled && user && <Notifications />}
       {isMainLayout ? (
         <main className="flex flex-col relative h-full min-h-full min-w-0">
           <Header />
