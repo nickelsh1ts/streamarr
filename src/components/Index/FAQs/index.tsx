@@ -2,7 +2,7 @@ import useSettings from '@app/hooks/useSettings';
 import PlexLogo from '@app/assets/services/plex.svg';
 import Link from 'next/link';
 
-//TODO: Update FAQ's and provide current information (How can I join & What an I watch on)
+//TODO: Update FAQ's and provide current information (How can I join & What can I watch on)
 
 function FAQs() {
   const { currentSettings } = useSettings();

@@ -26,6 +26,8 @@ import {
 import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
 
+//TODO: Add support for pinning shared libraries on demand
+
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();
