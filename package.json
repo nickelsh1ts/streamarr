@@ -25,7 +25,7 @@
     "cypress:build": "yarn build && yarn cypress:prepare",
     "css-build": "tailwindcss -o public/tailwind.css",
     "css-watch": "tailwindcss -o public/tailwind.css --watch",
-    "start:python": "cd server/python && gunicorn -w 2 -b 0.0.0.0:5005 plex_invite:app",
+    "start:python": "cd server/python && gunicorn -w 2 -b 0.0.0.0:5005 --timeout 60 --graceful-timeout 30 --keep-alive 5 plex_invite:app",
     "dev:all": "concurrently \"yarn dev\" \"cd server/python && python3 plex_invite.py\"",
     "start:all": "concurrently \"yarn start\" \"yarn start:python\""
   },
