@@ -1,15 +1,16 @@
 import { getSettings } from '@server/lib/settings';
 import type { User } from '@server/entity/User';
-import { Notification } from '@server/lib/notifications';
+import { NotificationType } from '@server/constants/notification';
 import type { NotificationAgent } from '@server/lib/notifications/agents/agent';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { Router } from 'express';
 import EmailAgent from '@server/lib/notifications/agents/email';
+import InAppAgent from '@server/lib/notifications/agents/inApp';
 
 const notificationRoutes = Router();
 
 const sendTestNotification = async (agent: NotificationAgent, user: User) =>
-  await agent.send(Notification.TEST_NOTIFICATION, {
+  await agent.send(NotificationType.TEST_NOTIFICATION, {
     notifySystem: true,
     notifyAdmin: false,
     notifyUser: user,
@@ -84,6 +85,42 @@ notificationRoutes.post('/webpush/test', (req, res, next) => {
       return next({
         status: 500,
         message: 'Failed to send web push notification.',
+      });
+    }
+  })().catch(next);
+});
+
+notificationRoutes.get('/inapp', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.notifications.agents.inApp);
+});
+
+notificationRoutes.post('/inapp', (req, res) => {
+  const settings = getSettings();
+
+  settings.notifications.agents.inApp = req.body;
+  settings.save();
+
+  res.status(200).json(settings.notifications.agents.inApp);
+});
+
+notificationRoutes.post('/inapp/test', (req, res, next) => {
+  (async () => {
+    if (!req.user) {
+      return next({
+        status: 500,
+        message: 'User information is missing from the request.',
+      });
+    }
+
+    const inAppAgent = new InAppAgent(req.body);
+    if (await sendTestNotification(inAppAgent, req.user)) {
+      res.status(204).send();
+    } else {
+      return next({
+        status: 500,
+        message: 'Failed to send in-app notification.',
       });
     }
   })().catch(next);

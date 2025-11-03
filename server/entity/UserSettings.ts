@@ -1,5 +1,5 @@
 import type { NotificationAgentTypes } from '@server/interfaces/api/userSettingsInterfaces';
-import { hasNotificationType, Notification } from '@server/lib/notifications';
+import { hasNotificationType } from '@server/lib/notifications';
 import { NotificationAgentKey } from '@server/lib/settings';
 import {
   Column,
@@ -9,8 +9,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
+import { NotificationType } from '@server/constants/notification';
 
-export const ALL_NOTIFICATIONS = Object.values(Notification)
+export const ALL_NOTIFICATIONS = Object.values(NotificationType)
   .filter((v) => !isNaN(Number(v)))
   .reduce((a, v) => a + Number(v), 0);
 
@@ -53,32 +54,24 @@ export class UserSettings {
     nullable: true,
     transformer: {
       from: (value: string | null): Partial<NotificationAgentTypes> => {
-        const defaultTypes = {
-          email: ALL_NOTIFICATIONS,
-          webpush: ALL_NOTIFICATIONS,
-        };
+        // Return empty object if no value exists
+        // Missing agents will be treated as "all enabled" by hasNotificationType
         if (!value) {
-          return defaultTypes;
+          return {};
         }
 
-        const values = JSON.parse(value) as Partial<NotificationAgentTypes>;
+        try {
+          const values = JSON.parse(value) as Partial<NotificationAgentTypes>;
 
-        // Something with the migration to this field has caused some issue where
-        // the value pre-populates with just a raw "2"? Here we check if that's the case
-        // and return the default notification types if so
-        if (typeof values !== 'object') {
-          return defaultTypes;
+          // Return the values as-is, without adding defaults
+          // This allows us to distinguish between:
+          // 1. undefined = never set, treat as all enabled
+          // 2. 0 or other value = explicitly set by user
+          return values;
+        } catch {
+          // If parsing fails, return empty object
+          return {};
         }
-
-        if (values.email == null) {
-          values.email = ALL_NOTIFICATIONS;
-        }
-
-        if (values.webpush == null) {
-          values.webpush = ALL_NOTIFICATIONS;
-        }
-
-        return values;
       },
       to: (value: Partial<NotificationAgentTypes>): string | null => {
         if (!value || typeof value !== 'object') {
@@ -96,6 +89,12 @@ export class UserSettings {
           }
         );
 
+        // Only save if there are any valid keys remaining
+        const hasValidKeys = Object.keys(value).length > 0;
+        if (!hasValidKeys) {
+          return null;
+        }
+
         return JSON.stringify(value);
       },
     },
@@ -104,7 +103,7 @@ export class UserSettings {
 
   public hasNotificationType(
     key: NotificationAgentKey,
-    type: Notification
+    type: NotificationType
   ): boolean {
     return hasNotificationType(type, this.notificationTypes[key] ?? 0);
   }

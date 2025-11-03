@@ -324,6 +324,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsNotificationsResponse>(
         emailEnabled: settings.email.enabled,
         pgpKey: user.settings?.pgpKey,
         webPushEnabled: settings.webpush.enabled,
+        inAppEnabled: settings.inApp.enabled,
         notificationTypes: user.settings?.notificationTypes ?? {},
       });
     } catch (e) {

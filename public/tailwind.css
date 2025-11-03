@@ -8316,3 +8316,19 @@ html:has(.drawer-toggle:checked) {
   --tw-bg-opacity: 1;
   background-color: rgb(64 64 64 / var(--tw-bg-opacity, 1));
 }
+
+.right-2 {
+    right: 0.5rem /* 8px */;
+}
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+.animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.top-1\.5 {
+    top: 0.25rem /* 6px */;
+}

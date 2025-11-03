@@ -23,6 +23,7 @@ import PlexAPI from '@server/api/plexapi';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import signupRoutes from './signup';
+import notificationRoutes from '@server/routes/notification';
 
 //TODO: Create API endpoints for services and Plex instead of using reverse proxies
 
@@ -249,6 +250,14 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
 
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
 router.use('/invite', isAuthenticated(), inviteRoutes);
+router.use(
+  '/notification',
+  isAuthenticated(
+    [Permission.MANAGE_NOTIFICATIONS, Permission.CREATE_NOTIFICATIONS],
+    { type: 'or' }
+  ),
+  notificationRoutes
+);
 router.use('/service', isAuthenticated(), serviceRoutes);
 router.use('/auth', authRoutes);
 router.use('/signup', signupRoutes);

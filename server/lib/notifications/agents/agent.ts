@@ -1,6 +1,7 @@
 import type { User } from '@server/entity/User';
 import type { NotificationAgentConfig } from '@server/lib/settings';
-import type { Notification } from '..';
+import type { NotificationType } from '@server/constants/notification';
+import type Invite from '@server/entity/Invite';
 
 export interface NotificationPayload {
   event?: string;
@@ -11,6 +12,7 @@ export interface NotificationPayload {
   image?: string;
   message?: string;
   extra?: { name: string; value: string }[];
+  invite?: Invite;
   isAdmin?: boolean;
 }
 
@@ -25,5 +27,5 @@ export abstract class BaseAgent<T extends NotificationAgentConfig> {
 
 export interface NotificationAgent {
   shouldSend(): boolean;
-  send(type: Notification, payload: NotificationPayload): Promise<boolean>;
+  send(type: NotificationType, payload: NotificationPayload): Promise<boolean>;
 }

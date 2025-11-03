@@ -30,6 +30,7 @@ import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import { AfterDate } from '@server/utils/dateHelpers';
 import { InviteStatus } from '@server/constants/invite';
 import Event from '@server/entity/Event';
+import { Notification } from '@server/entity/Notification';
 
 @Entity()
 export class User {
@@ -80,8 +81,8 @@ export class User {
   @Column({ nullable: true, select: false })
   public plexToken?: string;
 
-  @Column({ type: 'integer', default: 0 })
-  public permissions = 0;
+  @Column({ type: 'integer', default: 32 })
+  public permissions = 32;
 
   @Column()
   public avatar: string;
@@ -116,6 +117,12 @@ export class User {
   @OneToMany(() => Event, (event) => event.updatedBy)
   public modifiedEvents: Event[];
 
+  @OneToMany(() => Notification, (notification) => notification.createdBy)
+  public createdNotifications: Notification[];
+
+  @OneToMany(() => Notification, (notification) => notification.updatedBy)
+  public modifiedNotifications: Notification[];
+
   @OneToOne(() => UserSettings, (settings) => settings.user, {
     cascade: true,
     eager: true,
@@ -125,6 +132,9 @@ export class User {
 
   @OneToMany(() => UserPushSubscription, (pushSub) => pushSub.user)
   public pushSubscriptions: UserPushSubscription[];
+
+  @OneToMany(() => Notification, (notification) => notification.notifyUser)
+  public notifications: Notification[];
 
   @CreateDateColumn()
   public createdAt: Date;
