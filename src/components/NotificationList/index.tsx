@@ -5,6 +5,7 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Header from '@app/components/Common/Header';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
+import { useNotifications } from '@app/hooks/useNotifications';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -20,7 +21,6 @@ import useSWR from 'swr';
 import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
 import Toast from '@app/components/Toast';
 import axios from 'axios';
-import { socket } from '@app/utils/webSocket';
 import NotificationModal from '@app/components/NotificationList/NotificationModal';
 import type Notification from '@server/entity/Notification';
 
@@ -78,6 +78,8 @@ const NotificationsList = () => {
     notification: null | Notification;
   }>({ open: false, notification: null });
 
+  useNotifications();
+
   // Restore last set filter values on component mount
   useEffect(() => {
     const filterString = window.localStorage.getItem('nl-filter-settings');
@@ -110,18 +112,6 @@ const NotificationsList = () => {
   const hasPrevPage = pageIndex > 0;
 
   const subtextItems = user?.id != currentUser?.id ? null : null;
-
-  useEffect(() => {
-    const handleNewNotification = () => {
-      revalidate();
-    };
-
-    socket.on('newNotification', handleNewNotification);
-
-    return () => {
-      socket.off('newNotification', handleNewNotification);
-    };
-  }, [revalidate]);
 
   const deleteNotification = async (notificationId: number, userId: string) => {
     try {

@@ -1,23 +1,55 @@
 'use client';
-import type { Dispatch, SetStateAction } from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useRef } from 'react';
+import { socket } from '@app/utils/webSocket';
+import type { NotificationType } from '@server/constants/notification';
+import type { NotificationSeverity } from '@server/constants/notification';
 
-//TODO: Look at moving notification data/revalidation here
-// Then we can remove SWR from the layout and notification list components
-// And only load notifications when the notification sidebar is opened
-
-interface NotificationsContextProps {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+export interface SocketNotificationPayload {
+  type?: NotificationType;
+  subject?: string;
+  severity?: NotificationSeverity;
+  description?: string;
+  message?: string;
+  inviteId?: number;
+  actionUrl?: string;
+  actionUrlTitle?: string;
+  action?: 'updated' | 'deleted' | 'bulkUpdated';
+  id?: number;
+  isRead?: boolean;
 }
-export const NotificationContext = createContext<NotificationsContextProps>({
-  isOpen: false,
-} as NotificationsContextProps);
+
+type NotificationCallback = (notification: SocketNotificationPayload) => void;
+
+interface NotificationContextProps {
+  subscribe: (callback: NotificationCallback) => () => void;
+}
+
+export const NotificationContext = createContext<NotificationContextProps>({
+  subscribe: () => () => {},
+});
 
 const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const listenersRef = useRef(new Set<NotificationCallback>());
+
+  const subscribe = (callback: NotificationCallback) => {
+    listenersRef.current.add(callback);
+    return () => listenersRef.current.delete(callback);
+  };
+
+  useEffect(() => {
+    const handleNewNotification = (notification: SocketNotificationPayload) => {
+      listenersRef.current.forEach((callback) => callback(notification));
+    };
+
+    socket.on('newNotification', handleNewNotification);
+
+    return () => {
+      socket.off('newNotification', handleNewNotification);
+    };
+  }, []);
+
   return (
-    <NotificationContext.Provider value={{ isOpen, setIsOpen }}>
+    <NotificationContext.Provider value={{ subscribe }}>
       {children}
     </NotificationContext.Provider>
   );

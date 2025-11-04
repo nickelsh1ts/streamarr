@@ -1,5 +1,6 @@
 'use client';
-import { NotificationContext } from '@app/context/NotificationContext';
+import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
+import { useNotifications } from '@app/hooks/useNotifications';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { Transition, TransitionChild } from '@headlessui/react';
 import { Cog8ToothIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -10,12 +11,11 @@ import {
   QueueListIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { useContext, useEffect, useRef, useState } from 'react';
-import useSWR from 'swr';
+import { useEffect, useRef, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
 import { useUser } from '@app/hooks/useUser';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { socket } from '@app/utils/webSocket';
 import axios from 'axios';
 import Toast from '@app/components/Toast';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -23,29 +23,47 @@ import { NotificationCard } from '@app/components/NotificationList/NotificationC
 import Button from '@app/components/Common/Button';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
+import { NotificationSeverity } from '@server/constants/notification';
+
+const getToastType = (
+  severity: NotificationSeverity
+): 'default' | 'primary' | 'error' | 'warning' | 'success' | 'info' => {
+  switch (severity) {
+    case NotificationSeverity.ERROR:
+      return 'error';
+    case NotificationSeverity.WARNING:
+      return 'warning';
+    case NotificationSeverity.SUCCESS:
+      return 'success';
+    case NotificationSeverity.INFO:
+      return 'info';
+    case NotificationSeverity.SECONDARY:
+      return 'default';
+    case NotificationSeverity.ACCENT:
+      return 'warning';
+    default:
+      return 'primary';
+  }
+};
 
 const Notifications = () => {
   const { user } = useUser();
   const intl = useIntl();
-  const { isOpen, setIsOpen } = useContext(NotificationContext);
+  const { isOpen, setIsOpen } = useNotificationSidebar();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [newPageSize, setNewPageSize] = useState<number>(5);
   const [earlierPageSize, setEarlierPageSize] = useState<number>(5);
   const ref = useRef<HTMLDivElement>(null);
+  const { mutate: revalidate } = useSWRConfig();
   useClickOutside(ref, () => setIsOpen(false));
   useLockBodyScroll(isOpen);
 
-  const {
-    data,
-    error,
-    mutate: revalidate,
-  } = useSWR<NotificationResultsResponse>(
+  const { data, error } = useSWR<NotificationResultsResponse>(
     user ? `/api/v1/user/${user?.id}/notifications` : null
   );
 
-  useEffect(() => {
-    const handleNewNotification = (notification) => {
-      revalidate();
+  useNotifications(
+    (notification) => {
       if (!notification?.action) {
         Toast({
           title:
@@ -54,19 +72,14 @@ const Notifications = () => {
               id: 'notification.newReceived',
               defaultMessage: 'New Notification Received',
             }),
-          type: notification.severity || 'info',
+          type: getToastType(notification.severity),
           icon: <InformationCircleIcon className="size-7" />,
           message: notification.description,
         });
       }
-    };
-
-    socket.on('newNotification', handleNewNotification);
-
-    return () => {
-      socket.off('newNotification', handleNewNotification);
-    };
-  }, [intl, revalidate]);
+    },
+    { autoRevalidate: false }
+  );
 
   const deleteNotification = async (notificationId: number, userId: string) => {
     try {
@@ -84,7 +97,9 @@ const Notifications = () => {
         message: e.response?.data?.message || e.message,
       });
     } finally {
-      revalidate();
+      revalidate(
+        (key) => typeof key === 'string' && key.includes('/notifications')
+      );
     }
   };
 
@@ -109,7 +124,9 @@ const Notifications = () => {
         message: e.response?.data?.message || e.message,
       });
     } finally {
-      revalidate();
+      revalidate(
+        (key) => typeof key === 'string' && key.includes('/notifications')
+      );
     }
   };
 
@@ -129,7 +146,9 @@ const Notifications = () => {
         message: e.response?.data?.message || e.message,
       });
     } finally {
-      revalidate();
+      revalidate(
+        (key) => typeof key === 'string' && key.includes('/notifications')
+      );
     }
   };
 

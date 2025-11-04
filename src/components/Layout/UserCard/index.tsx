@@ -1,6 +1,6 @@
 'use client';
 import CachedImage from '@app/components/Common/CachedImage';
-import { NotificationContext } from '@app/context/NotificationContext';
+import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
   BellAlertIcon,
@@ -12,7 +12,6 @@ import type { UserNotificationsResponse } from '@server/interfaces/api/userInter
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
 
@@ -23,7 +22,7 @@ const UserCard = ({
 }) => {
   const { user } = useUser();
   const path = usePathname();
-  const { setIsOpen } = useContext(NotificationContext);
+  const { setIsOpen } = useNotificationSidebar();
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
       user ? `/api/v1/user/${user?.id}/settings/notifications` : null
