@@ -143,10 +143,10 @@ const NotificationModal = ({
       ),
     message: Yup.string()
       .max(
-        500,
+        150,
         intl.formatMessage({
           id: 'notificationModal.descriptionMax',
-          defaultMessage: 'Description must not be more than 500 characters',
+          defaultMessage: 'Description must not be more than 150 characters',
         })
       )
       .required(
@@ -287,7 +287,7 @@ const NotificationModal = ({
                   })
                 : intl.formatMessage({
                     id: 'notificationModal.sendTitle',
-                    defaultMessage: 'Send a notification',
+                    defaultMessage: 'Send a Notification',
                   })
             }
             show={show}

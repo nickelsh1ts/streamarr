@@ -229,24 +229,22 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         </p>
         {!!onComplete && (
           <Alert title="" type="primary">
-            <div className="ms-4">
-              <FormattedMessage
-                id="plexSettings.setupInstructions"
-                defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
-                values={{
-                  plexLink: (
-                    <a
-                      href="https://plex.tv"
-                      className="text-white transition duration-300 hover:underline inline-flex"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      plex.tv
-                    </a>
-                  ),
-                }}
-              />
-            </div>
+            <FormattedMessage
+              id="plexSettings.setupInstructions"
+              defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
+              values={{
+                plexLink: (
+                  <a
+                    href="https://plex.tv"
+                    className="text-white transition duration-300 hover:underline inline-flex"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    plex.tv
+                  </a>
+                ),
+              }}
+            />
           </Alert>
         )}
       </div>

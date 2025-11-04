@@ -239,7 +239,7 @@ const NotificationsList = () => {
               defaultMessage: 'In App Notifications Disabled',
             })}
           >
-            <p className="sm:ml-3 text-sm leading-5">
+            <p className="text-sm leading-5">
               <FormattedMessage
                 id="notification.signUpDisabledMessage"
                 defaultMessage="The admin has currently disabled in-app notifications."

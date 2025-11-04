@@ -117,7 +117,7 @@
     "defaultMessage": "Agenda"
   },
   "calendar.createEvent": {
-    "defaultMessage": "Create Event"
+    "defaultMessage": "Create an Event"
   },
   "calendar.createdBy": {
     "defaultMessage": "Created By:"
