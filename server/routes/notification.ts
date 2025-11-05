@@ -139,21 +139,17 @@ notificationRoutes.post<
       label: 'Notifications',
       type: req.body.type,
       subject: req.body.subject,
-      notifyUserIsArray: Array.isArray(req.body.notifyUser),
-      notifyUserLength: Array.isArray(req.body.notifyUser)
-        ? req.body.notifyUser.length
-        : 1,
+      notifyUsers: req.body.notifyUser,
     });
 
     const userRepository = getRepository(User);
-
-    // Fetch user entities from the database
     const userIds = Array.isArray(req.body.notifyUser)
       ? req.body.notifyUser
       : [req.body.notifyUser];
 
     const users = await userRepository.find({
       where: userIds.map((id) => ({ id })),
+      relations: ['settings'],
     });
 
     if (users.length === 0) {
@@ -163,149 +159,76 @@ notificationRoutes.post<
       });
     }
 
-    // Fetch user settings separately for validation (don't attach to user entities)
-    const userSettingsMap = new Map();
-    for (const user of users) {
-      const userWithSettings = await userRepository.findOne({
-        where: { id: user.id },
-        relations: ['settings'],
-      });
-      if (userWithSettings?.settings) {
-        userSettingsMap.set(user.id, userWithSettings.settings);
-      }
-    }
-
-    if (!Array.isArray(req.body.notifyUser)) {
-      const notifyUser = users[0];
-      const settings = userSettingsMap.get(notifyUser.id);
-      if (
-        settings &&
-        !hasNotificationType(
+    // Filter users who have at least one notification type enabled
+    const eligibleUsers = users.filter((user) => {
+      const settings = user.settings;
+      return (
+        !settings ||
+        hasNotificationType(
           req.body.type,
           settings.notificationTypes?.inApp ?? 0
-        ) &&
-        !hasNotificationType(
+        ) ||
+        hasNotificationType(
           req.body.type,
           settings.notificationTypes?.email ?? 0
-        ) &&
-        !hasNotificationType(
+        ) ||
+        hasNotificationType(
           req.body.type,
           settings.notificationTypes?.webpush ?? 0
         )
-      ) {
-        logger.debug('User has disabled notification type', {
-          label: 'Notifications',
-          userId: notifyUser.id,
-          type: req.body.type,
-        });
-        return next({
-          status: 400,
-          message: 'User has disabled this notification type.',
-        });
-      }
-
-      try {
-        // Create minimal user object without entity methods to avoid serialization issues
-        const minimalNotifyUser = {
-          id: notifyUser.id,
-          displayName: notifyUser.displayName,
-          email: notifyUser.email,
-        } as User;
-
-        const payload = {
-          notificationType: NotificationType[req.body.type],
-          type: req.body.type,
-          severity: req.body.severity,
-          subject: req.body.subject,
-          message: req.body.message,
-          actionUrl: req.body.actionUrl,
-          actionUrlTitle: req.body.actionUrlTitle,
-          notifyUser: minimalNotifyUser,
-          createdBy: { id: req.user.id } as User,
-          updatedBy: { id: req.user.id } as User,
-          notifySystem: false,
-          notifyAdmin: false,
-        };
-
-        notificationManager.sendNotification(req.body.type, payload);
-        res.status(201).json({ success: true, userId: notifyUser.id });
-      } catch (e) {
-        logger.debug('Error creating notification', {
-          label: 'Notifications',
-          errorMessage: e.message,
-        });
-        next({ status: 500, message: 'Error creating notification' });
-      }
-    } else {
-      const createdNotifications: NotificationCreationResult[] = [];
-      await Promise.all(
-        users
-          .filter((user) => {
-            const settings = userSettingsMap.get(user.id);
-            return (
-              (!settings ||
-                // Check if user has local notifications enabled and fallback to true if undefined
-                // since local should default to true
-                hasNotificationType(
-                  req.body.type,
-                  settings?.notificationTypes?.email ?? 0
-                ) ||
-                hasNotificationType(
-                  req.body.type,
-                  settings?.notificationTypes?.webpush ?? 0
-                ) ||
-                hasNotificationType(
-                  req.body.type,
-                  settings?.notificationTypes?.inApp ?? 0
-                )) ??
-              true
-            );
-          })
-          .map(async (user) => {
-            try {
-              // Create minimal user object without entity methods to avoid serialization issues
-              const minimalNotifyUser = {
-                id: user.id,
-                displayName: user.displayName,
-                email: user.email,
-              } as User;
-
-              const payload = {
-                notificationType: NotificationType[req.body.type],
-                type: req.body.type,
-                severity: req.body.severity,
-                subject: req.body.subject,
-                message: req.body.message,
-                notifyUser: minimalNotifyUser,
-                actionUrl: req.body.actionUrl,
-                actionUrlTitle: req.body.actionUrlTitle,
-                createdBy: { id: req.user.id } as User,
-                updatedBy: { id: req.user.id } as User,
-                notifySystem: false,
-                notifyAdmin: false,
-              };
-
-              notificationManager.sendNotification(req.body.type, payload);
-              createdNotifications.push({ success: true, userId: user.id });
-            } catch (e) {
-              logger.error('Error creating notification', {
-                label: 'Notifications',
-                recipient: user.displayName,
-                type: NotificationType[req.body.type],
-                subject: req.body.subject,
-                errorMessage: e.message,
-              });
-              createdNotifications.push({
-                success: false,
-                userId: user.id,
-                error: e.message,
-              });
-            }
-          })
       );
+    });
 
-      res.status(201).json(createdNotifications);
+    if (eligibleUsers.length === 0) {
+      logger.debug('All selected users have disabled this notification type', {
+        label: 'Notifications',
+        type: req.body.type,
+      });
+      return next({
+        status: 400,
+        message: 'All selected users have disabled this notification type.',
+      });
     }
+
+    const createdNotifications: NotificationCreationResult[] = [];
+    await Promise.all(
+      eligibleUsers.map(async (user) => {
+        try {
+          const payload = {
+            notificationType: NotificationType[req.body.type],
+            type: req.body.type,
+            severity: req.body.severity,
+            subject: req.body.subject,
+            message: req.body.message,
+            notifyUser: user,
+            actionUrl: req.body.actionUrl,
+            actionUrlTitle: req.body.actionUrlTitle,
+            createdBy: { id: req.user.id } as User,
+            updatedBy: { id: req.user.id } as User,
+            notifySystem: false,
+            notifyAdmin: false,
+          };
+
+          notificationManager.sendNotification(req.body.type, payload);
+          createdNotifications.push({ success: true, userId: user.id });
+        } catch (e) {
+          logger.error('Error creating notification', {
+            label: 'Notifications',
+            recipient: user.displayName,
+            type: NotificationType[req.body.type],
+            subject: req.body.subject,
+            errorMessage: e.message,
+          });
+          createdNotifications.push({
+            success: false,
+            userId: user.id,
+            error: e.message,
+          });
+        }
+      })
+    );
+
+    res.status(201).json(createdNotifications);
   }
 );
 
