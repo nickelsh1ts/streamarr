@@ -14,6 +14,8 @@ export interface NotificationPayload {
   extra?: { name: string; value: string }[];
   invite?: Invite;
   isAdmin?: boolean;
+  actionUrl?: string;
+  actionUrlTitle?: string;
 }
 
 export abstract class BaseAgent<T extends NotificationAgentConfig> {

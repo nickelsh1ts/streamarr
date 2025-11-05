@@ -159,7 +159,7 @@ const NotificationsList = () => {
   };
 
   return (
-    <div className="w-full self-center mb-4">
+    <div className="w-full mb-4">
       <div className="flex flex-col justify-between lg:flex-row lg:items-end">
         <Header
           subtext={subtextItems?.reduce((prev, curr) => (
@@ -248,7 +248,7 @@ const NotificationsList = () => {
           </Alert>
         </div>
       )}
-      <ul id="notification-list" className="flex flex-col gap-4 mt-4 max-w-lg">
+      <ul id="notification-list" className="flex flex-col gap-1 mt-4">
         {!data && !error && <LoadingEllipsis />}
         {currentSettings?.inAppEnabled &&
           data?.results.map((notification) => {

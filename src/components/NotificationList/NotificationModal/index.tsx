@@ -141,26 +141,42 @@ const NotificationModal = ({
           defaultMessage: 'Subject is required',
         })
       ),
-    message: Yup.string()
-      .max(
-        150,
-        intl.formatMessage({
-          id: 'notificationModal.descriptionMax',
-          defaultMessage: 'Description must not be more than 150 characters',
-        })
-      )
-      .required(
-        intl.formatMessage({
-          id: 'notificationModal.descriptionRequired',
-          defaultMessage: 'Description is required',
-        })
-      ),
-    actionUrl: Yup.string().url(
+    message: Yup.string().max(
+      150,
       intl.formatMessage({
-        id: 'notificationModal.actionUrlValid',
-        defaultMessage: 'Action URL must be a valid URL',
+        id: 'notificationModal.descriptionMax',
+        defaultMessage: 'Description must not be more than 150 characters',
       })
     ),
+    actionUrl: Yup.string().when('actionUrlTitle', {
+      is: (val: string) => val && val.length > 0,
+      then: (schema) =>
+        schema
+          .matches(
+            /^(https?:\/\/|\/)/,
+            intl.formatMessage({
+              id: 'notificationModal.actionUrlInvalid',
+              defaultMessage:
+                'Action URL must be a URL or base path starting with /',
+            })
+          )
+          .required(
+            intl.formatMessage({
+              id: 'notificationModal.actionUrlRequired',
+              defaultMessage:
+                'Action URL is required when Action URL Title is provided',
+            })
+          ),
+      otherwise: (schema) =>
+        schema.matches(
+          /^$|^(https?:\/\/|\/)/,
+          intl.formatMessage({
+            id: 'notificationModal.actionUrlInvalid',
+            defaultMessage:
+              'Action URL must be a URL or base path starting with /',
+          })
+        ),
+    }),
     actionUrlTitle: Yup.string().max(
       40,
       intl.formatMessage({
@@ -204,6 +220,8 @@ const NotificationModal = ({
             subject: values.subject,
             message: values.message,
             severity: values.severity,
+            actionUrl: values.actionUrl,
+            actionUrlTitle: values.actionUrlTitle,
             notifyUser: values.notifyUsers.map((user) => user.id),
           };
 
@@ -269,10 +287,7 @@ const NotificationModal = ({
             okDisabled={isSubmitting || !isValid}
             secondaryButtonType="warning"
             secondaryDisabled={
-              !isValid ||
-              isSubmitting ||
-              values.subject === '' ||
-              values.message === ''
+              !isValid || isSubmitting || values.subject === ''
             }
             secondaryText={intl.formatMessage({
               id: 'common.preview',
@@ -327,7 +342,6 @@ const NotificationModal = ({
                     id="notificationModal.message"
                     defaultMessage="Message"
                   />
-                  <span className="text-error ml-1">*</span>
                 </label>
                 <div>
                   <Field
@@ -341,38 +355,6 @@ const NotificationModal = ({
                   />
                   {errors.message && touched.message && (
                     <div className="text-error">{errors.message}</div>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="actionUrl"
-                  className="block text-sm font-medium leading-6 text-left"
-                >
-                  <FormattedMessage
-                    id="notificationModal.actionUrl"
-                    defaultMessage="Action URL"
-                  />
-                  <span className="text-neutral-500 ml-2">
-                    (
-                    <FormattedMessage
-                      id="common.optional"
-                      defaultMessage="optional"
-                    />
-                    )
-                  </span>
-                </label>
-                <div>
-                  <Field
-                    as="input"
-                    id="actionUrl"
-                    name="actionUrl"
-                    className={`input input-sm input-primary rounded-md w-full ${
-                      errors.actionUrl && touched.actionUrl ? 'input-error' : ''
-                    }`}
-                  />
-                  {errors.actionUrl && touched.actionUrl && (
-                    <div className="text-error">{errors.actionUrl}</div>
                   )}
                 </div>
               </div>
@@ -407,6 +389,42 @@ const NotificationModal = ({
                   />
                   {errors.actionUrlTitle && touched.actionUrlTitle && (
                     <div className="text-error">{errors.actionUrlTitle}</div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="actionUrl"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
+                  <FormattedMessage
+                    id="notificationModal.actionUrl"
+                    defaultMessage="Action URL"
+                  />
+                  {values.actionUrlTitle ? (
+                    <span className="text-error ml-1">*</span>
+                  ) : (
+                    <span className="text-neutral-500 ml-2">
+                      (
+                      <FormattedMessage
+                        id="common.optional"
+                        defaultMessage="optional"
+                      />
+                      )
+                    </span>
+                  )}
+                </label>
+                <div>
+                  <Field
+                    as="input"
+                    id="actionUrl"
+                    name="actionUrl"
+                    className={`input input-sm input-primary rounded-md w-full ${
+                      errors.actionUrl && touched.actionUrl ? 'input-error' : ''
+                    }`}
+                  />
+                  {errors.actionUrl && touched.actionUrl && (
+                    <div className="text-error">{errors.actionUrl}</div>
                   )}
                 </div>
               </div>

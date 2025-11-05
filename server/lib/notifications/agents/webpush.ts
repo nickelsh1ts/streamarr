@@ -52,11 +52,11 @@ class WebPushAgent
 
     const actionUrl = payload.invite
       ? `/invites/${payload.invite.id}`
-      : undefined;
+      : (payload.actionUrl ?? undefined);
 
-    const actionUrlTitle = actionUrl
+    const actionUrlTitle = payload.invite
       ? `View ${payload.invite ? 'Invite' : ''}`
-      : undefined;
+      : (payload.actionUrlTitle ?? undefined);
 
     return {
       notificationType: NotificationType[type],

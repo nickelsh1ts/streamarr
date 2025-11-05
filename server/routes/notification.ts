@@ -121,6 +121,8 @@ notificationRoutes.post<
     subject: string;
     message: string;
     notifyUser: number | number[];
+    actionUrl: string;
+    actionUrlTitle: string;
   }
 >(
   '/',
@@ -216,6 +218,8 @@ notificationRoutes.post<
           severity: req.body.severity,
           subject: req.body.subject,
           message: req.body.message,
+          actionUrl: req.body.actionUrl,
+          actionUrlTitle: req.body.actionUrlTitle,
           notifyUser: minimalNotifyUser,
           createdBy: { id: req.user.id } as User,
           updatedBy: { id: req.user.id } as User,
@@ -273,6 +277,8 @@ notificationRoutes.post<
                 subject: req.body.subject,
                 message: req.body.message,
                 notifyUser: minimalNotifyUser,
+                actionUrl: req.body.actionUrl,
+                actionUrlTitle: req.body.actionUrlTitle,
                 createdBy: { id: req.user.id } as User,
                 updatedBy: { id: req.user.id } as User,
                 notifySystem: false,

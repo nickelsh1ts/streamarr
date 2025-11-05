@@ -72,7 +72,7 @@ export class Notification {
   @Column({ type: 'text' })
   public subject: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   public message: string;
 
   @Column({ type: 'boolean', default: false })

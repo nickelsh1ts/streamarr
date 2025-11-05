@@ -588,9 +588,17 @@ components:
         subject:
           type: string
           example: 'You have a new friend!'
-        description:
+        message:
           type: string
           example: 'Your invite code has been redeemed by {user}'
+        actionUrl:
+          type: string
+          nullable: true
+          example: '/settings/users'
+        actionUrlTitle:
+          type: string
+          nullable: true
+          example: 'View Users'
         isRead:
           type: boolean
           example: false
@@ -604,7 +612,6 @@ components:
         - type
         - severity
         - subject
-        - message
         - notifyUser
       properties:
         type:
@@ -622,7 +629,15 @@ components:
         message:
           type: string
           example: 'This is a test notification message'
-          maxLength: 500
+          maxLength: 150
+        actionUrl:
+          type: string
+          nullable: true
+          description: URL to link to when the notification is clicked
+        actionUrlTitle:
+          type: string
+          nullable: true
+          description: Title for the action URL link
         notifyUser:
           oneOf:
             - type: number
