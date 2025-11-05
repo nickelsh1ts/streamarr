@@ -115,7 +115,7 @@ const Sidebar = () => {
               </button>
             </div>
             <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-            <div className="mt-auto">
+            <div className="mt-auto w-full">
               <VersionStatus onClick={() => setIsOpen(!isOpen)} />
               {currentUrl.includes('/watch/web/index.html') && (
                 <>
@@ -304,7 +304,7 @@ const Sidebar = () => {
       >
         <SidebarMenu />
         {hasPermission([Permission.ADMIN]) && (
-          <div className="mt-auto">
+          <div className="mt-auto w-full">
             <VersionStatus />
           </div>
         )}
