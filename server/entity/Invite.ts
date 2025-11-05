@@ -149,17 +149,20 @@ export class Invite {
 
   @AfterLoad()
   updateStatusIfExpired() {
-    if (this.expiryLimit !== 0) {
+    // Only check expiry for invites that are NOT already EXPIRED or REDEEMED
+    // REDEEMED invites should stay REDEEMED forever, regardless of expiry time
+    if (
+      this.expiryLimit !== 0 &&
+      this.status !== InviteStatus.EXPIRED &&
+      this.status !== InviteStatus.REDEEMED
+    ) {
       let msPerUnit = 86400000;
       if (this.expiryTime === 'weeks') msPerUnit = 604800000;
       if (this.expiryTime === 'months') msPerUnit = 2629800000;
       const expiryDate = new Date(
         this.createdAt.getTime() + this.expiryLimit * msPerUnit
       );
-      if (
-        Date.now() > expiryDate.getTime() &&
-        this.status !== InviteStatus.EXPIRED
-      ) {
+      if (Date.now() > expiryDate.getTime()) {
         this.status = InviteStatus.EXPIRED;
       }
     }
