@@ -173,7 +173,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
+      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5 min-h-8">
         {Array.isArray(invite?.redeemedBy) && invite.redeemedBy.length > 0 ? (
           <div className="inline-flex items-center">
             <span className="font-extrabold mr-2">

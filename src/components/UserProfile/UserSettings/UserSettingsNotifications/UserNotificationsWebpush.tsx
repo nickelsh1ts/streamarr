@@ -298,9 +298,9 @@ const UserWebPushSettings = () => {
                     }
                   >
                     {webPushEnabled ? (
-                      <CloudArrowDownIcon className="size-4 mr-2" />
+                      <CloudArrowDownIcon className="size-5 mr-2" />
                     ) : (
-                      <CloudArrowUpIcon className="size-4 mr-2" />
+                      <CloudArrowUpIcon className="size-5 mr-2" />
                     )}
                     <span>
                       {webPushEnabled ? (
@@ -324,7 +324,7 @@ const UserWebPushSettings = () => {
                     buttonSize="sm"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="size-5 mr-2" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

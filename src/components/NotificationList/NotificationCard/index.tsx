@@ -109,23 +109,7 @@ export const NotificationCard = ({
         <span
           className={`${!notification.isRead ? 'text-primary' : ''} text-sm font-extrabold`}
         >
-          {moment(notification.createdAt)
-            .fromNow(true)
-            .replace(/a year/g, '1y')
-            .replace(/years?/g, 'y')
-            .replace(/a month/g, '1mo')
-            .replace(/months?/g, 'mo')
-            .replace(/a week/g, '1w')
-            .replace(/weeks?/g, 'w')
-            .replace(/a day/g, '1d')
-            .replace(/days?/g, 'd')
-            .replace(/an hour?/g, '1h')
-            .replace(/hours?/g, 'h')
-            .replace(/a minute/g, '1m')
-            .replace(/minutes?/g, 'm')
-            .replace(/seconds?/g, 's')
-            .replace(/\s/g, '')
-            .replace(/afews?/g, 'just now')}
+          {moment(notification.createdAt).fromNow(true)}
         </span>
         {notification.actionUrlTitle && notification.actionUrl && (
           <div className="flex gap-2 mt-2 w-full max-w-md">
