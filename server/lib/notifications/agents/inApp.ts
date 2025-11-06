@@ -52,15 +52,6 @@ class InAppAgent
     type: NotificationType,
     payload: InAppNotificationPayload
   ): InAppNotificationPayload {
-    let message: string | undefined;
-    switch (type) {
-      case NotificationType.TEST_NOTIFICATION:
-        message = payload.message;
-        break;
-      default:
-        message = 'Unknown';
-    }
-
     const actionUrl = payload.invite
       ? `/invites/${payload.invite.id}`
       : (payload.actionUrl ?? undefined);
@@ -73,7 +64,7 @@ class InAppAgent
       type: type,
       subject: payload.subject,
       severity: payload.severity ?? NotificationSeverity.INFO,
-      message: payload.message ?? message,
+      message: payload.message ?? '',
       createdBy: payload.createdBy,
       updatedBy: payload.updatedBy,
       notifyUser: payload.notifyUser,

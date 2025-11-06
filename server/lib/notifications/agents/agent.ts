@@ -1,10 +1,14 @@
 import type { User } from '@server/entity/User';
 import type { NotificationAgentConfig } from '@server/lib/settings';
-import type { NotificationType } from '@server/constants/notification';
+import type {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
 import type Invite from '@server/entity/Invite';
+import type Event from '@server/entity/Event';
 
 export interface NotificationPayload {
-  event?: string;
+  event?: Event;
   subject: string;
   notifySystem: boolean;
   notifyAdmin: boolean;
@@ -16,6 +20,7 @@ export interface NotificationPayload {
   isAdmin?: boolean;
   actionUrl?: string;
   actionUrlTitle?: string;
+  severity?: NotificationSeverity;
 }
 
 export abstract class BaseAgent<T extends NotificationAgentConfig> {

@@ -87,19 +87,37 @@ const NotificationTypeSelector = ({
         hasNotifyUser: true,
       },
       {
-        id: 'friend-watching',
+        id: 'invite-expired',
         name: intl.formatMessage({
-          id: 'notification.friendWatching',
-          defaultMessage: 'Friend Watching',
+          id: 'notification.inviteExpired',
+          defaultMessage: 'Invite Expired',
         }),
         description: intl.formatMessage({
-          id: 'notification.friendWatching.description',
-          defaultMessage: 'Get notified when a friend is watching a show',
+          id: 'notification.inviteExpired.description',
+          defaultMessage: 'Get notified when an invite you created has expired',
         }),
-        value: Notification.FRIEND_WATCHING,
-        hidden: !user || !hasPermission(Permission.STREAMARR),
+        value: Notification.INVITE_EXPIRED,
+        hidden:
+          !user ||
+          !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
+            type: 'or',
+          }),
         hasNotifyUser: true,
       },
+      // {
+      //   id: 'friend-watching',
+      //   name: intl.formatMessage({
+      //     id: 'notification.friendWatching',
+      //     defaultMessage: 'Friend Watching',
+      //   }),
+      //   description: intl.formatMessage({
+      //     id: 'notification.friendWatching.description',
+      //     defaultMessage: 'Get notified when a friend is watching a show',
+      //   }),
+      //   value: Notification.FRIEND_WATCHING,
+      //   hidden: !user || !hasPermission(Permission.STREAMARR),
+      //   hasNotifyUser: true,
+      // },
       {
         id: 'local-messages',
         name: intl.formatMessage({
@@ -134,51 +152,51 @@ const NotificationTypeSelector = ({
         hasNotifyUser: true,
       },
       {
-        id: 'invite-expired',
+        id: 'new-invite',
         name: intl.formatMessage({
-          id: 'notification.inviteExpired',
-          defaultMessage: 'Invite Expired',
+          id: 'notification.newInvite',
+          defaultMessage: 'New Invite Created',
         }),
         description: intl.formatMessage({
-          id: 'notification.inviteExpired.description',
-          defaultMessage: 'Get notified when an invite you created has expired',
+          id: 'notification.newInvite.description',
+          defaultMessage: 'Get notified when a new invite is created',
         }),
-        value: Notification.INVITE_EXPIRED,
+        value: Notification.NEW_INVITE,
         hidden:
           !user ||
-          !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
+          !hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
             type: 'or',
           }),
         hasNotifyUser: true,
       },
-      {
-        id: 'system',
-        name: intl.formatMessage({
-          id: 'notification.system',
-          defaultMessage: 'System Notifications',
-        }),
-        description: intl.formatMessage({
-          id: 'notification.system.description',
-          defaultMessage: 'Get notified about important system events',
-        }),
-        value: Notification.SYSTEM,
-        hidden: !user || !hasPermission(Permission.ADMIN),
-        hasNotifyUser: true,
-      },
-      {
-        id: 'updates',
-        name: intl.formatMessage({
-          id: 'notification.updates',
-          defaultMessage: 'Updates',
-        }),
-        description: intl.formatMessage({
-          id: 'notification.updates.description',
-          defaultMessage: 'Get notified about Streamarr updates',
-        }),
-        value: Notification.UPDATES,
-        hidden: !user || !hasPermission(Permission.ADMIN),
-        hasNotifyUser: true,
-      },
+      // {
+      //   id: 'system',
+      //   name: intl.formatMessage({
+      //     id: 'notification.system',
+      //     defaultMessage: 'System Notifications',
+      //   }),
+      //   description: intl.formatMessage({
+      //     id: 'notification.system.description',
+      //     defaultMessage: 'Get notified about important system events',
+      //   }),
+      //   value: Notification.SYSTEM,
+      //   hidden: !user || !hasPermission(Permission.ADMIN),
+      //   hasNotifyUser: true,
+      // },
+      // {
+      //   id: 'updates',
+      //   name: intl.formatMessage({
+      //     id: 'notification.updates',
+      //     defaultMessage: 'Updates',
+      //   }),
+      //   description: intl.formatMessage({
+      //     id: 'notification.updates.description',
+      //     defaultMessage: 'Get notified about Streamarr updates',
+      //   }),
+      //   value: Notification.UPDATES,
+      //   hidden: !user || !hasPermission(Permission.ADMIN),
+      //   hasNotifyUser: true,
+      // },
       {
         id: 'user-created',
         name: intl.formatMessage({

@@ -9,6 +9,7 @@ export enum NotificationType {
   SYSTEM = 2048,
   UPDATES = 4096,
   FRIEND_WATCHING = 8192,
+  NEW_INVITE = 16384,
 }
 
 export enum NotificationSeverity {

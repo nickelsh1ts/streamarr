@@ -47,8 +47,6 @@ class EmailAgent
     recipientName?: string
   ): EmailOptions | undefined {
     const { applicationUrl, applicationTitle, customLogo } = getSettings().main;
-
-    // Use custom logo if available, otherwise fallback to default
     const logoUrl = customLogo || '/logo_full.png';
 
     if (type === NotificationType.TEST_NOTIFICATION) {
@@ -81,6 +79,94 @@ class EmailAgent
         },
       };
     }
+
+    if (type === NotificationType.USER_CREATED) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/usercreated'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.INVITE_REDEEMED) {
+      return {
+        template: path.join(
+          __dirname,
+          '../../../templates/email/inviteredeemed'
+        ),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.INVITE_EXPIRED) {
+      return {
+        template: path.join(
+          __dirname,
+          '../../../templates/email/inviteexpired'
+        ),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.NEW_INVITE) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/newinvite'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.NEW_EVENT) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/newevent'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    return undefined;
   }
 
   public async send(
@@ -112,15 +198,6 @@ class EmailAgent
             payload.notifyUser.email,
             payload.notifyUser.displayName
           );
-
-          // Skip sending if no template is configured for this notification type
-          if (!emailMessage) {
-            logger.debug('No email template configured for notification type', {
-              label: 'Notifications',
-              type: NotificationType[type],
-            });
-            return true;
-          }
 
           const email = new PreparedEmail(
             this.getSettings(),
@@ -174,18 +251,6 @@ class EmailAgent
                 user.email,
                 user.displayName
               );
-
-              // Skip sending if no template is configured for this notification type
-              if (!emailMessage) {
-                logger.debug(
-                  'No email template configured for notification type',
-                  {
-                    label: 'Notifications',
-                    type: NotificationType[type],
-                  }
-                );
-                return true;
-              }
 
               const email = new PreparedEmail(
                 this.getSettings(),

@@ -38,18 +38,6 @@ class WebPushAgent
     type: NotificationType,
     payload: NotificationPayload
   ): PushNotificationPayload {
-    let message: string | undefined;
-    switch (type) {
-      case NotificationType.TEST_NOTIFICATION:
-        message = payload.message;
-        break;
-      case NotificationType.LOCAL_MESSAGE:
-        message = payload.message;
-        break;
-      default:
-        return { notificationType: NotificationType[type], subject: 'Unknown' };
-    }
-
     const actionUrl = payload.invite
       ? `/invites/${payload.invite.id}`
       : (payload.actionUrl ?? undefined);
@@ -61,7 +49,7 @@ class WebPushAgent
     return {
       notificationType: NotificationType[type],
       subject: payload.subject,
-      message,
+      message: payload.message ?? '',
       image: payload.image,
       actionUrl,
       actionUrlTitle,
