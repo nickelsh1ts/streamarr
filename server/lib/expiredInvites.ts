@@ -61,6 +61,7 @@ class ExpiredInvites {
       }
     } catch (e) {
       logger.error('Failed to clean orphaned QR codes', {
+        label: 'Jobs',
         errorMessage: e.message,
       });
     }
