@@ -195,7 +195,8 @@ export type JobId =
   | 'plex-full-scan'
   | 'plex-refresh-token'
   | 'invites-qrcode-cleanup'
-  | 'image-cache-cleanup';
+  | 'image-cache-cleanup'
+  | 'notification-cleanup';
 
 interface AllSettings {
   clientId: string;
@@ -318,6 +319,7 @@ class Settings {
         'plex-refresh-token': { schedule: '0 0 5 * * *' },
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
+        'notification-cleanup': { schedule: '0 30 1 * * *' },
       },
     };
     if (initialSettings) {
