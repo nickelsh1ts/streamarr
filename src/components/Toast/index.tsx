@@ -10,12 +10,14 @@ type ToastPosition =
   | 'bottom-left'
   | 'bottom-center'
   | 'bottom-right';
-type ToastType =
+export type ToastType =
   | 'default'
   | 'primary'
+  | 'secondary'
   | 'error'
   | 'warning'
   | 'success'
+  | 'accent'
   | 'info';
 
 interface ToastProps {
@@ -50,9 +52,15 @@ const Toast = (
   switch (type) {
     case 'primary':
       toastStyle.push(
-        'bg-primary ring-primary-content ring-opacity-30 text-primary-content'
+        'bg-primary/30 ring-primary-content ring-opacity-30 text-primary-content'
       );
       ringStyle.push('focus:ring-primary-content');
+      break;
+    case 'secondary':
+      toastStyle.push(
+        'bg-secondary ring-secondary-content ring-opacity-30 text-secondary-content'
+      );
+      ringStyle.push('focus:ring-secondary-content');
       break;
     case 'error':
       toastStyle.push(
@@ -78,6 +86,12 @@ const Toast = (
       );
       ringStyle.push('focus:ring-info-content');
       break;
+    case 'accent':
+      toastStyle.push(
+        'bg-accent ring-accent-content ring-opacity-30 text-accent-content'
+      );
+      ringStyle.push('focus:ring-accent-content');
+      break;
     default:
       toastStyle.push(
         'bg-base-100 ring-base-content ring-opacity-30 text-base-content'
@@ -89,7 +103,7 @@ const Toast = (
       <div
         className={`${
           t.visible ? 'animate-slide-in' : 'animate-leave'
-        } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 ${toastStyle.join(' ')}`}
+        } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 backdrop-blur-md bg-opacity-60 ${toastStyle.join(' ')}`}
       >
         <div className="flex-1 w-0 p-4">
           <div className="flex">

@@ -24,10 +24,9 @@ import Button from '@app/components/Common/Button';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
 import { NotificationSeverity } from '@server/constants/notification';
+import type { ToastType } from '@app/components/Toast';
 
-const getToastType = (
-  severity: NotificationSeverity
-): 'default' | 'primary' | 'error' | 'warning' | 'success' | 'info' => {
+export const getToastType = (severity: NotificationSeverity): ToastType => {
   switch (severity) {
     case NotificationSeverity.ERROR:
       return 'error';
@@ -37,12 +36,14 @@ const getToastType = (
       return 'success';
     case NotificationSeverity.INFO:
       return 'info';
-    case NotificationSeverity.SECONDARY:
-      return 'default';
-    case NotificationSeverity.ACCENT:
-      return 'warning';
-    default:
+    case NotificationSeverity.PRIMARY:
       return 'primary';
+    case NotificationSeverity.SECONDARY:
+      return 'secondary';
+    case NotificationSeverity.ACCENT:
+      return 'accent';
+    default:
+      return 'default';
   }
 };
 

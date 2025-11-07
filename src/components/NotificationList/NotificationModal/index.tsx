@@ -1,6 +1,7 @@
 'use client';
 import Modal from '@app/components/Common/Modal';
 import UserSelector from '@app/components/Common/UserSelector';
+import type { ToastType } from '@app/components/Toast';
 import Toast from '@app/components/Toast';
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
@@ -22,6 +23,7 @@ import { Field, Form, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as Yup from 'yup';
 import useSWR from 'swr';
+import { getToastType } from '@app/components/Layout/Notifications';
 
 interface NotificationModalProps {
   onClose: () => void;
@@ -29,14 +31,6 @@ interface NotificationModalProps {
   onSave?: () => void;
   show: boolean;
 }
-
-type ToastType =
-  | 'default'
-  | 'primary'
-  | 'error'
-  | 'warning'
-  | 'success'
-  | 'info';
 
 const NotificationModal = ({
   onClose,
@@ -59,15 +53,9 @@ const NotificationModal = ({
     userData?.results.filter((user) => {
       const notificationTypes = user.settings?.notificationTypes;
 
-      // If notificationTypes is not set, it defaults to ALL_NOTIFICATIONS for all agents
-      // which includes LOCAL_MESSAGE, so we should include this user
       if (!notificationTypes) {
         return true;
       }
-
-      // Check if LOCAL_MESSAGE is enabled for at least one notification agent
-      // We need to check if the bit is actually set, not if it passes through hasNotificationType
-      // which has special logic for TEST_NOTIFICATION that interferes with our check
       const localMessageBit = NotificationType.LOCAL_MESSAGE;
 
       return (
@@ -79,49 +67,46 @@ const NotificationModal = ({
 
   const createPreview = (values) => {
     let icon = <InformationCircleIcon className="text-primary" />;
-    let type: ToastType = 'primary';
     switch (values.severity) {
       case NotificationSeverity.ERROR:
         icon = <XCircleIcon className="text-error-content size-7" />;
-        type = 'error';
         break;
       case NotificationSeverity.WARNING:
         icon = (
           <ExclamationTriangleIcon className="text-warning-content size-7" />
         );
-        type = 'warning';
         break;
       case NotificationSeverity.INFO:
         icon = (
           <InformationCircleIcon className="text-primary-content size-7" />
         );
-        type = 'info';
         break;
       case NotificationSeverity.SUCCESS:
         icon = <CheckBadgeIcon className="text-success-content size-7" />;
-        type = 'success';
+        break;
+      case NotificationSeverity.PRIMARY:
+        icon = (
+          <InformationCircleIcon className="text-primary-content size-7" />
+        );
         break;
       case NotificationSeverity.SECONDARY:
         icon = (
           <InformationCircleIcon className="text-secondary-content size-7" />
         );
-        type = 'default';
         break;
       case NotificationSeverity.ACCENT:
         icon = <InformationCircleIcon className="text-accent-content size-7" />;
-        type = 'warning';
         break;
       default:
         icon = (
           <InformationCircleIcon className="text-primary-content size-7" />
         );
-        type = 'primary';
     }
 
     Toast({
       title: values.subject,
       message: values.message,
-      type: type,
+      type: getToastType(values.severity as NotificationSeverity) as ToastType,
       icon: icon,
     });
   };
