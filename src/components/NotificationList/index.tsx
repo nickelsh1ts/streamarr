@@ -111,7 +111,8 @@ const NotificationsList = () => {
   const hasNextPage = (data?.pageInfo.pages ?? 0) > pageIndex + 1;
   const hasPrevPage = pageIndex > 0;
 
-  const subtextItems = user?.id != currentUser?.id ? null : null;
+  const subtextItems: React.ReactNode[] =
+    user?.id != currentUser?.id ? [user?.displayName] : null;
 
   const deleteNotification = async (notificationId: number, userId: string) => {
     try {

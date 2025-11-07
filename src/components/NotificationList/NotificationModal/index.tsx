@@ -348,8 +348,8 @@ const NotificationModal = ({
                     as="textarea"
                     id="message"
                     name="message"
-                    rows={6}
-                    className={`input input-sm input-primary rounded-md w-full h-32 ${
+                    rows={3}
+                    className={`input input-sm input-primary rounded-md w-full h-16 leading-normal ${
                       errors.message && touched.message ? 'input-error' : ''
                     }`}
                   />

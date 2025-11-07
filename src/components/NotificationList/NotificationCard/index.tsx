@@ -1,4 +1,5 @@
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
@@ -13,7 +14,6 @@ import {
 import { NotificationSeverity } from '@server/constants/notification';
 import type Notification from '@server/entity/Notification';
 import moment from 'moment';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -69,7 +69,7 @@ export const NotificationCard = ({
     <div
       onClick={() => {
         !notification.isRead && onRead();
-        if (notification.actionUrl) {
+        if (notification.actionUrl && !notification.actionUrlTitle) {
           setIsOpen(false);
           router.push(notification.actionUrl);
         }
@@ -85,10 +85,12 @@ export const NotificationCard = ({
       tabIndex={0}
       className={`flex gap-3 p-2 text-white w-full rounded-lg relative text-start ${!notification.isRead ? 'bg-primary/20' : ''} hover:bg-primary-content/10 group/item has-[.actions:hover]:bg-transparent`}
     >
-      <div className="relative inline-flex size-16 flex-shrink-0 items-center justify-center rounded-full border border-base-200 shadow-md mb-2">
+      <div className="relative inline-flex size-16 flex-shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
         <div>
-          <Image
-            src={'/streamarr-logo-192x192.png'}
+          <CachedImage
+            src={
+              notification?.createdBy?.avatar || '/streamarr-logo-192x192.png'
+            }
             alt=""
             className="rounded-full"
             width={64}
@@ -96,7 +98,7 @@ export const NotificationCard = ({
           />
         </div>
         <div
-          className={`absolute rounded-full size-7 right-0 bottom-0 -me-1 -mb-2 p-1 ${bgColor}`}
+          className={`absolute rounded-full size-7 right-0 bottom-0 -me-1 -mb-1 p-1 ${bgColor}`}
         >
           {icon}
         </div>
@@ -107,9 +109,9 @@ export const NotificationCard = ({
           <span className="">{notification.message}</span>
         </div>
         <span
-          className={`${!notification.isRead ? 'text-primary' : ''} text-sm font-extrabold`}
+          className={`${!notification.isRead ? 'text-primary' : ''} text-xs font-bold`}
         >
-          {moment(notification.createdAt).fromNow(true)}
+          {moment(notification.createdAt).fromNow()}
         </span>
         {notification.actionUrlTitle && notification.actionUrl && (
           <div className="flex gap-2 mt-2 w-full max-w-md">
@@ -128,7 +130,7 @@ export const NotificationCard = ({
         )}
       </div>
       <div className="flex flex-row gap-1 items-center">
-        <div className="p-2 content-center">
+        <div className="p-2 content-center -ms-8">
           <div className="relative size-4">
             {!notification.isRead && (
               <>

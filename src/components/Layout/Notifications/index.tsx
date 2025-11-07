@@ -256,8 +256,8 @@ const Notifications = () => {
               </button>
             </span>
           </div>
-          <div className="m-4 sm:pb-0 flex flex-col h-full overflow-y-auto">
-            <div className="flex flex-row justify-between mb-2">
+          <div className="m-1 sm:pb-0 flex flex-col h-full overflow-y-auto">
+            <div className="mx-3 flex flex-row justify-between mb-2">
               <span className="font-bold text-xl">
                 {filter === 'unread' ? '' : 'New'}
               </span>
@@ -271,7 +271,7 @@ const Notifications = () => {
                 <FormattedMessage id="common.seeAll" defaultMessage="See all" />
               </Button>
             </div>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2 mb-2">
               {!data && !error ? (
                 <LoadingEllipsis />
               ) : (data?.results.filter((notification) => {
@@ -340,7 +340,7 @@ const Notifications = () => {
               (data?.results.filter((notification) => notification.isRead)
                 .length ?? 0) > 0 && (
                 <div className="flex flex-col">
-                  <div className="mb-2">
+                  <div className="mb-2 mx-3">
                     <span className="font-bold text-xl">
                       <FormattedMessage
                         id="notification.earlier"
