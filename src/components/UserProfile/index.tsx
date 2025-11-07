@@ -4,6 +4,7 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import type {
   QuotaResponse,
   UserInvitesResponse,
+  UserNotificationsResponse,
 } from '@server/interfaces/api/userInterfaces';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -14,6 +15,7 @@ import ProgressCircle from '@app/components/Common/ProgressCircle';
 import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
+import RecentNotification from '@app/components/Common/Slider/RecentNotification';
 
 const UserProfile = () => {
   const userQuery = useParams<{ userid: string }>();
@@ -42,6 +44,18 @@ const UserProfile = () => {
       ? `/api/v1/user/${user.id}/quota`
       : null
   );
+
+  const { data: notifications, error: notificationError } =
+    useSWR<UserNotificationsResponse>(
+      user &&
+        (user.id === currentUser?.id ||
+          currentHasPermission(
+            [Permission.VIEW_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
+            { type: 'or' }
+          ))
+        ? `/api/v1/user/${user.id}/notifications?take=10&skip=0`
+        : null
+    );
 
   if (!user && !error) {
     return <LoadingEllipsis />;
@@ -208,6 +222,45 @@ const UserProfile = () => {
                 />
               ))}
               placeholder={<RecentInvite.Placeholder />}
+            />
+          </>
+        )}
+      {(user.id === currentUser?.id ||
+        currentHasPermission(
+          [Permission.MANAGE_NOTIFICATIONS, Permission.VIEW_NOTIFICATIONS],
+          { type: 'or' }
+        )) &&
+        (!notifications || !!notifications.results.length) &&
+        !notificationError && (
+          <>
+            <div className="flex my-4 relative">
+              <Link
+                className="flex items-center gap-2 link-primary"
+                href={
+                  user.id === currentUser?.id
+                    ? '/profile/notifications?filter=all'
+                    : `/admin/users/${user?.id}/notifications?filter=all`
+                }
+              >
+                <span className="text-2xl font-bold">
+                  <FormattedMessage
+                    id="profile.recentNotifications"
+                    defaultMessage="Recent Notifications"
+                  />
+                </span>
+                <ArrowRightCircleIcon className="size-5" />
+              </Link>
+            </div>
+            <Slider
+              sliderKey="notifications"
+              isLoading={!notifications}
+              items={(notifications?.results ?? []).map((notification) => (
+                <RecentNotification
+                  key={`notification-slider-item-${notification.id}`}
+                  notification={notification}
+                />
+              ))}
+              placeholder={<RecentNotification.Placeholder />}
             />
           </>
         )}

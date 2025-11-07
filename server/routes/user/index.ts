@@ -650,6 +650,8 @@ router.get<{ id: string }, UserNotificationsResponse>(
       )
         .createQueryBuilder('notification')
         .leftJoinAndSelect('notification.notifyUser', 'user')
+        .leftJoinAndSelect('notification.createdBy', 'createdBy')
+        .leftJoinAndSelect('notification.updatedBy', 'updatedBy')
         .where('user.id = :id', { id: user.id })
         .andWhere('notification.isRead IN (:...isRead)', {
           isRead: isReadFilter,
@@ -704,6 +706,7 @@ router.put<
 
     const notification = await notificationRepository.findOneOrFail({
       where: { id: Number(req.params.notificationId) },
+      relations: ['createdBy', 'updatedBy', 'notifyUser'],
     });
 
     if (!notification) {
@@ -798,6 +801,7 @@ router.put<
     // If no notificationIds provided, update ALL user's notifications (no additional filter)
     const notifications = await notificationRepository.find({
       where: whereCondition,
+      relations: ['createdBy', 'updatedBy', 'notifyUser'],
     });
 
     // Validate that all requested notification IDs belong to the user
