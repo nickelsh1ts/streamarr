@@ -52,14 +52,6 @@ class InAppAgent
     type: NotificationType,
     payload: InAppNotificationPayload
   ): InAppNotificationPayload {
-    const actionUrl = payload.invite
-      ? `/invites/${payload.invite.id}`
-      : (payload.actionUrl ?? undefined);
-
-    const actionUrlTitle = payload.invite
-      ? `View ${payload.invite ? 'Invite' : ''}`
-      : (payload.actionUrlTitle ?? undefined);
-
     return {
       type: type,
       subject: payload.subject,
@@ -69,8 +61,8 @@ class InAppAgent
       updatedBy: payload.updatedBy,
       notifyUser: payload.notifyUser,
       inviteId: payload.invite?.id,
-      actionUrl,
-      actionUrlTitle,
+      actionUrl: payload.actionUrl,
+      actionUrlTitle: payload.actionUrlTitle,
       notifySystem: payload.notifySystem,
       notifyAdmin: payload.notifyAdmin,
     };

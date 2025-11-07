@@ -38,21 +38,13 @@ class WebPushAgent
     type: NotificationType,
     payload: NotificationPayload
   ): PushNotificationPayload {
-    const actionUrl = payload.invite
-      ? `/invites/${payload.invite.id}`
-      : (payload.actionUrl ?? undefined);
-
-    const actionUrlTitle = payload.invite
-      ? `View ${payload.invite ? 'Invite' : ''}`
-      : (payload.actionUrlTitle ?? undefined);
-
     return {
       notificationType: NotificationType[type],
       subject: payload.subject,
       message: payload.message ?? '',
       image: payload.image,
-      actionUrl,
-      actionUrlTitle,
+      actionUrl: payload.actionUrl,
+      actionUrlTitle: payload.actionUrlTitle,
       isAdmin: payload.isAdmin,
     };
   }
