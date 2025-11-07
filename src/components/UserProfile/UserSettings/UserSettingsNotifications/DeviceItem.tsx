@@ -101,11 +101,11 @@ const DeviceItem = ({
         {subEndpoint === device.endpoint ? (
           <Button
             buttonType="primary"
-            buttonSize="md"
+            buttonSize="sm"
             className="w-full"
             disabled
           >
-            <LockClosedIcon className="size-7 mr-2" />{' '}
+            <LockClosedIcon className="size-5 mr-2" />{' '}
             <span>
               <FormattedMessage
                 id="userSettings.notifications.subscriptionActive"

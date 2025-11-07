@@ -44,7 +44,7 @@ const AboutSettings = () => {
             defaultMessage="This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
           />
         </p>
-        <p className="text-sm leading-5 place-content-center">
+        <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
           <a
             href="https://github.com/nickelsh1ts/streamarr"
             className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"

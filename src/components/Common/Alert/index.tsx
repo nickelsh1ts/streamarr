@@ -50,11 +50,9 @@ const Alert = ({ title, children, type }: AlertProps) => {
       <div className={`flex flex-wrap gap-2 ${design.titleColor}`}>
         <div className={`flex-shrink-0 ${design.titleColor}`}>{design.svg}</div>
         {title && (
-          <div className="md:flex flex-1 md:justify-between">
-            <div className={`text-sm ${design.textColor}`}>
-              <div className={`text-sm font-medium ${design.titleColor}`}>
-                {title}
-              </div>
+          <div className={`text-sm ${design.textColor}`}>
+            <div className={`text-sm font-medium ${design.titleColor}`}>
+              {title}
             </div>
           </div>
         )}
