@@ -53,7 +53,7 @@ const NotificationModal = ({
     userData?.results.filter((user) => {
       const notificationTypes = user.settings?.notificationTypes;
 
-      if (!notificationTypes) {
+      if (!notificationTypes || Object.keys(notificationTypes).length === 0) {
         return true;
       }
       const localMessageBit = NotificationType.LOCAL_MESSAGE;

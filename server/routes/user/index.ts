@@ -26,7 +26,7 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const pageSize = req.query.take ? Number(req.query.take) : 10;
+    const pageSize = req.query.take ? Number(req.query.take) : undefined;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
     let query = getRepository(User)
       .createQueryBuilder('user')
@@ -61,17 +61,16 @@ router.get('/', async (req, res, next) => {
         break;
     }
 
-    const [users, userCount] = await query
-      .take(pageSize)
-      .skip(skip)
-      .getManyAndCount();
+    const [users, userCount] = await (
+      pageSize ? query.take(pageSize).skip(skip) : query
+    ).getManyAndCount();
 
     res.status(200).json({
       pageInfo: {
-        pages: Math.ceil(userCount / pageSize),
-        pageSize,
+        pages: pageSize ? Math.ceil(userCount / pageSize) : 1,
+        pageSize: pageSize ?? userCount,
         results: userCount,
-        page: Math.ceil(skip / pageSize) + 1,
+        page: pageSize ? Math.ceil(skip / pageSize) + 1 : 1,
       },
       results: User.filterMany(
         users,
