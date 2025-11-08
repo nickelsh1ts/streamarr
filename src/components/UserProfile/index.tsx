@@ -16,16 +16,19 @@ import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
 import RecentNotification from '@app/components/Common/Slider/RecentNotification';
+import useSettings from '@app/hooks/useSettings';
 
 const UserProfile = () => {
+  const currentSettings = useSettings().currentSettings;
   const userQuery = useParams<{ userid: string }>();
-  const { user, error } = useUser({
+  const { user, error, hasPermission } = useUser({
     id: Number(userQuery.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
 
   const { data: invites, error: inviteError } = useSWR<UserInvitesResponse>(
     user &&
+      currentSettings.enableSignUp &&
       (user.id === currentUser?.id ||
         currentHasPermission(
           [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
@@ -48,6 +51,7 @@ const UserProfile = () => {
   const { data: notifications, error: notificationError } =
     useSWR<UserNotificationsResponse>(
       user &&
+        currentSettings.inAppEnabled &&
         (user.id === currentUser?.id ||
           currentHasPermission(
             [Permission.VIEW_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
@@ -142,7 +146,11 @@ const UserProfile = () => {
                     quota.invite.restricted ? 'text-red-500' : 'text-white'
                   }`}
                 >
-                  {quota.invite.limit > 0 ? (
+                  {quota.invite.limit > 0 &&
+                  hasPermission(
+                    [Permission.STREAMARR, Permission.CREATE_INVITES],
+                    { type: 'or' }
+                  ) ? (
                     <>
                       <ProgressCircle
                         progress={Math.round(

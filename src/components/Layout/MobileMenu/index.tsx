@@ -396,6 +396,11 @@ const MobileMenu = () => {
               if (url.match(/^\/request\/?(.*)?\/?/) && !requestDisabled) {
                 setMenuType('request');
               }
+              if (
+                url.match(/^\/watch\/web\/index\.html#!\/settings\/?(.*)?\/?/)
+              ) {
+                setMenuType('settings');
+              }
             }}
           >
             {isOpen &&
