@@ -80,6 +80,7 @@ const SignUpAuthForm = ({
     setLoading(true);
     try {
       const response = await axios.post<{
+        success: boolean;
         user: User;
         message?: string;
       }>('/api/v1/signup/localauth', {
