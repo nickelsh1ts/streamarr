@@ -8,6 +8,14 @@ export class LocalNotifications1756351277979 implements MigrationInterface {
       `CREATE TABLE "notification" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "type" integer NOT NULL, "severity" varchar NOT NULL DEFAULT ('info'), "subject" text NOT NULL, "message" text NOT NULL, "isRead" boolean NOT NULL DEFAULT (0), "actionUrl" text, "actionUrlTitle" text, "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "notifyUserId" integer, "createdById" integer, "updatedById" integer)`
     );
     await queryRunner.query(
+      `CREATE TABLE "temporary_event" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "type" varchar NOT NULL DEFAULT ('local'), "categories" varchar, "description" varchar NOT NULL, "end" datetime NOT NULL, "start" datetime NOT NULL, "status" text NOT NULL DEFAULT ('TENTATIVE'), "summary" varchar NOT NULL, "uid" text NOT NULL, "allDay" boolean NOT NULL DEFAULT (0), "sendNotification" boolean NOT NULL DEFAULT (0), "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "createdById" integer, "updatedById" integer, CONSTRAINT "UQ_8e5f60ed922f3daf06a8d6c77e8" UNIQUE ("uid"), CONSTRAINT "FK_4d47abd5a12645e80cfa987c917" FOREIGN KEY ("createdById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION, CONSTRAINT "FK_fd1e91ef5276d4bd640d21bb74f" FOREIGN KEY ("updatedById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION)`
+    );
+    await queryRunner.query(
+      `INSERT INTO "temporary_event"("id", "type", "categories", "description", "end", "start", "status", "summary", "uid", "allDay", "createdAt", "updatedAt", "createdById", "updatedById") SELECT "id", "type", "categories", "description", "end", "start", "status", "summary", "uid", "allDay", "createdAt", "updatedAt", "createdById", "updatedById" FROM "event"`
+    );
+    await queryRunner.query(`DROP TABLE "event"`);
+    await queryRunner.query(`ALTER TABLE "temporary_event" RENAME TO "event"`);
+    await queryRunner.query(
       `CREATE TABLE "temporary_user" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "email" varchar NOT NULL, "plexUsername" varchar, "username" varchar, "password" varchar, "resetPasswordGuid" varchar, "recoveryLinkExpirationDate" date, "userType" integer NOT NULL DEFAULT (1), "plexId" integer, "plexToken" varchar, "permissions" integer NOT NULL DEFAULT (32), "avatar" varchar NOT NULL, "inviteQuotaLimit" integer, "inviteQuotaDays" integer, "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "redeemedInviteId" integer, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "FK_946f71fd3b363326811d818aa17" FOREIGN KEY ("redeemedInviteId") REFERENCES "invite" ("id") ON DELETE SET NULL ON UPDATE NO ACTION)`
     );
     await queryRunner.query(
@@ -46,6 +54,14 @@ export class LocalNotifications1756351277979 implements MigrationInterface {
       `INSERT INTO "user"("id", "email", "plexUsername", "username", "password", "resetPasswordGuid", "recoveryLinkExpirationDate", "userType", "plexId", "plexToken", "permissions", "avatar", "inviteQuotaLimit", "inviteQuotaDays", "createdAt", "updatedAt", "redeemedInviteId") SELECT "id", "email", "plexUsername", "username", "password", "resetPasswordGuid", "recoveryLinkExpirationDate", "userType", "plexId", "plexToken", "permissions", "avatar", "inviteQuotaLimit", "inviteQuotaDays", "createdAt", "updatedAt", "redeemedInviteId" FROM "temporary_user"`
     );
     await queryRunner.query(`DROP TABLE "temporary_user"`);
+    await queryRunner.query(`ALTER TABLE "event" RENAME TO "temporary_event"`);
+    await queryRunner.query(
+      `CREATE TABLE "event" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "type" varchar NOT NULL DEFAULT ('local'), "categories" varchar, "description" varchar NOT NULL, "end" datetime NOT NULL, "start" datetime NOT NULL, "status" text NOT NULL DEFAULT ('TENTATIVE'), "summary" varchar NOT NULL, "uid" text NOT NULL, "allDay" boolean NOT NULL DEFAULT (0), "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), "createdById" integer, "updatedById" integer, CONSTRAINT "UQ_8e5f60ed922f3daf06a8d6c77e8" UNIQUE ("uid"), CONSTRAINT "FK_4d47abd5a12645e80cfa987c917" FOREIGN KEY ("createdById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION, CONSTRAINT "FK_fd1e91ef5276d4bd640d21bb74f" FOREIGN KEY ("updatedById") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE NO ACTION)`
+    );
+    await queryRunner.query(
+      `INSERT INTO "event"("id", "type", "categories", "description", "end", "start", "status", "summary", "uid", "allDay", "createdAt", "updatedAt", "createdById", "updatedById") SELECT "id", "type", "categories", "description", "end", "start", "status", "summary", "uid", "allDay", "createdAt", "updatedAt", "createdById", "updatedById" FROM "temporary_event"`
+    );
+    await queryRunner.query(`DROP TABLE "temporary_event"`);
     await queryRunner.query(`DROP TABLE "notification"`);
   }
 }

@@ -59,6 +59,7 @@ const Schedule = () => {
       categories: e.categories ?? [],
       status: e.status ?? 'unknown',
       allDay: e.allDay ?? false,
+      sendNotification: e.sendNotification ?? false,
       createdBy: e.createdBy,
       type: radarrEvents?.includes(e)
         ? 'movie'

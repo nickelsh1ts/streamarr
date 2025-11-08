@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
 import * as Yup from 'yup';
 
 interface EventModalProps {
@@ -210,6 +211,21 @@ const EventModal = ({
       otherwise: (schema) => schema.notRequired(),
     }),
     allDay: Yup.boolean(),
+    sendNotification: Yup.boolean().test(
+      'not-past-event',
+      intl.formatMessage({
+        id: 'event.sendNotificationPastEvent',
+        defaultMessage: 'Cannot send notifications for past events',
+      }),
+      function (value) {
+        const { start } = this.parent;
+        // If sendNotification is true, ensure start date is not in the past
+        if (value === true && start && moment(start).isBefore(moment())) {
+          return false;
+        }
+        return true;
+      }
+    ),
   });
 
   // Determine if we're in view-only mode
@@ -364,6 +380,7 @@ const EventModal = ({
         allDay: selectedEvent?.allDay ?? false,
         categories: selectedEvent?.categories ?? '',
         status: selectedEvent?.status ?? 'TENTATIVE',
+        sendNotification: selectedEvent?.sendNotification ?? false,
       }}
       validationSchema={EventSchema}
       onSubmit={async (values, { resetForm }) => {
@@ -377,6 +394,7 @@ const EventModal = ({
             allDay: values.allDay,
             categories: values.categories,
             status: values.status,
+            sendNotification: values.sendNotification,
           };
           if (!selectedEvent?.id) {
             await axios.post('/api/v1/calendar/local', submission);
@@ -578,7 +596,7 @@ const EventModal = ({
                     id="description"
                     name="description"
                     rows={6}
-                    className={`input input-sm input-primary rounded-md w-full h-32 ${
+                    className={`input input-sm input-primary rounded-md w-full h-32 leading-normal ${
                       errors.description && touched.description
                         ? 'input-error'
                         : ''
@@ -590,6 +608,33 @@ const EventModal = ({
                       <div className="text-error">{errors.description}</div>
                     )}
                 </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="sendNotification"
+                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                >
+                  <Field
+                    name="sendNotification"
+                    id="sendNotification"
+                    type="checkbox"
+                    className="checkbox checkbox-primary checkbox-sm"
+                    disabled={
+                      values.start &&
+                      moment(values.start).isBefore(moment()) &&
+                      !values.sendNotification
+                    }
+                  />
+                  <FormattedMessage
+                    id="calendar.sendNotification"
+                    defaultMessage="Send Notification"
+                  />
+                </label>
+                {errors.sendNotification && touched.sendNotification && (
+                  <div className="text-error text-sm mt-1">
+                    {errors.sendNotification}
+                  </div>
+                )}
               </div>
               <div>
                 <label

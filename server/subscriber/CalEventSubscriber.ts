@@ -27,7 +27,7 @@ export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
     entity: Event,
     type: NotificationType
   ) {
-    if (!moment(entity.start).isAfter(moment())) {
+    if (!entity.sendNotification || !moment(entity.start).isAfter(moment())) {
       return;
     }
 
