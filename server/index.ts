@@ -151,43 +151,17 @@ app
     setSocketIO(io);
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
-      logger.debug(`Socket connection attempt`, {
-        label: 'SocketIO',
-        socketID: socket.id,
-        user: req.session?.userId,
-      });
       // Check for valid session and user
       if (!req.session || !req.session.userId || !req.session.userId) {
-        logger.debug('Socket connection rejected: no valid session/user', {
-          label: 'SocketIO',
-        });
         socket.disconnect(true);
         return;
       }
-      const userRepository = getRepository(User);
       try {
-        const user = await userRepository.findOneByOrFail({
-          id: req.session.userId,
-        });
         socket.join(String(req.session.userId));
-        logger.debug(`${user.displayName} connected to a websocket`, {
-          label: 'SocketIO',
-        });
       } catch {
-        logger.debug('Socket connection rejected: user not found', {
-          label: 'SocketIO',
-        });
         socket.disconnect(true);
         return;
       }
-
-      socket.on('disconnect', () => {
-        logger.debug(`Socket disconnected`, {
-          label: 'SocketIO',
-          socketID: socket.id,
-          user: req.session?.userId,
-        });
-      });
     });
     server.use('/imageproxy', clearCookies, imageproxy);
     server.use('/logo', clearCookies, logoRoutes);
