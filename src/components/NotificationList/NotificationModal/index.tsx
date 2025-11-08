@@ -42,10 +42,10 @@ const NotificationModal = ({
   const { hasPermission: currentHasPermission } = useUser();
 
   const { data: userData } = useSWR<UserResultsResponse>(
-    currentHasPermission([
-      Permission.CREATE_NOTIFICATIONS,
-      Permission.MANAGE_NOTIFICATIONS,
-    ])
+    currentHasPermission(
+      [Permission.CREATE_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
+      { type: 'or' }
+    )
       ? '/api/v1/user?sort=displayname'
       : null
   );

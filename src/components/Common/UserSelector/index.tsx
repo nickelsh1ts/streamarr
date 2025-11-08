@@ -245,11 +245,12 @@ const UserSelector = ({
                             <span className="ml-3 block flex-shrink-0">
                               {user.displayName}
                             </span>
-                            {user.displayName.toLowerCase() !== user.email && (
-                              <span className="ml-1 truncate text-gray-400">
-                                ({user.email})
-                              </span>
-                            )}
+                            {user.displayName.toLowerCase() !== user.email &&
+                              user.email && (
+                                <span className="ml-1 truncate text-gray-400">
+                                  ({user.email})
+                                </span>
+                              )}
                           </span>
                           {selected && (
                             <span
