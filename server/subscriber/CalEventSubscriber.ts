@@ -27,6 +27,10 @@ export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
     entity: Event,
     type: NotificationType
   ) {
+    if (!moment(entity.start).isAfter(moment())) {
+      return;
+    }
+
     const userRepository = getRepository(User);
 
     const users = await userRepository.find({

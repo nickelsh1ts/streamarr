@@ -111,10 +111,9 @@ router.get('/libraries', async (req, res, next) => {
     });
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
 
-    // Only enabled libraries
-    const enabledLibraries = settings.plex.libraries.filter(
-      (lib) => lib.enabled
-    );
+    const enabledLibraries = settings.plex.libraries
+      .filter((lib) => lib.enabled)
+      .sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
     // Get media counts for each enabled library
     const results = await Promise.all(
