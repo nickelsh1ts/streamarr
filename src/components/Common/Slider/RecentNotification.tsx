@@ -56,10 +56,7 @@ const RecentNotification = ({ notification }: RecentNotificationProps) => {
     >
       <div className="absolute top-0 right-0 m-2 size-7">{icon}</div>
       <div>
-        <p className="text-xs truncate w-full text-neutral-400">
-          {moment(notification?.createdAt).fromNow()}
-        </p>
-        <p className="truncate text-sm font-semibold">
+        <p className="truncate text-sm font-semibold me-6">
           {notification?.subject}
         </p>
         <div className="w-full h-full">
@@ -67,6 +64,9 @@ const RecentNotification = ({ notification }: RecentNotificationProps) => {
             {notification?.message}
           </p>
         </div>
+        <p className="text-xs text-end truncate w-full text-neutral-400">
+          {moment(notification?.createdAt).fromNow()}
+        </p>
       </div>
     </div>
   );
