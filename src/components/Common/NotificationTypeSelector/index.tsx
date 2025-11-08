@@ -52,6 +52,7 @@ interface NotificationTypeSelectorProps {
   currentTypes: number;
   onUpdate: (newTypes: number) => void;
   error?: string;
+  agent?: string;
 }
 
 const NotificationTypeSelector = ({
@@ -60,6 +61,7 @@ const NotificationTypeSelector = ({
   currentTypes,
   onUpdate,
   error,
+  agent = '',
 }: NotificationTypeSelectorProps) => {
   const { hasPermission } = useUser({ id: user?.id });
   const [allowedTypes, setAllowedTypes] = useState(enabledTypes);
@@ -246,10 +248,11 @@ const NotificationTypeSelector = ({
             <div className="max-w-lg">
               {availableTypes.map((type) => (
                 <NotificationType
-                  key={`notification-type-${type.id}`}
+                  key={`notification-type-${agent}-${type.id}`}
                   option={type}
                   currentTypes={currentTypes}
                   onUpdate={onUpdate}
+                  agent={agent}
                 />
               ))}
             </div>
