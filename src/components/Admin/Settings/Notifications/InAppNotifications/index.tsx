@@ -43,7 +43,7 @@ const InAppNotifications = () => {
             title: intl.formatMessage({
               id: 'inAppNotifications.saveSuccess',
               defaultMessage:
-                'In-app notifications settings saved successfully.',
+                'In-app notification settings saved successfully.',
             }),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,

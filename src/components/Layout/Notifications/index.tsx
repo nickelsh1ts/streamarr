@@ -206,7 +206,7 @@ const Notifications = () => {
                 >
                   <FormattedMessage
                     id="common.unread"
-                    defaultMessage="Unread"
+                    defaultMessage="unread"
                   />
                 </Button>
               </p>

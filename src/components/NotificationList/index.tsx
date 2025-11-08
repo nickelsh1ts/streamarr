@@ -186,16 +186,16 @@ const NotificationsList = () => {
               onChange={(e) => {
                 setCurrentFilter(e.target.value as Filter);
               }}
-              className="select select-sm select-primary rounded-l-none w-full flex-1"
+              className="select select-sm select-primary rounded-l-none w-full flex-1 capitalize"
             >
               <option value="all">
                 <FormattedMessage id="common.all" defaultMessage="All" />
               </option>
               <option value="unread">
-                <FormattedMessage id="common.unread" defaultMessage="Unread" />
+                <FormattedMessage id="common.unread" defaultMessage="unread" />
               </option>
               <option value="read">
-                <FormattedMessage id="common.read" defaultMessage="Read" />
+                <FormattedMessage id="common.read" defaultMessage="read" />
               </option>
             </select>
           </div>
