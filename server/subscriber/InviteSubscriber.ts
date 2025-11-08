@@ -131,6 +131,14 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
     if (!event.entity) {
       return;
     }
+    if (
+      !event.entity.createdBy.hasPermission(
+        [Permission.CREATE_INVITES, Permission.STREAMARR],
+        { type: 'or' }
+      )
+    ) {
+      return;
+    }
 
     const previousUses = event.databaseEntity?.uses ?? 0;
     const currentUses = event.entity.uses ?? 0;

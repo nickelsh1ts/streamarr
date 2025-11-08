@@ -16,6 +16,7 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import logger from '@server/logger';
 import moment from 'moment';
+import { Permission } from '@server/lib/permissions';
 
 @EventSubscriber()
 export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
@@ -40,10 +41,16 @@ export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
     const eligibleUsers = users.filter((user) => {
       const settings = user.settings;
       return (
-        !settings ||
-        hasNotificationType(type, settings.notificationTypes?.inApp ?? 0) ||
-        hasNotificationType(type, settings.notificationTypes?.email ?? 0) ||
-        hasNotificationType(type, settings.notificationTypes?.webpush ?? 0)
+        (!settings ||
+          hasNotificationType(type, settings.notificationTypes?.inApp ?? 0) ||
+          hasNotificationType(type, settings.notificationTypes?.email ?? 0) ||
+          hasNotificationType(
+            type,
+            settings.notificationTypes?.webpush ?? 0
+          )) &&
+        user.hasPermission([Permission.VIEW_SCHEDULE, Permission.STREAMARR], {
+          type: 'or',
+        })
       );
     });
 
