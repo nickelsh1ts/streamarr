@@ -66,7 +66,7 @@ const NotificationModal = ({
     }) ?? [];
 
   const createPreview = (values) => {
-    let icon = <InformationCircleIcon className="text-primary" />;
+    let icon;
     switch (values.severity) {
       case NotificationSeverity.ERROR:
         icon = <XCircleIcon className="text-error-content size-7" />;

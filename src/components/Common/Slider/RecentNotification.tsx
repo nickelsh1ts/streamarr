@@ -26,7 +26,7 @@ interface RecentNotificationProps {
 }
 
 const RecentNotification = ({ notification }: RecentNotificationProps) => {
-  let icon = <InformationCircleIcon className="text-primary" />;
+  let icon;
   switch (notification.severity) {
     case NotificationSeverity.ERROR:
       icon = <XCircleIcon className="text-error" />;
