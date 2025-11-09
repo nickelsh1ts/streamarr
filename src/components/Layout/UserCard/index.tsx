@@ -61,7 +61,7 @@ const UserCard = ({
           <button onClick={() => setIsOpen(true)} className="indicator">
             {unRead > 0 && (
               <span className="indicator-item indicator-top indicator-end top-2 right-2 badge badge-xs py-2 text-xs font-thin badge-error">
-                {unRead > 0 ? unRead : null}
+                {unRead}
               </span>
             )}
             {unRead > 0 ? (

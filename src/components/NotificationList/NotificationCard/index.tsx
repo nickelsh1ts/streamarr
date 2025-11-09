@@ -32,8 +32,8 @@ export const NotificationCard = ({
   const intl = useIntl();
   const router = useRouter();
   const { setIsOpen } = useNotificationSidebar();
-  let icon = <InformationCircleIcon className="text-primary-content" />;
-  let bgColor = 'bg-primary';
+  let icon;
+  let bgColor;
 
   switch (notification.severity) {
     case NotificationSeverity.ERROR:
