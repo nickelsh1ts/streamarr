@@ -6,7 +6,11 @@ from datetime import datetime, timezone
 import os
 import json
 
-log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
+if os.environ.get('CONFIG_DIRECTORY'):
+    log_path = os.path.join(os.environ['CONFIG_DIRECTORY'], 'logs', '.machinelogs.json')
+else:
+    log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
+
 class JSONLineLogger:
     def __init__(self, label='Plex Sync'):
         self.label = label
