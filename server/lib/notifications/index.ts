@@ -1,15 +1,11 @@
 import { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
 import type { NotificationAgent, NotificationPayload } from './agents/agent';
-
-export enum Notification {
-  NONE = 0,
-  INVITE_SENT = 2,
-  TEST_NOTIFICATION = 32,
-}
+import type { User } from '@server/entity/User';
+import { NotificationType } from '@server/constants/notification';
 
 export const hasNotificationType = (
-  types: Notification | Notification[],
+  types: NotificationType | NotificationType[],
   value: number
 ): boolean => {
   let total = 0;
@@ -27,18 +23,29 @@ export const hasNotificationType = (
   }
 
   // Test notifications don't need to be enabled
-  if (!(value & Notification.TEST_NOTIFICATION)) {
-    value += Notification.TEST_NOTIFICATION;
+  if (!(value & NotificationType.TEST_NOTIFICATION)) {
+    value += NotificationType.TEST_NOTIFICATION;
   }
 
   return !!(value & total);
 };
 
-export const getAdminPermission = (type: Notification): Permission => {
+export const getAdminPermission = (type: NotificationType): Permission => {
   switch (type) {
     default:
       return Permission.ADMIN;
   }
+};
+
+export const shouldSendAdminNotification = (
+  type: NotificationType,
+  user: User,
+  payload: NotificationPayload
+): boolean => {
+  return (
+    user.id !== payload.notifyUser?.id &&
+    user.hasPermission(getAdminPermission(type))
+  );
 };
 
 class NotificationManager {
@@ -50,10 +57,10 @@ class NotificationManager {
   };
 
   public sendNotification(
-    type: Notification,
+    type: NotificationType,
     payload: NotificationPayload
   ): void {
-    logger.info(`Sending notification(s) for ${Notification[type]}`, {
+    logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
       label: 'Notifications',
       subject: payload.subject,
     });

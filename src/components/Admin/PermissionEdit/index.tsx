@@ -194,6 +194,55 @@ const PermissionEdit = ({
         },
       ],
     },
+    {
+      id: 'ManageNotifications',
+      name: intl.formatMessage({
+        id: 'userPermissions.manageNotifications.name',
+        defaultMessage: 'Manage Notifications',
+      }),
+      description: intl.formatMessage({
+        id: 'userPermissions.manageNotifications.description',
+        defaultMessage:
+          'Grant permission to manage notifications. Users with this permission can edit or remove notifications made by others.',
+      }),
+      permission: Permission.MANAGE_NOTIFICATIONS,
+      requires: [
+        {
+          permissions: [Permission.MANAGE_USERS],
+        },
+      ],
+      children: [
+        {
+          id: 'createnotifications',
+          name: intl.formatMessage({
+            id: 'userPermissions.createNotifications.name',
+            defaultMessage: 'Create Notifications',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.createNotifications.description',
+            defaultMessage: 'Grant permission to create custom notifications.',
+          }),
+          permission: Permission.CREATE_NOTIFICATIONS,
+        },
+        {
+          id: 'viewnotifications',
+          name: intl.formatMessage({
+            id: 'userPermissions.viewNotifications.name',
+            defaultMessage: 'View Notifications',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.viewNotifications.description',
+            defaultMessage: 'Grant permission to view notifications of others.',
+          }),
+          permission: Permission.VIEW_NOTIFICATIONS,
+          requires: [
+            {
+              permissions: [Permission.MANAGE_USERS],
+            },
+          ],
+        },
+      ],
+    },
   ];
 
   return (

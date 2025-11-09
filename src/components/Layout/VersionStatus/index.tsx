@@ -55,7 +55,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
       )}
       <div className="flex min-w-0 flex-1 flex-col truncate px-2 last:pr-0">
         <span className="font-bold">{versionStream}</span>
-        <span className="truncate">
+        <span className="overflow-hidden text-ellipsis">
           {data.commitTag === 'local' ? (
             'working on it'
           ) : data.commitsBehind > 0 ? (

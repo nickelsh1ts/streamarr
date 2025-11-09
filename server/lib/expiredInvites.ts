@@ -1,7 +1,7 @@
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { InviteStatus } from '@server/constants/invite';
-import { Not } from 'typeorm';
+import { Not, In } from 'typeorm';
 import logger from '@server/logger';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
 import fs from 'fs/promises';
@@ -10,7 +10,7 @@ class ExpiredInvites {
   public async run() {
     const inviteRepository = getRepository(Invite);
     const invites = await inviteRepository.find({
-      where: { status: Not(InviteStatus.EXPIRED) },
+      where: { status: Not(In([InviteStatus.EXPIRED, InviteStatus.REDEEMED])) },
     });
     let updatedCount = 0;
     let qrDeletedCount = 0;
@@ -25,7 +25,8 @@ class ExpiredInvites {
         );
         if (
           Date.now() > expiryDate.getTime() &&
-          invite.status !== InviteStatus.EXPIRED
+          invite.status !== InviteStatus.EXPIRED &&
+          invite.status !== InviteStatus.REDEEMED
         ) {
           invite.status = InviteStatus.EXPIRED;
           await inviteRepository.save(invite);
@@ -60,6 +61,7 @@ class ExpiredInvites {
       }
     } catch (e) {
       logger.error('Failed to clean orphaned QR codes', {
+        label: 'Jobs',
         errorMessage: e.message,
       });
     }

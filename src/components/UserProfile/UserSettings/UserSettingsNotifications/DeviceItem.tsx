@@ -101,11 +101,11 @@ const DeviceItem = ({
         {subEndpoint === device.endpoint ? (
           <Button
             buttonType="primary"
-            buttonSize="md"
+            buttonSize="sm"
             className="w-full"
             disabled
           >
-            <LockClosedIcon className="size-7 mr-2" />{' '}
+            <LockClosedIcon className="size-5 mr-2" />{' '}
             <span>
               <FormattedMessage
                 id="userSettings.notifications.subscriptionActive"
@@ -115,6 +115,7 @@ const DeviceItem = ({
           </Button>
         ) : (
           <ConfirmButton
+            buttonSize="sm"
             onClick={() => deletePushSubscriptionFromBackend(device.endpoint)}
             confirmText={
               <FormattedMessage
@@ -124,7 +125,7 @@ const DeviceItem = ({
             }
             className="w-full"
           >
-            <TrashIcon className="size-7 mr-2" />
+            <TrashIcon className="size-5 mr-2" />
             <span>
               <FormattedMessage
                 id="userSettings.notifications.deleteSubscription"

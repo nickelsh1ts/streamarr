@@ -46,7 +46,7 @@ def invite():
     try:
         account = MyPlexAccount(token=token)
         server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-        plex_server = server_resource.connect()
+        plex_server = server_resource.connect(timeout=15)
     except Exception as e:
         logger.error('Server not found or connection failed', {'error': str(e)})
         return jsonify({'success': False, 'error': 'Server not found or connection failed'}), 404
@@ -151,7 +151,7 @@ def libraries():
                     # Get all sections available on the server for comparison
                     try:
                         server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-                        plex_server = server_resource.connect()
+                        plex_server = server_resource.connect(timeout=15)
                         all_server_sections = list(plex_server.library.sections())
                         all_server_section_ids = [str(section.key) for section in all_server_sections]
                     except Exception as e:
@@ -182,7 +182,7 @@ def libraries():
 
             try:
                 server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-                plex_server = server_resource.connect()
+                plex_server = server_resource.connect(timeout=15)
             except Exception as e:
                 logger.error('Server not found or connection failed', {'error': str(e)})
                 return jsonify({'success': False, 'error': 'Server not found or connection failed'}), 404

@@ -74,6 +74,12 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         })
       ),
     webAppUrl: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.required',
+          defaultMessage: 'URL Base is required',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -228,8 +234,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           />
         </p>
         {!!onComplete && (
-          <Alert title="" type="primary">
-            <div className="ms-4">
+          <Alert type="primary">
+            <p className="text-sm leading-5 flex-1">
               <FormattedMessage
                 id="plexSettings.setupInstructions"
                 defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
@@ -246,7 +252,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   ),
                 }}
               />
-            </div>
+            </p>
           </Alert>
         )}
       </div>
@@ -256,7 +262,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           port: data?.port ?? 32400,
           useSsl: data?.useSsl,
           selectedPreset: undefined,
-          webAppUrl: data?.webAppUrl,
+          webAppUrl: data?.webAppUrl ?? '/web/index.html',
         }}
         enableReinitialize
         validationSchema={PlexSettingsSchema}
@@ -499,6 +505,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />{' '}
+                  <span className="ml-1 text-error">*</span>
                   <Tooltip
                     content={intl.formatMessage({
                       id: 'plexSettings.urlBaseTooltip',
@@ -524,10 +531,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   <div className="form-input-field">
                     <Field
                       type="text"
-                      inputMode="url"
                       id="webAppUrl"
                       name="webAppUrl"
-                      placeholder="https://app.plex.tv/desktop"
                       className="input input-sm input-primary rounded-md w-full"
                     />
                   </div>

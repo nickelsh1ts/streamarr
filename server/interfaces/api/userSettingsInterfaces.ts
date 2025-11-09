@@ -24,5 +24,6 @@ export interface UserSettingsNotificationsResponse {
   emailEnabled?: boolean;
   pgpKey?: string;
   webPushEnabled?: boolean;
+  inAppEnabled?: boolean;
   notificationTypes: Partial<NotificationAgentTypes>;
 }

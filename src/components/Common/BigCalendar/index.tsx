@@ -37,6 +37,7 @@ export interface eventProps {
   categories?: string[] | string;
   status?: string;
   allDay?: boolean;
+  sendNotification?: boolean;
   createdBy?: User;
 }
 

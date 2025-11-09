@@ -133,6 +133,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
     // Check if user already exists
     let user = await userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.plexId = :id', { id: plexUser.id })
       .orWhere('user.email = :email', { email: plexUser.email.toLowerCase() })
       .getOne();
@@ -185,7 +186,6 @@ signupRoutes.post('/plexauth', async (req, res) => {
     if (invite.sharedLibraries) {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
-        user,
       });
     }
 
@@ -581,6 +581,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     // Check if user already exists
     let user = await userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.email = :email', { email: email.toLowerCase() })
       .orWhere('user.plexUsername = :username', { username })
       .getOne();
@@ -628,7 +629,6 @@ signupRoutes.post('/localauth', async (req, res) => {
     if (invite.sharedLibraries) {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
-        user,
       });
     }
 
@@ -666,7 +666,20 @@ signupRoutes.post('/localauth', async (req, res) => {
       req.session.userId = user.id;
     }
 
-    res.status(200).json(user.filter());
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        avatar: user.avatar,
+        displayName: user.displayName,
+        userType: user.userType,
+        permissions: user.permissions,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+      message: 'Account created successfully. You are now logged in.',
+    });
   } catch (e) {
     if (!res.headersSent) {
       res.status(500).json({

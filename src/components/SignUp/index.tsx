@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+//TODO: Add support for auto-pinning libraries
+
 const Join = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [inviteCode, setInviteCode] = useState<string | null>(null);

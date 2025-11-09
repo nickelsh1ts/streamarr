@@ -416,7 +416,7 @@ const InviteList = () => {
                 defaultMessage: 'Sign Up Disabled',
               })}
             >
-              <p className="ml-3 text-sm leading-5">
+              <p className="text-sm leading-5">
                 <FormattedMessage
                   id="inviteList.signUpDisabledMessage"
                   defaultMessage="The admin has currently disabled the sign up feature. No new invites can be created."

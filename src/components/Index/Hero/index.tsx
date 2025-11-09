@@ -153,46 +153,24 @@ export default function Hero() {
           )}
           <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
             {mediaLibraries ? (
-              mediaLibraries.length > 0 &&
-              (() => {
-                // Separate and sort movies and shows by id
-                const movies = mediaLibraries
-                  .filter((lib) => lib.type === 'movie')
-                  .sort((a, b) => a.id.localeCompare(b.id));
-                const shows = mediaLibraries
-                  .filter((lib) => lib.type === 'show')
-                  .sort((a, b) => a.id.localeCompare(b.id));
-                // Alternate them
-                const alternated: typeof mediaLibraries = [];
-                let i = 0,
-                  j = 0;
-                while (
-                  alternated.length < 4 &&
-                  (i < movies.length || j < shows.length)
-                ) {
-                  if (i < movies.length) alternated.push(movies[i++]);
-                  if (alternated.length < 4 && j < shows.length)
-                    alternated.push(shows[j++]);
-                }
-                return (
-                  <>
-                    {alternated.map((lib) => (
-                      <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
-                        <span className="font-bold">{lib.name} </span>{' '}
-                        {lib.mediaCount}
-                      </p>
-                    ))}
-                    {mediaLibraries.length > 4 && (
-                      <p className="first:pl-0 pl-4 font-bold">
-                        <FormattedMessage
-                          id="hero.more"
-                          defaultMessage="+ more"
-                        />
-                      </p>
-                    )}
-                  </>
-                );
-              })()
+              mediaLibraries.length > 0 && (
+                <>
+                  {mediaLibraries.slice(0, 4).map((lib) => (
+                    <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
+                      <span className="font-bold">{lib.name} </span>{' '}
+                      {lib.mediaCount}
+                    </p>
+                  ))}
+                  {mediaLibraries.length > 4 && (
+                    <p className="first:pl-0 pl-4 font-bold">
+                      <FormattedMessage
+                        id="hero.more"
+                        defaultMessage="+ more"
+                      />
+                    </p>
+                  )}
+                </>
+              )
             ) : (
               <LoadingEllipsis />
             )}

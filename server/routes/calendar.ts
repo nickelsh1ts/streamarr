@@ -57,6 +57,7 @@ calendarRoutes.post<
     categories?: string;
     status?: 'TENTATIVE' | 'CONFIRMED' | 'CANCELLED';
     allDay?: boolean;
+    sendNotification?: boolean;
   }
 >(
   '/local',
@@ -86,6 +87,7 @@ calendarRoutes.post<
         categories: req.body.categories,
         status: req.body.status,
         allDay: req.body.allDay,
+        sendNotification: req.body.sendNotification ?? false,
         createdBy: req.user,
         updatedBy: req.user,
       });

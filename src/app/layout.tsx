@@ -7,7 +7,7 @@ import { LanguageProvider } from '@app/context/LanguageContext';
 import 'styles/globals.css';
 import { Toaster } from 'react-hot-toast';
 import NotificationProvider from '@app/context/NotificationContext';
-import Notifications from '@app/components/Layout/Notifications';
+import { NotificationSidebarProvider } from '@app/context/NotificationSidebarContext';
 import { SettingsProvider } from '@app/context/SettingsContext';
 import type { ReactNode } from 'react';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
@@ -67,8 +67,9 @@ export default async function RootLayout({
             <InteractionProvider>
               <UserContext initialUser={user}>
                 <NotificationProvider>
-                  <Notifications />
-                  <Layout initialized={initialized}>{children}</Layout>
+                  <NotificationSidebarProvider>
+                    <Layout initialized={initialized}>{children}</Layout>
+                  </NotificationSidebarProvider>
                 </NotificationProvider>
               </UserContext>
             </InteractionProvider>

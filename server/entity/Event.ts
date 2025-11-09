@@ -75,6 +75,9 @@ export class Event {
   @Column({ type: 'boolean', default: false })
   public allDay: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  public sendNotification: boolean;
+
   @ManyToOne(() => User, (user) => user.createdEvents, {
     eager: true,
     onDelete: 'SET NULL',

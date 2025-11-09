@@ -175,7 +175,7 @@ const CalendarToolBar = ({
           >
             <FormattedMessage
               id="calendar.createEvent"
-              defaultMessage="Create Event"
+              defaultMessage="Create an Event"
             />
           </button>
         )}

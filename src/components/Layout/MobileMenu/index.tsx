@@ -93,6 +93,13 @@ const MobileMenu = () => {
       { type: 'or' }
     );
 
+  const requestDisabled =
+    !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
+      type: 'or',
+    }) || !currentSettings?.enableRequest;
+
+  const isWatchRoute = url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/);
+
   const menuLinks: MenuLink[] = [
     {
       href: '/watch/web/index.html#!',
@@ -149,9 +156,7 @@ const MobileMenu = () => {
         />
       ),
       activeRegExp: /^\/request\/?$/,
-      hidden: !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
-        type: 'or',
-      }),
+      hidden: requestDisabled,
     },
     {
       href: '/invites',
@@ -323,37 +328,41 @@ const MobileMenu = () => {
               </ul>
             )}
             <ul className="menu p-0 m-0 mt-2 mb-2">
-              <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
-                <button
-                  onClick={() => setMenuType('library')}
-                  className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
-                >
-                  <FormattedMessage
-                    id="mobileMenu.libraries"
-                    defaultMessage="Libraries"
-                  />
-                </button>
-                <button
-                  onClick={() => setMenuType('request')}
-                  className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
-                >
-                  <FormattedMessage
-                    id="common.request"
-                    defaultMessage="Request"
-                  />
-                </button>
-                {url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/) && (
+              {(isWatchRoute || !requestDisabled) && (
+                <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
                   <button
-                    onClick={() => setMenuType('settings')}
-                    className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    onClick={() => setMenuType('library')}
+                    className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
                     <FormattedMessage
-                      id="sidebar.settings"
-                      defaultMessage="Settings"
+                      id="mobileMenu.libraries"
+                      defaultMessage="Libraries"
                     />
                   </button>
-                )}
-              </li>
+                  {!requestDisabled && (
+                    <button
+                      onClick={() => setMenuType('request')}
+                      className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    >
+                      <FormattedMessage
+                        id="common.request"
+                        defaultMessage="Request"
+                      />
+                    </button>
+                  )}
+                  {isWatchRoute && (
+                    <button
+                      onClick={() => setMenuType('settings')}
+                      className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    >
+                      <FormattedMessage
+                        id="sidebar.settings"
+                        defaultMessage="Settings"
+                      />
+                    </button>
+                  )}
+                </li>
+              )}
             </ul>
           </>
         )}
@@ -384,8 +393,13 @@ const MobileMenu = () => {
               ) {
                 setMenuType('library');
               }
-              if (url.match(/^\/request\/?(.*)?\/?/)) {
+              if (url.match(/^\/request\/?(.*)?\/?/) && !requestDisabled) {
                 setMenuType('request');
+              }
+              if (
+                url.match(/^\/watch\/web\/index\.html#!\/settings\/?(.*)?\/?/)
+              ) {
+                setMenuType('settings');
               }
             }}
           >

@@ -49,9 +49,11 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
           />
         </div>
       )}
-      {!pathname.includes('/invites') && (
-        <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
-      )}
+      {!pathname.includes('/invites') &&
+        (!pathname.includes('/notifications') ||
+          pathname.includes('/settings/notifications')) && (
+          <ProfileHeader isSettingsPage={isSettingsPage} user={user} />
+        )}
       {children}
     </div>
   );

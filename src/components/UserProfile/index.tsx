@@ -4,6 +4,7 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import type {
   QuotaResponse,
   UserInvitesResponse,
+  UserNotificationsResponse,
 } from '@server/interfaces/api/userInterfaces';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -14,18 +15,20 @@ import ProgressCircle from '@app/components/Common/ProgressCircle';
 import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
-
-//TODO: Implement a request more invites feature
+import RecentNotification from '@app/components/Common/Slider/RecentNotification';
+import useSettings from '@app/hooks/useSettings';
 
 const UserProfile = () => {
+  const currentSettings = useSettings().currentSettings;
   const userQuery = useParams<{ userid: string }>();
-  const { user, error } = useUser({
+  const { user, error, hasPermission } = useUser({
     id: Number(userQuery.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
 
   const { data: invites, error: inviteError } = useSWR<UserInvitesResponse>(
     user &&
+      currentSettings.enableSignUp &&
       (user.id === currentUser?.id ||
         currentHasPermission(
           [Permission.MANAGE_INVITES, Permission.VIEW_INVITES],
@@ -44,6 +47,19 @@ const UserProfile = () => {
       ? `/api/v1/user/${user.id}/quota`
       : null
   );
+
+  const { data: notifications, error: notificationError } =
+    useSWR<UserNotificationsResponse>(
+      user &&
+        currentSettings.inAppEnabled &&
+        (user.id === currentUser?.id ||
+          currentHasPermission(
+            [Permission.VIEW_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
+            { type: 'or' }
+          ))
+        ? `/api/v1/user/${user.id}/notifications?take=10&skip=0`
+        : null
+    );
 
   if (!user && !error) {
     return <LoadingEllipsis />;
@@ -130,7 +146,11 @@ const UserProfile = () => {
                     quota.invite.restricted ? 'text-red-500' : 'text-white'
                   }`}
                 >
-                  {quota.invite.limit > 0 ? (
+                  {quota.invite.limit > 0 &&
+                  hasPermission(
+                    [Permission.STREAMARR, Permission.CREATE_INVITES],
+                    { type: 'or' }
+                  ) ? (
                     <>
                       <ProgressCircle
                         progress={Math.round(
@@ -210,6 +230,45 @@ const UserProfile = () => {
                 />
               ))}
               placeholder={<RecentInvite.Placeholder />}
+            />
+          </>
+        )}
+      {(user.id === currentUser?.id ||
+        currentHasPermission(
+          [Permission.MANAGE_NOTIFICATIONS, Permission.VIEW_NOTIFICATIONS],
+          { type: 'or' }
+        )) &&
+        (!notifications || !!notifications.results.length) &&
+        !notificationError && (
+          <>
+            <div className="flex my-4 relative">
+              <Link
+                className="flex items-center gap-2 link-primary"
+                href={
+                  user.id === currentUser?.id
+                    ? '/profile/notifications?filter=all'
+                    : `/admin/users/${user?.id}/notifications?filter=all`
+                }
+              >
+                <span className="text-2xl font-bold">
+                  <FormattedMessage
+                    id="profile.recentNotifications"
+                    defaultMessage="Recent Notifications"
+                  />
+                </span>
+                <ArrowRightCircleIcon className="size-5" />
+              </Link>
+            </div>
+            <Slider
+              sliderKey="notifications"
+              isLoading={!notifications}
+              items={(notifications?.results ?? []).map((notification) => (
+                <RecentNotification
+                  key={`notification-slider-item-${notification.id}`}
+                  notification={notification}
+                />
+              ))}
+              placeholder={<RecentNotification.Placeholder />}
             />
           </>
         )}

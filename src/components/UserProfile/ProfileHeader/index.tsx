@@ -114,7 +114,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               buttonType="primary"
               className="max-lg:w-full"
             >
-              <CogIcon className="size-5" />
+              <CogIcon className="size-5 mr-2" />
               <span>
                 <FormattedMessage
                   id="profile.editSettings"
@@ -138,7 +138,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
                 buttonType="primary"
                 className="max-lg:w-full"
               >
-                <UserIcon className="size-5" />
+                <UserIcon className="size-5 mr-2" />
                 <span>
                   <FormattedMessage
                     id="profile.viewProfile"

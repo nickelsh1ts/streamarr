@@ -128,6 +128,7 @@ interface FullPublicSettings extends PublicSettings {
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
+  inAppEnabled: boolean;
   newPlexLogin: boolean;
   enableRequest: boolean;
   requestUrl: string;
@@ -173,11 +174,13 @@ export interface NotificationAgentWebhook extends NotificationAgentConfig {
 export enum NotificationAgentKey {
   EMAIL = 'email',
   WEBPUSH = 'webpush',
+  IN_APP = 'inApp',
 }
 
 interface NotificationAgents {
   email: NotificationAgentEmail;
   webpush: NotificationAgentConfig;
+  inApp: NotificationAgentConfig;
 }
 
 interface NotificationSettings {
@@ -192,7 +195,8 @@ export type JobId =
   | 'plex-full-scan'
   | 'plex-refresh-token'
   | 'invites-qrcode-cleanup'
-  | 'image-cache-cleanup';
+  | 'image-cache-cleanup'
+  | 'notification-cleanup';
 
 interface AllSettings {
   clientId: string;
@@ -233,7 +237,7 @@ class Settings {
         applicationUrl: '',
         csrfProtection: false,
         cacheImages: false,
-        defaultPermissions: Permission.NONE,
+        defaultPermissions: Permission.STREAMARR,
         defaultQuotas: {
           invites: {},
         },
@@ -307,6 +311,7 @@ class Settings {
             },
           },
           webpush: { enabled: false, options: {} },
+          inApp: { enabled: true, options: {} },
         },
       },
       jobs: {
@@ -314,6 +319,7 @@ class Settings {
         'plex-refresh-token': { schedule: '0 0 5 * * *' },
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
+        'notification-cleanup': { schedule: '0 30 1 * * *' },
       },
     };
     if (initialSettings) {
@@ -440,6 +446,7 @@ class Settings {
       enablePushRegistration: this.data.notifications.agents.webpush.enabled,
       locale: this.data.main.locale,
       emailEnabled: this.data.notifications.agents.email.enabled,
+      inAppEnabled: this.data.notifications.agents.inApp.enabled,
       newPlexLogin: this.data.main.newPlexLogin,
       supportUrl: this.data.main.supportUrl,
       supportEmail: this.data.main.supportEmail,
