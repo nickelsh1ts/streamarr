@@ -30,13 +30,14 @@ import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Tabs from '@app/components/Common/Tabs';
+import Toggle from '@app/components/Common/Toggle';
 
 const ConfirmAccountForm = ({
   onComplete,
   user,
 }: {
   user: User;
-  onComplete: () => Promise<void> | void;
+  onComplete: (autoPinLibraries?: boolean) => Promise<void> | void;
 }) => {
   const [webPushEnabled, setWebPushEnabled] = useState(false);
   const { currentSettings } = useSettings();
@@ -207,6 +208,7 @@ const ConfirmAccountForm = ({
           notificationsData?.notificationTypes?.webpush ?? ALL_NOTIFICATIONS,
         inAppTypes:
           notificationsData?.notificationTypes?.inApp ?? ALL_NOTIFICATIONS,
+        autoPinLibraries: true,
       }}
       enableReinitialize
       validationSchema={CombinedSchema}
@@ -230,11 +232,11 @@ const ConfirmAccountForm = ({
               confirmPassword: values.confirmPassword,
             });
           }
-          // Save notification settings (only notification types)
           await axios.post(`/api/v1/user/${user.id}/settings/notifications`, {
             notificationTypes: {
               email: values.emailTypes,
               webpush: values.webpushTypes,
+              inApp: values.inAppTypes,
             },
           });
           Toast({
@@ -245,7 +247,7 @@ const ConfirmAccountForm = ({
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
-          await onComplete();
+          await onComplete(values.autoPinLibraries);
         } catch (e) {
           Toast({
             title: intl.formatMessage({
@@ -381,6 +383,42 @@ const ConfirmAccountForm = ({
                 </Field>
               </div>
             </div>
+            {user?.userType === UserType.PLEX && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="autoPinLibraries" className="col-span-1">
+                  <FormattedMessage
+                    id="signUp.pinLibraries"
+                    defaultMessage="Pin Libraries"
+                  />
+                </label>
+                <div className="col-span-2 flex items-center gap-2">
+                  <Toggle
+                    id="autoPinLibraries"
+                    valueOf={values.autoPinLibraries}
+                    onClick={() =>
+                      setFieldValue(
+                        'autoPinLibraries',
+                        !values.autoPinLibraries
+                      )
+                    }
+                  />
+                  <Badge badgeType="primary">
+                    <span className="capitalize">
+                      <FormattedMessage
+                        id="common.recommended"
+                        defaultMessage="recommended"
+                      />
+                    </span>
+                  </Badge>
+                </div>
+                <div className="text-xs text-gray-400 !ml-0">
+                  <FormattedMessage
+                    id="signUp.autoPinLibrariesHelp"
+                    defaultMessage="Automatically pin shared libraries to your Plex home screen"
+                  />
+                </div>
+              </div>
+            )}
             {currentSettings?.localLogin && (
               <div className="mb-6 mt-3">
                 <h3 className="text-2xl font-extrabold mb-2">

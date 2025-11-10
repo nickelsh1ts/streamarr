@@ -6,14 +6,15 @@ import ICodeForm from '@app/components/SignUp/Forms/ICodeForm';
 import SignUpAuthForm from '@app/components/SignUp/Forms/SignUpAuthForm';
 import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
-import { XCircleIcon } from '@heroicons/react/24/solid';
+import {
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
 import type { User } from '@server/entity/User';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
-//TODO: Add support for auto-pinning libraries
 
 const Join = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -24,14 +25,31 @@ const Join = () => {
   const intl = useIntl();
 
   // Step 3: Finalize signup
-  const finishSignup = async () => {
+  const finishSignup = async (autoPinLibraries = true) => {
     if (!user || !inviteCode) return;
     try {
       await axios.post('/api/v1/signup/complete', {
         userId: user.id,
         icode: inviteCode,
       });
-      router.push('/watch/web/index.html#!/settings/manage-library-access');
+
+      if (autoPinLibraries) {
+        try {
+          await axios.post(`/api/v1/user/${user.id}/settings/pin-libraries`);
+        } catch (e) {
+          Toast({
+            title: intl.formatMessage({
+              id: 'signUp.autoPinLibrariesFailed',
+              defaultMessage: 'Pinning libraries failed',
+            }),
+            message: e.response?.data?.message || e.message,
+            type: 'warning',
+            icon: <ExclamationTriangleIcon className="size-7" />,
+          });
+        }
+      }
+
+      router.push('/watch/web/index.html#!');
     } catch (e) {
       Toast({
         title: intl.formatMessage({
