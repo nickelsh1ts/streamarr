@@ -2,7 +2,9 @@
 import Error from '@app/app/error';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import LoadingEllipsis, {
+  SmallLoadingEllipsis,
+} from '@app/components/Common/LoadingEllipsis';
 import QuotaSelector from '@app/components/QuotaSelector';
 import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
@@ -16,7 +18,7 @@ import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import Toast from '@app/components/Toast';
+import Toast, { dismissToast } from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -32,6 +34,7 @@ const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
+  const [isPinning, setIsPinning] = useState(false);
   const searchParams = useParams<{ userid: string }>();
   const {
     user,
@@ -299,211 +302,312 @@ const UserSettingsGeneral = () => {
                     </Field>
                   </div>
                 </div>
-                {currentHasPermission(Permission.MANAGE_USERS) &&
+                {user?.userType === UserType.PLEX &&
+                  currentHasPermission(Permission.MANAGE_USERS) &&
                   !hasPermission(Permission.MANAGE_USERS) && (
                     <>
-                      {user?.userType === UserType.PLEX && (
-                        <>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                            <label htmlFor="plexAccess" className="col-span-1">
-                              <FormattedMessage
-                                id="settings.plexAccess"
-                                defaultMessage="Plex Access"
-                              />
-                              <span className="block text-xs text-gray-400 mt-1">
-                                <FormattedMessage
-                                  id="settings.plexAccessDescription"
-                                  defaultMessage="Changes will sync with Plex automatically on save."
-                                />
-                              </span>
-                            </label>
-                            <div className="col-span-2">
-                              <LibrarySelector
-                                value={values.sharedLibraries}
-                                serverValue={data.globalSharedLibraries}
-                                isUserSettings
-                                setFieldValue={setFieldValue}
-                              />
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                            <div className="col-span-1"></div>
-                            <div className="inline-flex items-center space-x-2">
-                              <span
-                                id="allowDownloads"
-                                role="checkbox"
-                                tabIndex={0}
-                                aria-checked={values.allowDownloads}
-                                onClick={() =>
-                                  setFieldValue(
-                                    'allowDownloads',
-                                    !values.allowDownloads
-                                  )
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === 'Space') {
-                                    e.preventDefault();
-                                    setFieldValue(
-                                      'allowDownloads',
-                                      !values.allowDownloads
-                                    );
-                                  }
-                                }}
-                                className={`${
-                                  values.allowDownloads
-                                    ? 'bg-primary'
-                                    : 'bg-neutral-700'
-                                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
-                              >
-                                <span
-                                  aria-hidden="true"
-                                  className={`${
-                                    values.allowDownloads
-                                      ? 'translate-x-5'
-                                      : 'translate-x-0'
-                                  } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
-                                >
-                                  <span
-                                    className={`${
-                                      values.allowDownloads
-                                        ? 'opacity-0 duration-100 ease-out'
-                                        : 'opacity-100 duration-200 ease-in'
-                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                                  >
-                                    <XMarkIcon className="h-3 w-3 text-neutral-400" />
-                                  </span>
-                                  <span
-                                    className={`${
-                                      values.allowDownloads
-                                        ? 'opacity-100 duration-200 ease-in'
-                                        : 'opacity-0 duration-100 ease-out'
-                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                                  >
-                                    <CheckIcon className="h-3 w-3 text-primary" />
-                                  </span>
-                                </span>
-                              </span>
-                              <label htmlFor="allowDownloads">
-                                <FormattedMessage
-                                  id="invite.allowDownloads"
-                                  defaultMessage="Allow Downloads"
-                                />
-                              </label>
-                            </div>
-                            <div className="inline-flex items-center space-x-2">
-                              <span
-                                id="allowLiveTv"
-                                role="checkbox"
-                                tabIndex={0}
-                                aria-checked={values.allowLiveTv}
-                                onClick={() =>
-                                  setFieldValue(
-                                    'allowLiveTv',
-                                    !values.allowLiveTv
-                                  )
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === 'Space') {
-                                    e.preventDefault();
-                                    setFieldValue(
-                                      'allowLiveTv',
-                                      !values.allowLiveTv
-                                    );
-                                  }
-                                }}
-                                className={`${
-                                  values.allowLiveTv
-                                    ? 'bg-primary'
-                                    : 'bg-neutral-700'
-                                } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
-                              >
-                                <span
-                                  aria-hidden="true"
-                                  className={`${
-                                    values.allowLiveTv
-                                      ? 'translate-x-5'
-                                      : 'translate-x-0'
-                                  } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
-                                >
-                                  <span
-                                    className={`${
-                                      values.allowLiveTv
-                                        ? 'opacity-0 duration-100 ease-out'
-                                        : 'opacity-100 duration-200 ease-in'
-                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                                  >
-                                    <XMarkIcon className="h-3 w-3 text-neutral-400" />
-                                  </span>
-                                  <span
-                                    className={`${
-                                      values.allowLiveTv
-                                        ? 'opacity-100 duration-200 ease-in'
-                                        : 'opacity-0 duration-100 ease-out'
-                                    } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                                  >
-                                    <CheckIcon className="h-3 w-3 text-primary" />
-                                  </span>
-                                </span>
-                              </span>
-                              <label htmlFor="allowLiveTv">
-                                <FormattedMessage
-                                  id="settings.allowLiveTv"
-                                  defaultMessage="Allow Live TV Access"
-                                />
-                              </label>
-                            </div>
-                          </div>
-                        </>
-                      )}
                       <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                        <div className="col-span-1">
-                          <span>
+                        <label htmlFor="plexAccess" className="col-span-1">
+                          <FormattedMessage
+                            id="settings.plexAccess"
+                            defaultMessage="Plex Access"
+                          />
+                          <span className="block text-xs text-gray-400 mt-1">
                             <FormattedMessage
-                              id="settings.inviteQuota"
-                              defaultMessage="Invite Quota"
+                              id="settings.plexAccessDescription"
+                              defaultMessage="Changes will sync with Plex automatically on save."
                             />
                           </span>
-                        </div>
+                        </label>
                         <div className="col-span-2">
-                          <div className="mb-4 flex items-center">
-                            <input
-                              type="checkbox"
-                              id="globalOverride"
-                              className="checkbox checkbox-primary"
-                              checked={inviteQuotaEnabled}
-                              onChange={() => setInviteQuotaEnabled((s) => !s)}
-                            />
-                            <label
-                              htmlFor="globalOverride"
-                              className="ml-2 text-gray-300"
-                            >
-                              <FormattedMessage
-                                id="settings.overrideGlobalLimit"
-                                defaultMessage="Override Global Limit"
-                              />
-                            </label>
-                          </div>
-                          <QuotaSelector
-                            isDisabled={!inviteQuotaEnabled}
-                            dayFieldName="inviteQuotaDays"
-                            limitFieldName="inviteQuotaLimit"
-                            onChange={setFieldValue}
-                            defaultDays={values.inviteQuotaDays}
-                            defaultLimit={values.inviteQuotaLimit}
-                            dayOverride={
-                              !inviteQuotaEnabled
-                                ? data?.globalInviteQuotaDays
-                                : undefined
-                            }
-                            limitOverride={
-                              !inviteQuotaEnabled
-                                ? data?.globalInviteQuotaLimit
-                                : undefined
-                            }
+                          <LibrarySelector
+                            value={values.sharedLibraries}
+                            serverValue={data.globalSharedLibraries}
+                            isUserSettings
+                            setFieldValue={setFieldValue}
                           />
                         </div>
                       </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="col-span-1"></div>
+                        <div className="inline-flex items-center space-x-2">
+                          <span
+                            id="allowDownloads"
+                            role="checkbox"
+                            tabIndex={0}
+                            aria-checked={values.allowDownloads}
+                            onClick={() =>
+                              setFieldValue(
+                                'allowDownloads',
+                                !values.allowDownloads
+                              )
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === 'Space') {
+                                e.preventDefault();
+                                setFieldValue(
+                                  'allowDownloads',
+                                  !values.allowDownloads
+                                );
+                              }
+                            }}
+                            className={`${
+                              values.allowDownloads
+                                ? 'bg-primary'
+                                : 'bg-neutral-700'
+                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`${
+                                values.allowDownloads
+                                  ? 'translate-x-5'
+                                  : 'translate-x-0'
+                              } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
+                            >
+                              <span
+                                className={`${
+                                  values.allowDownloads
+                                    ? 'opacity-0 duration-100 ease-out'
+                                    : 'opacity-100 duration-200 ease-in'
+                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                              >
+                                <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                              </span>
+                              <span
+                                className={`${
+                                  values.allowDownloads
+                                    ? 'opacity-100 duration-200 ease-in'
+                                    : 'opacity-0 duration-100 ease-out'
+                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                              >
+                                <CheckIcon className="h-3 w-3 text-primary" />
+                              </span>
+                            </span>
+                          </span>
+                          <label htmlFor="allowDownloads">
+                            <FormattedMessage
+                              id="invite.allowDownloads"
+                              defaultMessage="Allow Downloads"
+                            />
+                          </label>
+                        </div>
+                        <div className="inline-flex items-center space-x-2">
+                          <span
+                            id="allowLiveTv"
+                            role="checkbox"
+                            tabIndex={0}
+                            aria-checked={values.allowLiveTv}
+                            onClick={() =>
+                              setFieldValue('allowLiveTv', !values.allowLiveTv)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === 'Space') {
+                                e.preventDefault();
+                                setFieldValue(
+                                  'allowLiveTv',
+                                  !values.allowLiveTv
+                                );
+                              }
+                            }}
+                            className={`${
+                              values.allowLiveTv
+                                ? 'bg-primary'
+                                : 'bg-neutral-700'
+                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`${
+                                values.allowLiveTv
+                                  ? 'translate-x-5'
+                                  : 'translate-x-0'
+                              } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
+                            >
+                              <span
+                                className={`${
+                                  values.allowLiveTv
+                                    ? 'opacity-0 duration-100 ease-out'
+                                    : 'opacity-100 duration-200 ease-in'
+                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                              >
+                                <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                              </span>
+                              <span
+                                className={`${
+                                  values.allowLiveTv
+                                    ? 'opacity-100 duration-200 ease-in'
+                                    : 'opacity-0 duration-100 ease-out'
+                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                              >
+                                <CheckIcon className="h-3 w-3 text-primary" />
+                              </span>
+                            </span>
+                          </span>
+                          <label htmlFor="allowLiveTv">
+                            <FormattedMessage
+                              id="settings.allowLiveTv"
+                              defaultMessage="Allow Live TV Access"
+                            />
+                          </label>
+                        </div>
+                      </div>
                     </>
+                  )}
+                {user?.userType === UserType.PLEX &&
+                  (user?.id === currentUser.id ||
+                    (currentHasPermission(Permission.MANAGE_USERS) &&
+                      !hasPermission(Permission.MANAGE_USERS))) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="col-span-1">
+                        <span>
+                          <FormattedMessage
+                            id="settings.pinLibraries"
+                            defaultMessage="Pin Libraries"
+                          />
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <Button
+                          buttonType="primary"
+                          buttonSize="sm"
+                          disabled={isPinning}
+                          onClick={async () => {
+                            setIsPinning(true);
+
+                            const processingToastId = Toast({
+                              title: intl.formatMessage({
+                                id: 'settings.pinLibrariesProcessing',
+                                defaultMessage: 'Pinning Libraries...',
+                              }),
+                              message: intl.formatMessage({
+                                id: 'settings.pinLibrariesProcessingMessage',
+                                defaultMessage:
+                                  'Please wait while we pin your libraries to Plex',
+                              }),
+                              type: 'warning',
+                              duration: 60000,
+                            });
+
+                            try {
+                              const response = await axios.post(
+                                `/api/v1/user/${user.id}/settings/pin-libraries`
+                              );
+                              dismissToast(processingToastId);
+
+                              if (response.data.success) {
+                                Toast({
+                                  title: intl.formatMessage({
+                                    id: 'settings.pinLibrariesSuccess',
+                                    defaultMessage:
+                                      'Libraries pinned successfully!',
+                                  }),
+                                  message: intl.formatMessage(
+                                    {
+                                      id: 'settings.pinLibrariesSuccessMessage',
+                                      defaultMessage:
+                                        '{count} {count, plural, one {library} other {libraries}} pinned to your Plex home screen',
+                                    },
+                                    {
+                                      count: response.data.pinned_count || 0,
+                                    }
+                                  ),
+                                  type: 'success',
+                                  icon: <CheckBadgeIcon className="size-7" />,
+                                });
+                              }
+                            } catch (e) {
+                              dismissToast(processingToastId);
+
+                              Toast({
+                                title: intl.formatMessage({
+                                  id: 'settings.pinLibrariesError',
+                                  defaultMessage: 'Failed to pin libraries',
+                                }),
+                                message:
+                                  e.response?.data?.message ||
+                                  e.message ||
+                                  intl.formatMessage({
+                                    id: 'settings.pinLibrariesErrorMessage',
+                                    defaultMessage:
+                                      'An error occurred while pinning libraries',
+                                  }),
+                                type: 'error',
+                                icon: <XCircleIcon className="size-7" />,
+                              });
+                            } finally {
+                              setIsPinning(false);
+                            }
+                          }}
+                        >
+                          {isPinning ? (
+                            <SmallLoadingEllipsis />
+                          ) : (
+                            <FormattedMessage
+                              id="settings.pinLibrariesToPlex"
+                              defaultMessage="Pin Libraries to Plex Home"
+                            />
+                          )}
+                        </Button>
+                        <div className="mt-2 text-xs text-gray-400">
+                          <FormattedMessage
+                            id="settings.pinLibrariesHelp"
+                            defaultMessage="Pin all your shared libraries to the Plex home screen"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                {currentHasPermission(Permission.MANAGE_USERS) &&
+                  !hasPermission(Permission.MANAGE_USERS) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="col-span-1">
+                        <span>
+                          <FormattedMessage
+                            id="settings.inviteQuota"
+                            defaultMessage="Invite Quota"
+                          />
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <div className="mb-4 flex items-center">
+                          <input
+                            type="checkbox"
+                            id="globalOverride"
+                            className="checkbox checkbox-primary"
+                            checked={inviteQuotaEnabled}
+                            onChange={() => setInviteQuotaEnabled((s) => !s)}
+                          />
+                          <label
+                            htmlFor="globalOverride"
+                            className="ml-2 text-gray-300"
+                          >
+                            <FormattedMessage
+                              id="settings.overrideGlobalLimit"
+                              defaultMessage="Override Global Limit"
+                            />
+                          </label>
+                        </div>
+                        <QuotaSelector
+                          isDisabled={!inviteQuotaEnabled}
+                          dayFieldName="inviteQuotaDays"
+                          limitFieldName="inviteQuotaLimit"
+                          onChange={setFieldValue}
+                          defaultDays={values.inviteQuotaDays}
+                          defaultLimit={values.inviteQuotaLimit}
+                          dayOverride={
+                            !inviteQuotaEnabled
+                              ? data?.globalInviteQuotaDays
+                              : undefined
+                          }
+                          limitOverride={
+                            !inviteQuotaEnabled
+                              ? data?.globalInviteQuotaLimit
+                              : undefined
+                          }
+                        />
+                      </div>
+                    </div>
                   )}
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />
