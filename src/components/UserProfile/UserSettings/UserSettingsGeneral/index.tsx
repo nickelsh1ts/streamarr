@@ -28,8 +28,6 @@ import {
 import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
 
-//TODO: Add support for pinning shared libraries on demand
-
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();
@@ -460,10 +458,14 @@ const UserSettingsGeneral = () => {
                       !hasPermission(Permission.MANAGE_USERS))) && (
                     <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                       <div className="col-span-1">
-                        <span>
+                        <FormattedMessage
+                          id="settings.pinLibraries"
+                          defaultMessage="Pin Libraries"
+                        />
+                        <span className="block text-xs text-gray-400 mt-1">
                           <FormattedMessage
-                            id="settings.pinLibraries"
-                            defaultMessage="Pin Libraries"
+                            id="settings.pinLibrariesHelp"
+                            defaultMessage="Pin all your shared libraries to the Plex home screen"
                           />
                         </span>
                       </div>
@@ -541,7 +543,12 @@ const UserSettingsGeneral = () => {
                           }}
                         >
                           {isPinning ? (
-                            <SmallLoadingEllipsis />
+                            <SmallLoadingEllipsis
+                              text={intl.formatMessage({
+                                id: 'settings.pleaseWait',
+                                defaultMessage: 'Please wait',
+                              })}
+                            />
                           ) : (
                             <FormattedMessage
                               id="settings.pinLibrariesToPlex"
@@ -549,12 +556,6 @@ const UserSettingsGeneral = () => {
                             />
                           )}
                         </Button>
-                        <div className="mt-2 text-xs text-gray-400">
-                          <FormattedMessage
-                            id="settings.pinLibrariesHelp"
-                            defaultMessage="Pin all your shared libraries to the Plex home screen"
-                          />
-                        </div>
                       </div>
                     </div>
                   )}
