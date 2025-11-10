@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import os
 import json
 import requests
+import time
 
 if os.environ.get('CONFIG_DIRECTORY'):
     log_path = os.path.join(os.environ['CONFIG_DIRECTORY'], 'logs', '.machinelogs.json')
@@ -47,6 +48,7 @@ def invite():
     allow_camera_upload = data.get('allow_camera_upload', False)
     allow_channels = data.get('allow_channels', False)
     plex_home = data.get('plex_home', False)
+    user_token = data.get('user_token')  # Optional: token of the user being invited for auto-accept
 
     try:
         account = MyPlexAccount(token=token)
@@ -88,16 +90,49 @@ def invite():
                 allowChannels=allow_channels,
                 allowCameraUpload=allow_camera_upload
             )
-            return jsonify({'success': True, 'message': 'Plex Home user created. Plex Home email invitation sent.'})
-        account.inviteFriend(
-            email,
-            server=plex_server,
-            sections=section_names,
-            allowSync=allow_sync,
-            allowCameraUpload=allow_camera_upload,
-            allowChannels=allow_channels
-        )
-        return jsonify({'success': True, 'message': 'Invite sent. Please visit /watch/web/index.html#!/settings/manage-library-access to accept.'})
+            message = 'Plex Home user created. Plex Home email invitation sent.'
+        else:
+            account.inviteFriend(
+                email,
+                server=plex_server,
+                sections=section_names,
+                allowSync=allow_sync,
+                allowCameraUpload=allow_camera_upload,
+                allowChannels=allow_channels
+            )
+            message = 'User invited successfully. Will attempt to auto-accept if user_token is provided.'
+
+            if user_token:
+                try:
+                    time.sleep(3)
+
+                    user_account = MyPlexAccount(token=user_token)
+
+                    pending_invites = user_account.pendingInvites()
+
+                    if pending_invites and len(pending_invites) > 0:
+                        matching_invite = pending_invites[0]
+
+                        user_account.acceptInvite(matching_invite)
+
+                        logger.info('Invite auto-accepted successfully', {
+                            'email': email,
+                            'invite_id': matching_invite.id
+                        })
+                        message = 'User Invited successfully and automatically accepted.'
+                    else:
+                        logger.info('No pending invites found to accept', {
+                            'email': email
+                        })
+
+                except Exception as accept_error:
+                    logger.error('Unable to auto-accept invite', {
+                        'email': email,
+                        'error': str(accept_error),
+                        'traceback': traceback.format_exc()
+                    })
+
+        return jsonify({'success': True, 'message': message})
     except Exception as e:
         logger.error('Invite error', {'error': str(e)})
         traceback.print_exc()

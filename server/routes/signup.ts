@@ -179,6 +179,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
       displayName: plexUser.username, // Set display name immediately
       avatar: plexUser.thumb,
       userType: UserType.PLEX,
+      plexToken: plexUser.authToken,
       permissions: settings.main.defaultPermissions, // Assign default permissions from admin settings
     });
 
@@ -367,6 +368,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
             allow_channels: invite.liveTv ?? false,
             plex_home: invite.plexHome ?? false,
             plex_base_url,
+            user_token: user.plexToken,
           });
 
           if (!response.data.success)
@@ -741,15 +743,15 @@ signupRoutes.post('/complete', async (req, res) => {
       },
     });
   } catch (e) {
+    logger.error('Error in signup/complete:', {
+      label: 'SignUp',
+      error: e.message,
+    });
     if (!res.headersSent) {
       res
         .status(500)
         .json({ success: false, message: 'Internal server error.' });
     }
-    logger.error('Error in signup/complete:', {
-      label: 'SignUp',
-      error: e.message,
-    });
   }
 });
 
