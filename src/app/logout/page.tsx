@@ -14,7 +14,6 @@ const LogOutPage = () => {
   const clearPlexToken = () => {
     try {
       localStorage.removeItem('myPlexAccessToken');
-      sessionStorage.removeItem('myPlexAccessToken');
     } catch {
       // fail silently
     }

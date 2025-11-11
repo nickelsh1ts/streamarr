@@ -85,7 +85,6 @@ const Layout = ({
 
           if (token) {
             localStorage.setItem('myPlexAccessToken', token);
-            sessionStorage.setItem('myPlexAccessToken', token);
             tokenRef.current = true;
           }
         } catch {
