@@ -596,12 +596,12 @@ userSettingsRoutes.post<{ id: string }>(
       logger.error('Something went wrong trying to pin libraries', {
         label: 'Plex Sync',
         userId: req.params.id,
-        error: e.message,
+        error: e?.message || e,
       });
 
       return next({
         status: 500,
-        message: 'Failed to pin libraries: ' + e.message,
+        message: `Failed to pin libraries: ${e?.message || 'Unknown error'}`,
       });
     }
   }

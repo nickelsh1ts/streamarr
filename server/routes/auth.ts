@@ -288,7 +288,12 @@ authRoutes.post('/logout', (req, res, next) => {
         message: 'Something went wrong.',
       });
     }
-    res.clearCookie('streamarr.sid');
+    const settings = getSettings();
+    res.clearCookie('streamarr.sid', {
+      httpOnly: true,
+      sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
     res.status(200).json({ status: 'ok' });
   });
 });
