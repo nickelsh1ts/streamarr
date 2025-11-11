@@ -2476,6 +2476,50 @@ paths:
                   status:
                     type: string
                     example: 'ok'
+  /auth/plex/token:
+    get:
+      summary: Get Plex authentication token
+      description: Returns the authenticated user's Plex token for use in iframe authentication. Requires an active session.
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Successfully retrieved Plex token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The user's Plex authentication token
+                    example: 'xxxxxxxxxxxxxxxxxxxx'
+        '404':
+          description: User does not have a Plex token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 404
+                  message:
+                    type: string
+                    example: 'Plex token not found'
+        '500':
+          description: Server error while retrieving token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: 'Failed to retrieve Plex token'
   /auth/reset-password:
     post:
       summary: Send a reset password email
