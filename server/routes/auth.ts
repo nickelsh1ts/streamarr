@@ -288,10 +288,9 @@ authRoutes.post('/logout', (req, res, next) => {
         message: 'Something went wrong.',
       });
     }
+    res.clearCookie('streamarr.sid');
+    res.status(200).json({ status: 'ok' });
   });
-
-  res.clearCookie('streamarr.sid');
-  res.status(200).json({ status: 'ok' });
 });
 
 authRoutes.get('/plex/token', isAuthenticated(), async (req, res, next) => {
