@@ -45,8 +45,10 @@ class PlexSync {
     let librarySectionIds: string[] = [];
 
     if (sharedLibraries === 'all') {
-      // Send empty array for "all" libraries (will grant all available sections)
-      librarySectionIds = [];
+      librarySectionIds =
+        this.settings.plex.libraries
+          .filter((lib) => lib.enabled)
+          .map((lib) => lib.id) || [];
     } else if (
       sharedLibraries === 'server' ||
       sharedLibraries === '' ||

@@ -13,6 +13,7 @@ import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { canMakePermissionsChange } from '@server/routes/user';
 import { UserType } from '@server/constants/user';
+import axios from 'axios';
 
 const isOwnProfileOrAdmin = () => {
   const authMiddleware = (req, res, next) => {
@@ -445,6 +446,163 @@ userSettingsRoutes.post<
       res.status(200).json({ permissions: user.permissions });
     } catch (e) {
       next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.post<{ id: string }>(
+  '/pin-libraries',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.id = :id', { id: Number(req.params.id) })
+        .leftJoinAndSelect('user.settings', 'settings')
+        .getOne();
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.userType !== UserType.PLEX) {
+        return next({
+          status: 400,
+          message: 'Library pinning is only available for Plex users.',
+        });
+      }
+
+      if (!user.plexToken) {
+        return next({
+          status: 400,
+          message: 'User does not have a Plex token.',
+        });
+      }
+
+      const mainUser = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.id = :id', { id: 1 })
+        .getOne();
+
+      if (!mainUser || !mainUser.plexToken) {
+        return next({
+          status: 500,
+          message: 'Admin Plex token missing',
+        });
+      }
+
+      const plexSettings = getSettings().plex;
+
+      if (!plexSettings?.machineId) {
+        return next({
+          status: 500,
+          message: 'Plex server not configured.',
+        });
+      }
+
+      const librariesResponse = await axios.get(
+        'http://localhost:5005/library-details',
+        {
+          params: {
+            token: mainUser.plexToken,
+            server_id: plexSettings.machineId,
+            email: user.email,
+          },
+          timeout: 15000,
+        }
+      );
+
+      if (
+        !librariesResponse.data.success ||
+        !librariesResponse.data.libraries
+      ) {
+        return next({
+          status: 500,
+          message: 'Failed to get library information.',
+        });
+      }
+
+      const allLibraries = librariesResponse.data.libraries;
+      const userSharedLibraries = user.settings?.sharedLibraries;
+      let librariesToPin = allLibraries.filter((lib: { id: string }) =>
+        getSettings().main.sharedLibraries.split('|').includes(lib.id)
+      );
+
+      if (userSharedLibraries && userSharedLibraries !== 'all') {
+        const allowedLibraryIds = userSharedLibraries.split('|');
+        librariesToPin = allLibraries.filter((lib: { id: string }) =>
+          allowedLibraryIds.includes(lib.id)
+        );
+      } else if (userSharedLibraries && userSharedLibraries === 'all') {
+        librariesToPin = allLibraries.filter((lib: { id: string }) =>
+          getSettings().plex.libraries.some(
+            (library) => library.id === lib.id && library.enabled
+          )
+        );
+      }
+
+      if (librariesToPin.length === 0) {
+        res.status(200).json({
+          success: true,
+          message: 'No libraries to pin.',
+          pinned_count: 0,
+        });
+        return;
+      }
+
+      const pythonResponse = await axios.post(
+        'http://localhost:5005/pin-libraries',
+        {
+          user_token: user.plexToken,
+          server_id: plexSettings.machineId,
+          server_name: plexSettings.name || 'Streamarr',
+          libraries: librariesToPin,
+        },
+        {
+          timeout: 30000,
+        }
+      );
+
+      if (pythonResponse.data.success) {
+        logger.debug('Libraries pinned successfully', {
+          label: 'Plex Sync',
+          userId: user.id,
+          email: user.email,
+          pinned_count: pythonResponse.data.pinned_count,
+        });
+
+        res.status(200).json({
+          success: true,
+          message: pythonResponse.data.message,
+          pinned_count: pythonResponse.data.pinned_count,
+        });
+      } else {
+        logger.error('Failed to pin libraries', {
+          label: 'Plex Sync',
+          userId: user.id,
+          error: pythonResponse.data.error,
+        });
+
+        return next({
+          status: 500,
+          message: pythonResponse.data.error || 'Failed to pin libraries.',
+        });
+      }
+    } catch (e) {
+      logger.error('Something went wrong trying to pin libraries', {
+        label: 'Plex Sync',
+        userId: req.params.id,
+        error: e?.message || e,
+      });
+
+      return next({
+        status: 500,
+        message: `Failed to pin libraries: ${e?.message || 'Unknown error'}`,
+      });
     }
   }
 );

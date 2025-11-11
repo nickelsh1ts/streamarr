@@ -374,6 +374,9 @@
   "common.localUser": {
     "defaultMessage": "Local User"
   },
+  "common.loggingOut": {
+    "defaultMessage": "Logging out..."
+  },
   "common.logs": {
     "defaultMessage": "Logs"
   },
@@ -445,6 +448,9 @@
   },
   "common.read": {
     "defaultMessage": "read"
+  },
+  "common.recommended": {
+    "defaultMessage": "recommended"
   },
   "common.redeemed": {
     "defaultMessage": "Redeemed"
@@ -1700,6 +1706,9 @@
   "servicesSettings.urlBase.noTrailingSlash": {
     "defaultMessage": "URL Base must not end in a trailing slash"
   },
+  "servicesSettings.urlBase.required": {
+    "defaultMessage": "URL Base is required"
+  },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "You must provide an API key"
   },
@@ -1741,6 +1750,36 @@
   },
   "settings.permissions.error": {
     "defaultMessage": "You do not have permission to modify this user's settings."
+  },
+  "settings.pinLibraries": {
+    "defaultMessage": "Pin Libraries"
+  },
+  "settings.pinLibrariesError": {
+    "defaultMessage": "Failed to pin libraries"
+  },
+  "settings.pinLibrariesErrorMessage": {
+    "defaultMessage": "An error occurred while pinning libraries"
+  },
+  "settings.pinLibrariesHelp": {
+    "defaultMessage": "Pin all your shared libraries to the Plex home screen"
+  },
+  "settings.pinLibrariesProcessing": {
+    "defaultMessage": "Pinning Libraries..."
+  },
+  "settings.pinLibrariesProcessingMessage": {
+    "defaultMessage": "Please wait while we pin your libraries to Plex"
+  },
+  "settings.pinLibrariesSuccess": {
+    "defaultMessage": "Libraries pinned successfully!"
+  },
+  "settings.pinLibrariesSuccessMessage": {
+    "defaultMessage": "{count} {count, plural, one {library} other {libraries}} pinned to your Plex home screen"
+  },
+  "settings.pinLibrariesToPlex": {
+    "defaultMessage": "Pin Libraries to Plex Home"
+  },
+  "settings.pleaseWait": {
+    "defaultMessage": "Please wait"
   },
   "settings.plexAccess": {
     "defaultMessage": "Plex Access"
@@ -1862,6 +1901,12 @@
   "signIn.title": {
     "defaultMessage": "Sign in to continue"
   },
+  "signUp.autoPinLibrariesFailed": {
+    "defaultMessage": "Pinning libraries failed"
+  },
+  "signUp.autoPinLibrariesHelp": {
+    "defaultMessage": "Automatically pin shared libraries to your Plex home screen"
+  },
   "signUp.confirmAccount": {
     "defaultMessage": "Confirm Account"
   },
@@ -1888,6 +1933,9 @@
   },
   "signUp.orEnterLocalAccount": {
     "defaultMessage": "or enter local account details"
+  },
+  "signUp.pinLibraries": {
+    "defaultMessage": "Pin Libraries"
   },
   "signUp.plexAuthFailed": {
     "defaultMessage": "Plex authentication failed"

@@ -7,7 +7,7 @@ import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { publicRoutes } from '@app/middleware';
 import useSettings from '@app/hooks/useSettings';
 import Notifications from '@app/components/Layout/Notifications';
@@ -23,6 +23,7 @@ const Layout = ({
   const pathname = usePathname();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
+  const tokenRef = useRef(false);
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
       user ? `/api/v1/user/${user?.id}/settings/notifications` : null
@@ -66,6 +67,35 @@ const Layout = ({
     }),
     [user]
   );
+
+  // Set Plex token in localStorage after successful login
+  useEffect(() => {
+    if (user && !loading && !tokenRef.current) {
+      const setPlexToken = async () => {
+        try {
+          // Check if token already exists
+          if (localStorage.getItem('myPlexAccessToken')) {
+            tokenRef.current = true;
+            return;
+          }
+
+          // Fetch user's Plex token
+          const response = await axios.get('/api/v1/auth/plex/token');
+          const { token } = response.data;
+
+          if (token) {
+            localStorage.setItem('myPlexAccessToken', token);
+            tokenRef.current = true;
+          }
+        } catch {
+          // Token fetch failed or user doesn't have a Plex token
+          // Do not set tokenRef.current = true here; allow retry on next render
+        }
+      };
+
+      setPlexToken();
+    }
+  }, [user, loading]);
 
   if (!initialized) {
     if (!pathname.match(/setup|signin\/plex\/loading/)) {

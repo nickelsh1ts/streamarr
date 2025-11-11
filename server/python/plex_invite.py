@@ -5,8 +5,14 @@ import logging
 from datetime import datetime, timezone
 import os
 import json
+import requests
+import time
 
-log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
+if os.environ.get('CONFIG_DIRECTORY'):
+    log_path = os.path.join(os.environ['CONFIG_DIRECTORY'], 'logs', '.machinelogs.json')
+else:
+    log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
+
 class JSONLineLogger:
     def __init__(self, label='Plex Sync'):
         self.label = label
@@ -42,6 +48,7 @@ def invite():
     allow_camera_upload = data.get('allow_camera_upload', False)
     allow_channels = data.get('allow_channels', False)
     plex_home = data.get('plex_home', False)
+    user_token = data.get('user_token')  # Optional: token of the user being invited for auto-accept
 
     try:
         account = MyPlexAccount(token=token)
@@ -83,16 +90,49 @@ def invite():
                 allowChannels=allow_channels,
                 allowCameraUpload=allow_camera_upload
             )
-            return jsonify({'success': True, 'message': 'Plex Home user created. Plex Home email invitation sent.'})
-        account.inviteFriend(
-            email,
-            server=plex_server,
-            sections=section_names,
-            allowSync=allow_sync,
-            allowCameraUpload=allow_camera_upload,
-            allowChannels=allow_channels
-        )
-        return jsonify({'success': True, 'message': 'Invite sent. Please visit /watch/web/index.html#!/settings/manage-library-access to accept.'})
+            message = 'Plex Home user created. Plex Home email invitation sent.'
+        else:
+            account.inviteFriend(
+                email,
+                server=plex_server,
+                sections=section_names,
+                allowSync=allow_sync,
+                allowCameraUpload=allow_camera_upload,
+                allowChannels=allow_channels
+            )
+            message = 'User invited successfully. Will attempt to auto-accept if user_token is provided.'
+
+            if user_token:
+                try:
+                    time.sleep(3)
+
+                    user_account = MyPlexAccount(token=user_token)
+
+                    pending_invites = user_account.pendingInvites()
+
+                    if pending_invites and len(pending_invites) > 0:
+                        matching_invite = pending_invites[0]
+
+                        user_account.acceptInvite(matching_invite)
+
+                        logger.info('Invite auto-accepted successfully', {
+                            'email': email,
+                            'invite_id': matching_invite.id
+                        })
+                        message = 'User Invited successfully and automatically accepted.'
+                    else:
+                        logger.info('No pending invites found to accept', {
+                            'email': email
+                        })
+
+                except Exception as accept_error:
+                    logger.error('Unable to auto-accept invite', {
+                        'email': email,
+                        'error': str(accept_error),
+                        'traceback': traceback.format_exc()
+                    })
+
+        return jsonify({'success': True, 'message': message})
     except Exception as e:
         logger.error('Invite error', {'error': str(e)})
         traceback.print_exc()
@@ -244,6 +284,237 @@ def libraries():
 
     except Exception as e:
         logger.error(f'Libraries {request.method} error', {'error': str(e)})
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/pin-libraries', methods=['POST'])
+def pin_libraries():
+    data = request.json
+    user_token = data.get('user_token')
+    server_id = data.get('server_id')
+    libraries_to_pin = data.get('libraries', [])
+    server_name = data.get('server_name', 'Streamarr')
+
+    if not user_token or not server_id:
+        return jsonify({'success': False, 'error': 'Missing required parameters'}), 400
+
+    if not libraries_to_pin:
+        return jsonify({'success': False, 'error': 'No libraries specified'}), 400
+
+    try:
+        get_params = {
+            'sharedSettings': '1',
+            'X-Plex-Product': 'Plex Web',
+            'X-Plex-Version': '4.152.0',
+            'X-Plex-Client-Identifier': 'streamarr',
+            'X-Plex-Token': user_token
+        }
+        headers = {
+            'Accept': 'application/json'
+        }
+        response = requests.get(
+            'https://clients.plex.tv/api/v2/user/settings',
+            params=get_params,
+            headers=headers,
+            timeout=15
+        )
+
+        if response.status_code == 200:
+            try:
+                current_settings = response.json()
+            except Exception as json_error:
+                logger.error('Failed to parse Plex settings response', {
+                    'status_code': response.status_code,
+                    'response_text': response.text[:500],
+                    'error': str(json_error)
+                })
+                return jsonify({
+                    'success': False,
+                    'error': f'Failed to parse Plex response: {str(json_error)}',
+                    'response_preview': response.text[:200]
+                }), 500
+        else:
+            current_settings = {}
+
+        existing_pinned = []
+        experience_data = {}
+
+        if current_settings and 'value' in current_settings:
+            for setting in current_settings['value']:
+                if setting.get('id') == 'experience':
+                    experience_value = json.loads(setting.get('value', '{}'))
+                    experience_data = experience_value
+                    existing_pinned = experience_value.get('sidebarSettings', {}).get('pinnedSources', [])
+                    break
+
+        preserved_pins = [
+            pin for pin in existing_pinned
+            if pin.get('machineIdentifier') != server_id
+        ]
+
+        movies_and_shows = [lib for lib in libraries_to_pin if lib['type'] in ['movie', 'show']]
+        music = [lib for lib in libraries_to_pin if lib['type'] == 'artist']
+
+        movies_and_shows.sort(key=lambda x: int(x['id']))
+        music.sort(key=lambda x: int(x['id']))
+
+        sorted_libraries = movies_and_shows + music
+
+        our_pinned_sources = []
+        for lib in sorted_libraries:
+            type_mapping = {
+                'movie': 'movies',
+                'show': 'tv',
+                'artist': 'music'
+            }
+            source_type = type_mapping.get(lib['type'], lib['type'])
+            our_pinned_sources.append({
+                'key': f"source--{source_type}--{server_id}--com.plexapp.plugins.library--{lib['id']}",
+                'sourceType': source_type,
+                'machineIdentifier': server_id,
+                'providerIdentifier': 'com.plexapp.plugins.library',
+                'directoryID': lib['id'],
+                'title': lib['name'],
+                'serverFriendlyName': server_name,
+                'serverSourceTitle': None,
+                'isFullOwnedServer': True,
+                'hiddenAt': None
+            })
+
+        discover_watchlist_defaults = [
+            {
+                'key': 'source--discover--myPlex--tv.plex.provider.discover--home',
+                'sourceType': 'discover',
+                'machineIdentifier': 'myPlex',
+                'providerIdentifier': 'tv.plex.provider.discover',
+                'directoryID': 'home',
+                'directoryIcon': 'https://provider-static.plex.tv/icons/discover-560.svg',
+                'title': 'Discover',
+                'serverFriendlyName': 'plex.tv',
+                'providerSourceTitle': None,
+                'isCloud': True,
+                'isFullOwnedServer': False,
+                'hiddenAt': None
+            },
+            {
+                'key': 'source--watchlist--myPlex--tv.plex.provider.discover--watchlist',
+                'sourceType': 'watchlist',
+                'machineIdentifier': 'myPlex',
+                'providerIdentifier': 'tv.plex.provider.discover',
+                'directoryID': 'watchlist',
+                'directoryIcon': 'https://provider-static.plex.tv/icons/watchlist.svg',
+                'title': 'Watchlist',
+                'serverFriendlyName': 'plex.tv',
+                'providerSourceTitle': None,
+                'isCloud': True,
+                'isFullOwnedServer': False,
+                'hiddenAt': None
+            }
+        ]
+
+        final_pinned_sources = preserved_pins.copy()
+        final_pinned_sources.extend(our_pinned_sources)
+        existing_keys = {pin.get('key') for pin in final_pinned_sources}
+        for default_source in discover_watchlist_defaults:
+            if default_source['key'] not in existing_keys:
+                final_pinned_sources.append(default_source)
+
+        if 'sidebarSettings' not in experience_data:
+            experience_data['sidebarSettings'] = {}
+
+        experience_data['sidebarSettings']['hasCompletedSetup'] = True
+        experience_data['sidebarSettings']['pinnedSources'] = final_pinned_sources
+
+        payload = {
+            'value': json.dumps([{
+                'id': 'experience',
+                'type': 'json',
+                'value': json.dumps(experience_data),
+                'hidden': False
+            }])
+        }
+
+        post_params = {
+            'sharedSettings': '1',
+            'X-Plex-Product': 'Plex Web',
+            'X-Plex-Version': '4.152.0',
+            'X-Plex-Client-Identifier': 'streamarr-pin-libraries',
+            'X-Plex-Token': user_token
+        }
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        update_response = requests.post(
+            'https://clients.plex.tv/api/v2/user/settings',
+            params=post_params,
+            headers=headers,
+            json=payload,
+            timeout=15
+        )
+
+        if update_response.status_code in [200, 201]:
+            return jsonify({
+                'success': True,
+                'message': 'Libraries pinned successfully',
+                'pinned_count': len(our_pinned_sources)
+            })
+        else:
+            logger.error('Failed to update pinned libraries', {
+                'status_code': update_response.status_code,
+                'response': update_response.text[:500]
+            })
+            return jsonify({
+                'success': False,
+                'error': f'Failed to update settings: {update_response.status_code}',
+                'details': update_response.text
+            }), update_response.status_code
+
+    except Exception as e:
+        logger.error('Pin libraries error', {'error': str(e)})
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/library-details', methods=['GET'])
+def library_details():
+    token = request.args.get('token')
+    server_id = request.args.get('server_id')
+    email = request.args.get('email')
+
+    if not all([token, server_id, email]):
+        return jsonify({'success': False, 'error': 'Missing required parameters'}), 400
+
+    try:
+        account = MyPlexAccount(token=token)
+        account_users = list(account.users())
+
+        target_user = None
+        for user in account_users:
+            if user.email and user.email.lower() == email.lower():
+                target_user = user
+                break
+
+        if not target_user:
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+
+        library_details = []
+        for server in target_user.servers:
+            if server.machineIdentifier == server_id:
+                sections_list = list(server.sections())
+                for section in sections_list:
+                    library_details.append({
+                        'id': str(section.key),
+                        'name': section.title,
+                        'type': section.type
+                    })
+                break
+
+        return jsonify({
+            'success': True,
+            'libraries': library_details
+        })
+
+    except Exception as e:
+        logger.error('Library details error', {'error': str(e)})
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':

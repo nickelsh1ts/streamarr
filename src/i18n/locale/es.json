@@ -381,6 +381,9 @@
   "common.localUser": {
     "defaultMessage": "Usuario Local"
   },
+  "common.loggingOut": {
+    "defaultMessage": "Cerrando sesión..."
+  },
   "common.logs": {
     "defaultMessage": "Registros"
   },
@@ -452,6 +455,9 @@
   },
   "common.read": {
     "defaultMessage": "leído"
+  },
+  "common.recommended": {
+    "defaultMessage": "recomendado"
   },
   "common.redeemed": {
     "defaultMessage": "Canjeado",
@@ -1729,6 +1735,9 @@
   "servicesSettings.urlBase.noTrailingSlash": {
     "defaultMessage": "La URL base no debe tener una barra diagonal al final"
   },
+  "servicesSettings.urlBase.required": {
+    "defaultMessage": "La URL Base es requerida"
+  },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "Debes proporcionar una clave API"
   },
@@ -1773,6 +1782,36 @@
   "settings.permissions.error": {
     "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
     "description": "Professional Spanish translation"
+  },
+  "settings.pinLibraries": {
+    "defaultMessage": "Anclar Bibliotecas"
+  },
+  "settings.pinLibrariesError": {
+    "defaultMessage": "Error al anclar bibliotecas"
+  },
+  "settings.pinLibrariesErrorMessage": {
+    "defaultMessage": "Ocurrió un error al anclar las bibliotecas"
+  },
+  "settings.pinLibrariesHelp": {
+    "defaultMessage": "Anclar todas tus bibliotecas compartidas a la pantalla de inicio de Plex"
+  },
+  "settings.pinLibrariesProcessing": {
+    "defaultMessage": "Anclando Bibliotecas..."
+  },
+  "settings.pinLibrariesProcessingMessage": {
+    "defaultMessage": "Por favor espera mientras anclamos tus bibliotecas a Plex"
+  },
+  "settings.pinLibrariesSuccess": {
+    "defaultMessage": "¡Bibliotecas ancladas exitosamente!"
+  },
+  "settings.pinLibrariesSuccessMessage": {
+    "defaultMessage": "{count} {count, plural, one {biblioteca anclada} other {bibliotecas ancladas}} a tu pantalla de inicio de Plex"
+  },
+  "settings.pinLibrariesToPlex": {
+    "defaultMessage": "Anclar Bibliotecas a Inicio de Plex"
+  },
+  "settings.pleaseWait": {
+    "defaultMessage": "Por favor espera"
   },
   "settings.plexAccess": {
     "defaultMessage": "Acceso a Plex"
@@ -1901,6 +1940,12 @@
     "defaultMessage": "Inicia sesión para continuar",
     "description": "Professional Spanish translation"
   },
+  "signUp.autoPinLibrariesFailed": {
+    "defaultMessage": "Error al anclar bibliotecas"
+  },
+  "signUp.autoPinLibrariesHelp": {
+    "defaultMessage": "Anclar automáticamente las bibliotecas compartidas a tu pantalla de inicio de Plex"
+  },
   "signUp.confirmAccount": {
     "defaultMessage": "Confirmar Cuenta"
   },
@@ -1927,6 +1972,9 @@
   },
   "signUp.orEnterLocalAccount": {
     "defaultMessage": "o introduce los detalles de la cuenta local"
+  },
+  "signUp.pinLibraries": {
+    "defaultMessage": "Anclar Bibliotecas"
   },
   "signUp.plexAuthFailed": {
     "defaultMessage": "Falló la autenticación de Plex"
