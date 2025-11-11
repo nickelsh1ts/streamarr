@@ -5,9 +5,10 @@ interface ToggleProps {
   valueOf: boolean;
   onClick: () => void;
   title?: React.ReactNode;
+  ariaLabel?: string;
 }
 
-const Toggle = ({ id, valueOf, onClick, title }: ToggleProps) => {
+const Toggle = ({ id, valueOf, onClick, title, ariaLabel }: ToggleProps) => {
   return (
     <div className="inline-flex items-center space-x-2">
       <span
@@ -15,7 +16,8 @@ const Toggle = ({ id, valueOf, onClick, title }: ToggleProps) => {
         role="checkbox"
         tabIndex={0}
         aria-checked={valueOf}
-        onClick={() => onClick()}
+        aria-label={ariaLabel || (typeof title === 'string' ? title : undefined)}
+        onClick={onClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === 'Space') {
             e.preventDefault();

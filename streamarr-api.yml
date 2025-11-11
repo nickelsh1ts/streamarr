@@ -2479,7 +2479,7 @@ paths:
   /auth/plex/token:
     get:
       summary: Get Plex authentication token
-      description: Returns the authenticated user's Plex token for use in iframe authentication. Requires an active session.
+      description: Returns the authenticated user's Plex token for client-side Plex integration. Requires an active session.
       tags:
         - auth
       responses:

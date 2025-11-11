@@ -89,7 +89,7 @@ const Layout = ({
           }
         } catch {
           // Token fetch failed or user doesn't have a Plex token
-          tokenRef.current = true;
+          // Do not set tokenRef.current = true here; allow retry on next render
         }
       };
 
