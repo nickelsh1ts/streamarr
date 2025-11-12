@@ -276,6 +276,9 @@
   "common.currentPassword": {
     "defaultMessage": "Contraseña Actual"
   },
+  "common.days": {
+    "defaultMessage": "{count, plural, one {# día} other {# días}}"
+  },
   "common.default": {
     "defaultMessage": "Predeterminado"
   },
@@ -1095,6 +1098,12 @@
   "inviteList.sortMostRecent": {
     "defaultMessage": "Más Reciente"
   },
+  "inviteList.trialPeriodActive": {
+    "defaultMessage": "Período de Prueba Activo"
+  },
+  "inviteList.trialPeriodMessage": {
+    "defaultMessage": "{self, select, true {Estás} other {Están}} actualmente en un período de prueba y no pueden crear invitaciones hasta el {date}."
+  },
   "inviteShare.createAnother": {
     "defaultMessage": "Crear Otra"
   },
@@ -1591,6 +1600,15 @@
   "profile.totalInvites": {
     "defaultMessage": "Total de Invitaciones"
   },
+  "profile.trialPeriod": {
+    "defaultMessage": "Período de Prueba"
+  },
+  "profile.trialPeriodEnds": {
+    "defaultMessage": "Finaliza el {date}"
+  },
+  "profile.trialPeriodRestriction": {
+    "defaultMessage": "Se pueden generar nuevas invitaciones después de esta fecha"
+  },
   "profile.userId": {
     "defaultMessage": "ID de Usuario: {userId}"
   },
@@ -1759,6 +1777,9 @@
   "settings.allowLiveTv": {
     "defaultMessage": "Permitir Acceso a TV en Vivo"
   },
+  "settings.enableTrialPeriod": {
+    "defaultMessage": "Habilitar Período de Prueba"
+  },
   "settings.inviteQuota": {
     "defaultMessage": "Cuota de Invitaciones"
   },
@@ -1821,6 +1842,15 @@
   },
   "settings.saveError": {
     "defaultMessage": "Algo salió mal al guardar la configuración."
+  },
+  "settings.trialPeriod": {
+    "defaultMessage": "Período de Prueba"
+  },
+  "settings.trialPeriodDefaultDays": {
+    "defaultMessage": "{count, plural, one {(Predeterminado: # día)} other {(Predeterminado: # días)}}"
+  },
+  "settings.trialPeriodEndDateDescription": {
+    "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
@@ -2147,6 +2177,12 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
+  },
+  "userSettings.enableTrialPeriod": {
+    "defaultMessage": "Habilitar Período de Prueba"
+  },
+  "userSettings.enableTrialPeriodDescription": {
+    "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"
   },
   "userSettings.engine": {
     "defaultMessage": "Motor"

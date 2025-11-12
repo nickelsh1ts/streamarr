@@ -272,6 +272,9 @@
   "common.currentPassword": {
     "defaultMessage": "Current Password"
   },
+  "common.days": {
+    "defaultMessage": "{count, plural, one {# day} other {# days}}"
+  },
   "common.default": {
     "defaultMessage": "Default"
   },
@@ -1079,6 +1082,12 @@
   "inviteList.sortMostRecent": {
     "defaultMessage": "Most Recent"
   },
+  "inviteList.trialPeriodActive": {
+    "defaultMessage": "Trial Period Active"
+  },
+  "inviteList.trialPeriodMessage": {
+    "defaultMessage": "{self, select, true {You} other {They}} are currently in a trial period and cannot create invites until {date}."
+  },
   "inviteShare.createAnother": {
     "defaultMessage": "Create Another"
   },
@@ -1568,6 +1577,15 @@
   "profile.totalInvites": {
     "defaultMessage": "Total Invites"
   },
+  "profile.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "profile.trialPeriodEnds": {
+    "defaultMessage": "Ends {date}"
+  },
+  "profile.trialPeriodRestriction": {
+    "defaultMessage": "New invites can be generated after this date"
+  },
   "profile.userId": {
     "defaultMessage": "User ID: {userId}"
   },
@@ -1730,6 +1748,9 @@
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
   },
+  "settings.enableTrialPeriod": {
+    "defaultMessage": "Enable Trial Period"
+  },
   "settings.inviteQuota": {
     "defaultMessage": "Invite Quota"
   },
@@ -1789,6 +1810,15 @@
   },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
+  },
+  "settings.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "settings.trialPeriodDefaultDays": {
+    "defaultMessage": "{count, plural, one {(Default: # day)} other {(Default: # days)}}"
+  },
+  "settings.trialPeriodEndDateDescription": {
+    "defaultMessage": "Cannot create invites until after this date"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
@@ -2107,6 +2137,12 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
+  },
+  "userSettings.enableTrialPeriod": {
+    "defaultMessage": "Enable Trial Period"
+  },
+  "userSettings.enableTrialPeriodDescription": {
+    "defaultMessage": "Set a period of days where new users cannot create invites"
   },
   "userSettings.engine": {
     "defaultMessage": "Engine"
