@@ -27,6 +27,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
+import { momentWithLocale } from '@app/utils/momentLocale';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const UserSettingsGeneral = () => {
   const intl = useIntl();
@@ -95,6 +98,10 @@ const UserSettingsGeneral = () => {
                 : 'server',
           allowDownloads: data?.allowDownloads ?? false,
           allowLiveTv: data?.allowLiveTv ?? false,
+          trialPeriodEnabled: data?.trialPeriodEndsAt ? true : false,
+          trialPeriodEndsAt: data?.trialPeriodEndsAt
+            ? momentWithLocale(data.trialPeriodEndsAt).format('YYYY-MM-DD')
+            : momentWithLocale().format('YYYY-MM-DD'),
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -118,7 +125,16 @@ const UserSettingsGeneral = () => {
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
 
           try {
-            const submitData = {
+            const submitData: {
+              username: string;
+              locale?: string;
+              inviteQuotaLimit: number | null;
+              inviteQuotaDays: number | null;
+              sharedLibraries: string | null;
+              allowDownloads: boolean;
+              allowLiveTv: boolean;
+              trialPeriodEndsAt?: string | null;
+            } = {
               username: values.displayName,
               locale: values.locale,
               inviteQuotaLimit: inviteQuotaEnabled
@@ -131,6 +147,23 @@ const UserSettingsGeneral = () => {
               allowDownloads: values.allowDownloads,
               allowLiveTv: values.allowLiveTv,
             };
+
+            if (
+              currentHasPermission(Permission.MANAGE_USERS) &&
+              currentUser?.id !== user?.id &&
+              user?.id !== 1 &&
+              !hasPermission(Permission.MANAGE_USERS)
+            ) {
+              if (!values.trialPeriodEnabled) {
+                submitData.trialPeriodEndsAt = null;
+              } else {
+                const dateStr = values.trialPeriodEndsAt;
+                const endOfDay = momentWithLocale(dateStr)
+                  .endOf('day')
+                  .toISOString();
+                submitData.trialPeriodEndsAt = endOfDay;
+              }
+            }
 
             await axios.post(
               `/api/v1/user/${user?.id}/settings/main`,
@@ -607,6 +640,104 @@ const UserSettingsGeneral = () => {
                               : undefined
                           }
                         />
+                      </div>
+                    </div>
+                  )}
+                {currentHasPermission(Permission.MANAGE_USERS) &&
+                  currentUser?.id !== user?.id &&
+                  user?.id !== 1 &&
+                  !hasPermission(Permission.MANAGE_USERS) &&
+                  data?.globalEnableTrialPeriod && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="col-span-1">
+                        <FormattedMessage
+                          id="settings.trialPeriod"
+                          defaultMessage="Trial Period"
+                        />
+                        <span className="block text-xs text-gray-400 mt-1">
+                          <FormattedMessage
+                            id="settings.trialPeriodEndDateDescription"
+                            defaultMessage="Cannot create invites until after this date"
+                          />{' '}
+                          <FormattedMessage
+                            id="settings.trialPeriodDefaultDays"
+                            defaultMessage="{count, plural, one {(Default: # day)} other {(Default: # days)}}"
+                            values={{
+                              count: data?.globalTrialPeriodDays ?? 30,
+                            }}
+                          />
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <div className="mb-4 flex items-center">
+                          <Field
+                            type="checkbox"
+                            id="trialPeriodEnabled"
+                            name="trialPeriodEnabled"
+                            className="checkbox checkbox-primary"
+                            onChange={() =>
+                              setFieldValue(
+                                'trialPeriodEnabled',
+                                !values.trialPeriodEnabled
+                              )
+                            }
+                          />
+                          <label
+                            htmlFor="trialPeriodEnabled"
+                            className="ml-2 text-gray-300"
+                          >
+                            <FormattedMessage
+                              id="settings.enableTrialPeriod"
+                              defaultMessage="Enable Trial Period"
+                            />
+                          </label>
+                        </div>
+                        <DatePicker
+                          disabled={!values.trialPeriodEnabled}
+                          dateFormat="MMMM d, yyyy"
+                          locale={locale !== 'en' ? locale : undefined}
+                          showIcon
+                          toggleCalendarOnIconClick
+                          selected={
+                            momentWithLocale(
+                              values.trialPeriodEndsAt
+                            ).toDate() ?? momentWithLocale().toDate()
+                          }
+                          onChange={(date: Date) =>
+                            date
+                              ? setFieldValue('trialPeriodEndsAt', date)
+                              : null
+                          }
+                          icon={
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              className={
+                                values.trialPeriodEnabled ? '' : 'opacity-50'
+                              }
+                            >
+                              <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                              <path
+                                fillRule="evenodd"
+                                d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          }
+                          className={`input input-sm input-primary rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40 ${
+                            errors.trialPeriodEndsAt &&
+                            touched.trialPeriodEndsAt
+                              ? 'input-error'
+                              : ''
+                          }`}
+                        />
+                        {errors.trialPeriodEndsAt &&
+                          touched.trialPeriodEndsAt && (
+                            <div className="text-sm text-red-500 mt-1">
+                              {errors.trialPeriodEndsAt}
+                            </div>
+                          )}
                       </div>
                     </div>
                   )}

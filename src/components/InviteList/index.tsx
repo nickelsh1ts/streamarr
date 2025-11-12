@@ -33,6 +33,7 @@ import Toast from '@app/components/Toast';
 import InviteShareModal from '@app/components/InviteList/InviteShareModal';
 import useSettings from '@app/hooks/useSettings';
 import Alert from '@app/components/Common/Alert';
+import { momentWithLocale } from '@app/utils/momentLocale';
 
 enum Filter {
   ALL = 'all',
@@ -361,7 +362,12 @@ const InviteList = () => {
                   [Permission.CREATE_INVITES, Permission.STREAMARR],
                   { type: 'or' }
                 ) ||
-                !currentSettings?.enableSignUp
+                !currentSettings?.enableSignUp ||
+                (quota?.invite.trialPeriodActive &&
+                  !hasPermission(
+                    [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+                    { type: 'or' }
+                  ))
               }
             >
               <FormattedMessage
@@ -420,6 +426,28 @@ const InviteList = () => {
                 <FormattedMessage
                   id="inviteList.signUpDisabledMessage"
                   defaultMessage="The admin has currently disabled the sign up feature. No new invites can be created."
+                />
+              </p>
+            </Alert>
+          )}
+          {quota?.invite.trialPeriodActive && (
+            <Alert
+              type="warning"
+              title={intl.formatMessage({
+                id: 'inviteList.trialPeriodActive',
+                defaultMessage: 'Trial Period Active',
+              })}
+            >
+              <p className="text-sm leading-5">
+                <FormattedMessage
+                  id="inviteList.trialPeriodMessage"
+                  defaultMessage="{self, select, true {You} other {They}} are currently in a trial period and cannot create invites until {date}."
+                  values={{
+                    self: user.id === currentUser?.id ? true : false,
+                    date: momentWithLocale(
+                      quota.invite.trialPeriodEndsAt ?? ''
+                    ).format('LL'),
+                  }}
                 />
               </p>
             </Alert>
