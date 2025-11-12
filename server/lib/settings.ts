@@ -113,6 +113,8 @@ export interface MainSettings {
   extendedHome: boolean;
   customLogo?: string;
   customLogoSmall?: string;
+  enableTrialPeriod: boolean;
+  trialPeriodDays: number;
 }
 
 interface PublicSettings {
@@ -254,6 +256,8 @@ class Settings {
         supportUrl: '',
         supportEmail: '',
         extendedHome: true,
+        enableTrialPeriod: false,
+        trialPeriodDays: 30,
       },
       plex: {
         name: '',

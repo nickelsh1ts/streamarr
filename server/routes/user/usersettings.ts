@@ -45,6 +45,8 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         downloads,
         liveTv,
         plexHome,
+        enableTrialPeriod,
+        trialPeriodDays,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -98,6 +100,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         allowDownloads: user.settings?.allowDownloads ?? false,
         allowLiveTv: user.settings?.allowLiveTv ?? false,
         globalSharedLibraries: defaultSharedLibraries,
+        trialPeriodEndsAt: user.settings?.trialPeriodEndsAt ?? null,
+        globalEnableTrialPeriod: enableTrialPeriod,
+        globalTrialPeriodDays: trialPeriodDays,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
@@ -164,6 +169,29 @@ userSettingsRoutes.post<
       user.settings.sharedLibraries = newSharedLibraries;
       user.settings.allowDownloads = req.body.allowDownloads ?? false;
       user.settings.allowLiveTv = req.body.allowLiveTv ?? false;
+    }
+
+    if (
+      req.user?.hasPermission(Permission.MANAGE_USERS) &&
+      req.user.id !== user.id &&
+      user.id !== 1 &&
+      !user.hasPermission(Permission.MANAGE_USERS) &&
+      req.body.trialPeriodEndsAt !== undefined
+    ) {
+      if (req.body.trialPeriodEndsAt === null) {
+        user.settings.trialPeriodEndsAt = null;
+      } else {
+        const trialDate = new Date(req.body.trialPeriodEndsAt);
+
+        if (isNaN(trialDate.getTime())) {
+          return next({
+            status: 400,
+            message: 'Invalid trial period end date.',
+          });
+        }
+
+        user.settings.trialPeriodEndsAt = trialDate;
+      }
     }
 
     await userRepository.save(user);
