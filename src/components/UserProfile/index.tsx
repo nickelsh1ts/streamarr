@@ -110,7 +110,8 @@ const UserProfile = () => {
                   </Link>
                 </dd>
               </div>
-              {quota.invite.trialPeriodActive ? (
+              {quota.invite.trialPeriodActive &&
+              quota.invite.trialPeriodEnabled ? (
                 <div className="overflow-hidden rounded-lg bg-yellow-900 bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
                   <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
                     <ClockIcon className="size-5 mr-2" />

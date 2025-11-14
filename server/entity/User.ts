@@ -232,10 +232,9 @@ export class User {
 
   public isInTrialPeriod(): boolean {
     // Check if user.settings.trialPeriodEndsAt exists and is in the future
-    if (!this.settings?.trialPeriodEndsAt) {
-      return false;
-    }
     if (
+      !this.settings?.trialPeriodEndsAt ||
+      !getSettings().main.enableTrialPeriod ||
       this.hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
         type: 'or',
       })
@@ -309,6 +308,7 @@ export class User {
           (inTrialPeriod && !canBypass) || quotaExceeded ? true : false,
         trialPeriodActive: inTrialPeriod,
         trialPeriodEndsAt: trialPeriodEndsAt,
+        trialPeriodEnabled: getSettings().main.enableTrialPeriod,
       },
     };
   }

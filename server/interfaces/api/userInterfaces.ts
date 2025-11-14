@@ -23,6 +23,7 @@ export interface QuotaStatus {
   restricted: boolean;
   trialPeriodActive?: boolean;
   trialPeriodEndsAt?: Date | null;
+  trialPeriodEnabled?: boolean;
 }
 
 export interface QuotaResponse {

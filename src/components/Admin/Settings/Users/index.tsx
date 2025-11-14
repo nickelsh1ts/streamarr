@@ -18,8 +18,6 @@ import { Field, Form, Formik } from 'formik';
 import useSWR, { mutate } from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
-//TODO: Add a "trial period" for new users enable/disable option with customizable length
-
 const UserSettings = () => {
   const intl = useIntl();
   const {

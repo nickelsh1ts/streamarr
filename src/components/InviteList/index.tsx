@@ -367,7 +367,8 @@ const InviteList = () => {
                   !hasPermission(
                     [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
                     { type: 'or' }
-                  ))
+                  ) &&
+                  quota?.invite.trialPeriodEnabled)
               }
             >
               <FormattedMessage
@@ -430,28 +431,29 @@ const InviteList = () => {
               </p>
             </Alert>
           )}
-          {quota?.invite.trialPeriodActive && (
-            <Alert
-              type="warning"
-              title={intl.formatMessage({
-                id: 'inviteList.trialPeriodActive',
-                defaultMessage: 'Trial Period Active',
-              })}
-            >
-              <p className="text-sm leading-5">
-                <FormattedMessage
-                  id="inviteList.trialPeriodMessage"
-                  defaultMessage="{self, select, true {You} other {They}} are currently in a trial period and cannot create invites until {date}."
-                  values={{
-                    self: user.id === currentUser?.id ? true : false,
-                    date: momentWithLocale(
-                      quota.invite.trialPeriodEndsAt ?? ''
-                    ).format('LL'),
-                  }}
-                />
-              </p>
-            </Alert>
-          )}
+          {quota?.invite.trialPeriodActive &&
+            quota?.invite.trialPeriodEnabled && (
+              <Alert
+                type="warning"
+                title={intl.formatMessage({
+                  id: 'inviteList.trialPeriodActive',
+                  defaultMessage: 'Trial Period Active',
+                })}
+              >
+                <p className="text-sm leading-5">
+                  <FormattedMessage
+                    id="inviteList.trialPeriodMessage"
+                    defaultMessage="{self, select, true {You} other {They}} are currently in a trial period and cannot create invites until {date}."
+                    values={{
+                      self: user.id === currentUser?.id ? true : false,
+                      date: momentWithLocale(
+                        quota.invite.trialPeriodEndsAt ?? ''
+                      ).format('LL'),
+                    }}
+                  />
+                </p>
+              </Alert>
+            )}
           <ul id="invitesList">
             {data?.results.map((invite) => {
               return (
