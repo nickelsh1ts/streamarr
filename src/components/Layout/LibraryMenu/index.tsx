@@ -137,7 +137,7 @@ const LibraryMenu = ({
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col">
+    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto">
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
         <SingleItem
           liKey={item.title}
