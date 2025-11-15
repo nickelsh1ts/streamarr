@@ -18,8 +18,6 @@ import { Field, Form, Formik } from 'formik';
 import useSWR, { mutate } from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
-//TODO: Add a "trial period" for new users enable/disable option with customizable length
-
 const UserSettings = () => {
   const intl = useIntl();
   const {
@@ -61,6 +59,8 @@ const UserSettings = () => {
           downloads: data?.downloads,
           liveTv: data?.liveTv,
           plexHome: data?.plexHome,
+          enableTrialPeriod: data?.enableTrialPeriod ?? false,
+          trialPeriodDays: data?.trialPeriodDays ?? 30,
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -82,6 +82,8 @@ const UserSettings = () => {
               downloads: values.downloads,
               liveTv: values.liveTv,
               plexHome: values.plexHome,
+              enableTrialPeriod: values.enableTrialPeriod,
+              trialPeriodDays: values.trialPeriodDays,
             });
             mutate('/api/v1/settings/public');
 
@@ -280,6 +282,53 @@ const UserSettings = () => {
                           values={{ count: values.inviteExpiryLimit }}
                         />
                       </option>
+                    </Field>
+                  )}
+                </div>
+                <label htmlFor="enableTrialPeriod" className="font-bold block">
+                  <FormattedMessage
+                    id="userSettings.enableTrialPeriod"
+                    defaultMessage="Enable Trial Period"
+                  />
+                  <span className="text-sm block font-light text-neutral-300">
+                    <FormattedMessage
+                      id="userSettings.enableTrialPeriodDescription"
+                      defaultMessage="Set a period of days where new users cannot create invites"
+                    />
+                  </span>
+                </label>
+                <div className="col-span-2 gap-4 inline-flex items-center">
+                  <Field
+                    type="checkbox"
+                    id="enableTrialPeriod"
+                    name="enableTrialPeriod"
+                    onChange={() => {
+                      setFieldValue(
+                        'enableTrialPeriod',
+                        !values.enableTrialPeriod
+                      );
+                    }}
+                    className="checkbox checkbox-primary rounded-md"
+                  />
+                  {values.enableTrialPeriod && (
+                    <Field
+                      as="select"
+                      name="trialPeriodDays"
+                      id="trialPeriodDays"
+                      className="select select-sm select-primary rounded-md"
+                      onChange={(e) =>
+                        setFieldValue('trialPeriodDays', Number(e.target.value))
+                      }
+                    >
+                      {[...Array(90)].map((_item, i) => (
+                        <option value={i + 1} key={`trial-period-${i + 1}`}>
+                          <FormattedMessage
+                            id="common.days"
+                            defaultMessage="{count, plural, one {# day} other {# days}}"
+                            values={{ count: i + 1 }}
+                          />
+                        </option>
+                      ))}
                     </Field>
                   )}
                 </div>

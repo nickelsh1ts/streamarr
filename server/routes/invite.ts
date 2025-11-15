@@ -184,6 +184,22 @@ inviteRoutes.post<
       return next({ status: 500, message: 'User missing from request.' });
     }
 
+    // Check if user is in trial period (bypass for MANAGE_USERS and MANAGE_INVITES)
+    if (
+      !req.user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        {
+          type: 'or',
+        }
+      ) &&
+      req.user.isInTrialPeriod()
+    ) {
+      return next({
+        status: 403,
+        message: 'You cannot create invites until after the trial period.',
+      });
+    }
+
     const settings = getSettings();
     if (!settings.main.enableSignUp) {
       return next({

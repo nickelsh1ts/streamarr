@@ -215,6 +215,16 @@ components:
           nullable: true
           description: URL path to custom uploaded small logo file
           example: '/logos/logo_sm.png'
+        enableTrialPeriod:
+          type: boolean
+          example: false
+          description: Enable trial period for new users
+        trialPeriodDays:
+          type: integer
+          minimum: 1
+          maximum: 90
+          example: 30
+          description: Number of days for trial period (only applies when enableTrialPeriod is true)
     PlexLibrary:
       type: object
       properties:
@@ -3103,6 +3113,17 @@ paths:
                       restricted:
                         type: boolean
                         example: false
+                        description: Whether user is restricted from creating invites
+                      trialPeriodActive:
+                        type: boolean
+                        example: false
+                        description: Whether user is currently in trial period
+                      trialPeriodEndsAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: '2025-12-01T00:00:00.000Z'
+                        description: End date of user's trial period
   /user/{userId}/settings/main:
     get:
       summary: Get general settings for a user
@@ -3126,6 +3147,54 @@ paths:
                   username:
                     type: string
                     example: 'Mr User'
+                  locale:
+                    type: string
+                    nullable: true
+                    example: 'en'
+                  inviteQuotaLimit:
+                    type: integer
+                    nullable: true
+                  inviteQuotaDays:
+                    type: integer
+                    nullable: true
+                  globalInviteQuotaDays:
+                    type: integer
+                  globalInviteQuotaLimit:
+                    type: integer
+                  globalInviteUsageLimit:
+                    type: integer
+                  globalInvitesExpiryLimit:
+                    type: integer
+                  globalInvitesExpiryTime:
+                    type: string
+                    enum: [days, weeks, months]
+                  globalAllowDownloads:
+                    type: boolean
+                  globalLiveTv:
+                    type: boolean
+                  globalPlexHome:
+                    type: boolean
+                  sharedLibraries:
+                    type: string
+                    nullable: true
+                  allowDownloads:
+                    type: boolean
+                  allowLiveTv:
+                    type: boolean
+                  globalSharedLibraries:
+                    type: string
+                    nullable: true
+                  trialPeriodEndsAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                    description: End date of user's trial period
+                  globalEnableTrialPeriod:
+                    type: boolean
+                    description: Global trial period setting
+                  globalTrialPeriodDays:
+                    type: integer
+                    description: Global default trial period in days
     post:
       summary: Update general settings for a user
       description: Updates and returns general settings for a specific user. Requires `MANAGE_USERS` permission if editing other users.
@@ -3147,6 +3216,27 @@ paths:
                 username:
                   type: string
                   nullable: true
+                locale:
+                  type: string
+                  nullable: true
+                inviteQuotaLimit:
+                  type: integer
+                  nullable: true
+                inviteQuotaDays:
+                  type: integer
+                  nullable: true
+                sharedLibraries:
+                  type: string
+                  nullable: true
+                allowDownloads:
+                  type: boolean
+                allowLiveTv:
+                  type: boolean
+                trialPeriodEndsAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Trial period end date (only editable by MANAGE_USERS, not on self/owner/other admins)
       responses:
         '200':
           description: Updated user general settings returned
@@ -3452,6 +3542,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Invites'
+        '403':
+          description: User is in trial period or does not have permission
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: 'You cannot create invites while in your trial period. Trial ends on 2025-12-01'
   /invite/count:
     get:
       summary: Gets invite counts

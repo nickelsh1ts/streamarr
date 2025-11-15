@@ -49,6 +49,9 @@ export class UserSettings {
   @Column({ default: false })
   public allowLiveTv: boolean;
 
+  @Column({ type: 'datetime', nullable: true })
+  public trialPeriodEndsAt?: Date;
+
   @Column({
     type: 'text',
     nullable: true,

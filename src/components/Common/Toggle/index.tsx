@@ -16,7 +16,9 @@ const Toggle = ({ id, valueOf, onClick, title, ariaLabel }: ToggleProps) => {
         role="checkbox"
         tabIndex={0}
         aria-checked={valueOf}
-        aria-label={ariaLabel || (typeof title === 'string' ? title : undefined)}
+        aria-label={
+          ariaLabel || (typeof title === 'string' ? title : undefined)
+        }
         onClick={onClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === 'Space') {

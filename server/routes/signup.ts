@@ -7,6 +7,7 @@ import { UserSettings } from '@server/entity/UserSettings';
 import { getSettings } from '@server/lib/settings';
 import { InviteStatus } from '@server/constants/invite';
 import { UserType } from '@server/constants/user';
+import { Permission } from '@server/lib/permissions';
 import axios from 'axios';
 import logger from '@server/logger';
 import crypto from 'crypto';
@@ -188,6 +189,22 @@ signupRoutes.post('/plexauth', async (req, res) => {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
       });
+    } else {
+      user.settings = new UserSettings();
+    }
+
+    if (
+      settings.main.enableTrialPeriod &&
+      !user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        { type: 'or' }
+      ) &&
+      user.id !== 1
+    ) {
+      const trialEndDate = new Date(
+        Date.now() + settings.main.trialPeriodDays * 86400000
+      );
+      user.settings.trialPeriodEndsAt = trialEndDate;
     }
 
     await userRepository.save(user);
@@ -614,6 +631,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     const avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
 
     // Create new local user
+    const settings = getSettings();
     user = new User({
       email: email.toLowerCase(),
       username: username,
@@ -632,6 +650,22 @@ signupRoutes.post('/localauth', async (req, res) => {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
       });
+    } else {
+      user.settings = new UserSettings();
+    }
+
+    if (
+      settings.main.enableTrialPeriod &&
+      !user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        { type: 'or' }
+      ) &&
+      user.id !== 1
+    ) {
+      const trialEndDate = new Date(
+        Date.now() + settings.main.trialPeriodDays * 86400000
+      );
+      user.settings.trialPeriodEndsAt = trialEndDate;
     }
 
     await userRepository.save(user);

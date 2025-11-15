@@ -21,6 +21,9 @@ export interface QuotaStatus {
   used: number;
   remaining?: number;
   restricted: boolean;
+  trialPeriodActive?: boolean;
+  trialPeriodEndsAt?: Date | null;
+  trialPeriodEnabled?: boolean;
 }
 
 export interface QuotaResponse {

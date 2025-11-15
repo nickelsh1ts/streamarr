@@ -230,20 +230,41 @@ export class User {
     this.displayName = this.username || this.plexUsername || this.email;
   }
 
+  public isInTrialPeriod(): boolean {
+    // Check if user.settings.trialPeriodEndsAt exists and is in the future
+    if (
+      !this.settings?.trialPeriodEndsAt ||
+      !getSettings().main.enableTrialPeriod ||
+      this.id === 1 ||
+      this.hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
+        type: 'or',
+      })
+    ) {
+      return false;
+    }
+    return new Date(this.settings.trialPeriodEndsAt) > new Date();
+  }
+
   public async getQuota(): Promise<QuotaResponse> {
     const {
       main: { defaultQuotas },
     } = getSettings();
     const inviteRepository = getRepository(Invite);
-    const canBypass = this.hasPermission([Permission.MANAGE_USERS], {
-      type: 'or',
-    });
+    const canBypass = this.hasPermission(
+      [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+      {
+        type: 'or',
+      }
+    );
 
     const inviteQuotaLimit = !canBypass
       ? (this.inviteQuotaLimit ?? defaultQuotas.invites.quotaLimit)
       : -1;
     const inviteQuotaDays =
       this.inviteQuotaDays ?? defaultQuotas.invites.quotaDays;
+
+    const inTrialPeriod = this.isInTrialPeriod();
+    const trialPeriodEndsAt = this.settings?.trialPeriodEndsAt ?? null;
 
     // Count invite invites made during quota period
     let inviteQuotaUsed: number;
@@ -271,6 +292,11 @@ export class User {
       inviteQuotaUsed = 0;
     }
 
+    const quotaExceeded =
+      inviteQuotaLimit &&
+      inviteQuotaLimit !== -1 &&
+      inviteQuotaLimit - inviteQuotaUsed <= 0;
+
     return {
       invite: {
         days: inviteQuotaDays,
@@ -280,11 +306,10 @@ export class User {
           ? Math.max(0, inviteQuotaLimit - inviteQuotaUsed)
           : null,
         restricted:
-          inviteQuotaLimit &&
-          inviteQuotaLimit != -1 &&
-          inviteQuotaLimit - inviteQuotaUsed <= 0
-            ? true
-            : false,
+          (inTrialPeriod && !canBypass) || quotaExceeded ? true : false,
+        trialPeriodActive: inTrialPeriod,
+        trialPeriodEndsAt: trialPeriodEndsAt,
+        trialPeriodEnabled: getSettings().main.enableTrialPeriod,
       },
     };
   }

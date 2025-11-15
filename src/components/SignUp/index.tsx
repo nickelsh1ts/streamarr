@@ -10,6 +10,7 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import { UserType } from '@server/constants/user';
 import type { User } from '@server/entity/User';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -33,7 +34,7 @@ const Join = () => {
         icode: inviteCode,
       });
 
-      if (autoPinLibraries) {
+      if (autoPinLibraries && user.userType === UserType.PLEX) {
         try {
           await axios.post(`/api/v1/user/${user.id}/settings/pin-libraries`);
         } catch (e) {

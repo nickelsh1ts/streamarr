@@ -6,7 +6,7 @@ import type {
   UserInvitesResponse,
   UserNotificationsResponse,
 } from '@server/interfaces/api/userInterfaces';
-import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowRightCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Error from '@app/app/error';
@@ -17,6 +17,7 @@ import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
 import RecentNotification from '@app/components/Common/Slider/RecentNotification';
 import useSettings from '@app/hooks/useSettings';
+import { momentWithLocale } from '@app/utils/momentLocale';
 
 const UserProfile = () => {
   const currentSettings = useSettings().currentSettings;
@@ -109,88 +110,120 @@ const UserProfile = () => {
                   </Link>
                 </dd>
               </div>
-              <div
-                className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
-                  quota.invite.restricted
-                    ? 'bg-gradient-to-t from-red-900 to-transparent ring-red-500'
-                    : 'ring-gray-700'
-                } sm:p-6`}
-              >
-                <dt
-                  className={`truncate text-sm font-bold text-gray-300 ${
-                    quota.invite.restricted ? 'text-red-500' : 'text-gray-300'
-                  }`}
-                >
-                  {quota.invite.limit ? (
-                    quota.invite.days === 0 || quota.invite.limit === -1 ? (
-                      <FormattedMessage
-                        id="profile.invitesLifetime"
-                        defaultMessage="Invites (Lifetime)"
-                      />
-                    ) : (
-                      <FormattedMessage
-                        id="profile.invitesPastDays"
-                        defaultMessage="Invites (past {days} {days, plural, one {day} other {days}})"
-                        values={{ days: quota.invite.days }}
-                      />
-                    )
-                  ) : (
+              {quota.invite.trialPeriodActive &&
+              quota.invite.trialPeriodEnabled ? (
+                <div className="overflow-hidden rounded-lg bg-yellow-900 bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
+                  <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
+                    <ClockIcon className="size-5 mr-2" />
                     <FormattedMessage
-                      id="common.invites"
-                      defaultMessage="Invites"
+                      id="profile.trialPeriod"
+                      defaultMessage="Trial Period"
                     />
-                  )}
-                </dt>
-                <dd
-                  className={`mt-1 text-sm font-semibold items-center flex text-white ${
-                    quota.invite.restricted ? 'text-red-500' : 'text-white'
-                  }`}
-                >
-                  {quota.invite.limit > 0 &&
-                  hasPermission(
-                    [Permission.STREAMARR, Permission.CREATE_INVITES],
-                    { type: 'or' }
-                  ) ? (
-                    <>
-                      <ProgressCircle
-                        progress={Math.round(
-                          ((quota?.invite.remaining ?? 0) /
-                            (quota?.invite.limit ?? 1)) *
-                            100
-                        )}
-                        useHeatLevel
-                        className="mr-2 h-8 w-8"
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-yellow-200">
+                    <div className="text-3xl">
+                      <FormattedMessage
+                        id="profile.trialPeriodEnds"
+                        defaultMessage="Ends {date}"
+                        values={{
+                          date: momentWithLocale(
+                            quota.invite.trialPeriodEndsAt ?? new Date()
+                          ).format('ll'),
+                        }}
                       />
-                      <div>
-                        <span className="text-3xl font-semibold">
-                          <FormattedMessage
-                            id="profile.invitesRemaining"
-                            defaultMessage="{remaining} of {limit} remaining"
-                            values={{
-                              remaining: quota.invite.remaining,
-                              limit: quota.invite.limit,
-                            }}
-                          />
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <span className="text-3xl font-semibold">
-                      {quota.invite.limit === -1 ? (
+                    </div>
+                    <div className="text-xs mt-2 text-yellow-300">
+                      <FormattedMessage
+                        id="profile.trialPeriodRestriction"
+                        defaultMessage="New invites can be generated after this date"
+                      />
+                    </div>
+                  </dd>
+                </div>
+              ) : (
+                <div
+                  className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                    quota.invite.restricted
+                      ? 'bg-gradient-to-t from-red-900 to-transparent ring-red-500'
+                      : 'ring-gray-700'
+                  } sm:p-6`}
+                >
+                  <dt
+                    className={`truncate text-sm font-bold text-gray-300 ${
+                      quota.invite.restricted ? 'text-red-500' : 'text-gray-300'
+                    }`}
+                  >
+                    {quota.invite.limit ? (
+                      quota.invite.days === 0 || quota.invite.limit === -1 ? (
                         <FormattedMessage
-                          id="common.unlimited"
-                          defaultMessage="Unlimited"
+                          id="profile.invitesLifetime"
+                          defaultMessage="Invites (Lifetime)"
                         />
                       ) : (
                         <FormattedMessage
-                          id="common.none"
-                          defaultMessage="None"
+                          id="profile.invitesPastDays"
+                          defaultMessage="Invites (past {days} {days, plural, one {day} other {days}})"
+                          values={{ days: quota.invite.days }}
                         />
-                      )}
-                    </span>
-                  )}
-                </dd>
-              </div>
+                      )
+                    ) : (
+                      <FormattedMessage
+                        id="common.invites"
+                        defaultMessage="Invites"
+                      />
+                    )}
+                  </dt>
+                  <dd
+                    className={`mt-1 text-sm font-semibold items-center flex text-white ${
+                      quota.invite.restricted ? 'text-red-500' : 'text-white'
+                    }`}
+                  >
+                    {quota.invite.limit > 0 &&
+                    hasPermission(
+                      [Permission.STREAMARR, Permission.CREATE_INVITES],
+                      { type: 'or' }
+                    ) ? (
+                      <>
+                        <ProgressCircle
+                          progress={Math.round(
+                            ((quota?.invite.remaining ?? 0) /
+                              (quota?.invite.limit ?? 1)) *
+                              100
+                          )}
+                          useHeatLevel
+                          className="mr-2 h-8 w-8"
+                        />
+                        <div>
+                          <span className="text-3xl font-semibold">
+                            <FormattedMessage
+                              id="profile.invitesRemaining"
+                              defaultMessage="{remaining} of {limit} remaining"
+                              values={{
+                                remaining: quota.invite.remaining,
+                                limit: quota.invite.limit,
+                              }}
+                            />
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-3xl font-semibold">
+                        {quota.invite.limit === -1 ? (
+                          <FormattedMessage
+                            id="common.unlimited"
+                            defaultMessage="Unlimited"
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="common.none"
+                            defaultMessage="None"
+                          />
+                        )}
+                      </span>
+                    )}
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
         )}
