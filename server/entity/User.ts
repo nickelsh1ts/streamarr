@@ -293,7 +293,7 @@ export class User {
 
     const quotaExceeded =
       inviteQuotaLimit &&
-      inviteQuotaLimit != -1 &&
+      inviteQuotaLimit !== -1 &&
       inviteQuotaLimit - inviteQuotaUsed <= 0;
 
     return {

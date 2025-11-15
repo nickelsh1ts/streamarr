@@ -101,7 +101,7 @@ const UserSettingsGeneral = () => {
           trialPeriodEnabled: data?.trialPeriodEndsAt ? true : false,
           trialPeriodEndsAt: data?.trialPeriodEndsAt
             ? momentWithLocale(data.trialPeriodEndsAt).format('YYYY-MM-DD')
-            : momentWithLocale().format('YYYY-MM-DD'),
+            : undefined,
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -705,7 +705,10 @@ const UserSettingsGeneral = () => {
                           }
                           onChange={(date: Date) =>
                             date
-                              ? setFieldValue('trialPeriodEndsAt', date)
+                              ? setFieldValue(
+                                  'trialPeriodEndsAt',
+                                  momentWithLocale(date).format('YYYY-MM-DD')
+                                )
                               : null
                           }
                           icon={
