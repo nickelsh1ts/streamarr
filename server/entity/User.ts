@@ -235,6 +235,7 @@ export class User {
     if (
       !this.settings?.trialPeriodEndsAt ||
       !getSettings().main.enableTrialPeriod ||
+      this.id === 1 ||
       this.hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
         type: 'or',
       })
@@ -293,7 +294,7 @@ export class User {
 
     const quotaExceeded =
       inviteQuotaLimit &&
-      inviteQuotaLimit != -1 &&
+      inviteQuotaLimit !== -1 &&
       inviteQuotaLimit - inviteQuotaUsed <= 0;
 
     return {

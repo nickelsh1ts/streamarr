@@ -127,7 +127,7 @@ const UserProfile = () => {
                         defaultMessage="Ends {date}"
                         values={{
                           date: momentWithLocale(
-                            quota.invite.trialPeriodEndsAt ?? ''
+                            quota.invite.trialPeriodEndsAt ?? new Date()
                           ).format('ll'),
                         }}
                       />
