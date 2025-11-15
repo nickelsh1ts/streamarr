@@ -447,7 +447,7 @@ const InviteList = () => {
                     values={{
                       self: user.id === currentUser?.id ? true : false,
                       date: momentWithLocale(
-                        quota.invite.trialPeriodEndsAt ?? ''
+                        quota.invite.trialPeriodEndsAt ?? new Date()
                       ).format('LL'),
                     }}
                   />

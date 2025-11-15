@@ -705,7 +705,10 @@ const UserSettingsGeneral = () => {
                           }
                           onChange={(date: Date) =>
                             date
-                              ? setFieldValue('trialPeriodEndsAt', date)
+                              ? setFieldValue(
+                                  'trialPeriodEndsAt',
+                                  momentWithLocale(date).format('YYYY-MM-DD')
+                                )
                               : null
                           }
                           icon={
