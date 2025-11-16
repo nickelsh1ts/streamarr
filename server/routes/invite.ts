@@ -110,32 +110,31 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
     const inviteRepository = getRepository(Invite);
     await Promise.all(
       invites.map(async (invite) => {
-        let expiryDate;
-        if (invite.expiresAt) {
-          expiryDate = new Date(invite.expiresAt);
-        } else if (invite.expiryLimit !== 0) {
-          let msPerUnit = 86400000;
-          if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
-          if (invite.expiryTime === 'months') msPerUnit = 2629800000;
-          expiryDate = new Date(
-            invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
-          );
-        }
-        const now = Date.now();
-        // Only check for expiry, not usage limit (handled at use time)
         if (
-          expiryDate &&
-          now > expiryDate.getTime() &&
           invite.status !== InviteStatus.EXPIRED &&
-          invite.status !== InviteStatus.REDEEMED // Don't override redeemed
+          invite.status !== InviteStatus.REDEEMED
         ) {
-          invite.status = InviteStatus.EXPIRED;
-          await inviteRepository.save(invite);
-          logger.debug('Invite marked as expired and saved', {
-            label: 'API',
-            inviteId: invite.id,
-            icode: invite.icode,
-          });
+          let expiryDate;
+          if (invite.expiresAt) {
+            expiryDate = new Date(invite.expiresAt);
+          } else if (invite.expiryLimit !== 0) {
+            let msPerUnit = 86400000;
+            if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
+            if (invite.expiryTime === 'months') msPerUnit = 2629800000;
+            expiryDate = new Date(
+              invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
+            );
+          }
+          const now = Date.now();
+          if (expiryDate && now > expiryDate.getTime()) {
+            invite.status = InviteStatus.EXPIRED;
+            await inviteRepository.save(invite);
+            logger.debug('Invite marked as expired during lookup', {
+              label: 'API',
+              inviteId: invite.id,
+              icode: invite.icode,
+            });
+          }
         }
       })
     );
@@ -183,6 +182,22 @@ inviteRoutes.post<
   async (req, res, next) => {
     if (!req.user) {
       return next({ status: 500, message: 'User missing from request.' });
+    }
+
+    // Check if user is in trial period (bypass for MANAGE_USERS and MANAGE_INVITES)
+    if (
+      !req.user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        {
+          type: 'or',
+        }
+      ) &&
+      req.user.isInTrialPeriod()
+    ) {
+      return next({
+        status: 403,
+        message: 'You cannot create invites until after the trial period.',
+      });
     }
 
     const settings = getSettings();
@@ -311,8 +326,12 @@ inviteRoutes.get('/count', async (req, res, next) => {
       .getCount();
 
     const inactiveCount = await query
-      .where('invite.status = :InviteStatus', {
-        InviteStatus: InviteStatus.REDEEMED && InviteStatus.EXPIRED,
+      .where('invite.status IN (:...InviteStatuses)', {
+        InviteStatuses: [
+          InviteStatus.REDEEMED,
+          InviteStatus.EXPIRED,
+          InviteStatus.INACTIVE,
+        ],
       })
       .getCount();
 

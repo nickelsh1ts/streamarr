@@ -14,7 +14,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 const InviteCardPlaceholder = () => {
   return (
-    <div className="relative w-64 animate-pulse rounded-xl bg-primary/50 backdrop-blur-md p-4 border border-primary">
+    <div className="relative w-[17rem] animate-pulse rounded-xl bg-primary/50 backdrop-blur-md p-4 border border-primary">
       <div className="w-20 sm:w-28">
         <div className="w-full" style={{ paddingBottom: '100%' }} />
       </div>
@@ -173,7 +173,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
+      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5 min-h-8">
         {Array.isArray(invite?.redeemedBy) && invite.redeemedBy.length > 0 ? (
           <div className="inline-flex items-center">
             <span className="font-extrabold mr-2">

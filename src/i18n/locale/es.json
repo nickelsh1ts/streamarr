@@ -20,6 +20,51 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "Ver en GitHub"
   },
+  "aboutSettings.dataDirectory": {
+    "defaultMessage": "Directorio de Datos"
+  },
+  "aboutSettings.developWarning": {
+    "defaultMessage": "Estás ejecutando la rama <code>develop</code> de Streamarr, que solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
+  },
+  "aboutSettings.documentation": {
+    "defaultMessage": "Documentación"
+  },
+  "aboutSettings.gettingSupport": {
+    "defaultMessage": "Obtener Soporte"
+  },
+  "aboutSettings.githubDiscussions": {
+    "defaultMessage": "Discusiones de GitHub"
+  },
+  "aboutSettings.helpPayForCoffee": {
+    "defaultMessage": "Ayuda a Pagar el Café ☕️"
+  },
+  "aboutSettings.outOfDate": {
+    "defaultMessage": "Desactualizado"
+  },
+  "aboutSettings.preAlphaWarning": {
+    "defaultMessage": "Este es software PRE-ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
+  },
+  "aboutSettings.preferred": {
+    "defaultMessage": "Preferido"
+  },
+  "aboutSettings.supportStreamarr": {
+    "defaultMessage": "Apoyar Streamarr"
+  },
+  "aboutSettings.timeZone": {
+    "defaultMessage": "Zona Horaria"
+  },
+  "aboutSettings.title": {
+    "defaultMessage": "Acerca de Streamarr"
+  },
+  "aboutSettings.totalUsers": {
+    "defaultMessage": "Total de Usuarios"
+  },
+  "aboutSettings.upToDate": {
+    "defaultMessage": "Actualizado"
+  },
+  "aboutSettings.version": {
+    "defaultMessage": "Versión"
+  },
   "admin.settings.services.description": {
     "defaultMessage": "Configura tus varios servicios a continuación."
   },
@@ -29,230 +74,14 @@
   "appData.warning": {
     "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
   },
-  "backToTop.backUpTop": {
-    "defaultMessage": "Volver arriba"
-  },
-  "calendar.createEvent": {
-    "defaultMessage": "Crear Evento"
-  },
-  "calendar.createdBy": {
-    "defaultMessage": "Creado Por:"
-  },
-  "calendar.deleteEvent": {
-    "defaultMessage": "Eliminar Evento"
-  },
-  "calendar.editEvent": {
-    "defaultMessage": "Editar Evento"
-  },
-  "calendar.eventAllDay": {
-    "defaultMessage": "Evento de Todo el Día"
-  },
-  "calendar.eventCategories": {
-    "defaultMessage": "Categorías"
-  },
-  "calendar.eventDate": {
-    "defaultMessage": "Fecha"
-  },
-  "calendar.eventDates": {
-    "defaultMessage": "Fechas de Inicio y Fin"
-  },
-  "calendar.eventDescription": {
-    "defaultMessage": "Descripción"
-  },
-  "calendar.eventId": {
-    "defaultMessage": "UID"
-  },
-  "calendar.eventStatus": {
-    "defaultMessage": "Estado"
-  },
-  "calendar.eventSummary": {
-    "defaultMessage": "Resumen"
-  },
-  "calendar.statusCancelled": {
-    "defaultMessage": "Cancelado"
-  },
-  "calendar.statusConfirmed": {
-    "defaultMessage": "Confirmado"
-  },
-  "calendar.statusTentative": {
-    "defaultMessage": "Tentativo"
-  },
   "auth.signin": {
     "defaultMessage": "Iniciar sesión"
   },
   "auth.signup": {
     "defaultMessage": "Regístrate ahora"
   },
-  "common.about": {
-    "defaultMessage": "Acerca de"
-  },
-  "common.all": {
-    "defaultMessage": "Todos"
-  },
-  "common.cancel": {
-    "defaultMessage": "Cancelar"
-  },
-  "common.close": {
-    "defaultMessage": "Cerrar"
-  },
-  "common.delete": {
-    "defaultMessage": "Eliminar"
-  },
-  "common.downloading": {
-    "defaultMessage": "Descargando"
-  },
-  "common.downloads": {
-    "defaultMessage": "Descargas"
-  },
-  "common.edit": {
-    "defaultMessage": "Editar"
-  },
-  "common.endTime": {
-    "defaultMessage": "Hora de Fin"
-  },
-  "common.eventError": {
-    "defaultMessage": "Algo salió mal al guardar el evento"
-  },
-  "common.joined": {
-    "defaultMessage": "Se Unió"
-  },
-  "common.local": {
-    "defaultMessage": "Local"
-  },
-  "common.manageEvents": {
-    "defaultMessage": "Gestionar Eventos"
-  },
-  "common.next": {
-    "defaultMessage": "Siguiente"
-  },
-  "common.previous": {
-    "defaultMessage": "Anterior"
-  },
-  "common.role": {
-    "defaultMessage": "Rol"
-  },
-  "common.saving": {
-    "defaultMessage": "Guardando…"
-  },
-  "common.services": {
-    "defaultMessage": "Servicios"
-  },
-  "common.settings": {
-    "defaultMessage": "Configuración"
-  },
-  "common.startTime": {
-    "defaultMessage": "Hora de Inicio"
-  },
-  "common.status": {
-    "defaultMessage": "Estado"
-  },
-  "common.subtitles": {
-    "defaultMessage": "Subtítulos"
-  },
-  "common.test": {
-    "defaultMessage": "Probar"
-  },
-  "common.transcoding": {
-    "defaultMessage": "Transcodificación"
-  },
-  "common.testing": {
-    "defaultMessage": "Probando…"
-  },
-  "common.tvShows": {
-    "defaultMessage": "Series de TV"
-  },
-  "common.type": {
-    "defaultMessage": "Tipo"
-  },
-  "common.users": {
-    "defaultMessage": "Usuarios"
-  },
-  "common.admin": {
-    "defaultMessage": "Administrador"
-  },
-  "common.displayLanguage": {
-    "defaultMessage": "Idioma de Pantalla"
-  },
-  "common.localUser": {
-    "defaultMessage": "Usuario Local"
-  },
-  "common.owner": {
-    "defaultMessage": "Propietario"
-  },
-  "common.plex": {
-    "defaultMessage": "Plex"
-  },
-  "common.plexUser": {
-    "defaultMessage": "Usuario de Plex"
-  },
-  "common.saveChanges": {
-    "defaultMessage": "Guardar Cambios"
-  },
-  "common.saveSuccess": {
-    "defaultMessage": "Configuración guardada exitosamente"
-  },
-  "common.settingsSaveError": {
-    "defaultMessage": "Error al guardar la configuración por {appName}"
-  },
-  "common.settingsSaveSuccess": {
-    "defaultMessage": "Configuración guardada exitosamente por {appName}"
-  },
-  "common.showingResults": {
-    "defaultMessage": "Mostrando {start} a {end} de {total} resultados"
-  },
-  "common.user": {
-    "defaultMessage": "Usuario"
-  },
-  "common.userRole": {
-    "defaultMessage": "Rol de Usuario"
-  },
-  "hero.error.emptyCode": {
-    "defaultMessage": "Por favor, introduce un código de invitación válido."
-  },
-  "hero.getStarted": {
-    "defaultMessage": "¡Empecemos!"
-  },
-  "hero.inviteCode": {
-    "defaultMessage": "Introduce tu código de invitación para comenzar"
-  },
-  "hero.more": {
-    "defaultMessage": "+ más"
-  },
-  "hero.subtitle": {
-    "defaultMessage": "Mira en cualquier lugar, en cualquier momento y gratis. El futuro es ahora."
-  },
-  "hero.title": {
-    "defaultMessage": "Películas y series ilimitadas"
-  },
-  "help.githubLink": {
-    "defaultMessage": "GitHub"
-  },
-  "help.helpCentre": {
-    "defaultMessage": "Centro de Ayuda"
-  },
-  "help.howToBecomeMember": {
-    "defaultMessage": "Cómo hacerse miembro"
-  },
-  "help.manageAccount": {
-    "defaultMessage": "Administrar Cuenta"
-  },
-  "help.popularTopics": {
-    "defaultMessage": "Temas populares"
-  },
-  "help.preReleaseWarning": {
-    "defaultMessage": "Esta es una vista previa de pre-lanzamiento y actualmente está en desarrollo activo. Si encuentras problemas, por favor inténtalo de nuevo o comunícate con {support} para obtener más ayuda. Por favor revisa GitHub para actualizaciones de estado."
-  },
-  "help.quickLinks": {
-    "defaultMessage": "Enlaces Rápidos"
-  },
-  "help.relatedArticles": {
-    "defaultMessage": "Artículos Relacionados"
-  },
-  "help.requestingNewMedia": {
-    "defaultMessage": "Solicitar nuevos medios"
-  },
-  "help.supportedDevices": {
-    "defaultMessage": "Dispositivos compatibles"
+  "backToTop.backUpTop": {
+    "defaultMessage": "Volver arriba"
   },
   "cache.description": {
     "defaultMessage": "Streamarr almacena en caché las solicitudes a endpoints de API externos para optimizar el rendimiento y evitar hacer llamadas API innecesarias."
@@ -287,14 +116,50 @@
   "calendar.agenda": {
     "defaultMessage": "Agenda"
   },
-  "calendar.day": {
-    "defaultMessage": "Día"
+  "calendar.createEvent": {
+    "defaultMessage": "Crear un Evento"
+  },
+  "calendar.createdBy": {
+    "defaultMessage": "Creado Por:"
   },
   "calendar.date": {
     "defaultMessage": "Fecha"
   },
+  "calendar.day": {
+    "defaultMessage": "Día"
+  },
+  "calendar.deleteEvent": {
+    "defaultMessage": "Eliminar Evento"
+  },
+  "calendar.editEvent": {
+    "defaultMessage": "Editar Evento"
+  },
   "calendar.event": {
     "defaultMessage": "Evento"
+  },
+  "calendar.eventAllDay": {
+    "defaultMessage": "Evento de Todo el Día"
+  },
+  "calendar.eventCategories": {
+    "defaultMessage": "Categorías"
+  },
+  "calendar.eventDate": {
+    "defaultMessage": "Fecha"
+  },
+  "calendar.eventDates": {
+    "defaultMessage": "Fechas de Inicio y Fin"
+  },
+  "calendar.eventDescription": {
+    "defaultMessage": "Descripción"
+  },
+  "calendar.eventId": {
+    "defaultMessage": "UID"
+  },
+  "calendar.eventStatus": {
+    "defaultMessage": "Estado"
+  },
+  "calendar.eventSummary": {
+    "defaultMessage": "Resumen"
   },
   "calendar.month": {
     "defaultMessage": "Mes"
@@ -302,20 +167,478 @@
   "calendar.noEventSelected": {
     "defaultMessage": "Ningún evento seleccionado"
   },
+  "calendar.sendNotification": {
+    "defaultMessage": "Enviar Notificación"
+  },
   "calendar.status": {
     "defaultMessage": "Estado"
   },
-  "calendar.today": {
-    "defaultMessage": "Hoy"
+  "calendar.statusCancelled": {
+    "defaultMessage": "Cancelado"
+  },
+  "calendar.statusConfirmed": {
+    "defaultMessage": "Confirmado"
+  },
+  "calendar.statusTentative": {
+    "defaultMessage": "Tentativo"
   },
   "calendar.time": {
     "defaultMessage": "Hora"
+  },
+  "calendar.today": {
+    "defaultMessage": "Hoy"
   },
   "calendar.uid": {
     "defaultMessage": "UID"
   },
   "calendar.week": {
     "defaultMessage": "Semana"
+  },
+  "common.4k": {
+    "defaultMessage": "4K"
+  },
+  "common.4kserver": {
+    "defaultMessage": "Servidor 4K"
+  },
+  "common.about": {
+    "defaultMessage": "Acerca de"
+  },
+  "common.active": {
+    "defaultMessage": "Activo",
+    "description": "Spanish translation"
+  },
+  "common.addserver": {
+    "defaultMessage": "Agregar servidor"
+  },
+  "common.admin": {
+    "defaultMessage": "Administrador"
+  },
+  "common.adminCentre": {
+    "defaultMessage": "Centro de Administración",
+    "description": "Spanish translation"
+  },
+  "common.advanced": {
+    "defaultMessage": "Avanzado"
+  },
+  "common.after": {
+    "defaultMessage": "después"
+  },
+  "common.all": {
+    "defaultMessage": "Todos"
+  },
+  "common.apiKey": {
+    "defaultMessage": "Clave API"
+  },
+  "common.areYouSure": {
+    "defaultMessage": "¿Estás seguro?"
+  },
+  "common.arrAdd4k": {
+    "defaultMessage": "Agregar Servidor 4K {arrApp}"
+  },
+  "common.arrEdit": {
+    "defaultMessage": "Editar Servidor {arrApp}"
+  },
+  "common.arrEdit4k": {
+    "defaultMessage": "Editar Servidor 4K {arrApp}"
+  },
+  "common.by": {
+    "defaultMessage": "por"
+  },
+  "common.calendarSync": {
+    "defaultMessage": "Habilitar Sincronización de Calendario"
+  },
+  "common.calendarSync.description": {
+    "defaultMessage": "Sincronizar automáticamente eventos de {arrApp} al calendario"
+  },
+  "common.cancel": {
+    "defaultMessage": "Cancelar"
+  },
+  "common.close": {
+    "defaultMessage": "Cerrar"
+  },
+  "common.confirmPassword": {
+    "defaultMessage": "Confirmar Contraseña"
+  },
+  "common.continue": {
+    "defaultMessage": "Continuar",
+    "description": "Spanish translation"
+  },
+  "common.copied": {
+    "defaultMessage": "Copiado al portapapeles"
+  },
+  "common.copiedToClipboard": {
+    "defaultMessage": "¡{item} copiado al portapapeles!",
+    "description": "Spanish translation"
+  },
+  "common.createEvent": {
+    "defaultMessage": "Crear Evento"
+  },
+  "common.currentPassword": {
+    "defaultMessage": "Contraseña Actual"
+  },
+  "common.days": {
+    "defaultMessage": "{count, plural, one {# día} other {# días}}"
+  },
+  "common.default": {
+    "defaultMessage": "Predeterminado"
+  },
+  "common.default4k": {
+    "defaultMessage": "Predeterminado 4K"
+  },
+  "common.defaultserver": {
+    "defaultMessage": "Servidor predeterminado"
+  },
+  "common.delete": {
+    "defaultMessage": "Eliminar"
+  },
+  "common.displayLanguage": {
+    "defaultMessage": "Idioma de Pantalla"
+  },
+  "common.displayName": {
+    "defaultMessage": "Nombre para mostrar"
+  },
+  "common.downloading": {
+    "defaultMessage": "Descargando"
+  },
+  "common.downloads": {
+    "defaultMessage": "Descargas"
+  },
+  "common.edit": {
+    "defaultMessage": "Editar"
+  },
+  "common.email": {
+    "defaultMessage": "Correo Electrónico"
+  },
+  "common.emailAddress": {
+    "defaultMessage": "Dirección de correo electrónico"
+  },
+  "common.endTime": {
+    "defaultMessage": "Hora de Fin"
+  },
+  "common.eventError": {
+    "defaultMessage": "Algo salió mal al guardar el evento"
+  },
+  "common.expired": {
+    "defaultMessage": "Expirado",
+    "description": "Spanish translation"
+  },
+  "common.expires": {
+    "defaultMessage": "Expira"
+  },
+  "common.externalUrl": {
+    "defaultMessage": "URL externa"
+  },
+  "common.futuredays": {
+    "defaultMessage": "Días Futuros"
+  },
+  "common.futuredays.description": {
+    "defaultMessage": "Sincronizar eventos para los próximos X días"
+  },
+  "common.general": {
+    "defaultMessage": "General"
+  },
+  "common.goBack": {
+    "defaultMessage": "Volver"
+  },
+  "common.home": {
+    "defaultMessage": "Inicio"
+  },
+  "common.hostname": {
+    "defaultMessage": "Nombre del host"
+  },
+  "common.inApp": {
+    "defaultMessage": "En la Aplicación"
+  },
+  "common.inactive": {
+    "defaultMessage": "Inactivo",
+    "description": "Spanish translation"
+  },
+  "common.indexers": {
+    "defaultMessage": "Indexadores"
+  },
+  "common.invite": {
+    "defaultMessage": "Invitación"
+  },
+  "common.invites": {
+    "defaultMessage": "Invitaciones"
+  },
+  "common.issues": {
+    "defaultMessage": "Problemas"
+  },
+  "common.jobsAndCache": {
+    "defaultMessage": "Trabajos y Cache"
+  },
+  "common.joined": {
+    "defaultMessage": "Se Unió"
+  },
+  "common.lifetime": {
+    "defaultMessage": "De por vida"
+  },
+  "common.loading": {
+    "defaultMessage": "Cargando",
+    "description": "Spanish translation"
+  },
+  "common.local": {
+    "defaultMessage": "Local"
+  },
+  "common.localUser": {
+    "defaultMessage": "Usuario Local"
+  },
+  "common.loggingOut": {
+    "defaultMessage": "Cerrando sesión..."
+  },
+  "common.logs": {
+    "defaultMessage": "Registros"
+  },
+  "common.manageEvents": {
+    "defaultMessage": "Gestionar Eventos"
+  },
+  "common.manageUsers": {
+    "defaultMessage": "Administrar Usuarios"
+  },
+  "common.movies": {
+    "defaultMessage": "Películas"
+  },
+  "common.music": {
+    "defaultMessage": "Música"
+  },
+  "common.never": {
+    "defaultMessage": "Nunca"
+  },
+  "common.newPassword": {
+    "defaultMessage": "Nueva Contraseña"
+  },
+  "common.next": {
+    "defaultMessage": "Siguiente"
+  },
+  "common.noResults": {
+    "defaultMessage": "Sin Resultados"
+  },
+  "common.none": {
+    "defaultMessage": "Ninguno"
+  },
+  "common.notificationTypes": {
+    "defaultMessage": "Tipos de Notificación"
+  },
+  "common.notifications": {
+    "defaultMessage": "Notificaciones"
+  },
+  "common.optional": {
+    "defaultMessage": "opcional"
+  },
+  "common.owner": {
+    "defaultMessage": "Propietario"
+  },
+  "common.password": {
+    "defaultMessage": "Contraseña"
+  },
+  "common.pastdays": {
+    "defaultMessage": "Días Pasados"
+  },
+  "common.pastdays.description": {
+    "defaultMessage": "Sincronizar eventos de los últimos X días"
+  },
+  "common.plex": {
+    "defaultMessage": "Plex"
+  },
+  "common.plexUser": {
+    "defaultMessage": "Usuario de Plex"
+  },
+  "common.port": {
+    "defaultMessage": "Puerto"
+  },
+  "common.preview": {
+    "defaultMessage": "Vista Previa"
+  },
+  "common.previous": {
+    "defaultMessage": "Anterior"
+  },
+  "common.print": {
+    "defaultMessage": "Imprimir"
+  },
+  "common.read": {
+    "defaultMessage": "leído"
+  },
+  "common.recommended": {
+    "defaultMessage": "recomendado"
+  },
+  "common.redeemed": {
+    "defaultMessage": "Canjeado",
+    "description": "Spanish translation"
+  },
+  "common.releaseSchedule": {
+    "defaultMessage": "Cronograma de Lanzamientos"
+  },
+  "common.remaining": {
+    "defaultMessage": "restante"
+  },
+  "common.request": {
+    "defaultMessage": "Solicitud"
+  },
+  "common.requests": {
+    "defaultMessage": "Solicitudes"
+  },
+  "common.resultsDisplay": {
+    "defaultMessage": "Mostrar {select} resultados por página"
+  },
+  "common.role": {
+    "defaultMessage": "Rol"
+  },
+  "common.saveChanges": {
+    "defaultMessage": "Guardar Cambios"
+  },
+  "common.saveSuccess": {
+    "defaultMessage": "Configuración guardada exitosamente"
+  },
+  "common.saving": {
+    "defaultMessage": "Guardando…"
+  },
+  "common.schedule": {
+    "defaultMessage": "Cronograma"
+  },
+  "common.seeAll": {
+    "defaultMessage": "Ver todo"
+  },
+  "common.selectTab": {
+    "defaultMessage": "Seleccionar una Pestaña",
+    "description": "Spanish translation"
+  },
+  "common.sendNotification": {
+    "defaultMessage": "Enviar Notificación"
+  },
+  "common.servername": {
+    "defaultMessage": "Nombre del servidor"
+  },
+  "common.services": {
+    "defaultMessage": "Servicios"
+  },
+  "common.settings": {
+    "defaultMessage": "Configuración"
+  },
+  "common.settingsEnable": {
+    "defaultMessage": "Habilitar"
+  },
+  "common.settingsSaveError": {
+    "defaultMessage": "Error al guardar la configuración por {appName}"
+  },
+  "common.settingsSaveSuccess": {
+    "defaultMessage": "Configuración guardada exitosamente por {appName}"
+  },
+  "common.showAll": {
+    "defaultMessage": "Mostrar Todo"
+  },
+  "common.showingResults": {
+    "defaultMessage": "Mostrando {start} a {end} de {total} resultados"
+  },
+  "common.shows": {
+    "defaultMessage": "Series"
+  },
+  "common.signIn": {
+    "defaultMessage": "Iniciar Sesión"
+  },
+  "common.signingIn": {
+    "defaultMessage": "Iniciando Sesión...",
+    "description": "Spanish translation"
+  },
+  "common.ssl": {
+    "defaultMessage": "SSL"
+  },
+  "common.startTime": {
+    "defaultMessage": "Hora de Inicio"
+  },
+  "common.status": {
+    "defaultMessage": "Estado"
+  },
+  "common.subtitles": {
+    "defaultMessage": "Subtítulos"
+  },
+  "common.test": {
+    "defaultMessage": "Probar"
+  },
+  "common.testing": {
+    "defaultMessage": "Probando…"
+  },
+  "common.transcoding": {
+    "defaultMessage": "Transcodificación"
+  },
+  "common.tvShows": {
+    "defaultMessage": "Series de TV"
+  },
+  "common.type": {
+    "defaultMessage": "Tipo"
+  },
+  "common.unknown": {
+    "defaultMessage": "Desconocido"
+  },
+  "common.unknownUser": {
+    "defaultMessage": "Usuario Desconocido"
+  },
+  "common.unlimited": {
+    "defaultMessage": "Ilimitado"
+  },
+  "common.unread": {
+    "defaultMessage": "no leído"
+  },
+  "common.urlBase": {
+    "defaultMessage": "Base URL"
+  },
+  "common.useSsl": {
+    "defaultMessage": "Usar SSL"
+  },
+  "common.user": {
+    "defaultMessage": "Usuario"
+  },
+  "common.userRole": {
+    "defaultMessage": "Rol de Usuario"
+  },
+  "common.users": {
+    "defaultMessage": "Usuarios"
+  },
+  "common.viewMore": {
+    "defaultMessage": "Ver Más"
+  },
+  "common.webApp": {
+    "defaultMessage": "Aplicación Web"
+  },
+  "common.webPush": {
+    "defaultMessage": "Notificaciones Web",
+    "description": "Professional Spanish translation"
+  },
+  "confirmAccount.disableWebPush": {
+    "defaultMessage": "Deshabilitar Web Push"
+  },
+  "confirmAccount.enableWebPush": {
+    "defaultMessage": "Habilitar Web Push"
+  },
+  "confirmAccount.error": {
+    "defaultMessage": "Error al confirmar la cuenta."
+  },
+  "confirmAccount.finalizingAccount": {
+    "defaultMessage": "Finalizando Cuenta..."
+  },
+  "confirmAccount.plexOAuthWarning": {
+    "defaultMessage": "Tu cuenta actualmente usa Plex OAuth para autenticarse. Opcionalmente configura una contraseña a continuación para habilitar el inicio de sesión como 'usuario local' usando tu dirección de correo electrónico."
+  },
+  "confirmAccount.settingsSaved": {
+    "defaultMessage": "¡Configuración de cuenta guardada exitosamente!"
+  },
+  "confirmAccount.subscriptionFailed": {
+    "defaultMessage": "Error al suscribirse a las notificaciones web push"
+  },
+  "confirmAccount.webPushDisableError": {
+    "defaultMessage": "Error al deshabilitar las notificaciones web push"
+  },
+  "confirmAccount.webPushDisabled": {
+    "defaultMessage": "Web push ha sido deshabilitado"
+  },
+  "confirmAccount.webPushEnableError": {
+    "defaultMessage": "Error al habilitar las notificaciones web push"
+  },
+  "confirmAccount.webPushEnabled": {
+    "defaultMessage": "Notificaciones Web Push Habilitadas"
+  },
+  "copyButton.tooltip": {
+    "defaultMessage": "Copiar al portapapeles"
   },
   "devices.availableOnDevices": {
     "defaultMessage": "Disponible en dispositivos"
@@ -332,338 +655,9 @@
   "devices.tv": {
     "defaultMessage": "TV"
   },
-  "sidebar.player": {
-    "defaultMessage": "Reproductor"
-  },
-  "common.unlimited": {
-    "defaultMessage": "Ilimitado"
-  },
-  "common.unknown": {
-    "defaultMessage": "Desconocido"
-  },
-  "common.urlBase": {
-    "defaultMessage": "Base URL"
-  },
-  "common.displayName": {
-    "defaultMessage": "Nombre para mostrar"
-  },
-  "common.email": {
-    "defaultMessage": "Correo Electrónico"
-  },
-  "common.emailAddress": {
-    "defaultMessage": "Dirección de correo electrónico"
-  },
-  "common.password": {
-    "defaultMessage": "Contraseña"
-  },
-  "common.by": {
-    "defaultMessage": "por"
-  },
-  "common.expires": {
-    "defaultMessage": "Expira"
-  },
-  "common.never": {
-    "defaultMessage": "Nunca"
-  },
-  "common.after": {
-    "defaultMessage": "después"
-  },
-  "common.home": {
-    "defaultMessage": "Inicio"
-  },
-  "common.invites": {
-    "defaultMessage": "Invitaciones"
-  },
-  "invite.defaultLibraries": {
-    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
-  },
-  "invite.inviteToPlexHome": {
-    "defaultMessage": "Invitar a Plex Home"
-  },
-  "invite.modified": {
-    "defaultMessage": "Modificado"
-  },
-  "invite.neverExpires": {
-    "defaultMessage": "Nunca Expira"
-  },
-  "invite.plexHome": {
-    "defaultMessage": "Plex Home"
-  },
-  "invite.shareInvite": {
-    "defaultMessage": "Compartir Invitación"
-  },
-  "invite.sharedLibraries": {
-    "defaultMessage": "Bibliotecas Compartidas:"
-  },
-  "invite.statusChanged": {
-    "defaultMessage": "Estado Cambiado"
-  },
-  "invite.timeUnit.day": {
-    "defaultMessage": "día"
-  },
-  "invite.timeUnit.month": {
-    "defaultMessage": "mes"
-  },
-  "invite.timeUnit.week": {
-    "defaultMessage": "semana"
-  },
-  "invite.updatedSuccessfully": {
-    "defaultMessage": "Invitación actualizada exitosamente"
-  },
-  "invite.usageLimit": {
-    "defaultMessage": "Límite de Uso"
-  },
-  "invite.usageUnit": {
-    "defaultMessage": "Unidad de Uso"
-  },
-  "imageCache.title": {
-    "defaultMessage": "Caché de Imágenes"
-  },
-  "imageCache.description": {
-    "defaultMessage": "Gestiona el caché de imágenes del sistema"
-  },
-  "imageCache.qrcode": {
-    "defaultMessage": "Código QR"
-  },
-  "imageCache.table.imagesCached": {
-    "defaultMessage": "Imágenes en Caché"
-  },
-  "imageCache.table.totalCacheSize": {
-    "defaultMessage": "Tamaño Total del Caché"
-  },
-  "userSettings.browser": {
-    "defaultMessage": "Navegador"
-  },
-  "userSettings.engine": {
-    "defaultMessage": "Motor"
-  },
-  "userSettings.operatingSystem": {
-    "defaultMessage": "Sistema operativo"
-  },
-  "userSettings.InviteSettings": {
-    "defaultMessage": "Configuración de invitaciones predeterminada"
-  },
-  "userSettings.InviteSettingsDescription": {
-    "defaultMessage": "Configuración inicial asociada a nuevas invitaciones"
-  },
-  "userSettings.defaultPermissions": {
-    "defaultMessage": "Permisos predeterminados"
-  },
-  "userSettings.defaultPermissionsDescription": {
-    "defaultMessage": "Permisos iniciales asignados a nuevos usuarios"
-  },
-  "userSettings.defaultSharedLibraries": {
-    "defaultMessage": "Bibliotecas compartidas predeterminadas"
-  },
-  "userSettings.defaultSharedLibrariesDescription": {
-    "defaultMessage": "Bibliotecas iniciales compartidas con nuevos usuarios"
-  },
-  "userSettings.description": {
-    "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
-  },
-  "userSettings.inviteLimit": {
-    "defaultMessage": "Límite de invitaciones predeterminado"
-  },
-  "userSettings.inviteLimitDescription": {
-    "defaultMessage": "Establecer el límite de invitaciones predeterminado para nuevos usuarios."
-  },
-  "userSettings.inviteUsageLimit": {
-    "defaultMessage": "{count, plural, one {uso por invitación} other {usos por invitación}}"
-  },
-  "userSettings.localLogin": {
-    "defaultMessage": "Habilitar inicio de sesión local"
-  },
-  "userSettings.localLoginDescription": {
-    "defaultMessage": "Permitir a los usuarios iniciar sesión usando su dirección de correo electrónico y contraseña, en lugar de Plex OAuth"
-  },
-  "userSettings.manageDevices": {
-    "defaultMessage": "Administrar dispositivos"
-  },
-  "userSettings.noWebPushSubscriptions": {
-    "defaultMessage": "No tienes suscripciones de notificaciones web para mostrar."
-  },
-  "userSettings.notifications.deleteSubscription": {
-    "defaultMessage": "Eliminar suscripción"
-  },
-  "userSettings.notifications.disableWebPush": {
-    "defaultMessage": "Deshabilitar notificaciones web"
-  },
-  "userSettings.notifications.emailTitle": {
-    "defaultMessage": "Notificaciones por correo electrónico"
-  },
-  "userSettings.notifications.enableWebPush": {
-    "defaultMessage": "Habilitar notificaciones web"
-  },
-  "invite.advancedSettings": {
-    "defaultMessage": "Configuración avanzada"
-  },
-  "invite.allLibraries": {
-    "defaultMessage": "Todas las bibliotecas"
-  },
-  "invite.allowDownloads": {
-    "defaultMessage": "Permitir descargas"
-  },
-  "invite.clickToCopy": {
-    "defaultMessage": "Haz clic para copiar el código de invitación"
-  },
-  "invite.code": {
-    "defaultMessage": "Código de invitación"
-  },
-  "invite.codeInvalid": {
-    "defaultMessage": "El código de invitación solo debe contener letras y números."
-  },
-  "invite.codeMax": {
-    "defaultMessage": "El código de invitación debe tener menos de 20 caracteres"
-  },
-  "invite.codeMin": {
-    "defaultMessage": "El código de invitación debe tener al menos 8 caracteres"
-  },
-  "invite.create": {
-    "defaultMessage": "Crear invitación"
-  },
-  "invite.createTitle": {
-    "defaultMessage": "Crear una invitación"
-  },
-  "invite.created": {
-    "defaultMessage": "Creada"
-  },
-  "invite.createdSuccessfully": {
-    "defaultMessage": "¡Invitación creada exitosamente!"
-  },
-  "invite.defaultLibrariesAll": {
-    "defaultMessage": "Predeterminado (Todas las bibliotecas)"
-  },
-  "invite.deleteInvite": {
-    "defaultMessage": "Eliminar invitación"
-  },
-  "invite.disable": {
-    "defaultMessage": "Deshabilitar invitación"
-  },
-  "invite.disabledError": {
-    "defaultMessage": "Algo salió mal al deshabilitar la invitación."
-  },
-  "invite.downloads": {
-    "defaultMessage": "Descargas"
-  },
-  "invite.editInvite": {
-    "defaultMessage": "Editar invitación"
-  },
-  "invite.enable": {
-    "defaultMessage": "Habilitar invitación"
-  },
-  "invite.error": {
-    "defaultMessage": "Algo salió mal al {action} la invitación."
-  },
-  "invite.expiration": {
-    "defaultMessage": "Expiración"
-  },
-  "invite.inviteAs": {
-    "defaultMessage": "Invitar como"
-  },
-  "copyButton.tooltip": {
-    "defaultMessage": "Copiar al portapapeles"
-  },
-  "common.hostname": {
-    "defaultMessage": "Nombre del host"
-  },
-  "common.port": {
-    "defaultMessage": "Puerto"
-  },
-  "common.ssl": {
-    "defaultMessage": "SSL"
-  },
-  "common.useSsl": {
-    "defaultMessage": "Usar SSL"
-  },
-  "common.apiKey": {
-    "defaultMessage": "Clave API"
-  },
-  "common.externalUrl": {
-    "defaultMessage": "URL externa"
-  },
-  "common.settingsEnable": {
-    "defaultMessage": "Habilitar"
-  },
-  "common.default": {
-    "defaultMessage": "Predeterminado"
-  },
-  "common.default4k": {
-    "defaultMessage": "Predeterminado 4K"
-  },
-  "common.defaultserver": {
-    "defaultMessage": "Servidor predeterminado"
-  },
-  "common.servername": {
-    "defaultMessage": "Nombre del servidor"
-  },
-  "common.addserver": {
-    "defaultMessage": "Agregar servidor"
-  },
-  "common.4k": {
-    "defaultMessage": "4K"
-  },
-  "common.4kserver": {
-    "defaultMessage": "Servidor 4K"
-  },
-  "common.movies": {
-    "defaultMessage": "Películas"
-  },
-  "common.shows": {
-    "defaultMessage": "Series"
-  },
-  "signUp.confirmAccount": {
-    "defaultMessage": "Confirmar Cuenta"
-  },
-  "signUp.createAccount": {
-    "defaultMessage": "Crear Cuenta"
-  },
-  "signUp.createLocalAccount": {
-    "defaultMessage": "Crear cuenta de {applicationTitle}"
-  },
-  "signUp.enterInviteCode": {
-    "defaultMessage": "Introducir Código de Invitación"
-  },
-  "signUp.errorDuringSignup": {
-    "defaultMessage": "Error durante el registro"
-  },
-  "signUp.errorDuringSignupFallback": {
-    "defaultMessage": "Se produjo un error durante el registro. Por favor, inténtalo de nuevo."
-  },
-  "signUp.getStartedInviteCode": {
-    "defaultMessage": "Comienza introduciendo tu código de invitación a continuación."
-  },
-  "signUp.loginWithPlex": {
-    "defaultMessage": "Regístrate con tu cuenta de {plexLogo}."
-  },
-  "signUp.orEnterLocalAccount": {
-    "defaultMessage": "o introduce los detalles de la cuenta local"
-  },
-  "signUp.plexAuthFailed": {
-    "defaultMessage": "Falló la autenticación de Plex"
-  },
-  "signUp.plexLoginError": {
-    "defaultMessage": "Error en el inicio de sesión de Plex"
-  },
-  "signUp.plexLoginIncomplete": {
-    "defaultMessage": "Inicio de sesión de Plex incompleto"
-  },
-  "signUp.plexLoginIncompleteMessage": {
-    "defaultMessage": "El inicio de sesión de Plex no se completó. Por favor, inténtalo de nuevo y asegúrate de terminar el proceso de inicio de sesión."
-  },
-  "signUp.plexRecommended": {
-    "defaultMessage": "(Plex es recomendado para la mejor experiencia)"
-  },
-  "signUp.registrationByInvite": {
-    "defaultMessage": "El registro es solo por invitación."
-  },
-  "signUp.reviewDetailsConfirm": {
-    "defaultMessage": "Revisa tus detalles a continuación y confirma tu cuenta."
-  },
-  "signUp.signInWithPlex": {
-    "defaultMessage": "Por favor, inicia sesión con tu cuenta de Plex {localLoginOption} para continuar con el proceso de registro. {plexRecommended}."
-  },
-  "signUp.welcomeTo": {
-    "defaultMessage": "Bienvenido a {applicationTitle}"
+  "email.required": {
+    "defaultMessage": "Debes proporcionar una dirección de correo electrónico válida",
+    "description": "Spanish translation"
   },
   "emailNotifications.allowSelfSigned": {
     "defaultMessage": "Permitir Certificados Auto-firmados"
@@ -746,6 +740,9 @@
   "event.endDateRequired": {
     "defaultMessage": "Debes proporcionar una fecha de fin válida para eventos que no sean de todo el día"
   },
+  "event.sendNotificationPastEvent": {
+    "defaultMessage": "No se pueden enviar notificaciones para eventos pasados"
+  },
   "event.startDateRequired": {
     "defaultMessage": "Debes proporcionar una fecha de inicio válida"
   },
@@ -763,240 +760,6 @@
   },
   "footer.termsOfUse": {
     "defaultMessage": "Términos de Uso"
-  },
-  "iCodeForm.inviteCodeRequired": {
-    "defaultMessage": "El código de invitación es requerido"
-  },
-  "iCodeForm.inviteCodeTooShort": {
-    "defaultMessage": "El código de invitación es muy corto"
-  },
-  "iCodeForm.letsGetStarted": {
-    "defaultMessage": "Empecemos"
-  },
-  "iCodeForm.validatingInviteCode": {
-    "defaultMessage": "Validando Código de Invitación..."
-  },
-  "aboutSettings.dataDirectory": {
-    "defaultMessage": "Directorio de Datos"
-  },
-  "aboutSettings.developWarning": {
-    "defaultMessage": "Estás ejecutando la rama <code>develop</code> de Streamarr, que solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
-  },
-  "aboutSettings.documentation": {
-    "defaultMessage": "Documentación"
-  },
-  "aboutSettings.gettingSupport": {
-    "defaultMessage": "Obtener Soporte"
-  },
-  "aboutSettings.githubDiscussions": {
-    "defaultMessage": "Discusiones de GitHub"
-  },
-  "aboutSettings.helpPayForCoffee": {
-    "defaultMessage": "Ayuda a Pagar el Café ☕️"
-  },
-  "aboutSettings.outOfDate": {
-    "defaultMessage": "Desactualizado"
-  },
-  "aboutSettings.preAlphaWarning": {
-    "defaultMessage": "Este es software PRE-ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
-  },
-  "aboutSettings.preferred": {
-    "defaultMessage": "Preferido"
-  },
-  "aboutSettings.supportStreamarr": {
-    "defaultMessage": "Apoyar Streamarr"
-  },
-  "aboutSettings.timeZone": {
-    "defaultMessage": "Zona Horaria"
-  },
-  "aboutSettings.title": {
-    "defaultMessage": "Acerca de Streamarr"
-  },
-  "aboutSettings.totalUsers": {
-    "defaultMessage": "Total de Usuarios"
-  },
-  "aboutSettings.upToDate": {
-    "defaultMessage": "Actualizado"
-  },
-  "aboutSettings.version": {
-    "defaultMessage": "Versión"
-  },
-  "notification.inviteUsedSuccessfully": {
-    "defaultMessage": "Invitación Canjeada Exitosamente"
-  },
-  "notification.inviteUsedSuccessfully.description": {
-    "defaultMessage": "Recibe notificaciones cuando una invitación que enviaste ha sido canjeada exitosamente"
-  },
-  "plex.login.button": {
-    "defaultMessage": "Iniciar sesión con"
-  },
-  "sidebar.authorizedDevices": {
-    "defaultMessage": "Dispositivos Autorizados"
-  },
-  "sidebar.general": {
-    "defaultMessage": "General"
-  },
-  "sidebar.manageLibraryAccess": {
-    "defaultMessage": "Gestionar Acceso a Bibliotecas"
-  },
-  "sidebar.onlineMediaSources": {
-    "defaultMessage": "Fuentes de Medios en Línea"
-  },
-  "sidebar.privacy": {
-    "defaultMessage": "Privacidad"
-  },
-  "sidebar.quality": {
-    "defaultMessage": "Calidad"
-  },
-  "sidebar.settings": {
-    "defaultMessage": "Configuración"
-  },
-  "sidebar.streamingServices": {
-    "defaultMessage": "Servicios de Streaming"
-  },
-  "userPermissions.admin.description": {
-    "defaultMessage": "Acceso completo de administrador. Omite todas las demás verificaciones de permisos."
-  },
-  "userPermissions.advancedInvites.description": {
-    "defaultMessage": "Conceder permiso para hacer invitaciones con usos ilimitados que nunca expiren. Los usuarios con este permiso también pueden modificar el permiso de descargas de Plex de las invitaciones y el código."
-  },
-  "userPermissions.advancedInvites.name": {
-    "defaultMessage": "Invitación Avanzada"
-  },
-  "userPermissions.createEvents.description": {
-    "defaultMessage": "Conceder permiso para crear eventos personalizados"
-  },
-  "userPermissions.createEvents.name": {
-    "defaultMessage": "Crear Eventos"
-  },
-  "userPermissions.createInvites.description": {
-    "defaultMessage": "Conceder permiso para crear invitaciones (de acuerdo a sus cuotas)."
-  },
-  "userPermissions.createInvites.name": {
-    "defaultMessage": "Crear Invitaciones"
-  },
-  "userPermissions.error": {
-    "defaultMessage": "Algo salió mal al guardar los permisos de usuario."
-  },
-  "userPermissions.manageEvents.description": {
-    "defaultMessage": "Conceder permiso para gestionar eventos. Los usuarios con este permiso pueden editar o eliminar eventos creados por otros."
-  },
-  "userPermissions.manageInvites.description": {
-    "defaultMessage": "Conceder permiso para gestionar invitaciones. Todas las invitaciones hechas por un usuario con este permiso pueden ser modificadas."
-  },
-  "userPermissions.manageInvites.name": {
-    "defaultMessage": "Gestionar Invitaciones"
-  },
-  "userPermissions.manageUsers.description": {
-    "defaultMessage": "Conceder permiso para gestionar usuarios. Los usuarios con este permiso no pueden modificar usuarios con o conceder el privilegio de Administrador."
-  },
-  "userPermissions.request.description": {
-    "defaultMessage": "Conceder permiso para acceder a solicitudes (nota: el acceso en overseerr también debe ser concedido)"
-  },
-  "userPermissions.streamarr.description": {
-    "defaultMessage": "Conceder permiso para ver, solicitar, invitar y ver el horario."
-  },
-  "userPermissions.streamarr.name": {
-    "defaultMessage": "Streamarr"
-  },
-  "logs.copyError": {
-    "defaultMessage": "Error al copiar el mensaje del registro."
-  },
-  "logs.description": {
-    "defaultMessage": "También puedes ver estos registros directamente vía {stdout}, o en {logPath}"
-  },
-  "logs.filter.debug": {
-    "defaultMessage": "Depuración"
-  },
-  "logs.filter.error": {
-    "defaultMessage": "Error"
-  },
-  "logs.filter.info": {
-    "defaultMessage": "Información"
-  },
-  "logs.filter.warn": {
-    "defaultMessage": "Advertencia"
-  },
-  "logs.logMessage": {
-    "defaultMessage": "Mensaje de Registro"
-  },
-  "logs.modal.additionalData": {
-    "defaultMessage": "Datos Adicionales"
-  },
-  "logs.modal.label": {
-    "defaultMessage": "Etiqueta"
-  },
-  "logs.modal.message": {
-    "defaultMessage": "Mensaje"
-  },
-  "logs.modal.severity": {
-    "defaultMessage": "Severidad"
-  },
-  "logs.modal.timestamp": {
-    "defaultMessage": "Marca de Tiempo"
-  },
-  "logs.modal.title": {
-    "defaultMessage": "Detalles del Registro"
-  },
-  "logs.pause": {
-    "defaultMessage": "Pausar"
-  },
-  "logs.resume": {
-    "defaultMessage": "Reanudar"
-  },
-  "logs.table.copyToClipboard": {
-    "defaultMessage": "Copiar al portapapeles"
-  },
-  "logs.table.logMessage": {
-    "defaultMessage": "mensaje de registro"
-  },
-  "logs.table.viewDetails": {
-    "defaultMessage": "Ver Detalles"
-  },
-  "logs.title": {
-    "defaultMessage": "Registros"
-  },
-  "mobileMenu.libraries": {
-    "defaultMessage": "Bibliotecas"
-  },
-  "moreHelp.checkHelpSection": {
-    "defaultMessage": "Revisa la Sección de Ayuda"
-  },
-  "moreHelp.needMoreHelp": {
-    "defaultMessage": "¿Necesitas Más Ayuda?"
-  },
-  "moreHelp.needToChat": {
-    "defaultMessage": "¿Necesitas Conversar?"
-  },
-  "moreHelp.plexHelpDescription": {
-    "defaultMessage": "Encuentra ayuda oficial y documentación de Plex"
-  },
-  "moreHelp.plexSupport": {
-    "defaultMessage": "Soporte de Plex"
-  },
-  "moreHelp.support": {
-    "defaultMessage": "Soporte"
-  },
-  "moreHelp.visitPlex": {
-    "defaultMessage": "Visitar Plex"
-  },
-  "library.discover": {
-    "defaultMessage": "Descubrir"
-  },
-  "library.loading": {
-    "defaultMessage": "Cargando bibliotecas..."
-  },
-  "library.music": {
-    "defaultMessage": "Música"
-  },
-  "library.photos": {
-    "defaultMessage": "Fotos"
-  },
-  "library.watchlist": {
-    "defaultMessage": "Lista de Reproducción"
-  },
-  "schedule.untitled": {
-    "defaultMessage": "Sin título"
   },
   "generalSettings.apiKey.regenerateError": {
     "defaultMessage": "Algo salió mal al generar una nueva clave API."
@@ -1028,50 +791,291 @@
   "generalSettings.csrfProtection.tooltip": {
     "defaultMessage": "¡NO habilites esta configuración a menos que entiendas lo que estás haciendo!"
   },
-  "generalSettings.title": {
-    "defaultMessage": "Configuración General"
-  },
-  "generalSettings.description": {
-    "defaultMessage": "Configura los ajustes generales de la aplicación"
-  },
-  "generalSettings.customLogo.label": {
-    "defaultMessage": "Logo Personalizado"
-  },
-  "generalSettings.customLogo.description": {
-    "defaultMessage": "Sube un logo personalizado para reemplazar el logo por defecto"
-  },
   "generalSettings.customLogo.currentAlt": {
     "defaultMessage": "Logo actual"
-  },
-  "generalSettings.customLogo.deleteSuccess": {
-    "defaultMessage": "Logo personalizado eliminado exitosamente"
   },
   "generalSettings.customLogo.deleteError": {
     "defaultMessage": "Error al eliminar el logo personalizado"
   },
-  "generalSettings.customLogoSmall.label": {
-    "defaultMessage": "Logo Pequeño Personalizado"
+  "generalSettings.customLogo.deleteSuccess": {
+    "defaultMessage": "Logo personalizado eliminado exitosamente"
   },
-  "generalSettings.customLogoSmall.description": {
-    "defaultMessage": "Sube un logo pequeño personalizado para usar en espacios reducidos"
+  "generalSettings.customLogo.description": {
+    "defaultMessage": "Sube un logo personalizado para reemplazar el logo por defecto"
+  },
+  "generalSettings.customLogo.label": {
+    "defaultMessage": "Logo Personalizado"
+  },
+  "generalSettings.customLogo.validation.fileExtension": {
+    "defaultMessage": "Extensión de archivo no válida"
+  },
+  "generalSettings.customLogo.validation.fileSize": {
+    "defaultMessage": "El archivo es demasiado grande"
+  },
+  "generalSettings.customLogo.validation.fileType": {
+    "defaultMessage": "Tipo de archivo no válido"
   },
   "generalSettings.customLogoSmall.currentAlt": {
     "defaultMessage": "Logo pequeño actual"
   },
-  "generalSettings.customLogoSmall.deleteSuccess": {
-    "defaultMessage": "Logo pequeño personalizado eliminado exitosamente"
-  },
   "generalSettings.customLogoSmall.deleteError": {
     "defaultMessage": "Error al eliminar el logo pequeño personalizado"
   },
-  "generalSettings.enableSignUp.label": {
-    "defaultMessage": "Habilitar Registro"
+  "generalSettings.customLogoSmall.deleteSuccess": {
+    "defaultMessage": "Logo pequeño personalizado eliminado exitosamente"
+  },
+  "generalSettings.customLogoSmall.description": {
+    "defaultMessage": "Sube un logo pequeño personalizado para usar en espacios reducidos"
+  },
+  "generalSettings.customLogoSmall.label": {
+    "defaultMessage": "Logo Pequeño Personalizado"
+  },
+  "generalSettings.description": {
+    "defaultMessage": "Configura los ajustes generales de la aplicación"
   },
   "generalSettings.enableSignUp.description": {
     "defaultMessage": "Permite que nuevos usuarios se registren sin invitación"
   },
+  "generalSettings.enableSignUp.label": {
+    "defaultMessage": "Habilitar Registro"
+  },
   "generalSettings.extendedHome.description": {
     "defaultMessage": "Mostrar información adicional en la página de inicio"
+  },
+  "generalSettings.extendedHome.label": {
+    "defaultMessage": "Habilitar Página de Inicio Extendida"
+  },
+  "generalSettings.logo.uploadError": {
+    "defaultMessage": "Error al subir los logos"
+  },
+  "generalSettings.releaseSched.label": {
+    "defaultMessage": "Habilitar Cronograma de Lanzamientos"
+  },
+  "generalSettings.supportEmail.label": {
+    "defaultMessage": "Correo de Soporte"
+  },
+  "generalSettings.supportUrl.label": {
+    "defaultMessage": "URL de Obtener Soporte"
+  },
+  "generalSettings.title": {
+    "defaultMessage": "Configuración General"
+  },
+  "generalSettings.trustProxy.description": {
+    "defaultMessage": "Permitir que Streamarr registre correctamente las direcciones IP de clientes detrás de un proxy"
+  },
+  "generalSettings.trustProxy.label": {
+    "defaultMessage": "Habilitar Soporte de Proxy"
+  },
+  "generalSettings.validation.applicationTitle": {
+    "defaultMessage": "Debe proporcionar un título de aplicación"
+  },
+  "generalSettings.validation.port": {
+    "defaultMessage": "Número de puerto inválido",
+    "description": "Professional Spanish translation"
+  },
+  "generalSettings.validation.supportUrl": {
+    "defaultMessage": "Debe proporcionar una URL válida"
+  },
+  "help.githubLink": {
+    "defaultMessage": "GitHub"
+  },
+  "help.helpCentre": {
+    "defaultMessage": "Centro de Ayuda"
+  },
+  "help.howToBecomeMember": {
+    "defaultMessage": "Cómo hacerse miembro"
+  },
+  "help.manageAccount": {
+    "defaultMessage": "Administrar Cuenta"
+  },
+  "help.popularTopics": {
+    "defaultMessage": "Temas populares"
+  },
+  "help.preReleaseWarning": {
+    "defaultMessage": "Esta es una vista previa de pre-lanzamiento y actualmente está en desarrollo activo. Si encuentras problemas, por favor inténtalo de nuevo o comunícate con {support} para obtener más ayuda. Por favor revisa GitHub para actualizaciones de estado."
+  },
+  "help.quickLinks": {
+    "defaultMessage": "Enlaces Rápidos"
+  },
+  "help.relatedArticles": {
+    "defaultMessage": "Artículos Relacionados"
+  },
+  "help.requestingNewMedia": {
+    "defaultMessage": "Solicitar nuevos medios"
+  },
+  "help.supportedDevices": {
+    "defaultMessage": "Dispositivos compatibles"
+  },
+  "hero.error.emptyCode": {
+    "defaultMessage": "Por favor, introduce un código de invitación válido."
+  },
+  "hero.getStarted": {
+    "defaultMessage": "¡Empecemos!"
+  },
+  "hero.inviteCode": {
+    "defaultMessage": "Introduce tu código de invitación para comenzar"
+  },
+  "hero.more": {
+    "defaultMessage": "+ más"
+  },
+  "hero.subtitle": {
+    "defaultMessage": "Mira en cualquier lugar, en cualquier momento y gratis. El futuro es ahora."
+  },
+  "hero.title": {
+    "defaultMessage": "Películas y series ilimitadas"
+  },
+  "iCodeForm.inviteCodeRequired": {
+    "defaultMessage": "El código de invitación es requerido"
+  },
+  "iCodeForm.inviteCodeTooShort": {
+    "defaultMessage": "El código de invitación es muy corto"
+  },
+  "iCodeForm.letsGetStarted": {
+    "defaultMessage": "Empecemos"
+  },
+  "iCodeForm.validatingInviteCode": {
+    "defaultMessage": "Validando Código de Invitación..."
+  },
+  "imageCache.description": {
+    "defaultMessage": "Gestiona el caché de imágenes del sistema"
+  },
+  "imageCache.qrcode": {
+    "defaultMessage": "Código QR"
+  },
+  "imageCache.table.imagesCached": {
+    "defaultMessage": "Imágenes en Caché"
+  },
+  "imageCache.table.totalCacheSize": {
+    "defaultMessage": "Tamaño Total del Caché"
+  },
+  "imageCache.title": {
+    "defaultMessage": "Caché de Imágenes"
+  },
+  "inAppNotifications.enableAgent": {
+    "defaultMessage": "Habilitar Agente"
+  },
+  "inAppNotifications.saveError": {
+    "defaultMessage": "Error al guardar la configuración de notificaciones en la aplicación."
+  },
+  "inAppNotifications.saveSuccess": {
+    "defaultMessage": "Configuración de notificaciones en la aplicación guardada exitosamente."
+  },
+  "inAppNotifications.testError": {
+    "defaultMessage": "Error al enviar la notificación de prueba en la aplicación."
+  },
+  "inAppNotifications.testSending": {
+    "defaultMessage": "Enviando notificación de prueba en la aplicación…"
+  },
+  "invite.advancedSettings": {
+    "defaultMessage": "Configuración avanzada"
+  },
+  "invite.allLibraries": {
+    "defaultMessage": "Todas las bibliotecas"
+  },
+  "invite.allowDownloads": {
+    "defaultMessage": "Permitir descargas"
+  },
+  "invite.clickToCopy": {
+    "defaultMessage": "Haz clic para copiar el código de invitación"
+  },
+  "invite.code": {
+    "defaultMessage": "Código de invitación"
+  },
+  "invite.codeInvalid": {
+    "defaultMessage": "El código de invitación solo debe contener letras y números."
+  },
+  "invite.codeMax": {
+    "defaultMessage": "El código de invitación debe tener menos de 20 caracteres"
+  },
+  "invite.codeMin": {
+    "defaultMessage": "El código de invitación debe tener al menos 8 caracteres"
+  },
+  "invite.create": {
+    "defaultMessage": "Crear invitación"
+  },
+  "invite.createTitle": {
+    "defaultMessage": "Crear una invitación"
+  },
+  "invite.created": {
+    "defaultMessage": "Creada"
+  },
+  "invite.createdSuccessfully": {
+    "defaultMessage": "¡Invitación creada exitosamente!"
+  },
+  "invite.defaultLibraries": {
+    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
+  },
+  "invite.defaultLibrariesAll": {
+    "defaultMessage": "Predeterminado (Todas las bibliotecas)"
+  },
+  "invite.deleteInvite": {
+    "defaultMessage": "Eliminar invitación"
+  },
+  "invite.disable": {
+    "defaultMessage": "Deshabilitar invitación"
+  },
+  "invite.disabledError": {
+    "defaultMessage": "Algo salió mal al deshabilitar la invitación."
+  },
+  "invite.downloads": {
+    "defaultMessage": "Descargas"
+  },
+  "invite.editInvite": {
+    "defaultMessage": "Editar invitación"
+  },
+  "invite.editTitle": {
+    "defaultMessage": "Editar Invitación"
+  },
+  "invite.enable": {
+    "defaultMessage": "Habilitar invitación"
+  },
+  "invite.error": {
+    "defaultMessage": "Algo salió mal al {action} la invitación."
+  },
+  "invite.expiration": {
+    "defaultMessage": "Expiración"
+  },
+  "invite.inviteAs": {
+    "defaultMessage": "Invitar como"
+  },
+  "invite.inviteToPlexHome": {
+    "defaultMessage": "Invitar a Plex Home"
+  },
+  "invite.modified": {
+    "defaultMessage": "Modificado"
+  },
+  "invite.neverExpires": {
+    "defaultMessage": "Nunca Expira"
+  },
+  "invite.plexHome": {
+    "defaultMessage": "Plex Home"
+  },
+  "invite.shareInvite": {
+    "defaultMessage": "Compartir Invitación"
+  },
+  "invite.sharedLibraries": {
+    "defaultMessage": "Bibliotecas Compartidas:"
+  },
+  "invite.statusChanged": {
+    "defaultMessage": "Estado Cambiado"
+  },
+  "invite.timeUnit.day": {
+    "defaultMessage": "día"
+  },
+  "invite.timeUnit.month": {
+    "defaultMessage": "mes"
+  },
+  "invite.timeUnit.week": {
+    "defaultMessage": "semana"
+  },
+  "invite.updatedSuccessfully": {
+    "defaultMessage": "Invitación actualizada exitosamente"
+  },
+  "invite.usageLimit": {
+    "defaultMessage": "Límite de Uso"
+  },
+  "invite.usageUnit": {
+    "defaultMessage": "Unidad de Uso"
   },
   "inviteList.inviteAFriend": {
     "defaultMessage": "Invitar a un Amigo"
@@ -1093,6 +1097,12 @@
   },
   "inviteList.sortMostRecent": {
     "defaultMessage": "Más Reciente"
+  },
+  "inviteList.trialPeriodActive": {
+    "defaultMessage": "Período de Prueba Activo"
+  },
+  "inviteList.trialPeriodMessage": {
+    "defaultMessage": "{self, select, true {Estás} other {Están}} actualmente en un período de prueba y no pueden crear invitaciones hasta el {date}."
   },
   "inviteShare.createAnother": {
     "defaultMessage": "Crear Otra"
@@ -1184,53 +1194,288 @@
   "jobs.unknownJob": {
     "defaultMessage": "Trabajo Desconocido"
   },
-  "welcome.acknowledge": {
-    "defaultMessage": "Reconocer"
+  "library.discover": {
+    "defaultMessage": "Descubrir"
   },
-  "welcome.headsUp": {
-    "defaultMessage": "¡Hola! - ¡Solo un pequeño aviso!"
+  "library.liveTV": {
+    "defaultMessage": "TV en Vivo",
+    "description": "Translation restored after checkpoint"
   },
-  "welcome.moreToCome": {
-    "defaultMessage": "¡Hay mucho más por venir, así que mantente atento y vuelve a revisar más tarde!"
+  "library.loading": {
+    "defaultMessage": "Cargando bibliotecas..."
   },
-  "welcome.welcomeTo": {
-    "defaultMessage": "Bienvenido a"
+  "library.music": {
+    "defaultMessage": "Música"
   },
-  "welcome.workInProgress": {
-    "defaultMessage": "Esto todavía es muy experimental y le faltan algunas funciones. Si encuentras problemas, por favor sigue intentando o contacta a nickelsh1ts."
+  "library.photos": {
+    "defaultMessage": "Fotos"
   },
-  "confirmAccount.disableWebPush": {
-    "defaultMessage": "Deshabilitar Web Push"
+  "library.watchlist": {
+    "defaultMessage": "Lista de Reproducción"
   },
-  "confirmAccount.enableWebPush": {
-    "defaultMessage": "Habilitar Web Push"
+  "librarySelector.defaultLibrariesAll": {
+    "defaultMessage": "Bibliotecas Predeterminadas (Todas)"
   },
-  "confirmAccount.error": {
-    "defaultMessage": "Error al confirmar la cuenta."
+  "librarySelector.defaultLibrariesWith": {
+    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
   },
-  "confirmAccount.finalizingAccount": {
-    "defaultMessage": "Finalizando Cuenta..."
+  "localSignup.confirmPasswordRequired": {
+    "defaultMessage": "Por favor confirma tu contraseña"
   },
-  "confirmAccount.plexOAuthWarning": {
-    "defaultMessage": "Tu cuenta actualmente usa Plex OAuth para autenticarse. Opcionalmente configura una contraseña a continuación para habilitar el inicio de sesión como 'usuario local' usando tu dirección de correo electrónico."
+  "localSignup.creatingAccount": {
+    "defaultMessage": "Creando Cuenta..."
   },
-  "confirmAccount.settingsSaved": {
-    "defaultMessage": "¡Configuración de cuenta guardada exitosamente!"
+  "localSignup.emailInvalid": {
+    "defaultMessage": "Por favor introduce una dirección de correo válida"
   },
-  "confirmAccount.subscriptionFailed": {
-    "defaultMessage": "Error al suscribirse a las notificaciones web push"
+  "localSignup.emailRequired": {
+    "defaultMessage": "La dirección de correo es requerida"
   },
-  "confirmAccount.webPushDisableError": {
-    "defaultMessage": "Error al deshabilitar las notificaciones web push"
+  "localSignup.passwordLowercase": {
+    "defaultMessage": "La contraseña debe contener al menos una letra minúscula"
   },
-  "confirmAccount.webPushDisabled": {
-    "defaultMessage": "Web push ha sido deshabilitado"
+  "localSignup.passwordMinLength": {
+    "defaultMessage": "La contraseña debe tener al menos 8 caracteres"
   },
-  "confirmAccount.webPushEnableError": {
-    "defaultMessage": "Error al habilitar las notificaciones web push"
+  "localSignup.passwordRequired": {
+    "defaultMessage": "La contraseña es requerida"
   },
-  "confirmAccount.webPushEnabled": {
-    "defaultMessage": "Notificaciones Web Push Habilitadas"
+  "localSignup.passwordsMatch": {
+    "defaultMessage": "Las contraseñas deben coincidir"
+  },
+  "localSignup.usernameInvalidChars": {
+    "defaultMessage": "El nombre de usuario solo puede contener letras, números, guiones bajos y guiones"
+  },
+  "localSignup.usernameMaxLength": {
+    "defaultMessage": "El nombre de usuario debe tener menos de 20 caracteres"
+  },
+  "localSignup.usernameMinLength": {
+    "defaultMessage": "El nombre de usuario debe tener al menos 3 caracteres"
+  },
+  "localSignup.usernameRequired": {
+    "defaultMessage": "El nombre de usuario es requerido"
+  },
+  "logs.copyError": {
+    "defaultMessage": "Error al copiar el mensaje del registro."
+  },
+  "logs.description": {
+    "defaultMessage": "También puedes ver estos registros directamente vía {stdout}, o en {logPath}"
+  },
+  "logs.filter.debug": {
+    "defaultMessage": "Depuración"
+  },
+  "logs.filter.error": {
+    "defaultMessage": "Error"
+  },
+  "logs.filter.info": {
+    "defaultMessage": "Información"
+  },
+  "logs.filter.warn": {
+    "defaultMessage": "Advertencia"
+  },
+  "logs.logMessage": {
+    "defaultMessage": "Mensaje de Registro"
+  },
+  "logs.modal.additionalData": {
+    "defaultMessage": "Datos Adicionales"
+  },
+  "logs.modal.label": {
+    "defaultMessage": "Etiqueta"
+  },
+  "logs.modal.message": {
+    "defaultMessage": "Mensaje"
+  },
+  "logs.modal.severity": {
+    "defaultMessage": "Severidad"
+  },
+  "logs.modal.timestamp": {
+    "defaultMessage": "Marca de Tiempo"
+  },
+  "logs.modal.title": {
+    "defaultMessage": "Detalles del Registro"
+  },
+  "logs.pause": {
+    "defaultMessage": "Pausar"
+  },
+  "logs.resume": {
+    "defaultMessage": "Reanudar"
+  },
+  "logs.table.copyToClipboard": {
+    "defaultMessage": "Copiar al portapapeles"
+  },
+  "logs.table.logMessage": {
+    "defaultMessage": "mensaje de registro"
+  },
+  "logs.table.viewDetails": {
+    "defaultMessage": "Ver Detalles"
+  },
+  "logs.title": {
+    "defaultMessage": "Registros"
+  },
+  "mobileMenu.libraries": {
+    "defaultMessage": "Bibliotecas"
+  },
+  "moreHelp.checkHelpSection": {
+    "defaultMessage": "Revisa la Sección de Ayuda"
+  },
+  "moreHelp.needMoreHelp": {
+    "defaultMessage": "¿Necesitas Más Ayuda?"
+  },
+  "moreHelp.needToChat": {
+    "defaultMessage": "¿Necesitas Conversar?"
+  },
+  "moreHelp.plexHelpDescription": {
+    "defaultMessage": "Encuentra ayuda oficial y documentación de Plex"
+  },
+  "moreHelp.plexSupport": {
+    "defaultMessage": "Soporte de Plex"
+  },
+  "moreHelp.support": {
+    "defaultMessage": "Soporte"
+  },
+  "moreHelp.visitPlex": {
+    "defaultMessage": "Visitar Plex"
+  },
+  "notFound.notFound": {
+    "defaultMessage": "No encontrado"
+  },
+  "notFound.page": {
+    "defaultMessage": "Página"
+  },
+  "notFound.quote": {
+    "defaultMessage": "Hay lugares allá afuera que no puedes encontrar en ningún mapa. No se han ido, solo están perdidos."
+  },
+  "notification.deleteThis": {
+    "defaultMessage": "Eliminar esta notificación"
+  },
+  "notification.deletedError": {
+    "defaultMessage": "Error al eliminar la notificación"
+  },
+  "notification.earlier": {
+    "defaultMessage": "Anteriores"
+  },
+  "notification.header": {
+    "defaultMessage": "Notificaciones"
+  },
+  "notification.inAppDisabled": {
+    "defaultMessage": "Notificaciones en la Aplicación Deshabilitadas"
+  },
+  "notification.inviteExpired": {
+    "defaultMessage": "Invitación Expirada"
+  },
+  "notification.inviteExpired.description": {
+    "defaultMessage": "Recibe una notificación cuando una invitación que creaste haya expirado"
+  },
+  "notification.inviteUsedSuccessfully": {
+    "defaultMessage": "Invitación Canjeada Exitosamente"
+  },
+  "notification.inviteUsedSuccessfully.description": {
+    "defaultMessage": "Recibe notificaciones cuando una invitación que enviaste ha sido canjeada exitosamente"
+  },
+  "notification.localMessages": {
+    "defaultMessage": "Mensajes de Streamarr"
+  },
+  "notification.localMessages.description": {
+    "defaultMessage": "Recibe una notificación cuando recibas un mensaje de Streamarr"
+  },
+  "notification.markAllAsRead": {
+    "defaultMessage": "Marcar todo como leído"
+  },
+  "notification.markAsRead": {
+    "defaultMessage": "Marcar como {isRead}"
+  },
+  "notification.newEvent": {
+    "defaultMessage": "Nuevo Evento"
+  },
+  "notification.newEvent.description": {
+    "defaultMessage": "Recibe una notificación cuando se cree un nuevo evento en Streamarr"
+  },
+  "notification.newInvite": {
+    "defaultMessage": "Nueva Invitación Creada"
+  },
+  "notification.newInvite.description": {
+    "defaultMessage": "Recibe una notificación cuando se cree una nueva invitación"
+  },
+  "notification.newReceived": {
+    "defaultMessage": "Nueva Notificación Recibida"
+  },
+  "notification.noUnread": {
+    "defaultMessage": "No hay notificaciones sin leer"
+  },
+  "notification.open": {
+    "defaultMessage": "Abrir Notificaciones"
+  },
+  "notification.readAllError": {
+    "defaultMessage": "Error al marcar todas las notificaciones como leídas"
+  },
+  "notification.readError": {
+    "defaultMessage": "Error al marcar la notificación como leída"
+  },
+  "notification.sendNotification": {
+    "defaultMessage": "Enviar Notificación"
+  },
+  "notification.settings": {
+    "defaultMessage": "Configuración de Notificaciones"
+  },
+  "notification.signUpDisabledMessage": {
+    "defaultMessage": "El administrador ha deshabilitado actualmente las notificaciones en la aplicación."
+  },
+  "notification.userCreated": {
+    "defaultMessage": "Usuario Creado"
+  },
+  "notification.userCreated.description": {
+    "defaultMessage": "Recibe una notificación cuando se cree un nuevo usuario"
+  },
+  "notificationModal.actionUrl": {
+    "defaultMessage": "URL de Acción"
+  },
+  "notificationModal.actionUrlInvalid": {
+    "defaultMessage": "La URL de Acción debe ser una URL o ruta base que comience con /"
+  },
+  "notificationModal.actionUrlRequired": {
+    "defaultMessage": "La URL de Acción es requerida cuando se proporciona el Título de URL de Acción"
+  },
+  "notificationModal.actionUrlTitle": {
+    "defaultMessage": "Título de URL de Acción"
+  },
+  "notificationModal.actionUrlTitleMax": {
+    "defaultMessage": "El Título de URL de Acción no debe tener más de 40 caracteres"
+  },
+  "notificationModal.descriptionMax": {
+    "defaultMessage": "La descripción no debe tener más de 150 caracteres"
+  },
+  "notificationModal.editNotification": {
+    "defaultMessage": "Editar Notificación"
+  },
+  "notificationModal.message": {
+    "defaultMessage": "Mensaje"
+  },
+  "notificationModal.notifyUsers": {
+    "defaultMessage": "Notificar Usuarios"
+  },
+  "notificationModal.notifyUsersRequired": {
+    "defaultMessage": "Se debe seleccionar al menos un usuario"
+  },
+  "notificationModal.saveError": {
+    "defaultMessage": "Hubo un error al guardar la notificación"
+  },
+  "notificationModal.sendTitle": {
+    "defaultMessage": "Enviar una Notificación"
+  },
+  "notificationModal.severity": {
+    "defaultMessage": "Severidad"
+  },
+  "notificationModal.subject": {
+    "defaultMessage": "Asunto"
+  },
+  "notificationModal.subjectMax": {
+    "defaultMessage": "El asunto no debe tener más de 40 caracteres"
+  },
+  "notificationModal.subjectRequired": {
+    "defaultMessage": "El asunto es requerido"
+  },
+  "plex.login.button": {
+    "defaultMessage": "Iniciar sesión con"
   },
   "plexImport.error": {
     "defaultMessage": "Error al importar usuarios de Plex"
@@ -1279,444 +1524,6 @@
   },
   "plexSettings.libraries.title": {
     "defaultMessage": "Bibliotecas de Plex"
-  },
-  "librarySelector.defaultLibrariesAll": {
-    "defaultMessage": "Bibliotecas Predeterminadas (Todas)"
-  },
-  "librarySelector.defaultLibrariesWith": {
-    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
-  },
-  "servicesSettings.urlBase.leadingSlash": {
-    "defaultMessage": "La URL base no debe tener una barra diagonal al inicio"
-  },
-  "servicesSettings.urlBase.noTrailingSlash": {
-    "defaultMessage": "La URL base no debe tener una barra diagonal al final"
-  },
-  "servicesSettings.validation.apikey": {
-    "defaultMessage": "Debes proporcionar una clave API válida"
-  },
-  "servicesSettings.validation.hostname": {
-    "defaultMessage": "Debes proporcionar un nombre de host válido o dirección IP"
-  },
-  "servicesSettings.validation.servername": {
-    "defaultMessage": "Debes proporcionar un nombre de servidor válido"
-  },
-  "servicesSettings.validation.urlNoTrailingSlash": {
-    "defaultMessage": "La URL no debe tener una barra diagonal al final"
-  },
-  "servicesSettings.bazarr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Bazarr."
-  },
-  "servicesSettings.bazarr.title": {
-    "defaultMessage": "Configuración de Bazarr"
-  },
-  "servicesSettings.downloads.description": {
-    "defaultMessage": "Configura los ajustes para el servicio de descargas."
-  },
-  "servicesSettings.downloads.title": {
-    "defaultMessage": "Configuración de Descargas"
-  },
-  "servicesSettings.lidarr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Lidarr."
-  },
-  "servicesSettings.lidarr.title": {
-    "defaultMessage": "Configuración de Lidarr"
-  },
-  "servicesSettings.overseerr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Overseerr."
-  },
-  "servicesSettings.overseerr.title": {
-    "defaultMessage": "Configuración de Overseerr"
-  },
-  "servicesSettings.prowlarr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Prowlarr."
-  },
-  "servicesSettings.prowlarr.title": {
-    "defaultMessage": "Configuración de Prowlarr"
-  },
-  "servicesSettings.radarr.testfailed": {
-    "defaultMessage": "Error al conectar con Radarr."
-  },
-  "servicesSettings.radarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Radarr establecida exitosamente!"
-  },
-  "servicesSettings.sonarr.testfailed": {
-    "defaultMessage": "Error al conectar con Sonarr."
-  },
-  "servicesSettings.sonarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Sonarr establecida exitosamente!"
-  },
-  "localSignup.confirmPasswordRequired": {
-    "defaultMessage": "Por favor confirma tu contraseña"
-  },
-  "localSignup.creatingAccount": {
-    "defaultMessage": "Creando Cuenta..."
-  },
-  "localSignup.emailInvalid": {
-    "defaultMessage": "Por favor introduce una dirección de correo válida"
-  },
-  "localSignup.emailRequired": {
-    "defaultMessage": "La dirección de correo es requerida"
-  },
-  "localSignup.passwordLowercase": {
-    "defaultMessage": "La contraseña debe contener al menos una letra minúscula"
-  },
-  "localSignup.passwordMinLength": {
-    "defaultMessage": "La contraseña debe tener al menos 8 caracteres"
-  },
-  "localSignup.passwordRequired": {
-    "defaultMessage": "La contraseña es requerida"
-  },
-  "localSignup.passwordsMatch": {
-    "defaultMessage": "Las contraseñas deben coincidir"
-  },
-  "localSignup.usernameInvalidChars": {
-    "defaultMessage": "El nombre de usuario solo puede contener letras, números, guiones bajos y guiones"
-  },
-  "localSignup.usernameMaxLength": {
-    "defaultMessage": "El nombre de usuario debe tener menos de 20 caracteres"
-  },
-  "localSignup.usernameMinLength": {
-    "defaultMessage": "El nombre de usuario debe tener al menos 3 caracteres"
-  },
-  "localSignup.usernameRequired": {
-    "defaultMessage": "El nombre de usuario es requerido"
-  },
-  "resetPassword.backToSignIn": {
-    "defaultMessage": "Volver al Inicio de Sesión"
-  },
-  "resetPassword.description": {
-    "defaultMessage": "Por favor introduce una nueva contraseña para tu cuenta local."
-  },
-  "resetPassword.passwordTooShort": {
-    "defaultMessage": "La contraseña es muy corta; debe tener un mínimo de 8 caracteres"
-  },
-  "resetPassword.success": {
-    "defaultMessage": "¡Contraseña restablecida exitosamente!"
-  },
-  "resetPassword.title": {
-    "defaultMessage": "Restablecer tu contraseña"
-  },
-  "radarrSettings.addserver": {
-    "defaultMessage": "Agregar Servidor Radarr"
-  },
-  "radarrSettings.deleteTitle": {
-    "defaultMessage": "Eliminar Servidor Radarr"
-  },
-  "radarrSettings.deleteconfirm": {
-    "defaultMessage": "¿Estás seguro de que quieres eliminar este servidor?"
-  },
-  "radarrSettings.description": {
-    "defaultMessage": "Configura tu(s) servidor(es) Radarr a continuación. Puedes conectar múltiples servidores Radarr, pero solo dos de ellos pueden marcarse como predeterminados (uno no-4K y uno 4K). Los administradores pueden anular el/los servidor(es) usado(s) para procesar nuevos eventos."
-  },
-  "radarrSettings.no4kdefault": {
-    "defaultMessage": "Un servidor Radarr 4K debe estar marcado como predeterminado para habilitar nuevos eventos Radarr 4K."
-  },
-  "radarrSettings.noDefaultServer": {
-    "defaultMessage": "Al menos un servidor Radarr debe estar marcado como predeterminado para que los eventos de películas sean procesados."
-  },
-  "radarrSettings.single4kWarning": {
-    "defaultMessage": "Si solo tienes un servidor Radarr para contenido no-4K y 4K (o si solo descargas contenido 4K), tu servidor Radarr NO debe ser designado como servidor 4K."
-  },
-  "radarrSettings.title": {
-    "defaultMessage": "Configuración de Radarr"
-  },
-  "sonarrSettings.addServer": {
-    "defaultMessage": "Agregar Servidor Sonarr"
-  },
-  "sonarrSettings.deleteTitle": {
-    "defaultMessage": "Eliminar Servidor Sonarr"
-  },
-  "sonarrSettings.description": {
-    "defaultMessage": "Configura tu(s) servidor(es) Sonarr a continuación. Puedes conectar múltiples servidores Sonarr, pero solo dos de ellos pueden marcarse como predeterminados (uno no-4K y uno 4K). Los administradores pueden anular el/los servidor(es) usado(s) para procesar nuevos eventos."
-  },
-  "sonarrSettings.no4kDefault": {
-    "defaultMessage": "Un servidor Sonarr 4K debe estar marcado como predeterminado para habilitar nuevos eventos Sonarr 4K."
-  },
-  "sonarrSettings.noDefaultServer": {
-    "defaultMessage": "Al menos un servidor Sonarr debe estar marcado como predeterminado para que los eventos de series de TV sean procesados."
-  },
-  "sonarrSettings.single4kWarning": {
-    "defaultMessage": "Si solo tienes un servidor Sonarr para contenido no-4K y 4K (o si solo descargas contenido 4K), tu servidor Sonarr NO debe ser designado como servidor 4K."
-  },
-  "sonarrSettings.title": {
-    "defaultMessage": "Configuración de Sonarr"
-  },
-  "userDropdown.account": {
-    "defaultMessage": "Cuenta"
-  },
-  "userDropdown.accountSettings": {
-    "defaultMessage": "Configuración de Cuenta"
-  },
-  "userDropdown.getSupport": {
-    "defaultMessage": "Obtener Soporte"
-  },
-  "userDropdown.signOut": {
-    "defaultMessage": "Cerrar Sesión de {applicationTitle}"
-  },
-  "userDropdown.watchHistory": {
-    "defaultMessage": "Historial de Visualización"
-  },
-  "profile.editSettings": {
-    "defaultMessage": "Editar Configuración"
-  },
-  "profile.invitesLifetime": {
-    "defaultMessage": "Invitaciones (Historial)"
-  },
-  "profile.invitesPastDays": {
-    "defaultMessage": "Invitaciones (últimos {days} {days, plural, one {día} other {días}})"
-  },
-  "profile.invitesRemaining": {
-    "defaultMessage": "{remaining} de {limit} restantes"
-  },
-  "profile.joined": {
-    "defaultMessage": "Se unió el {date}"
-  },
-  "profile.recentInvites": {
-    "defaultMessage": "Invitaciones Recientes"
-  },
-  "profile.totalInvites": {
-    "defaultMessage": "Total de Invitaciones"
-  },
-  "profile.userId": {
-    "defaultMessage": "ID de Usuario: {userId}"
-  },
-  "profile.viewProfile": {
-    "defaultMessage": "Ver Perfil"
-  },
-  "quotaSelector.invitesPerPeriod": {
-    "defaultMessage": "{count, plural, one {invitación por} other {invitaciones por}}"
-  },
-  "servicesSettings.tautulli.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Tautulli. Streamarr obtiene datos del historial de visualización para tus medios de Plex desde Tautulli."
-  },
-  "servicesSettings.tautulli.title": {
-    "defaultMessage": "Configuración de Tautulli"
-  },
-  "servicesSettings.tdarr.description": {
-    "defaultMessage": "Configura los ajustes para tu servidor Tdarr."
-  },
-  "servicesSettings.tdarr.title": {
-    "defaultMessage": "Configuración de Tdarr"
-  },
-  "servicesSettings.uptime.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Uptime. Streamarr presenta tu enlace de tiempo de actividad a través del centro de ayuda."
-  },
-  "servicesSettings.uptime.title": {
-    "defaultMessage": "Configuración de Uptime"
-  },
-  "servicesSettings.validation.apiKeyRequired": {
-    "defaultMessage": "Debes proporcionar una clave API"
-  },
-  "settings.accountType": {
-    "defaultMessage": "Tipo de Cuenta"
-  },
-  "settings.allowLiveTv": {
-    "defaultMessage": "Permitir Acceso a TV en Vivo"
-  },
-  "settings.inviteQuota": {
-    "defaultMessage": "Cuota de Invitaciones"
-  },
-  "settings.librariesSynced": {
-    "defaultMessage": "Las bibliotecas se han sincronizado con Plex."
-  },
-  "settings.notifications": {
-    "defaultMessage": "Configuración de Notificaciones"
-  },
-  "settings.overrideGlobalLimit": {
-    "defaultMessage": "Anular Límite Global"
-  },
-  "settings.plexAccess": {
-    "defaultMessage": "Acceso a Plex"
-  },
-  "settings.plexAccessDescription": {
-    "defaultMessage": "Los cambios se sincronizarán con Plex automáticamente al guardar."
-  },
-  "settings.saveError": {
-    "defaultMessage": "Algo salió mal al guardar la configuración."
-  },
-  "settingsBadge.advanced.tooltip": {
-    "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
-  },
-  "settingsBadge.experimental.label": {
-    "defaultMessage": "Experimental"
-  },
-  "settingsBadge.experimental.tooltip": {
-    "defaultMessage": "Habilitar esta configuración puede resultar en comportamiento inesperado de la aplicación"
-  },
-  "settingsBadge.restartRequired.label": {
-    "defaultMessage": "Reinicio requerido"
-  },
-  "settingsBadge.restartRequired.tooltip": {
-    "defaultMessage": "Streamarr debe reiniciarse para que los cambios a esta configuración tengan efecto"
-  },
-  "setup.configurePlex": {
-    "defaultMessage": "Configurar Plex"
-  },
-  "setup.configureServices": {
-    "defaultMessage": "Configurar Servicios"
-  },
-  "setup.errorDuringSetup": {
-    "defaultMessage": "Error completando la configuración"
-  },
-  "setup.finishSetup": {
-    "defaultMessage": "Finalizar Configuración"
-  },
-  "setup.finishing": {
-    "defaultMessage": "Finalizando configuración..."
-  },
-  "setup.getStartedPlex": {
-    "defaultMessage": "Comienza iniciando sesión con tu cuenta de Plex"
-  },
-  "setup.loginError": {
-    "defaultMessage": "Error de inicio de sesión"
-  },
-  "setup.onlyEnabledLibraries": {
-    "defaultMessage": "Solo las bibliotecas habilitadas serán escaneadas."
-  },
-  "setup.signInWithPlex": {
-    "defaultMessage": "Iniciar sesión con Plex"
-  },
-  "setup.tip": {
-    "defaultMessage": "Consejo"
-  },
-  "setup.welcomeTo": {
-    "defaultMessage": "Bienvenido a {appName}"
-  },
-  "signIn.forgotPassword": {
-    "defaultMessage": "Espera, olvidé mi contraseña"
-  },
-  "signIn.loginError": {
-    "defaultMessage": "Algo salió mal al intentar iniciar sesión."
-  },
-  "signIn.passwordRequired": {
-    "defaultMessage": "Debes proporcionar una contraseña"
-  },
-  "signIn.rememberMe": {
-    "defaultMessage": "Recordarme"
-  },
-  "signIn.signingIn": {
-    "defaultMessage": "Iniciando Sesión…"
-  },
-  "userPermissions.success": {
-    "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
-  },
-  "userPermissions.title": {
-    "defaultMessage": "Editar Permisos de Usuario"
-  },
-  "userPermissions.viewInvites.description": {
-    "defaultMessage": "Otorga permiso para ver invitaciones de otros usuarios."
-  },
-  "userPermissions.viewInvites.name": {
-    "defaultMessage": "Ver Invitaciones"
-  },
-  "userPermissions.viewSchedule.description": {
-    "defaultMessage": "Otorga permiso para ver el cronograma de lanzamientos."
-  },
-  "userPermissions.viewSchedule.name": {
-    "defaultMessage": "Ver Cronograma"
-  },
-  "users.creating": {
-    "defaultMessage": "Creando..."
-  },
-  "users.deleteUser": {
-    "defaultMessage": "Eliminar Usuario"
-  },
-  "users.deleteUserConfirmation": {
-    "defaultMessage": "¿Estás seguro de que deseas eliminar este usuario? Todos sus datos se eliminarán permanentemente. Esto no se puede deshacer."
-  },
-  "users.deleteUserError": {
-    "defaultMessage": "Error al eliminar el usuario."
-  },
-  "users.deleteUserSuccess": {
-    "defaultMessage": "¡Usuario eliminado exitosamente!"
-  },
-  "users.deleting": {
-    "defaultMessage": "Eliminando..."
-  },
-  "users.emailAlreadyInUse": {
-    "defaultMessage": "La dirección de correo electrónico proporcionada ya está en uso por otro usuario."
-  },
-  "users.emailGeneratedPassword": {
-    "defaultMessage": "Enviar por correo electrónico una contraseña generada por el servidor al usuario"
-  },
-  "users.invitedBy": {
-    "defaultMessage": "Invitado por"
-  },
-  "users.localSignInDisabled": {
-    "defaultMessage": "La configuración Habilitar Inicio de Sesión Local está actualmente deshabilitada."
-  },
-  "users.sortInviteCount": {
-    "defaultMessage": "Recuento de Invitaciones"
-  },
-  "users.sortJoinDate": {
-    "defaultMessage": "Fecha de Registro"
-  },
-  "users.title": {
-    "defaultMessage": "Lista de Usuarios"
-  },
-  "users.create": {
-    "defaultMessage": "Crear"
-  },
-  "userSettings.title": {
-    "defaultMessage": "Configuración de Usuario"
-  },
-  "userSettings.saveSuccess": {
-    "defaultMessage": "Configuración de usuario guardada exitosamente"
-  },
-  "userSettings.plexLogin": {
-    "defaultMessage": "Inicio de Sesión de Plex"
-  },
-  "userSettings.plexLoginDescription": {
-    "defaultMessage": "Permitir que este usuario inicie sesión con su cuenta de Plex"
-  },
-  "userSettings.pgpPublicKey": {
-    "defaultMessage": "Clave Pública PGP"
-  },
-  "userSettings.pgpPublicKeyDescription": {
-    "defaultMessage": "Clave pública PGP para encriptar notificaciones por correo electrónico"
-  },
-  "userSettings.notifications.webpushTitle": {
-    "defaultMessage": "Configuración de Notificaciones Web Push"
-  },
-  "userSettings.notifications.webpushEnabled": {
-    "defaultMessage": "Notificaciones web push habilitadas"
-  },
-  "userSettings.notifications.webpushDisabled": {
-    "defaultMessage": "Notificaciones web push deshabilitadas"
-  },
-  "userSettings.notifications.webpushEnableError": {
-    "defaultMessage": "Error al habilitar las notificaciones web push"
-  },
-  "userSettings.notifications.webpushDisableError": {
-    "defaultMessage": "Error al deshabilitar las notificaciones web push"
-  },
-  "userSettings.notifications.subscriptionActive": {
-    "defaultMessage": "Suscripción activa"
-  },
-  "userSettings.notifications.subscriptionDeleted": {
-    "defaultMessage": "Suscripción eliminada"
-  },
-  "userSettings.notifications.subscriptionDeleteError": {
-    "defaultMessage": "Error al eliminar la suscripción"
-  },
-  "webpushNotifications.httpsRequired": {
-    "defaultMessage": "Para recibir notificaciones web push, Streamarr debe servirse sobre HTTPS."
-  },
-  "webpushNotifications.saveError": {
-    "defaultMessage": "Error al guardar la configuración de notificaciones web push."
-  },
-  "webpushNotifications.saveSuccess": {
-    "defaultMessage": "¡Configuración de notificaciones web push guardada exitosamente!"
-  },
-  "webpushNotifications.testError": {
-    "defaultMessage": "Error al enviar notificación de prueba web push."
-  },
-  "webpushNotifications.testSending": {
-    "defaultMessage": "Enviando notificación de prueba web push…"
-  },
-  "webpushNotifications.testSuccess": {
-    "defaultMessage": "¡Notificación de prueba web push enviada!"
   },
   "plexSettings.loadServersPrompt": {
     "defaultMessage": "Presiona el botón para cargar servidores disponibles"
@@ -1769,146 +1576,679 @@
   "plexSettings.webAppDescription": {
     "defaultMessage": "La aplicación web Plex debe ubicarse en el mismo dominio para evitar problemas de origen cruzado."
   },
-  "generalSettings.customLogo.validation.fileExtension": {
-    "defaultMessage": "Extensión de archivo no válida"
+  "profile.editSettings": {
+    "defaultMessage": "Editar Configuración"
   },
-  "generalSettings.customLogo.validation.fileSize": {
-    "defaultMessage": "El archivo es demasiado grande"
+  "profile.invitesLifetime": {
+    "defaultMessage": "Invitaciones (Historial)"
   },
-  "generalSettings.customLogo.validation.fileType": {
-    "defaultMessage": "Tipo de archivo no válido"
+  "profile.invitesPastDays": {
+    "defaultMessage": "Invitaciones (últimos {days} {days, plural, one {día} other {días}})"
   },
-  "common.advanced": {
-    "defaultMessage": "Avanzado"
+  "profile.invitesRemaining": {
+    "defaultMessage": "{remaining} de {limit} restantes"
   },
-  "common.areYouSure": {
-    "defaultMessage": "¿Estás seguro?"
+  "profile.joined": {
+    "defaultMessage": "Se unió el {date}"
   },
-  "common.arrAdd4k": {
-    "defaultMessage": "Agregar Servidor 4K {arrApp}"
+  "profile.recentInvites": {
+    "defaultMessage": "Invitaciones Recientes"
   },
-  "common.arrEdit": {
-    "defaultMessage": "Editar Servidor {arrApp}"
+  "profile.recentNotifications": {
+    "defaultMessage": "Notificaciones Recientes"
   },
-  "common.arrEdit4k": {
-    "defaultMessage": "Editar Servidor 4K {arrApp}"
+  "profile.totalInvites": {
+    "defaultMessage": "Total de Invitaciones"
   },
-  "common.calendarSync": {
-    "defaultMessage": "Habilitar Sincronización de Calendario"
+  "profile.trialPeriod": {
+    "defaultMessage": "Período de Prueba"
   },
-  "common.calendarSync.description": {
-    "defaultMessage": "Sincronizar automáticamente eventos de {arrApp} al calendario"
+  "profile.trialPeriodEnds": {
+    "defaultMessage": "Finaliza el {date}"
   },
-  "common.confirmPassword": {
-    "defaultMessage": "Confirmar Contraseña"
+  "profile.trialPeriodRestriction": {
+    "defaultMessage": "Se pueden generar nuevas invitaciones después de esta fecha"
   },
-  "common.copied": {
-    "defaultMessage": "Copiado al portapapeles"
+  "profile.userId": {
+    "defaultMessage": "ID de Usuario: {userId}"
   },
-  "common.currentPassword": {
-    "defaultMessage": "Contraseña Actual"
+  "profile.viewProfile": {
+    "defaultMessage": "Ver Perfil"
   },
-  "common.futuredays": {
-    "defaultMessage": "Días Futuros"
+  "quotaSelector.invitesPerPeriod": {
+    "defaultMessage": "{count, plural, one {invitación por} other {invitaciones por}}"
   },
-  "common.futuredays.description": {
-    "defaultMessage": "Sincronizar eventos para los próximos X días"
+  "radarrSettings.addserver": {
+    "defaultMessage": "Agregar Servidor Radarr"
   },
-  "common.general": {
+  "radarrSettings.deleteTitle": {
+    "defaultMessage": "Eliminar Servidor Radarr"
+  },
+  "radarrSettings.deleteconfirm": {
+    "defaultMessage": "¿Estás seguro de que quieres eliminar este servidor?"
+  },
+  "radarrSettings.description": {
+    "defaultMessage": "Configura tu(s) servidor(es) Radarr a continuación. Puedes conectar múltiples servidores Radarr, pero solo dos de ellos pueden marcarse como predeterminados (uno no-4K y uno 4K). Los administradores pueden anular el/los servidor(es) usado(s) para procesar nuevos eventos."
+  },
+  "radarrSettings.no4kdefault": {
+    "defaultMessage": "Un servidor Radarr 4K debe estar marcado como predeterminado para habilitar nuevos eventos Radarr 4K."
+  },
+  "radarrSettings.noDefaultServer": {
+    "defaultMessage": "Al menos un servidor Radarr debe estar marcado como predeterminado para que los eventos de películas sean procesados."
+  },
+  "radarrSettings.single4kWarning": {
+    "defaultMessage": "Si solo tienes un servidor Radarr para contenido no-4K y 4K (o si solo descargas contenido 4K), tu servidor Radarr NO debe ser designado como servidor 4K."
+  },
+  "radarrSettings.title": {
+    "defaultMessage": "Configuración de Radarr"
+  },
+  "resetPassword.backToSignIn": {
+    "defaultMessage": "Volver al Inicio de Sesión"
+  },
+  "resetPassword.description": {
+    "defaultMessage": "Por favor introduce una nueva contraseña para tu cuenta local."
+  },
+  "resetPassword.email.label": {
+    "defaultMessage": "Por favor, introduce la dirección de correo electrónico asociada a tu cuenta local.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.note": {
+    "defaultMessage": "Ten en cuenta que los usuarios de Plex deben restablecer su contraseña desde la ventana de inicio de sesión de {plexLogo}.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.sent": {
+    "defaultMessage": "Revisa tu correo electrónico",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.sent.label": {
+    "defaultMessage": "Por favor, revisa tu correo electrónico para acceder al enlace de restablecimiento de contraseña.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.email.sent.note": {
+    "defaultMessage": "Si no lo recibes, tu dirección puede ser incorrecta o no estar asociada a una cuenta existente.",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.help": {
+    "defaultMessage": "Espera, necesito más ayuda",
+    "description": "Professional Spanish translation"
+  },
+  "resetPassword.passwordTooShort": {
+    "defaultMessage": "La contraseña es muy corta; debe tener un mínimo de 8 caracteres"
+  },
+  "resetPassword.success": {
+    "defaultMessage": "¡Contraseña restablecida exitosamente!"
+  },
+  "resetPassword.title": {
+    "defaultMessage": "Restablecer tu contraseña"
+  },
+  "schedule.untitled": {
+    "defaultMessage": "Sin título"
+  },
+  "selectUsers": {
+    "defaultMessage": "Seleccionar Usuarios"
+  },
+  "servicesSettings.bazarr.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Bazarr."
+  },
+  "servicesSettings.bazarr.title": {
+    "defaultMessage": "Configuración de Bazarr"
+  },
+  "servicesSettings.downloads.description": {
+    "defaultMessage": "Configura los ajustes para el servicio de descargas."
+  },
+  "servicesSettings.downloads.title": {
+    "defaultMessage": "Configuración de Descargas"
+  },
+  "servicesSettings.lidarr.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Lidarr."
+  },
+  "servicesSettings.lidarr.title": {
+    "defaultMessage": "Configuración de Lidarr"
+  },
+  "servicesSettings.overseerr.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Overseerr."
+  },
+  "servicesSettings.overseerr.title": {
+    "defaultMessage": "Configuración de Overseerr"
+  },
+  "servicesSettings.prowlarr.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Prowlarr."
+  },
+  "servicesSettings.prowlarr.title": {
+    "defaultMessage": "Configuración de Prowlarr"
+  },
+  "servicesSettings.radarr.testfailed": {
+    "defaultMessage": "Error al conectar con Radarr."
+  },
+  "servicesSettings.radarr.testsuccess": {
+    "defaultMessage": "¡Conexión con Radarr establecida exitosamente!"
+  },
+  "servicesSettings.sonarr.testfailed": {
+    "defaultMessage": "Error al conectar con Sonarr."
+  },
+  "servicesSettings.sonarr.testsuccess": {
+    "defaultMessage": "¡Conexión con Sonarr establecida exitosamente!"
+  },
+  "servicesSettings.tautulli.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Tautulli. Streamarr obtiene datos del historial de visualización para tus medios de Plex desde Tautulli."
+  },
+  "servicesSettings.tautulli.title": {
+    "defaultMessage": "Configuración de Tautulli"
+  },
+  "servicesSettings.tdarr.description": {
+    "defaultMessage": "Configura los ajustes para tu servidor Tdarr."
+  },
+  "servicesSettings.tdarr.title": {
+    "defaultMessage": "Configuración de Tdarr"
+  },
+  "servicesSettings.uptime.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Uptime. Streamarr presenta tu enlace de tiempo de actividad a través del centro de ayuda."
+  },
+  "servicesSettings.uptime.title": {
+    "defaultMessage": "Configuración de Uptime"
+  },
+  "servicesSettings.urlBase.leadingSlash": {
+    "defaultMessage": "La URL base no debe tener una barra diagonal al inicio"
+  },
+  "servicesSettings.urlBase.noTrailingSlash": {
+    "defaultMessage": "La URL base no debe tener una barra diagonal al final"
+  },
+  "servicesSettings.urlBase.required": {
+    "defaultMessage": "La URL Base es requerida"
+  },
+  "servicesSettings.validation.apiKeyRequired": {
+    "defaultMessage": "Debes proporcionar una clave API"
+  },
+  "servicesSettings.validation.apikey": {
+    "defaultMessage": "Debes proporcionar una clave API válida"
+  },
+  "servicesSettings.validation.hostname": {
+    "defaultMessage": "Debes proporcionar un nombre de host válido o dirección IP"
+  },
+  "servicesSettings.validation.servername": {
+    "defaultMessage": "Debes proporcionar un nombre de servidor válido"
+  },
+  "servicesSettings.validation.urlNoTrailingSlash": {
+    "defaultMessage": "La URL no debe tener una barra diagonal al final"
+  },
+  "settings.accountType": {
+    "defaultMessage": "Tipo de Cuenta"
+  },
+  "settings.allowLiveTv": {
+    "defaultMessage": "Permitir Acceso a TV en Vivo"
+  },
+  "settings.enableTrialPeriod": {
+    "defaultMessage": "Habilitar Período de Prueba"
+  },
+  "settings.inviteQuota": {
+    "defaultMessage": "Cuota de Invitaciones"
+  },
+  "settings.librariesSynced": {
+    "defaultMessage": "Las bibliotecas se han sincronizado con Plex."
+  },
+  "settings.notifications": {
+    "defaultMessage": "Configuración de Notificaciones"
+  },
+  "settings.notifications.description": {
+    "defaultMessage": "Configurar y habilitar agentes de notificación.",
+    "description": "Professional Spanish translation"
+  },
+  "settings.overrideGlobalLimit": {
+    "defaultMessage": "Anular Límite Global"
+  },
+  "settings.permissions": {
+    "defaultMessage": "Permisos",
+    "description": "Spanish translation"
+  },
+  "settings.permissions.error": {
+    "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
+    "description": "Professional Spanish translation"
+  },
+  "settings.pinLibraries": {
+    "defaultMessage": "Anclar Bibliotecas"
+  },
+  "settings.pinLibrariesError": {
+    "defaultMessage": "Error al anclar bibliotecas"
+  },
+  "settings.pinLibrariesErrorMessage": {
+    "defaultMessage": "Ocurrió un error al anclar las bibliotecas"
+  },
+  "settings.pinLibrariesHelp": {
+    "defaultMessage": "Anclar todas tus bibliotecas compartidas a la pantalla de inicio de Plex"
+  },
+  "settings.pinLibrariesProcessing": {
+    "defaultMessage": "Anclando Bibliotecas..."
+  },
+  "settings.pinLibrariesProcessingMessage": {
+    "defaultMessage": "Por favor espera mientras anclamos tus bibliotecas a Plex"
+  },
+  "settings.pinLibrariesSuccess": {
+    "defaultMessage": "¡Bibliotecas ancladas exitosamente!"
+  },
+  "settings.pinLibrariesSuccessMessage": {
+    "defaultMessage": "{count} {count, plural, one {biblioteca anclada} other {bibliotecas ancladas}} a tu pantalla de inicio de Plex"
+  },
+  "settings.pinLibrariesToPlex": {
+    "defaultMessage": "Anclar Bibliotecas a Inicio de Plex"
+  },
+  "settings.pleaseWait": {
+    "defaultMessage": "Por favor espera"
+  },
+  "settings.plexAccess": {
+    "defaultMessage": "Acceso a Plex"
+  },
+  "settings.plexAccessDescription": {
+    "defaultMessage": "Los cambios se sincronizarán con Plex automáticamente al guardar."
+  },
+  "settings.saveError": {
+    "defaultMessage": "Algo salió mal al guardar la configuración."
+  },
+  "settings.trialPeriod": {
+    "defaultMessage": "Período de Prueba"
+  },
+  "settings.trialPeriodDefaultDays": {
+    "defaultMessage": "{count, plural, one {(Predeterminado: # día)} other {(Predeterminado: # días)}}"
+  },
+  "settings.trialPeriodEndDateDescription": {
+    "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha"
+  },
+  "settingsBadge.advanced.tooltip": {
+    "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
+  },
+  "settingsBadge.experimental.label": {
+    "defaultMessage": "Experimental"
+  },
+  "settingsBadge.experimental.tooltip": {
+    "defaultMessage": "Habilitar esta configuración puede resultar en comportamiento inesperado de la aplicación"
+  },
+  "settingsBadge.restartRequired.label": {
+    "defaultMessage": "Reinicio requerido"
+  },
+  "settingsBadge.restartRequired.tooltip": {
+    "defaultMessage": "Streamarr debe reiniciarse para que los cambios a esta configuración tengan efecto"
+  },
+  "setup.configurePlex": {
+    "defaultMessage": "Configurar Plex"
+  },
+  "setup.configureServices": {
+    "defaultMessage": "Configurar Servicios"
+  },
+  "setup.errorDuringSetup": {
+    "defaultMessage": "Error completando la configuración"
+  },
+  "setup.finishSetup": {
+    "defaultMessage": "Finalizar Configuración"
+  },
+  "setup.finishing": {
+    "defaultMessage": "Finalizando configuración..."
+  },
+  "setup.getStartedPlex": {
+    "defaultMessage": "Comienza iniciando sesión con tu cuenta de Plex"
+  },
+  "setup.loginError": {
+    "defaultMessage": "Error de inicio de sesión"
+  },
+  "setup.onlyEnabledLibraries": {
+    "defaultMessage": "Solo las bibliotecas habilitadas serán escaneadas."
+  },
+  "setup.signInWithPlex": {
+    "defaultMessage": "Iniciar sesión con Plex"
+  },
+  "setup.tip": {
+    "defaultMessage": "Consejo"
+  },
+  "setup.welcomeTo": {
+    "defaultMessage": "Bienvenido a {appName}"
+  },
+  "sidebar.authorizedDevices": {
+    "defaultMessage": "Dispositivos Autorizados"
+  },
+  "sidebar.general": {
     "defaultMessage": "General"
   },
-  "common.goBack": {
-    "defaultMessage": "Volver"
+  "sidebar.manageLibraryAccess": {
+    "defaultMessage": "Gestionar Acceso a Bibliotecas"
   },
-  "common.invite": {
-    "defaultMessage": "Invitación"
+  "sidebar.onlineMediaSources": {
+    "defaultMessage": "Fuentes de Medios en Línea"
   },
-  "common.indexers": {
-    "defaultMessage": "Indexadores"
+  "sidebar.player": {
+    "defaultMessage": "Reproductor"
   },
-  "common.issues": {
-    "defaultMessage": "Problemas"
+  "sidebar.privacy": {
+    "defaultMessage": "Privacidad"
   },
-  "common.jobsAndCache": {
-    "defaultMessage": "Trabajos y Cache"
+  "sidebar.quality": {
+    "defaultMessage": "Calidad"
   },
-  "common.lifetime": {
-    "defaultMessage": "De por vida"
+  "sidebar.settings": {
+    "defaultMessage": "Configuración"
   },
-  "common.logs": {
-    "defaultMessage": "Registros"
+  "sidebar.streamingServices": {
+    "defaultMessage": "Servicios de Streaming"
   },
-  "common.manageUsers": {
-    "defaultMessage": "Administrar Usuarios"
+  "signIn.description": {
+    "defaultMessage": "Usarás esta cuenta para iniciar sesión en {applicationTitle} y ver tus películas y series favoritas.",
+    "description": "Professional Spanish translation"
   },
-  "common.music": {
-    "defaultMessage": "Música"
+  "signIn.forgotPassword": {
+    "defaultMessage": "Espera, olvidé mi contraseña"
   },
-  "common.newPassword": {
-    "defaultMessage": "Nueva Contraseña"
+  "signIn.localAccount": {
+    "defaultMessage": "Iniciar sesión con {applicationTitle}",
+    "description": "Professional Spanish translation"
   },
-  "common.notifications": {
-    "defaultMessage": "Notificaciones"
+  "signIn.loginError": {
+    "defaultMessage": "Algo salió mal al intentar iniciar sesión."
   },
-  "common.noResults": {
-    "defaultMessage": "Sin Resultados"
+  "signIn.loginFailed": {
+    "defaultMessage": "¡Error de inicio de sesión! Algo salió mal, ¡intentemos de nuevo!",
+    "description": "Professional Spanish translation"
   },
-  "common.none": {
-    "defaultMessage": "Ninguno"
+  "signIn.newUser": {
+    "defaultMessage": "¿Nuevo en {applicationTitle}? {signUpLink}",
+    "description": "Professional Spanish translation"
   },
-  "common.notificationTypes": {
-    "defaultMessage": "Tipos de Notificación"
+  "signIn.passwordRequired": {
+    "defaultMessage": "Debes proporcionar una contraseña"
   },
-  "common.optional": {
-    "defaultMessage": "opcional"
+  "signIn.plexAccount": {
+    "defaultMessage": "Usa tu cuenta de {plex}",
+    "description": "Professional Spanish translation"
   },
-  "common.pastdays": {
-    "defaultMessage": "Días Pasados"
+  "signIn.rememberMe": {
+    "defaultMessage": "Recordarme"
   },
-  "common.pastdays.description": {
-    "defaultMessage": "Sincronizar eventos de los últimos X días"
+  "signIn.signUp": {
+    "defaultMessage": "Regístrate",
+    "description": "Professional Spanish translation"
   },
-  "common.print": {
-    "defaultMessage": "Imprimir"
+  "signIn.signingIn": {
+    "defaultMessage": "Iniciando Sesión…"
   },
-  "common.releaseSchedule": {
-    "defaultMessage": "Cronograma de Lanzamientos"
+  "signIn.title": {
+    "defaultMessage": "Inicia sesión para continuar",
+    "description": "Professional Spanish translation"
   },
-  "common.remaining": {
-    "defaultMessage": "restante"
+  "signUp.autoPinLibrariesFailed": {
+    "defaultMessage": "Error al anclar bibliotecas"
   },
-  "common.request": {
-    "defaultMessage": "Solicitud"
+  "signUp.autoPinLibrariesHelp": {
+    "defaultMessage": "Anclar automáticamente las bibliotecas compartidas a tu pantalla de inicio de Plex"
   },
-  "common.requests": {
-    "defaultMessage": "Solicitudes"
+  "signUp.confirmAccount": {
+    "defaultMessage": "Confirmar Cuenta"
   },
-  "common.resultsDisplay": {
-    "defaultMessage": "Mostrar {select} resultados por página"
+  "signUp.createAccount": {
+    "defaultMessage": "Crear Cuenta"
   },
-  "common.schedule": {
-    "defaultMessage": "Cronograma"
+  "signUp.createLocalAccount": {
+    "defaultMessage": "Crear cuenta de {applicationTitle}"
   },
-  "common.showAll": {
-    "defaultMessage": "Mostrar Todo"
+  "signUp.enterInviteCode": {
+    "defaultMessage": "Introducir Código de Invitación"
   },
-  "common.signIn": {
-    "defaultMessage": "Iniciar Sesión"
+  "signUp.errorDuringSignup": {
+    "defaultMessage": "Error durante el registro"
   },
-  "common.unknownUser": {
-    "defaultMessage": "Usuario Desconocido"
+  "signUp.errorDuringSignupFallback": {
+    "defaultMessage": "Se produjo un error durante el registro. Por favor, inténtalo de nuevo."
   },
-  "common.webApp": {
-    "defaultMessage": "Aplicación Web"
+  "signUp.getStartedInviteCode": {
+    "defaultMessage": "Comienza introduciendo tu código de invitación a continuación."
   },
-  "notFound.notFound": {
-    "defaultMessage": "No encontrado"
+  "signUp.loginWithPlex": {
+    "defaultMessage": "Regístrate con tu cuenta de {plexLogo}."
   },
-  "notFound.page": {
-    "defaultMessage": "Página"
+  "signUp.orEnterLocalAccount": {
+    "defaultMessage": "o introduce los detalles de la cuenta local"
   },
-  "notFound.quote": {
-    "defaultMessage": "Hay lugares allá afuera que no puedes encontrar en ningún mapa. No se han ido, solo están perdidos."
+  "signUp.pinLibraries": {
+    "defaultMessage": "Anclar Bibliotecas"
+  },
+  "signUp.plexAuthFailed": {
+    "defaultMessage": "Falló la autenticación de Plex"
+  },
+  "signUp.plexLoginError": {
+    "defaultMessage": "Error en el inicio de sesión de Plex"
+  },
+  "signUp.plexLoginIncomplete": {
+    "defaultMessage": "Inicio de sesión de Plex incompleto"
+  },
+  "signUp.plexLoginIncompleteMessage": {
+    "defaultMessage": "El inicio de sesión de Plex no se completó. Por favor, inténtalo de nuevo y asegúrate de terminar el proceso de inicio de sesión."
+  },
+  "signUp.plexRecommended": {
+    "defaultMessage": "(Plex es recomendado para la mejor experiencia)"
+  },
+  "signUp.registrationByInvite": {
+    "defaultMessage": "El registro es solo por invitación."
+  },
+  "signUp.reviewDetailsConfirm": {
+    "defaultMessage": "Revisa tus detalles a continuación y confirma tu cuenta."
+  },
+  "signUp.signInWithPlex": {
+    "defaultMessage": "Por favor, inicia sesión con tu cuenta de Plex {localLoginOption} para continuar con el proceso de registro. {plexRecommended}."
+  },
+  "signUp.welcomeTo": {
+    "defaultMessage": "Bienvenido a {applicationTitle}"
+  },
+  "sonarrSettings.addServer": {
+    "defaultMessage": "Agregar Servidor Sonarr"
+  },
+  "sonarrSettings.deleteTitle": {
+    "defaultMessage": "Eliminar Servidor Sonarr"
+  },
+  "sonarrSettings.description": {
+    "defaultMessage": "Configura tu(s) servidor(es) Sonarr a continuación. Puedes conectar múltiples servidores Sonarr, pero solo dos de ellos pueden marcarse como predeterminados (uno no-4K y uno 4K). Los administradores pueden anular el/los servidor(es) usado(s) para procesar nuevos eventos."
+  },
+  "sonarrSettings.no4kDefault": {
+    "defaultMessage": "Un servidor Sonarr 4K debe estar marcado como predeterminado para habilitar nuevos eventos Sonarr 4K."
+  },
+  "sonarrSettings.noDefaultServer": {
+    "defaultMessage": "Al menos un servidor Sonarr debe estar marcado como predeterminado para que los eventos de series de TV sean procesados."
+  },
+  "sonarrSettings.single4kWarning": {
+    "defaultMessage": "Si solo tienes un servidor Sonarr para contenido no-4K y 4K (o si solo descargas contenido 4K), tu servidor Sonarr NO debe ser designado como servidor 4K."
+  },
+  "sonarrSettings.title": {
+    "defaultMessage": "Configuración de Sonarr"
+  },
+  "userDropdown.account": {
+    "defaultMessage": "Cuenta"
+  },
+  "userDropdown.accountSettings": {
+    "defaultMessage": "Configuración de Cuenta"
+  },
+  "userDropdown.getSupport": {
+    "defaultMessage": "Obtener Soporte"
+  },
+  "userDropdown.signOut": {
+    "defaultMessage": "Cerrar Sesión de {applicationTitle}"
+  },
+  "userDropdown.watchHistory": {
+    "defaultMessage": "Historial de Visualización"
+  },
+  "userPermissions.admin.description": {
+    "defaultMessage": "Acceso completo de administrador. Omite todas las demás verificaciones de permisos."
+  },
+  "userPermissions.advancedInvites.description": {
+    "defaultMessage": "Conceder permiso para hacer invitaciones con usos ilimitados que nunca expiren. Los usuarios con este permiso también pueden modificar el permiso de descargas de Plex de las invitaciones y el código."
+  },
+  "userPermissions.advancedInvites.name": {
+    "defaultMessage": "Invitación Avanzada"
+  },
+  "userPermissions.createEvents.description": {
+    "defaultMessage": "Conceder permiso para crear eventos personalizados"
+  },
+  "userPermissions.createEvents.name": {
+    "defaultMessage": "Crear Eventos"
+  },
+  "userPermissions.createInvites.description": {
+    "defaultMessage": "Conceder permiso para crear invitaciones (de acuerdo a sus cuotas)."
+  },
+  "userPermissions.createInvites.name": {
+    "defaultMessage": "Crear Invitaciones"
+  },
+  "userPermissions.createNotifications.description": {
+    "defaultMessage": "Otorgar permiso para crear notificaciones personalizadas."
+  },
+  "userPermissions.createNotifications.name": {
+    "defaultMessage": "Crear Notificaciones"
+  },
+  "userPermissions.error": {
+    "defaultMessage": "Algo salió mal al guardar los permisos de usuario."
+  },
+  "userPermissions.manageEvents.description": {
+    "defaultMessage": "Conceder permiso para gestionar eventos. Los usuarios con este permiso pueden editar o eliminar eventos creados por otros."
+  },
+  "userPermissions.manageInvites.description": {
+    "defaultMessage": "Conceder permiso para gestionar invitaciones. Todas las invitaciones hechas por un usuario con este permiso pueden ser modificadas."
+  },
+  "userPermissions.manageInvites.name": {
+    "defaultMessage": "Gestionar Invitaciones"
+  },
+  "userPermissions.manageNotifications.description": {
+    "defaultMessage": "Otorgar permiso para gestionar notificaciones. Los usuarios con este permiso pueden editar o eliminar notificaciones hechas por otros."
+  },
+  "userPermissions.manageNotifications.name": {
+    "defaultMessage": "Gestionar Notificaciones"
+  },
+  "userPermissions.manageUsers.description": {
+    "defaultMessage": "Conceder permiso para gestionar usuarios. Los usuarios con este permiso no pueden modificar usuarios con o conceder el privilegio de Administrador."
+  },
+  "userPermissions.request.description": {
+    "defaultMessage": "Conceder permiso para acceder a solicitudes (nota: el acceso en overseerr también debe ser concedido)"
+  },
+  "userPermissions.streamarr.description": {
+    "defaultMessage": "Conceder permiso para ver, solicitar, invitar y ver el horario."
+  },
+  "userPermissions.streamarr.name": {
+    "defaultMessage": "Streamarr"
+  },
+  "userPermissions.success": {
+    "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
+  },
+  "userPermissions.title": {
+    "defaultMessage": "Editar Permisos de Usuario"
+  },
+  "userPermissions.viewInvites.description": {
+    "defaultMessage": "Otorga permiso para ver invitaciones de otros usuarios."
+  },
+  "userPermissions.viewInvites.name": {
+    "defaultMessage": "Ver Invitaciones"
+  },
+  "userPermissions.viewNotifications.description": {
+    "defaultMessage": "Otorgar permiso para ver notificaciones de otros."
+  },
+  "userPermissions.viewNotifications.name": {
+    "defaultMessage": "Ver Notificaciones"
+  },
+  "userPermissions.viewSchedule.description": {
+    "defaultMessage": "Otorga permiso para ver el cronograma de lanzamientos."
+  },
+  "userPermissions.viewSchedule.name": {
+    "defaultMessage": "Ver Cronograma"
+  },
+  "userSettings.InviteSettings": {
+    "defaultMessage": "Configuración de invitaciones predeterminada"
+  },
+  "userSettings.InviteSettingsDescription": {
+    "defaultMessage": "Configuración inicial asociada a nuevas invitaciones"
+  },
+  "userSettings.browser": {
+    "defaultMessage": "Navegador"
+  },
+  "userSettings.cannotModifyOwnPermissions": {
+    "defaultMessage": "No puedes modificar tus propios permisos",
+    "description": "Professional Spanish translation"
+  },
+  "userSettings.defaultPermissions": {
+    "defaultMessage": "Permisos predeterminados"
+  },
+  "userSettings.defaultPermissionsDescription": {
+    "defaultMessage": "Permisos iniciales asignados a nuevos usuarios"
+  },
+  "userSettings.defaultSharedLibraries": {
+    "defaultMessage": "Bibliotecas compartidas predeterminadas"
+  },
+  "userSettings.defaultSharedLibrariesDescription": {
+    "defaultMessage": "Bibliotecas iniciales compartidas con nuevos usuarios"
+  },
+  "userSettings.description": {
+    "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
+  },
+  "userSettings.enableTrialPeriod": {
+    "defaultMessage": "Habilitar Período de Prueba"
+  },
+  "userSettings.enableTrialPeriodDescription": {
+    "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"
+  },
+  "userSettings.engine": {
+    "defaultMessage": "Motor"
+  },
+  "userSettings.inviteLimit": {
+    "defaultMessage": "Límite de invitaciones predeterminado"
+  },
+  "userSettings.inviteLimitDescription": {
+    "defaultMessage": "Establecer el límite de invitaciones predeterminado para nuevos usuarios."
+  },
+  "userSettings.inviteUsageLimit": {
+    "defaultMessage": "{count, plural, one {uso por invitación} other {usos por invitación}}"
+  },
+  "userSettings.localLogin": {
+    "defaultMessage": "Habilitar inicio de sesión local"
+  },
+  "userSettings.localLoginDescription": {
+    "defaultMessage": "Permitir a los usuarios iniciar sesión usando su dirección de correo electrónico y contraseña, en lugar de Plex OAuth"
+  },
+  "userSettings.manageDevices": {
+    "defaultMessage": "Administrar dispositivos"
+  },
+  "userSettings.noWebPushSubscriptions": {
+    "defaultMessage": "No tienes suscripciones de notificaciones web para mostrar."
+  },
+  "userSettings.notifications.deleteSubscription": {
+    "defaultMessage": "Eliminar suscripción"
+  },
+  "userSettings.notifications.disableWebPush": {
+    "defaultMessage": "Deshabilitar notificaciones web"
+  },
+  "userSettings.notifications.emailTitle": {
+    "defaultMessage": "Notificaciones por correo electrónico"
+  },
+  "userSettings.notifications.enableWebPush": {
+    "defaultMessage": "Habilitar notificaciones web"
+  },
+  "userSettings.notifications.inAppTitle": {
+    "defaultMessage": "Notificaciones en la Aplicación"
+  },
+  "userSettings.notifications.subscriptionActive": {
+    "defaultMessage": "Suscripción activa"
+  },
+  "userSettings.notifications.subscriptionDeleteError": {
+    "defaultMessage": "Error al eliminar la suscripción"
+  },
+  "userSettings.notifications.subscriptionDeleted": {
+    "defaultMessage": "Suscripción eliminada"
+  },
+  "userSettings.notifications.webpushDisableError": {
+    "defaultMessage": "Error al deshabilitar las notificaciones web push"
+  },
+  "userSettings.notifications.webpushDisabled": {
+    "defaultMessage": "Notificaciones web push deshabilitadas"
+  },
+  "userSettings.notifications.webpushEnableError": {
+    "defaultMessage": "Error al habilitar las notificaciones web push"
+  },
+  "userSettings.notifications.webpushEnabled": {
+    "defaultMessage": "Notificaciones web push habilitadas"
+  },
+  "userSettings.notifications.webpushTitle": {
+    "defaultMessage": "Configuración de Notificaciones Web Push"
+  },
+  "userSettings.operatingSystem": {
+    "defaultMessage": "Sistema operativo"
   },
   "userSettings.password.confirmRequired": {
     "defaultMessage": "Debe confirmar la nueva contraseña"
@@ -1937,6 +2277,28 @@
   "userSettings.password.saveSuccess": {
     "defaultMessage": "¡Contraseña guardada exitosamente!"
   },
+  "userSettings.permissionsSaved": {
+    "defaultMessage": "Permisos de usuario guardados exitosamente",
+    "description": "Spanish translation"
+  },
+  "userSettings.pgpPublicKey": {
+    "defaultMessage": "Clave Pública PGP"
+  },
+  "userSettings.pgpPublicKeyDescription": {
+    "defaultMessage": "Clave pública PGP para encriptar notificaciones por correo electrónico"
+  },
+  "userSettings.plexLogin": {
+    "defaultMessage": "Inicio de Sesión de Plex"
+  },
+  "userSettings.plexLoginDescription": {
+    "defaultMessage": "Permitir que este usuario inicie sesión con su cuenta de Plex"
+  },
+  "userSettings.saveSuccess": {
+    "defaultMessage": "Configuración de usuario guardada exitosamente"
+  },
+  "userSettings.title": {
+    "defaultMessage": "Configuración de Usuario"
+  },
   "users.automaticallyGeneratePassword": {
     "defaultMessage": "Generar Contraseña Automáticamente"
   },
@@ -1945,6 +2307,9 @@
   },
   "users.configurePasswordGeneration": {
     "defaultMessage": "Configure una URL de aplicación y habilite las notificaciones por correo electrónico para permitir la generación automática de contraseñas."
+  },
+  "users.create": {
+    "defaultMessage": "Crear"
   },
   "users.createLocalUser": {
     "defaultMessage": "Crear Usuario Local"
@@ -1955,159 +2320,76 @@
   "users.createUserSuccess": {
     "defaultMessage": "¡Usuario creado exitosamente!"
   },
-  "generalSettings.extendedHome.label": {
-    "defaultMessage": "Habilitar Página de Inicio Extendida"
+  "users.creating": {
+    "defaultMessage": "Creando..."
   },
-  "generalSettings.logo.uploadError": {
-    "defaultMessage": "Error al subir los logos"
+  "users.deleteUser": {
+    "defaultMessage": "Eliminar Usuario"
   },
-  "generalSettings.releaseSched.label": {
-    "defaultMessage": "Habilitar Cronograma de Lanzamientos"
+  "users.deleteUserConfirmation": {
+    "defaultMessage": "¿Estás seguro de que deseas eliminar este usuario? Todos sus datos se eliminarán permanentemente. Esto no se puede deshacer."
   },
-  "generalSettings.supportEmail.label": {
-    "defaultMessage": "Correo de Soporte"
+  "users.deleteUserError": {
+    "defaultMessage": "Error al eliminar el usuario."
   },
-  "generalSettings.supportUrl.label": {
-    "defaultMessage": "URL de Obtener Soporte"
+  "users.deleteUserSuccess": {
+    "defaultMessage": "¡Usuario eliminado exitosamente!"
   },
-  "generalSettings.trustProxy.description": {
-    "defaultMessage": "Permitir que Streamarr registre correctamente las direcciones IP de clientes detrás de un proxy"
+  "users.deleting": {
+    "defaultMessage": "Eliminando..."
   },
-  "generalSettings.trustProxy.label": {
-    "defaultMessage": "Habilitar Soporte de Proxy"
+  "users.emailAlreadyInUse": {
+    "defaultMessage": "La dirección de correo electrónico proporcionada ya está en uso por otro usuario."
   },
-  "generalSettings.validation.applicationTitle": {
-    "defaultMessage": "Debe proporcionar un título de aplicación"
+  "users.emailGeneratedPassword": {
+    "defaultMessage": "Enviar por correo electrónico una contraseña generada por el servidor al usuario"
   },
-  "generalSettings.validation.supportUrl": {
-    "defaultMessage": "Debe proporcionar una URL válida"
+  "users.invitedBy": {
+    "defaultMessage": "Invitado por"
   },
-  "library.liveTV": {
-    "defaultMessage": "TV en Vivo",
-    "description": "Translation restored after checkpoint"
+  "users.localSignInDisabled": {
+    "defaultMessage": "La configuración Habilitar Inicio de Sesión Local está actualmente deshabilitada."
   },
-  "common.active": {
-    "defaultMessage": "Activo",
-    "description": "Spanish translation"
+  "users.sortInviteCount": {
+    "defaultMessage": "Recuento de Invitaciones"
   },
-  "common.adminCentre": {
-    "defaultMessage": "Centro de Administración",
-    "description": "Spanish translation"
+  "users.sortJoinDate": {
+    "defaultMessage": "Fecha de Registro"
   },
-  "common.continue": {
-    "defaultMessage": "Continuar",
-    "description": "Spanish translation"
+  "users.title": {
+    "defaultMessage": "Lista de Usuarios"
   },
-  "common.copiedToClipboard": {
-    "defaultMessage": "¡{item} copiado al portapapeles!",
-    "description": "Spanish translation"
+  "webpushNotifications.httpsRequired": {
+    "defaultMessage": "Para recibir notificaciones web push, Streamarr debe servirse sobre HTTPS."
   },
-  "common.expired": {
-    "defaultMessage": "Expirado",
-    "description": "Spanish translation"
+  "webpushNotifications.saveError": {
+    "defaultMessage": "Error al guardar la configuración de notificaciones web push."
   },
-  "common.inactive": {
-    "defaultMessage": "Inactivo",
-    "description": "Spanish translation"
+  "webpushNotifications.saveSuccess": {
+    "defaultMessage": "¡Configuración de notificaciones web push guardada exitosamente!"
   },
-  "common.loading": {
-    "defaultMessage": "Cargando",
-    "description": "Spanish translation"
+  "webpushNotifications.testError": {
+    "defaultMessage": "Error al enviar notificación de prueba web push."
   },
-  "common.redeemed": {
-    "defaultMessage": "Canjeado",
-    "description": "Spanish translation"
+  "webpushNotifications.testSending": {
+    "defaultMessage": "Enviando notificación de prueba web push…"
   },
-  "common.selectTab": {
-    "defaultMessage": "Seleccionar una Pestaña",
-    "description": "Spanish translation"
+  "webpushNotifications.testSuccess": {
+    "defaultMessage": "¡Notificación de prueba web push enviada!"
   },
-  "common.signingIn": {
-    "defaultMessage": "Iniciando Sesión...",
-    "description": "Spanish translation"
+  "welcome.acknowledge": {
+    "defaultMessage": "Reconocer"
   },
-  "common.webPush": {
-    "defaultMessage": "Notificaciones Web",
-    "description": "Professional Spanish translation"
+  "welcome.headsUp": {
+    "defaultMessage": "¡Hola! - ¡Solo un pequeño aviso!"
   },
-  "generalSettings.validation.port": {
-    "defaultMessage": "Número de puerto inválido",
-    "description": "Professional Spanish translation"
+  "welcome.moreToCome": {
+    "defaultMessage": "¡Hay mucho más por venir, así que mantente atento y vuelve a revisar más tarde!"
   },
-  "resetPassword.email.label": {
-    "defaultMessage": "Por favor, introduce la dirección de correo electrónico asociada a tu cuenta local.",
-    "description": "Professional Spanish translation"
+  "welcome.welcomeTo": {
+    "defaultMessage": "Bienvenido a"
   },
-  "resetPassword.email.note": {
-    "defaultMessage": "Ten en cuenta que los usuarios de Plex deben restablecer su contraseña desde la ventana de inicio de sesión de {plexLogo}.",
-    "description": "Professional Spanish translation"
-  },
-  "email.required": {
-    "defaultMessage": "Debes proporcionar una dirección de correo electrónico válida",
-    "description": "Spanish translation"
-  },
-  "resetPassword.email.sent": {
-    "defaultMessage": "Revisa tu correo electrónico",
-    "description": "Professional Spanish translation"
-  },
-  "resetPassword.email.sent.label": {
-    "defaultMessage": "Por favor, revisa tu correo electrónico para acceder al enlace de restablecimiento de contraseña.",
-    "description": "Professional Spanish translation"
-  },
-  "resetPassword.email.sent.note": {
-    "defaultMessage": "Si no lo recibes, tu dirección puede ser incorrecta o no estar asociada a una cuenta existente.",
-    "description": "Professional Spanish translation"
-  },
-  "resetPassword.help": {
-    "defaultMessage": "Espera, necesito más ayuda",
-    "description": "Professional Spanish translation"
-  },
-  "settings.notifications.description": {
-    "defaultMessage": "Configurar y habilitar agentes de notificación.",
-    "description": "Professional Spanish translation"
-  },
-  "settings.permissions": {
-    "defaultMessage": "Permisos",
-    "description": "Spanish translation"
-  },
-  "settings.permissions.error": {
-    "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.description": {
-    "defaultMessage": "Usarás esta cuenta para iniciar sesión en {applicationTitle} y ver tus películas y series favoritas.",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.localAccount": {
-    "defaultMessage": "Iniciar sesión con {applicationTitle}",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.loginFailed": {
-    "defaultMessage": "¡Error de inicio de sesión! Algo salió mal, ¡intentemos de nuevo!",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.newUser": {
-    "defaultMessage": "¿Nuevo en {applicationTitle}? {signUpLink}",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.plexAccount": {
-    "defaultMessage": "Usa tu cuenta de {plex}",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.signUp": {
-    "defaultMessage": "Regístrate",
-    "description": "Professional Spanish translation"
-  },
-  "signIn.title": {
-    "defaultMessage": "Inicia sesión para continuar",
-    "description": "Professional Spanish translation"
-  },
-  "userSettings.cannotModifyOwnPermissions": {
-    "defaultMessage": "No puedes modificar tus propios permisos",
-    "description": "Professional Spanish translation"
-  },
-  "userSettings.permissionsSaved": {
-    "defaultMessage": "Permisos de usuario guardados exitosamente",
-    "description": "Spanish translation"
+  "welcome.workInProgress": {
+    "defaultMessage": "Esto todavía es muy experimental y le faltan algunas funciones. Si encuentras problemas, por favor sigue intentando o contacta a nickelsh1ts."
   }
 }

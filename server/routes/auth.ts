@@ -283,11 +283,49 @@ authRoutes.post('/local', async (req, res, next) => {
 authRoutes.post('/logout', (req, res, next) => {
   req.session?.destroy((err) => {
     if (err) {
-      return next({ status: 500, message: 'Something went wrong.' });
+      return next({
+        status: 500,
+        message: 'Something went wrong.',
+      });
+    }
+    const settings = getSettings();
+    res.clearCookie('streamarr.sid', {
+      httpOnly: true,
+      sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    res.status(200).json({ status: 'ok' });
+  });
+});
+
+authRoutes.get('/plex/token', isAuthenticated(), async (req, res, next) => {
+  try {
+    const userRepository = getRepository(User);
+    const user = await userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.plexToken')
+      .where('user.id = :id', { id: req.user?.id })
+      .getOneOrFail();
+
+    if (!user || !user.plexToken) {
+      return next({ status: 404, message: 'Plex token not found' });
     }
 
-    return res.status(200).json({ status: 'ok' });
-  });
+    logger.debug('Plex token retrieved', {
+      label: 'API',
+      userId: user.id,
+      displayName: user.displayName,
+    });
+
+    res.status(200).json({ token: user.plexToken });
+  } catch (e) {
+    logger.error('Error fetching Plex token', {
+      label: 'API',
+      userId: req.user?.id,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    return next({ status: 500, message: 'Failed to retrieve Plex token' });
+  }
 });
 
 authRoutes.post('/reset-password', async (req, res, next) => {

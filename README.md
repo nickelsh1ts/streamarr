@@ -28,12 +28,13 @@ Currently under active development Streamarr aims to be a complete (or at least 
 - Built as a PWA so users can access on-the-go or on a PC.
 - Supports most\* Plex library types: Movies, TV Shows, Music and live TV.
 - An integrated Help Center for clear user instructions and support.
+- An integrated notification system with custom notification triggers.
 
 ## Planned Features
 
-- An integrated notification system with custom notification triggers.
 - Enable Customization of the Help Center.
 - Fully customizable email newsletters and communications.
+- Customizable & interactive "new user" tutorial/welcome
 - Theme and Logo customization.
 
 With more features planned!

@@ -1,24 +1,19 @@
 'use client';
 import type { eventProps } from '@app/components/Common/BigCalendar';
-import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import useLocale from '@app/hooks/useLocale';
 import { useUser, Permission } from '@app/hooks/useUser';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
-import {
-  ArrowDownTrayIcon,
-  ClockIcon,
-  TrashIcon,
-  XCircleIcon,
-} from '@heroicons/react/24/solid';
+import { ClockIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Field, Form, Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
 import * as Yup from 'yup';
 
 interface EventModalProps {
@@ -105,7 +100,7 @@ const DatePickerField = ({ values, ...props }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-primary"
+                className="text-primary-content"
               >
                 <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
                 <path
@@ -135,7 +130,7 @@ const DatePickerField = ({ values, ...props }) => {
                 id: 'common.startTime',
                 defaultMessage: 'Start Time',
               })}
-              icon={<ClockIcon className="text-primary" />}
+              icon={<ClockIcon className="text-primary-content" />}
             />
             <span className="text-primary text-xl font-bold mx-2"> - </span>
             <DatePicker
@@ -156,7 +151,7 @@ const DatePickerField = ({ values, ...props }) => {
                 id: 'common.endTime',
                 defaultMessage: 'End Time',
               })}
-              icon={<ClockIcon className="text-primary" />}
+              icon={<ClockIcon className="text-primary-content" />}
             />
           </div>
         </>
@@ -216,19 +211,40 @@ const EventModal = ({
       otherwise: (schema) => schema.notRequired(),
     }),
     allDay: Yup.boolean(),
+    sendNotification: Yup.boolean().test(
+      'not-past-event',
+      intl.formatMessage({
+        id: 'event.sendNotificationPastEvent',
+        defaultMessage: 'Cannot send notifications for past events',
+      }),
+      function (value) {
+        const { start } = this.parent;
+        // If sendNotification is true, ensure start date is not in the past
+        if (value === true && start && moment(start).isBefore(moment())) {
+          return false;
+        }
+        return true;
+      }
+    ),
   });
 
-  return (
-    <Modal
-      onCancel={() => {
-        onClose();
-        setEdit(false);
-      }}
-      title={edit ? 'Edit Event' : selectedEvent?.title || 'Create an Event'}
-      subtitle={edit ? null : subtitle}
-      show={open}
-    >
-      {selectedEvent && !edit ? (
+  // Determine if we're in view-only mode
+  const isViewMode = selectedEvent && !edit;
+  // Determine if we're creating a new event (no selectedEvent.id)
+  const isNewEvent = !selectedEvent?.id;
+
+  // View-only mode - no permissions check needed for the modal wrapper
+  if (isViewMode) {
+    return (
+      <Modal
+        onCancel={() => {
+          onClose();
+          setEdit(false);
+        }}
+        title={selectedEvent?.title || ''}
+        subtitle={subtitle}
+        show={open}
+      >
         <div className="space-y-2">
           {selectedEvent.categories && selectedEvent.categories.length > 0 && (
             <div className="flex items-center text-neutral-400">
@@ -315,96 +331,165 @@ const EventModal = ({
               </div>
             )}
         </div>
-      ) : !hasPermission([Permission.MANAGE_EVENTS, Permission.CREATE_EVENTS], {
-          type: 'or',
-        }) || !open ? (
+      </Modal>
+    );
+  }
+
+  // Check permissions for create/edit mode
+  if (
+    !hasPermission([Permission.MANAGE_EVENTS, Permission.CREATE_EVENTS], {
+      type: 'or',
+    }) ||
+    !open
+  ) {
+    return (
+      <Modal
+        onCancel={() => {
+          onClose();
+          setEdit(false);
+        }}
+        title=""
+        show={open}
+      >
         <span>
           <FormattedMessage
             id="calendar.noEventSelected"
             defaultMessage="No event selected."
           />
         </span>
-      ) : (
-        <Formik
-          enableReinitialize
-          initialValues={{
-            uid: selectedEvent?.uid ?? '',
-            summary: selectedEvent?.title ?? '',
-            description: selectedEvent?.description ?? '',
-            start: selectedEvent?.start ?? new Date(),
-            end:
-              selectedEvent?.end ??
-              (() => {
-                const date = new Date();
-                date.setHours(date.getHours() + 1);
-                return date;
-              })(),
-            allDay: selectedEvent?.allDay ?? false,
-            categories: selectedEvent?.categories ?? '',
-            status: selectedEvent?.status ?? 'TENTATIVE',
-          }}
-          validationSchema={EventSchema}
-          onSubmit={async (values) => {
-            try {
-              const submission = {
-                uid: values.uid ?? '',
-                summary: values.summary,
-                description: values.description,
-                start: values.start,
-                end: values.end,
-                allDay: values.allDay,
-                categories: values.categories,
-                status: values.status,
-              };
-              if (!selectedEvent?.id) {
-                await axios.post('/api/v1/calendar/local', submission);
+      </Modal>
+    );
+  }
+
+  // Create/Edit mode with Formik
+  return (
+    <Formik
+      enableReinitialize
+      initialValues={{
+        uid: selectedEvent?.uid ?? '',
+        summary: selectedEvent?.title ?? '',
+        description: selectedEvent?.description ?? '',
+        start: selectedEvent?.start ?? new Date(),
+        end:
+          selectedEvent?.end ??
+          (() => {
+            const date = new Date();
+            date.setHours(date.getHours() + 1);
+            return date;
+          })(),
+        allDay: selectedEvent?.allDay ?? false,
+        categories: selectedEvent?.categories ?? '',
+        status: selectedEvent?.status ?? 'TENTATIVE',
+        sendNotification: selectedEvent?.sendNotification ?? false,
+      }}
+      validationSchema={EventSchema}
+      onSubmit={async (values, { resetForm }) => {
+        try {
+          const submission = {
+            uid: values.uid ?? '',
+            summary: values.summary,
+            description: values.description,
+            start: values.start,
+            end: values.end,
+            allDay: values.allDay,
+            categories: values.categories,
+            status: values.status,
+            sendNotification: values.sendNotification,
+          };
+          if (!selectedEvent?.id) {
+            await axios.post('/api/v1/calendar/local', submission);
+          } else {
+            await axios.put(
+              `/api/v1/calendar/local/${selectedEvent.id}`,
+              submission
+            );
+          }
+          resetForm();
+          onSave();
+          setEdit(false);
+        } catch (e) {
+          Toast({
+            title: intl.formatMessage({
+              id: 'common.eventError',
+              defaultMessage: 'Something went wrong while saving the event',
+            }),
+            message: e.message,
+            type: 'error',
+            icon: <XCircleIcon className="size-7" />,
+          });
+        }
+      }}
+    >
+      {({ errors, touched, values, handleSubmit, isSubmitting, isValid }) => {
+        return (
+          <Modal
+            onCancel={() => {
+              if (isNewEvent) {
+                // Close modal for new events
+                onClose();
               } else {
-                await axios.put(
-                  `/api/v1/calendar/local/${selectedEvent.id}`,
-                  submission
-                );
+                // Revert to view mode for existing events
+                setEdit(false);
               }
-              onSave();
-              setEdit(false);
-            } catch (e) {
-              Toast({
-                title: intl.formatMessage({
-                  id: 'common.eventError',
-                  defaultMessage: 'Something went wrong while saving the event',
-                }),
-                message: e.message,
-                type: 'error',
-                icon: <XCircleIcon className="size-7" />,
-              });
+            }}
+            cancelText={intl.formatMessage({
+              id: 'common.cancel',
+              defaultMessage: 'Cancel',
+            })}
+            cancelButtonType="default"
+            okButtonType="primary"
+            okText={
+              isSubmitting
+                ? intl.formatMessage({
+                    id: 'common.saving',
+                    defaultMessage: 'Saving...',
+                  })
+                : isNewEvent
+                  ? intl.formatMessage({
+                      id: 'common.createEvent',
+                      defaultMessage: 'Create Event',
+                    })
+                  : intl.formatMessage({
+                      id: 'common.saveChanges',
+                      defaultMessage: 'Save Changes',
+                    })
             }
-          }}
-        >
-          {({
-            errors,
-            touched,
-            values,
-            handleSubmit,
-            isSubmitting,
-            isValid,
-          }) => (
-            <Form className="space-y-2" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="summary">
+            onOk={() => handleSubmit()}
+            okDisabled={isSubmitting || !isValid}
+            title={
+              isNewEvent
+                ? intl.formatMessage({
+                    id: 'calendar.createEvent',
+                    defaultMessage: 'Create an Event',
+                  })
+                : intl.formatMessage({
+                    id: 'calendar.editEvent',
+                    defaultMessage: 'Edit Event',
+                  })
+            }
+            show={open}
+          >
+            <Form className="space-y-2">
+              <div className="border-t border-primary pt-4">
+                <label
+                  htmlFor="summary"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   <FormattedMessage
                     id="calendar.eventSummary"
                     defaultMessage="Summary"
                   />
-                  <span className="text-error ml-2">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      name="summary"
-                      id="summary"
-                      type="text"
-                      className="input input-sm input-primary w-full"
-                    />
-                  </div>
+                <div>
+                  <Field
+                    id="summary"
+                    name="summary"
+                    type="text"
+                    className={`input input-sm input-primary rounded-md w-full ${
+                      errors.summary && touched.summary ? 'input-error' : ''
+                    }`}
+                  />
                   {errors.summary &&
                     touched.summary &&
                     typeof errors.summary === 'string' && (
@@ -412,24 +497,28 @@ const EventModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="allDay">
+              <div>
+                <label
+                  htmlFor="allDay"
+                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                >
+                  <Field
+                    name="allDay"
+                    id="allDay"
+                    type="checkbox"
+                    className="checkbox checkbox-primary checkbox-sm"
+                  />
                   <FormattedMessage
                     id="calendar.eventAllDay"
                     defaultMessage="All Day Event"
                   />
                 </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    name="allDay"
-                    id="allDay"
-                    type="checkbox"
-                    className="checkbox checkbox-primary"
-                  />
-                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="dates">
+              <div>
+                <label
+                  htmlFor="dates"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   {!values.allDay ? (
                     <FormattedMessage
                       id="calendar.eventDates"
@@ -441,9 +530,9 @@ const EventModal = ({
                       defaultMessage="Date"
                     />
                   )}
-                  <span className="text-error ml-2">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2">
+                <div>
                   <DatePickerField
                     name="dates"
                     id="dates"
@@ -462,22 +551,27 @@ const EventModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="categories">
+              <div>
+                <label
+                  htmlFor="categories"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   <FormattedMessage
                     id="calendar.eventCategories"
                     defaultMessage="Categories"
                   />
-                  <span className="text-error ml-2">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      name="categories"
-                      id="categories"
-                      className="input input-sm input-primary w-full"
-                    />
-                  </div>
+                <div>
+                  <Field
+                    id="categories"
+                    name="categories"
+                    className={`input input-sm input-primary rounded-md w-full ${
+                      errors.categories && touched.categories
+                        ? 'input-error'
+                        : ''
+                    }`}
+                  />
                   {errors.categories &&
                     touched.categories &&
                     typeof errors.categories === 'string' && (
@@ -485,23 +579,29 @@ const EventModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="description">
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   <FormattedMessage
                     id="calendar.eventDescription"
                     defaultMessage="Description"
                   />
-                  <span className="text-error ml-2">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      name="description"
-                      id="description"
-                      as="textarea"
-                      className="textarea textarea-primary w-full leading-5"
-                    />
-                  </div>
+                <div>
+                  <Field
+                    as="textarea"
+                    id="description"
+                    name="description"
+                    rows={6}
+                    className={`input input-sm input-primary rounded-md w-full h-32 leading-normal ${
+                      errors.description && touched.description
+                        ? 'input-error'
+                        : ''
+                    }`}
+                  />
                   {errors.description &&
                     touched.description &&
                     typeof errors.description === 'string' && (
@@ -509,19 +609,49 @@ const EventModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="status">
+              <div>
+                <label
+                  htmlFor="sendNotification"
+                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                >
+                  <Field
+                    name="sendNotification"
+                    id="sendNotification"
+                    type="checkbox"
+                    className="checkbox checkbox-primary checkbox-sm"
+                    disabled={
+                      values.start &&
+                      moment(values.start).isBefore(moment()) &&
+                      !values.sendNotification
+                    }
+                  />
+                  <FormattedMessage
+                    id="calendar.sendNotification"
+                    defaultMessage="Send Notification"
+                  />
+                </label>
+                {errors.sendNotification && touched.sendNotification && (
+                  <div className="text-error text-sm mt-1">
+                    {errors.sendNotification}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   <FormattedMessage
                     id="calendar.eventStatus"
                     defaultMessage="Status"
                   />
                 </label>
-                <div className="sm:col-span-2">
+                <div>
                   <Field
-                    name="status"
-                    id="status"
                     as="select"
-                    className="select select-sm select-primary"
+                    id="status"
+                    name="status"
+                    className="select select-sm select-primary w-full"
                   >
                     <option value="TENTATIVE">
                       {intl.formatMessage({
@@ -544,13 +674,16 @@ const EventModal = ({
                   </Field>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="uid">
+              <div>
+                <label
+                  htmlFor="uid"
+                  className="block text-sm font-medium leading-6 text-left"
+                >
                   <FormattedMessage
                     id="calendar.eventId"
                     defaultMessage="UID"
                   />
-                  <span className="text-sm font-light text-neutral-300 ml-2">
+                  <span className="text-neutral-500 ml-2">
                     (
                     <FormattedMessage
                       id="common.optional"
@@ -559,45 +692,19 @@ const EventModal = ({
                     )
                   </span>
                 </label>
-                <div className="sm:col-span-2">
+                <div>
                   <Field
-                    name="uid"
                     id="uid"
-                    className="input input-sm input-primary w-full"
+                    name="uid"
+                    className="input input-sm input-primary rounded-md w-full"
                   />
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
-                  <Button
-                    buttonType="primary"
-                    buttonSize="sm"
-                    type="submit"
-                    disabled={isSubmitting || !isValid}
-                  >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>
-                      {isSubmitting ? (
-                        <FormattedMessage
-                          id="common.saving"
-                          defaultMessage="Saving..."
-                        />
-                      ) : (
-                        <FormattedMessage
-                          id="common.saveChanges"
-                          defaultMessage="Save Changes"
-                        />
-                      )}
-                    </span>
-                  </Button>
-                </span>
-              </div>
             </Form>
-          )}
-        </Formik>
-      )}
-    </Modal>
+          </Modal>
+        );
+      }}
+    </Formik>
   );
 };
 export default EventModal;

@@ -1,23 +1,38 @@
 'use client';
 import CachedImage from '@app/components/Common/CachedImage';
-import { NotificationContext } from '@app/context/NotificationContext';
+import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
   BellAlertIcon,
+  BellIcon,
   HomeIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
+import type { UserNotificationsResponse } from '@server/interfaces/api/userInterfaces';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
 
-const UserCard = () => {
+const UserCard = ({
+  notifications,
+}: {
+  notifications?: UserNotificationsResponse;
+}) => {
   const { user } = useUser();
   const path = usePathname();
-  const { setIsOpen } = useContext(NotificationContext);
+  const { setIsOpen } = useNotificationSidebar();
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
 
   const { hasPermission } = useUser();
+
+  const unRead =
+    notifications?.results.filter((notification) => !notification.isRead)
+      .length ?? 0;
 
   return (
     <div className="pointer-events-auto w-64 relative">
@@ -41,12 +56,22 @@ const UserCard = () => {
           </p>
         </div>
       </Link>
-      <div className="absolute top-1 right-1">
-        <button onClick={() => setIsOpen(true)} className="indicator">
-          <span className="indicator-item indicator-start left-2 top-2 badge badge-sm font-thin badge-error h-5 hidden"></span>
-          <BellAlertIcon className="size-8 m-1" />
-        </button>
-      </div>
+      {notificationSettings?.inAppEnabled && (
+        <div className="absolute top-1 right-1">
+          <button onClick={() => setIsOpen(true)} className="indicator">
+            {unRead > 0 && (
+              <span className="indicator-item indicator-top indicator-end top-2 right-2 badge badge-xs py-2 text-xs font-thin badge-error">
+                {unRead}
+              </span>
+            )}
+            {unRead > 0 ? (
+              <BellAlertIcon className="size-8 m-1" />
+            ) : (
+              <BellIcon className="size-8 m-1" />
+            )}
+          </button>
+        </div>
+      )}
       {path.match(/^\/(help\/?(.*)?|\/?$)/) && (
         <Link
           className={`btn btn-sm rounded-none w-full inline-flex justify-start btn-ghost`}

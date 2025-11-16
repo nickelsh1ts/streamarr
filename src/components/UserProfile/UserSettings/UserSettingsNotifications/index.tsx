@@ -3,7 +3,11 @@ import Error from '@app/app/error';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useUser } from '@app/hooks/useUser';
-import { CloudIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
+import {
+  BellAlertIcon,
+  CloudIcon,
+  EnvelopeIcon,
+} from '@heroicons/react/24/solid';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useParams, usePathname } from 'next/navigation';
 import useSWR from 'swr';
@@ -53,6 +57,21 @@ const UserSettingsNotifications = ({
       ),
       hidden: !data?.webPushEnabled,
       regex: /\/settings\/notifications\/webpush/,
+    },
+    {
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.inAppTitle',
+        defaultMessage: 'In-App Notifications',
+      }),
+      route: '/settings/notifications/inapp',
+      content: (
+        <span className="flex">
+          <BellAlertIcon className="size-5 mr-2" />{' '}
+          <FormattedMessage id="common.inApp" defaultMessage="In-App" />
+        </span>
+      ),
+      hidden: !data?.inAppEnabled,
+      regex: /\/settings\/notifications\/inapp/,
     },
   ].map((settingsRoute) => ({
     ...settingsRoute,

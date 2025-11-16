@@ -120,7 +120,7 @@ class PlexAPI {
     } catch (e) {
       logger.error('Failed to get Plex status', {
         label: 'Plex API',
-        errorMessage: e instanceof Error ? e.message : String(e),
+        errorMessage: e.message,
       });
       throw new Error('Failed to get Plex status');
     }

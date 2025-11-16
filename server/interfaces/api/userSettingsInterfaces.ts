@@ -17,6 +17,9 @@ export interface UserSettingsGeneralResponse {
   allowDownloads?: boolean;
   allowLiveTv?: boolean;
   globalSharedLibraries?: string;
+  trialPeriodEndsAt?: Date | null;
+  globalEnableTrialPeriod?: boolean;
+  globalTrialPeriodDays?: number;
 }
 
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;
@@ -24,5 +27,6 @@ export interface UserSettingsNotificationsResponse {
   emailEnabled?: boolean;
   pgpKey?: string;
   webPushEnabled?: boolean;
+  inAppEnabled?: boolean;
   notificationTypes: Partial<NotificationAgentTypes>;
 }

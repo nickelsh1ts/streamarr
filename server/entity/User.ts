@@ -30,6 +30,7 @@ import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import { AfterDate } from '@server/utils/dateHelpers';
 import { InviteStatus } from '@server/constants/invite';
 import Event from '@server/entity/Event';
+import { Notification } from '@server/entity/Notification';
 
 @Entity()
 export class User {
@@ -80,8 +81,8 @@ export class User {
   @Column({ nullable: true, select: false })
   public plexToken?: string;
 
-  @Column({ type: 'integer', default: 0 })
-  public permissions = 0;
+  @Column({ type: 'integer', default: 32 })
+  public permissions = 32;
 
   @Column()
   public avatar: string;
@@ -116,6 +117,12 @@ export class User {
   @OneToMany(() => Event, (event) => event.updatedBy)
   public modifiedEvents: Event[];
 
+  @OneToMany(() => Notification, (notification) => notification.createdBy)
+  public createdNotifications: Notification[];
+
+  @OneToMany(() => Notification, (notification) => notification.updatedBy)
+  public modifiedNotifications: Notification[];
+
   @OneToOne(() => UserSettings, (settings) => settings.user, {
     cascade: true,
     eager: true,
@@ -125,6 +132,9 @@ export class User {
 
   @OneToMany(() => UserPushSubscription, (pushSub) => pushSub.user)
   public pushSubscriptions: UserPushSubscription[];
+
+  @OneToMany(() => Notification, (notification) => notification.notifyUser)
+  public notifications: Notification[];
 
   @CreateDateColumn()
   public createdAt: Date;
@@ -220,20 +230,41 @@ export class User {
     this.displayName = this.username || this.plexUsername || this.email;
   }
 
+  public isInTrialPeriod(): boolean {
+    // Check if user.settings.trialPeriodEndsAt exists and is in the future
+    if (
+      !this.settings?.trialPeriodEndsAt ||
+      !getSettings().main.enableTrialPeriod ||
+      this.id === 1 ||
+      this.hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
+        type: 'or',
+      })
+    ) {
+      return false;
+    }
+    return new Date(this.settings.trialPeriodEndsAt) > new Date();
+  }
+
   public async getQuota(): Promise<QuotaResponse> {
     const {
       main: { defaultQuotas },
     } = getSettings();
     const inviteRepository = getRepository(Invite);
-    const canBypass = this.hasPermission([Permission.MANAGE_USERS], {
-      type: 'or',
-    });
+    const canBypass = this.hasPermission(
+      [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+      {
+        type: 'or',
+      }
+    );
 
     const inviteQuotaLimit = !canBypass
       ? (this.inviteQuotaLimit ?? defaultQuotas.invites.quotaLimit)
       : -1;
     const inviteQuotaDays =
       this.inviteQuotaDays ?? defaultQuotas.invites.quotaDays;
+
+    const inTrialPeriod = this.isInTrialPeriod();
+    const trialPeriodEndsAt = this.settings?.trialPeriodEndsAt ?? null;
 
     // Count invite invites made during quota period
     let inviteQuotaUsed: number;
@@ -261,6 +292,11 @@ export class User {
       inviteQuotaUsed = 0;
     }
 
+    const quotaExceeded =
+      inviteQuotaLimit &&
+      inviteQuotaLimit !== -1 &&
+      inviteQuotaLimit - inviteQuotaUsed <= 0;
+
     return {
       invite: {
         days: inviteQuotaDays,
@@ -270,11 +306,10 @@ export class User {
           ? Math.max(0, inviteQuotaLimit - inviteQuotaUsed)
           : null,
         restricted:
-          inviteQuotaLimit &&
-          inviteQuotaLimit != -1 &&
-          inviteQuotaLimit - inviteQuotaUsed <= 0
-            ? true
-            : false,
+          (inTrialPeriod && !canBypass) || quotaExceeded ? true : false,
+        trialPeriodActive: inTrialPeriod,
+        trialPeriodEndsAt: trialPeriodEndsAt,
+        trialPeriodEnabled: getSettings().main.enableTrialPeriod,
       },
     };
   }

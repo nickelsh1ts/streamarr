@@ -5,9 +5,10 @@ import type { NotificationAgentConfig } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import webpush from 'web-push';
-import { Notification } from '..';
+import { NotificationType } from '@server/constants/notification';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
+import { shouldSendAdminNotification } from '@server/lib/notifications';
 
 interface PushNotificationPayload {
   notificationType: string;
@@ -16,8 +17,6 @@ interface PushNotificationPayload {
   image?: string;
   actionUrl?: string;
   actionUrlTitle?: string;
-  requestId?: number;
-  pendingRequestsCount?: number;
   isAdmin?: boolean;
 }
 
@@ -36,23 +35,16 @@ class WebPushAgent
   }
 
   private getNotificationPayload(
-    type: Notification,
+    type: NotificationType,
     payload: NotificationPayload
   ): PushNotificationPayload {
-    let message: string | undefined;
-    switch (type) {
-      case Notification.TEST_NOTIFICATION:
-        message = payload.message;
-        break;
-      default:
-        return { notificationType: Notification[type], subject: 'Unknown' };
-    }
-
     return {
-      notificationType: Notification[type],
+      notificationType: NotificationType[type],
       subject: payload.subject,
-      message,
+      message: payload.message ?? '',
       image: payload.image,
+      actionUrl: payload.actionUrl,
+      actionUrlTitle: payload.actionUrlTitle,
       isAdmin: payload.isAdmin,
     };
   }
@@ -66,7 +58,7 @@ class WebPushAgent
   }
 
   public async send(
-    type: Notification,
+    type: NotificationType,
     payload: NotificationPayload
   ): Promise<boolean> {
     const userRepository = getRepository(User);
@@ -84,7 +76,7 @@ class WebPushAgent
       logger.debug('Sending web push notification', {
         label: 'Notifications',
         recipient: pushSub.user.displayName,
-        type: Notification[type],
+        type: NotificationType[type],
         subject: payload.subject,
       });
 
@@ -102,7 +94,7 @@ class WebPushAgent
           {
             label: 'Notifications',
             recipient: pushSub.user.displayName,
-            type: Notification[type],
+            type: NotificationType[type],
             subject: payload.subject,
             errorMessage: e.message,
           }
@@ -137,10 +129,12 @@ class WebPushAgent
         (user) =>
           // Check if user has webpush notifications enabled and fallback to true if undefined
           // since web push should default to true
-          user.settings?.hasNotificationType(
+          (user.settings?.hasNotificationType(
             NotificationAgentKey.WEBPUSH,
             type
-          ) ?? true
+          ) ??
+            true) &&
+          shouldSendAdminNotification(type, user, payload)
       );
 
       const allSubs = await userPushSubRepository

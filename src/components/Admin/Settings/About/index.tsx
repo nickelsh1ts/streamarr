@@ -38,24 +38,22 @@ const AboutSettings = () => {
   return (
     <div>
       <Alert type="primary">
-        <div className="ml-3 flex-1 md:flex md:justify-between">
-          <p className="text-sm leading-5">
-            <FormattedMessage
-              id="aboutSettings.preAlphaWarning"
-              defaultMessage="This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
-            />
-          </p>
-          <p className="mt-3 text-sm leading-5 md:mt-0 md:ml-6">
-            <a
-              href="https://github.com/nickelsh1ts/streamarr"
-              className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub <ArrowRightIcon className="size-4 inline-flex" />
-            </a>
-          </p>
-        </div>
+        <p className="text-sm leading-5 flex-1">
+          <FormattedMessage
+            id="aboutSettings.preAlphaWarning"
+            defaultMessage="This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+          />
+        </p>
+        <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
+          <a
+            href="https://github.com/nickelsh1ts/streamarr"
+            className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub <ArrowRightIcon className="size-4 inline-flex" />
+          </a>
+        </p>
       </Alert>
       <div className="mt-6">
         <List
@@ -67,7 +65,7 @@ const AboutSettings = () => {
           <div className="mt-4">
             {data.version.startsWith('develop-') && (
               <Alert>
-                <p className="ml-3 text-sm leading-5">
+                <p className="text-sm leading-5 flex-1">
                   <FormattedMessage
                     id="aboutSettings.developWarning"
                     defaultMessage="You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."

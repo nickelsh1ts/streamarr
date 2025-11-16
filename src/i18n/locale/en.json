@@ -117,7 +117,7 @@
     "defaultMessage": "Agenda"
   },
   "calendar.createEvent": {
-    "defaultMessage": "Create Event"
+    "defaultMessage": "Create an Event"
   },
   "calendar.createdBy": {
     "defaultMessage": "Created By:"
@@ -166,6 +166,9 @@
   },
   "calendar.noEventSelected": {
     "defaultMessage": "No event selected."
+  },
+  "calendar.sendNotification": {
+    "defaultMessage": "Send Notification"
   },
   "calendar.status": {
     "defaultMessage": "Status:"
@@ -263,8 +266,14 @@
   "common.copiedToClipboard": {
     "defaultMessage": "Copied {item} to Clipboard!"
   },
+  "common.createEvent": {
+    "defaultMessage": "Create Event"
+  },
   "common.currentPassword": {
     "defaultMessage": "Current Password"
+  },
+  "common.days": {
+    "defaultMessage": "{count, plural, one {# day} other {# days}}"
   },
   "common.default": {
     "defaultMessage": "Default"
@@ -332,6 +341,9 @@
   "common.hostname": {
     "defaultMessage": "Hostname or IP Address"
   },
+  "common.inApp": {
+    "defaultMessage": "In-App"
+  },
   "common.inactive": {
     "defaultMessage": "Inactive"
   },
@@ -364,6 +376,9 @@
   },
   "common.localUser": {
     "defaultMessage": "Local User"
+  },
+  "common.loggingOut": {
+    "defaultMessage": "Logging out..."
   },
   "common.logs": {
     "defaultMessage": "Logs"
@@ -425,11 +440,20 @@
   "common.port": {
     "defaultMessage": "Port"
   },
+  "common.preview": {
+    "defaultMessage": "Preview"
+  },
   "common.previous": {
     "defaultMessage": "Previous"
   },
   "common.print": {
     "defaultMessage": "Print"
+  },
+  "common.read": {
+    "defaultMessage": "read"
+  },
+  "common.recommended": {
+    "defaultMessage": "recommended"
   },
   "common.redeemed": {
     "defaultMessage": "Redeemed"
@@ -464,8 +488,14 @@
   "common.schedule": {
     "defaultMessage": "Schedule"
   },
+  "common.seeAll": {
+    "defaultMessage": "See all"
+  },
   "common.selectTab": {
     "defaultMessage": "Select a Tab"
+  },
+  "common.sendNotification": {
+    "defaultMessage": "Send Notification"
   },
   "common.servername": {
     "defaultMessage": "Server Name"
@@ -536,6 +566,9 @@
   "common.unlimited": {
     "defaultMessage": "Unlimited"
   },
+  "common.unread": {
+    "defaultMessage": "unread"
+  },
   "common.urlBase": {
     "defaultMessage": "URL Base"
   },
@@ -550,6 +583,9 @@
   },
   "common.users": {
     "defaultMessage": "Users"
+  },
+  "common.viewMore": {
+    "defaultMessage": "View More"
   },
   "common.webApp": {
     "defaultMessage": "Web App"
@@ -692,6 +728,9 @@
   "event.endDateRequired": {
     "defaultMessage": "You must provide a valid end date for non-all-day events"
   },
+  "event.sendNotificationPastEvent": {
+    "defaultMessage": "Cannot send notifications for past events"
+  },
   "event.startDateRequired": {
     "defaultMessage": "You must provide a valid start date"
   },
@@ -824,9 +863,6 @@
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "You must provide a valid URL"
   },
-  "help.githubLink": {
-    "defaultMessage": "GitHub"
-  },
   "help.helpCentre": {
     "defaultMessage": "Help Centre"
   },
@@ -899,6 +935,21 @@
   "imageCache.title": {
     "defaultMessage": "Image Cache"
   },
+  "inAppNotifications.enableAgent": {
+    "defaultMessage": "Enable Agent"
+  },
+  "inAppNotifications.saveError": {
+    "defaultMessage": "In App notification settings failed to save."
+  },
+  "inAppNotifications.saveSuccess": {
+    "defaultMessage": "In-app notification settings saved successfully."
+  },
+  "inAppNotifications.testError": {
+    "defaultMessage": "In App test notification failed to send."
+  },
+  "inAppNotifications.testSending": {
+    "defaultMessage": "Sending In App test notification…"
+  },
   "invite.advancedSettings": {
     "defaultMessage": "Advanced Settings"
   },
@@ -954,6 +1005,9 @@
     "defaultMessage": "Downloads"
   },
   "invite.editInvite": {
+    "defaultMessage": "Edit Invite"
+  },
+  "invite.editTitle": {
     "defaultMessage": "Edit Invite"
   },
   "invite.enable": {
@@ -1027,6 +1081,12 @@
   },
   "inviteList.sortMostRecent": {
     "defaultMessage": "Most Recent"
+  },
+  "inviteList.trialPeriodActive": {
+    "defaultMessage": "Trial Period Active"
+  },
+  "inviteList.trialPeriodMessage": {
+    "defaultMessage": "{self, select, true {You} other {They}} are currently in a trial period and cannot create invites until {date}."
   },
   "inviteShare.createAnother": {
     "defaultMessage": "Create Another"
@@ -1268,11 +1328,134 @@
   "notFound.quote": {
     "defaultMessage": "There are places out there you can't find on any map. They're not gone, they're just lost."
   },
+  "notification.deleteThis": {
+    "defaultMessage": "Delete this notification"
+  },
+  "notification.deletedError": {
+    "defaultMessage": "Error deleting notification"
+  },
+  "notification.earlier": {
+    "defaultMessage": "Earlier"
+  },
+  "notification.header": {
+    "defaultMessage": "Notifications"
+  },
+  "notification.inAppDisabled": {
+    "defaultMessage": "In App Notifications Disabled"
+  },
+  "notification.inviteExpired": {
+    "defaultMessage": "Invite Expired"
+  },
+  "notification.inviteExpired.description": {
+    "defaultMessage": "Get notified when an invite you created has expired"
+  },
   "notification.inviteUsedSuccessfully": {
     "defaultMessage": "Invite Redeemed Successfully"
   },
   "notification.inviteUsedSuccessfully.description": {
     "defaultMessage": "Get notified when an invite you sent has been successfully redeemed"
+  },
+  "notification.localMessages": {
+    "defaultMessage": "Streamarr Messages"
+  },
+  "notification.localMessages.description": {
+    "defaultMessage": "Get notified when you receive a message from Streamarr"
+  },
+  "notification.markAllAsRead": {
+    "defaultMessage": "Mark all as read"
+  },
+  "notification.markAsRead": {
+    "defaultMessage": "Mark as {isRead}"
+  },
+  "notification.newEvent": {
+    "defaultMessage": "New Event"
+  },
+  "notification.newEvent.description": {
+    "defaultMessage": "Get notified when a new Streamarr event is created"
+  },
+  "notification.newInvite": {
+    "defaultMessage": "New Invite Created"
+  },
+  "notification.newInvite.description": {
+    "defaultMessage": "Get notified when a new invite is created"
+  },
+  "notification.newReceived": {
+    "defaultMessage": "New Notification Received"
+  },
+  "notification.noUnread": {
+    "defaultMessage": "No unread notifications"
+  },
+  "notification.open": {
+    "defaultMessage": "Open Notifications"
+  },
+  "notification.readAllError": {
+    "defaultMessage": "Error marking all notifications as read"
+  },
+  "notification.readError": {
+    "defaultMessage": "Error marking notification as read"
+  },
+  "notification.sendNotification": {
+    "defaultMessage": "Send Notification"
+  },
+  "notification.settings": {
+    "defaultMessage": "Notification Settings"
+  },
+  "notification.signUpDisabledMessage": {
+    "defaultMessage": "The admin has currently disabled in-app notifications."
+  },
+  "notification.userCreated": {
+    "defaultMessage": "User Created"
+  },
+  "notification.userCreated.description": {
+    "defaultMessage": "Get notified when a new user is created"
+  },
+  "notificationModal.actionUrl": {
+    "defaultMessage": "Action URL"
+  },
+  "notificationModal.actionUrlInvalid": {
+    "defaultMessage": "Action URL must be a URL or base path starting with /"
+  },
+  "notificationModal.actionUrlRequired": {
+    "defaultMessage": "Action URL is required when Action URL Title is provided"
+  },
+  "notificationModal.actionUrlTitle": {
+    "defaultMessage": "Action URL Title"
+  },
+  "notificationModal.actionUrlTitleMax": {
+    "defaultMessage": "Action URL Title must not be more than 40 characters"
+  },
+  "notificationModal.descriptionMax": {
+    "defaultMessage": "Description must not be more than 150 characters"
+  },
+  "notificationModal.editNotification": {
+    "defaultMessage": "Edit Notification"
+  },
+  "notificationModal.message": {
+    "defaultMessage": "Message"
+  },
+  "notificationModal.notifyUsers": {
+    "defaultMessage": "Notify Users"
+  },
+  "notificationModal.notifyUsersRequired": {
+    "defaultMessage": "At least one user must be selected"
+  },
+  "notificationModal.saveError": {
+    "defaultMessage": "There was an error saving the notification"
+  },
+  "notificationModal.sendTitle": {
+    "defaultMessage": "Send a Notification"
+  },
+  "notificationModal.severity": {
+    "defaultMessage": "Severity"
+  },
+  "notificationModal.subject": {
+    "defaultMessage": "Subject"
+  },
+  "notificationModal.subjectMax": {
+    "defaultMessage": "Subject must not be more than 40 characters"
+  },
+  "notificationModal.subjectRequired": {
+    "defaultMessage": "Subject is required"
   },
   "plex.login.button": {
     "defaultMessage": "Sign in with"
@@ -1388,8 +1571,20 @@
   "profile.recentInvites": {
     "defaultMessage": "Recent Invites"
   },
+  "profile.recentNotifications": {
+    "defaultMessage": "Recent Notifications"
+  },
   "profile.totalInvites": {
     "defaultMessage": "Total Invites"
+  },
+  "profile.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "profile.trialPeriodEnds": {
+    "defaultMessage": "Ends {date}"
+  },
+  "profile.trialPeriodRestriction": {
+    "defaultMessage": "New invites can be generated after this date"
   },
   "profile.userId": {
     "defaultMessage": "User ID: {userId}"
@@ -1460,6 +1655,9 @@
   "schedule.untitled": {
     "defaultMessage": "Untitled"
   },
+  "selectUsers": {
+    "defaultMessage": "Select Users"
+  },
   "servicesSettings.bazarr.description": {
     "defaultMessage": "Optionally configure the settings for your Bazarr server."
   },
@@ -1526,6 +1724,9 @@
   "servicesSettings.urlBase.noTrailingSlash": {
     "defaultMessage": "URL Base must not end in a trailing slash"
   },
+  "servicesSettings.urlBase.required": {
+    "defaultMessage": "URL Base is required"
+  },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "You must provide an API key"
   },
@@ -1546,6 +1747,9 @@
   },
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.enableTrialPeriod": {
+    "defaultMessage": "Enable Trial Period"
   },
   "settings.inviteQuota": {
     "defaultMessage": "Invite Quota"
@@ -1568,6 +1772,36 @@
   "settings.permissions.error": {
     "defaultMessage": "You do not have permission to modify this user's settings."
   },
+  "settings.pinLibraries": {
+    "defaultMessage": "Pin Libraries"
+  },
+  "settings.pinLibrariesError": {
+    "defaultMessage": "Failed to pin libraries"
+  },
+  "settings.pinLibrariesErrorMessage": {
+    "defaultMessage": "An error occurred while pinning libraries"
+  },
+  "settings.pinLibrariesHelp": {
+    "defaultMessage": "Pin all your shared libraries to the Plex home screen"
+  },
+  "settings.pinLibrariesProcessing": {
+    "defaultMessage": "Pinning Libraries..."
+  },
+  "settings.pinLibrariesProcessingMessage": {
+    "defaultMessage": "Please wait while we pin your libraries to Plex"
+  },
+  "settings.pinLibrariesSuccess": {
+    "defaultMessage": "Libraries pinned successfully!"
+  },
+  "settings.pinLibrariesSuccessMessage": {
+    "defaultMessage": "{count} {count, plural, one {library} other {libraries}} pinned to your Plex home screen"
+  },
+  "settings.pinLibrariesToPlex": {
+    "defaultMessage": "Pin Libraries to Plex Home"
+  },
+  "settings.pleaseWait": {
+    "defaultMessage": "Please wait"
+  },
   "settings.plexAccess": {
     "defaultMessage": "Plex Access"
   },
@@ -1576,6 +1810,15 @@
   },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
+  },
+  "settings.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "settings.trialPeriodDefaultDays": {
+    "defaultMessage": "{count, plural, one {(Default: # day)} other {(Default: # days)}}"
+  },
+  "settings.trialPeriodEndDateDescription": {
+    "defaultMessage": "Cannot create invites until after this date"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
@@ -1688,6 +1931,12 @@
   "signIn.title": {
     "defaultMessage": "Sign in to continue"
   },
+  "signUp.autoPinLibrariesFailed": {
+    "defaultMessage": "Pinning libraries failed"
+  },
+  "signUp.autoPinLibrariesHelp": {
+    "defaultMessage": "Automatically pin shared libraries to your Plex home screen"
+  },
   "signUp.confirmAccount": {
     "defaultMessage": "Confirm Account"
   },
@@ -1714,6 +1963,9 @@
   },
   "signUp.orEnterLocalAccount": {
     "defaultMessage": "or enter local account details"
+  },
+  "signUp.pinLibraries": {
+    "defaultMessage": "Pin Libraries"
   },
   "signUp.plexAuthFailed": {
     "defaultMessage": "Plex authentication failed"
@@ -1799,6 +2051,12 @@
   "userPermissions.createInvites.name": {
     "defaultMessage": "Create Invites"
   },
+  "userPermissions.createNotifications.description": {
+    "defaultMessage": "Grant permission to create custom notifications."
+  },
+  "userPermissions.createNotifications.name": {
+    "defaultMessage": "Create Notifications"
+  },
   "userPermissions.error": {
     "defaultMessage": "Something went wrong while saving user permissions."
   },
@@ -1810,6 +2068,12 @@
   },
   "userPermissions.manageInvites.name": {
     "defaultMessage": "Manage Invites"
+  },
+  "userPermissions.manageNotifications.description": {
+    "defaultMessage": "Grant permission to manage notifications. Users with this permission can edit or remove notifications made by others."
+  },
+  "userPermissions.manageNotifications.name": {
+    "defaultMessage": "Manage Notifications"
   },
   "userPermissions.manageUsers.description": {
     "defaultMessage": "Grant permission to manage users. Users with this permission cannot modify users with or grant the Admin privilege."
@@ -1834,6 +2098,12 @@
   },
   "userPermissions.viewInvites.name": {
     "defaultMessage": "View Invites"
+  },
+  "userPermissions.viewNotifications.description": {
+    "defaultMessage": "Grant permission to view notifications of others."
+  },
+  "userPermissions.viewNotifications.name": {
+    "defaultMessage": "View Notifications"
   },
   "userPermissions.viewSchedule.description": {
     "defaultMessage": "Grant permission to view the release schedule."
@@ -1867,6 +2137,12 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
+  },
+  "userSettings.enableTrialPeriod": {
+    "defaultMessage": "Enable Trial Period"
+  },
+  "userSettings.enableTrialPeriodDescription": {
+    "defaultMessage": "Set a period of days where new users cannot create invites"
   },
   "userSettings.engine": {
     "defaultMessage": "Engine"
@@ -1903,6 +2179,9 @@
   },
   "userSettings.notifications.enableWebPush": {
     "defaultMessage": "Enable web push"
+  },
+  "userSettings.notifications.inAppTitle": {
+    "defaultMessage": "In-App Notifications"
   },
   "userSettings.notifications.subscriptionActive": {
     "defaultMessage": "Active Subscription"

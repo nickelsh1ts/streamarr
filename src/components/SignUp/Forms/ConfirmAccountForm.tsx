@@ -29,13 +29,15 @@ import {
 import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { FormattedMessage, useIntl } from 'react-intl';
+import Tabs from '@app/components/Common/Tabs';
+import Toggle from '@app/components/Common/Toggle';
 
 const ConfirmAccountForm = ({
   onComplete,
   user,
 }: {
   user: User;
-  onComplete: () => Promise<void> | void;
+  onComplete: (autoPinLibraries?: boolean) => Promise<void> | void;
 }) => {
   const [webPushEnabled, setWebPushEnabled] = useState(false);
   const { currentSettings } = useSettings();
@@ -204,6 +206,9 @@ const ConfirmAccountForm = ({
           notificationsData?.notificationTypes?.email ?? ALL_NOTIFICATIONS,
         webpushTypes:
           notificationsData?.notificationTypes?.webpush ?? ALL_NOTIFICATIONS,
+        inAppTypes:
+          notificationsData?.notificationTypes?.inApp ?? ALL_NOTIFICATIONS,
+        autoPinLibraries: true,
       }}
       enableReinitialize
       validationSchema={CombinedSchema}
@@ -227,11 +232,11 @@ const ConfirmAccountForm = ({
               confirmPassword: values.confirmPassword,
             });
           }
-          // Save notification settings (only notification types)
           await axios.post(`/api/v1/user/${user.id}/settings/notifications`, {
             notificationTypes: {
               email: values.emailTypes,
               webpush: values.webpushTypes,
+              inApp: values.inAppTypes,
             },
           });
           Toast({
@@ -242,7 +247,7 @@ const ConfirmAccountForm = ({
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
-          await onComplete();
+          await onComplete(values.autoPinLibraries);
         } catch (e) {
           Toast({
             title: intl.formatMessage({
@@ -378,6 +383,42 @@ const ConfirmAccountForm = ({
                 </Field>
               </div>
             </div>
+            {user?.userType === UserType.PLEX && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="autoPinLibraries" className="col-span-1">
+                  <FormattedMessage
+                    id="signUp.pinLibraries"
+                    defaultMessage="Pin Libraries"
+                  />
+                </label>
+                <div className="col-span-2 flex items-center gap-2">
+                  <Toggle
+                    id="autoPinLibraries"
+                    valueOf={values.autoPinLibraries}
+                    onClick={() =>
+                      setFieldValue(
+                        'autoPinLibraries',
+                        !values.autoPinLibraries
+                      )
+                    }
+                  />
+                  <Badge badgeType="primary">
+                    <span className="capitalize">
+                      <FormattedMessage
+                        id="common.recommended"
+                        defaultMessage="recommended"
+                      />
+                    </span>
+                  </Badge>
+                </div>
+                <div className="text-xs text-gray-400 !ml-0">
+                  <FormattedMessage
+                    id="signUp.autoPinLibrariesHelp"
+                    defaultMessage="Automatically pin shared libraries to your Plex home screen"
+                  />
+                </div>
+              </div>
+            )}
             {currentSettings?.localLogin && (
               <div className="mb-6 mt-3">
                 <h3 className="text-2xl font-extrabold mb-2">
@@ -485,74 +526,116 @@ const ConfirmAccountForm = ({
                   defaultMessage="Notification Settings"
                 />
               </h3>
-              <h4 className="text-xl font-semibold mb-1">
-                <FormattedMessage id="common.email" defaultMessage="Email" />
-              </h4>
-              <div className="max-w-6xl space-y-2">
-                <NotificationTypeSelector
-                  user={user}
-                  currentTypes={values.emailTypes}
-                  onUpdate={(newTypes) => {
-                    setFieldValue('emailTypes', newTypes);
-                    setFieldTouched('emailTypes');
-                  }}
-                  error={
-                    errors.emailTypes && touched.emailTypes
-                      ? (errors.emailTypes as string)
-                      : undefined
-                  }
-                />
-                <h4 className="text-xl font-semibold mb-1">
-                  <FormattedMessage
-                    id="common.webPush"
-                    defaultMessage="Web Push"
-                  />
-                </h4>
-                <div className="flex col-span-3 mt-4">
-                  <span className="inline-flex rounded-md shadow-sm">
-                    <Button
-                      buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
-                      type="button"
-                      buttonSize="sm"
-                      onClick={() =>
-                        webPushEnabled
-                          ? disablePushNotifications()
-                          : enablePushNotifications()
-                      }
-                    >
-                      {webPushEnabled ? (
-                        <CloudArrowDownIcon className="size-4 mr-2" />
-                      ) : (
-                        <CloudArrowUpIcon className="size-4 mr-2" />
-                      )}
-                      <span>
-                        {webPushEnabled
-                          ? intl.formatMessage({
-                              id: 'confirmAccount.disableWebPush',
-                              defaultMessage: 'Disable Web Push',
-                            })
-                          : intl.formatMessage({
-                              id: 'confirmAccount.enableWebPush',
-                              defaultMessage: 'Enable Web Push',
-                            })}
-                      </span>
-                    </Button>
-                  </span>
-                </div>
-                <NotificationTypeSelector
-                  user={user}
-                  currentTypes={values.webpushTypes}
-                  onUpdate={(newTypes) => {
-                    setFieldValue('webpushTypes', newTypes);
-                    setFieldTouched('webpushTypes');
-                  }}
-                  error={
-                    errors.webpushTypes && touched.webpushTypes
-                      ? (errors.webpushTypes as string)
-                      : undefined
-                  }
-                />
-              </div>
+              <Tabs
+                tabs={[
+                  {
+                    id: 'email-notifications',
+                    title: intl.formatMessage({
+                      id: 'common.email',
+                      defaultMessage: 'Email',
+                    }),
+                    content: (
+                      <div className="max-w-6xl space-y-2">
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.emailTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('emailTypes', newTypes);
+                            setFieldTouched('emailTypes');
+                          }}
+                          error={
+                            errors.emailTypes && touched.emailTypes
+                              ? (errors.emailTypes as string)
+                              : undefined
+                          }
+                          agent="email"
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'webpush-notifications',
+                    title: intl.formatMessage({
+                      id: 'common.webPush',
+                      defaultMessage: 'Web Push',
+                    }),
+                    content: (
+                      <div className="max-w-6xl space-y-2">
+                        <div className="flex col-span-3 mt-4 mb-4">
+                          <span className="inline-flex rounded-md shadow-sm">
+                            <Button
+                              buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
+                              type="button"
+                              buttonSize="sm"
+                              onClick={() =>
+                                webPushEnabled
+                                  ? disablePushNotifications()
+                                  : enablePushNotifications()
+                              }
+                            >
+                              {webPushEnabled ? (
+                                <CloudArrowDownIcon className="size-4 mr-2" />
+                              ) : (
+                                <CloudArrowUpIcon className="size-4 mr-2" />
+                              )}
+                              <span>
+                                {webPushEnabled
+                                  ? intl.formatMessage({
+                                      id: 'confirmAccount.disableWebPush',
+                                      defaultMessage: 'Disable Web Push',
+                                    })
+                                  : intl.formatMessage({
+                                      id: 'confirmAccount.enableWebPush',
+                                      defaultMessage: 'Enable Web Push',
+                                    })}
+                              </span>
+                            </Button>
+                          </span>
+                        </div>
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.webpushTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('webpushTypes', newTypes);
+                            setFieldTouched('webpushTypes');
+                          }}
+                          error={
+                            errors.webpushTypes && touched.webpushTypes
+                              ? (errors.webpushTypes as string)
+                              : undefined
+                          }
+                          agent="webpush"
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'inapp-notifications',
+                    title: intl.formatMessage({
+                      id: 'common.inApp',
+                      defaultMessage: 'In-App',
+                    }),
+                    content: (
+                      <div className="max-w-6xl space-y-2">
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.inAppTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('inAppTypes', newTypes);
+                            setFieldTouched('inAppTypes');
+                          }}
+                          error={
+                            errors.inAppTypes && touched.inAppTypes
+                              ? (errors.inAppTypes as string)
+                              : undefined
+                          }
+                          agent="inapp"
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </div>
           <Button

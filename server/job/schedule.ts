@@ -6,6 +6,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import schedule from 'node-schedule';
 import expiredInvites from '@server/lib/expiredInvites';
+import cleanUpNotifications from '@server/lib/cleanUpNotifications';
 
 interface ScheduledJob {
   id: JobId;
@@ -82,6 +83,20 @@ export const startJobs = (): void => {
         label: 'Jobs',
       });
       expiredInvites.run();
+    }),
+  });
+
+  scheduledJobs.push({
+    id: 'notification-cleanup',
+    name: 'Notification Cleanup',
+    type: 'process',
+    interval: 'hours',
+    cronSchedule: jobs['notification-cleanup']?.schedule,
+    job: schedule.scheduleJob(jobs['notification-cleanup']?.schedule, () => {
+      logger.info('Starting scheduled job: Notification Cleanup', {
+        label: 'Jobs',
+      });
+      cleanUpNotifications.run();
     }),
   });
 

@@ -1,9 +1,14 @@
+import type { IncomingMessage } from 'http';
+import type { Session as ExpressSession } from 'express-session';
 import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
 import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
 import notificationManager from '@server/lib/notifications';
+import LocalAgent, {
+  setSocketIO,
+} from '@server/lib/notifications/agents/inApp';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
@@ -25,6 +30,12 @@ import next from 'next';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import { Server as SocketIOServer } from 'socket.io';
+import { createServer } from 'http';
+
+interface SocketRequest extends IncomingMessage {
+  session?: ExpressSession & { userId?: number };
+}
 
 const API_SPEC_PATH = path.join(__dirname, '../streamarr-api.yml');
 
@@ -70,7 +81,11 @@ app
     }
 
     // Register Notification Agents
-    notificationManager.registerAgents([new EmailAgent(), new WebPushAgent()]);
+    notificationManager.registerAgents([
+      new EmailAgent(),
+      new WebPushAgent(),
+      new LocalAgent(),
+    ]);
     // Start Jobs
     startJobs();
     const server = express();
@@ -106,26 +121,48 @@ app
       });
     }
     // Set up sessions
-    const sessionRespository = getRepository(Session);
-    server.use(
-      '/api',
-      session({
-        secret: settings.clientId,
-        resave: false,
-        saveUninitialized: false,
-        name: 'streamarr.sid',
-        cookie: {
-          maxAge: 1000 * 60 * 60 * 24 * 30,
-          httpOnly: true,
-          sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
-          secure: 'auto',
-        },
-        store: new TypeormStore({
-          cleanupLimit: 2,
-          ttl: 60 * 60 * 24 * 30,
-        }).connect(sessionRespository) as Store,
-      })
-    );
+    const sessionRepository = getRepository(Session);
+    const sessionMiddleware = session({
+      secret: settings.clientId,
+      resave: false,
+      saveUninitialized: false,
+      name: 'streamarr.sid',
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+        sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+        secure: 'auto',
+      },
+      store: new TypeormStore({
+        cleanupLimit: 2,
+        ttl: 60 * 60 * 24 * 30,
+      }).connect(sessionRepository) as Store,
+    });
+    server.use('/api', sessionMiddleware);
+    const httpServer = createServer(server);
+    const io = new SocketIOServer(httpServer, {
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+      },
+    });
+    io.engine.use(sessionMiddleware);
+    server.set('io', io);
+    setSocketIO(io);
+    io.on('connection', async (socket) => {
+      const req = socket.request as SocketRequest;
+      // Check for valid session and user
+      if (!req.session || !req.session.userId || !req.session.userId) {
+        socket.disconnect(true);
+        return;
+      }
+      try {
+        socket.join(String(req.session.userId));
+      } catch {
+        socket.disconnect(true);
+        return;
+      }
+    });
     server.use('/imageproxy', clearCookies, imageproxy);
     server.use('/logo', clearCookies, logoRoutes);
     const apiDocs = YAML.load(API_SPEC_PATH);
@@ -169,13 +206,13 @@ app
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {
-      server.listen(port, host, () => {
+      httpServer.listen(port, host, () => {
         logger.info(`server ready on ${host} port ${port}`, {
           label: 'Server',
         });
       });
     } else {
-      server.listen(port, () => {
+      httpServer.listen(port, () => {
         logger.info(`server ready on port ${port}`, { label: 'Server' });
       });
     }

@@ -141,8 +141,8 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
       {data?.length ? (
         <>
           {settings.currentSettings.newPlexLogin && (
-            <Alert
-              title={
+            <Alert type="info">
+              <p className="text-sm font-medium text-info-content flex-1">
                 <FormattedMessage
                   id="plexImport.newSignIn.warning"
                   defaultMessage="The <strong>Enable New Plex Sign-In</strong> setting is currently enabled. Plex users with library access do not need to be imported in order to sign in."
@@ -152,9 +152,8 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                     ),
                   }}
                 />
-              }
-              type="info"
-            />
+              </p>
+            </Alert>
           )}
           <div className="flex flex-col">
             <div className="-mx-4 sm:mx-0">

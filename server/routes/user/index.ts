@@ -4,6 +4,7 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type {
+  UserNotificationsResponse,
   QuotaResponse,
   UserInvitesResponse,
   UserResultsResponse,
@@ -19,15 +20,17 @@ import PreparedEmail from '@server/lib/email';
 import path from 'path';
 import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
+import Notification from '@server/entity/Notification';
 
 const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const pageSize = req.query.take ? Number(req.query.take) : 10;
+    const pageSize = req.query.take ? Number(req.query.take) : undefined;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
     let query = getRepository(User)
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.settings', 'settings')
       .leftJoinAndSelect('user.redeemedInvite', 'redeemedInvite')
       .leftJoinAndSelect('redeemedInvite.createdBy', 'invitedBy');
 
@@ -58,17 +61,16 @@ router.get('/', async (req, res, next) => {
         break;
     }
 
-    const [users, userCount] = await query
-      .take(pageSize)
-      .skip(skip)
-      .getManyAndCount();
+    const [users, userCount] = await (
+      pageSize ? query.take(pageSize).skip(skip) : query
+    ).getManyAndCount();
 
     res.status(200).json({
       pageInfo: {
-        pages: Math.ceil(userCount / pageSize),
-        pageSize,
+        pages: pageSize ? Math.ceil(userCount / pageSize) : 1,
+        pageSize: pageSize ?? userCount,
         results: userCount,
-        page: Math.ceil(skip / pageSize) + 1,
+        page: pageSize ? Math.ceil(skip / pageSize) + 1 : 1,
       },
       results: User.filterMany(
         users,
@@ -288,8 +290,7 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
     res
       .status(200)
       .json(user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
+  } catch {
     next({ status: 404, message: 'User not found.' });
   }
 });
@@ -596,6 +597,301 @@ router.get<{ id: string }, QuotaResponse>(
       res.status(200).json(quotas);
     } catch (e) {
       next({ status: 404, message: e.message });
+    }
+  }
+);
+
+router.get<{ id: string }, UserNotificationsResponse>(
+  '/:id/notifications',
+  async (req, res, next) => {
+    const pageSize = req.query.take ? Number(req.query.take) : 20;
+    const skip = req.query.skip ? Number(req.query.skip) : 0;
+
+    try {
+      const user = await getRepository(User).findOneOrFail({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (
+        Number(req.params.id) !== req.user?.id &&
+        !req.user?.hasPermission(
+          [Permission.MANAGE_USERS, Permission.MANAGE_NOTIFICATIONS],
+          { type: 'and' }
+        )
+      ) {
+        return next({
+          status: 403,
+          message:
+            'You do not have permission to view this users notifications',
+        });
+      }
+
+      let isReadFilter: boolean[];
+
+      switch (req.query.filter) {
+        case 'unread':
+          isReadFilter = [false];
+          break;
+        case 'read':
+          isReadFilter = [true];
+          break;
+        default:
+          isReadFilter = [true, false];
+          break;
+      }
+
+      const [notifications, notificationCount] = await getRepository(
+        Notification
+      )
+        .createQueryBuilder('notification')
+        .leftJoinAndSelect('notification.notifyUser', 'user')
+        .leftJoinAndSelect('notification.createdBy', 'createdBy')
+        .leftJoinAndSelect('notification.updatedBy', 'updatedBy')
+        .where('user.id = :id', { id: user.id })
+        .andWhere('notification.isRead IN (:...isRead)', {
+          isRead: isReadFilter,
+        })
+        .orderBy('notification.createdAt', 'DESC')
+        .take(pageSize)
+        .skip(skip)
+        .getManyAndCount();
+
+      res.status(200).json({
+        pageInfo: {
+          pages: Math.ceil(notificationCount / pageSize),
+          pageSize,
+          results: notificationCount,
+          page: Math.ceil(skip / pageSize) + 1,
+        },
+        results: notifications,
+      });
+    } catch (e) {
+      next({ status: 404, message: e.message });
+    }
+  }
+);
+
+router.put<
+  { userId: string; notificationId: string },
+  Notification,
+  Notification
+>('/:userId/notifications/:notificationId', async (req, res, next) => {
+  try {
+    const userRepository = getRepository(User);
+    const notificationRepository = getRepository(Notification);
+
+    const user = await userRepository.findOneOrFail({
+      where: { id: Number(req.params.userId) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    if (
+      user.id !== req.user?.id &&
+      !req.user?.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message:
+          "You do not have permission to update this user's notifications.",
+      });
+    }
+
+    const notification = await notificationRepository.findOneOrFail({
+      where: { id: Number(req.params.notificationId) },
+      relations: ['createdBy', 'updatedBy', 'notifyUser'],
+    });
+
+    if (!notification) {
+      return next({ status: 404, message: 'Notification not found.' });
+    }
+    notificationRepository.merge(notification, req.body);
+    const updatedNotification = await notificationRepository.save(notification);
+
+    const io = req.app.get('io');
+    if (io) {
+      await io.to(String(req.params.userId)).emit('newNotification', {
+        id: notification.id,
+        isRead: notification.isRead,
+        action: 'updated',
+      });
+    }
+
+    res.status(200).json(updatedNotification);
+  } catch (e) {
+    next({ status: 404, message: e.message });
+  }
+});
+
+router.put<
+  { userId: string },
+  Notification[],
+  Partial<Notification> & { notificationIds?: number[] }
+>('/:userId/notifications', async (req, res, next) => {
+  try {
+    const userRepository = getRepository(User);
+    const notificationRepository = getRepository(Notification);
+
+    const user = await userRepository.findOneOrFail({
+      where: { id: Number(req.params.userId) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    // Extract notificationIds from request body
+    const { notificationIds, ...notificationUpdates } = req.body;
+
+    // Check if only updating isRead property
+    const isOnlyReadStatusUpdate =
+      Object.keys(notificationUpdates).length === 1 &&
+      'isRead' in notificationUpdates;
+
+    // Basic permission: user can update their own notifications, or admin can update any
+    if (
+      user.id !== req.user?.id &&
+      !req.user?.hasPermission(
+        [Permission.MANAGE_NOTIFICATIONS, Permission.MANAGE_USERS],
+        { type: 'and' }
+      )
+    ) {
+      return next({
+        status: 403,
+        message:
+          "You do not have permission to update this user's notifications.",
+      });
+    }
+
+    // Enhanced permission: for non-isRead updates, require notification management permissions
+    if (!isOnlyReadStatusUpdate) {
+      if (
+        !req.user?.hasPermission(
+          [Permission.CREATE_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
+          { type: 'or' }
+        )
+      ) {
+        return next({
+          status: 403,
+          message:
+            'You do not have permission to modify notification properties other than read status.',
+        });
+      }
+    }
+
+    // Build query based on whether specific notification IDs are provided
+    const whereCondition: {
+      notifyUser: { id: number };
+      id?: ReturnType<typeof In>;
+    } = {
+      notifyUser: { id: user.id },
+    };
+
+    if (notificationIds && notificationIds.length > 0) {
+      // Update specific notifications by ID
+      whereCondition.id = In(notificationIds);
+    }
+    // If no notificationIds provided, update ALL user's notifications (no additional filter)
+    const notifications = await notificationRepository.find({
+      where: whereCondition,
+      relations: ['createdBy', 'updatedBy', 'notifyUser'],
+    });
+
+    // Validate that all requested notification IDs belong to the user
+    if (
+      notificationIds &&
+      notificationIds.length > 0 &&
+      notifications.length !== notificationIds.length
+    ) {
+      return next({
+        status: 404,
+        message:
+          'One or more notification IDs not found or do not belong to this user.',
+      });
+    }
+
+    const updatedNotifications = await Promise.all(
+      notifications.map(async (notification) => {
+        notificationRepository.merge(notification, notificationUpdates);
+        return notificationRepository.save(notification);
+      })
+    );
+
+    const io = req.app.get('io');
+    if (io) {
+      await io.to(String(req.params.userId)).emit('newNotification', {
+        action: 'bulkUpdated',
+      });
+    }
+
+    res.status(200).json(updatedNotifications);
+  } catch (e) {
+    logger.error('Something went wrong updating user notifications', {
+      label: 'API',
+      userId: req.params.userId,
+      notificationIds: req.body.notificationIds,
+      errorMessage: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Something went wrong updating the notifications',
+    });
+  }
+});
+
+router.delete<{ userId: string; notificationId: string }>(
+  '/:userId/notifications/:notificationId',
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+    const notificationRepository = getRepository(Notification);
+
+    try {
+      const user = await userRepository.findOneOrFail({
+        where: { id: Number(req.params.userId) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (
+        user.id !== req.user?.id &&
+        !req.user?.hasPermission(Permission.MANAGE_USERS)
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to delete this user's notifications.",
+        });
+      }
+
+      const notification = await notificationRepository.findOneOrFail({
+        where: { id: Number(req.params.notificationId) },
+      });
+
+      await notificationRepository.remove(notification);
+
+      const io = req.app.get('io');
+      if (io) {
+        await io.to(String(req.params.userId)).emit('newNotification', {
+          id: notification.id,
+          action: 'deleted',
+        });
+      }
+
+      res.status(204).send();
+    } catch (e) {
+      logger.debug('Something went wrong deleting the notification', {
+        label: 'Notifications',
+        errorMessage: e.message,
+      });
+      next({ status: 404, message: 'Notification not found' });
     }
   }
 );

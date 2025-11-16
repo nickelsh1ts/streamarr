@@ -603,3 +603,6 @@ code {
     display: none;
   }
 }
+.badge:empty {
+  display: inline-flex;
+}

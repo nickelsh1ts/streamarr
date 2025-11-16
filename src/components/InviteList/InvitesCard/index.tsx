@@ -121,14 +121,16 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       : ''}
                 </button>
                 <p className="text-xs truncate w-full text-warning">
-                  {invite?.expiresAt != null ? (
-                    `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
-                  ) : (
-                    <FormattedMessage
-                      id="invite.neverExpires"
-                      defaultMessage="Never expires"
-                    />
-                  )}
+                  {invite?.expiresAt != null &&
+                  (invite?.status !== InviteStatus.REDEEMED ||
+                    moment(invite?.expiresAt).isAfter(moment()))
+                    ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                    : invite?.status !== InviteStatus.REDEEMED && (
+                        <FormattedMessage
+                          id="invite.neverExpires"
+                          defaultMessage="Never expires"
+                        />
+                      )}
                 </p>
                 <div className="flex flex-wrap w-full items-center gap-x-2 gap-y-1">
                   <p className="text-xs flex items-center">
@@ -281,7 +283,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 />
               </span>
               {moment(invite?.createdAt).fromNow()}
-              {hasPermission(Permission.MANAGE_USERS) ? (
+              {hasPermission(Permission.MANAGE_USERS) && invite?.createdBy ? (
                 <>
                   {' '}
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
@@ -297,13 +299,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       height={20}
                     />
                     <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                      {invite?.createdBy?.displayName ||
-                        invite?.createdBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                      {invite?.createdBy?.displayName}
                     </span>
                   </Link>
                 </>
@@ -323,39 +319,29 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       height={20}
                     />
                     <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                      {invite?.createdBy?.displayName ||
-                        invite?.createdBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                      {invite?.createdBy?.displayName}
                     </span>
                   </Link>
                 </>
               ) : (
-                <>
-                  {' '}
-                  <FormattedMessage id="common.by" defaultMessage="by" />{' '}
-                  <span className="font-extrabold flex items-center truncate">
-                    <CachedImage
-                      src={invite?.createdBy?.avatar}
-                      alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
-                      width={20}
-                      height={20}
-                    />
-                    <span className="truncate text-sm font-semibold">
-                      {invite?.createdBy?.displayName ||
-                        invite?.createdBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                invite?.createdBy && (
+                  <>
+                    {' '}
+                    <FormattedMessage id="common.by" defaultMessage="by" />{' '}
+                    <span className="font-extrabold flex items-center truncate">
+                      <CachedImage
+                        src={invite?.createdBy?.avatar}
+                        alt=""
+                        className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                        width={20}
+                        height={20}
+                      />
+                      <span className="truncate text-sm font-semibold">
+                        {invite?.createdBy?.displayName}
+                      </span>
                     </span>
-                  </span>
-                </>
+                  </>
+                )
               )}
             </div>
             <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
@@ -366,7 +352,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 />
               </span>
               {moment(invite?.updatedAt).fromNow()}
-              {hasPermission(Permission.MANAGE_USERS) ? (
+              {hasPermission(Permission.MANAGE_USERS) && invite?.updatedBy ? (
                 <>
                   {' '}
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
@@ -382,13 +368,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       height={20}
                     />
                     <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                      {invite?.updatedBy?.displayName ||
-                        invite?.updatedBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                      {invite?.updatedBy?.displayName}
                     </span>
                   </Link>
                 </>
@@ -407,39 +387,29 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       height={20}
                     />
                     <span className="truncate text-sm font-semibold group-hover:text-white group-hover:underline">
-                      {invite?.updatedBy?.displayName ||
-                        invite?.updatedBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                      {invite?.updatedBy?.displayName}
                     </span>
                   </Link>
                 </>
               ) : (
-                <>
-                  {' '}
-                  <FormattedMessage id="common.by" defaultMessage="by" />{' '}
-                  <span className="font-extrabold flex items-center truncate">
-                    <CachedImage
-                      src={invite?.updatedBy?.avatar}
-                      alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
-                      width={20}
-                      height={20}
-                    />
-                    <span className="truncate text-sm font-semibold">
-                      {invite?.updatedBy?.displayName ||
-                        invite?.updatedBy?.email || (
-                          <FormattedMessage
-                            id="common.unknown"
-                            defaultMessage="Unknown"
-                          />
-                        )}
+                invite?.updatedBy && (
+                  <>
+                    {' '}
+                    <FormattedMessage id="common.by" defaultMessage="by" />{' '}
+                    <span className="font-extrabold flex items-center truncate">
+                      <CachedImage
+                        src={invite?.updatedBy?.avatar}
+                        alt=""
+                        className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                        width={20}
+                        height={20}
+                      />
+                      <span className="truncate text-sm font-semibold">
+                        {invite?.updatedBy?.displayName}
+                      </span>
                     </span>
-                  </span>
-                </>
+                  </>
+                )
               )}
             </div>
             <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
@@ -460,14 +430,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           key={user?.id || idx}
                           href={`/admin/users/${user?.id}`}
                           className="group"
-                          title={
-                            user?.displayName ||
-                            user?.email ||
-                            intl.formatMessage({
-                              id: 'common.unknown',
-                              defaultMessage: 'Unknown',
-                            })
-                          }
+                          title={user?.displayName}
                         >
                           <CachedImage
                             src={user?.avatar}
@@ -478,17 +441,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           />
                         </Link>
                       ) : (
-                        <span
-                          key={user?.id || idx}
-                          title={
-                            user?.displayName ||
-                            user?.email ||
-                            intl.formatMessage({
-                              id: 'common.unknown',
-                              defaultMessage: 'Unknown',
-                            })
-                          }
-                        >
+                        <span key={user?.id || idx} title={user?.displayName}>
                           <CachedImage
                             src={user?.avatar}
                             alt=""

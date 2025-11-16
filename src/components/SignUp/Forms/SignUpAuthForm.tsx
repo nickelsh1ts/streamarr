@@ -80,6 +80,7 @@ const SignUpAuthForm = ({
     setLoading(true);
     try {
       const response = await axios.post<{
+        success: boolean;
         user: User;
         message?: string;
       }>('/api/v1/signup/localauth', {
@@ -118,7 +119,7 @@ const SignUpAuthForm = ({
               id="signUp.loginWithPlex"
               defaultMessage="Sign up with your {plexLogo} account"
               values={{
-                plexLogo: <PlexLogo className="inline-block size-9 mr-2" />,
+                plexLogo: <PlexLogo className="inline-block size-9" />,
               }}
             />
           </button>

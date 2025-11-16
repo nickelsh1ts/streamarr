@@ -6,9 +6,10 @@ import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { EmailOptions } from 'email-templates';
 import path from 'path';
-import { Notification } from '..';
+import { shouldSendAdminNotification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
+import { NotificationType } from '@server/constants/notification';
 
 class EmailAgent
   extends BaseAgent<NotificationAgentEmail>
@@ -40,17 +41,15 @@ class EmailAgent
   }
 
   private buildMessage(
-    type: Notification,
+    type: NotificationType,
     payload: NotificationPayload,
     recipientEmail: string,
     recipientName?: string
   ): EmailOptions | undefined {
     const { applicationUrl, applicationTitle, customLogo } = getSettings().main;
-
-    // Use custom logo if available, otherwise fallback to default
     const logoUrl = customLogo || '/logo_full.png';
 
-    if (type === Notification.TEST_NOTIFICATION) {
+    if (type === NotificationType.TEST_NOTIFICATION) {
       return {
         template: path.join(__dirname, '../../../templates/email/test-email'),
         message: { to: recipientEmail },
@@ -65,11 +64,113 @@ class EmailAgent
       };
     }
 
+    if (type === NotificationType.LOCAL_MESSAGE) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/localmessage'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.USER_CREATED) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/usercreated'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.INVITE_REDEEMED) {
+      return {
+        template: path.join(
+          __dirname,
+          '../../../templates/email/inviteredeemed'
+        ),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.INVITE_EXPIRED) {
+      return {
+        template: path.join(
+          __dirname,
+          '../../../templates/email/inviteexpired'
+        ),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.NEW_INVITE) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/newinvite'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
+    if (type === NotificationType.NEW_EVENT) {
+      return {
+        template: path.join(__dirname, '../../../templates/email/newevent'),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
     return undefined;
   }
 
   public async send(
-    type: Notification,
+    type: NotificationType,
     payload: NotificationPayload
   ): Promise<boolean> {
     if (payload.notifyUser) {
@@ -86,28 +187,28 @@ class EmailAgent
         logger.debug('Sending email notification', {
           label: 'Notifications',
           recipient: payload.notifyUser.displayName,
-          type: Notification[type],
+          type: NotificationType[type],
           subject: payload.subject,
         });
 
         try {
+          const emailMessage = this.buildMessage(
+            type,
+            payload,
+            payload.notifyUser.email,
+            payload.notifyUser.displayName
+          );
+
           const email = new PreparedEmail(
             this.getSettings(),
             payload.notifyUser.settings?.pgpKey
           );
-          await email.send(
-            this.buildMessage(
-              type,
-              payload,
-              payload.notifyUser.email,
-              payload.notifyUser.displayName
-            )
-          );
+          await email.send(emailMessage);
         } catch (e) {
           logger.error('Error sending email notification', {
             label: 'Notifications',
             recipient: payload.notifyUser.displayName,
-            type: Notification[type],
+            type: NotificationType[type],
             subject: payload.subject,
             errorMessage: e.message,
           });
@@ -125,36 +226,42 @@ class EmailAgent
         users
           .filter(
             (user) =>
-              !user.settings ||
-              // Check if user has email notifications enabled and fallback to true if undefined
-              // since email should default to true
-              (user.settings.hasNotificationType(
-                NotificationAgentKey.EMAIL,
-                type
-              ) ??
-                true)
+              (!user.settings ||
+                // Check if user has email notifications enabled and fallback to true if undefined
+                // since email should default to true
+                (user.settings.hasNotificationType(
+                  NotificationAgentKey.EMAIL,
+                  type
+                ) ??
+                  true)) &&
+              shouldSendAdminNotification(type, user, payload)
           )
           .map(async (user) => {
             logger.debug('Sending email notification', {
               label: 'Notifications',
               recipient: user.displayName,
-              type: Notification[type],
+              type: NotificationType[type],
               subject: payload.subject,
             });
 
             try {
+              const emailMessage = this.buildMessage(
+                type,
+                payload,
+                user.email,
+                user.displayName
+              );
+
               const email = new PreparedEmail(
                 this.getSettings(),
                 user.settings?.pgpKey
               );
-              await email.send(
-                this.buildMessage(type, payload, user.email, user.displayName)
-              );
+              await email.send(emailMessage);
             } catch (e) {
               logger.error('Error sending email notification', {
                 label: 'Notifications',
                 recipient: user.displayName,
-                type: Notification[type],
+                type: NotificationType[type],
                 subject: payload.subject,
                 errorMessage: e.message,
               });

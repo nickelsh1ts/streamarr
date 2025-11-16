@@ -53,15 +53,26 @@ const DropdownItem = ({
       {divide === 'before' && (
         <span className="border-t p-0 border-[#ffffff1a] my-1"></span>
       )}
-      <Link
-        href={props.href || ''}
-        onClick={() => setIsOpen && setIsOpen(!isOpen)}
-        onKeyDown={() => {}}
-        className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
-        {...props}
-      >
-        {children}
-      </Link>
+      {props.href ? (
+        <Link
+          href={props.href}
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          onKeyDown={() => setIsOpen && setIsOpen(!isOpen)}
+          className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+          {...props}
+        >
+          {children}
+        </Link>
+      ) : (
+        <button
+          onClick={() => setIsOpen && setIsOpen(!isOpen)}
+          onKeyDown={() => setIsOpen && setIsOpen(!isOpen)}
+          className={`w-full text-left rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+          {...(props as unknown as ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          {children}
+        </button>
+      )}
       {divide === 'after' && (
         <div className="border-t p-0 border-zinc-300/40 my-1"></div>
       )}
@@ -77,6 +88,8 @@ interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   toolTip?: boolean;
   ttplacement?: 'top' | 'bottom';
   tiptitle?: string;
+  chevron?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const DropDownMenu = ({
@@ -87,7 +100,9 @@ const DropDownMenu = ({
   ttplacement = 'bottom',
   tiptitle,
   buttonType,
+  chevron = true,
   toolTip = false,
+  size = 'sm',
   ...props
 }: DropDownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -122,24 +137,28 @@ const DropDownMenu = ({
             type="button"
             className={`relative inline-flex h-full items-center text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
-            onClick={() => setIsOpen((state) => !state)}
+            onClick={(e) => {
+              setIsOpen((state) => !state);
+              e.stopPropagation();
+            }}
             {...props}
           >
             {dropdownIcon ? dropdownIcon : title}
-            {!dropUp ? (
-              <ChevronDownIcon
-                className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
-              />
-            ) : (
-              <ChevronUpIcon
-                className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
-              />
-            )}
+            {chevron &&
+              (!dropUp ? (
+                <ChevronDownIcon
+                  className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                />
+              ) : (
+                <ChevronUpIcon
+                  className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                />
+              ))}
           </button>
         </Tooltip>
         <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute z-50 menu min-w-52 text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
+            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
           >
             <div className={`${styleClasses.dropdownClasses}`}>
               {title && (

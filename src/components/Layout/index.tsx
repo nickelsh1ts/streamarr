@@ -7,9 +7,11 @@ import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { publicRoutes } from '@app/middleware';
 import useSettings from '@app/hooks/useSettings';
+import Notifications from '@app/components/Layout/Notifications';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const Layout = ({
   children,
@@ -21,11 +23,13 @@ const Layout = ({
   const pathname = usePathname();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
-
-  // Use SWR to get the latest settings, which will update when mutated
+  const tokenRef = useRef(false);
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
   const { data: dynamicSettings } = useSWR('/api/v1/settings/public');
 
-  // Use dynamic settings first, then client context, then server-side as fallback
   const initialized =
     dynamicSettings?.initialized ??
     currentSettings.initialized ??
@@ -64,6 +68,35 @@ const Layout = ({
     [user]
   );
 
+  // Set Plex token in localStorage after successful login
+  useEffect(() => {
+    if (user && !loading && !tokenRef.current) {
+      const setPlexToken = async () => {
+        try {
+          // Check if token already exists
+          if (localStorage.getItem('myPlexAccessToken')) {
+            tokenRef.current = true;
+            return;
+          }
+
+          // Fetch user's Plex token
+          const response = await axios.get('/api/v1/auth/plex/token');
+          const { token } = response.data;
+
+          if (token) {
+            localStorage.setItem('myPlexAccessToken', token);
+            tokenRef.current = true;
+          }
+        } catch {
+          // Token fetch failed or user doesn't have a Plex token
+          // Do not set tokenRef.current = true here; allow retry on next render
+        }
+      };
+
+      setPlexToken();
+    }
+  }, [user, loading]);
+
   if (!initialized) {
     if (!pathname.match(/setup|signin\/plex\/loading/)) {
       redirect('/setup');
@@ -91,8 +124,8 @@ const Layout = ({
 
     // Feature-disabled redirects
     if (
-      pathname.match(/schedule/) &&
-      !currentSettings.releaseSched &&
+      ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
+        (pathname.match(/request/) && !currentSettings.enableRequest)) &&
       user &&
       !loading
     ) {
@@ -102,6 +135,7 @@ const Layout = ({
 
   return (
     <SWRConfig value={swrConfigValue}>
+      {notificationSettings?.inAppEnabled && user && <Notifications />}
       {isMainLayout ? (
         <main className="flex flex-col relative h-full min-h-full min-w-0">
           <Header />

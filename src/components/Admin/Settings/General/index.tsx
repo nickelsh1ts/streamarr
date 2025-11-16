@@ -28,6 +28,8 @@ import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 
+//TODO: Add customizable & interactive new user tutorial/welcome
+
 const GeneralSettings = () => {
   const intl = useIntl();
   const { user: currentUser, hasPermission: userHasPermission } = useUser();

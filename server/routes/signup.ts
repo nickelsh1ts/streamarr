@@ -7,6 +7,7 @@ import { UserSettings } from '@server/entity/UserSettings';
 import { getSettings } from '@server/lib/settings';
 import { InviteStatus } from '@server/constants/invite';
 import { UserType } from '@server/constants/user';
+import { Permission } from '@server/lib/permissions';
 import axios from 'axios';
 import logger from '@server/logger';
 import crypto from 'crypto';
@@ -133,6 +134,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
     // Check if user already exists
     let user = await userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.plexId = :id', { id: plexUser.id })
       .orWhere('user.email = :email', { email: plexUser.email.toLowerCase() })
       .getOne();
@@ -178,6 +180,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
       displayName: plexUser.username, // Set display name immediately
       avatar: plexUser.thumb,
       userType: UserType.PLEX,
+      plexToken: plexUser.authToken,
       permissions: settings.main.defaultPermissions, // Assign default permissions from admin settings
     });
 
@@ -185,8 +188,23 @@ signupRoutes.post('/plexauth', async (req, res) => {
     if (invite.sharedLibraries) {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
-        user,
       });
+    } else {
+      user.settings = new UserSettings();
+    }
+
+    if (
+      settings.main.enableTrialPeriod &&
+      !user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        { type: 'or' }
+      ) &&
+      user.id !== 1
+    ) {
+      const trialEndDate = new Date(
+        Date.now() + settings.main.trialPeriodDays * 86400000
+      );
+      user.settings.trialPeriodEndsAt = trialEndDate;
     }
 
     await userRepository.save(user);
@@ -367,6 +385,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
             allow_channels: invite.liveTv ?? false,
             plex_home: invite.plexHome ?? false,
             plex_base_url,
+            user_token: user.plexToken,
           });
 
           if (!response.data.success)
@@ -581,6 +600,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     // Check if user already exists
     let user = await userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.settings', 'settings')
       .where('user.email = :email', { email: email.toLowerCase() })
       .orWhere('user.plexUsername = :username', { username })
       .getOne();
@@ -611,6 +631,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     const avatar = `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex')}?d=mm&s=200`;
 
     // Create new local user
+    const settings = getSettings();
     user = new User({
       email: email.toLowerCase(),
       username: username,
@@ -628,8 +649,23 @@ signupRoutes.post('/localauth', async (req, res) => {
     if (invite.sharedLibraries) {
       user.settings = new UserSettings({
         sharedLibraries: invite.sharedLibraries,
-        user,
       });
+    } else {
+      user.settings = new UserSettings();
+    }
+
+    if (
+      settings.main.enableTrialPeriod &&
+      !user.hasPermission(
+        [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+        { type: 'or' }
+      ) &&
+      user.id !== 1
+    ) {
+      const trialEndDate = new Date(
+        Date.now() + settings.main.trialPeriodDays * 86400000
+      );
+      user.settings.trialPeriodEndsAt = trialEndDate;
     }
 
     await userRepository.save(user);
@@ -666,7 +702,20 @@ signupRoutes.post('/localauth', async (req, res) => {
       req.session.userId = user.id;
     }
 
-    res.status(200).json(user.filter());
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        avatar: user.avatar,
+        displayName: user.displayName,
+        userType: user.userType,
+        permissions: user.permissions,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+      message: 'Account created successfully. You are now logged in.',
+    });
   } catch (e) {
     if (!res.headersSent) {
       res.status(500).json({
@@ -728,15 +777,15 @@ signupRoutes.post('/complete', async (req, res) => {
       },
     });
   } catch (e) {
+    logger.error('Error in signup/complete:', {
+      label: 'SignUp',
+      error: e.message,
+    });
     if (!res.headersSent) {
       res
         .status(500)
         .json({ success: false, message: 'Internal server error.' });
     }
-    logger.error('Error in signup/complete:', {
-      label: 'SignUp',
-      error: e.message,
-    });
   }
 });
 
