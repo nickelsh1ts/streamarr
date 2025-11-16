@@ -213,6 +213,7 @@
     "npmPublish": false,
     "publish": [
       {
+        "path": "semantic-release-docker-buildx",
         "buildArgs": {
           "COMMIT_TAG": "$GIT_SHA"
         },
