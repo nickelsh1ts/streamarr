@@ -3,7 +3,7 @@ name: Streamarr Release
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   semantic-release:
