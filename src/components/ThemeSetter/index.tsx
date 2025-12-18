@@ -10,6 +10,10 @@ const ThemeSetter: React.FC = () => {
   const theme = currentSettings.theme;
 
   useEffect(() => {
+    if (!theme) {
+      return;
+    }
+    
     Object.entries(theme).forEach(([key, value]) => {
       const daisyKey = daisyUIMapping[key];
       if (daisyKey) {
