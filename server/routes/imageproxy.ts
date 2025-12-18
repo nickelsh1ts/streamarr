@@ -7,7 +7,7 @@ const tmdbImageProxy = new ImageProxy('tmdb', 'https://image.tmdb.org', {
   rateLimitOptions: { maxRequests: 20, maxRPS: 50 },
 });
 
-router.get('/*', async (req, res) => {
+router.get('/*splat', async (req, res) => {
   const imagePath = req.path.replace('/image', '');
   try {
     const imageData = await tmdbImageProxy.getImage(imagePath);

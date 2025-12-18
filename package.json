@@ -49,7 +49,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "email-templates": "^12.0.3",
-    "express": "^4.22.1",
+    "express": "^5.2.1",
     "express-openapi-validator": "^5.6.0",
     "express-rate-limit": "^8.2.1",
     "formik": "^2.4.9",
