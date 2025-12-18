@@ -34,7 +34,7 @@ const defaultSettings: PublicSettingsResponse = {
     'secondary-content': '#cfcbdc',
     accent: '#e5a00d',
     'accent-content': '#fff',
-    neutral: '#6c757d',
+    neutral: '#737373',
     'neutral-content': '#e0e2e4',
     'base-100': '#121212',
     'base-200': '#121418',

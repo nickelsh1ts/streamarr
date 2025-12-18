@@ -4,9 +4,11 @@
     "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "baseUrl": ".",
     "outDir": "../dist",
     "noEmit": false,
-    "paths": { "@server/*": ["./*"] }
+    "paths": { "@server/*": ["./*"] },
+    "ignoreDeprecations": "6.0"
   },
   "include": ["**/*.ts"]
 }
