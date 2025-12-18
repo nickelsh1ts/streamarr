@@ -36,8 +36,7 @@ const DropdownItem = ({
   );
 };
 
-interface ButtonWithDropdownProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonWithDropdownProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: React.ReactNode;
   buttonType?: 'primary' | 'ghost';
   dropUp?: boolean;

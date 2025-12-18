@@ -13,14 +13,12 @@ interface SensitiveInputBaseProps {
 }
 
 interface CustomInputProps
-  extends React.ComponentProps<'input'>,
-    SensitiveInputBaseProps {
+  extends React.ComponentProps<'input'>, SensitiveInputBaseProps {
   as?: 'input';
 }
 
 interface CustomFieldProps
-  extends React.ComponentProps<typeof Field>,
-    SensitiveInputBaseProps {
+  extends React.ComponentProps<typeof Field>, SensitiveInputBaseProps {
   as: 'field';
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
