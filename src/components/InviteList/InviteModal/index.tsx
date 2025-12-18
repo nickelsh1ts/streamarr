@@ -410,7 +410,7 @@ const InviteModal = ({
                     defaultMessage="Invite Code"
                   />
                   {invite ? null : (
-                    <span className="text-neutral-500 ml-2">
+                    <span className="text-neutral ml-2">
                       (
                       <FormattedMessage
                         id="common.optional"
@@ -608,7 +608,7 @@ const InviteModal = ({
                           }
                         }}
                         className={`${
-                          values.downloads ? 'bg-primary' : 'bg-neutral-700'
+                          values.downloads ? 'bg-primary' : 'bg-neutral'
                         } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                       >
                         <span
@@ -624,7 +624,7 @@ const InviteModal = ({
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                            <XMarkIcon className="h-3 w-3 text-neutral" />
                           </span>
                           <span
                             className={`${
@@ -658,7 +658,7 @@ const InviteModal = ({
                           }
                         }}
                         className={`${
-                          values.liveTv ? 'bg-primary' : 'bg-neutral-700'
+                          values.liveTv ? 'bg-primary' : 'bg-neutral'
                         } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                       >
                         <span
@@ -674,7 +674,7 @@ const InviteModal = ({
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                            <XMarkIcon className="h-3 w-3 text-neutral" />
                           </span>
                           <span
                             className={`${
@@ -716,7 +716,7 @@ const InviteModal = ({
                             }
                           }}
                           className={`${
-                            values.plexHome ? 'bg-primary' : 'bg-neutral-700'
+                            values.plexHome ? 'bg-primary' : 'bg-neutral'
                           } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring ${!currentHasPermission(Permission.ADMIN) ? 'opacity-60 cursor-not-allowed' : ''}`}
                           aria-disabled={
                             !currentHasPermission(Permission.ADMIN)
@@ -737,7 +737,7 @@ const InviteModal = ({
                                   : 'opacity-100 duration-200 ease-in'
                               } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                             >
-                              <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                              <XMarkIcon className="h-3 w-3 text-neutral" />
                             </span>
                             <span
                               className={`${
@@ -807,7 +807,7 @@ const InviteModal = ({
                                 <span className="inline-block w-full relative rounded-md shadow-sm">
                                   <ListboxButton
                                     ref={buttonRef}
-                                    className="focus:shadow-outline-primary relative w-full cursor-default rounded-md border border-primary bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:border-primary-content focus:outline-none sm:text-sm sm:leading-5"
+                                    className="focus:shadow-outline-primary relative w-full cursor-default rounded-md border border-primary bg-base-100 py-2 pl-3 pr-10 text-left transition duration-150 ease-in-out focus:border-primary-content focus:outline-none sm:text-sm sm:leading-5"
                                   >
                                     <span className="flex items-center">
                                       <CachedImage
@@ -822,12 +822,12 @@ const InviteModal = ({
                                       </span>
                                       {selectedUser.displayName.toLowerCase() !==
                                         selectedUser.email && (
-                                        <span className="ml-1 truncate text-gray-400">
+                                        <span className="ml-1 truncate text-neutral">
                                           ({selectedUser.email})
                                         </span>
                                       )}
                                     </span>
-                                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500">
+                                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                       <ChevronDownIcon className="h-5 w-5" />
                                     </span>
                                   </ListboxButton>
@@ -866,8 +866,8 @@ const InviteModal = ({
                                             <div
                                               className={`${
                                                 focus
-                                                  ? 'bg-primary text-white'
-                                                  : 'text-gray-300'
+                                                  ? 'bg-primary text-primary-content'
+                                                  : ''
                                               } relative cursor-default select-none py-2 pl-8 pr-4 rounded-md`}
                                             >
                                               <span
@@ -889,7 +889,7 @@ const InviteModal = ({
                                                 </span>
                                                 {user.displayName.toLowerCase() !==
                                                   user.email && (
-                                                  <span className="ml-1 truncate text-gray-400">
+                                                  <span className="ml-1 truncate text-neutral">
                                                     ({user.email})
                                                   </span>
                                                 )}
@@ -898,7 +898,7 @@ const InviteModal = ({
                                                 <span
                                                   className={`${
                                                     focus
-                                                      ? 'text-white'
+                                                      ? 'text-primary-content'
                                                       : 'text-primary'
                                                   } absolute inset-y-0 left-0 flex items-center pl-1.5`}
                                                 >

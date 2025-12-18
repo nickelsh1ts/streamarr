@@ -52,7 +52,7 @@ const MoreHelp = () => {
                         target="_blank"
                         href={currentSettings.supportUrl}
                         type="button"
-                        className="btn btn-sm btn-primary hover:btn-secondary me-1 mb-2 rounded-md text-base min-h-9"
+                        className="btn btn-sm btn-primary me-1 mb-2 rounded-md text-base min-h-9"
                         rel="noreferrer"
                       >
                         <FormattedMessage

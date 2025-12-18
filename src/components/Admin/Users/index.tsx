@@ -403,7 +403,7 @@ const AdminUsers = () => {
                       id="users.automaticallyGeneratePassword"
                       defaultMessage="Automatically Generate Password"
                     />
-                    <span className="block text-sm text-neutral-500">
+                    <span className="block text-sm text-neutral">
                       <FormattedMessage
                         id="users.emailGeneratedPassword"
                         defaultMessage="Email a server-generated password to the user"
@@ -514,7 +514,7 @@ const AdminUsers = () => {
             )}
           </div>
           <div className="mb-2 flex flex-grow lg:mb-0 lg:flex-grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 sm:text-sm">
               <BarsArrowDownIcon className="size-7" />
             </span>
             <select
@@ -648,7 +648,7 @@ const AdminUsers = () => {
                       {user.displayName}
                     </Link>
                     {user.displayName.toLowerCase() !== user.email && (
-                      <div className="text-sm leading-5 text-gray-300">
+                      <div className="text-sm leading-5 text-neutral">
                         {user.email}
                       </div>
                     )}

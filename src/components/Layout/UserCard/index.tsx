@@ -38,7 +38,7 @@ const UserCard = ({
     <div className="pointer-events-auto w-64 relative">
       <Link
         href="/profile"
-        className="flex flex-col items-center place-content-center gap-2 p-4 bg-slate-50/10 hover:bg-slate-50/20"
+        className="flex flex-col items-center place-content-center gap-2 p-4 bg-neutral/20 hover:bg-neutral/30"
       >
         <CachedImage
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"

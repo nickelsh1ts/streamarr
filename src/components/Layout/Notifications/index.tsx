@@ -179,7 +179,7 @@ const Notifications = () => {
       <TransitionChild>
         <div
           ref={ref}
-          className={`fixed flex flex-col top-0 bottom-0 max-sm:pb-14 right-0 z-50 bg-primary/30 backdrop-blur-md sm:border-l border-primary w-full sm:max-w-[30rem] max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-[closed]:max-sm:translate-y-full data-[closed]:sm:translate-x-full overflow-hidden`}
+          className={`fixed flex flex-col top-0 bottom-0 max-sm:pb-14 right-0 z-50 bg-primary/30 backdrop-blur-md sm:border-l border-primary w-full sm:max-w-[30rem] max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-[closed]:max-sm:translate-y-full data-[closed]:sm:translate-x-full overflow-hidden text-primary-content`}
         >
           <div className="w-full h-20 content-center p-4 flex flex-wrap justify-between items-center gap-2">
             <span>
@@ -189,7 +189,7 @@ const Notifications = () => {
                   defaultMessage="Notifications"
                 />
               </h3>
-              <p className="text-sm font-thin text-neutral-300">
+              <p className="text-sm font-thin text-neutral">
                 <Button
                   className={filter === 'all' ? 'btn-active' : ''}
                   buttonSize="sm"
@@ -215,7 +215,7 @@ const Notifications = () => {
               <DropDownMenu
                 chevron={false}
                 dropdownIcon={<EllipsisHorizontalIcon className="size-8" />}
-                className="text-neutral-400 hover:text-white transition duration-200 p-1 rounded-full"
+                className="text-neutral hover:text-primary-content transition duration-200 p-1 rounded-full"
               >
                 <DropDownMenu.Item
                   onClick={() => readAllNotifications(String(user.id))}
@@ -250,7 +250,7 @@ const Notifications = () => {
                 </DropDownMenu.Item>
               </DropDownMenu>
               <button
-                className="text-neutral-400 hover:text-white p-2 rounded-full transition duration-200"
+                className="text-neutral hover:text-primary-content p-2 rounded-full transition duration-200"
                 onClick={() => setIsOpen(false)}
               >
                 <XMarkIcon className="size-6" />
@@ -258,8 +258,8 @@ const Notifications = () => {
             </span>
           </div>
           <div className="m-1 sm:pb-0 flex flex-col h-full overflow-y-auto">
-            <div className="mx-3 flex flex-row justify-between mb-2">
-              <span className="font-bold text-xl">
+            <div className="mx-3 flex flex-row justify-between mb-2 text-neutral">
+              <span className="font-bold text-xl text-primary-content">
                 {filter === 'unread' ? '' : 'New'}
               </span>
               <Button
@@ -278,7 +278,7 @@ const Notifications = () => {
               ) : (data?.results.filter((notification) => {
                   return !notification.isRead;
                 }).length ?? 0) === 0 ? (
-                <span className="text-center w-full text-neutral-400">
+                <span className="text-center w-full text-neutral">
                   {intl.formatMessage({
                     id: 'notification.noUnread',
                     defaultMessage: 'No unread notifications',

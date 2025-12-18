@@ -309,7 +309,7 @@ export const SingleItem = ({
         href={
           href && pivotList && type ? href + '&pivot=' + defaultPivot : href
         }
-        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
+        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 focus:text-primary-content capitalize gap-0 space-x-2 ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
@@ -369,7 +369,7 @@ export const MultiItem = ({
         )}
         className="group"
       >
-        <summary className="active:!bg-primary/20 space-x-2 gap-0 text-zinc-300 hover:text-white group-open:text-white capitalize">
+        <summary className="active:!bg-primary/20 space-x-2 gap-0 hover:text-base-content group-open:text-base-content capitalize">
           {icon}
           <p className="inline-flex">{title}</p>
         </summary>
@@ -405,7 +405,7 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>

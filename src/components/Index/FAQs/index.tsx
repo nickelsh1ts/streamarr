@@ -16,7 +16,7 @@ function FAQs() {
           </p>
         </div>
         <div className="join join-vertical w-full gap-3 rounded-none px-4">
-          <div className="collapse collapse-arrow join-item bg-brand-dark ">
+          <div className="collapse collapse-arrow join-item bg-secondary">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
               What is{' '}
@@ -37,7 +37,7 @@ function FAQs() {
               </p>
             </div>
           </div>
-          <div className="collapse collapse-arrow join-item bg-brand-dark ">
+          <div className="collapse collapse-arrow join-item bg-secondary">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
               What is <PlexLogo className="inline-block size-9" />?
@@ -79,7 +79,7 @@ function FAQs() {
               </p>
             </div>
           </div>
-          <div className="collapse collapse-arrow join-item bg-brand-dark ">
+          <div className="collapse collapse-arrow join-item bg-secondary">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
               How can I join{' '}
@@ -107,7 +107,7 @@ function FAQs() {
               </p>
             </div>
           </div>
-          <div className="collapse collapse-arrow join-item bg-brand-dark ">
+          <div className="collapse collapse-arrow join-item bg-secondary">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
               Where can I watch{' '}
@@ -137,7 +137,7 @@ function FAQs() {
               </p>
             </div>
           </div>
-          <div className="collapse collapse-arrow join-item bg-brand-dark ">
+          <div className="collapse collapse-arrow join-item bg-secondary">
             <input type="radio" name="faqs" />
             <div className="collapse-title text-xl font-medium">
               What can I watch on{' '}

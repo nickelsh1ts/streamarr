@@ -98,7 +98,7 @@ const AboutSettings = () => {
                 >
                   <Badge
                     badgeType="warning"
-                    className="ml-2 !cursor-pointer transition hover:bg-yellow-400"
+                    className="ml-2 !cursor-pointer transition"
                   >
                     <FormattedMessage
                       id="aboutSettings.outOfDate"
@@ -118,7 +118,7 @@ const AboutSettings = () => {
                 >
                   <Badge
                     badgeType="success"
-                    className="ml-2 !cursor-pointer transition hover:bg-green-400"
+                    className="ml-2 !cursor-pointer transition"
                   >
                     <FormattedMessage
                       id="aboutSettings.upToDate"

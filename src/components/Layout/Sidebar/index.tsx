@@ -300,7 +300,7 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral-700 font-base`}
+        className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral font-base`}
       >
         <SidebarMenu />
         {hasPermission([Permission.ADMIN]) && (
@@ -367,7 +367,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
               <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
                 <button
                   onClick={() => handleClick(0)}
-                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30'}`}
                 >
                   <ChevronDownIcon className="size-5" />
                 </button>
@@ -411,7 +411,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                     >
                       <button
                         onClick={() => handleClick(1)}
-                        className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 text-zinc-300 hover:text-white rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                        className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
                       >
                         <ChevronDownIcon className="size-5" />
                       </button>

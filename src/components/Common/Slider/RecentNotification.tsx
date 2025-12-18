@@ -64,7 +64,7 @@ const RecentNotification = ({ notification }: RecentNotificationProps) => {
             {notification?.message}
           </p>
         </div>
-        <p className="text-xs text-end truncate w-full text-neutral-400">
+        <p className="text-xs text-end truncate w-full text-neutral">
           {moment(notification?.createdAt).fromNow()}
         </p>
       </div>

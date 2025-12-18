@@ -262,9 +262,7 @@ const JobsCacheSettings = () => {
                   {jobModalState.job &&
                     cronstrue.toString(jobModalState.job.cronSchedule)}
                 </div>
-                <div className="text-sm text-gray-500">
-                  {jobModalState.job?.cronSchedule}
-                </div>
+                <div className="text-sm">{jobModalState.job?.cronSchedule}</div>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
@@ -382,7 +380,7 @@ const JobsCacheSettings = () => {
             {data?.map((job) => (
               <tr key={`job-list-${job.id}`}>
                 <Table.TD>
-                  <div className="flex items-center text-sm leading-5 text-white">
+                  <div className="flex items-center text-sm leading-5">
                     <span>
                       {job.name ??
                         intl.formatMessage({
@@ -412,7 +410,7 @@ const JobsCacheSettings = () => {
                   </Badge>
                 </Table.TD>
                 <Table.TD>
-                  <div className="text-sm leading-5 text-white">
+                  <div className="text-sm leading-5">
                     {moment(job.nextExecutionTime).from(now)}
                   </div>
                 </Table.TD>

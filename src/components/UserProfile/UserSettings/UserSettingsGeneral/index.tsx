@@ -227,7 +227,7 @@ const UserSettingsGeneral = () => {
                       defaultMessage="Account Type"
                     />
                   </div>
-                  <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
+                  <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                     <div className="flex max-w-lg items-center">
                       {user?.userType === UserType.PLEX ? (
                         <Badge badgeType="warning">
@@ -251,7 +251,7 @@ const UserSettingsGeneral = () => {
                   <div className="col-span-1">
                     <FormattedMessage id="common.role" defaultMessage="Role" />
                   </div>
-                  <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
+                  <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                     <div className="flex max-w-lg items-center">
                       {user?.id === 1 ? (
                         <FormattedMessage
@@ -343,7 +343,7 @@ const UserSettingsGeneral = () => {
                             id="settings.plexAccess"
                             defaultMessage="Plex Access"
                           />
-                          <span className="block text-xs text-gray-400 mt-1">
+                          <span className="block text-xs text-neutral mt-1">
                             <FormattedMessage
                               id="settings.plexAccessDescription"
                               defaultMessage="Changes will sync with Plex automatically on save."
@@ -385,7 +385,7 @@ const UserSettingsGeneral = () => {
                             className={`${
                               values.allowDownloads
                                 ? 'bg-primary'
-                                : 'bg-neutral-700'
+                                : 'bg-neutral'
                             } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                           >
                             <span
@@ -403,7 +403,7 @@ const UserSettingsGeneral = () => {
                                     : 'opacity-100 duration-200 ease-in'
                                 } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                               >
-                                <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                                <XMarkIcon className="h-3 w-3 text-neutral" />
                               </span>
                               <span
                                 className={`${
@@ -442,9 +442,7 @@ const UserSettingsGeneral = () => {
                               }
                             }}
                             className={`${
-                              values.allowLiveTv
-                                ? 'bg-primary'
-                                : 'bg-neutral-700'
+                              values.allowLiveTv ? 'bg-primary' : 'bg-neutral'
                             } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                           >
                             <span
@@ -462,7 +460,7 @@ const UserSettingsGeneral = () => {
                                     : 'opacity-100 duration-200 ease-in'
                                 } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                               >
-                                <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                                <XMarkIcon className="h-3 w-3 text-neutral" />
                               </span>
                               <span
                                 className={`${
@@ -495,7 +493,7 @@ const UserSettingsGeneral = () => {
                           id="settings.pinLibraries"
                           defaultMessage="Pin Libraries"
                         />
-                        <span className="block text-xs text-gray-400 mt-1">
+                        <span className="block text-xs text-neutral mt-1">
                           <FormattedMessage
                             id="settings.pinLibrariesHelp"
                             defaultMessage="Pin all your shared libraries to the Plex home screen"
@@ -612,10 +610,7 @@ const UserSettingsGeneral = () => {
                             checked={inviteQuotaEnabled}
                             onChange={() => setInviteQuotaEnabled((s) => !s)}
                           />
-                          <label
-                            htmlFor="globalOverride"
-                            className="ml-2 text-gray-300"
-                          >
+                          <label htmlFor="globalOverride" className="ml-2">
                             <FormattedMessage
                               id="settings.overrideGlobalLimit"
                               defaultMessage="Override Global Limit"
@@ -654,7 +649,7 @@ const UserSettingsGeneral = () => {
                           id="settings.trialPeriod"
                           defaultMessage="Trial Period"
                         />
-                        <span className="block text-xs text-gray-400 mt-1">
+                        <span className="block text-xs text-neutral mt-1">
                           <FormattedMessage
                             id="settings.trialPeriodEndDateDescription"
                             defaultMessage="Cannot create invites until after this date"
@@ -682,10 +677,7 @@ const UserSettingsGeneral = () => {
                               )
                             }
                           />
-                          <label
-                            htmlFor="trialPeriodEnabled"
-                            className="ml-2 text-gray-300"
-                          >
+                          <label htmlFor="trialPeriodEnabled" className="ml-2">
                             <FormattedMessage
                               id="settings.enableTrialPeriod"
                               defaultMessage="Enable Trial Period"

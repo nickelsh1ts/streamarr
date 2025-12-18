@@ -27,7 +27,7 @@ const Toggle = ({ id, valueOf, onClick, title, ariaLabel }: ToggleProps) => {
           }
         }}
         className={`${
-          valueOf ? 'bg-primary' : 'bg-neutral-700'
+          valueOf ? 'bg-primary' : 'bg-neutral'
         } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
       >
         <span
@@ -43,7 +43,7 @@ const Toggle = ({ id, valueOf, onClick, title, ariaLabel }: ToggleProps) => {
                 : 'opacity-100 duration-200 ease-in'
             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
           >
-            <XMarkIcon className="h-3 w-3 text-neutral-400" />
+            <XMarkIcon className="h-3 w-3 text-neutral" />
           </span>
           <span
             className={`${

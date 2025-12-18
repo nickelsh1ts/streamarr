@@ -352,7 +352,7 @@ const NotificationModal = ({
                     id="notificationModal.actionUrlTitle"
                     defaultMessage="Action URL Title"
                   />
-                  <span className="text-neutral-500 ml-2">
+                  <span className="text-neutral ml-2">
                     (
                     <FormattedMessage
                       id="common.optional"
@@ -389,7 +389,7 @@ const NotificationModal = ({
                   {values.actionUrlTitle ? (
                     <span className="text-error ml-1">*</span>
                   ) : (
-                    <span className="text-neutral-500 ml-2">
+                    <span className="text-neutral ml-2">
                       (
                       <FormattedMessage
                         id="common.optional"

@@ -17,7 +17,7 @@ const Header = ({ isInView = true }) => {
   return (
     <header
       id="top"
-      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-brand-dark' : 'bg-[#161616]') : ''} font-bold z-20`}
+      className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-secondary backdrop-brightness-50' : 'bg-base-200') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && user && (
@@ -53,7 +53,7 @@ const Header = ({ isInView = true }) => {
               <Link
                 href="/signin"
                 id="signin"
-                className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg hover:btn-secondary print:hidden mr-2"
+                className="btn btn-sm text- md:btn-md text-xs btn-primary rounded-md gap-0.5 md:tracking-widest uppercase md:text-lg print:hidden mr-2"
               >
                 <FormattedMessage id="auth.signin" defaultMessage="Sign in" />
               </Link>

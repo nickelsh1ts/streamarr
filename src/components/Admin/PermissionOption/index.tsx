@@ -99,8 +99,8 @@ const PermissionOption = ({
           <label htmlFor={option.id} className="block">
             <span className="sr-only">option: {option.name}</span>
             <div className="flex flex-col">
-              <span className="font-bold text-white">{option.name}</span>
-              <span className="font-thin text-neutral-300">
+              <span className="font-bold">{option.name}</span>
+              <span className="font-thin text-neutral">
                 {option.description}
               </span>
             </div>

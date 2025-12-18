@@ -101,7 +101,7 @@ const Schedule = () => {
         </Header>
         <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row">
           <div className="flex flex-grow sm:flex-grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
               <FunnelIcon className="h-6 w-6" />
             </span>
             <select

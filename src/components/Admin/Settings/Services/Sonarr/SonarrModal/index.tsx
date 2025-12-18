@@ -391,7 +391,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
+                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
                       {values.ssl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -520,7 +520,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     id="common.calendarSync"
                     defaultMessage="Enable Calendar Sync"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="common.calendarSync.description"
                       defaultMessage="Automatically sync {arrApp} events to the calendar"
@@ -543,7 +543,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     id="common.pastdays"
                     defaultMessage="Past Days"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="common.pastdays.description"
                       defaultMessage="Sync events from the past X days"
@@ -567,7 +567,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     id="common.futuredays"
                     defaultMessage="Future Days"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="common.futuredays.description"
                       defaultMessage="Sync events for the next X days"

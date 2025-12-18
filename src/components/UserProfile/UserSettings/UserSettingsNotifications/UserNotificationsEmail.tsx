@@ -106,7 +106,7 @@ const UserEmailSettings = () => {
                     />
                   </span>
                   <SettingsBadge badgeType="advanced" />
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-neutral">
                     <FormattedMessage
                       id="userSettings.pgpPublicKeyDescription"
                       defaultMessage="Encrypt email messages using {openPGP}."
