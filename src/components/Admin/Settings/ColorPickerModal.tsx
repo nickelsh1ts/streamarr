@@ -133,7 +133,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
         const C = Craw.endsWith('%')
           ? parseFloat(Craw) / 100
           : parseFloat(Craw);
-        const H = parseFloat(Hraw.replace(/deg/i, '').replace('%', ''));
+        const H = parseFloat(Hraw.replace(/deg/i, '').replace(/%/g, ''));
         const rgb = oklchToRgb(L, C, H);
         setColor(colord({ r: rgb.r, g: rgb.g, b: rgb.b }).toHex());
         return;
