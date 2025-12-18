@@ -40,8 +40,8 @@ const AboutSettings = () => {
       <Alert type="primary">
         <p className="text-sm leading-5 flex-1">
           <FormattedMessage
-            id="aboutSettings.preAlphaWarning"
-            defaultMessage="This is PRE-ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+            id="aboutSettings.alphaWarning"
+            defaultMessage="This is ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
           />
         </p>
         <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
