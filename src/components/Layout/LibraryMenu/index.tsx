@@ -15,8 +15,8 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
+import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLinksProps {
@@ -47,25 +47,11 @@ const LibraryMenu = ({
 }: LibraryMenuProps) => {
   const intl = useIntl();
   const pathname = usePathname();
-  const [currentUrl, setCurrentUrl] = useState(pathname);
+  const hash = useHash();
+  const url = pathname + (hash || '');
   const { hasPermission } = useUser();
   const { currentSettings } = useSettings();
   const { libraryLinks, loading } = useLibraryLinks('id');
-
-  useEffect(() => {
-    let lastUrl = window.location.pathname + window.location.hash;
-    setCurrentUrl(lastUrl);
-    const interval = setInterval(() => {
-      const newUrl = window.location.pathname + window.location.hash;
-      if (newUrl !== lastUrl) {
-        lastUrl = newUrl;
-        setCurrentUrl(newUrl);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
-  const url = currentUrl;
 
   // Group libraries by type
   const groupedLibraries = libraryLinks.reduce(
@@ -281,23 +267,18 @@ export const SingleItem = ({
       : regExp.test(url);
 
   // Determine pivot list based on type
-  let pivotList: string[] | null = null;
-  if (type) {
+  const pivotList: string[] | null = (() => {
+    if (!type) return null;
     switch (type) {
       case 'movie':
-        pivotList = ['library', 'collections', 'categories'];
-        break;
       case 'show':
-        pivotList = ['library', 'collections', 'categories'];
-        break;
+        return ['library', 'collections', 'categories'];
       case 'artist':
-        pivotList = ['library', 'playlists'];
-        break;
+        return ['library', 'playlists'];
       default:
-        pivotList = null;
-        break;
+        return null;
     }
-  }
+  })();
 
   return (
     <li
@@ -355,7 +336,18 @@ export const MultiItem = ({
   defaultPivot,
   url,
 }: MultiItemProps) => {
-  let pivotList: string[] | null = null;
+  const getPivotList = (type: string): string[] | null => {
+    switch (type) {
+      case 'movie':
+      case 'show':
+        return ['library', 'collections', 'categories'];
+      case 'artist':
+        return ['library', 'playlists'];
+      default:
+        return null;
+    }
+  };
+
   return (
     <li className="pointer-events-auto" key={liKey}>
       <details
@@ -382,20 +374,7 @@ export const MultiItem = ({
                 )
               : url.includes(item.regExp);
 
-            switch (item.type) {
-              case 'movie':
-                pivotList = ['library', 'collections', 'categories'];
-                break;
-              case 'show':
-                pivotList = ['library', 'collections', 'categories'];
-                break;
-              case 'artist':
-                pivotList = ['library', 'playlists'];
-                break;
-              default:
-                pivotList = null;
-                break;
-            }
+            const pivotList = getPivotList(item.type);
             return (
               <li key={item.title}>
                 <Link

@@ -18,16 +18,16 @@ export class UserPushSubscription {
   })
   public user: User;
 
-  @Column()
+  @Column('text')
   public endpoint: string;
 
-  @Column()
+  @Column('text')
   public p256dh: string;
 
-  @Column()
+  @Column('text')
   public auth: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public userAgent: string;
 
   @CreateDateColumn({ nullable: true })

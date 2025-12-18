@@ -3,7 +3,7 @@ import { NotificationType as Notification } from '@server/constants/notification
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { sortBy } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 export const hasNotificationType = (
@@ -64,7 +64,6 @@ const NotificationTypeSelector = ({
   agent = '',
 }: NotificationTypeSelectorProps) => {
   const { hasPermission } = useUser({ id: user?.id });
-  const [allowedTypes, setAllowedTypes] = useState(enabledTypes);
   const intl = useIntl();
 
   const availableTypes = useMemo(() => {
@@ -219,15 +218,10 @@ const NotificationTypeSelector = ({
       (type) => !type.hidden && hasNotificationType(type.value, enabledTypes)
     );
 
-    const newAllowedTypes = filteredTypes.reduce((a, v) => a + v.value, 0);
-    if (newAllowedTypes !== allowedTypes) {
-      setAllowedTypes(newAllowedTypes);
-    }
-
     return user
       ? sortBy(filteredTypes, 'hasNotifyUser', 'DESC')
       : filteredTypes;
-  }, [intl, user, hasPermission, allowedTypes, enabledTypes]);
+  }, [intl, user, hasPermission, enabledTypes]);
 
   if (!availableTypes.length) {
     return null;

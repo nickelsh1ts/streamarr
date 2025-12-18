@@ -16,8 +16,8 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
     parentRef
   ) => {
     const ref = useRef(null);
-    useClickOutside(ref, () => setIsClicked(false));
     const [isClicked, setIsClicked] = useState(false);
+    useClickOutside(ref, () => setIsClicked(false));
     return (
       <Button
         ref={parentRef}

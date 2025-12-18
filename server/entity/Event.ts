@@ -48,13 +48,13 @@ export class Event {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ default: 'local' })
+  @Column({ type: 'text', default: 'local' })
   public type: 'local';
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public categories: string;
 
-  @Column()
+  @Column('text')
   public description: string;
 
   @Column({ type: 'datetime' })
@@ -66,7 +66,7 @@ export class Event {
   @Column({ type: 'text', default: 'TENTATIVE' })
   public status: 'TENTATIVE' | 'CONFIRMED' | 'CANCELLED';
 
-  @Column()
+  @Column('text')
   public summary: string;
 
   @Column({ type: 'text', unique: true })

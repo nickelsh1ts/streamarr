@@ -18,8 +18,18 @@ enum Filter {
 
 const Schedule = () => {
   const intl = useIntl();
-  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
+  const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem(
+        'schedule-filter-settings'
+      );
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentFilter || Filter.ALL;
+      }
+    }
+    return Filter.ALL;
+  });
 
   // Fetch calendar events from API
   const { data: sonarrEvents } = useSWR('/api/v1/calendar/sonarr', fetcher);
@@ -69,26 +79,13 @@ const Schedule = () => {
     }));
   }, [sonarrEvents, radarrEvents, localEvents, currentFilter, intl]);
 
-  // Restore last set filter values on component mount
-  useEffect(() => {
-    const filterString = window.localStorage.getItem(
-      'schedule-filter-settings'
-    );
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-      setCurrentFilter(filterSettings.currentFilter);
-    }
-    setHasLoadedSettings(true);
-  }, []);
-
   // Set filter values to local storage any time they are changed
   useEffect(() => {
-    if (!hasLoadedSettings) return;
     window.localStorage.setItem(
       'schedule-filter-settings',
       JSON.stringify({ currentFilter })
     );
-  }, [currentFilter, hasLoadedSettings]);
+  }, [currentFilter]);
 
   return (
     <div className="relative max-sm:mb-16 flex flex-col">

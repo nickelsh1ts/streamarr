@@ -66,7 +66,7 @@ export class Notification {
   @Column({ type: 'integer' })
   public type: NotificationType;
 
-  @Column({ default: NotificationSeverity.INFO })
+  @Column({ type: 'integer', default: NotificationSeverity.INFO })
   public severity: NotificationSeverity;
 
   @Column({ type: 'text' })

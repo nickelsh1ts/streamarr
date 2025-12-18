@@ -14,7 +14,7 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/solid';
 import type { SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Accordion from '@app/components/Common/Accordion';
 import Image from 'next/image';
 import VersionStatus from '@app/components/Layout/VersionStatus';
@@ -23,6 +23,7 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useHash from '@app/hooks/useHash';
 
 interface MenuLinksProps {
   href: string;
@@ -32,24 +33,13 @@ interface MenuLinksProps {
 }
 
 const Sidebar = () => {
-  const [currentUrl, setCurrentUrl] = useState('');
+  const pathname = usePathname();
+  const hash = useHash();
+  const currentUrl = pathname + (hash || '');
   const { hasPermission } = useUser();
   const { currentSettings } = useSettings();
   const intl = useIntl();
   const logoSrc = currentSettings.customLogo || '/logo_full.png';
-
-  useEffect(() => {
-    let lastUrl = window.location.pathname + window.location.hash;
-    setCurrentUrl(lastUrl);
-    const interval = setInterval(() => {
-      const newUrl = window.location.pathname + window.location.hash;
-      if (newUrl !== lastUrl) {
-        lastUrl = newUrl;
-        setCurrentUrl(newUrl);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -322,20 +312,9 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const { currentSettings } = useSettings();
   const { hasPermission } = useUser();
   const pathname = usePathname();
-  const [url, setCurrentUrl] = useState(pathname);
+  const hash = useHash();
+  const url = pathname + (hash || '');
   const intl = useIntl();
-  useEffect(() => {
-    let lastUrl = window.location.pathname + window.location.hash;
-    setCurrentUrl(lastUrl);
-    const interval = setInterval(() => {
-      const newUrl = window.location.pathname + window.location.hash;
-      if (newUrl !== lastUrl) {
-        lastUrl = newUrl;
-        setCurrentUrl(newUrl);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="space-y-1 mb-1 w-full">

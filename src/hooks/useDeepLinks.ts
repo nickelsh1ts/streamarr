@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 interface useDeepLinksProps {
   plexUrl?: string;
   plexUrl4k?: string;
@@ -13,21 +11,13 @@ const useDeepLinks = ({
   iOSPlexUrl,
   iOSPlexUrl4k,
 }: useDeepLinksProps) => {
-  const [returnedPlexUrl, setReturnedPlexUrl] = useState(plexUrl);
-  const [returnedPlexUrl4k, setReturnedPlexUrl4k] = useState(plexUrl4k);
+  const isIOS =
+    typeof navigator !== 'undefined' &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1));
 
-  useEffect(() => {
-    if (
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1)
-    ) {
-      setReturnedPlexUrl(iOSPlexUrl);
-      setReturnedPlexUrl4k(iOSPlexUrl4k);
-    } else {
-      setReturnedPlexUrl(plexUrl);
-      setReturnedPlexUrl4k(plexUrl4k);
-    }
-  }, [iOSPlexUrl, iOSPlexUrl4k, plexUrl, plexUrl4k]);
+  const returnedPlexUrl = isIOS ? iOSPlexUrl : plexUrl;
+  const returnedPlexUrl4k = isIOS ? iOSPlexUrl4k : plexUrl4k;
 
   return { plexUrl: returnedPlexUrl, plexUrl4k: returnedPlexUrl4k };
 };

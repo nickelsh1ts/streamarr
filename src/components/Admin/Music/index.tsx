@@ -2,18 +2,16 @@
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import type { ServiceSettings } from '@server/lib/settings';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const AdminMusic = () => {
-  const [hostname, setHostname] = useState('');
+  const [hostname] = useState(() =>
+    typeof window !== 'undefined'
+      ? `${window?.location?.protocol}//${window?.location?.host}`
+      : ''
+  );
   const { data } = useSWR<ServiceSettings>('/api/v1/settings/lidarr');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
-    }
-  }, [setHostname]);
 
   if (!data) {
     <LoadingEllipsis />;
