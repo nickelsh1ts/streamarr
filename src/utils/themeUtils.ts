@@ -120,6 +120,10 @@ export const daisyUIMapping: Record<string, string> = {
 };
 
 export const setIframeTheme = (innerFrame: Window, theme: Theme) => {
+  if (!innerFrame.document || !innerFrame.document.documentElement) {
+    return;
+  }
+  
   Object.entries(theme).forEach(([key, value]) => {
     const daisyKey = daisyUIMapping[key];
     if (daisyKey) {
