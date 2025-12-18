@@ -40,7 +40,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="absolute left-0 right-0 -top-18 z-0 h-96">
           <ImageFader
             rotationSpeed={6000}
-            gradient="bg-gradient-to-t from-[#1f1f1f] from-0% to-secondary/85 to-75%"
+            gradient="bg-gradient-to-t from-base-300 from-0% to-secondary/85 to-75%"
             backgroundImages={
               backdrops?.map(
                 (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`

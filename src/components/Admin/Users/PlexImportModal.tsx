@@ -162,7 +162,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th className="w-16 bg-neutral-700 px-4 py-3">
+                        <th className="w-16 bg-neutral px-4 py-3">
                           <span
                             role="checkbox"
                             tabIndex={0}
@@ -178,18 +178,18 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                             <span
                               aria-hidden="true"
                               className={`${
-                                isAllUsers() ? 'bg-primary' : 'bg-neutral-800'
+                                isAllUsers() ? 'bg-primary' : 'bg-base-300'
                               } absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out`}
                             ></span>
                             <span
                               aria-hidden="true"
                               className={`${
                                 isAllUsers() ? 'translate-x-5' : 'translate-x-0'
-                              } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral-200 bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
+                              } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
                             ></span>
                           </span>
                         </th>
-                        <th className="bg-neutral-700 px-1 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-neutral-200 md:px-6">
+                        <th className="bg-neutral px-1 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-neutral-content md:px-6">
                           <FormattedMessage
                             id="common.user"
                             defaultMessage="User"
@@ -197,10 +197,10 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-700 bg-neutral-800">
+                    <tbody className="divide-y divide-neutral bg-base-300">
                       {data?.map((user) => (
                         <tr key={`user-${user.id}`}>
-                          <td className="whitespace-nowrap px-4 py-4 text-sm font-medium leading-5 text-neutral-100">
+                          <td className="whitespace-nowrap px-4 py-4 text-sm font-medium leading-5 text-neutral-content">
                             <span
                               role="checkbox"
                               tabIndex={0}
@@ -227,11 +227,11 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                   isSelectedUser(user.id)
                                     ? 'translate-x-5'
                                     : 'translate-x-0'
-                                } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral-200 bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
+                                } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
                               ></span>
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-neutral-100 md:px-6">
+                          <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-neutral-content md:px-6">
                             <div className="flex items-center">
                               <CachedImage
                                 className="h-10 w-10 flex-shrink-0 rounded-full"
@@ -241,13 +241,13 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                 height={24}
                               />
                               <div className="ml-4">
-                                <div className="text-base font-bold leading-5">
+                                <div className="text-base-content font-bold leading-5">
                                   {user.username}
                                 </div>
                                 {user.username &&
                                   user.username.toLowerCase() !==
                                     user.email && (
-                                    <div className="text-sm leading-5 text-neutral-300">
+                                    <div className="text-sm leading-5 text-neutral">
                                       {user.email}
                                     </div>
                                   )}

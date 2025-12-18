@@ -17,7 +17,7 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
   {
     backgroundImages,
     rotationSpeed = DEFAULT_ROTATION_SPEED,
-    gradient = 'bg-gradient-to-t lg:bg-gradient-to-r from-brand-dark via-brand-dark/75 via-65% lg:via-40% to-80% to-brand-dark/0',
+    gradient = 'bg-gradient-to-t lg:bg-gradient-to-r from-secondary via-secondary/75 via-65% lg:via-40% to-80% to-secondary/0',
     forceOptimize,
     ...props
   },
@@ -66,7 +66,9 @@ const ImageFader: ForwardRefRenderFunction<HTMLDivElement, ImageFaderProps> = (
             fill
             {...overrides}
           />
-          <div className={`absolute inset-0 ${gradient}`} />
+          <div
+            className={`absolute inset-0 ${gradient} backdrop-brightness-50`}
+          />
         </div>
       )),
     [backgroundImages, activeIndex, gradient, imageLoader, overrides, props]

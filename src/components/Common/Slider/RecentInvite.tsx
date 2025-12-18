@@ -146,7 +146,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
         <div className="">
-          <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60">
+          <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60 text-primary-content">
             {(Array.isArray(invite?.redeemedBy) &&
               invite.redeemedBy.length > 0) ||
             invite?.status === InviteStatus.REDEEMED ? (

@@ -93,7 +93,7 @@ const CalendarToolBar = ({
     <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
       <div
         id="datePicker"
-        className="text-primary flex flex-grow flex-col sm:flex-row lg:flex-grow-0 gap-2"
+        className="flex flex-grow flex-col sm:flex-row lg:flex-grow-0 gap-2"
       >
         {view != Views.WEEK ? (
           <DatePicker
@@ -170,7 +170,9 @@ const CalendarToolBar = ({
         }) && (
           <button
             id="create-event"
-            onClick={() => setEditEventModal({ open: true, event: null })}
+            onClick={() =>
+              setEditEventModal({ open: true, selectedEvent: null })
+            }
             className="btn btn-sm btn-primary"
           >
             <FormattedMessage
@@ -230,7 +232,7 @@ const CalendarToolBar = ({
           </button>
         </div>
         <div className="flex flex-grow sm:mb-0 lg:flex-grow-0">
-          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
+          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
             {view === 'month' ? (
               <CalendarIcon className="size-6" />
             ) : view === 'week' ? (

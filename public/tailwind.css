@@ -8332,3 +8332,9 @@ html:has(.drawer-toggle:checked) {
 .top-1\.5 {
     top: 0.25rem /* 6px */;
 }
+.bg-neutral\/20 {
+    background-color: var(--fallback-n,oklch(var(--n)/0.2));
+}
+.hover\:bg-neutral\/30:hover {
+    background-color: var(--fallback-n,oklch(var(--n)/0.3));
+}

@@ -1,12 +1,13 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "baseUrl": ".",
     "outDir": "../dist",
     "noEmit": false,
-    "baseUrl": ".",
-    "paths": { "@server/*": ["*"] }
+    "paths": { "@server/*": ["./*"] }
   },
   "include": ["**/*.ts"]
 }

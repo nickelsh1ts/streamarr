@@ -83,12 +83,10 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               {user.displayName}
             </Link>
             {user.email && user.displayName?.toLowerCase() !== user.email && (
-              <span className="text-sm text-primary-content sm:ml-2 sm:text-lg">
-                ({user.email})
-              </span>
+              <span className="text-sm sm:ml-2 sm:text-lg">({user.email})</span>
             )}
           </h1>
-          <p className="text-sm font-medium text-neutral-300">
+          <p className="text-sm font-medium text-neutral">
             {subtextItems.map((item, idx) => (
               <span key={idx}>
                 {idx > 0 && ' | '}

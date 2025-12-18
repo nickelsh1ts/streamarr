@@ -357,7 +357,7 @@ const EmailNotifications = () => {
                   defaultMessage="Encryption Method"
                 />
                 <span className="ml-1 text-error">*</span>
-                <span className="block text-sm text-neutral-500">
+                <span className="block text-sm text-neutral">
                   <FormattedMessage
                     id="emailNotifications.encryptionMethodDescription"
                     defaultMessage="In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
@@ -454,7 +454,7 @@ const EmailNotifications = () => {
                   />
                 </span>
                 <SettingsBadge badgeType="advanced" />
-                <span className="block text-sm text-neutral-500">
+                <span className="block text-sm text-neutral">
                   <FormattedMessage
                     id="emailNotifications.pgpPasswordDescription"
                     defaultMessage="Sign encrypted email messages using {link}"
@@ -496,7 +496,7 @@ const EmailNotifications = () => {
                   />
                 </span>
                 <SettingsBadge badgeType="advanced" />
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-neutral">
                   <FormattedMessage
                     id="emailNotifications.pgpPasswordDescription"
                     defaultMessage="Sign encrypted email messages using {link}"

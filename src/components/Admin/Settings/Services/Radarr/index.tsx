@@ -45,16 +45,16 @@ export const ServerInstance = ({
   const serviceUrl = internalUrl;
 
   return (
-    <li className="col-span-1 rounded-lg bg-[#161616] shadow">
+    <li className="col-span-1 rounded-lg bg-base-200 shadow">
       <div className="flex w-full items-center justify-between space-x-6 p-6">
         <div className="flex-1 truncate">
           <div className="mb-2 flex items-center space-x-2">
-            <h3 className="truncate font-medium leading-5 text-white">
+            <h3 className="truncate font-medium leading-5">
               <a
                 href={serviceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition duration-300 hover:text-white hover:underline"
+                className="transition duration-300 hover:underline"
               >
                 {name}
               </a>
@@ -86,7 +86,7 @@ export const ServerInstance = ({
               </Badge>
             )}
           </div>
-          <p className="mt-1 truncate text-sm leading-5 text-gray-300">
+          <p className="mt-1 truncate text-sm leading-5">
             <span className="mr-2 font-bold">
               <FormattedMessage
                 id="common.hostname"
@@ -97,12 +97,12 @@ export const ServerInstance = ({
               href={internalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="transition duration-300 hover:text-white hover:underline"
+              className="transition duration-300 hover:underline"
             >
               {internalUrl}
             </a>
           </p>
-          <p className="mt-1 truncate text-sm leading-5 text-gray-300">
+          <p className="mt-1 truncate text-sm leading-5">
             <span className="mr-2 font-bold">
               <FormattedMessage id="common.urlBase" defaultMessage="URL Base" />
             </span>
@@ -127,7 +127,7 @@ export const ServerInstance = ({
           <div className="flex w-0 flex-1 border-r border-primary">
             <button
               onClick={() => onEdit()}
-              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 text-gray-200 transition duration-150 ease-in-out hover:text-white bg-primary bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <PencilIcon className="mr-2 h-5 w-5" />
               <span>
@@ -138,7 +138,7 @@ export const ServerInstance = ({
           <div className="-ml-px flex w-0 flex-1">
             <button
               onClick={() => onDelete()}
-              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 text-gray-200 transition duration-150 ease-in-out hover:text-white bg-primary bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <TrashIcon className="mr-2 h-5 w-5" />
               <span>

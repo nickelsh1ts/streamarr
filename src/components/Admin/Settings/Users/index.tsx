@@ -121,7 +121,7 @@ const UserSettings = () => {
                     id="userSettings.localLogin"
                     defaultMessage="Enable Local Sign-in"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.localLoginDescription"
                       defaultMessage="Allow users to sign in using their email address and password, instead of Plex OAuth"
@@ -144,7 +144,7 @@ const UserSettings = () => {
                     id="userSettings.plexLogin"
                     defaultMessage="Enable New Plex Sign-in"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.plexLoginDescription"
                       defaultMessage="Allow Plex users to sign in without first being imported"
@@ -167,7 +167,7 @@ const UserSettings = () => {
                     id="userSettings.inviteLimit"
                     defaultMessage="Default Invite Limit"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.inviteLimitDescription"
                       defaultMessage="Set the default invite limit for new users."
@@ -290,7 +290,7 @@ const UserSettings = () => {
                     id="userSettings.enableTrialPeriod"
                     defaultMessage="Enable Trial Period"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.enableTrialPeriodDescription"
                       defaultMessage="Set a period of days where new users cannot create invites"
@@ -337,7 +337,7 @@ const UserSettings = () => {
                     id="userSettings.InviteSettings"
                     defaultMessage="Default Invite Settings"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.InviteSettingsDescription"
                       defaultMessage="Initial settings associated to new invites"
@@ -361,7 +361,7 @@ const UserSettings = () => {
                         }
                       }}
                       className={`${
-                        values.downloads ? 'bg-primary' : 'bg-neutral-700'
+                        values.downloads ? 'bg-primary' : 'bg-neutral'
                       } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
@@ -377,7 +377,7 @@ const UserSettings = () => {
                               : 'opacity-100 duration-200 ease-in'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                          <XMarkIcon className="h-3 w-3 text-neutral" />
                         </span>
                         <span
                           className={`${
@@ -411,7 +411,7 @@ const UserSettings = () => {
                         }
                       }}
                       className={`${
-                        values.liveTv ? 'bg-primary' : 'bg-neutral-700'
+                        values.liveTv ? 'bg-primary' : 'bg-neutral'
                       } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
@@ -427,7 +427,7 @@ const UserSettings = () => {
                               : 'opacity-100 duration-200 ease-in'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                          <XMarkIcon className="h-3 w-3 text-neutral" />
                         </span>
                         <span
                           className={`${
@@ -457,7 +457,7 @@ const UserSettings = () => {
                         onClick={() => undefined}
                         onKeyDown={() => undefined}
                         className={`${
-                          values.plexHome ? 'bg-primary' : 'bg-neutral-700'
+                          values.plexHome ? 'bg-primary' : 'bg-neutral'
                         } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
                         aria-disabled={true}
                       >
@@ -474,7 +474,7 @@ const UserSettings = () => {
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral-400" />
+                            <XMarkIcon className="h-3 w-3 text-neutral" />
                           </span>
                           <span
                             className={`${
@@ -501,7 +501,7 @@ const UserSettings = () => {
                     id="userSettings.defaultSharedLibraries"
                     defaultMessage="Default Shared Libraries"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.defaultSharedLibrariesDescription"
                       defaultMessage="Initial libraries shared with new users"
@@ -519,7 +519,7 @@ const UserSettings = () => {
                     id="userSettings.defaultPermissions"
                     defaultMessage="Default Permissions"
                   />
-                  <span className="text-sm block font-light text-neutral-300">
+                  <span className="text-sm block font-light text-neutral">
                     <FormattedMessage
                       id="userSettings.defaultPermissionsDescription"
                       defaultMessage="Initial permissions assigned to new users"

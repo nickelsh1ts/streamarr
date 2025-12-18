@@ -247,7 +247,7 @@ const EventModal = ({
       >
         <div className="space-y-2">
           {selectedEvent.categories && selectedEvent.categories.length > 0 && (
-            <div className="flex items-center text-neutral-400">
+            <div className="flex items-center text-neutral">
               <span>
                 {Array.isArray(selectedEvent.categories)
                   ? selectedEvent.categories.join(', ')
@@ -255,11 +255,7 @@ const EventModal = ({
               </span>
             </div>
           )}
-          {selectedEvent.description && (
-            <div className="text-primary-content">
-              {selectedEvent.description}
-            </div>
-          )}
+          {selectedEvent.description && <div>{selectedEvent.description}</div>}
           {selectedEvent.status && (
             <div>
               <span className="font-semibold">
@@ -323,7 +319,7 @@ const EventModal = ({
             )}
           {selectedEvent.uid &&
             hasPermission([Permission.ADMIN], { type: 'or' }) && (
-              <div className="flex items-center place-content-end text-xs mt-2 text-neutral-400">
+              <div className="flex items-center place-content-end text-xs mt-2 text-neutral">
                 <span className="font-semibold">
                   <FormattedMessage id="calendar.uid" defaultMessage="UID:" />
                 </span>
@@ -683,7 +679,7 @@ const EventModal = ({
                     id="calendar.eventId"
                     defaultMessage="UID"
                   />
-                  <span className="text-neutral-500 ml-2">
+                  <span className="text-neutral ml-2">
                     (
                     <FormattedMessage
                       id="common.optional"

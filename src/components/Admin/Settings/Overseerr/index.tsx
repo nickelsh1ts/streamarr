@@ -4,10 +4,12 @@ import DynamicFrame from '@app/components/Common/DynamicFrame';
 import type { ServiceSettings } from '@server/lib/settings';
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
+import useSettings from '@app/hooks/useSettings';
 
 const AdminOverseerr = () => {
   const [hostname, setHostname] = useState('');
   const { data } = useSWR<ServiceSettings>('/api/v1/settings/overseerr');
+  const { currentSettings } = useSettings();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -23,6 +25,7 @@ const AdminOverseerr = () => {
           domainURL={hostname}
           basePath={data?.urlBase}
           newBase={'/admin/settings/overseerr'}
+          theme={currentSettings?.theme}
         >
           <link rel="stylesheet" href="/request.css" />
         </DynamicFrame>

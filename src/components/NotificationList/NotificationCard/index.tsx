@@ -2,6 +2,7 @@ import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
+import useSettings from '@app/hooks/useSettings';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import {
   CheckBadgeIcon,
@@ -29,6 +30,7 @@ export const NotificationCard = ({
   onRead,
   onDelete,
 }: NotificationCardProps) => {
+  const { currentSettings } = useSettings();
   const intl = useIntl();
   const router = useRouter();
   const { setIsOpen } = useNotificationSidebar();
@@ -45,8 +47,8 @@ export const NotificationCard = ({
       bgColor = 'bg-warning';
       break;
     case NotificationSeverity.INFO:
-      icon = <InformationCircleIcon className="text-primary-content" />;
-      bgColor = 'bg-primary';
+      icon = <InformationCircleIcon className="text-info-content" />;
+      bgColor = 'bg-info';
       break;
     case NotificationSeverity.SUCCESS:
       icon = <CheckBadgeIcon className="text-success-content" />;
@@ -64,6 +66,9 @@ export const NotificationCard = ({
       icon = <InformationCircleIcon className="text-primary-content" />;
       bgColor = 'bg-primary';
   }
+
+  const logoSmallSrc =
+    currentSettings.customLogoSmall || '/streamarr-logo-512x512.png';
 
   return (
     <div
@@ -83,14 +88,12 @@ export const NotificationCard = ({
       }}
       role="button"
       tabIndex={0}
-      className={`flex gap-3 p-2 text-white w-full rounded-lg relative text-start ${!notification.isRead ? 'bg-primary/20' : ''} hover:bg-primary-content/10 group/item has-[.actions:hover]:bg-transparent`}
+      className={`flex gap-3 p-2 text-primary-content w-full rounded-lg relative text-start ${!notification.isRead ? 'bg-primary/20' : ''} hover:bg-primary-content/10 group/item has-[.actions:hover]:bg-transparent`}
     >
       <div className="relative inline-flex size-16 flex-shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
         <div>
           <CachedImage
-            src={
-              notification?.createdBy?.avatar || '/streamarr-logo-192x192.png'
-            }
+            src={notification?.createdBy?.avatar || logoSmallSrc}
             alt=""
             className="rounded-full"
             width={64}
@@ -145,7 +148,7 @@ export const NotificationCard = ({
             chevron={false}
             size="md"
             dropdownIcon={<EllipsisHorizontalIcon className="size-7" />}
-            className="p-1 rounded-full hover:bg-[#202629] actions"
+            className="p-1 rounded-full hover:bg-base-200 actions text-neutral hover:text-base-content"
           >
             <DropDownMenu.Item
               onClick={(e) => {

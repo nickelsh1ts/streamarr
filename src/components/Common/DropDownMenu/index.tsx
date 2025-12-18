@@ -32,13 +32,13 @@ const DropdownItem = ({
   setIsOpen,
   ...props
 }: DropdownItemProps) => {
-  let styleClass = 'hover:bg-primary-content/10';
+  let styleClass = 'hover:bg-base-content/10 text-base-content';
   const url = usePathname() + useHash();
 
   switch (buttonType) {
     case 'ghost':
       styleClass +=
-        ' bg-transparent rounded hover:bg-gradient-to-br from-primary to-primary/20 text-white focus:border-primary-content focus:text-white';
+        ' bg-transparent rounded hover:bg-gradient-to-br from-primary to-primary/20 focus:border-base-content focus:text-base-content';
       break;
     default:
       styleClass += '';
@@ -58,7 +58,7 @@ const DropdownItem = ({
           href={props.href}
           onClick={() => setIsOpen && setIsOpen(!isOpen)}
           onKeyDown={() => setIsOpen && setIsOpen(!isOpen)}
-          className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+          className={`rounded-none py-1 ${styleClass} ${isActive ? 'bg-base-content/20' : ''}`}
           {...props}
         >
           {children}
@@ -67,7 +67,7 @@ const DropdownItem = ({
         <button
           onClick={() => setIsOpen && setIsOpen(!isOpen)}
           onKeyDown={() => setIsOpen && setIsOpen(!isOpen)}
-          className={`w-full text-left rounded-none py-1 ${styleClass} ${isActive ? 'bg-primary-content/20' : ''}`}
+          className={`w-full text-left rounded-none py-1 ${styleClass} ${isActive ? 'bg-base-content/20' : ''}`}
           {...(props as unknown as ButtonHTMLAttributes<HTMLButtonElement>)}
         >
           {children}
@@ -82,6 +82,7 @@ const DropdownItem = ({
 
 interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   dropUp?: boolean;
+  side?: 'left' | 'right';
   title?: string;
   dropdownIcon?: React.ReactNode;
   buttonType?: 'primary' | 'ghost';
@@ -94,6 +95,7 @@ interface DropDownMenuProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const DropDownMenu = ({
   dropUp,
+  side = 'right',
   title,
   children,
   dropdownIcon,
@@ -121,9 +123,9 @@ const DropDownMenu = ({
       break;
     default:
       styleClasses.dropdownSideButtonClasses +=
-        ' text-zinc-300 hover:text-white';
+        ' text-zinc-300 hover:text-primary-content';
       styleClasses.dropdownClasses +=
-        ' shadow-3xl bg-[#202629] border-[.2px] border-base-200';
+        ' shadow-3xl bg-base-200 border-[.2px] border-base-200';
   }
 
   return (
@@ -158,11 +160,11 @@ const DropDownMenu = ({
         </Tooltip>
         <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -my-1 right-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
+            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -ml-1 -my-1 ${side}-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? `top-auto bottom-full origin-bottom-${side} data-[closed]:translate-y-2 data-[leave]:translate-y-2` : `origin-top-${side} data-[closed]:-translate-y-2 data-[leave]:-translate-y-2`}`}
           >
             <div className={`${styleClasses.dropdownClasses}`}>
               {title && (
-                <span className="ms-4 font-bold text-primary-content/45 uppercase">
+                <span className="ms-4 font-bold text-base-content/45 uppercase">
                   {title}
                 </span>
               )}

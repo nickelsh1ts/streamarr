@@ -23,10 +23,12 @@ import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
+import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
+import { SettingsContext } from '@app/context/SettingsContext';
 
 //TODO: Add customizable & interactive new user tutorial/welcome
 
@@ -34,7 +36,13 @@ const GeneralSettings = () => {
   const intl = useIntl();
   const { user: currentUser, hasPermission: userHasPermission } = useUser();
   const { setLocale } = useLocale();
+  const { updateSettings } = useContext(SettingsContext);
   const [isRotating, setIsRotating] = useState(false);
+  const [editingColor, setEditingColor] = useState<{
+    open: boolean;
+    color: string | null;
+    content: string | null;
+  }>({ open: false, color: null, content: null });
   const {
     data,
     error,
@@ -134,6 +142,7 @@ const GeneralSettings = () => {
           supportUrl: data?.supportUrl,
           supportEmail: data?.supportEmail,
           extendedHome: data?.extendedHome,
+          theme: data?.theme,
           customLogo: null as File | null,
           customLogoSmall: null as File | null,
         }}
@@ -153,7 +162,9 @@ const GeneralSettings = () => {
               supportUrl: values.supportUrl,
               supportEmail: values.supportEmail,
               extendedHome: values.extendedHome,
+              theme: values.theme,
             });
+            updateSettings({ theme: values.theme });
             if (values.customLogo || values.customLogoSmall) {
               try {
                 const formData = new FormData();
@@ -336,7 +347,7 @@ const GeneralSettings = () => {
                         defaultMessage="Custom Logo"
                       />
                     </span>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.customLogo.description"
                         defaultMessage="Upload a custom logo (recommended: 190x55px)"
@@ -479,7 +490,7 @@ const GeneralSettings = () => {
                         defaultMessage="Custom Logo (mobile)"
                       />
                     </span>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.customLogoSmall.description"
                         defaultMessage="Upload a custom logo for mobile screens (recommended: square aspect ratio, 45x45px)"
@@ -624,7 +635,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Signup"
                       />
                     </span>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.enableSignUp.description"
                         defaultMessage="Allow new users to signup. This will also enable invite management."
@@ -673,7 +684,7 @@ const GeneralSettings = () => {
                       />
                     </span>
                     <SettingsBadge badgeType="restartRequired" />
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.trustProxy.description"
                         defaultMessage="Allow Streamarr to correctly register client IP addresses behind a proxy"
@@ -702,7 +713,7 @@ const GeneralSettings = () => {
                     </span>
                     <SettingsBadge badgeType="advanced" className="mr-2" />
                     <SettingsBadge badgeType="restartRequired" />
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.csrfProtection.description"
                         defaultMessage="Set external API access to read-only (requires HTTPS)"
@@ -735,7 +746,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Image Caching"
                       />
                     </span>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.cacheImages.description"
                         defaultMessage="Cache externally sourced images (requires extra disk space)"
@@ -829,7 +840,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Extended Homepage"
                       />
                     </span>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral">
                       <FormattedMessage
                         id="generalSettings.extendedHome.description"
                         defaultMessage="Enable the extended homepage with FAQs"
@@ -844,6 +855,158 @@ const GeneralSettings = () => {
                       setFieldValue('extendedHome', !values.extendedHome);
                     }}
                     className="checkbox-primary checkbox"
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label
+                    htmlFor="theme"
+                    className="font-medium col-span-1 mb-4"
+                  >
+                    <span>
+                      <FormattedMessage
+                        id="generalSettings.theme.title"
+                        defaultMessage="Theme Customization"
+                      />
+                    </span>
+                    <p className="text-sm text-neutral mb-2">
+                      <FormattedMessage
+                        id="generalSettings.theme.description"
+                        defaultMessage="Customize the colors of Streamarr."
+                      />
+                    </p>
+                    <Button
+                      buttonType="warning"
+                      buttonSize="sm"
+                      onClick={() => {
+                        setFieldValue('theme', {
+                          primary: '#974ede',
+                          'primary-content': '#fff',
+                          secondary: '#080011',
+                          'secondary-content': '#cfcbdc',
+                          accent: '#e5a00d',
+                          'accent-content': '#fff',
+                          neutral: '#737373',
+                          'neutral-content': '#e0e2e4',
+                          'base-100': '#121212',
+                          'base-200': '#161616',
+                          'base-300': '#1f1f1f',
+                          'base-content': '#fff',
+                          info: '#2563eb',
+                          'info-content': '#d2e2ff',
+                          success: '#84cc16',
+                          'success-content': '#fff',
+                          warning: '#ffc107',
+                          'warning-content': '#fff',
+                          error: '#b91c1c',
+                          'error-content': '#fff',
+                        });
+                      }}
+                    >
+                      <FormattedMessage
+                        id="common.resetToDefault"
+                        defaultMessage="Reset to Default"
+                      />
+                    </Button>
+                  </label>
+                  <div className="col-span-2 place-items-start grid grid-cols-4 lg:grid-cols-10 gap-2">
+                    {[
+                      'base-100',
+                      'base-200',
+                      'base-300',
+                      'base-content',
+                      'primary',
+                      'primary-content',
+                      'secondary',
+                      'secondary-content',
+                      'accent',
+                      'accent-content',
+                      'neutral',
+                      'neutral-content',
+                      'info',
+                      'info-content',
+                      'success',
+                      'success-content',
+                      'warning',
+                      'warning-content',
+                      'error',
+                      'error-content',
+                    ].map((colorKey) => (
+                      <div
+                        key={colorKey}
+                        className="flex flex-col items-start space-y-1 mb-2"
+                      >
+                        <button
+                          type="button"
+                          className="size-12 rounded-lg text-xl"
+                          style={{
+                            backgroundColor:
+                              colorKey === 'base-content'
+                                ? values.theme?.['base-300']
+                                : values.theme?.[
+                                    colorKey?.replace('-content', '')
+                                  ],
+                          }}
+                          onClick={() =>
+                            setEditingColor({
+                              open: true,
+                              color: colorKey,
+                              content: colorKey.includes('-content')
+                                ? values.theme?.[colorKey]
+                                : values.theme?.[colorKey + '-content'],
+                            })
+                          }
+                          title={`Edit ${colorKey?.replace('-', ' ')}`}
+                        >
+                          {colorKey.includes('-content') ? (
+                            <span
+                              className="text-xl font-extrabold"
+                              style={{
+                                color: values.theme?.[colorKey],
+                              }}
+                            >
+                              Abc
+                            </span>
+                          ) : (
+                            colorKey.includes('base') && (
+                              <span
+                                className="text-md font-thin"
+                                style={{
+                                  color: values.theme?.['base-content'],
+                                }}
+                              >
+                                {colorKey?.replace('base-', '')}
+                              </span>
+                            )
+                          )}
+                        </button>
+                        <span className="text-xs text-center tracking-wider">
+                          {!colorKey.includes('-content') &&
+                            !colorKey.includes('base') &&
+                            colorKey?.replace('-', ' ')}
+                          {colorKey.includes('base-100') && <span>base</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <ColorPickerModal
+                    colorName={editingColor?.color}
+                    show={editingColor?.open}
+                    theme={values.theme}
+                    onSave={(color) => {
+                      setFieldValue(`theme.${editingColor?.color}`, color);
+                      setEditingColor({
+                        open: false,
+                        color: null,
+                        content: null,
+                      });
+                    }}
+                    onClose={() =>
+                      setEditingColor({
+                        open: false,
+                        color: null,
+                        content: null,
+                      })
+                    }
                   />
                 </div>
                 <div className="divider divider-primary mb-0 col-span-full" />

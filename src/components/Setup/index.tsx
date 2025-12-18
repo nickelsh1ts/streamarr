@@ -131,7 +131,7 @@ const Setup = () => {
           {currentStep === 2 && (
             <div>
               <SettingsPlex onComplete={() => setPlexSettingsComplete(true)} />
-              <div className="mt-4 text-sm text-neutral-300">
+              <div className="mt-4 text-sm text-neutral">
                 <span className="mr-2">
                   <Badge>
                     <FormattedMessage id="setup.tip" defaultMessage="Tip" />

@@ -219,7 +219,7 @@ const ServicesTautulli = () => {
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 text-primary-content sm:text-sm">
+                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
                       {values.tautulliUseSsl ? 'https://' : 'http://'}
                     </span>
                     <Field

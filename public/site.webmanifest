@@ -30,7 +30,7 @@
   ],
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#2b0b53",
+  "background_color": "#080011",
   "theme_color": "#1f1f1f",
   "shortcuts": [{
       "name": "Watch",

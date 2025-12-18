@@ -42,13 +42,14 @@ const AdminLink = ({
     'px-1 py-4 ml-8 text-sm font-medium leading-5 transition duration-300 border-b-2 whitespace-nowrap first:ml-0';
   let activeLinkColor = 'text-primary border-primary';
   let inactiveLinkColor =
-    'text-primary-content/70 border-transparent hover:text-primary-content/60 hover:border-gray-400 focus:text-gray-300 focus:border-gray-400';
+    'text-base-content/70 border-transparent hover:text-base-content/60 hover:border-neutral focus:text-neutral focus:border-neutral';
 
   if (tabType === 'button') {
     linkClasses =
       'px-3 py-2 text-sm font-medium transition duration-300 rounded-md whitespace-nowrap mx-2 my-1';
-    activeLinkColor = 'bg-primary';
-    inactiveLinkColor = 'bg-base-100 hover:bg-primary/50 focus:bg-primary/30';
+    activeLinkColor = 'bg-primary text-primary-content';
+    inactiveLinkColor =
+      'bg-base-100 hover:bg-primary/50 focus:bg-primary/30 text-base-content hover:text-primary-content focus:text-primary-content';
   }
 
   return (
@@ -129,7 +130,7 @@ const AdminTabs = ({
           </nav>
         </div>
       ) : (
-        <div className="hide-scrollbar hidden overflow-x-scroll border-b border-gray-600 sm:block m-0">
+        <div className="hide-scrollbar hidden overflow-x-scroll border-b border-neutral sm:block m-0">
           <nav className="flex" data-testid="Admin-nav-desktop">
             {AdminRoutes.filter((route) => !route.hidden).map(
               (route, index) => (

@@ -14,7 +14,7 @@ const TH = ({
   ...props
 }: React.ComponentPropsWithoutRef<'th'>) => {
   const style = [
-    'px-4 py-3 bg-base-100 text-left text-xs leading-4 font-medium text-gray-200 uppercase tracking-wider truncate',
+    'px-4 py-3 bg-base-100 text-base-content text-left text-xs leading-4 font-medium uppercase tracking-wider truncate',
   ];
 
   if (className) {
@@ -40,7 +40,7 @@ const TD = ({
   className,
   ...props
 }: TDProps & React.ComponentPropsWithoutRef<'td'>) => {
-  const style = ['text-sm leading-5 text-white'];
+  const style = ['text-sm leading-5'];
 
   switch (alignText) {
     case 'left':
