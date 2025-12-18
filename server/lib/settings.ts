@@ -88,6 +88,29 @@ interface Quota {
   quotaExpiryTime?: 'days' | 'weeks' | 'months';
 }
 
+export interface Theme {
+  primary: string;
+  'primary-content': string;
+  secondary: string;
+  'secondary-content': string;
+  accent: string;
+  'accent-content': string;
+  neutral: string;
+  'neutral-content': string;
+  'base-100': string;
+  'base-200': string;
+  'base-300': string;
+  'base-content': string;
+  info: string;
+  'info-content': string;
+  success: string;
+  'success-content': string;
+  warning: string;
+  'warning-content': string;
+  error: string;
+  'error-content': string;
+}
+
 export interface MainSettings {
   apiKey: string;
   applicationTitle: string;
@@ -115,13 +138,14 @@ export interface MainSettings {
   customLogoSmall?: string;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  theme: Theme;
 }
 
 interface PublicSettings {
   initialized: boolean;
 }
 
-interface FullPublicSettings extends PublicSettings {
+export interface FullPublicSettings extends PublicSettings {
   applicationTitle: string;
   applicationUrl: string;
   localLogin: boolean;
@@ -144,6 +168,7 @@ interface FullPublicSettings extends PublicSettings {
   releaseSched: boolean;
   statusUrl: string;
   statusEnabled: boolean;
+  theme: Theme;
 }
 
 export interface NotificationAgentConfig {
@@ -258,6 +283,28 @@ class Settings {
         extendedHome: true,
         enableTrialPeriod: false,
         trialPeriodDays: 30,
+        theme: {
+          primary: '#974ede',
+          'primary-content': '#fff',
+          secondary: '#080011',
+          'secondary-content': '#cfcbdc',
+          accent: '#e5a00d',
+          'accent-content': '#fff',
+          neutral: '#737373',
+          'neutral-content': '#e0e2e4',
+          'base-100': '#121212',
+          'base-200': '#161616',
+          'base-300': '#1f1f1f',
+          'base-content': '#fff',
+          info: '#2563eb',
+          'info-content': '#d2e2ff',
+          success: '#84cc16',
+          'success-content': '#fff',
+          warning: '#ffc107',
+          'warning-content': '#fff',
+          error: '#b91c1c',
+          'error-content': '#fff',
+        },
       },
       plex: {
         name: '',
@@ -464,6 +511,7 @@ class Settings {
       releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
+      theme: this.data.main.theme,
     };
   }
 

@@ -17133,6 +17133,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-colorful@npm:^5.6.1":
+  version: 5.6.1
+  resolution: "react-colorful@npm:5.6.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/48eb73cf71e10841c2a61b6b06ab81da9fffa9876134c239bfdebcf348ce2a47e56b146338e35dfb03512c85966bfc9a53844fc56bc50154e71f8daee59ff6f0
+  languageName: node
+  linkType: hard
+
 "react-datepicker@npm:^8.4.0":
   version: 8.4.0
   resolution: "react-datepicker@npm:8.4.0"
@@ -18902,6 +18912,7 @@ __metadata:
     axios-rate-limit: "npm:^1.4.0"
     bcrypt: "npm:^6.0.0"
     bowser: "npm:^2.11.0"
+    colord: "npm:^2.9.3"
     commitizen: "npm:4.3.1"
     concurrently: "npm:^9.2.0"
     connect-typeorm: "npm:^2.0.0"
@@ -18953,6 +18964,7 @@ __metadata:
     react-animate-height: "npm:^3.2.3"
     react-aria: "npm:3.41.1"
     react-big-calendar: "npm:^1.19.4"
+    react-colorful: "npm:^5.6.1"
     react-datepicker: "npm:^8.4.0"
     react-dom: "npm:19.1.0"
     react-hot-toast: "npm:^2.5.2"

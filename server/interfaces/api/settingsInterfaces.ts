@@ -1,4 +1,5 @@
 import type { PaginatedResponse } from './common';
+import type { Theme } from '@server/lib/settings';
 
 export type LogMessage = {
   timestamp: string;
@@ -45,6 +46,7 @@ export interface PublicSettingsResponse {
   statusEnabled: boolean;
   customLogo?: string;
   customLogoSmall?: string;
+  theme: Theme;
 }
 
 export interface CacheItem {
