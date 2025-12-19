@@ -182,7 +182,7 @@ app
       next();
     });
     server.use('/api/v1', routes);
-    server.get('/*splat', (req, res) => handle(req, res));
+    server.get('/{*splat}', (req, res) => handle(req, res));
     server.use(
       (
         err: unknown,
