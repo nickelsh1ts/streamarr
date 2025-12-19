@@ -1,7 +1,7 @@
 'use client';
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
-import { publicRoutes } from '@app/middleware';
+import { publicRoutes } from '@app/proxy';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 

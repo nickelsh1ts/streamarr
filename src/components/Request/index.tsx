@@ -174,6 +174,7 @@ const Request = ({ children, ...props }) => {
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <iframe
         {...props}
         loading="eager"

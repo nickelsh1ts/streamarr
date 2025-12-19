@@ -8,7 +8,7 @@ import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
 import ImageFader from '@app/components/Common/ImageFader';
 import { useEffect, useMemo, useRef } from 'react';
-import { publicRoutes } from '@app/middleware';
+import { publicRoutes } from '@app/proxy';
 import useSettings from '@app/hooks/useSettings';
 import Notifications from '@app/components/Layout/Notifications';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';

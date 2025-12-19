@@ -13,7 +13,7 @@ const ThemeSetter: React.FC = () => {
     if (!theme) {
       return;
     }
-    
+
     Object.entries(theme).forEach(([key, value]) => {
       const daisyKey = daisyUIMapping[key];
       if (daisyKey) {
