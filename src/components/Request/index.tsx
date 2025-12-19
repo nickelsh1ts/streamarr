@@ -4,7 +4,7 @@ import useRouteGuard from '@app/hooks/useRouteGuard';
 import useSettings from '@app/hooks/useSettings';
 import { Permission } from '@server/lib/permissions';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
@@ -25,10 +25,12 @@ const Request = ({ children, ...props }) => {
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
-  const hostname =
-    typeof window !== 'undefined' && currentSettings?.requestUrl
-      ? `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
-      : '';
+  const hostname = useMemo(() => {
+    if (typeof window !== 'undefined' && currentSettings?.requestUrl) {
+      return `${window.location.protocol}//${window.location.host}${currentSettings.requestUrl}`;
+    }
+    return '';
+  }, [currentSettings?.requestUrl]);
 
   useEffect(() => {
     if (currentSettings?.requestUrl) {
