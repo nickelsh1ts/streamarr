@@ -106,7 +106,6 @@ export default function BigCalendar({
   const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
     useMemo(() => {
       // The timezone is set globally by useEffect above
-      // We need timezone in deps to recreate localizer when timezone changes
       return {
         defaultDate: getDate(defaultDateStr, moment),
         getNow: () => moment().toDate(),
@@ -114,6 +113,7 @@ export default function BigCalendar({
         myEvents: events,
         scrollToTime: moment().toDate(),
       };
+      // timezone dependency needed to recreate localizer when timezone changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [events, timezone]);
 
