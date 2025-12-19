@@ -11,12 +11,12 @@ export const INTERACTION_TYPE = {
 const UPDATE_INTERVAL = 1000; // Throttle updates to the type to prevent flip flopping
 
 const useInteraction = (): boolean => {
-  const [isTouch, setIsTouch] = useState(false);
+  const [isTouch, setIsTouch] = useState(
+    () => typeof window !== 'undefined' && 'ontouchstart' in window
+  );
 
   useEffect(() => {
     const hasTapEvent = 'ontouchstart' in window;
-    setIsTouch(hasTapEvent);
-
     let localTouch = hasTapEvent;
     let lastTouchUpdate = Date.now();
 

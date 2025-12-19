@@ -34,9 +34,26 @@ const LogsSettings = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const [currentFilter, setCurrentFilter] = useState<Filter>('debug');
-  const [currentPageSize, setCurrentPageSize] = useState(25);
+  const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem('logs-display-settings');
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentFilter || 'debug';
+      }
+    }
+    return 'debug';
+  });
+  const [currentPageSize, setCurrentPageSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem('logs-display-settings');
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentPageSize || 25;
+      }
+    }
+    return 25;
+  });
   const [searchFilter, debouncedSearchFilter, setSearchFilter] =
     useDebouncedState('');
   const [refreshInterval, setRefreshInterval] = useState(5000);
@@ -77,17 +94,6 @@ const LogsSettings = () => {
   const { data: appData } = useSWR('/api/v1/status/appdata');
 
   useEffect(() => {
-    const filterString = window.localStorage.getItem('logs-display-settings');
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentPageSize(filterSettings.currentPageSize);
-    }
-    setHasLoadedSettings(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedSettings) return;
     window.localStorage.setItem(
       'logs-display-settings',
       JSON.stringify({
@@ -95,7 +101,7 @@ const LogsSettings = () => {
         currentPageSize,
       })
     );
-  }, [currentFilter, currentPageSize, hasLoadedSettings]);
+  }, [currentFilter, currentPageSize]);
 
   const copyLogString = (log: LogMessage) => {
     return `${log.timestamp} [${log.level}]${log.label ? `[${log.label}]` : ''}: ${

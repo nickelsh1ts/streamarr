@@ -5,7 +5,7 @@ export const SETUP_REGEX = /\/(setup|signin\/plex\/loading)/;
 export const publicRoutes =
   /(\/|signin(\/plex\/loading)?|signup|resetpassword\/?(.*)?|setup|signin(\/plex\/loading)?|help\/?(.*)?)$/;
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // Always allow static files and Next.js internals

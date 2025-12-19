@@ -4,7 +4,6 @@
     "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "baseUrl": ".",
     "outDir": "../dist",
     "noEmit": false,
     "paths": { "@server/*": ["./*"] }

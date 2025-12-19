@@ -28,25 +28,25 @@ export class UserSettings {
   @JoinColumn()
   public user: User;
 
-  @Column({ default: '' })
+  @Column({ type: 'text', default: '' })
   public locale?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public region?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public originalLanguage?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public pgpKey?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public sharedLibraries?: string;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   public allowDownloads: boolean;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   public allowLiveTv: boolean;
 
   @Column({ type: 'datetime', nullable: true })

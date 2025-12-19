@@ -21,7 +21,7 @@ export interface User {
   updatedAt: Date;
   inviteQuotaLimit?: number;
   inviteQuotaDays?: number;
-  inviteCount: number;
+  inviteCount?: number;
   settings?: UserSettings;
   redeemedInvite?: {
     id: number;

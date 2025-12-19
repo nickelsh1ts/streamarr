@@ -1,22 +1,38 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const getHash = () =>
-  typeof window !== 'undefined' ? window.location.hash : undefined;
+  typeof window !== 'undefined' ? window.location.hash : '';
 
 const useHash = () => {
-  const [isClient, setIsClient] = useState(false);
-  const [hash, setHash] = useState(getHash());
-  const params = useParams();
+  const [hash, setHash] = useState(getHash);
 
   useEffect(() => {
-    setIsClient(true);
-    setHash(getHash());
-  }, [params]);
+    const handleHashChange = () => {
+      setHash(getHash());
+    };
 
-  return isClient ? hash : null;
+    // Listen to hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Polling fallback for iframe navigation that may not trigger hashchange
+    let lastHash = getHash();
+    const interval = setInterval(() => {
+      const newHash = getHash();
+      if (newHash !== lastHash) {
+        lastHash = newHash;
+        setHash(newHash);
+      }
+    }, 100);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return hash || null;
 };
 
 export default useHash;

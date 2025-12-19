@@ -1,16 +1,12 @@
 'use client';
 import useSettings from '@app/hooks/useSettings';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const Privacy = () => {
   const { currentSettings } = useSettings();
-  const [hostname, setHostname] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.host}`);
-    }
-  }, [setHostname]);
+  const [hostname] = useState(() =>
+    typeof window !== 'undefined' ? `${window?.location?.host}` : ''
+  );
 
   return (
     <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">

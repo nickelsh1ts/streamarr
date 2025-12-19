@@ -19,16 +19,19 @@ const Request = ({ children, ...props }) => {
   const { currentSettings } = useSettings();
 
   const [contentRef, setContentRef] = useState(null);
-  const [loadingIframe, setLoadingIframe] = useState(true);
+  const [loadingIframe, setLoadingIframe] = useState(
+    () => !currentSettings?.requestUrl
+  );
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
-  const [hostname, setHostname] = useState('');
+  const hostname =
+    typeof window !== 'undefined' && currentSettings?.requestUrl
+      ? `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
+      : '';
 
   useEffect(() => {
-    if (!currentSettings?.requestUrl) {
-      setLoadingIframe(true);
-    } else {
+    if (currentSettings?.requestUrl) {
       innerFrame?.navigation?.addEventListener('navigate', () => {
         setLoadingIframe(true);
         setTimeout(() => {
@@ -59,14 +62,6 @@ const Request = ({ children, ...props }) => {
     router,
     url,
   ]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && currentSettings?.requestUrl) {
-      setHostname(
-        `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
-      );
-    }
-  }, [currentSettings?.requestUrl, setHostname]);
 
   useEffect(() => {
     if (mountNode && currentSettings.theme) {
@@ -179,6 +174,7 @@ const Request = ({ children, ...props }) => {
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <iframe
         {...props}
         loading="eager"

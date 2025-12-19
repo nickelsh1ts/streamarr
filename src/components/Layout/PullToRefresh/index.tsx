@@ -8,6 +8,7 @@ const PullToRefresh = () => {
 
   const [pullStartPoint, setPullStartPoint] = useState(0);
   const [pullChange, setPullChange] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const refreshDiv = useRef<HTMLDivElement>(null);
 
   // Various pull down thresholds that determine icon location
@@ -20,6 +21,7 @@ const PullToRefresh = () => {
     // Reload function that is called when reload threshold has been hit
     // Add loading class to determine when to add spin animation
     const forceReload = () => {
+      setIsLoading(true);
       refreshDiv.current?.classList.add('loading');
       setTimeout(() => {
         location.reload();
@@ -102,7 +104,7 @@ const PullToRefresh = () => {
     >
       <div
         className={`${
-          refreshDiv.current?.classList.contains('loading') && 'animate-spin'
+          isLoading && 'animate-spin'
         } relative -top-24 h-9 w-9 rounded-full border-2 border-primary bg-secondary p-1 shadow-md shadow-black ring-1 ring-zinc-700`}
         style={{ animationDirection: 'reverse' }}
       >
