@@ -7,8 +7,12 @@ import os
 import json
 import requests
 import time
+import sys
 
-config_dir = os.environ.get('CONFIG_DIRECTORY', '/app/config')
+config_dir = os.environ.get(
+    'CONFIG_DIRECTORY',
+    os.path.join(os.path.dirname(__file__), '../../config'),
+)
 log_dir = os.path.join(config_dir, 'logs')
 log_path = os.path.join(log_dir, '.machinelogs.json')
 
@@ -32,7 +36,6 @@ class JSONLineLogger:
                 f.write(json.dumps(log_entry) + '\n')
         except Exception as e:
             # Fallback to stderr if file logging fails
-            import sys
             print(f"[{level.upper()}][{self.label}] {message} {json.dumps(data) if data else ''}", file=sys.stderr)
     def info(self, message, data=None):
         self._write('info', message, data)
