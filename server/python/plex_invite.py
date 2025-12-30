@@ -7,11 +7,16 @@ import os
 import json
 import requests
 import time
+import sys
 
-if os.environ.get('CONFIG_DIRECTORY'):
-    log_path = os.path.join(os.environ['CONFIG_DIRECTORY'], 'logs', '.machinelogs.json')
-else:
-    log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../config/logs/.machinelogs.json'))
+config_dir = os.environ.get(
+    'CONFIG_DIRECTORY',
+    os.path.join(os.path.dirname(__file__), '../../config'),
+)
+log_dir = os.path.join(config_dir, 'logs')
+log_path = os.path.join(log_dir, '.machinelogs.json')
+
+os.makedirs(log_dir, exist_ok=True)
 
 class JSONLineLogger:
     def __init__(self, label='Plex Sync'):
@@ -26,8 +31,12 @@ class JSONLineLogger:
         }
         if data:
             log_entry['data'] = data
-        with open(self.log_path, 'a', encoding='utf-8') as f:
-            f.write(json.dumps(log_entry) + '\n')
+        try:
+            with open(self.log_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry) + '\n')
+        except Exception as e:
+            # Fallback to stderr if file logging fails
+            print(f"[{level.upper()}][{self.label}] {message} {json.dumps(data) if data else ''}", file=sys.stderr)
     def info(self, message, data=None):
         self._write('info', message, data)
     def error(self, message, data=None):
