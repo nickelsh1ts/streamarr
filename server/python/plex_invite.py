@@ -16,8 +16,6 @@ config_dir = os.environ.get(
 log_dir = os.path.join(config_dir, 'logs')
 log_path = os.path.join(log_dir, '.machinelogs.json')
 
-os.makedirs(log_dir, exist_ok=True)
-
 class JSONLineLogger:
     def __init__(self, label='Plex Sync'):
         self.label = label
