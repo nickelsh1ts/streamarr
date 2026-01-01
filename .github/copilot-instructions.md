@@ -34,7 +34,7 @@ yarn dev:all
 yarn dev
 
 # Python service only
-cd server/python && python3 plex_invite.py
+CONFIG_DIRECTORY=./config cd server/python && python3 plex_invite.py
 ```
 
 **Important**: `yarn dev` uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`. Changes to the OpenAPI spec trigger server restart.
