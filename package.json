@@ -144,7 +144,7 @@
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.8.1",
     "cz-conventional-changelog": "3.3.0",
-    "daisyui": "4.12.24",
+    "daisyui": "5.4.2",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.0",
     "eslint-config-prettier": "^10.1.8",

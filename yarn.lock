@@ -10589,16 +10589,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-selector-tokenizer@npm:^0.8":
-  version: 0.8.0
-  resolution: "css-selector-tokenizer@npm:0.8.0"
-  dependencies:
-    cssesc: "npm:^3.0.0"
-    fastparse: "npm:^1.1.2"
-  checksum: 10c0/86f68cc666d41f9d153351677694002a9d00e2609e6abc66fcfd7f580be3d6ecc0929e46a06c621ab28da5febbb54567db9709b819414edae4a36d9ff9133e16
-  languageName: node
-  linkType: hard
-
 "css-tree@npm:^2.3.1":
   version: 2.3.1
   resolution: "css-tree@npm:2.3.1"
@@ -10680,13 +10670,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"culori@npm:^3":
-  version: 3.3.0
-  resolution: "culori@npm:3.3.0"
-  checksum: 10c0/acd330a8f940dc22f36650ba722c9302a4745fee3c8fb40a27ac27228767e2cba4221c2dc414fce652b82cb264d28f65d8b76d505df402ecf94dbb9e440319e1
-  languageName: node
-  linkType: hard
-
 "cy-mobile-commands@npm:^0.3.0":
   version: 0.3.0
   resolution: "cy-mobile-commands@npm:0.3.0"
@@ -10764,15 +10747,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:4.12.24":
-  version: 4.12.24
-  resolution: "daisyui@npm:4.12.24"
-  dependencies:
-    css-selector-tokenizer: "npm:^0.8"
-    culori: "npm:^3"
-    picocolors: "npm:^1"
-    postcss-js: "npm:^4"
-  checksum: 10c0/a5865e05b543965c21a934264da2c576f0760137344cb270e2d27183f03c9c51ae1b0af8ebe530fcd31ba4602711d57a5ddbf59c6c9461c53fdd73d53ed61375
+"daisyui@npm:5.4.2":
+  version: 5.4.2
+  resolution: "daisyui@npm:5.4.2"
+  checksum: 10c0/b8b1ca526e204d5ccd136da469844d68054e8d73f47a5e15a5c0cf3cc8aeb5d2e4f4db08108f94bf6c3da8c159055f2b17f8a412546e665d1ab606b903a1a91e
   languageName: node
   linkType: hard
 
@@ -12605,13 +12583,6 @@ __metadata:
   version: 1.0.16
   resolution: "fastest-levenshtein@npm:1.0.16"
   checksum: 10c0/7e3d8ae812a7f4fdf8cad18e9cde436a39addf266a5986f653ea0d81e0de0900f50c0f27c6d5aff3f686bcb48acbd45be115ae2216f36a6a13a7dbbf5cad878b
-  languageName: node
-  linkType: hard
-
-"fastparse@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "fastparse@npm:1.1.2"
-  checksum: 10c0/c08d6e7ef10c0928426c1963dd4593e2baaf44d223ab1e5ba5d7b30470144b3a4ecb3605958b73754cea3f857ecef00b67c885f07ca2c312b38b67d9d88b84b5
   languageName: node
   linkType: hard
 
@@ -18488,7 +18459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1, picocolors@npm:^1.0.0, picocolors@npm:^1.1.1":
+"picocolors@npm:^1.0.0, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
   checksum: 10c0/e2e3e8170ab9d7c7421969adaa7e1b31434f789afb9b3f115f6b96d91945041ac3ceb02e9ec6fe6510ff036bcc0bf91e69a1772edc0b707e12b19c0f2d6bcf58
@@ -18631,7 +18602,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-js@npm:^4, postcss-js@npm:^4.0.1":
+"postcss-js@npm:^4.0.1":
   version: 4.0.1
   resolution: "postcss-js@npm:4.0.1"
   dependencies:
@@ -21225,7 +21196,7 @@ __metadata:
     cy-mobile-commands: "npm:^0.3.0"
     cypress: "npm:^15.8.1"
     cz-conventional-changelog: "npm:3.3.0"
-    daisyui: "npm:4.12.24"
+    daisyui: "npm:5.4.2"
     date-fns: "npm:^4.1.0"
     date-fns-tz: "npm:^3.2.0"
     email-templates: "npm:^12.0.3"
