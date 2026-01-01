@@ -9,10 +9,7 @@ import requests
 import time
 import sys
 
-config_dir = os.environ.get(
-    'CONFIG_DIRECTORY',
-    os.path.join(os.path.dirname(__file__), '../../config'),
-)
+config_dir = os.environ.get('CONFIG_DIRECTORY', '/app/config')
 log_dir = os.path.join(config_dir, 'logs')
 log_path = os.path.join(log_dir, '.machinelogs.json')
 
