@@ -355,7 +355,7 @@ export const MultiItem = ({
           item.regExp.includes('source=')
             ? matchesLibrarySource(
                 url,
-                item.regExp.replace('source=', '').replace('&', '')
+                item.regExp.replace('source=', '').replace(/&/g, '')
               )
             : url.includes(item.regExp)
         )}
@@ -370,7 +370,7 @@ export const MultiItem = ({
             const isActive = item.regExp.includes('source=')
               ? matchesLibrarySource(
                   url,
-                  item.regExp.replace('source=', '').replace('&', '')
+                  item.regExp.replace('source=', '').replace(/&/g, '')
                 )
               : url.includes(item.regExp);
 
