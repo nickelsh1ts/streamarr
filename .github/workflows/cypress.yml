@@ -17,7 +17,7 @@ jobs:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: set node
