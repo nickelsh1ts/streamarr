@@ -1,4 +1,4 @@
-FROM node:24-alpine AS base
+FROM node:25-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -18,7 +18,7 @@ fi
 # Make sure the virtual environment is in PATH
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN corepack enable
+RUN npm install -g corepack --force && corepack enable
 RUN yarn set version stable
 
 RUN yarn
