@@ -4,7 +4,7 @@ ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production YARN_VERSION=4.9.2
 
 RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini python3 py3-pip && rm -rf /tmp/*
 
-RUN corepack enable && corepack prepare yarn@${YARN_VERSION}
+RUN npm install -g corepack --force && corepack enable && corepack prepare yarn@${YARN_VERSION}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

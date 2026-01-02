@@ -13,12 +13,12 @@ jobs:
     name: Prepare & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    container: node:24-alpine
+    container: node:25-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install and Enable Corepack
+        run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
         run: yarn
       - name: Prepare

@@ -15,9 +15,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 25
+      - name: Install and Enable Corepack
+        run: npm install -g corepack --force && corepack enable
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx

@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install and Enable Corepack
+        run: npm install -g corepack --force && corepack enable
       - name: set node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'yarn'
