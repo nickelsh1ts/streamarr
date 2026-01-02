@@ -160,6 +160,7 @@
     "prettier-plugin-tailwindcss": "0.7.2",
     "sass": "^1.97.1",
     "semantic-release": "^25.0.2",
+    "semantic-release-docker-buildx": "^1.0.1",
     "stylelint": "^16.26.1",
     "tailwindcss": "3.4.19",
     "ts-node": "^10.9.2",
@@ -206,6 +207,13 @@
           ],
           "message": "chore(release): ${nextRelease.version}"
         }
+      ],
+      "semantic-release-docker-buildx",
+      [
+        "@semantic-release/github",
+        {
+          "addReleases": "bottom"
+        }
       ]
     ],
     "branches": [
@@ -214,6 +222,7 @@
     "npmPublish": false,
     "publish": [
       {
+        "path": "semantic-release-docker-buildx",
         "buildArgs": {
           "COMMIT_TAG": "$GIT_SHA"
         },

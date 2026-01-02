@@ -3,7 +3,10 @@ name: Streamarr Release
 on:
   push:
     branches:
-      - master
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   semantic-release:
@@ -20,6 +23,8 @@ jobs:
           node-version: 25
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
+      - name: Ensure Yarn is correct version
+        run: corepack prepare yarn@4.9.2 --activate
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx

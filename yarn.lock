@@ -20447,6 +20447,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semantic-release-docker-buildx@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "semantic-release-docker-buildx@npm:1.0.1"
+  dependencies:
+    execa: "npm:^5.0.0"
+  peerDependencies:
+    semantic-release: ">=11.0.0 <18.0.0"
+  checksum: 10c0/cb56e01ff55859092a495865e09f6ab433b3377a77109dbd4fbdf7d9ab2f29373e300d0f58c10e6a1327f7bd5e55dec592fec45172ec3381cce870ad1014834e
+  languageName: node
+  linkType: hard
+
 "semantic-release@npm:^25.0.2":
   version: 25.0.2
   resolution: "semantic-release@npm:25.0.2"
@@ -21388,6 +21399,7 @@ __metadata:
     sass: "npm:^1.97.1"
     secure-random-password: "npm:^0.2.3"
     semantic-release: "npm:^25.0.2"
+    semantic-release-docker-buildx: "npm:^1.0.1"
     socket.io: "npm:^4.8.3"
     socket.io-client: "npm:^4.8.3"
     sqlite3: "npm:^5.1.7"
