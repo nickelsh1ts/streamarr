@@ -4,11 +4,15 @@ import AdminTabs from '@app/components/Common/AdminTabs';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import type { SonarrSettings } from '@server/lib/settings';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const AdminTVShows = () => {
-  const [hostname, setHostname] = useState('');
+  const [hostname] = useState(() =>
+    typeof window !== 'undefined'
+      ? `${window?.location?.protocol}//${window?.location?.host}`
+      : ''
+  );
   const params = useParams<{ id: string }>();
   const { data: sonarrData } = useSWR<SonarrSettings[]>(
     '/api/v1/settings/sonarr'
@@ -21,12 +25,6 @@ const AdminTVShows = () => {
       regex: new RegExp(`^/admin/tv/?${d.id > 0 ? d.id : ''}/?`, 'gi'),
     };
   });
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
-    }
-  }, [setHostname]);
 
   const baseUrl =
     sonarrData?.find((d) => d.id === Number(params?.id))?.baseUrl ||

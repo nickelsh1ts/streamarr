@@ -34,9 +34,26 @@ const LogsSettings = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const [currentFilter, setCurrentFilter] = useState<Filter>('debug');
-  const [currentPageSize, setCurrentPageSize] = useState(25);
+  const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem('logs-display-settings');
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentFilter || 'debug';
+      }
+    }
+    return 'debug';
+  });
+  const [currentPageSize, setCurrentPageSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem('logs-display-settings');
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentPageSize || 25;
+      }
+    }
+    return 25;
+  });
   const [searchFilter, debouncedSearchFilter, setSearchFilter] =
     useDebouncedState('');
   const [refreshInterval, setRefreshInterval] = useState(5000);
@@ -77,17 +94,6 @@ const LogsSettings = () => {
   const { data: appData } = useSWR('/api/v1/status/appdata');
 
   useEffect(() => {
-    const filterString = window.localStorage.getItem('logs-display-settings');
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentPageSize(filterSettings.currentPageSize);
-    }
-    setHasLoadedSettings(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedSettings) return;
     window.localStorage.setItem(
       'logs-display-settings',
       JSON.stringify({
@@ -95,7 +101,7 @@ const LogsSettings = () => {
         currentPageSize,
       })
     );
-  }, [currentFilter, currentPageSize, hasLoadedSettings]);
+  }, [currentFilter, currentPageSize]);
 
   const copyLogString = (log: LogMessage) => {
     return `${log.timestamp} [${log.level}]${log.label ? `[${log.label}]` : ''}: ${
@@ -165,7 +171,7 @@ const LogsSettings = () => {
                   defaultMessage="Timestamp"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
+              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {moment(activeLog.log?.timestamp).format('lll').toString()}
                 </div>
@@ -178,7 +184,7 @@ const LogsSettings = () => {
                   defaultMessage="Severity"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
+              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   <Badge
                     badgeType={
@@ -203,7 +209,7 @@ const LogsSettings = () => {
                   defaultMessage="Label"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
+              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.label}
                 </div>
@@ -216,7 +222,7 @@ const LogsSettings = () => {
                   defaultMessage="Message"
                 />
               </div>
-              <div className="col-span-2 mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
+              <div className="col-span-2 mb-1 text-sm font-medium leading-5 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.message}
                 </div>
@@ -230,8 +236,8 @@ const LogsSettings = () => {
                     defaultMessage="Additional Data"
                   />
                 </div>
-                <div className="col-span-2 mb-1 text-sm font-medium leading-5 text-neutral-400 sm:mt-2">
-                  <code className="block max-h-64 w-full overflow-auto text-clip whitespace-pre bg-neutral-800 px-6 py-4 ring-1 ring-neutral-700">
+                <div className="col-span-2 mb-1 text-sm font-medium leading-5 sm:mt-2">
+                  <code className="block max-h-64 w-full overflow-auto text-clip whitespace-pre bg-base-300 px-6 py-4 ring-1 ring-neutral">
                     {JSON.stringify(activeLog.log?.data, null, ' ')}
                   </code>
                 </div>
@@ -370,10 +376,10 @@ const LogsSettings = () => {
             data.results.map((row: LogMessage, index: number) => {
               return (
                 <tr key={`log-list-${index}`}>
-                  <Table.TD className="text-neutral-300">
+                  <Table.TD className="">
                     {moment(row.timestamp).format('lll').toString()}
                   </Table.TD>
-                  <Table.TD className="text-neutral-300">
+                  <Table.TD className="">
                     <Badge
                       badgeType={
                         row.level === 'error'
@@ -388,12 +394,8 @@ const LogsSettings = () => {
                       {row.level?.toUpperCase()}
                     </Badge>
                   </Table.TD>
-                  <Table.TD className="text-neutral-300">
-                    {row.label ?? ''}
-                  </Table.TD>
-                  <Table.TD className="text-neutral-300">
-                    {row.message}
-                  </Table.TD>
+                  <Table.TD className="">{row.label ?? ''}</Table.TD>
+                  <Table.TD className="">{row.message}</Table.TD>
                   <Table.TD className="-m-1 flex flex-wrap items-center justify-end gap-1">
                     {row.data && (
                       <Tooltip

@@ -14,7 +14,7 @@ const Header = ({ children, extraMargin = 0, subtext }: HeaderProps) => {
         >
           <span className="text-primary">{children}</span>
         </h2>
-        {subtext && <div className="mt-2 text-neutral-300">{subtext}</div>}
+        {subtext && <div className="mt-2 text-neutral">{subtext}</div>}
       </div>
     </div>
   );

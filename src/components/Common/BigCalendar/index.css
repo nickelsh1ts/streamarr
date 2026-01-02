@@ -1,6 +1,6 @@
 @import 'react-big-calendar/lib/css/react-big-calendar.css';
 .rbc-header {
-  @apply text-primary-content bg-secondary items-center justify-center h-9 text-sm;
+  @apply text-secondary-content bg-secondary items-center justify-center h-9 text-sm;
 }
 
 :not(th).rbc-header {
@@ -16,7 +16,7 @@
 }
 
 .react-datepicker__calendar-icon {
-  @apply !h-5 !w-5 !p-1.5;
+  @apply !h-5 !w-5 !p-1.5 text-primary;
 }
 
 .react-datepicker__view-calendar-icon input {
@@ -28,7 +28,7 @@ h2.react-datepicker__current-month {
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply select select-sm select-primary select-bordered text-primary-content w-full;
+  @apply select select-sm select-primary select-bordered w-full;
   background-image: none;
 }
 .react-datepicker-popper {
@@ -56,7 +56,7 @@ h2.react-datepicker__current-month {
 
 .rbc-event,
 .rbc-day-slot .rbc-background-event {
-  @apply bg-primary;
+  @apply bg-primary text-primary-content;
 }
 
 .rbc-day-slot .rbc-event,
@@ -118,4 +118,8 @@ h2.react-datepicker__current-month {
 }
 .react-datepicker-wrapper {
   @apply !flex flex-1;
+}
+
+.rbc-off-range {
+  @apply text-neutral;
 }

@@ -182,7 +182,7 @@ app
       next();
     });
     server.use('/api/v1', routes);
-    server.get('*', (req, res) => handle(req, res));
+    server.get('/{*splat}', (req, res) => handle(req, res));
     server.use(
       (
         err: unknown,
@@ -206,13 +206,25 @@ app
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {
-      httpServer.listen(port, host, () => {
+      httpServer.listen(port, host, (error?: Error) => {
+        if (error) {
+          logger.error(`Failed to start server: ${error.message}`, {
+            label: 'Server',
+          });
+          throw error;
+        }
         logger.info(`server ready on ${host} port ${port}`, {
           label: 'Server',
         });
       });
     } else {
-      httpServer.listen(port, () => {
+      httpServer.listen(port, (error?: Error) => {
+        if (error) {
+          logger.error(`Failed to start server: ${error.message}`, {
+            label: 'Server',
+          });
+          throw error;
+        }
         logger.info(`server ready on port ${port}`, { label: 'Server' });
       });
     }

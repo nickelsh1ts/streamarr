@@ -2,18 +2,17 @@
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import type { ServiceSettings } from '@server/lib/settings';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const AdminDownloads = () => {
-  const [hostname, setHostname] = useState('');
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/downloads');
-
-  useEffect(() => {
+  const [hostname] = useState(() => {
     if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
+      return `${window?.location?.protocol}//${window?.location?.host}`;
     }
-  }, [setHostname]);
+    return '';
+  });
+  const { data } = useSWR<ServiceSettings>('/api/v1/settings/downloads');
 
   if (!data) {
     return <LoadingEllipsis />;

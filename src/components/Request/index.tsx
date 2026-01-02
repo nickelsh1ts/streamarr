@@ -6,8 +6,8 @@ import { Permission } from '@server/lib/permissions';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-
-//BUG: Fix issues with initial auth in overseerr redirects to /watch
+import { setIframeTheme } from '@app/utils/themeUtils';
+import { colord } from 'colord';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -19,16 +19,19 @@ const Request = ({ children, ...props }) => {
   const { currentSettings } = useSettings();
 
   const [contentRef, setContentRef] = useState(null);
-  const [loadingIframe, setLoadingIframe] = useState(true);
+  const [loadingIframe, setLoadingIframe] = useState(
+    () => !currentSettings?.requestUrl
+  );
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
-  const [hostname, setHostname] = useState('');
+  const hostname =
+    typeof window !== 'undefined' && currentSettings?.requestUrl
+      ? `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
+      : '';
 
   useEffect(() => {
-    if (!currentSettings?.requestUrl) {
-      setLoadingIframe(true);
-    } else {
+    if (currentSettings?.requestUrl) {
       innerFrame?.navigation?.addEventListener('navigate', () => {
         setLoadingIframe(true);
         setTimeout(() => {
@@ -61,15 +64,117 @@ const Request = ({ children, ...props }) => {
   ]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && currentSettings?.requestUrl) {
-      setHostname(
-        `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
+    if (mountNode && currentSettings.theme) {
+      const hexToRgb = (hex: string) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+          ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+          : '0,0,0';
+      };
+      const theme = currentSettings.theme;
+      mountNode.style.setProperty(
+        '--color-background-accent',
+        theme.primary,
+        'important'
       );
+      mountNode.style.setProperty(
+        '--accent-color',
+        colord(theme.primary)
+          .toRgbString()
+          .replace('rgb(', '')
+          .replace(')', ''),
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--color-brand-accent',
+        theme.secondary,
+        'important'
+      );
+      mountNode.style.setProperty('--bs-primary', theme.primary, 'important');
+      mountNode.style.setProperty(
+        '--color-background-accent-focus',
+        theme.secondary,
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--color-text-accent',
+        theme.secondary,
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--main-bg-color',
+        theme['base-300'],
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--modal-bg-color',
+        theme['base-100'],
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--drop-down-menu-bg',
+        theme.neutral,
+        'important'
+      );
+      mountNode.style.setProperty('--text', theme['base-content'], 'important');
+      mountNode.style.setProperty(
+        '--text-hover',
+        theme['base-content'],
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--color-text-on-accent',
+        theme['base-content'],
+        'important'
+      );
+      mountNode.style.setProperty('--link-color', theme.primary, 'important');
+      mountNode.style.setProperty('--button-color', theme.primary, 'important');
+      mountNode.style.setProperty(
+        '--button-color-hover',
+        theme.secondary,
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--plex-poster-unwatched',
+        theme['base-content'],
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--transparency-light-15',
+        `rgba(${hexToRgb(theme.primary)}, 0.15)`,
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--overseerr-gradient',
+        `linear-gradient(180deg, rgba(${hexToRgb(theme.primary)}, 0.47) 0%, rgba(${hexToRgb(theme['base-300'])}, 1) 100%)`,
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--label-text-color',
+        theme['base-content'],
+        'important'
+      );
+      mountNode.style.setProperty(
+        '--tw-ring-color',
+        theme.primary,
+        'important'
+      );
+
+      // Set DaisyUI CSS variables for injected components
+      if (innerFrame) {
+        setIframeTheme(innerFrame, currentSettings.theme);
+      }
     }
-  }, [currentSettings?.requestUrl, setHostname]);
+  }, [
+    mountNode,
+    currentSettings.theme,
+    innerFrame,
+    innerFrame?.location?.pathname,
+  ]);
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <iframe
         {...props}
         loading="eager"
@@ -87,7 +192,7 @@ const Request = ({ children, ...props }) => {
         {mountNode && createPortal(children, mountNode)}
       </iframe>
       {loadingIframe ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#1f1f1f]">
+        <div className="absolute inset-0 flex items-center justify-center bg-base-300">
           <LoadingEllipsis />
         </div>
       ) : null}

@@ -26,7 +26,7 @@ const Tooltip = ({
     });
 
   const tooltipStyle = [
-    'z-50 text-sm absolute font-normal bg-[#202629] border-1 border-black backdrop-blur px-2 py-3 tracking-wide rounded-md shadow-3xl shadow-black/80 text-primary-content capitalize',
+    'z-50 text-sm absolute font-normal bg-base-300 border-1 border-black backdrop-blur px-2 py-3 tracking-wide rounded-md shadow-3xl shadow-black/80 capitalize',
   ];
 
   if (className) {
@@ -61,7 +61,7 @@ const Tooltip = ({
             >
               {!tooltipConfig?.followCursor && (
                 <svg
-                  className="fill-[#202629] block w-4 h-2"
+                  className="fill-base-300 block w-4 h-2"
                   viewBox="0 0 30 10"
                   preserveAspectRatio="none"
                 >

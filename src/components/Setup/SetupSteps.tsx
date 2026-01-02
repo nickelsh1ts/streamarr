@@ -25,14 +25,14 @@ const SetupSteps = ({
         >
           {completed && <CheckIcon className="h-6 w-6 text-white" />}
           {!completed && (
-            <p className={active ? 'text-white' : 'text-neutral-300'}>
+            <p className={active ? 'text-white' : 'text-neutral'}>
               {stepNumber}
             </p>
           )}
         </div>
         <p
           className={`text-sm font-medium leading-5 ${
-            active ? 'text-white' : 'text-neutral-300'
+            active ? 'text-white' : 'text-neutral'
           }`}
         >
           {description}

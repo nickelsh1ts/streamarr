@@ -183,11 +183,11 @@
 }
 
 .react-select-container .react-select__indicator-separator {
-  @apply bg-neutral-500 my-2 mx-2;
+  @apply bg-neutral my-2 mx-2;
 }
 
 .react-select-container .react-select__indicator {
-  @apply text-white mx-2 hover:text-neutral-600 hover:cursor-pointer;
+  @apply mx-2 text-base-content hover:text-base-content/60 hover:cursor-pointer;
 }
 
 .react-select-container .react-select__menu {
@@ -212,4 +212,36 @@
 
 .react-select__option:active {
   @apply !bg-primary text-primary-content;
+}
+
+.custom-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+.custom-range:focus {
+  outline: none;
+}
+.custom-range::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  background: inherit; /* keep inline gradient */
+  box-shadow: none !important;
+  border: none !important;
+}
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.custom-range::-moz-range-track,
+.custom-range::-moz-range-progress {
+  background: inherit;
+  box-shadow: none !important;
+  border: none !important;
+}
+.custom-range::-ms-fill-lower,
+.custom-range::-ms-fill-upper {
+  background: inherit;
+  box-shadow: none !important;
+  border: none !important;
 }

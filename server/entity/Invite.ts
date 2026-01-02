@@ -91,7 +91,7 @@ export class Invite {
   @Column({ type: 'datetime', nullable: true })
   public expiresAt: Date;
 
-  @Column({ unique: true })
+  @Column({ type: 'text', unique: true })
   public icode: string;
 
   @Column({ type: 'int', default: 0 })
@@ -115,7 +115,7 @@ export class Invite {
   @Column({ type: 'text', default: '' })
   public expiryTime: 'days' | 'weeks' | 'months';
 
-  @Column({ default: '' })
+  @Column({ type: 'text', default: '' })
   public sharedLibraries: string;
 
   @ManyToOne(() => User, (user) => user.createdInvites, {

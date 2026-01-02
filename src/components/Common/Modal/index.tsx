@@ -31,7 +31,7 @@ interface Props {
   loading?: boolean;
   children?: React.ReactNode;
   show: boolean;
-  size?: 'sm' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export default function Modal({
@@ -67,7 +67,7 @@ export default function Modal({
         <div className="flex min-h-full items-end justify-center p-1 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full`}
+            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : size === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full`}
           >
             <div className="absolute pt-1 pr-1 top-0 right-0 z-10">
               <button
@@ -95,7 +95,7 @@ export default function Modal({
                 </svg>
               </button>
             </div>
-            <div className="bg-[#16191d] px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="bg-base-100 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               {loading ? (
                 <div className="my-8">
                   <LoadingEllipsis />

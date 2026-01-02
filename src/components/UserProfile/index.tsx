@@ -86,13 +86,13 @@ const UserProfile = () => {
           <div className="relative">
             <dl className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
-                <dt className="truncate text-sm font-bold text-gray-300">
+                <dt className="truncate text-sm font-bold text-primary-content">
                   <FormattedMessage
                     id="profile.totalInvites"
                     defaultMessage="Total Invites"
                   />
                 </dt>
-                <dd className="mt-1 text-3xl font-semibold text-white">
+                <dd className="mt-1 text-3xl font-semibold text-primary-content">
                   <Link
                     className="link-hover"
                     href={
@@ -143,14 +143,15 @@ const UserProfile = () => {
               ) : (
                 <div
                   className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
-                    quota.invite.restricted
-                      ? 'bg-gradient-to-t from-red-900 to-transparent ring-red-500'
-                      : 'ring-gray-700'
+                    quota.invite.restricted &&
+                    'bg-gradient-to-t from-error/60 to-transparent ring-error'
                   } sm:p-6`}
                 >
                   <dt
-                    className={`truncate text-sm font-bold text-gray-300 ${
-                      quota.invite.restricted ? 'text-red-500' : 'text-gray-300'
+                    className={`truncate text-sm font-bold ${
+                      quota.invite.restricted
+                        ? 'text-error'
+                        : 'text-primary-content'
                     }`}
                   >
                     {quota.invite.limit ? (
@@ -174,8 +175,10 @@ const UserProfile = () => {
                     )}
                   </dt>
                   <dd
-                    className={`mt-1 text-sm font-semibold items-center flex text-white ${
-                      quota.invite.restricted ? 'text-red-500' : 'text-white'
+                    className={`mt-1 text-sm font-semibold items-center flex ${
+                      quota.invite.restricted
+                        ? 'text-error'
+                        : 'text-primary-content'
                     }`}
                   >
                     {quota.invite.limit > 0 &&

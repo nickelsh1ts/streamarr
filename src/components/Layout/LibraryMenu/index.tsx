@@ -15,8 +15,8 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import type { SetStateAction } from 'react';
+import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface MenuLinksProps {
@@ -47,25 +47,11 @@ const LibraryMenu = ({
 }: LibraryMenuProps) => {
   const intl = useIntl();
   const pathname = usePathname();
-  const [currentUrl, setCurrentUrl] = useState(pathname);
+  const hash = useHash();
+  const url = pathname + (hash || '');
   const { hasPermission } = useUser();
   const { currentSettings } = useSettings();
   const { libraryLinks, loading } = useLibraryLinks('id');
-
-  useEffect(() => {
-    let lastUrl = window.location.pathname + window.location.hash;
-    setCurrentUrl(lastUrl);
-    const interval = setInterval(() => {
-      const newUrl = window.location.pathname + window.location.hash;
-      if (newUrl !== lastUrl) {
-        lastUrl = newUrl;
-        setCurrentUrl(newUrl);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
-  const url = currentUrl;
 
   // Group libraries by type
   const groupedLibraries = libraryLinks.reduce(
@@ -281,23 +267,18 @@ export const SingleItem = ({
       : regExp.test(url);
 
   // Determine pivot list based on type
-  let pivotList: string[] | null = null;
-  if (type) {
+  const pivotList: string[] | null = (() => {
+    if (!type) return null;
     switch (type) {
       case 'movie':
-        pivotList = ['library', 'collections', 'categories'];
-        break;
       case 'show':
-        pivotList = ['library', 'collections', 'categories'];
-        break;
+        return ['library', 'collections', 'categories'];
       case 'artist':
-        pivotList = ['library', 'playlists'];
-        break;
+        return ['library', 'playlists'];
       default:
-        pivotList = null;
-        break;
+        return null;
     }
-  }
+  })();
 
   return (
     <li
@@ -309,7 +290,7 @@ export const SingleItem = ({
         href={
           href && pivotList && type ? href + '&pivot=' + defaultPivot : href
         }
-        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'} ${linkclasses ? linkclasses : ''}`}
+        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 focus:text-primary-content capitalize gap-0 space-x-2 ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
@@ -355,7 +336,18 @@ export const MultiItem = ({
   defaultPivot,
   url,
 }: MultiItemProps) => {
-  let pivotList: string[] | null = null;
+  const getPivotList = (type: string): string[] | null => {
+    switch (type) {
+      case 'movie':
+      case 'show':
+        return ['library', 'collections', 'categories'];
+      case 'artist':
+        return ['library', 'playlists'];
+      default:
+        return null;
+    }
+  };
+
   return (
     <li className="pointer-events-auto" key={liKey}>
       <details
@@ -363,13 +355,13 @@ export const MultiItem = ({
           item.regExp.includes('source=')
             ? matchesLibrarySource(
                 url,
-                item.regExp.replace('source=', '').replace('&', '')
+                item.regExp.replace('source=', '').replace(/&/g, '')
               )
             : url.includes(item.regExp)
         )}
         className="group"
       >
-        <summary className="active:!bg-primary/20 space-x-2 gap-0 text-zinc-300 hover:text-white group-open:text-white capitalize">
+        <summary className="active:!bg-primary/20 space-x-2 gap-0 hover:text-base-content group-open:text-base-content capitalize">
           {icon}
           <p className="inline-flex">{title}</p>
         </summary>
@@ -378,24 +370,11 @@ export const MultiItem = ({
             const isActive = item.regExp.includes('source=')
               ? matchesLibrarySource(
                   url,
-                  item.regExp.replace('source=', '').replace('&', '')
+                  item.regExp.replace('source=', '').replace(/&/g, '')
                 )
               : url.includes(item.regExp);
 
-            switch (item.type) {
-              case 'movie':
-                pivotList = ['library', 'collections', 'categories'];
-                break;
-              case 'show':
-                pivotList = ['library', 'collections', 'categories'];
-                break;
-              case 'artist':
-                pivotList = ['library', 'playlists'];
-                break;
-              default:
-                pivotList = null;
-                break;
-            }
+            const pivotList = getPivotList(item.type);
             return (
               <li key={item.title}>
                 <Link
@@ -405,7 +384,7 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>

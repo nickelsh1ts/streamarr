@@ -15,6 +15,7 @@ import type { User } from '@app/hooks/useUser';
 import { cookies } from 'next/headers';
 import { UserContext } from '@app/context/UserContext';
 import Layout from '@app/components/Layout';
+import ThemeSetter from '@app/components/ThemeSetter';
 
 export default async function RootLayout({
   children,
@@ -58,12 +59,16 @@ export default async function RootLayout({
       <head>
         <PWAHeader applicationTitle={currentSettings.applicationTitle} />
       </head>
-      <body className="bg-[#1f1f1f] min-h-dvh">
-        <NextTopLoader color="#974ede" />
+      <body
+        className="min-h-dvh"
+        style={{ background: currentSettings.theme['base-300'] }}
+      >
+        <NextTopLoader color={currentSettings.theme.primary} />
         <PullToRefresh />
         <Toaster />
         <LanguageProvider>
           <SettingsProvider currentSettings={currentSettings}>
+            <ThemeSetter />
             <InteractionProvider>
               <UserContext initialUser={user}>
                 <NotificationProvider>

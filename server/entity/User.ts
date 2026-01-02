@@ -21,7 +21,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VirtualColumn,
 } from 'typeorm';
 import { UserPushSubscription } from './UserPushSubscription';
 import { UserSettings } from './UserSettings';
@@ -49,6 +48,7 @@ export class User {
   public id: number;
 
   @Column({
+    type: 'text',
     unique: true,
     transformer: {
       from: (value: string): string => (value ?? '').toLowerCase(),
@@ -57,16 +57,16 @@ export class User {
   })
   public email: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public plexUsername?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   public username?: string;
 
-  @Column({ nullable: true, select: false })
+  @Column({ type: 'text', nullable: true, select: false })
   public password?: string;
 
-  @Column({ nullable: true, select: false })
+  @Column({ type: 'text', nullable: true, select: false })
   public resetPasswordGuid?: string;
 
   @Column({ type: 'date', nullable: true })
@@ -75,25 +75,22 @@ export class User {
   @Column({ type: 'integer', default: UserType.PLEX })
   public userType: UserType;
 
-  @Column({ nullable: true, select: true })
+  @Column({ type: 'integer', nullable: true, select: true })
   public plexId?: number;
 
-  @Column({ nullable: true, select: false })
+  @Column({ type: 'text', nullable: true, select: false })
   public plexToken?: string;
 
   @Column({ type: 'integer', default: 32 })
   public permissions = 32;
 
-  @Column()
+  @Column('text')
   public avatar: string;
 
-  @VirtualColumn({
-    query: (alias) =>
-      `SELECT COUNT(*) FROM "invite" WHERE "invite"."createdById" = ${alias}.id`,
-  })
-  public inviteCount: number;
+  // Computed in queries, not stored in DB
+  public inviteCount?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'integer', nullable: true })
   public inviteQuotaLimit?: number;
 
   @OneToMany(() => Invite, (invite) => invite.createdBy)
@@ -108,7 +105,7 @@ export class User {
   @OneToMany(() => Invite, (invite) => invite.updatedBy)
   public modifiedInvites: Invite[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'integer', nullable: true })
   public inviteQuotaDays?: number;
 
   @OneToMany(() => Event, (event) => event.createdBy)

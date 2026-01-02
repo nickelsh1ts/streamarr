@@ -58,8 +58,16 @@ export default function BigCalendar({
   revalidateEvents,
 }: BigCalendarProps) {
   const intl = useIntl();
-  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const [timezone, setTimezone] = useState(defaultTZ);
+  const [timezone, setTimezone] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const viewString = window.localStorage.getItem('schedule-view-settings');
+      if (viewString) {
+        const viewSettings = JSON.parse(viewString);
+        return viewSettings.timezone || defaultTZ;
+      }
+    }
+    return defaultTZ;
+  });
 
   // Set global moment timezone whenever timezone changes
   useEffect(() => {
@@ -70,25 +78,22 @@ export default function BigCalendar({
   }, [timezone]);
 
   const [date, setDate] = useState(defaultDateStr);
-  const [view, setView] = useState<View>(Views.MONTH);
+  const [view, setView] = useState<View>(() => {
+    if (typeof window !== 'undefined') {
+      const viewString = window.localStorage.getItem('schedule-view-settings');
+      if (viewString) {
+        const viewSettings = JSON.parse(viewString);
+        return viewSettings.view || Views.MONTH;
+      }
+    }
+    return Views.MONTH;
+  });
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate]);
   const onView = useCallback((newView) => setView(newView), [setView]);
 
-  // Restore last set view values on component mount
-  useEffect(() => {
-    const viewString = window.localStorage.getItem('schedule-view-settings');
-    if (viewString) {
-      const viewSettings = JSON.parse(viewString);
-      setView(viewSettings.view);
-      setTimezone(viewSettings.timezone || defaultTZ);
-    }
-    setHasLoadedSettings(true);
-  }, []);
-
   // Set view values to local storage any time they are changed
   useEffect(() => {
-    if (!hasLoadedSettings) return;
     window.localStorage.setItem(
       'schedule-view-settings',
       JSON.stringify({
@@ -96,10 +101,12 @@ export default function BigCalendar({
         timezone,
       })
     );
-  }, [view, hasLoadedSettings, timezone]);
+  }, [view, timezone]);
 
   const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
     useMemo(() => {
+      // Set timezone before creating localizer so it uses the correct timezone
+      moment.tz.setDefault(timezone);
       return {
         defaultDate: getDate(defaultDateStr, moment),
         getNow: () => moment().toDate(),
@@ -107,7 +114,7 @@ export default function BigCalendar({
         myEvents: events,
         scrollToTime: moment().toDate(),
       };
-    }, [events]);
+    }, [events, timezone]);
 
   const { messages } = useMemo(
     () => ({

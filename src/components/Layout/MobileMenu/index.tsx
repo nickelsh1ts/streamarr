@@ -48,10 +48,13 @@ const MobileMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
-  const [currentUrl, setCurrentUrl] = useState('');
+  const [currentUrl, setCurrentUrl] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.location.pathname + window.location.hash
+      : ''
+  );
   useEffect(() => {
     let lastUrl = window.location.pathname + window.location.hash;
-    setCurrentUrl(lastUrl);
     const interval = setInterval(() => {
       const newUrl = window.location.pathname + window.location.hash;
       if (newUrl !== lastUrl) {

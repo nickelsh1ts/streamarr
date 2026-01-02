@@ -29,13 +29,13 @@ Currently under active development Streamarr aims to be a complete (or at least 
 - Supports most\* Plex library types: Movies, TV Shows, Music and live TV.
 - An integrated Help Center for clear user instructions and support.
 - An integrated notification system with custom notification triggers.
+- Theme and Logo customization.
 
 ## Planned Features
 
 - Enable Customization of the Help Center.
 - Fully customizable email newsletters and communications.
 - Customizable & interactive "new user" tutorial/welcome
-- Theme and Logo customization.
 
 With more features planned!
 

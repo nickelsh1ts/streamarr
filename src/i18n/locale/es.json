@@ -41,8 +41,8 @@
   "aboutSettings.outOfDate": {
     "defaultMessage": "Desactualizado"
   },
-  "aboutSettings.preAlphaWarning": {
-    "defaultMessage": "Este es software PRE-ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
+  "aboutSettings.alphaWarning": {
+    "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
   },
   "aboutSettings.preferred": {
     "defaultMessage": "Preferido"

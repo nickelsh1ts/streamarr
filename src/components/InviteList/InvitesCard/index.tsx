@@ -68,7 +68,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
         <div className="flex flex-col justify-between items-center space-x-0 md:space-x-3 sm:flex-row w-full">
           <div className="flex w-full items-start overflow-hidden">
             <div className="pt-2">
-              <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60">
+              <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60 text-primary-content">
                 {(Array.isArray(invite?.redeemedBy) &&
                   invite.redeemedBy.length > 0) ||
                 invite?.status === InviteStatus.REDEEMED ? (
@@ -167,15 +167,15 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     )}
                   </p>
                 </div>
-                <div className="text-sm text-neutral-400">
+                <div className="text-sm">
                   <p className="whitespace-normal break-words">
-                    <span className="font-bold text-white whitespace-nowrap">
+                    <span className="font-bold whitespace-nowrap">
                       <FormattedMessage
                         id="invite.sharedLibraries"
                         defaultMessage="Shared Libraries:"
                       />{' '}
                     </span>
-                    <span className="whitespace-normal break-words align-baseline">
+                    <span className="whitespace-normal break-words align-baseline text-neutral">
                       {(() => {
                         if (!Libraries) return null;
                         const allIds = Libraries.map((lib) => lib.id).sort();
