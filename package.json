@@ -84,7 +84,7 @@
     "remark-gfm": "^4.0.1",
     "secure-random-password": "^0.2.3",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
+    "socket.io-client": "^4.8.3",
     "sqlite3": "^5.1.7",
     "swagger-ui-express": "^5.0.1",
     "swr": "^2.3.8",
