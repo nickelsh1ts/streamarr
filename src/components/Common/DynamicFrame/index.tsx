@@ -1,11 +1,35 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 import type { Theme } from '@server/lib/settings';
+
+// Type for Navigation API (not yet in standard TypeScript lib)
+interface NavigationDestination {
+  url: string;
+}
+
+interface NavigateEvent extends Event {
+  destination: NavigationDestination;
+}
+
+interface Navigation extends EventTarget {
+  addEventListener(
+    type: 'navigate',
+    callback: (event: NavigateEvent) => void
+  ): void;
+  removeEventListener(
+    type: 'navigate',
+    callback: (event: NavigateEvent) => void
+  ): void;
+}
+
+interface WindowWithNavigation extends Window {
+  navigation?: Navigation;
+}
 
 interface DynamicFrameProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,14 +50,45 @@ const DynamicFrame = ({
   theme,
   ...props
 }: DynamicFrameProps) => {
-  const pathname = usePathname().replace(newBase, '');
-  const router = useRouter();
+  const pathname = usePathname();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [innerFrame, setInnerFrame] = useState<WindowWithNavigation | null>(
+    null
+  );
+  const [loadingIframe, setLoadingIframe] = useState(true);
 
-  const [contentRef, setContentRef] = useState(null);
-  const [loadingIframe, setLoadingIframe] = useState(false);
+  // Track the current iframe path to avoid unnecessary updates
+  const currentIframePathRef = useRef<string>('');
 
-  const mountNode = contentRef?.contentWindow?.document?.body;
-  const innerFrame = contentRef?.contentWindow;
+  // Calculate the sub-path (path after the newBase)
+  // Only extract subPath if pathname actually starts with newBase, otherwise use empty string
+  const subPath = useMemo(() => {
+    if (!pathname || !newBase) return '';
+    // Check if the current pathname starts with this iframe's newBase
+    if (pathname.startsWith(newBase)) {
+      return pathname.slice(newBase.length) || '';
+    }
+    // If pathname doesn't match this iframe's route, return empty (load service root)
+    return '';
+  }, [pathname, newBase]);
+
+  // Calculate iframe src - only compute once on mount
+  const iframeSrc = useMemo(() => {
+    if (!domainURL || !basePath) return '';
+    return `${domainURL}${basePath}${subPath}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domainURL, basePath]); // Intentionally exclude subPath to only compute initial src
+
+  // Handle iframe load event
+  const handleIframeLoad = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (iframe?.contentWindow?.document?.body) {
+      setMountNode(iframe.contentWindow.document.body);
+      setInnerFrame(iframe.contentWindow as WindowWithNavigation);
+    }
+    setTimeout(() => setLoadingIframe(false), 300);
+  }, []);
 
   useEffect(() => {
     if (mountNode && theme) {
@@ -155,37 +210,49 @@ const DynamicFrame = ({
   }, [mountNode, innerFrame, theme]);
 
   useEffect(() => {
-    innerFrame?.navigation.addEventListener('navigate', () => {
-      setLoadingIframe(true);
-      setTimeout(() => {
-        if (
-          pathname != innerFrame.location.pathname.replace(basePath + '/', '')
-        ) {
-          router.push(innerFrame.location.pathname.replace(basePath, newBase));
-        } else {
-          setLoadingIframe(false);
-        }
-      }, 200);
-    });
-  }, [
-    innerFrame?.location.pathname,
-    innerFrame?.navigation,
-    router,
-    pathname,
-    basePath,
-    newBase,
-  ]);
+    if (!innerFrame?.navigation) return;
+
+    const handleNavigate = (event: NavigateEvent) => {
+      // Get the new path from the iframe navigation
+      const iframeUrl = new URL(event.destination.url);
+      const iframePath = iframeUrl.pathname;
+
+      // Calculate the sub-path (remove basePath prefix)
+      const newSubPath = iframePath.replace(basePath ?? '', '');
+
+      // Only update browser URL if the path actually changed
+      if (newSubPath !== currentIframePathRef.current) {
+        currentIframePathRef.current = newSubPath;
+
+        // Use replaceState to update browser URL without triggering Next.js navigation
+        // This prevents the iframe from remounting
+        const newBrowserPath = `${newBase}${newSubPath}`;
+        window.history.replaceState(
+          { ...window.history.state, as: newBrowserPath, url: newBrowserPath },
+          '',
+          newBrowserPath
+        );
+      }
+    };
+
+    innerFrame.navigation.addEventListener('navigate', handleNavigate);
+
+    // Cleanup listener on unmount or when innerFrame changes
+    return () => {
+      innerFrame.navigation.removeEventListener('navigate', handleNavigate);
+    };
+  }, [innerFrame, basePath, newBase]);
 
   return (
     <>
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <iframe
         {...props}
+        ref={iframeRef}
         loading="lazy"
-        onLoad={() => setTimeout(() => setLoadingIframe(false), 600)}
-        ref={setContentRef}
-        className={`w-full h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)] relative ${loadingIframe && 'invisible'}`}
-        src={`${domainURL}${basePath}${pathname}`}
+        onLoad={handleIframeLoad}
+        className={`w-full h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)] relative ${loadingIframe ? 'invisible' : ''}`}
+        src={iframeSrc}
         allowFullScreen
         title={title}
       >
