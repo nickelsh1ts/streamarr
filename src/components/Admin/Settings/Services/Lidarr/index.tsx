@@ -72,7 +72,7 @@ const ServicesLidarr = () => {
         validationSchema={SettingsSchema}
         onSubmit={async (values) => {
           try {
-            await axios.post('/api/v1/settings/Lidarr', {
+            await axios.post('/api/v1/settings/lidarr', {
               hostname: values.hostname,
               port: values.port,
               useSsl: values.useSsl,

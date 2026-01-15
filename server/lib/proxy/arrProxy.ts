@@ -9,6 +9,7 @@ export interface ArrServiceConfig {
   useSsl: boolean;
   baseUrl: string;
   apiKey: string;
+  apiKeyHeader?: string; // Default: 'X-Api-Key', Bazarr uses 'X-API-KEY'
 }
 
 function getTarget(config: ArrServiceConfig): string {
@@ -22,19 +23,19 @@ function normalizeBaseUrl(baseUrl: string): string {
 }
 
 export function createArrProxy(config: ArrServiceConfig) {
-  const { name, apiKey, baseUrl } = config;
+  const { name, apiKey, baseUrl, apiKeyHeader = 'X-Api-Key' } = config;
   const pathPrefix = normalizeBaseUrl(baseUrl);
 
   return createProxyMiddleware({
     target: getTarget(config),
     changeOrigin: true,
-    autoRewrite: true, // Auto-rewrite Location headers on redirects
+    autoRewrite: true,
     router: () => getTarget(config),
     pathRewrite: (path) => `${pathPrefix}${path}`,
     on: {
       proxyReq: (proxyReq, req) => {
         const expressReq = req as Request;
-        proxyReq.setHeader('X-Api-Key', apiKey);
+        proxyReq.setHeader(apiKeyHeader, apiKey);
 
         // Forward client IP
         const clientIp =

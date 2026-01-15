@@ -19,9 +19,22 @@ export function getActiveProxyPaths(): string[] {
     paths.push('/web');
   }
 
+  // Multi-instance DVR services (radarr/sonarr)
   for (const service of [...settings.radarr, ...settings.sonarr]) {
     if (service.hostname && service.baseUrl) {
       paths.push(service.baseUrl);
+    }
+  }
+
+  // Single-instance *Arr services
+  const singleArrServices = [
+    settings.lidarr,
+    settings.prowlarr,
+    settings.bazarr,
+  ];
+  for (const service of singleArrServices) {
+    if (service.hostname && service.urlBase) {
+      paths.push(service.urlBase);
     }
   }
 
@@ -86,6 +99,32 @@ export function createServiceProxyRouter(
           apiKey: service.apiKey,
         }),
         label,
+        true
+      );
+    }
+  }
+
+  // Register single-instance *Arr services (requires ADMIN)
+  const singleArrServices = [
+    { service: settings.lidarr, name: 'Lidarr' },
+    { service: settings.prowlarr, name: 'Prowlarr' },
+    { service: settings.bazarr, name: 'Bazarr', apiKeyHeader: 'X-API-KEY' },
+  ];
+
+  for (const { service, name, apiKeyHeader } of singleArrServices) {
+    if (service.hostname && service.urlBase && service.apiKey) {
+      registerProxy(
+        service.urlBase,
+        createArrProxy({
+          name,
+          hostname: service.hostname,
+          port: service.port ?? 0,
+          useSsl: service.useSsl ?? false,
+          baseUrl: service.urlBase,
+          apiKey: service.apiKey,
+          apiKeyHeader,
+        }),
+        name,
         true
       );
     }
