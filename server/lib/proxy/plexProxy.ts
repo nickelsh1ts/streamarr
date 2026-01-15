@@ -1,10 +1,7 @@
 import type { Server } from 'http';
 import type { RequestHandler } from 'express';
 import { getSettings } from '@server/lib/settings';
-import {
-  createServiceProxy,
-  registerWebSocketHandler,
-} from './index';
+import { createServiceProxy, registerWebSocketHandler } from './index';
 
 function getPlexTarget(): string {
   const { plex } = getSettings();

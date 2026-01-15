@@ -98,11 +98,16 @@ app
     }
     server.use(cookieParser());
 
+    // Get proxy paths to skip body parsing for proxied services
+    const proxyPaths = getActiveProxyPaths();
+    const isProxyPath = (path: string) =>
+      proxyPaths.some((p) => path.startsWith(p));
+
     // Conditional body parsing - skip for file upload and proxy routes
     server.use((req, res, next) => {
       if (
         req.path.includes('/settings/logos/upload') ||
-        req.path.startsWith('/web')
+        isProxyPath(req.path)
       ) {
         return next();
       }
@@ -112,7 +117,7 @@ app
     server.use((req, res, next) => {
       if (
         req.path.includes('/settings/logos/upload') ||
-        req.path.startsWith('/web')
+        isProxyPath(req.path)
       ) {
         return next();
       }
@@ -178,14 +183,12 @@ app
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
-    const proxyPaths = getActiveProxyPaths();
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
         ignorePaths: (path) =>
-          path.includes('/settings/logos/upload') ||
-          proxyPaths.some((proxyPath) => path.startsWith(proxyPath)),
+          path.includes('/settings/logos/upload') || isProxyPath(path),
       })
     );
     server.use((_req, res, next) => {
