@@ -1547,12 +1547,6 @@
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
   },
-  "plexSettings.urlBaseTooltip": {
-    "defaultMessage": "It is recommended to leave this as the default value"
-  },
-  "plexSettings.webAppDescription": {
-    "defaultMessage": "The Plex web app must be located on the same domain as to avoid cross-origin issues."
-  },
   "profile.editSettings": {
     "defaultMessage": "Edit Settings"
   },

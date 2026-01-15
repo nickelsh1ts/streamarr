@@ -27,7 +27,6 @@ export interface PlexSettings {
   port: number;
   useSsl?: boolean;
   libraries: Library[];
-  webAppUrl?: string;
 }
 
 export interface TautulliSettings {
@@ -311,7 +310,6 @@ class Settings {
         ip: '',
         port: 32400,
         useSsl: false,
-        webAppUrl: '/web/index.html',
         libraries: [],
       },
       tautulli: {},

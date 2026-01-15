@@ -300,10 +300,6 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/PlexLibrary'
-        webAppUrl:
-          type: string
-          nullable: true
-          example: 'https://app.plex.tv/desktop'
       required:
         - name
         - machineId

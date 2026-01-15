@@ -1564,18 +1564,6 @@
   "plexSettings.title": {
     "defaultMessage": "Configuración de Plex"
   },
-  "plexSettings.urlBaseTooltip": {
-    "defaultMessage": "Se recomienda dejar esto como el valor predeterminado"
-  },
-  "plexSettings.validation.webAppUrl.leadingSlash": {
-    "defaultMessage": "La URL base debe tener una barra diagonal inicial"
-  },
-  "plexSettings.validation.webAppUrl.noTrailingSlash": {
-    "defaultMessage": "La URL base no debe terminar con una barra diagonal"
-  },
-  "plexSettings.webAppDescription": {
-    "defaultMessage": "La aplicación web Plex debe ubicarse en el mismo dominio para evitar problemas de origen cruzado."
-  },
   "profile.editSettings": {
     "defaultMessage": "Editar Configuración"
   },
