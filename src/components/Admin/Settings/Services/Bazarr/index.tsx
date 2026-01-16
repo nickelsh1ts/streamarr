@@ -66,7 +66,6 @@ const ServicesBazarr = () => {
           urlBase: dataBazarr?.urlBase,
           hostname: dataBazarr?.hostname ?? '',
           port: dataBazarr?.port ?? 6767,
-          useSsl: dataBazarr?.useSsl ?? false,
           apiKey: dataBazarr?.apiKey ?? '',
         }}
         validationSchema={SettingsSchema}
@@ -75,7 +74,6 @@ const ServicesBazarr = () => {
             await axios.post('/api/v1/settings/Bazarr', {
               hostname: values.hostname,
               port: values.port,
-              useSsl: values.useSsl,
               enabled: values.enabled,
               urlBase: values.urlBase,
               apiKey: values.apiKey,
@@ -159,7 +157,7 @@ const ServicesBazarr = () => {
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
-                      {values.useSsl ? 'https://' : 'http://'}
+                      http://
                     </span>
                     <Field
                       type="text"
@@ -198,25 +196,6 @@ const ServicesBazarr = () => {
                     typeof errors.port === 'string' && (
                       <div className="text-error">{errors.port}</div>
                     )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">
-                  <FormattedMessage
-                    id="common.useSsl"
-                    defaultMessage="Use SSL"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    type="checkbox"
-                    id="useSsl"
-                    name="useSsl"
-                    onChange={() => {
-                      setFieldValue('useSsl', !values.useSsl);
-                    }}
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
-                  />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">

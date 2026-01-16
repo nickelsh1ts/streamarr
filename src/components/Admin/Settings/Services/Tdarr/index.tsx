@@ -44,14 +44,12 @@ const ServicesTdarr = () => {
           enabled: dataTdarr?.enabled ?? false,
           hostname: dataTdarr?.hostname ?? '',
           port: dataTdarr?.port ?? 8265,
-          useSsl: dataTdarr?.useSsl ?? false,
         }}
         onSubmit={async (values) => {
           try {
             await axios.post('/api/v1/settings/Tdarr', {
               hostname: values.hostname,
               port: values.port,
-              useSsl: values.useSsl,
               enabled: values.enabled,
             } as ServiceSettings);
 
@@ -133,7 +131,7 @@ const ServicesTdarr = () => {
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
-                      {values.useSsl ? 'https://' : 'http://'}
+                      http://
                     </span>
                     <Field
                       type="text"
@@ -172,20 +170,6 @@ const ServicesTdarr = () => {
                     typeof errors.port === 'string' && (
                       <div className="text-error">{errors.port}</div>
                     )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">Use SSL</label>
-                <div className="sm:col-span-2">
-                  <Field
-                    type="checkbox"
-                    id="useSsl"
-                    name="useSsl"
-                    onChange={() => {
-                      setFieldValue('useSsl', !values.useSsl);
-                    }}
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
-                  />
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />

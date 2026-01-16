@@ -117,14 +117,13 @@ export function createServiceProxyRouter(
     }
   }
 
-  // Register single-instance *Arr services (requires ADMIN)
+  // Register single-instance *Arr services that support SSL (requires ADMIN)
   const singleArrServices = [
     { service: settings.lidarr, name: 'Lidarr' },
     { service: settings.prowlarr, name: 'Prowlarr' },
-    { service: settings.bazarr, name: 'Bazarr', apiKeyHeader: 'X-API-KEY' },
   ];
 
-  for (const { service, name, apiKeyHeader } of singleArrServices) {
+  for (const { service, name } of singleArrServices) {
     if (service.hostname && service.urlBase && service.apiKey) {
       registerProxy(
         service.urlBase,
@@ -135,7 +134,6 @@ export function createServiceProxyRouter(
           useSsl: service.useSsl ?? false,
           baseUrl: service.urlBase,
           apiKey: service.apiKey,
-          apiKeyHeader,
         }),
         name,
         true
@@ -143,12 +141,33 @@ export function createServiceProxyRouter(
     }
   }
 
+  // Register Bazarr separately (HTTP only - no SSL support)
+  if (
+    settings.bazarr.hostname &&
+    settings.bazarr.urlBase &&
+    settings.bazarr.apiKey
+  ) {
+    registerProxy(
+      settings.bazarr.urlBase,
+      createArrProxy({
+        name: 'Bazarr',
+        hostname: settings.bazarr.hostname,
+        port: settings.bazarr.port ?? 6767,
+        useSsl: false, // Bazarr doesn't support SSL
+        baseUrl: settings.bazarr.urlBase,
+        apiKey: settings.bazarr.apiKey,
+        apiKeyHeader: 'X-API-KEY',
+      }),
+      'Bazarr',
+      true
+    );
+  }
+
   // Register Tdarr proxy (requires ADMIN, hardcoded paths)
   if (settings.tdarr.enabled && settings.tdarr.hostname) {
     const tdarrConfig = {
       hostname: settings.tdarr.hostname,
       port: settings.tdarr.port ?? 8265,
-      useSsl: settings.tdarr.useSsl ?? false,
     };
 
     const tdarrProxy = createTdarrProxy(tdarrConfig);

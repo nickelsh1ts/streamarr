@@ -15,12 +15,11 @@ interface SessionRequest extends IncomingMessage {
 export interface TdarrProxyConfig {
   hostname: string;
   port: number;
-  useSsl: boolean;
 }
 
+/** Tdarr only supports HTTP (no SSL/TLS) */
 function getTarget(config: TdarrProxyConfig): string {
-  const protocol = config.useSsl ? 'https' : 'http';
-  return `${protocol}://${config.hostname}:${config.port}`;
+  return `http://${config.hostname}:${config.port}`;
 }
 
 /**
