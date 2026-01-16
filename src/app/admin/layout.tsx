@@ -127,9 +127,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }),
         route: '/admin/transcode',
         regex: /^\/admin\/transcode/,
-        hidden: !services?.some(
-          (d) => d.id === 'tdarr' && d.enabled && d.urlBase
-        ),
+        hidden: !services?.some((d) => d.id === 'tdarr' && d.enabled),
       },
       {
         text: intl.formatMessage({

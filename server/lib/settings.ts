@@ -325,7 +325,6 @@ class Settings {
       },
       tdarr: {
         enabled: false,
-        urlBase: '/admin/tdarr',
       },
       bazarr: {
         enabled: false,

@@ -6,6 +6,13 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
+import {
+  createTdarrProxy,
+  createTdarrStaticProxy,
+  registerTdarrWebSocketHandler,
+  TDARR_PROXY_PATH,
+  TDARR_STATIC_PATH,
+} from '@server/lib/proxy/tdarrProxy';
 import logger from '@server/logger';
 
 /**
@@ -36,6 +43,12 @@ export function getActiveProxyPaths(): string[] {
     if (service.hostname && service.urlBase) {
       paths.push(service.urlBase);
     }
+  }
+
+  // Tdarr (hardcoded paths - no custom base URL support)
+  if (settings.tdarr.enabled && settings.tdarr.hostname) {
+    paths.push(TDARR_PROXY_PATH);
+    paths.push(TDARR_STATIC_PATH);
   }
 
   return paths;
@@ -128,6 +141,25 @@ export function createServiceProxyRouter(
         true
       );
     }
+  }
+
+  // Register Tdarr proxy (requires ADMIN, hardcoded paths)
+  if (settings.tdarr.enabled && settings.tdarr.hostname) {
+    const tdarrConfig = {
+      hostname: settings.tdarr.hostname,
+      port: settings.tdarr.port ?? 8265,
+      useSsl: settings.tdarr.useSsl ?? false,
+    };
+
+    const tdarrProxy = createTdarrProxy(tdarrConfig);
+    registerProxy(TDARR_PROXY_PATH, tdarrProxy, 'Tdarr', true);
+    registerTdarrWebSocketHandler(httpServer, sessionMiddleware, tdarrProxy);
+
+    // Static assets (no auth - loaded as resources after authenticated page loads)
+    router.use(TDARR_STATIC_PATH, createTdarrStaticProxy(tdarrConfig));
+    logger.info(`Tdarr Static proxy registered at ${TDARR_STATIC_PATH}`, {
+      label: 'Proxy',
+    });
   }
 
   return router;

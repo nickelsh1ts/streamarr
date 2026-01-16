@@ -12,33 +12,12 @@ import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import useSWR from 'swr';
-import * as Yup from 'yup';
 
 const ServicesTdarr = () => {
   const intl = useIntl();
   const { data: dataTdarr, mutate: revalidateTdarr } = useSWR<ServiceSettings>(
     '/api/v1/settings/tdarr'
   );
-
-  const SettingsSchema = Yup.object().shape({
-    urlBase: Yup.string()
-      .test(
-        'leading-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.leadingSlash',
-          defaultMessage: 'URL Base must have a leading slash',
-        }),
-        (value) => !value || value.startsWith('/')
-      )
-      .test(
-        'no-trailing-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.noTrailingSlash',
-          defaultMessage: 'URL Base must not end in a trailing slash',
-        }),
-        (value) => !value || !value.endsWith('/')
-      ),
-  });
 
   if (!dataTdarr) {
     return <LoadingEllipsis />;
@@ -63,12 +42,10 @@ const ServicesTdarr = () => {
       <Formik
         initialValues={{
           enabled: dataTdarr?.enabled ?? false,
-          urlBase: dataTdarr?.urlBase,
           hostname: dataTdarr?.hostname ?? '',
           port: dataTdarr?.port ?? 8265,
           useSsl: dataTdarr?.useSsl ?? false,
         }}
-        validationSchema={SettingsSchema}
         onSubmit={async (values) => {
           try {
             await axios.post('/api/v1/settings/Tdarr', {
@@ -76,7 +53,6 @@ const ServicesTdarr = () => {
               port: values.port,
               useSsl: values.useSsl,
               enabled: values.enabled,
-              urlBase: values.urlBase,
             } as ServiceSettings);
 
             Toast({
@@ -210,28 +186,6 @@ const ServicesTdarr = () => {
                     }}
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">
-                  <FormattedMessage
-                    id="common.urlBase"
-                    defaultMessage="URL Base"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      className="input input-sm input-primary rounded-md w-full"
-                      id="urlBase"
-                      name="urlBase"
-                      inputMode="url"
-                      type="text"
-                    />
-                  </div>
-                  {errors.urlBase && touched.urlBase && (
-                    <div className="text-error">{errors.urlBase}</div>
-                  )}
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />

@@ -118,14 +118,25 @@ function getActiveFrame(
     };
   }
 
-  // Single-instance services
+  // Single-instance services with configurable urlBase
   const serviceMap: Record<string, { newBase: string; title: string }> = {
     lidarr: { newBase: '/admin/music', title: 'music' },
     prowlarr: { newBase: '/admin/indexers', title: 'indexers' },
     bazarr: { newBase: '/admin/srt', title: 'subtitles' },
-    tdarr: { newBase: '/admin/transcode', title: 'transcoding' },
     downloads: { newBase: '/admin/downloads', title: 'downloads' },
   };
+
+  // Tdarr has hardcoded path (no base URL support)
+  if (serviceType === 'tdarr') {
+    const service = services.find((s) => s.id === 'tdarr');
+    if (!service?.enabled) return null;
+    return {
+      id: 'tdarr',
+      basePath: '/tdarr',
+      newBase: '/admin/transcode',
+      title: 'transcoding',
+    };
+  }
 
   const info = serviceMap[serviceType];
   if (!info) return null;

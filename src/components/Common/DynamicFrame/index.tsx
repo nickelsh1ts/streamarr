@@ -61,6 +61,11 @@ const DynamicFrame = ({
   // Track the current iframe path to avoid unnecessary updates
   const currentIframePathRef = useRef<string>('');
 
+  // Get the initial hash from browser URL (for hash-based routing like Tdarr)
+  const [initialHash] = useState(() =>
+    typeof window !== 'undefined' ? window.location.hash : ''
+  );
+
   // Calculate the sub-path (path after the newBase)
   // Only extract subPath if pathname actually starts with newBase, otherwise use empty string
   const subPath = useMemo(() => {
@@ -74,11 +79,12 @@ const DynamicFrame = ({
   }, [pathname, newBase]);
 
   // Calculate iframe src - only compute once on mount
+  // Include initialHash for hash-based routing (e.g., Tdarr uses /#/libraries)
   const iframeSrc = useMemo(() => {
     if (!domainURL || !basePath) return '';
-    return `${domainURL}${basePath}${subPath}`;
+    return `${domainURL}${basePath}${subPath}${initialHash}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domainURL, basePath]); // Intentionally exclude subPath to only compute initial src
+  }, [domainURL, basePath]); // Intentionally exclude subPath/initialHash to only compute initial src
 
   // Handle iframe load event
   const handleIframeLoad = useCallback(() => {
@@ -216,17 +222,22 @@ const DynamicFrame = ({
       // Get the new path from the iframe navigation
       const iframeUrl = new URL(event.destination.url);
       const iframePath = iframeUrl.pathname;
+      const iframeHash = iframeUrl.hash; // For hash-based routing (e.g., Tdarr)
 
       // Calculate the sub-path (remove basePath prefix)
       const newSubPath = iframePath.replace(basePath ?? '', '');
 
+      // Combine path and hash for the full route
+      // Hash-based apps (like Tdarr) use /#/route, path-based apps use /route
+      const fullSubPath = newSubPath + iframeHash;
+
       // Only update browser URL if the path actually changed
-      if (newSubPath !== currentIframePathRef.current) {
-        currentIframePathRef.current = newSubPath;
+      if (fullSubPath !== currentIframePathRef.current) {
+        currentIframePathRef.current = fullSubPath;
 
         // Use replaceState to update browser URL without triggering Next.js navigation
         // This prevents the iframe from remounting
-        const newBrowserPath = `${newBase}${newSubPath}`;
+        const newBrowserPath = `${newBase}${fullSubPath}`;
         window.history.replaceState(
           { ...window.history.state, as: newBrowserPath, url: newBrowserPath },
           '',
