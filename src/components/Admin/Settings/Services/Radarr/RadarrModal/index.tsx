@@ -62,6 +62,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       })
     ),
     baseUrl: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlbase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -487,6 +493,13 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="arrSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route. A restart is required to take effect."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const ServicesBazarr = () => {
   const intl = useIntl();
@@ -22,6 +23,12 @@ const ServicesBazarr = () => {
 
   const SettingsSchema = Yup.object().shape({
     urlBase: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlbase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -90,7 +97,7 @@ const ServicesBazarr = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
-          } catch {
+          } catch (e) {
             Toast({
               title: intl.formatMessage(
                 {
@@ -101,6 +108,7 @@ const ServicesBazarr = () => {
                 { appName: 'Bazarr' }
               ),
               type: 'error',
+              message: e.response?.data?.message || e.message,
               icon: <XCircleIcon className="size-7" />,
             });
           } finally {
@@ -204,6 +212,14 @@ const ServicesBazarr = () => {
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <SettingsBadge badgeType="restartRequired" />
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="servicesSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">

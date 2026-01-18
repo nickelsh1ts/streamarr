@@ -40,6 +40,7 @@ import Invite from '@server/entity/Invite';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
+import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 
 const settingsRoutes = Router();
 
@@ -326,8 +327,14 @@ settingsRoutes.get('/bazarr', (_req, res) => {
   res.status(200).json(settings.bazarr);
 });
 
-settingsRoutes.post('/bazarr', async (req, res) => {
+settingsRoutes.post('/bazarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'bazarr', 'bazarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.bazarr, req.body);
   settings.save();
@@ -340,8 +347,14 @@ settingsRoutes.get('/prowlarr', (_req, res) => {
   res.status(200).json(settings.prowlarr);
 });
 
-settingsRoutes.post('/prowlarr', async (req, res) => {
+settingsRoutes.post('/prowlarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'prowlarr', 'prowlarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.prowlarr, req.body);
   settings.save();
@@ -354,8 +367,14 @@ settingsRoutes.get('/lidarr', (_req, res) => {
   res.status(200).json(settings.lidarr);
 });
 
-settingsRoutes.post('/lidarr', async (req, res) => {
+settingsRoutes.post('/lidarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'lidarr', 'lidarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.lidarr, req.body);
   settings.save();

@@ -1,6 +1,7 @@
 import SonarrAPI from '@server/api/servarr/sonarr';
 import type { SonarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { Router } from 'express';
 
@@ -12,12 +13,18 @@ sonarrRoutes.get('/', (_req, res) => {
   res.status(200).json(settings.sonarr);
 });
 
-sonarrRoutes.post('/', (req, res) => {
+sonarrRoutes.post('/', (req, res, next) => {
   const settings = getSettings();
 
   const newSonarr = req.body as SonarrSettings;
   const lastItem = settings.sonarr[settings.sonarr.length - 1];
   newSonarr.id = lastItem ? lastItem.id + 1 : 0;
+
+  // Validate baseUrl
+  const validation = validateBaseUrl(newSonarr.baseUrl, 'sonarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   // If we are setting this as the default, clear any previous defaults for the same type first
   // ex: if is4k is true, it will only remove defaults for other servers that have is4k set to true
@@ -72,7 +79,7 @@ sonarrRoutes.post('/test', async (req, res, next) => {
   }
 });
 
-sonarrRoutes.put<{ id: string }>('/:id', (req, res) => {
+sonarrRoutes.put<{ id: string }>('/:id', (req, res, next) => {
   const settings = getSettings();
 
   const sonarrIndex = settings.sonarr.findIndex(
@@ -80,9 +87,17 @@ sonarrRoutes.put<{ id: string }>('/:id', (req, res) => {
   );
 
   if (sonarrIndex === -1) {
-    res
-      .status(404)
-      .json({ status: '404', message: 'Settings instance not found' });
+    return next({ status: 404, message: 'Settings instance not found' });
+  }
+
+  // Validate baseUrl
+  const validation = validateBaseUrl(
+    req.body.baseUrl,
+    'sonarr',
+    Number(req.params.id)
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
   }
 
   // If we are setting this as the default, clear any previous defaults for the same type first

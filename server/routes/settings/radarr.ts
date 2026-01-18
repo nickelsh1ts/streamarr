@@ -1,6 +1,7 @@
 import RadarrAPI from '@server/api/servarr/radarr';
 import type { RadarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { Router } from 'express';
 
@@ -12,12 +13,18 @@ radarrRoutes.get('/', (_req, res) => {
   res.status(200).json(settings.radarr);
 });
 
-radarrRoutes.post('/', (req, res) => {
+radarrRoutes.post('/', (req, res, next) => {
   const settings = getSettings();
 
   const newRadarr = req.body as RadarrSettings;
   const lastItem = settings.radarr[settings.radarr.length - 1];
   newRadarr.id = lastItem ? lastItem.id + 1 : 0;
+
+  // Validate baseUrl
+  const validation = validateBaseUrl(newRadarr.baseUrl, 'radarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   // If we are setting this as the default, clear any previous defaults for the same type first
   // ex: if is4k is true, it will only remove defaults for other servers that have is4k set to true
@@ -75,6 +82,16 @@ radarrRoutes.put<{ id: string }, RadarrSettings, RadarrSettings>(
 
     if (radarrIndex === -1) {
       return next({ status: '404', message: 'Settings instance not found' });
+    }
+
+    // Validate baseUrl
+    const validation = validateBaseUrl(
+      req.body.baseUrl,
+      'radarr',
+      Number(req.params.id)
+    );
+    if (!validation.valid) {
+      return next({ status: 400, message: validation.error });
     }
 
     // If we are setting this as the default, clear any previous defaults for the same type first
