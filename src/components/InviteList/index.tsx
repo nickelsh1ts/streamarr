@@ -153,7 +153,7 @@ const InviteList = () => {
 
   // Restore last set filter values on component mount
   useEffect(() => {
-    const filterString = window.localStorage.getItem('il-filter-settings');
+    const filterString = window.localStorage.getItem('invites-filter-settings');
 
     if (filterString) {
       const filterSettings = JSON.parse(filterString);
@@ -179,7 +179,7 @@ const InviteList = () => {
   // Set filter values to local storage any time they are changed
   useEffect(() => {
     window.localStorage.setItem(
-      'il-filter-settings',
+      'invites-filter-settings',
       JSON.stringify({
         currentFilter,
         currentSort,
