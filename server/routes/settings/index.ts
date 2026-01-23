@@ -40,6 +40,7 @@ import Invite from '@server/entity/Invite';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
+import downloadsRoutes from './downloads';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 
 const settingsRoutes = Router();
@@ -48,6 +49,7 @@ settingsRoutes.use('/notifications', notificationRoutes);
 settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/logos', logoSettingsRoutes);
+settingsRoutes.use('/downloads', downloadsRoutes);
 
 const filteredMainSettings = (
   user: User,
@@ -258,7 +260,6 @@ settingsRoutes.get('/services', (_req, res) => {
 
   services.push(
     settings.bazarr,
-    settings.downloads,
     settings.lidarr,
     settings.overseerr,
     settings.prowlarr,
@@ -266,9 +267,13 @@ settingsRoutes.get('/services', (_req, res) => {
     settings.uptime
   );
 
+  const downloadsService: ServiceSettings = {
+    enabled: settings.downloads.length > 0,
+  };
+
   const servicesWithId = [
     { ...settings.bazarr, id: 'bazarr' },
-    { ...settings.downloads, id: 'downloads' },
+    { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
     { ...settings.overseerr, id: 'overseerr' },
     { ...settings.prowlarr, id: 'prowlarr' },
@@ -291,20 +296,6 @@ settingsRoutes.post('/uptime', async (req, res) => {
   Object.assign(settings.uptime, req.body);
   settings.save();
   res.status(200).json(settings.uptime);
-});
-
-settingsRoutes.get('/downloads', (_req, res) => {
-  const settings = getSettings();
-
-  res.status(200).json(settings.downloads);
-});
-
-settingsRoutes.post('/downloads', async (req, res) => {
-  const settings = getSettings();
-
-  Object.assign(settings.downloads, req.body);
-  settings.save();
-  res.status(200).json(settings.downloads);
 });
 
 settingsRoutes.get('/tdarr', (_req, res) => {

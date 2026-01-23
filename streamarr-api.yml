@@ -598,6 +598,55 @@ components:
         externalUrl:
           type: string
           nullable: true
+    DownloadClientType:
+      type: string
+      enum:
+        - qbittorrent
+        - deluge
+        - transmission
+      example: qbittorrent
+    DownloadClientSettings:
+      type: object
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 0
+        name:
+          type: string
+          example: 'My qBittorrent'
+        client:
+          $ref: '#/components/schemas/DownloadClientType'
+        hostname:
+          type: string
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 8080
+        useSsl:
+          type: boolean
+          example: false
+        urlBase:
+          type: string
+          readOnly: true
+          description: Auto-generated URL base for proxy routing
+          example: '/qbt'
+        username:
+          type: string
+          nullable: true
+          example: 'admin'
+        password:
+          type: string
+          nullable: true
+          writeOnly: true
+        isDefault:
+          type: boolean
+          example: true
+          description: Whether this is the default download client shown in the UI
+      required:
+        - name
+        - client
+        - hostname
     PublicSettings:
       type: object
       properties:
@@ -1476,20 +1525,22 @@ paths:
                 $ref: '#/components/schemas/ServiceSettings'
   /settings/downloads:
     get:
-      summary: Get downloads settings
-      description: Retrieves current downloads settings.
+      summary: Get download client settings
+      description: Returns all download client configurations in a JSON array.
       tags:
         - settings
       responses:
         '200':
-          description: OK
+          description: 'Values were returned'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DownloadClientSettings'
     post:
-      summary: Update downloads settings
-      description: Updates downloads settings with the provided values.
+      summary: Create download client instance
+      description: Creates a new download client configuration.
       tags:
         - settings
       requestBody:
@@ -1497,14 +1548,59 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceSettings'
+              $ref: '#/components/schemas/DownloadClientSettings'
       responses:
-        '200':
-          description: 'Values were successfully updated'
+        '201':
+          description: 'New download client created'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                $ref: '#/components/schemas/DownloadClientSettings'
+  /settings/downloads/{downloadId}:
+    put:
+      summary: Update download client instance
+      description: Updates an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadClientSettings'
+      responses:
+        '200':
+          description: 'Download client updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
+    delete:
+      summary: Delete download client instance
+      description: Deletes an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      responses:
+        '200':
+          description: 'Download client deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
   /settings/tdarr:
     get:
       summary: Get tdarr settings

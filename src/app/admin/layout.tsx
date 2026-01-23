@@ -23,7 +23,6 @@ const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/indexers/,
   /^\/admin\/srt/,
   /^\/admin\/transcode/,
-  /^\/admin\/downloads/,
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -136,9 +135,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }),
         route: '/admin/downloads',
         regex: /^\/admin\/downloads/,
-        hidden: !services?.some(
-          (d) => d.id === 'downloads' && d.enabled && d.urlBase
-        ),
+        hidden: !services?.some((d) => d.id === 'downloads' && d.enabled),
       },
     ],
     [intl, radarr, sonarr, services]

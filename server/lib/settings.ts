@@ -79,6 +79,20 @@ export interface SonarrSettings extends DVRSettings {
   seriesType?: 'standard' | 'daily' | 'anime';
 }
 
+export type DownloadClientType = 'qbittorrent' | 'deluge' | 'transmission';
+
+export interface DownloadClientSettings {
+  id: number;
+  name: string;
+  client: DownloadClientType;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  username?: string;
+  password?: string;
+  externalUrl?: string;
+}
+
 interface Quota {
   quotaLimit?: number;
   quotaDays?: number;
@@ -234,7 +248,7 @@ interface AllSettings {
   radarr: RadarrSettings[];
   sonarr: SonarrSettings[];
   uptime: ServiceSettings;
-  downloads: ServiceSettings;
+  downloads: DownloadClientSettings[];
   tdarr: ServiceSettings;
   bazarr: ServiceSettings;
   prowlarr: ServiceSettings;
@@ -319,10 +333,7 @@ class Settings {
         enabled: false,
         externalUrl: 'https://status.streamarr.dev',
       },
-      downloads: {
-        enabled: false,
-        urlBase: '/admin/qbt',
-      },
+      downloads: [],
       tdarr: {
         enabled: false,
       },
@@ -411,11 +422,11 @@ class Settings {
     this.data.uptime = data;
   }
 
-  get downloads(): ServiceSettings {
+  get downloads(): DownloadClientSettings[] {
     return this.data.downloads;
   }
 
-  set downloads(data: ServiceSettings) {
+  set downloads(data: DownloadClientSettings[]) {
     this.data.downloads = data;
   }
 

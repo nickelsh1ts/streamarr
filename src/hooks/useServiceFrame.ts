@@ -20,14 +20,7 @@ export interface UseServiceFrameResult {
 }
 
 type RouteInfo = {
-  serviceType:
-    | 'radarr'
-    | 'sonarr'
-    | 'lidarr'
-    | 'prowlarr'
-    | 'bazarr'
-    | 'tdarr'
-    | 'downloads';
+  serviceType: 'radarr' | 'sonarr' | 'lidarr' | 'prowlarr' | 'bazarr' | 'tdarr';
   instanceId: number;
   isMovies: boolean;
   isTv: boolean;
@@ -59,7 +52,6 @@ function parseRoute(pathname: string): RouteInfo {
     { pattern: '/admin/indexers', type: 'prowlarr' as const },
     { pattern: '/admin/srt', type: 'bazarr' as const },
     { pattern: '/admin/transcode', type: 'tdarr' as const },
-    { pattern: '/admin/downloads', type: 'downloads' as const },
   ];
 
   for (const { pattern, type } of singleServices) {
@@ -123,7 +115,6 @@ function getActiveFrame(
     lidarr: { newBase: '/admin/music', title: 'music' },
     prowlarr: { newBase: '/admin/indexers', title: 'indexers' },
     bazarr: { newBase: '/admin/srt', title: 'subtitles' },
-    downloads: { newBase: '/admin/downloads', title: 'downloads' },
   };
 
   // Tdarr has hardcoded path (no base URL support)
