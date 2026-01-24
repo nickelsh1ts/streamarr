@@ -25,8 +25,6 @@ import { User } from '@server/entity/User';
 import signupRoutes from './signup';
 import notificationRoutes from '@server/routes/notification';
 
-//TODO: Create API endpoints for services and Plex instead of using reverse proxies
-
 export const createTmdbWithRegionLanguage = (): TheMovieDb => {
   return new TheMovieDb();
 };

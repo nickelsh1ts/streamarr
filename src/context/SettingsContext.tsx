@@ -17,6 +17,7 @@ const defaultSettings: PublicSettingsResponse = {
   newPlexLogin: true,
   enableRequest: false,
   requestUrl: '',
+  requestHostname: '',
   supportUrl: '',
   supportEmail: '',
   extendedHome: true,

@@ -36,6 +36,7 @@ export interface PublicSettingsResponse {
   newPlexLogin: boolean;
   enableRequest: boolean;
   requestUrl: string;
+  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
