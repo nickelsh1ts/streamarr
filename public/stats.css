@@ -1,0 +1,57 @@
+@charset "utf-8";
+/* CSS Document */
+@import url(https://theme-park.dev/css/base/tautulli/tautulli-base.css);
+.react-chroma-dark {
+  --color-background-accent: oklch(var(--p));
+  --color-brand-accent: oklch(var(--p));
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: oklch(var(--p)) !important;
+  --button-color-hover: oklch(var(--p));
+  --accent-color: oklch(var(--p));
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: oklch(var(--p));
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: oklch(var(--p));
+  --color-background-accent-focus: oklch(var(--p)) ;
+  --bs-primary: oklch(var(--p)) ;
+  --color-text-accent: oklch(var(--p));
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: oklch(var(--p));
+  --overseerr-gradient: linear-gradient(180deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
+  --label-text-color: #fff;
+  --tw-ring-color: 7E27D3;
+}
+:root {
+  --color-background-accent: oklch(var(--p));
+  --color-brand-accent: oklch(var(--p));
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: oklch(var(--p));
+  --button-color-hover: oklch(var(--p));
+  --accent-color: oklch(var(--p));
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: oklch(var(--p));
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: oklch(var(--p));
+  --color-background-accent-focus: oklch(var(--p)) ;
+  --bs-primary: oklch(var(--p)) ;
+  --color-text-accent: oklch(var(--p));
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: rgba(127, 17, 224, .15);
+  --overseerr-gradient: linear-gradient(180deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
+  --label-text-color: #fff;
+  --tw-ring-color: oklch(var(--p))!important;
+}
+
+[class*="navbar-brand"] > img {
+  display: none;
+}

@@ -1814,7 +1814,7 @@
     "defaultMessage": "¡Conexión con Sonarr establecida exitosamente!"
   },
   "servicesSettings.tautulli.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Tautulli. Streamarr obtiene datos del historial de visualización para tus medios de Plex desde Tautulli."
+    "defaultMessage": "Configura opcionalmente los ajustes de tu servidor Tautulli. Streamarr redirige Tautulli a través de /stats para los usuarios."
   },
   "servicesSettings.tautulli.title": {
     "defaultMessage": "Configuración de Tautulli"

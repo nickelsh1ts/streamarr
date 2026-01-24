@@ -1788,7 +1788,7 @@
     "defaultMessage": "Sonarr connection established successfully!"
   },
   "servicesSettings.tautulli.description": {
-    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr fetches watch history data for your Plex media from Tautulli."
+    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
   },
   "servicesSettings.tautulli.title": {
     "defaultMessage": "Tautulli Settings"

@@ -62,7 +62,6 @@ const AdminOverseerr = () => {
           domainURL={hostname}
           basePath={data?.urlBase}
           newBase={'/admin/settings/overseerr'}
-          theme={currentSettings?.theme}
         >
           <link rel="stylesheet" href="/request.css" />
         </DynamicFrame>

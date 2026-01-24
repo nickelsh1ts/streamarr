@@ -125,7 +125,8 @@ const Layout = ({
     // Feature-disabled redirects
     if (
       ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
-        (pathname.match(/request/) && !currentSettings.enableRequest)) &&
+        (pathname.match(/request/) && !currentSettings.enableRequest) ||
+        (pathname.match(/stats/) && !currentSettings.statsEnabled)) &&
       user &&
       !loading
     ) {

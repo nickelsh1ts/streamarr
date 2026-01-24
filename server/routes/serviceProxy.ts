@@ -13,6 +13,7 @@ import {
   TDARR_PROXY_PATH,
   TDARR_STATIC_PATH,
 } from '@server/lib/proxy/tdarrProxy';
+import { createTautulliProxy } from '@server/lib/proxy/tautulliProxy';
 import logger from '@server/logger';
 
 /**
@@ -49,6 +50,15 @@ export function getActiveProxyPaths(): string[] {
   if (settings.tdarr.enabled && settings.tdarr.hostname) {
     paths.push(TDARR_PROXY_PATH);
     paths.push(TDARR_STATIC_PATH);
+  }
+
+  // Tautulli
+  if (
+    settings.tautulli.enabled &&
+    settings.tautulli.hostname &&
+    settings.tautulli.urlBase
+  ) {
+    paths.push(settings.tautulli.urlBase);
   }
 
   return paths;
@@ -179,6 +189,25 @@ export function createServiceProxyRouter(
     logger.info(`Tdarr Static proxy registered at ${TDARR_STATIC_PATH}`, {
       label: 'Proxy',
     });
+  }
+
+  // Register Tautulli proxy
+  if (
+    settings.tautulli.enabled &&
+    settings.tautulli.hostname &&
+    settings.tautulli.urlBase
+  ) {
+    registerProxy(
+      settings.tautulli.urlBase,
+      createTautulliProxy({
+        hostname: settings.tautulli.hostname,
+        port: settings.tautulli.port ?? 8181,
+        useSsl: settings.tautulli.useSsl ?? false,
+        urlBase: settings.tautulli.urlBase,
+      }),
+      'Tautulli',
+      false
+    );
   }
 
   return router;

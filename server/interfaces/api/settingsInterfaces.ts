@@ -43,6 +43,7 @@ export interface PublicSettingsResponse {
   enableSignUp: boolean;
   releaseSched: boolean;
   statsUrl: string;
+  statsEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;

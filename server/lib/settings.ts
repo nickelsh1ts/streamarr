@@ -30,12 +30,12 @@ export interface PlexSettings {
 }
 
 export interface TautulliSettings {
+  enabled?: boolean;
   hostname?: string;
   port?: number;
   useSsl?: boolean;
   urlBase?: string;
   apiKey?: string;
-  externalUrl?: string;
 }
 
 export interface ServiceSettings {
@@ -181,6 +181,7 @@ export interface FullPublicSettings extends PublicSettings {
   statsUrl: string;
   releaseSched: boolean;
   statusUrl: string;
+  statsEnabled: boolean;
   statusEnabled: boolean;
   theme: Theme;
 }
@@ -518,7 +519,8 @@ class Settings {
       requestUrl: this.data.overseerr.urlBase,
       requestHostname:
         this.data.overseerr.hostname + ':' + this.data.overseerr.port,
-      statsUrl: this.data.tautulli.externalUrl,
+      statsUrl: this.data.tautulli.urlBase,
+      statsEnabled: this.data.tautulli.enabled || false,
       releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,

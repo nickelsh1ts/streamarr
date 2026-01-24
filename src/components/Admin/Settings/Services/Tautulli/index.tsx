@@ -14,6 +14,7 @@ import type { TautulliSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Formik, Field } from 'formik';
 import useSWR from 'swr';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const ServicesTautulli = () => {
   const intl = useIntl();
@@ -75,6 +76,12 @@ const ServicesTautulli = () => {
         }
       ),
       tautulliUrlBase: Yup.string()
+        .required(
+          intl.formatMessage({
+            id: 'servicesSettings.urlbase.required',
+            defaultMessage: 'You must provide a valid URL Base',
+          })
+        )
         .test(
           'leading-slash',
           intl.formatMessage({
@@ -105,21 +112,6 @@ const ServicesTautulli = () => {
           return schema.nullable();
         }
       ),
-      tautulliExternalUrl: Yup.string()
-        .url(
-          intl.formatMessage({
-            id: 'generalSettings.validation.supportUrl',
-            defaultMessage: 'You must provide a valid URL',
-          })
-        )
-        .test(
-          'no-trailing-slash',
-          intl.formatMessage({
-            id: 'servicesSettings.validation.urlNoTrailingSlash',
-            defaultMessage: 'URL must not end in a trailing slash',
-          }),
-          (value) => !value || !value.endsWith('/')
-        ),
     },
     [
       ['tautulliHostname', 'tautulliPort'],
@@ -144,29 +136,29 @@ const ServicesTautulli = () => {
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.tautulli.description"
-            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr fetches watch history data for your Plex media from Tautulli."
+            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
           />
         </p>
       </div>
       <Formik
         initialValues={{
+          tautulliEnabled: dataTautulli?.enabled ?? false,
           tautulliHostname: dataTautulli?.hostname,
           tautulliPort: dataTautulli?.port ?? 8181,
           tautulliUseSsl: dataTautulli?.useSsl,
           tautulliUrlBase: dataTautulli?.urlBase,
           tautulliApiKey: dataTautulli?.apiKey,
-          tautulliExternalUrl: dataTautulli?.externalUrl,
         }}
         validationSchema={TautulliSettingsSchema}
         onSubmit={async (values) => {
           try {
             await axios.post('/api/v1/settings/tautulli', {
+              enabled: values.tautulliEnabled,
               hostname: values.tautulliHostname,
               port: Number(values.tautulliPort),
               useSsl: values.tautulliUseSsl,
               urlBase: values.tautulliUrlBase,
               apiKey: values.tautulliApiKey,
-              externalUrl: values.tautulliExternalUrl,
             } as TautulliSettings);
 
             Toast({
@@ -209,6 +201,30 @@ const ServicesTautulli = () => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="tautulliEnabled">
+                  <FormattedMessage
+                    id="common.settingsEnable"
+                    defaultMessage="Enable"
+                  />
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      type="checkbox"
+                      id="tautulliEnabled"
+                      name="tautulliEnabled"
+                      onChange={() => {
+                        setFieldValue(
+                          'tautulliEnabled',
+                          !values.tautulliEnabled
+                        );
+                      }}
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="tautulliHostname">
                   <FormattedMessage
@@ -283,31 +299,33 @@ const ServicesTautulli = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="tautulliUrlBase" className="text-label">
+                <label htmlFor="tautulliUrlBase">
                   <FormattedMessage
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <SettingsBadge badgeType="restartRequired" />
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="servicesSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
-                  <div className="form-input-field">
+                  <div className="flex">
                     <Field
-                      type="text"
-                      inputMode="url"
+                      className="input input-sm input-primary rounded-md w-full"
                       id="tautulliUrlBase"
                       name="tautulliUrlBase"
-                      autoComplete="off"
-                      data-1pignore="true"
-                      data-lpignore="true"
-                      data-bwignore="true"
-                      className="input input-sm input-primary w-full rounded-md"
+                      inputMode="url"
+                      type="text"
                     />
                   </div>
-                  {errors.tautulliUrlBase &&
-                    touched.tautulliUrlBase &&
-                    typeof errors.tautulliUrlBase === 'string' && (
-                      <div className="text-error">{errors.tautulliUrlBase}</div>
-                    )}
+                  {errors.tautulliUrlBase && touched.tautulliUrlBase && (
+                    <div className="text-error">{errors.tautulliUrlBase}</div>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
@@ -332,35 +350,6 @@ const ServicesTautulli = () => {
                     touched.tautulliApiKey &&
                     typeof errors.tautulliApiKey === 'string' && (
                       <div className="text-error">{errors.tautulliApiKey}</div>
-                    )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="tautulliExternalUrl">
-                  <FormattedMessage
-                    id="common.externalUrl"
-                    defaultMessage="External URL"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      type="text"
-                      inputMode="url"
-                      id="tautulliExternalUrl"
-                      name="tautulliExternalUrl"
-                      autoComplete="off"
-                      data-1pignore="true"
-                      data-lpignore="true"
-                      data-bwignore="true"
-                      className="input input-sm input-primary rounded-md w-full"
-                    />
-                  </div>
-                  {errors.tautulliExternalUrl &&
-                    touched.tautulliExternalUrl && (
-                      <div className="text-error">
-                        {errors.tautulliExternalUrl}
-                      </div>
                     )}
                 </div>
               </div>
