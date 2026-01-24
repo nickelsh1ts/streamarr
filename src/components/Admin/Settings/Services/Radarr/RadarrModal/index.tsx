@@ -64,7 +64,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
     baseUrl: Yup.string()
       .required(
         intl.formatMessage({
-          id: 'servicesSettings.urlbase.required',
+          id: 'servicesSettings.urlBase.required',
           defaultMessage: 'You must provide a valid URL Base',
         })
       )

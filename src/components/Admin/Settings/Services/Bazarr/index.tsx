@@ -25,7 +25,7 @@ const ServicesBazarr = () => {
     urlBase: Yup.string()
       .required(
         intl.formatMessage({
-          id: 'servicesSettings.urlbase.required',
+          id: 'servicesSettings.urlBase.required',
           defaultMessage: 'You must provide a valid URL Base',
         })
       )
@@ -133,7 +133,6 @@ const ServicesBazarr = () => {
                     id="common.settingsEnable"
                     defaultMessage="Enable"
                   />
-                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">

@@ -168,7 +168,6 @@ const ServicesOverseerr = () => {
                     id="common.settingsEnable"
                     defaultMessage="Enable"
                   />
-                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">

@@ -1814,7 +1814,7 @@
   "servicesSettings.urlBase.noTrailingSlash": {
     "defaultMessage": "URL Base must not end in a trailing slash"
   },
-  "servicesSettings.urlbase.required": {
+  "servicesSettings.urlBase.required": {
     "defaultMessage": "You must provide a valid URL Base"
   },
   "servicesSettings.validation.apiKeyRequired": {
