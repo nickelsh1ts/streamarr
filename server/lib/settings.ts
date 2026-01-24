@@ -516,7 +516,8 @@ class Settings {
       enableSignUp: this.data.main.enableSignUp,
       enableRequest: this.data.overseerr.enabled,
       requestUrl: this.data.overseerr.urlBase,
-      requestHostname: this.data.overseerr.hostname + ':' + this.data.overseerr.port,
+      requestHostname:
+        this.data.overseerr.hostname + ':' + this.data.overseerr.port,
       statsUrl: this.data.tautulli.externalUrl,
       releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,

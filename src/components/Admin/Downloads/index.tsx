@@ -109,7 +109,10 @@ const AdminDownloads = () => {
                 className="select select-sm select-primary rounded-l-none w-full flex-1"
               >
                 <option value="all">
-                  <FormattedMessage id="downloads.clientAll" defaultMessage="All Clients" />
+                  <FormattedMessage
+                    id="downloads.clientAll"
+                    defaultMessage="All Clients"
+                  />
                 </option>
                 {clients?.map((client) => (
                   <option key={client.client} value={client.client}>
