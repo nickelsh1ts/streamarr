@@ -341,15 +341,15 @@ class Settings {
       },
       bazarr: {
         enabled: false,
-        urlBase: '/admin/bazarr',
+        urlBase: '/bazarr',
       },
       prowlarr: {
         enabled: false,
-        urlBase: '/admin/prowlarr',
+        urlBase: '/prowlarr',
       },
       lidarr: {
         enabled: false,
-        urlBase: '/admin/lidarr',
+        urlBase: '/lidarr',
       },
       overseerr: {
         enabled: false,
