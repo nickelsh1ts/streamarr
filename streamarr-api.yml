@@ -1694,6 +1694,100 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/prowlarr/test:
+    post:
+      summary: Test Prowlarr configuration
+      description: Tests if the Prowlarr configuration is valid. Returns tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 9696
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Prowlarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Prowlarr
+  /settings/prowlarr/auth:
+    get:
+      summary: Get Prowlarr authentication status
+      description: Returns the current authentication method configured on Prowlarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to connect to Prowlarr
+    post:
+      summary: Disable authentication on Prowlarr
+      description: |
+        Sets the authentication method to 'External' on Prowlarr.
+        This allows Streamarr to proxy the Prowlarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to disable authentication on Prowlarr
   /settings/lidarr:
     get:
       summary: Get lidarr settings
@@ -1725,6 +1819,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/lidarr/test:
+    post:
+      summary: Test Lidarr configuration
+      description: Tests if the Lidarr configuration is valid. Returns profiles, root folders, and tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8686
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Lidarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Lidarr
+  /settings/lidarr/auth:
+    get:
+      summary: Get Lidarr authentication status
+      description: Returns the current authentication method configured on Lidarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to connect to Lidarr
+    post:
+      summary: Disable authentication on Lidarr
+      description: |
+        Sets the authentication method to 'External' on Lidarr.
+        This allows Streamarr to proxy the Lidarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to disable authentication on Lidarr
   /settings/overseerr:
     get:
       summary: Get overseerr settings
@@ -1909,6 +2105,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RadarrSettings'
+  /settings/radarr/{radarrId}/auth:
+    get:
+      summary: Get Radarr authentication status
+      description: Returns the current authentication method configured on the Radarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to connect to Radarr
+    post:
+      summary: Disable authentication on Radarr instance
+      description: |
+        Sets the authentication method to 'External' on the Radarr instance.
+        This allows Streamarr to proxy the Radarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to disable authentication on Radarr
   /settings/radarr/{radarrId}/profiles:
     get:
       summary: Get available Radarr profiles
@@ -2053,6 +2310,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SonarrSettings'
+  /settings/sonarr/{sonarrId}/auth:
+    get:
+      summary: Get Sonarr authentication status
+      description: Returns the current authentication method configured on the Sonarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to connect to Sonarr
+    post:
+      summary: Disable authentication on Sonarr instance
+      description: |
+        Sets the authentication method to 'External' on the Sonarr instance.
+        This allows Streamarr to proxy the Sonarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to disable authentication on Sonarr
   /settings/public:
     get:
       summary: Get public settings

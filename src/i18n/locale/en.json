@@ -452,6 +452,9 @@
   "common.print": {
     "defaultMessage": "Print"
   },
+  "common.processing": {
+    "defaultMessage": "Processing..."
+  },
   "common.read": {
     "defaultMessage": "read"
   },
@@ -1715,11 +1718,32 @@
   "selectUsers": {
     "defaultMessage": "Select Users"
   },
+  "servicesSettings.authDisableFailed": {
+    "defaultMessage": "Failed to disable authentication on {service}"
+  },
+  "servicesSettings.authDisabled": {
+    "defaultMessage": "Auth Disabled"
+  },
+  "servicesSettings.authDisabled.tooltip": {
+    "defaultMessage": "To re-enable authentication, change the setting directly in {service}"
+  },
+  "servicesSettings.authDisabledService": {
+    "defaultMessage": "Authentication disabled on {service}"
+  },
   "servicesSettings.bazarr.description": {
     "defaultMessage": "Optionally configure the settings for your Bazarr server."
   },
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Bazarr Settings"
+  },
+  "servicesSettings.disableAuth": {
+    "defaultMessage": "Authentication"
+  },
+  "servicesSettings.disableAuth.button": {
+    "defaultMessage": "Disable {service} Auth"
+  },
+  "servicesSettings.disableAuth.description": {
+    "defaultMessage": "Disables authentication on {service}. You must understand the risks before proceeding. Only do this if {service} is not directly exposed to the internet."
   },
   "servicesSettings.downloads.addClient": {
     "defaultMessage": "Add Download Client"
@@ -1775,18 +1799,6 @@
   "servicesSettings.prowlarr.title": {
     "defaultMessage": "Prowlarr Settings"
   },
-  "servicesSettings.radarr.testfailed": {
-    "defaultMessage": "Failed to connect to Radarr."
-  },
-  "servicesSettings.radarr.testsuccess": {
-    "defaultMessage": "Radarr connection established successfully!"
-  },
-  "servicesSettings.sonarr.testfailed": {
-    "defaultMessage": "Failed to connect to Sonarr."
-  },
-  "servicesSettings.sonarr.testsuccess": {
-    "defaultMessage": "Sonarr connection established successfully!"
-  },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
   },
@@ -1798,6 +1810,12 @@
   },
   "servicesSettings.tdarr.title": {
     "defaultMessage": "Tdarr Settings"
+  },
+  "servicesSettings.testfailed": {
+    "defaultMessage": "Failed to connect to {service}."
+  },
+  "servicesSettings.testsuccess": {
+    "defaultMessage": "{service} connection established successfully!"
   },
   "servicesSettings.uptime.description": {
     "defaultMessage": "Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre."

@@ -139,4 +139,80 @@ sonarrRoutes.delete<{ id: string }>('/:id', (req, res) => {
   res.status(200).json(removed[0]);
 });
 
+sonarrRoutes.get<{ id: string }>('/:id/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const sonarrSettings = settings.sonarr.find(
+    (s) => s.id === Number(req.params.id)
+  );
+
+  if (!sonarrSettings) {
+    return next({ status: 404, message: 'Sonarr instance not found' });
+  }
+
+  try {
+    const sonarr = new SonarrAPI({
+      apiKey: sonarrSettings.apiKey,
+      url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
+    });
+
+    const hostConfig = await sonarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Sonarr auth status', {
+      label: 'Sonarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Sonarr' });
+  }
+});
+
+sonarrRoutes.post<{ id: string }>('/:id/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const sonarrSettings = settings.sonarr.find(
+    (s) => s.id === Number(req.params.id)
+  );
+
+  if (!sonarrSettings) {
+    return next({ status: 404, message: 'Sonarr instance not found' });
+  }
+
+  try {
+    const sonarr = new SonarrAPI({
+      apiKey: sonarrSettings.apiKey,
+      url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
+    });
+
+    const hostConfig = await sonarr.disableAuthentication();
+
+    logger.info(
+      `Authentication disabled on Sonarr instance ${sonarrSettings.name}`,
+      {
+        label: 'Sonarr',
+        userId: req.user?.id,
+        instanceId: sonarrSettings.id,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      authenticationMethod: hostConfig.authenticationMethod,
+    });
+  } catch (e) {
+    logger.error('Failed to disable Sonarr authentication', {
+      label: 'Sonarr',
+      message: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Failed to disable authentication on Sonarr',
+    });
+  }
+});
+
 export default sonarrRoutes;

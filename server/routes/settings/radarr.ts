@@ -56,8 +56,17 @@ radarrRoutes.post<undefined, Record<string, unknown>, RadarrSettings>(
         .getSystemStatus()
         .then((value) => value.urlBase)
         .catch(() => req.body.baseUrl);
+      const profiles = await radarr.getProfiles();
+      const folders = await radarr.getRootFolders();
+      const tags = await radarr.getTags();
 
       res.status(200).json({
+        profiles,
+        rootFolders: folders.map((folder) => ({
+          id: folder.id,
+          path: folder.path,
+        })),
+        tags,
         urlBase,
       });
     } catch (e) {
@@ -130,6 +139,82 @@ radarrRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
   settings.save();
 
   res.status(200).json(removed[0]);
+});
+
+radarrRoutes.get<{ id: string }>('/:id/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const radarrSettings = settings.radarr.find(
+    (r) => r.id === Number(req.params.id)
+  );
+
+  if (!radarrSettings) {
+    return next({ status: 404, message: 'Radarr instance not found' });
+  }
+
+  try {
+    const radarr = new RadarrAPI({
+      apiKey: radarrSettings.apiKey,
+      url: RadarrAPI.buildUrl(radarrSettings, '/api/v3'),
+    });
+
+    const hostConfig = await radarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Radarr auth status', {
+      label: 'Radarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Radarr' });
+  }
+});
+
+radarrRoutes.post<{ id: string }>('/:id/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const radarrSettings = settings.radarr.find(
+    (r) => r.id === Number(req.params.id)
+  );
+
+  if (!radarrSettings) {
+    return next({ status: 404, message: 'Radarr instance not found' });
+  }
+
+  try {
+    const radarr = new RadarrAPI({
+      apiKey: radarrSettings.apiKey,
+      url: RadarrAPI.buildUrl(radarrSettings, '/api/v3'),
+    });
+
+    const hostConfig = await radarr.disableAuthentication();
+
+    logger.info(
+      `Authentication disabled on Radarr instance ${radarrSettings.name}`,
+      {
+        label: 'Radarr',
+        userId: req.user?.id,
+        instanceId: radarrSettings.id,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      authenticationMethod: hostConfig.authenticationMethod,
+    });
+  } catch (e) {
+    logger.error('Failed to disable Radarr authentication', {
+      label: 'Radarr',
+      message: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Failed to disable authentication on Radarr',
+    });
+  }
 });
 
 export default radarrRoutes;

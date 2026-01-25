@@ -459,6 +459,9 @@
   "common.print": {
     "defaultMessage": "Imprimir"
   },
+  "common.processing": {
+    "defaultMessage": "Procesando..."
+  },
   "common.read": {
     "defaultMessage": "leído"
   },
@@ -608,9 +611,6 @@
   },
   "common.viewMore": {
     "defaultMessage": "Ver Más"
-  },
-  "common.webApp": {
-    "defaultMessage": "Aplicación Web"
   },
   "common.webPush": {
     "defaultMessage": "Notificaciones Web",
@@ -941,9 +941,6 @@
   },
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "Debe proporcionar una URL válida"
-  },
-  "help.githubLink": {
-    "defaultMessage": "GitHub"
   },
   "help.helpCentre": {
     "defaultMessage": "Centro de Ayuda"
@@ -1747,6 +1744,27 @@
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Configuración de Bazarr"
   },
+  "servicesSettings.authDisableFailed": {
+    "defaultMessage": "Error al deshabilitar la autenticación en {service}"
+  },
+  "servicesSettings.authDisabled": {
+    "defaultMessage": "Autenticación Deshabilitada"
+  },
+  "servicesSettings.authDisabled.tooltip": {
+    "defaultMessage": "Para volver a habilitar la autenticación, cambia la configuración directamente en {service}"
+  },
+  "servicesSettings.authDisabledService": {
+    "defaultMessage": "Autenticación deshabilitada en {service}"
+  },
+  "servicesSettings.disableAuth": {
+    "defaultMessage": "Autenticación"
+  },
+  "servicesSettings.disableAuth.button": {
+    "defaultMessage": "Deshabilitar Autenticación de {service}"
+  },
+  "servicesSettings.disableAuth.description": {
+    "defaultMessage": "Deshabilita la autenticación en {service}. Debes comprender los riesgos antes de continuar. Solo haz esto si {service} no está expuesto directamente a internet."
+  },
   "servicesSettings.downloads.addClient": {
     "defaultMessage": "Agregar Cliente de Descarga"
   },
@@ -1801,18 +1819,6 @@
   "servicesSettings.prowlarr.title": {
     "defaultMessage": "Configuración de Prowlarr"
   },
-  "servicesSettings.radarr.testfailed": {
-    "defaultMessage": "Error al conectar con Radarr."
-  },
-  "servicesSettings.radarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Radarr establecida exitosamente!"
-  },
-  "servicesSettings.sonarr.testfailed": {
-    "defaultMessage": "Error al conectar con Sonarr."
-  },
-  "servicesSettings.sonarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Sonarr establecida exitosamente!"
-  },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Configura opcionalmente los ajustes de tu servidor Tautulli. Streamarr redirige Tautulli a través de /stats para los usuarios."
   },
@@ -1824,6 +1830,12 @@
   },
   "servicesSettings.tdarr.title": {
     "defaultMessage": "Configuración de Tdarr"
+  },
+  "servicesSettings.testfailed": {
+    "defaultMessage": "Error al conectar con {service}."
+  },
+  "servicesSettings.testsuccess": {
+    "defaultMessage": "¡Conexión con {service} establecida exitosamente!"
   },
   "servicesSettings.uptime.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Uptime. Streamarr presenta tu enlace de tiempo de actividad a través del centro de ayuda."
@@ -2469,20 +2481,5 @@
   },
   "webpushNotifications.testSuccess": {
     "defaultMessage": "¡Notificación de prueba web push enviada!"
-  },
-  "welcome.acknowledge": {
-    "defaultMessage": "Reconocer"
-  },
-  "welcome.headsUp": {
-    "defaultMessage": "¡Hola! - ¡Solo un pequeño aviso!"
-  },
-  "welcome.moreToCome": {
-    "defaultMessage": "¡Hay mucho más por venir, así que mantente atento y vuelve a revisar más tarde!"
-  },
-  "welcome.welcomeTo": {
-    "defaultMessage": "Bienvenido a"
-  },
-  "welcome.workInProgress": {
-    "defaultMessage": "Esto todavía es muy experimental y le faltan algunas funciones. Si encuentras problemas, por favor sigue intentando o contacta a nickelsh1ts."
   }
 }
