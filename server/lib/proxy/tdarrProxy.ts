@@ -25,13 +25,13 @@ function getTarget(config: TdarrProxyConfig): string {
 /**
  * Creates the main Tdarr UI proxy.
  * Strips /tdarr prefix and forwards to Tdarr root.
- * WebSocket support enabled for Socket.IO real-time updates.
+ * WebSocket handled separately via registerTdarrWebSocketHandler.
  */
 export function createTdarrProxy(config: TdarrProxyConfig) {
   return createProxyMiddleware({
     target: getTarget(config),
     changeOrigin: true,
-    ws: true,
+    ws: false,
     router: () => getTarget(config),
     pathFilter: (path) => !path.includes('/_next/'),
     pathRewrite: (path) => path.replace(/^\/tdarr/, '') || '/',
