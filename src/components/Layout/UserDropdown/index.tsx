@@ -84,11 +84,8 @@ const UserDropdown = ({
             defaultMessage="Account Settings"
           />
         </DropDownMenu.Item>
-        {currentSettings?.statsUrl && (
-          <DropDownMenu.Item
-            href={currentSettings?.statsUrl.toLowerCase()}
-            target="_blank"
-          >
+        {currentSettings?.statsUrl && currentSettings?.statsEnabled && (
+          <DropDownMenu.Item href="/stats">
             <FormattedMessage
               id="userDropdown.watchHistory"
               defaultMessage="Watch History"

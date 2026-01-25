@@ -14,6 +14,7 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const ServicesBazarr = () => {
   const intl = useIntl();
@@ -22,6 +23,12 @@ const ServicesBazarr = () => {
 
   const SettingsSchema = Yup.object().shape({
     urlBase: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -66,7 +73,6 @@ const ServicesBazarr = () => {
           urlBase: dataBazarr?.urlBase,
           hostname: dataBazarr?.hostname ?? '',
           port: dataBazarr?.port ?? 6767,
-          useSsl: dataBazarr?.useSsl ?? false,
           apiKey: dataBazarr?.apiKey ?? '',
         }}
         validationSchema={SettingsSchema}
@@ -75,7 +81,6 @@ const ServicesBazarr = () => {
             await axios.post('/api/v1/settings/Bazarr', {
               hostname: values.hostname,
               port: values.port,
-              useSsl: values.useSsl,
               enabled: values.enabled,
               urlBase: values.urlBase,
               apiKey: values.apiKey,
@@ -92,7 +97,7 @@ const ServicesBazarr = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
-          } catch {
+          } catch (e) {
             Toast({
               title: intl.formatMessage(
                 {
@@ -103,6 +108,7 @@ const ServicesBazarr = () => {
                 { appName: 'Bazarr' }
               ),
               type: 'error',
+              message: e.response?.data?.message || e.message,
               icon: <XCircleIcon className="size-7" />,
             });
           } finally {
@@ -127,7 +133,6 @@ const ServicesBazarr = () => {
                     id="common.settingsEnable"
                     defaultMessage="Enable"
                   />
-                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -159,7 +164,7 @@ const ServicesBazarr = () => {
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
-                      {values.useSsl ? 'https://' : 'http://'}
+                      http://
                     </span>
                     <Field
                       type="text"
@@ -201,30 +206,19 @@ const ServicesBazarr = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">
-                  <FormattedMessage
-                    id="common.useSsl"
-                    defaultMessage="Use SSL"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    type="checkbox"
-                    id="useSsl"
-                    name="useSsl"
-                    onChange={() => {
-                      setFieldValue('useSsl', !values.useSsl);
-                    }}
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="urlBase">
                   <FormattedMessage
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <SettingsBadge badgeType="restartRequired" />
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="servicesSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">

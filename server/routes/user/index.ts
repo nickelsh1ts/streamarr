@@ -65,6 +65,24 @@ router.get('/', async (req, res, next) => {
       pageSize ? query.take(pageSize).skip(skip) : query
     ).getManyAndCount();
 
+    const userIds = users.map((u) => u.id);
+    if (userIds.length > 0) {
+      const inviteCounts = await getRepository(Invite)
+        .createQueryBuilder('invite')
+        .select('invite.createdBy.id', 'userId')
+        .addSelect('COUNT(invite.id)', 'count')
+        .where('invite.createdBy.id IN (:...userIds)', { userIds })
+        .groupBy('invite.createdBy.id')
+        .getRawMany();
+
+      const countMap = new Map(
+        inviteCounts.map((r) => [r.userId, Number(r.count)])
+      );
+      users.forEach((user) => {
+        user.inviteCount = countMap.get(user.id) ?? 0;
+      });
+    }
+
     res.status(200).json({
       pageInfo: {
         pages: pageSize ? Math.ceil(userCount / pageSize) : 1,
@@ -286,6 +304,12 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
     const user = await userRepository.findOneOrFail({
       where: { id: Number(req.params.id) },
     });
+
+    // Compute inviteCount separately since it's not a stored column
+    const inviteCount = await getRepository(Invite).count({
+      where: { createdBy: { id: user.id } },
+    });
+    user.inviteCount = inviteCount;
 
     res
       .status(200)

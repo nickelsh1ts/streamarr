@@ -1,27 +1,57 @@
 'use client';
 import Button from '@app/components/Common/Button';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import LoadingEllipsis, {
+  SmallLoadingEllipsis,
+} from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import Badge from '@app/components/Common/Badge';
 import Toast from '@app/components/Toast';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
   XCircleIcon,
+  ShieldExclamationIcon,
 } from '@heroicons/react/24/solid';
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const ServicesProwlarr = () => {
   const intl = useIntl();
+  const initialLoad = useRef(false);
   const { data: dataProwlarr, mutate: revalidateProwlarr } =
     useSWR<ServiceSettings>('/api/v1/settings/prowlarr');
+  const [isValidated, setIsValidated] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+  const [isDisablingAuth, setIsDisablingAuth] = useState(false);
+
+  // Fetch auth status when service is configured and validated
+  const { data: authStatus, mutate: revalidateAuthStatus } = useSWR<{
+    authenticationMethod: string;
+    isAuthDisabled: boolean;
+  }>(
+    dataProwlarr?.enabled &&
+      dataProwlarr?.hostname &&
+      dataProwlarr?.apiKey &&
+      isValidated
+      ? '/api/v1/settings/prowlarr/auth'
+      : null
+  );
 
   const SettingsSchema = Yup.object().shape({
     urlBase: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -39,6 +69,125 @@ const ServicesProwlarr = () => {
         (value) => !value || !value.endsWith('/')
       ),
   });
+
+  const testConnection = useCallback(
+    async ({
+      hostname,
+      port,
+      apiKey,
+      urlBase,
+      useSsl,
+    }: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      urlBase?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      try {
+        await axios.post('/api/v1/settings/prowlarr/test', {
+          hostname,
+          port: Number(port),
+          apiKey,
+          urlBase,
+          useSsl,
+        });
+
+        setIsValidated(true);
+        revalidateAuthStatus();
+        if (initialLoad.current) {
+          Toast({
+            title: intl.formatMessage(
+              {
+                id: 'servicesSettings.testsuccess',
+                defaultMessage:
+                  '{service} connection established successfully!',
+              },
+              { service: 'Prowlarr' }
+            ),
+            type: 'success',
+            icon: <CheckBadgeIcon className="size-7" />,
+          });
+        }
+      } catch {
+        setIsValidated(false);
+        if (initialLoad.current) {
+          Toast({
+            title: intl.formatMessage(
+              {
+                id: 'servicesSettings.testfailed',
+                defaultMessage: 'Failed to connect to {service}.',
+              },
+              { service: 'Prowlarr' }
+            ),
+            type: 'error',
+            icon: <XCircleIcon className="size-7" />,
+          });
+        }
+      } finally {
+        setIsTesting(false);
+        initialLoad.current = true;
+      }
+    },
+    [revalidateAuthStatus, intl]
+  );
+
+  // Auto-test connection on page load if service is configured
+  useEffect(() => {
+    if (
+      dataProwlarr?.enabled &&
+      dataProwlarr?.hostname &&
+      dataProwlarr?.apiKey &&
+      !isValidated &&
+      !isTesting
+    ) {
+      testConnection({
+        hostname: dataProwlarr.hostname,
+        port: dataProwlarr.port,
+        apiKey: dataProwlarr.apiKey,
+        urlBase: dataProwlarr.urlBase,
+        useSsl: dataProwlarr.useSsl,
+      });
+    }
+  }, [dataProwlarr, isTesting, isValidated, testConnection]);
+
+  const handleDisableAuth = async () => {
+    if (!dataProwlarr || isDisablingAuth) return;
+
+    try {
+      await axios.post('/api/v1/settings/prowlarr/auth');
+      revalidateAuthStatus(
+        { authenticationMethod: 'external', isAuthDisabled: true },
+        { revalidate: false }
+      );
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisabledService',
+            defaultMessage: 'Authentication disabled on {service}',
+          },
+          { service: 'Prowlarr' }
+        ),
+        type: 'success',
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+    } catch {
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisableFailed',
+            defaultMessage: 'Failed to disable authentication on {service}',
+          },
+          { service: 'Prowlarr' }
+        ),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsDisablingAuth(false);
+    }
+  };
 
   if (!dataProwlarr) {
     return <LoadingEllipsis />;
@@ -92,7 +241,7 @@ const ServicesProwlarr = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
-          } catch {
+          } catch (e) {
             Toast({
               title: intl.formatMessage(
                 {
@@ -103,6 +252,7 @@ const ServicesProwlarr = () => {
                 { appName: 'Prowlarr' }
               ),
               type: 'error',
+              message: e.response?.data?.message || e.message,
               icon: <XCircleIcon className="size-7" />,
             });
           } finally {
@@ -127,7 +277,6 @@ const ServicesProwlarr = () => {
                     id="common.settingsEnable"
                     defaultMessage="Enable"
                   />
-                  <span className="ml-1 text-error">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -225,6 +374,14 @@ const ServicesProwlarr = () => {
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <SettingsBadge badgeType="restartRequired" />
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="servicesSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -266,9 +423,97 @@ const ServicesProwlarr = () => {
                     )}
                 </div>
               </div>
+              {isValidated && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="authStatus" className="text-label">
+                    <FormattedMessage
+                      id="servicesSettings.disableAuth"
+                      defaultMessage="Authentication"
+                    />
+                  </label>
+                  <div className="sm:col-span-2">
+                    {!authStatus ? (
+                      <div className="place-items-start">
+                        <SmallLoadingEllipsis />
+                      </div>
+                    ) : authStatus?.authenticationMethod === 'external' ? (
+                      <div
+                        className="tooltip"
+                        data-tip={intl.formatMessage(
+                          {
+                            id: 'servicesSettings.authDisabled.tooltip',
+                            defaultMessage:
+                              'To re-enable authentication, change the setting directly in {service}',
+                          },
+                          { service: 'Prowlarr' }
+                        )}
+                      >
+                        <Badge badgeType="warning">
+                          <FormattedMessage
+                            id="servicesSettings.authDisabled"
+                            defaultMessage="Auth Disabled"
+                          />
+                        </Badge>
+                      </div>
+                    ) : (
+                      <>
+                        <ConfirmButton
+                          onClick={handleDisableAuth}
+                          confirmText={
+                            <FormattedMessage
+                              id="common.areYouSure"
+                              defaultMessage="Are you sure?"
+                            />
+                          }
+                          buttonSize="sm"
+                        >
+                          <ShieldExclamationIcon className="mr-1 size-5" />
+                          <FormattedMessage
+                            id="servicesSettings.disableAuth.button"
+                            defaultMessage="Disable {service} Auth"
+                            values={{ service: 'Prowlarr' }}
+                          />
+                        </ConfirmButton>
+                        <p className="mt-2 text-sm text-gray-500">
+                          <FormattedMessage
+                            id="servicesSettings.disableAuth.description"
+                            defaultMessage="Disables authentication on {service}. You must understand the risks before proceeding. Only do this if {service} is not directly exposed to the internet."
+                            values={{ service: 'Prowlarr' }}
+                          />
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="divider divider-primary mb-0 col-span-full" />
               <div className="flex justify-end col-span-3 mt-4">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
+                <div className="flex gap-2">
+                  <Button
+                    buttonType="warning"
+                    buttonSize="sm"
+                    type="button"
+                    disabled={
+                      !values.apiKey ||
+                      !values.hostname ||
+                      !values.port ||
+                      isTesting ||
+                      isSubmitting
+                    }
+                    onClick={() => testConnection(values)}
+                  >
+                    {isTesting ? (
+                      <FormattedMessage
+                        id="common.testing"
+                        defaultMessage="Testing..."
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="common.test"
+                        defaultMessage="Test"
+                      />
+                    )}
+                  </Button>
                   <Button
                     buttonType="primary"
                     buttonSize="sm"
@@ -288,7 +533,7 @@ const ServicesProwlarr = () => {
                           })}
                     </span>
                   </Button>
-                </span>
+                </div>
               </div>
             </form>
           );

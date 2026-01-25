@@ -300,10 +300,6 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/PlexLibrary'
-        webAppUrl:
-          type: string
-          nullable: true
-          example: 'https://app.plex.tv/desktop'
       required:
         - name
         - machineId
@@ -602,6 +598,55 @@ components:
         externalUrl:
           type: string
           nullable: true
+    DownloadClientType:
+      type: string
+      enum:
+        - qbittorrent
+        - deluge
+        - transmission
+      example: qbittorrent
+    DownloadClientSettings:
+      type: object
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 0
+        name:
+          type: string
+          example: 'My qBittorrent'
+        client:
+          $ref: '#/components/schemas/DownloadClientType'
+        hostname:
+          type: string
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 8080
+        useSsl:
+          type: boolean
+          example: false
+        urlBase:
+          type: string
+          readOnly: true
+          description: Auto-generated URL base for proxy routing
+          example: '/qbt'
+        username:
+          type: string
+          nullable: true
+          example: 'admin'
+        password:
+          type: string
+          nullable: true
+          writeOnly: true
+        isDefault:
+          type: boolean
+          example: true
+          description: Whether this is the default download client shown in the UI
+      required:
+        - name
+        - client
+        - hostname
     PublicSettings:
       type: object
       properties:
@@ -1480,20 +1525,22 @@ paths:
                 $ref: '#/components/schemas/ServiceSettings'
   /settings/downloads:
     get:
-      summary: Get downloads settings
-      description: Retrieves current downloads settings.
+      summary: Get download client settings
+      description: Returns all download client configurations in a JSON array.
       tags:
         - settings
       responses:
         '200':
-          description: OK
+          description: 'Values were returned'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DownloadClientSettings'
     post:
-      summary: Update downloads settings
-      description: Updates downloads settings with the provided values.
+      summary: Create download client instance
+      description: Creates a new download client configuration.
       tags:
         - settings
       requestBody:
@@ -1501,14 +1548,59 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceSettings'
+              $ref: '#/components/schemas/DownloadClientSettings'
       responses:
-        '200':
-          description: 'Values were successfully updated'
+        '201':
+          description: 'New download client created'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                $ref: '#/components/schemas/DownloadClientSettings'
+  /settings/downloads/{downloadId}:
+    put:
+      summary: Update download client instance
+      description: Updates an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadClientSettings'
+      responses:
+        '200':
+          description: 'Download client updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
+    delete:
+      summary: Delete download client instance
+      description: Deletes an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      responses:
+        '200':
+          description: 'Download client deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -1602,6 +1694,100 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/prowlarr/test:
+    post:
+      summary: Test Prowlarr configuration
+      description: Tests if the Prowlarr configuration is valid. Returns tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 9696
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Prowlarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Prowlarr
+  /settings/prowlarr/auth:
+    get:
+      summary: Get Prowlarr authentication status
+      description: Returns the current authentication method configured on Prowlarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to connect to Prowlarr
+    post:
+      summary: Disable authentication on Prowlarr
+      description: |
+        Sets the authentication method to 'External' on Prowlarr.
+        This allows Streamarr to proxy the Prowlarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to disable authentication on Prowlarr
   /settings/lidarr:
     get:
       summary: Get lidarr settings
@@ -1633,6 +1819,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/lidarr/test:
+    post:
+      summary: Test Lidarr configuration
+      description: Tests if the Lidarr configuration is valid. Returns profiles, root folders, and tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8686
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Lidarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Lidarr
+  /settings/lidarr/auth:
+    get:
+      summary: Get Lidarr authentication status
+      description: Returns the current authentication method configured on Lidarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to connect to Lidarr
+    post:
+      summary: Disable authentication on Lidarr
+      description: |
+        Sets the authentication method to 'External' on Lidarr.
+        This allows Streamarr to proxy the Lidarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to disable authentication on Lidarr
   /settings/overseerr:
     get:
       summary: Get overseerr settings
@@ -1817,6 +2105,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RadarrSettings'
+  /settings/radarr/{radarrId}/auth:
+    get:
+      summary: Get Radarr authentication status
+      description: Returns the current authentication method configured on the Radarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to connect to Radarr
+    post:
+      summary: Disable authentication on Radarr instance
+      description: |
+        Sets the authentication method to 'External' on the Radarr instance.
+        This allows Streamarr to proxy the Radarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to disable authentication on Radarr
   /settings/radarr/{radarrId}/profiles:
     get:
       summary: Get available Radarr profiles
@@ -1961,6 +2310,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SonarrSettings'
+  /settings/sonarr/{sonarrId}/auth:
+    get:
+      summary: Get Sonarr authentication status
+      description: Returns the current authentication method configured on the Sonarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to connect to Sonarr
+    post:
+      summary: Disable authentication on Sonarr instance
+      description: |
+        Sets the authentication method to 'External' on the Sonarr instance.
+        This allows Streamarr to proxy the Sonarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to disable authentication on Sonarr
   /settings/public:
     get:
       summary: Get public settings

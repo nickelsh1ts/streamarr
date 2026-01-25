@@ -14,7 +14,7 @@ const AdminMusic = () => {
   const { data } = useSWR<ServiceSettings>('/api/v1/settings/lidarr');
 
   if (!data) {
-    <LoadingEllipsis />;
+    return <LoadingEllipsis />;
   }
 
   return (

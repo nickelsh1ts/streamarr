@@ -74,6 +74,9 @@
   "appData.warning": {
     "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
   },
+  "arrSettings.urlBase.description": {
+    "defaultMessage": "La URL Base es requerida para que streamarr registre una ruta proxy. Se requiere un reinicio para que surta efecto."
+  },
   "auth.signin": {
     "defaultMessage": "Iniciar sesión"
   },
@@ -456,6 +459,9 @@
   "common.print": {
     "defaultMessage": "Imprimir"
   },
+  "common.processing": {
+    "defaultMessage": "Procesando..."
+  },
   "common.read": {
     "defaultMessage": "leído"
   },
@@ -477,6 +483,9 @@
   },
   "common.requests": {
     "defaultMessage": "Solicitudes"
+  },
+  "common.resetToDefault": {
+    "defaultMessage": "Restablecer a Predeterminado"
   },
   "common.resultsDisplay": {
     "defaultMessage": "Mostrar {select} resultados por página"
@@ -549,6 +558,9 @@
   "common.status": {
     "defaultMessage": "Estado"
   },
+  "common.status.active": {
+    "defaultMessage": "Activo"
+  },
   "common.subtitles": {
     "defaultMessage": "Subtítulos"
   },
@@ -591,14 +603,14 @@
   "common.userRole": {
     "defaultMessage": "Rol de Usuario"
   },
+  "common.username": {
+    "defaultMessage": "Nombre de Usuario"
+  },
   "common.users": {
     "defaultMessage": "Usuarios"
   },
   "common.viewMore": {
     "defaultMessage": "Ver Más"
-  },
-  "common.webApp": {
-    "defaultMessage": "Aplicación Web"
   },
   "common.webPush": {
     "defaultMessage": "Notificaciones Web",
@@ -654,6 +666,54 @@
   },
   "devices.tv": {
     "defaultMessage": "TV"
+  },
+  "downloads.clientAll": {
+    "defaultMessage": "Todos los Clientes"
+  },
+  "downloads.filterCompleted": {
+    "defaultMessage": "Completado"
+  },
+  "downloads.filterDownloading": {
+    "defaultMessage": "Descargando"
+  },
+  "downloads.filterErrored": {
+    "defaultMessage": "Con Error"
+  },
+  "downloads.filterPaused": {
+    "defaultMessage": "Pausado"
+  },
+  "downloads.filterSeeding": {
+    "defaultMessage": "Sembrando"
+  },
+  "downloads.sortAddedOn": {
+    "defaultMessage": "Fecha de Agregado"
+  },
+  "downloads.sortCategory": {
+    "defaultMessage": "Categoría"
+  },
+  "downloads.sortDone": {
+    "defaultMessage": "Completado"
+  },
+  "downloads.sortDownSpeed": {
+    "defaultMessage": "Velocidad de Descarga"
+  },
+  "downloads.sortETA": {
+    "defaultMessage": "Tiempo Estimado"
+  },
+  "downloads.sortName": {
+    "defaultMessage": "Nombre"
+  },
+  "downloads.sortRatio": {
+    "defaultMessage": "Ratio"
+  },
+  "downloads.sortSize": {
+    "defaultMessage": "Tamaño"
+  },
+  "downloads.sortStatus": {
+    "defaultMessage": "Estado"
+  },
+  "downloads.sortUpSpeed": {
+    "defaultMessage": "Velocidad de Subida"
   },
   "email.required": {
     "defaultMessage": "Debes proporcionar una dirección de correo electrónico válida",
@@ -857,6 +917,12 @@
   "generalSettings.supportUrl.label": {
     "defaultMessage": "URL de Obtener Soporte"
   },
+  "generalSettings.theme.description": {
+    "defaultMessage": "Personaliza los colores de Streamarr."
+  },
+  "generalSettings.theme.title": {
+    "defaultMessage": "Personalización del Tema"
+  },
   "generalSettings.title": {
     "defaultMessage": "Configuración General"
   },
@@ -875,9 +941,6 @@
   },
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "Debe proporcionar una URL válida"
-  },
-  "help.githubLink": {
-    "defaultMessage": "GitHub"
   },
   "help.helpCentre": {
     "defaultMessage": "Centro de Ayuda"
@@ -1564,18 +1627,6 @@
   "plexSettings.title": {
     "defaultMessage": "Configuración de Plex"
   },
-  "plexSettings.urlBaseTooltip": {
-    "defaultMessage": "Se recomienda dejar esto como el valor predeterminado"
-  },
-  "plexSettings.validation.webAppUrl.leadingSlash": {
-    "defaultMessage": "La URL base debe tener una barra diagonal inicial"
-  },
-  "plexSettings.validation.webAppUrl.noTrailingSlash": {
-    "defaultMessage": "La URL base no debe terminar con una barra diagonal"
-  },
-  "plexSettings.webAppDescription": {
-    "defaultMessage": "La aplicación web Plex debe ubicarse en el mismo dominio para evitar problemas de origen cruzado."
-  },
   "profile.editSettings": {
     "defaultMessage": "Editar Configuración"
   },
@@ -1693,8 +1744,50 @@
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Configuración de Bazarr"
   },
+  "servicesSettings.authDisableFailed": {
+    "defaultMessage": "Error al deshabilitar la autenticación en {service}"
+  },
+  "servicesSettings.authDisabled": {
+    "defaultMessage": "Autenticación Deshabilitada"
+  },
+  "servicesSettings.authDisabled.tooltip": {
+    "defaultMessage": "Para volver a habilitar la autenticación, cambia la configuración directamente en {service}"
+  },
+  "servicesSettings.authDisabledService": {
+    "defaultMessage": "Autenticación deshabilitada en {service}"
+  },
+  "servicesSettings.disableAuth": {
+    "defaultMessage": "Autenticación"
+  },
+  "servicesSettings.disableAuth.button": {
+    "defaultMessage": "Deshabilitar Autenticación de {service}"
+  },
+  "servicesSettings.disableAuth.description": {
+    "defaultMessage": "Deshabilita la autenticación en {service}. Debes comprender los riesgos antes de continuar. Solo haz esto si {service} no está expuesto directamente a internet."
+  },
+  "servicesSettings.downloads.addClient": {
+    "defaultMessage": "Agregar Cliente de Descarga"
+  },
+  "servicesSettings.downloads.clientType": {
+    "defaultMessage": "Tipo de Cliente"
+  },
+  "servicesSettings.downloads.deleteConfirm": {
+    "defaultMessage": "¿Estás seguro de que quieres eliminar el cliente de descarga \"{name}\"?"
+  },
+  "servicesSettings.downloads.deleteTitle": {
+    "defaultMessage": "Eliminar Cliente de Descarga"
+  },
   "servicesSettings.downloads.description": {
-    "defaultMessage": "Configura los ajustes para el servicio de descargas."
+    "defaultMessage": "Configura tu(s) cliente(s) de descarga a continuación. Puedes conectar múltiples clientes de descarga (qBittorrent, Deluge, Transmission)."
+  },
+  "servicesSettings.downloads.editClient": {
+    "defaultMessage": "Editar Cliente de Descarga"
+  },
+  "servicesSettings.downloads.testfailed": {
+    "defaultMessage": "Error al conectar con {client}"
+  },
+  "servicesSettings.downloads.testsuccess": {
+    "defaultMessage": "Conexión exitosa con {client}"
   },
   "servicesSettings.downloads.title": {
     "defaultMessage": "Configuración de Descargas"
@@ -1705,8 +1798,17 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Configuración de Lidarr"
   },
+  "servicesSettings.overseerr.alertDescription": {
+    "defaultMessage": "Para completar la integración de Overseerr, debes configurar un proxy inverso y servir overseerr en una URL base especificada. Overseerr actualmente no soporta URL bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
+  },
+  "servicesSettings.overseerr.alertTitle": {
+    "defaultMessage": "Advertencia: La integración de Overseerr requiere configuración adicional"
+  },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Overseerr."
+  },
+  "servicesSettings.overseerr.reverseProxyExample": {
+    "defaultMessage": "Ejemplo de Proxy Inverso Nginx"
   },
   "servicesSettings.overseerr.title": {
     "defaultMessage": "Configuración de Overseerr"
@@ -1717,20 +1819,8 @@
   "servicesSettings.prowlarr.title": {
     "defaultMessage": "Configuración de Prowlarr"
   },
-  "servicesSettings.radarr.testfailed": {
-    "defaultMessage": "Error al conectar con Radarr."
-  },
-  "servicesSettings.radarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Radarr establecida exitosamente!"
-  },
-  "servicesSettings.sonarr.testfailed": {
-    "defaultMessage": "Error al conectar con Sonarr."
-  },
-  "servicesSettings.sonarr.testsuccess": {
-    "defaultMessage": "¡Conexión con Sonarr establecida exitosamente!"
-  },
   "servicesSettings.tautulli.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Tautulli. Streamarr obtiene datos del historial de visualización para tus medios de Plex desde Tautulli."
+    "defaultMessage": "Configura opcionalmente los ajustes de tu servidor Tautulli. Streamarr redirige Tautulli a través de /stats para los usuarios."
   },
   "servicesSettings.tautulli.title": {
     "defaultMessage": "Configuración de Tautulli"
@@ -1741,11 +1831,20 @@
   "servicesSettings.tdarr.title": {
     "defaultMessage": "Configuración de Tdarr"
   },
+  "servicesSettings.testfailed": {
+    "defaultMessage": "Error al conectar con {service}."
+  },
+  "servicesSettings.testsuccess": {
+    "defaultMessage": "¡Conexión con {service} establecida exitosamente!"
+  },
   "servicesSettings.uptime.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Uptime. Streamarr presenta tu enlace de tiempo de actividad a través del centro de ayuda."
   },
   "servicesSettings.uptime.title": {
     "defaultMessage": "Configuración de Uptime"
+  },
+  "servicesSettings.urlBase.description": {
+    "defaultMessage": "La URL Base es requerida para que streamarr registre una ruta proxy."
   },
   "servicesSettings.urlBase.leadingSlash": {
     "defaultMessage": "La URL base no debe tener una barra diagonal al inicio"
@@ -1762,11 +1861,17 @@
   "servicesSettings.validation.apikey": {
     "defaultMessage": "Debes proporcionar una clave API válida"
   },
+  "servicesSettings.validation.clientType": {
+    "defaultMessage": "Debes seleccionar un tipo de cliente"
+  },
   "servicesSettings.validation.hostname": {
     "defaultMessage": "Debes proporcionar un nombre de host válido o dirección IP"
   },
   "servicesSettings.validation.servername": {
     "defaultMessage": "Debes proporcionar un nombre de servidor válido"
+  },
+  "servicesSettings.validation.urlBaseRequired": {
+    "defaultMessage": "La URL Base es requerida"
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "La URL no debe tener una barra diagonal al final"
@@ -2376,20 +2481,5 @@
   },
   "webpushNotifications.testSuccess": {
     "defaultMessage": "¡Notificación de prueba web push enviada!"
-  },
-  "welcome.acknowledge": {
-    "defaultMessage": "Reconocer"
-  },
-  "welcome.headsUp": {
-    "defaultMessage": "¡Hola! - ¡Solo un pequeño aviso!"
-  },
-  "welcome.moreToCome": {
-    "defaultMessage": "¡Hay mucho más por venir, así que mantente atento y vuelve a revisar más tarde!"
-  },
-  "welcome.welcomeTo": {
-    "defaultMessage": "Bienvenido a"
-  },
-  "welcome.workInProgress": {
-    "defaultMessage": "Esto todavía es muy experimental y le faltan algunas funciones. Si encuentras problemas, por favor sigue intentando o contacta a nickelsh1ts."
   }
 }

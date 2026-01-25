@@ -4,6 +4,8 @@ export type AvailableCacheIds =
   | 'tmdb'
   | 'radarr'
   | 'sonarr'
+  | 'lidarr'
+  | 'prowlarr'
   | 'imdb'
   | 'github'
   | 'plexguid'
@@ -47,6 +49,8 @@ class CacheManager {
     }),
     radarr: new Cache('radarr', 'Radarr API'),
     sonarr: new Cache('sonarr', 'Sonarr API'),
+    lidarr: new Cache('lidarr', 'Lidarr API'),
+    prowlarr: new Cache('prowlarr', 'Prowlarr API'),
     imdb: new Cache('imdb', 'IMDB Radarr Proxy', {
       stdTtl: 43200,
       checkPeriod: 60 * 30,
