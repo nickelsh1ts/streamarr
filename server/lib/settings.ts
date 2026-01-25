@@ -328,7 +328,10 @@ class Settings {
         useSsl: false,
         libraries: [],
       },
-      tautulli: {},
+      tautulli: {
+        enabled: false,
+        urlBase: '/tautulli',
+      },
       radarr: [],
       sonarr: [],
       uptime: {
