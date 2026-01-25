@@ -44,6 +44,7 @@ import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
 import downloadsRoutes from './downloads';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
+import { arrAuthLimiter } from '@server/lib/rateLimiters';
 
 const settingsRoutes = Router();
 
@@ -412,42 +413,46 @@ settingsRoutes.get('/prowlarr/auth', async (req, res, next) => {
   }
 });
 
-settingsRoutes.post('/prowlarr/auth', async (req, res, next) => {
-  const settings = getSettings();
-  const prowlarrSettings = settings.prowlarr;
+settingsRoutes.post(
+  '/prowlarr/auth',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    const settings = getSettings();
+    const prowlarrSettings = settings.prowlarr;
 
-  if (!prowlarrSettings.hostname || !prowlarrSettings.apiKey) {
-    return next({ status: 400, message: 'Prowlarr not configured' });
+    if (!prowlarrSettings.hostname || !prowlarrSettings.apiKey) {
+      return next({ status: 400, message: 'Prowlarr not configured' });
+    }
+
+    try {
+      const prowlarr = new ProwlarrAPI({
+        apiKey: prowlarrSettings.apiKey,
+        url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
+      });
+
+      const hostConfig = await prowlarr.disableAuthentication();
+
+      logger.info('Authentication disabled on Prowlarr', {
+        label: 'Prowlarr',
+        userId: req.user?.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        authenticationMethod: hostConfig.authenticationMethod,
+      });
+    } catch (e) {
+      logger.error('Failed to disable Prowlarr authentication', {
+        label: 'Prowlarr',
+        message: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Failed to disable authentication on Prowlarr',
+      });
+    }
   }
-
-  try {
-    const prowlarr = new ProwlarrAPI({
-      apiKey: prowlarrSettings.apiKey,
-      url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
-    });
-
-    const hostConfig = await prowlarr.disableAuthentication();
-
-    logger.info('Authentication disabled on Prowlarr', {
-      label: 'Prowlarr',
-      userId: req.user?.id,
-    });
-
-    res.status(200).json({
-      success: true,
-      authenticationMethod: hostConfig.authenticationMethod,
-    });
-  } catch (e) {
-    logger.error('Failed to disable Prowlarr authentication', {
-      label: 'Prowlarr',
-      message: e.message,
-    });
-    next({
-      status: 500,
-      message: 'Failed to disable authentication on Prowlarr',
-    });
-  }
-});
+);
 
 settingsRoutes.get('/lidarr', (_req, res) => {
   const settings = getSettings();
@@ -506,7 +511,7 @@ settingsRoutes.post<undefined, Record<string, unknown>, ServiceSettings>(
   }
 );
 
-settingsRoutes.get('/lidarr/auth', async (req, res, next) => {
+settingsRoutes.get('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
   const settings = getSettings();
   const lidarrSettings = settings.lidarr;
 
