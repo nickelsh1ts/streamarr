@@ -5,6 +5,7 @@ import type {
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
+import { testConnection } from '@server/api/downloads/base';
 
 const downloadsRoutes = Router();
 
@@ -137,6 +138,79 @@ downloadsRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
       error: error instanceof Error ? error.message : 'Unknown error',
     });
     next({ status: 500, message: 'Failed to delete download client' });
+  }
+});
+
+downloadsRoutes.post('/test', async (req, res, next) => {
+  try {
+    const testSettings = req.body as Partial<DownloadClientSettings>;
+
+    if (!testSettings.client) {
+      return next({ status: 400, message: 'Client type is required' });
+    }
+
+    if (!testSettings.hostname) {
+      return next({ status: 400, message: 'Hostname is required' });
+    }
+
+    if (!testSettings.port) {
+      return next({ status: 400, message: 'Port is required' });
+    }
+
+    if (!testSettings.username || !testSettings.password) {
+      return next({ status: 400, message: 'Username and password are required' });
+    }
+
+    // Create temporary client settings for testing
+    const clientSettings: DownloadClientSettings = {
+      id: -1, // Temporary ID for testing
+      name: testSettings.name || 'Test Client',
+      client: testSettings.client,
+      hostname: testSettings.hostname,
+      port: testSettings.port,
+      useSsl: testSettings.useSsl ?? false,
+      username: testSettings.username,
+      password: testSettings.password,
+    };
+
+    const result = await testConnection(clientSettings);
+
+    res.json(result);
+  } catch (e) {
+    logger.error('Failed to test download client connection', {
+      label: 'Downloads',
+      error: e.message ?? 'Unknown error',
+    });
+    next({ status: 500, message: 'Failed to test connection' });
+  }
+});
+
+downloadsRoutes.post('/test/:clientId', async (req, res, next) => {
+  try {
+    const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
+    const settings = getSettings();
+    const clientSettings = settings.downloads.find((c) => c.id === clientId);
+
+    if (!clientSettings) {
+      next({ status: 404, message: 'Download client not found' });
+      return;
+    }
+
+    const result = await testConnection(clientSettings);
+
+    res.json(result);
+  } catch (e) {
+    logger.error('Failed to test connection', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to test connection' });
   }
 });
 

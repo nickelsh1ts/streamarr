@@ -2237,6 +2237,81 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ctrl/deluge@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "@ctrl/deluge@npm:7.5.0"
+  dependencies:
+    "@ctrl/magnet-link": "npm:^4.2.0"
+    "@ctrl/shared-torrent": "npm:^6.5.0"
+    node-fetch-native: "npm:^1.6.7"
+    ofetch: "npm:^1.5.0"
+    tough-cookie: "npm:^6.0.0"
+    type-fest: "npm:^5.1.0"
+    ufo: "npm:^1.6.1"
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/345e0c6823849909a17c70416c216dcdb1f530f8c1d5d7ee9f275e21272edc59541e669e2354ab863e42c38a3db359b11f98158cfb57e5fafc55359f18c0b693
+  languageName: node
+  linkType: hard
+
+"@ctrl/magnet-link@npm:^4.0.2, @ctrl/magnet-link@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@ctrl/magnet-link@npm:4.2.0"
+  dependencies:
+    rfc4648: "npm:^1.5.4"
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/3726c543455348fed557c67a283b0a265b83e6698a71505c51263560137a4bcf946b2dc8890f07d40429f1f177b23fbf1c85094b1051d18ab550a25f88d8ecff
+  languageName: node
+  linkType: hard
+
+"@ctrl/qbittorrent@npm:^9.11.0":
+  version: 9.11.0
+  resolution: "@ctrl/qbittorrent@npm:9.11.0"
+  dependencies:
+    "@ctrl/magnet-link": "npm:^4.2.0"
+    "@ctrl/shared-torrent": "npm:^6.5.0"
+    "@ctrl/torrent-file": "npm:^4.4.0"
+    cookie: "npm:^1.0.2"
+    node-fetch-native: "npm:^1.6.7"
+    ofetch: "npm:^1.5.1"
+    type-fest: "npm:^5.2.0"
+    ufo: "npm:^1.6.1"
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/185c158ecdd89a16e0b979b5459ed575435ae54dcd0cb1691852ed2861c081e02c3dd107b0b3159603bd63809c665e83405f288a51439be778f0853d0c85d243
+  languageName: node
+  linkType: hard
+
+"@ctrl/shared-torrent@npm:^6.3.0, @ctrl/shared-torrent@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@ctrl/shared-torrent@npm:6.5.0"
+  peerDependencies:
+    ofetch: ^1.4.1
+  checksum: 10c0/21bb591f2e713c73aed3ec0a96ab3c41d9bfe8afec111d101b40a95409915670705cb29db12f62136eac6fca1ea8638f201e2738063eaf97ab79bc7ba8e15a69
+  languageName: node
+  linkType: hard
+
+"@ctrl/torrent-file@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@ctrl/torrent-file@npm:4.4.0"
+  dependencies:
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/a720f62094bfe25f68690f322605c8dcb8471e11b9d6256618a9c5809b600f0f84d4148ffcdd29211b4aba1caf54af406a801af5881a9313e5bab5b89233f680
+  languageName: node
+  linkType: hard
+
+"@ctrl/transmission@npm:^7.4.0":
+  version: 7.4.0
+  resolution: "@ctrl/transmission@npm:7.4.0"
+  dependencies:
+    "@ctrl/magnet-link": "npm:^4.0.2"
+    "@ctrl/shared-torrent": "npm:^6.3.0"
+    ofetch: "npm:^1.4.1"
+    type-fest: "npm:^4.41.0"
+    ufo: "npm:^1.6.1"
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/54e6e7372899eb8bf3354ddf0d30b2f7ba21280ad2ab94f0b59dadf8cabf10a60c9c5a6fcc5fdcb45da1d64c4bb7b4eeca00c87490bc09113462994f61dc2e97
+  languageName: node
+  linkType: hard
+
 "@cypress/request@npm:^3.0.9":
   version: 3.0.9
   resolution: "@cypress/request@npm:3.0.9"
@@ -10446,6 +10521,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie@npm:^1.0.2":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: 10c0/79c4ddc0fcad9c4f045f826f42edf54bcc921a29586a4558b0898277fa89fb47be95bc384c2253f493af7b29500c830da28341274527328f18eba9f58afa112c
+  languageName: node
+  linkType: hard
+
 "copy-to-clipboard@npm:^3.3.1":
   version: 3.3.3
   resolution: "copy-to-clipboard@npm:3.3.3"
@@ -11144,6 +11226,13 @@ __metadata:
   version: 2.0.3
   resolution: "dequal@npm:2.0.3"
   checksum: 10c0/f98860cdf58b64991ae10205137c0e97d384c3a4edc7f807603887b7c4b850af1224a33d88012009f150861cbee4fa2d322c4cc04b9313bee312e47f6ecaa888
+  languageName: node
+  linkType: hard
+
+"destr@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "destr@npm:2.0.5"
+  checksum: 10c0/efabffe7312a45ad90d79975376be958c50069f1156b94c181199763a7f971e113bd92227c26b94a169c71ca7dbc13583b7e96e5164743969fc79e1ff153e646
   languageName: node
   linkType: hard
 
@@ -17423,6 +17512,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch-native@npm:^1.6.7":
+  version: 1.6.7
+  resolution: "node-fetch-native@npm:1.6.7"
+  checksum: 10c0/8b748300fb053d21ca4d3db9c3ff52593d5e8f8a2d9fe90cbfad159676e324b954fdaefab46aeca007b5b9edab3d150021c4846444e4e8ab1f4e44cd3807be87
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:^2.6.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
@@ -17987,6 +18083,17 @@ __metadata:
     define-properties: "npm:^1.2.1"
     es-object-atoms: "npm:^1.0.0"
   checksum: 10c0/3c47814fdc64842ae3d5a74bc9d06bdd8d21563c04d9939bf6716a9c00596a4ebc342552f8934013d1ec991c74e3671b26710a0c51815f0b603795605ab6b2c9
+  languageName: node
+  linkType: hard
+
+"ofetch@npm:^1.4.1, ofetch@npm:^1.5.0, ofetch@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "ofetch@npm:1.5.1"
+  dependencies:
+    destr: "npm:^2.0.5"
+    node-fetch-native: "npm:^1.6.7"
+    ufo: "npm:^1.6.1"
+  checksum: 10c0/97ebc600512ea0ab401e97c73313218cc53c9b530b32ec8c995c347b0c68887129993168d1753f527761a64c6f93a5d823ce1378ccec95fc65a606f323a79a6c
   languageName: node
   linkType: hard
 
@@ -20276,6 +20383,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rfc4648@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "rfc4648@npm:1.5.4"
+  checksum: 10c0/8683e82ed9c3cb23844720d04eaeee12025146bfdfdf250b1cce80d56e16c6431530ba3033cbb0e7ca3a25223107847f14c6cac11a255ea7d219dc7ba11cd43d
+  languageName: node
+  linkType: hard
+
 "rfdc@npm:^1.3.0, rfdc@npm:^1.4.1":
   version: 1.4.1
   resolution: "rfdc@npm:1.4.1"
@@ -21343,6 +21457,10 @@ __metadata:
   dependencies:
     "@commitlint/cli": "npm:^20.3.0"
     "@commitlint/config-conventional": "npm:^20.3.0"
+    "@ctrl/deluge": "npm:^7.5.0"
+    "@ctrl/qbittorrent": "npm:^9.11.0"
+    "@ctrl/shared-torrent": "npm:^6.5.0"
+    "@ctrl/transmission": "npm:^7.4.0"
     "@eslint/compat": "npm:^2.0.0"
     "@eslint/js": "npm:^9.39.2"
     "@formatjs/cli": "npm:^6.8.8"
@@ -21425,6 +21543,7 @@ __metadata:
     node-schedule: "npm:^2.1.1"
     nodemailer: "npm:^7.0.12"
     nodemon: "npm:^3.1.11"
+    ofetch: "npm:^1.5.1"
     openpgp: "npm:^6.3.0"
     plex-api: "npm:^5.3.2"
     postcss: "npm:8.5.6"
@@ -22619,10 +22738,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.39.1, type-fest@npm:^4.6.0":
+"type-fest@npm:^4.39.1, type-fest@npm:^4.41.0, type-fest@npm:^4.6.0":
   version: 4.41.0
   resolution: "type-fest@npm:4.41.0"
   checksum: 10c0/f5ca697797ed5e88d33ac8f1fec21921839871f808dc59345c9cf67345bfb958ce41bd821165dbf3ae591cedec2bf6fe8882098dfdd8dc54320b859711a2c1e4
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^5.1.0":
+  version: 5.4.1
+  resolution: "type-fest@npm:5.4.1"
+  dependencies:
+    tagged-tag: "npm:^1.0.0"
+  checksum: 10c0/500386d690e634499e6fb765a1e33909a75fea0258acdd56a2d1c9565d6810e222f6d95bd80daa5498377c7ea976af46f518185b5dbd67ff8454562544808aa1
   languageName: node
   linkType: hard
 
@@ -22875,6 +23003,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ufo@npm:^1.6.1":
+  version: 1.6.3
+  resolution: "ufo@npm:1.6.3"
+  checksum: 10c0/bf0e4ebff99e54da1b9c7182ac2f40475988b41faa881d579bc97bc2a0509672107b0a0e94c4b8d31a0ab8c4bf07f4aa0b469ac6da8536d56bda5b085ea2e953
+  languageName: node
+  linkType: hard
+
 "uglify-js@npm:^3.1.4":
   version: 3.19.3
   resolution: "uglify-js@npm:3.19.3"
@@ -22890,6 +23025,13 @@ __metadata:
   dependencies:
     random-bytes: "npm:~1.0.0"
   checksum: 10c0/ec96862e859fd12175f3da7fda9d1359a2cf412fd521e10837cbdc6d554774079ce252f366981df9401283841c8924782f6dbee8f82a3a81f805ed8a8584595d
+  languageName: node
+  linkType: hard
+
+"uint8array-extras@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "uint8array-extras@npm:1.5.0"
+  checksum: 10c0/0e74641ac7dadb02eadefc1ccdadba6010e007757bda824960de3c72bbe2b04e6d3af75648441f412148c4103261d54fcb60be45a2863beb76643a55fddba3bd
   languageName: node
   linkType: hard
 

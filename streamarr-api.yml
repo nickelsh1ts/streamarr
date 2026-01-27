@@ -20,6 +20,8 @@ tags:
     description: Endpoints related to user management.
   - name: calendar
     description: Endpoints related to calendar events.
+  - name: downloads
+    description: Endpoints related to torrent download client management and operations.
 servers:
   - url: '{server}/api/v1'
     variables:
@@ -647,6 +649,263 @@ components:
         - name
         - client
         - hostname
+    TorrentStatus:
+      type: string
+      enum:
+        - downloading
+        - seeding
+        - paused
+        - queued
+        - checking
+        - error
+        - completed
+        - stalled
+        - moving
+        - metadata
+        - unknown
+      example: downloading
+    TorrentAction:
+      type: string
+      enum:
+        - pause
+        - resume
+        - remove
+        - forceRecheck
+        - queueUp
+        - queueDown
+        - topPriority
+        - bottomPriority
+      example: pause
+    CategoryAction:
+      type: string
+      enum:
+        - create
+        - edit
+        - delete
+      example: create
+    NormalizedTorrent:
+      type: object
+      properties:
+        hash:
+          type: string
+          example: '5a8def1ffad4db26849d16f7c11c4854e1f2def8'
+        name:
+          type: string
+          example: 'Ubuntu 22.04 LTS'
+        status:
+          $ref: '#/components/schemas/TorrentStatus'
+        progress:
+          type: number
+          example: 75.5
+          description: Progress percentage (0-100)
+        size:
+          type: number
+          example: 3221225472
+          description: Total size in bytes
+        downloaded:
+          type: number
+          example: 2415919104
+          description: Downloaded bytes
+        uploaded:
+          type: number
+          example: 1073741824
+          description: Uploaded bytes
+        downloadSpeed:
+          type: number
+          example: 1048576
+          description: Download speed in bytes/sec
+        uploadSpeed:
+          type: number
+          example: 524288
+          description: Upload speed in bytes/sec
+        eta:
+          type: number
+          nullable: true
+          example: 3600
+          description: Estimated time remaining in seconds
+        peers:
+          type: number
+          example: 45
+        seeds:
+          type: number
+          example: 120
+        ratio:
+          type: number
+          example: 1.5
+        label:
+          type: string
+          nullable: true
+          example: 'movies'
+        category:
+          type: string
+          nullable: true
+          example: 'movies'
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['movies', 'hd']
+        dateAdded:
+          type: string
+          format: date-time
+          example: '2024-01-25T10:00:00Z'
+        dateCompleted:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2024-01-25T12:30:00Z'
+        savePath:
+          type: string
+          example: '/downloads/movies'
+        clientId:
+          type: number
+          example: 0
+          description: ID of the download client
+        clientName:
+          type: string
+          example: 'My qBittorrent'
+        priority:
+          type: number
+          description: Queue position in qBittorrent (-1 if queuing disabled)
+          example: 5
+    TorrentStats:
+      type: object
+      properties:
+        totalTorrents:
+          type: number
+          example: 42
+        downloading:
+          type: number
+          example: 5
+        seeding:
+          type: number
+          example: 30
+        paused:
+          type: number
+          example: 7
+        totalDownloadSpeed:
+          type: number
+          example: 5242880
+          description: Total download speed in bytes/sec
+        totalUploadSpeed:
+          type: number
+          example: 2621440
+          description: Total upload speed in bytes/sec
+    AddTorrentRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID to use
+        magnetUri:
+          type: string
+          nullable: true
+          example: 'magnet:?xt=urn:btih:...'
+        torrentFile:
+          type: string
+          nullable: true
+          description: Base64-encoded .torrent file content
+        category:
+          type: string
+          nullable: true
+          example: 'movies'
+        savePath:
+          type: string
+          nullable: true
+          example: '/downloads/movies'
+      required:
+        - clientId
+    CategoryActionRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID (qBittorrent only)
+        action:
+          $ref: '#/components/schemas/CategoryAction'
+        categoryName:
+          type: string
+          example: 'movies'
+        newCategoryName:
+          type: string
+          nullable: true
+          example: 'films'
+          description: New name for edit action
+        savePath:
+          type: string
+          nullable: true
+          example: '/downloads/movies'
+          description: Save path for create/edit actions
+      required:
+        - clientId
+        - action
+        - categoryName
+    TestConnectionResponse:
+      type: object
+      properties:
+        connected:
+          type: boolean
+          example: true
+        version:
+          type: string
+          nullable: true
+          example: 'v4.5.2'
+        error:
+          type: string
+          nullable: true
+          example: 'Connection refused'
+    TorrentFile:
+      type: object
+      properties:
+        name:
+          type: string
+          description: File name (including relative path)
+        size:
+          type: number
+          description: File size in bytes
+        progress:
+          type: number
+          description: File progress (percentage/100)
+        priority:
+          type: number
+          description: File priority (0=skip, 1=normal, 6=high, 7=maximum)
+        is_seed:
+          type: boolean
+          description: True if file is seeding/complete
+        piece_range:
+          type: array
+          items:
+            type: number
+          description: Starting and ending piece indices
+        availability:
+          type: number
+          description: Percentage of file pieces currently available
+        index:
+          type: number
+          description: File index
+    DownloadsResponse:
+      type: object
+      properties:
+        torrents:
+          type: array
+          items:
+            $ref: '#/components/schemas/NormalizedTorrent'
+        stats:
+          $ref: '#/components/schemas/TorrentStats'
+        pagination:
+          type: object
+          properties:
+            page:
+              type: number
+              example: 1
+            pageSize:
+              type: number
+              example: 50
+            total:
+              type: number
+              example: 125
     PublicSettings:
       type: object
       properties:
@@ -1601,6 +1860,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DownloadClientSettings'
+  /settings/downloads/test:
+    post:
+      summary: Test download client connection
+      description: Tests connection to a download client with provided settings (for new/unsaved configurations).
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  $ref: '#/components/schemas/DownloadClientType'
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8080
+                useSsl:
+                  type: boolean
+                  example: false
+                username:
+                  type: string
+                  nullable: true
+                  example: 'admin'
+                password:
+                  type: string
+                  nullable: true
+              required:
+                - client
+                - hostname
+                - port
+      responses:
+        '200':
+          description: 'Connection test result'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestConnectionResponse'
+  /settings/downloads/test/{clientId}:
+    post:
+      summary: Test existing download client connection
+      description: Tests connection to an existing saved download client by ID.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: number
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Connection test result'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestConnectionResponse'
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -3874,6 +4195,367 @@ paths:
                   message:
                     type: string
                     example: Failed to pin libraries
+  /downloads:
+    get:
+      summary: Get all torrents from download clients
+      description: Returns torrents with pagination, filtering, and sorting support.
+      tags:
+        - downloads
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          schema:
+            type: number
+            default: 50
+          description: Number of items per page
+        - in: query
+          name: clientId
+          schema:
+            type: number
+          description: Filter by specific download client ID
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/TorrentStatus'
+          description: Filter by torrent status
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter by category/label
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search in torrent names
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - name
+              - progress
+              - size
+              - status
+              - eta
+              - ratio
+              - addedDate
+              - speed
+              - priority
+            default: addedDate
+          description: Sort field
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          description: Sort direction (ascending or descending)
+      responses:
+        '200':
+          description: 'Torrents returned with stats'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadsResponse'
+  /downloads/add:
+    post:
+      summary: Add a new torrent
+      description: Adds a torrent via magnet link, URL, or .torrent file upload.
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTorrentRequest'
+      responses:
+        '200':
+          description: 'Torrent added successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    nullable: true
+                    example: '5a8def1ffad4db26849d16f7c11c4854e1f2def8'
+  /downloads/{hash}/action:
+    post:
+      summary: Perform action on a torrent
+      description: Perform pause, resume, remove, or forceRecheck actions on a torrent.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/TorrentAction'
+                clientId:
+                  type: number
+                  example: 0
+                  description: Download client ID
+                deleteFiles:
+                  type: boolean
+                  default: false
+                  description: Whether to delete files when removing torrent
+              required:
+                - action
+                - clientId
+              additionalProperties: false
+      responses:
+        '200':
+          description: 'Action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/action:
+    post:
+      summary: Perform action on multiple torrents
+      description: Perform pause, resume, remove, or forceRecheck actions on multiple torrents.
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                torrents:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      hash:
+                        type: string
+                        description: Torrent hash
+                      clientId:
+                        type: number
+                        description: Download client ID
+                    required:
+                      - hash
+                      - clientId
+                  description: Array of torrents to perform action on
+                  minItems: 1
+                action:
+                  $ref: '#/components/schemas/TorrentAction'
+                deleteFiles:
+                  type: boolean
+                  default: false
+                  description: Whether to delete files when removing torrents
+              required:
+                - torrents
+                - action
+              additionalProperties: false
+      responses:
+        '200':
+          description: 'Bulk action completed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True if all actions succeeded
+                    example: true
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hash:
+                          type: string
+                        clientId:
+                          type: number
+                        success:
+                          type: boolean
+                        error:
+                          type: string
+                          nullable: true
+                  summary:
+                    type: object
+                    properties:
+                      total:
+                        type: number
+                        example: 5
+                      success:
+                        type: number
+                        example: 4
+                      failed:
+                        type: number
+                        example: 1
+  /downloads/category:
+    post:
+      summary: Manage qBittorrent categories
+      description: Create, edit, or delete qBittorrent categories (qBittorrent only).
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryActionRequest'
+      responses:
+        '200':
+          description: 'Category action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/{hash}/files:
+    get:
+      summary: Get torrent file list
+      description: Retrieves the list of files within a specific torrent
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+        - in: query
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Torrent files list'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TorrentFile'
+  /downloads/{hash}:
+    patch:
+      summary: Update torrent metadata
+      description: Updates torrent category and/or save path
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+              properties:
+                clientId:
+                  type: integer
+                  description: Download client ID
+                category:
+                  type: string
+                  description: New category name
+                savePath:
+                  type: string
+                  description: New save path
+      responses:
+        '200':
+          description: 'Torrent updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /downloads/{hash}/files/priority:
+    post:
+      summary: Set file priority
+      description: Sets the priority for specific files within a torrent
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+                - fileIds
+                - priority
+              properties:
+                clientId:
+                  type: integer
+                  description: Download client ID
+                fileIds:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of file indices to update
+                priority:
+                  type: integer
+                  description: Priority level (0=skip, 1=normal, 6=high, 7=maximum)
+                  enum: [0, 1, 6, 7]
+      responses:
+        '200':
+          description: 'File priority updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
   /invite:
     get:
       summary: Get all invites
