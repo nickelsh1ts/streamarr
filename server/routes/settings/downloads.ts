@@ -56,7 +56,7 @@ downloadsRoutes.post('/', (req, res, next) => {
     settings.downloads = [...settings.downloads, clientSettings];
     settings.save();
 
-    logger.info(`Download client created: ${clientSettings.name}`, {
+    logger.debug(`Download client created: ${clientSettings.name}`, {
       label: 'Downloads',
       client: clientSettings.client,
       externalUrl: clientSettings.externalUrl,
@@ -90,13 +90,13 @@ downloadsRoutes.put<{ id: string }>('/:id', (req, res, next) => {
       ...existingClient,
       ...updates,
       id: clientId, // Ensure ID cannot be changed
-      externalUrl: updates.externalUrl ?? existingClient.externalUrl,
+      externalUrl: updates.externalUrl ?? undefined,
     };
 
     settings.downloads[clientIndex] = updatedClient;
     settings.save();
 
-    logger.info(`Download client updated: ${updatedClient.name}`, {
+    logger.debug(`Download client updated: ${updatedClient.name}`, {
       label: 'Downloads',
       client: updatedClient.client,
     });
@@ -126,7 +126,7 @@ downloadsRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
 
     settings.save();
 
-    logger.info(`Download client removed: ${removed.name}`, {
+    logger.debug(`Download client removed: ${removed.name}`, {
       label: 'Downloads',
       client: removed.client,
     });

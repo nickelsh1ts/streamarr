@@ -583,123 +583,138 @@ const AdminDownloads = () => {
           </div>
         ) : data?.results && data.results.length > 0 ? (
           <div className="card bg-base-200">
-            <div className="px-4 pt-4 mb-2 flex justify-between items-end min-h-20 sm:min-h-10">
+            <div className="px-4 pt-4 mb-2 flex justify-between items-end min-h-10">
               {selectedHashes.size > 0 && (
                 <>
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm font-semibold whitespace-nowrap">
                     {selectedHashes.size}{' '}
                     <FormattedMessage
                       id="downloads.selected"
                       defaultMessage="selected"
                     />
                   </span>
-                  <div className="flex gap-2 sm:gap-6">
-                    <>
-                      <select
-                        className="select select-xs pr-1 select-primary block sm:hidden"
-                        disabled={isBulkActing}
-                        defaultValue=""
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === 'top') {
-                            handleBulkAction('topPriority');
-                          } else if (value === 'up') {
-                            handleBulkAction('queueUp');
-                          } else if (value === 'down') {
-                            handleBulkAction('queueDown');
-                          } else if (value === 'bottom') {
-                            handleBulkAction('bottomPriority');
-                          }
-                          // Reset to placeholder
-                          e.target.value = '';
-                        }}
-                      >
-                        <option value="" disabled>
-                          <FormattedMessage
-                            id="downloads.queueAction"
-                            defaultMessage="Queue"
-                          />
-                        </option>
-                        <option value="top">
-                          ⏫{' '}
-                          {intl.formatMessage({
-                            id: 'downloads.actionTopPriority',
-                            defaultMessage: 'Move to Top',
-                          })}
-                        </option>
-                        <option value="up">
-                          ⬆️{' '}
-                          {intl.formatMessage({
-                            id: 'downloads.actionQueueUp',
-                            defaultMessage: 'Move Up',
-                          })}
-                        </option>
-                        <option value="down">
-                          ⬇️{' '}
-                          {intl.formatMessage({
-                            id: 'downloads.actionQueueDown',
-                            defaultMessage: 'Move Down',
-                          })}
-                        </option>
-                        <option value="bottom">
-                          ⏬{' '}
-                          {intl.formatMessage({
-                            id: 'downloads.actionBottomPriority',
-                            defaultMessage: 'Move to Bottom',
-                          })}
-                        </option>
-                      </select>
-                      <div className="hidden sm:flex gap-1">
-                        <Button
-                          buttonSize="xs"
-                          buttonType="ghost"
-                          onClick={() => handleBulkAction('topPriority')}
-                          disabled={isBulkActing}
-                          title={intl.formatMessage({
-                            id: 'downloads.actionTopPriority',
-                            defaultMessage: 'Move to Top',
-                          })}
-                        >
-                          <ChevronDoubleUpIcon className="size-4" />
-                        </Button>
-                        <Button
-                          buttonSize="xs"
-                          buttonType="ghost"
-                          onClick={() => handleBulkAction('queueUp')}
-                          disabled={isBulkActing}
-                          title={intl.formatMessage({
-                            id: 'downloads.actionQueueUp',
-                            defaultMessage: 'Move Up',
-                          })}
-                        >
-                          <ChevronUpIcon className="size-4" />
-                        </Button>
-                        <Button
-                          buttonSize="xs"
-                          buttonType="ghost"
-                          onClick={() => handleBulkAction('queueDown')}
-                          disabled={isBulkActing}
-                          title={intl.formatMessage({
-                            id: 'downloads.actionQueueDown',
-                            defaultMessage: 'Move Down',
-                          })}
-                        >
-                          <ChevronDownIcon className="size-4" />
-                        </Button>
-                        <Button
-                          buttonSize="xs"
-                          buttonType="ghost"
-                          onClick={() => handleBulkAction('bottomPriority')}
-                          disabled={isBulkActing}
-                          title={intl.formatMessage({
-                            id: 'downloads.actionBottomPriority',
-                            defaultMessage: 'Move to Bottom',
-                          })}
-                        >
-                          <ChevronDoubleDownIcon className="size-4" />
-                        </Button>
-                      </div>
-                    </>
+                  <div className="flex flex-wrap justify-end gap-2 sm:gap-6">
+                    {(() => {
+                      // Check if any selected torrent has valid priority for queue management
+                      const hasValidPriority = data.results
+                        .filter((t) => selectedHashes.has(t.hash))
+                        .some(
+                          (t) => t.priority !== undefined && t.priority > 0
+                        );
+
+                      return (
+                        hasValidPriority && (
+                          <>
+                            <select
+                              className="select select-xs pr-1 select-primary block sm:hidden"
+                              disabled={isBulkActing}
+                              defaultValue=""
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === 'top') {
+                                  handleBulkAction('topPriority');
+                                } else if (value === 'up') {
+                                  handleBulkAction('queueUp');
+                                } else if (value === 'down') {
+                                  handleBulkAction('queueDown');
+                                } else if (value === 'bottom') {
+                                  handleBulkAction('bottomPriority');
+                                }
+                                // Reset to placeholder
+                                e.target.value = '';
+                              }}
+                            >
+                              <option value="" disabled>
+                                <FormattedMessage
+                                  id="downloads.queueAction"
+                                  defaultMessage="Queue"
+                                />
+                              </option>
+                              <option value="top">
+                                ⏫{' '}
+                                {intl.formatMessage({
+                                  id: 'downloads.actionTopPriority',
+                                  defaultMessage: 'Move to Top',
+                                })}
+                              </option>
+                              <option value="up">
+                                ⬆️{' '}
+                                {intl.formatMessage({
+                                  id: 'downloads.actionQueueUp',
+                                  defaultMessage: 'Move Up',
+                                })}
+                              </option>
+                              <option value="down">
+                                ⬇️{' '}
+                                {intl.formatMessage({
+                                  id: 'downloads.actionQueueDown',
+                                  defaultMessage: 'Move Down',
+                                })}
+                              </option>
+                              <option value="bottom">
+                                ⏬{' '}
+                                {intl.formatMessage({
+                                  id: 'downloads.actionBottomPriority',
+                                  defaultMessage: 'Move to Bottom',
+                                })}
+                              </option>
+                            </select>
+                            <div className="hidden sm:flex gap-1">
+                              <Button
+                                buttonSize="xs"
+                                buttonType="ghost"
+                                onClick={() => handleBulkAction('topPriority')}
+                                disabled={isBulkActing}
+                                title={intl.formatMessage({
+                                  id: 'downloads.actionTopPriority',
+                                  defaultMessage: 'Move to Top',
+                                })}
+                              >
+                                <ChevronDoubleUpIcon className="size-4" />
+                              </Button>
+                              <Button
+                                buttonSize="xs"
+                                buttonType="ghost"
+                                onClick={() => handleBulkAction('queueUp')}
+                                disabled={isBulkActing}
+                                title={intl.formatMessage({
+                                  id: 'downloads.actionQueueUp',
+                                  defaultMessage: 'Move Up',
+                                })}
+                              >
+                                <ChevronUpIcon className="size-4" />
+                              </Button>
+                              <Button
+                                buttonSize="xs"
+                                buttonType="ghost"
+                                onClick={() => handleBulkAction('queueDown')}
+                                disabled={isBulkActing}
+                                title={intl.formatMessage({
+                                  id: 'downloads.actionQueueDown',
+                                  defaultMessage: 'Move Down',
+                                })}
+                              >
+                                <ChevronDownIcon className="size-4" />
+                              </Button>
+                              <Button
+                                buttonSize="xs"
+                                buttonType="ghost"
+                                onClick={() =>
+                                  handleBulkAction('bottomPriority')
+                                }
+                                disabled={isBulkActing}
+                                title={intl.formatMessage({
+                                  id: 'downloads.actionBottomPriority',
+                                  defaultMessage: 'Move to Bottom',
+                                })}
+                              >
+                                <ChevronDoubleDownIcon className="size-4" />
+                              </Button>
+                            </div>
+                          </>
+                        )
+                      );
+                    })()}
                     <>
                       <select
                         className="select select-xs pr-1 select-primary block sm:hidden"
@@ -955,6 +970,12 @@ const AdminDownloads = () => {
                           ))}
                       </div>
                     </th>
+                    <th>
+                      <FormattedMessage
+                        id="downloads.client"
+                        defaultMessage="Client"
+                      />
+                    </th>
                     <th
                       className="cursor-pointer select-none hover:bg-base-300 transition-colors"
                       onClick={() => handleSort('priority')}
@@ -990,6 +1011,7 @@ const AdminDownloads = () => {
                       onRefresh={() => refetch(false)}
                       isSelected={selectedHashes.has(torrent.hash)}
                       onToggleSelect={handleToggleSelect}
+                      clients={clients ?? []}
                     />
                   ))}
                 </tbody>

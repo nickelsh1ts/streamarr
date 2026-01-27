@@ -189,7 +189,7 @@ const DownloadClientModal = ({
             useSsl: values.useSsl,
             username: values.username || undefined,
             password: values.password || undefined,
-            externalUrl: values.externalUrl || undefined,
+            externalUrl: values.externalUrl.trim() || null,
           };
 
           if (!downloadClient) {

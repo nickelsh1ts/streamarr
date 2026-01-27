@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { NormalizedDownloadItem } from '@server/interfaces/api/downloadsInterfaces';
+import type { DownloadClientSettings } from '@server/lib/settings';
 import ProgressBar from '@app/components/Common/ProgressBar';
 import Toast from '@app/components/Toast';
 import TorrentDetailsModal from './TorrentDetailsModal';
@@ -17,6 +18,7 @@ import {
   ChevronDoubleDownIcon,
   InformationCircleIcon,
   XCircleIcon,
+  ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/solid';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Button from '@app/components/Common/Button';
@@ -26,6 +28,7 @@ interface DownloadRowProps {
   onRefresh?: () => void;
   isSelected: boolean;
   onToggleSelect: (hash: string) => void;
+  clients: DownloadClientSettings[];
 }
 
 const DownloadRow: React.FC<DownloadRowProps> = ({
@@ -33,6 +36,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
   onRefresh,
   isSelected,
   onToggleSelect,
+  clients,
 }) => {
   const [isActing, setIsActing] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -252,6 +256,30 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           {torrent.ratio?.toFixed(2) ?? '-'}
         </td>
         <td>{getStatusBadge(torrent.status)}</td>
+        <td
+          className="cursor-pointer group"
+          onClick={() => {
+            const client = clients.find((c) => c.id === torrent.clientId);
+            if (client) {
+              const clientUrl =
+                client.externalUrl ||
+                `${client.useSsl ? 'https' : 'http'}://${client.hostname}:${client.port}`;
+              window.open(clientUrl, '_blank', 'noopener,noreferrer');
+            }
+          }}
+          title={intl.formatMessage(
+            {
+              id: 'downloads.openClient',
+              defaultMessage: 'Open {clientName}',
+            },
+            { clientName: torrent.clientName }
+          )}
+        >
+          <span className="font-medium flex gap-1">
+            {torrent.clientName}
+            <ArrowTopRightOnSquareIcon className="inline text-primary w-5 opacity-50 sm:w-0 h-5 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50 transition-all duration-150 overflow-visible" />
+          </span>
+        </td>
         <td>
           {torrent.clientType === 'qbittorrent' && (
             <div className="flex items-center">
@@ -573,6 +601,7 @@ export default React.memo(DownloadRow, (prevProps, nextProps) => {
     prevProps.torrent.priority === nextProps.torrent.priority &&
     prevProps.torrent.category === nextProps.torrent.category &&
     prevProps.torrent.savePath === nextProps.torrent.savePath &&
+    prevProps.torrent.clientName === nextProps.torrent.clientName &&
     prevProps.isSelected === nextProps.isSelected
   );
 });

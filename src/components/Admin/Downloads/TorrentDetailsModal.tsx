@@ -306,8 +306,8 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
         secondaryButtonType="info"
         onTertiary={handleDelete}
         tertiaryText={intl.formatMessage({
-          id: 'common.delete',
-          defaultMessage: 'Delete',
+          id: 'common.remove',
+          defaultMessage: 'Remove',
         })}
         tertiaryButtonType="error"
         show={isOpen}
@@ -557,7 +557,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
               />
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
+              <div className="flex flex-wrap gap-2">
                 <span className="text-neutral">
                   <FormattedMessage
                     id="downloads.connectedPeers"
@@ -565,11 +565,11 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   />
                   :
                 </span>
-                <span className="font-medium ml-2">
+                <span className="font-medium">
                   {torrent.peers} / {torrent.totalPeers}
                 </span>
               </div>
-              <div>
+              <div className="flex flex-wrap gap-2">
                 <span className="text-neutral">
                   <FormattedMessage
                     id="downloads.connectedSeeds"
@@ -577,7 +577,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   />
                   :
                 </span>
-                <span className="font-medium ml-2">
+                <span className="font-medium">
                   {torrent.seeds} / {torrent.totalSeeds}
                 </span>
               </div>
