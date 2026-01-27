@@ -158,7 +158,10 @@ downloadsRoutes.post('/test', async (req, res, next) => {
     }
 
     if (!testSettings.username || !testSettings.password) {
-      return next({ status: 400, message: 'Username and password are required' });
+      return next({
+        status: 400,
+        message: 'Username and password are required',
+      });
     }
 
     // Create temporary client settings for testing

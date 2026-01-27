@@ -411,7 +411,7 @@ export async function performTorrentAction(
         });
         return false;
     }
-    
+
     return true;
   } catch (e) {
     logger.error(`Failed to ${action} torrent`, {
