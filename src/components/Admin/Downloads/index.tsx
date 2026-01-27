@@ -291,7 +291,7 @@ const AdminDownloads = () => {
         setIsBulkActing(false);
       }
     },
-    [selectedHashes, data.results, performBulkAction, refetch, intl]
+    [selectedHashes, data, performBulkAction, refetch, intl]
   );
 
   // Update select-all state when selection changes

@@ -1,6 +1,5 @@
-import { QBittorrent } from '@ctrl/qbittorrent';
-import { Deluge } from '@ctrl/deluge';
-import { Transmission } from '@ctrl/transmission';
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+// Use dynamic imports for ESM-only packages to support CommonJS output
 import type { AllClientData, NormalizedTorrent } from '@ctrl/shared-torrent';
 import type { DownloadClientSettings } from '@server/lib/settings';
 import type {
@@ -12,6 +11,11 @@ import type {
   SetFilePriorityRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
 import logger from '@server/logger';
+
+// Type imports for client classes
+type QBittorrent = import('@ctrl/qbittorrent').QBittorrent;
+type Deluge = import('@ctrl/deluge').Deluge;
+type Transmission = import('@ctrl/transmission').Transmission;
 
 // qBittorrent raw torrent response fields
 interface QBittorrentRawTorrent {
@@ -33,10 +37,11 @@ const clientInstances = new Map<number, QBittorrent | Deluge | Transmission>();
 
 /**
  * Create or retrieve cached download client instance
+ * Uses dynamic imports for ESM-only packages
  */
-function getClient(
+async function getClient(
   settings: DownloadClientSettings
-): QBittorrent | Deluge | Transmission {
+): Promise<QBittorrent | Deluge | Transmission> {
   // Check cache first
   if (clientInstances.has(settings.id)) {
     return clientInstances.get(settings.id)!;
@@ -46,27 +51,33 @@ function getClient(
   let client: QBittorrent | Deluge | Transmission;
 
   switch (settings.client) {
-    case 'qbittorrent':
+    case 'qbittorrent': {
+      const { QBittorrent } = await import('@ctrl/qbittorrent');
       client = new QBittorrent({
         baseUrl,
         username: settings.username,
         password: settings.password,
       });
       break;
-    case 'deluge':
+    }
+    case 'deluge': {
+      const { Deluge } = await import('@ctrl/deluge');
       client = new Deluge({
         baseUrl,
         username: settings.username,
         password: settings.password,
       });
       break;
-    case 'transmission':
+    }
+    case 'transmission': {
+      const { Transmission } = await import('@ctrl/transmission');
       client = new Transmission({
         baseUrl,
         username: settings.username,
         password: settings.password,
       });
       break;
+    }
   }
 
   clientInstances.set(settings.id, client);
@@ -89,7 +100,7 @@ export async function testConnection(
   try {
     // Clear cache to force new connection
     clearClientCache(settings.id);
-    const client = getClient(settings);
+    const client = await getClient(settings);
 
     // getAllData is the most reliable way to test connectivity across all clients
     await client.getAllData();
@@ -119,7 +130,7 @@ export async function fetchClientData(
   settings: DownloadClientSettings
 ): Promise<(AllClientData & { queueingEnabled?: boolean }) | null> {
   try {
-    const client = getClient(settings);
+    const client = await getClient(settings);
     const data = await client.getAllData();
 
     // For qBittorrent, check if queueing is enabled
@@ -320,7 +331,7 @@ export async function performTorrentAction(
   options?: Record<string, unknown>
 ): Promise<boolean> {
   try {
-    const client = getClient(settings);
+    const client = await getClient(settings);
 
     switch (action) {
       case 'pause':
@@ -345,16 +356,10 @@ export async function performTorrentAction(
         break;
       case 'forceRecheck':
         // Not all clients support this via normalized API
-        if (
-          settings.client === 'qbittorrent' &&
-          client instanceof QBittorrent
-        ) {
+        if (settings.client === 'qbittorrent') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await (client as any).recheckTorrent(hash);
-        } else if (
-          settings.client === 'transmission' &&
-          client instanceof Transmission
-        ) {
+        } else if (settings.client === 'transmission') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await (client as any).verifyTorrent(hash);
         } else if (settings.client === 'deluge') {
@@ -368,10 +373,7 @@ export async function performTorrentAction(
       case 'queueDown':
       case 'topPriority':
       case 'bottomPriority':
-        if (
-          settings.client === 'qbittorrent' &&
-          client instanceof QBittorrent
-        ) {
+        if (settings.client === 'qbittorrent') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const qbtClient = client as any;
 
@@ -432,7 +434,7 @@ export async function addTorrent(
   options: AddTorrentRequest
 ): Promise<boolean> {
   try {
-    const client = getClient(settings);
+    const client = await getClient(settings);
 
     // Prepare add options
     const addOptions: {
@@ -495,7 +497,7 @@ export async function manageCategory(
       return false;
     }
 
-    const client = getClient(settings) as QBittorrent;
+    const client = (await getClient(settings)) as QBittorrent;
 
     switch (options.action) {
       case 'create':
@@ -543,7 +545,7 @@ export async function getTorrentFiles(
       return [];
     }
 
-    const client = getClient(settings) as QBittorrent;
+    const client = (await getClient(settings)) as QBittorrent;
     const files = await client.torrentFiles(hash);
 
     // Map and add index
@@ -576,7 +578,7 @@ export async function updateTorrentMetadata(
       return false;
     }
 
-    const client = getClient(settings) as QBittorrent;
+    const client = (await getClient(settings)) as QBittorrent;
 
     if (options.category !== undefined) {
       try {
@@ -643,7 +645,7 @@ export async function setTorrentFilePriority(
       return false;
     }
 
-    const client = getClient(settings) as QBittorrent;
+    const client = (await getClient(settings)) as QBittorrent;
 
     // Pass fileIds as array - normalizeHashes will handle conversion
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
