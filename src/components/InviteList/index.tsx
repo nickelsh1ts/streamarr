@@ -83,9 +83,42 @@ const InviteList = () => {
   });
   const { user: currentUser, hasPermission } = useUser();
   const intl = useIntl();
-  const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
-  const [currentSort, setCurrentSort] = useState<Sort>('created');
-  const [currentPageSize, setCurrentPageSize] = useState<number>(10);
+  const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem(
+        'invites-filter-settings'
+      );
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentFilter || Filter.ALL;
+      }
+    }
+    return Filter.ALL;
+  });
+  const [currentSort, setCurrentSort] = useState<Sort>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem(
+        'invites-filter-settings'
+      );
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentSort || 'created';
+      }
+    }
+    return 'created';
+  });
+  const [currentPageSize, setCurrentPageSize] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const filterString = window.localStorage.getItem(
+        'invites-filter-settings'
+      );
+      if (filterString) {
+        const filterSettings = JSON.parse(filterString);
+        return filterSettings.currentPageSize || 10;
+      }
+    }
+    return 10;
+  });
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -151,19 +184,8 @@ const InviteList = () => {
     }
   };
 
-  // Restore last set filter values on component mount
+  // Override with query params if provided
   useEffect(() => {
-    const filterString = window.localStorage.getItem('invites-filter-settings');
-
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentSort(filterSettings.currentSort);
-      setCurrentPageSize(filterSettings.currentPageSize);
-    }
-
-    // If filter value is provided in query, use that instead
     if (Object.values(Filter).includes(searchParams.get('filter') as Filter)) {
       setCurrentFilter(searchParams.get('filter') as Filter);
     }
