@@ -50,6 +50,12 @@ export interface DownloadClientStats {
   activeTorrents: number;
   pausedTorrents: number;
   totalTorrents: number;
+  health?: {
+    status: 'healthy' | 'retrying' | 'unhealthy';
+    lastError?: string;
+    cooldownUntil?: string;
+    isStale?: boolean;
+  };
 }
 
 export interface DownloadsResponse extends PaginatedResponse {

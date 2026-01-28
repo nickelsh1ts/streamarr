@@ -265,6 +265,18 @@ export const useDownloadActions = () => {
     []
   );
 
+  const retryClient = useCallback(async (clientId?: number) => {
+    if (clientId) {
+      const response = await axios.post(
+        `/api/v1/downloads/health/retry/${clientId}`
+      );
+      return response.data;
+    } else {
+      const response = await axios.post('/api/v1/downloads/health/retry');
+      return response.data;
+    }
+  }, []);
+
   return {
     pause,
     resume,
@@ -279,5 +291,6 @@ export const useDownloadActions = () => {
     updateTorrent,
     setFilePriority,
     performBulkAction,
+    retryClient,
   };
 };

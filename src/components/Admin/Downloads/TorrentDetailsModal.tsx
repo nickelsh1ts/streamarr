@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Modal from '@app/components/Common/Modal';
 import Alert from '@app/components/Common/Alert';
 import type {
   NormalizedDownloadItem,
   TorrentFile,
+  DownloadClientStats,
 } from '@server/interfaces/api/downloadsInterfaces';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ProgressBar from '@app/components/Common/ProgressBar';
@@ -25,6 +26,7 @@ interface TorrentDetailsModalProps {
   onClose: () => void;
   torrent: NormalizedDownloadItem | null;
   onRefresh?: () => void;
+  stats?: DownloadClientStats[];
 }
 
 const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
@@ -32,6 +34,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   onClose,
   torrent,
   onRefresh,
+  stats = [],
 }) => {
   const intl = useIntl();
   const [files, setFiles] = useState<TorrentFile[]>([]);
@@ -39,6 +42,12 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   const [filesLoaded, setFilesLoaded] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+
+  const isStale = useMemo(() => {
+    if (!torrent) return false;
+    const clientStat = stats.find((s) => s.clientId === torrent.clientId);
+    return clientStat?.health?.isStale === true;
+  }, [stats, torrent]);
 
   const {
     pause,
@@ -329,6 +338,21 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 defaultMessage="General Information"
               />
             </h3>
+            {isStale && (
+              <Alert
+                title={intl.formatMessage({
+                  id: 'downloads.staleDataWarning',
+                  defaultMessage: 'Client Unreachable',
+                })}
+                type="warning"
+              >
+                {intl.formatMessage({
+                  id: 'downloads.staleData',
+                  defaultMessage:
+                    'The data for this torrent may be outdated because the download client is offline or not responding.',
+                })}
+              </Alert>
+            )}
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral">

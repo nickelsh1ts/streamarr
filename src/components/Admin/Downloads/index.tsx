@@ -19,6 +19,7 @@ import {
   ChevronDoubleUpIcon,
   ChevronDoubleDownIcon,
   XCircleIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid';
 import useSWR from 'swr';
 import Button from '@app/components/Common/Button';
@@ -34,6 +35,7 @@ import RemoveTorrentModal from './RemoveTorrentModal';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
+import { momentWithLocale } from '@app/utils/momentLocale';
 
 enum Filter {
   ALL = 'all',
@@ -144,8 +146,9 @@ const AdminDownloads = () => {
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
   const [isBulkActing, setIsBulkActing] = useState(false);
   const [showBulkRemoveModal, setShowBulkRemoveModal] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
 
-  const { performBulkAction } = useDownloadActions();
+  const { performBulkAction, retryClient } = useDownloadActions();
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -340,6 +343,35 @@ const AdminDownloads = () => {
     },
     [selectedHashes, data, performBulkAction, refetch, intl]
   );
+
+  // Handle retry of unhealthy clients
+  const handleRetry = useCallback(async () => {
+    setIsRetrying(true);
+    try {
+      await retryClient();
+      // Refetch downloads after retry
+      await refetch();
+    } catch (e) {
+      Toast({
+        type: 'error',
+        title: intl.formatMessage({
+          id: 'downloads.retryError',
+          defaultMessage: 'Failed to retry client connection',
+        }),
+        message: e?.response?.data?.message || String(e),
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsRetrying(false);
+    }
+  }, [retryClient, refetch, intl]);
+
+  // Check if any clients are unhealthy
+  const unhealthyClients =
+    data?.stats.filter(
+      (s) => s.health?.status === 'unhealthy' || s.health?.status === 'retrying'
+    ) || [];
+  const hasUnhealthyClients = unhealthyClients.length > 0;
 
   // Update select-all state when selection changes
   useEffect(() => {
@@ -592,6 +624,69 @@ const AdminDownloads = () => {
                   })}
                   value={data.stats.filter((s) => s.connected).length}
                   icon={<GlobeAltIcon className="size-7" />}
+                  badge={
+                    hasUnhealthyClients ? (
+                      <div className="flex items-center gap-1 group">
+                        <Tooltip
+                          className="normal-case"
+                          content={
+                            <div className="text-sm">
+                              <div className="font-semibold mb-1">
+                                <FormattedMessage
+                                  id="downloads.clientsUnhealthy"
+                                  defaultMessage="{count} {count, plural, one {client} other {clients}} unreachable"
+                                  values={{ count: unhealthyClients.length }}
+                                />
+                              </div>
+                              {unhealthyClients.map((client) => (
+                                <div key={client.clientId} className="text-xs">
+                                  {client.clientName}
+                                  {client.health?.cooldownUntil && (
+                                    <span className="ml-1 opacity-70">
+                                      (
+                                      <FormattedMessage
+                                        id="downloads.retryingIn"
+                                        defaultMessage="retry in {time}"
+                                        values={{
+                                          time: momentWithLocale(
+                                            client.health.cooldownUntil
+                                          ).fromNow(true),
+                                        }}
+                                      />
+                                      )
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          }
+                        >
+                          <Button
+                            onClick={handleRetry}
+                            disabled={isRetrying}
+                            buttonSize="xs"
+                            buttonType="ghost"
+                            className="btn-circle !rounded-full text-warning hover:text-warning-content"
+                            aria-label="Retry unhealthy clients"
+                          >
+                            {isRetrying ? (
+                              <span className="loading loading-spinner text-primary loading-xs" />
+                            ) : (
+                              <ExclamationTriangleIcon className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </Tooltip>
+                        {!isRetrying && (
+                          <span className="text-xs mb-1 w-full opacity-100 underline underline-offset-4 group-hover:underline-offset-2 sm:w-0 sm:group-hover:w-full sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-150 overflow-visible">
+                            <FormattedMessage
+                              id="downloads.retry"
+                              defaultMessage="Retry"
+                            />
+                          </span>
+                        )}
+                      </div>
+                    ) : undefined
+                  }
                 />
               </div>
             );
@@ -1072,6 +1167,7 @@ const AdminDownloads = () => {
                       isSelected={selectedHashes.has(torrent.hash)}
                       onToggleSelect={handleToggleSelect}
                       clients={clients ?? []}
+                      stats={data.stats}
                     />
                   ))}
                 </tbody>

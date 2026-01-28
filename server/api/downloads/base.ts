@@ -11,6 +11,13 @@ import type {
   SetFilePriorityRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
 import logger from '@server/logger';
+import {
+  isClientInCooldown,
+  getCachedClientData,
+  markClientFailed,
+  markClientHealthy,
+  setRetryTimeout,
+} from '@server/lib/healthCheck';
 
 // Type imports for client classes
 type QBittorrent = import('@ctrl/qbittorrent').QBittorrent;
@@ -157,11 +164,18 @@ export async function testConnection(
 }
 
 /**
- * Fetch all torrent data from a single client
+ * Fetch all torrent data from a single client with health check support
  */
 export async function fetchClientData(
   settings: DownloadClientSettings
 ): Promise<(AllClientData & { queueingEnabled?: boolean }) | null> {
+  // Check if client is in cooldown period
+  if (isClientInCooldown(settings.id)) {
+    // Return cached data if available
+    const cachedData = getCachedClientData(settings.id);
+    return cachedData || null;
+  }
+
   try {
     const client = await getClient(settings);
     const data = await client.getAllData();
@@ -173,7 +187,6 @@ export async function fetchClientData(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const qbtClient = client as any;
         const preferences = await qbtClient.getPreferences();
-        // qBittorrent queuing is enabled if queueing_enabled is true
         queueingEnabled = preferences?.queueing_enabled === true;
       } catch (e) {
         logger.debug('Failed to fetch qBittorrent preferences', {
@@ -205,14 +218,37 @@ export async function fetchClientData(
       }
     }
 
-    return { ...data, queueingEnabled };
+    const result = { ...data, queueingEnabled };
+
+    // Mark client as healthy and cache the data
+    markClientHealthy(settings.id, settings.name, result);
+
+    return result;
   } catch (e) {
-    logger.warn(`Failed to fetch data from ${settings.name}`, {
-      label: 'Downloads API',
-      client: settings.client,
-      error: e.message,
-    });
-    return null;
+    const errorMessage = e.message || 'Unknown error';
+
+    // Mark client as failed
+    markClientFailed(settings.id, settings.name, errorMessage);
+
+    // If this is the first failure, schedule a retry in 5 seconds
+    const cachedData = getCachedClientData(settings.id);
+    if (!cachedData) {
+      // Only schedule retry if this is first failure (no cached data means first time seeing this client fail)
+      const retryTimeout = setTimeout(async () => {
+        try {
+          // Attempt retry
+          await fetchClientData(settings);
+        } catch {
+          // If retry fails, markClientFailed will be called again
+          // and will transition to unhealthy with cooldown
+        }
+      }, 5000);
+
+      setRetryTimeout(settings.id, retryTimeout);
+    }
+
+    // Return cached data if available, otherwise null
+    return cachedData || null;
   }
 }
 

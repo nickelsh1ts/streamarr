@@ -4576,6 +4576,121 @@ paths:
                 properties:
                   success:
                     type: boolean
+  /downloads/health:
+    get:
+      summary: Get health status for all download clients
+      description: Returns health status, error messages, and cooldown information for all configured download clients.
+      tags:
+        - downloads
+      responses:
+        '200':
+          description: 'Health status for all clients'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    clientId:
+                      type: number
+                      example: 0
+                    clientName:
+                      type: string
+                      example: 'qBittorrent'
+                    status:
+                      type: string
+                      enum: [healthy, retrying, unhealthy]
+                      example: 'healthy'
+                    lastError:
+                      type: string
+                      nullable: true
+                      example: 'Connection timeout'
+                    cooldownUntil:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    isStale:
+                      type: boolean
+                      example: false
+  /downloads/health/retry:
+    post:
+      summary: Retry all unhealthy download clients
+      description: Resets cooldown and attempts to reconnect to all unhealthy download clients.
+      tags:
+        - downloads
+      responses:
+        '200':
+          description: 'Retry results for all unhealthy clients'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        clientId:
+                          type: number
+                        clientName:
+                          type: string
+                        success:
+                          type: boolean
+                        health:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                              enum: [healthy, retrying, unhealthy]
+                            lastError:
+                              type: string
+                              nullable: true
+                            cooldownUntil:
+                              type: string
+                              format: date-time
+                              nullable: true
+                            isStale:
+                              type: boolean
+  /downloads/health/retry/{clientId}:
+    post:
+      summary: Retry specific download client
+      description: Resets cooldown and attempts to reconnect to a specific download client.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID to retry
+      responses:
+        '200':
+          description: 'Retry result for specific client'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  health:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [healthy, retrying, unhealthy]
+                      lastError:
+                        type: string
+                        nullable: true
+                      cooldownUntil:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      isStale:
+                        type: boolean
   /invite:
     get:
       summary: Get all invites

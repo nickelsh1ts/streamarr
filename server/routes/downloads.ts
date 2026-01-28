@@ -11,6 +11,12 @@ import {
   updateTorrentMetadata,
   setTorrentFilePriority,
 } from '@server/api/downloads/base';
+import {
+  getClientHealth,
+  getAllClientsHealth,
+  resetClientHealth,
+  isClientInCooldown,
+} from '@server/lib/healthCheck';
 import type {
   DownloadsResponse,
   NormalizedDownloadItem,
@@ -21,6 +27,20 @@ import type {
   UpdateTorrentRequest,
   SetFilePriorityRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
+
+function getHealthStatus(
+  clientId: number
+): DownloadClientStats['health'] | undefined {
+  const health = getClientHealth(clientId);
+  if (!health) return undefined;
+
+  return {
+    status: health.status,
+    lastError: health.lastError,
+    cooldownUntil: health.cooldownUntil?.toISOString(),
+    isStale: isClientInCooldown(clientId),
+  };
+}
 
 const downloadsRoutes = Router();
 
@@ -82,6 +102,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
 
     for (const result of clientResults) {
       const { clientSettings, data, error } = result;
+      const healthStatus = getHealthStatus(clientSettings.id);
 
       if (data && data.torrents) {
         // Normalize and add torrents
@@ -98,11 +119,15 @@ downloadsRoutes.get('/', async (req, res, next) => {
           (t) => t.status === 'paused'
         ).length;
 
+        const isConnected =
+          healthStatus.status === 'healthy' ||
+          healthStatus.status === 'retrying';
+
         stats.push({
           clientId: clientSettings.id,
           clientName: clientSettings.name,
           clientType: clientSettings.client,
-          connected: true,
+          connected: isConnected,
           totalDownloadSpeed: normalizedTorrents.reduce(
             (sum, t) => sum + t.downloadSpeed,
             0
@@ -114,6 +139,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
           activeTorrents,
           pausedTorrents,
           totalTorrents: normalizedTorrents.length,
+          health: healthStatus,
         });
       } else {
         // Client failed to connect
@@ -128,6 +154,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
           activeTorrents: 0,
           pausedTorrents: 0,
           totalTorrents: 0,
+          health: getHealthStatus(clientSettings.id),
         });
       }
     }
@@ -587,6 +614,92 @@ downloadsRoutes.post('/:hash/files/priority', async (req, res, next) => {
       error: e.message || String(e),
     });
     next({ status: 500, message: 'Failed to set file priority' });
+  }
+});
+
+// Get health status for all download clients
+downloadsRoutes.get('/health', (_req, res) => {
+  const allHealth = getAllClientsHealth();
+  res.json(
+    allHealth.map((h) => ({
+      clientId: h.clientId,
+      clientName: h.clientName,
+      status: h.status,
+      lastError: h.lastError,
+      cooldownUntil: h.cooldownUntil?.toISOString(),
+      lastSuccess: h.lastSuccess?.toISOString(),
+      lastFailure: h.lastFailure?.toISOString(),
+      consecutiveFailures: h.consecutiveFailures,
+    }))
+  );
+});
+
+// Retry a specific client (reset health and attempt fetch)
+downloadsRoutes.post('/health/retry/:clientId', async (req, res, next) => {
+  try {
+    const clientId = parseInt(req.params.clientId, 10);
+    const settings = getSettings();
+    const clientSettings = settings.downloads.find((c) => c.id === clientId);
+
+    if (!clientSettings) {
+      next({ status: 404, message: 'Client not found' });
+      return;
+    }
+
+    // Reset health state
+    resetClientHealth(clientId);
+
+    // Attempt to fetch data
+    const data = await fetchClientData(clientSettings);
+
+    res.json({
+      success: !!data,
+      health: getHealthStatus(clientId),
+    });
+  } catch (e) {
+    logger.error('Failed to retry client health check', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to retry client' });
+  }
+});
+
+// Retry all unhealthy clients
+downloadsRoutes.post('/health/retry', async (req, res, next) => {
+  try {
+    const settings = getSettings();
+    const allHealth = getAllClientsHealth();
+    const unhealthyClients = allHealth.filter((h) => h.status === 'unhealthy');
+
+    const results = await Promise.all(
+      unhealthyClients.map(async (h) => {
+        const clientSettings = settings.downloads.find(
+          (c) => c.id === h.clientId
+        );
+        if (!clientSettings) return null;
+
+        resetClientHealth(h.clientId);
+        const data = await fetchClientData(clientSettings);
+
+        return {
+          clientId: h.clientId,
+          clientName: h.clientName,
+          success: !!data,
+          health: getHealthStatus(h.clientId),
+        };
+      })
+    );
+
+    res.json({
+      results: results.filter((r) => r !== null),
+    });
+  } catch (e) {
+    logger.error('Failed to retry all clients', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to retry clients' });
   }
 });
 

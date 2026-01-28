@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { NormalizedDownloadItem } from '@server/interfaces/api/downloadsInterfaces';
+import type {
+  NormalizedDownloadItem,
+  DownloadClientStats,
+} from '@server/interfaces/api/downloadsInterfaces';
 import type { DownloadClientSettings } from '@server/lib/settings';
 import ProgressBar from '@app/components/Common/ProgressBar';
 import Toast from '@app/components/Toast';
@@ -19,9 +22,11 @@ import {
   InformationCircleIcon,
   XCircleIcon,
   ArrowTopRightOnSquareIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Button from '@app/components/Common/Button';
+import Tooltip from '@app/components/Common/ToolTip';
 
 interface DownloadRowProps {
   torrent: NormalizedDownloadItem;
@@ -29,6 +34,7 @@ interface DownloadRowProps {
   isSelected: boolean;
   onToggleSelect: (hash: string) => void;
   clients: DownloadClientSettings[];
+  stats: DownloadClientStats[];
 }
 
 const DownloadRow: React.FC<DownloadRowProps> = ({
@@ -37,7 +43,13 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
   isSelected,
   onToggleSelect,
   clients,
+  stats,
 }) => {
+  const isStale = useMemo(() => {
+    const clientStat = stats.find((s) => s.clientId === torrent.clientId);
+    return clientStat?.health?.isStale === true;
+  }, [stats, torrent.clientId]);
+
   const [isActing, setIsActing] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
@@ -209,13 +221,35 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           })}
         >
           <div className="flex flex-col">
-            <span
-              className="font-medium truncate w-fit max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl"
-              title={torrent.name}
-            >
-              <InformationCircleIcon className="inline text-primary w-5 opacity-50 sm:w-0 h-5 mr-1 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50 sm:group-hover:mr-1 transition-all duration-150 overflow-visible" />
-              {torrent.name}
-            </span>
+            <div className="flex items-center gap-1">
+              <span
+                className="font-medium truncate w-fit max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl"
+                title={torrent.name}
+              >
+                <InformationCircleIcon className="inline text-primary w-5 opacity-50 sm:w-0 h-5 mr-1 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50 sm:group-hover:mr-1 transition-all duration-150 overflow-visible" />
+                {torrent.name}
+              </span>
+              {isStale && (
+                <Tooltip
+                  content={
+                    <div className="text-xs">
+                      <FormattedMessage
+                        id="downloads.clientUnreachable"
+                        defaultMessage="Client Unreachable."
+                      />
+                    </div>
+                  }
+                >
+                  <ExclamationTriangleIcon
+                    title={intl.formatMessage({
+                      id: 'downloads.clientUnreachable',
+                      defaultMessage: 'Client Unreachable.',
+                    })}
+                    className="size-5 text-warning flex-shrink-0"
+                  />
+                </Tooltip>
+              )}
+            </div>
             {torrent.category && (
               <span className="text-xs text-neutral mt-1">
                 {torrent.category}
@@ -570,6 +604,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
               onClose={() => setShowDetailsModal(false)}
               torrent={torrent}
               onRefresh={onRefresh}
+              stats={stats}
             />
             <RemoveTorrentModal
               isOpen={showRemoveModal}
@@ -587,7 +622,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
 
 // Memoize to prevent unnecessary re-renders when parent updates
 export default React.memo(DownloadRow, (prevProps, nextProps) => {
-  // Only re-render if the torrent data actually changed or selection state changed
+  // Only re-render if the torrent data actually changed, selection state changed, or stats reference changed
   return (
     prevProps.torrent.hash === nextProps.torrent.hash &&
     prevProps.torrent.progress === nextProps.torrent.progress &&
@@ -600,6 +635,7 @@ export default React.memo(DownloadRow, (prevProps, nextProps) => {
     prevProps.torrent.category === nextProps.torrent.category &&
     prevProps.torrent.savePath === nextProps.torrent.savePath &&
     prevProps.torrent.clientName === nextProps.torrent.clientName &&
-    prevProps.isSelected === nextProps.isSelected
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.stats === nextProps.stats // Compare stats array reference
   );
 });
