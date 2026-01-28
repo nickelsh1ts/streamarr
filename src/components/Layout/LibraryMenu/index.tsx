@@ -171,7 +171,7 @@ const LibraryMenu = ({
             case 'artist':
               icon = <MusicalNoteIcon className="size-7" />;
               multiTitle = (
-                <FormattedMessage id="library.music" defaultMessage="Music" />
+                <FormattedMessage id="common.music" defaultMessage="Music" />
               );
               break;
             case 'live TV':

@@ -108,20 +108,20 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
         <thead className="sticky top-0 bg-base-100 z-10">
           <tr>
             <th className="min-w-[200px] max-w-xs">
-              <FormattedMessage id="downloads.fileName" defaultMessage="Name" />
+              <FormattedMessage id="common.name" defaultMessage="Name" />
             </th>
             <th className="min-w-[80px]">
-              <FormattedMessage id="downloads.fileSize" defaultMessage="Size" />
+              <FormattedMessage id="common.size" defaultMessage="Size" />
             </th>
             <th className="min-w-[120px]">
               <FormattedMessage
-                id="downloads.fileProgress"
+                id="common.progress"
                 defaultMessage="Progress"
               />
             </th>
             <th className="min-w-[140px]">
               <FormattedMessage
-                id="downloads.filePriority"
+                id="common.priority"
                 defaultMessage="Priority"
               />
             </th>

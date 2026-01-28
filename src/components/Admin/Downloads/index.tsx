@@ -456,7 +456,7 @@ const AdminDownloads = () => {
                 </option>
                 <option value="downloading">
                   <FormattedMessage
-                    id="downloads.filterDownloading"
+                    id="common.downloading"
                     defaultMessage="Downloading"
                   />
                 </option>
@@ -468,21 +468,18 @@ const AdminDownloads = () => {
                 </option>
                 <option value="completed">
                   <FormattedMessage
-                    id="downloads.filterCompleted"
+                    id="common.completed"
                     defaultMessage="Completed"
                   />
                 </option>
                 <option value="paused">
                   <FormattedMessage
-                    id="downloads.filterPaused"
+                    id="common.paused"
                     defaultMessage="Paused"
                   />
                 </option>
                 <option value="error">
-                  <FormattedMessage
-                    id="downloads.filterError"
-                    defaultMessage="Error"
-                  />
+                  <FormattedMessage id="common.error" defaultMessage="Error" />
                 </option>
                 <option value="stalled">
                   <FormattedMessage
@@ -539,10 +536,13 @@ const AdminDownloads = () => {
                 )}
                 <span className="ml-1">
                   {!isPaused ? (
-                    <FormattedMessage id="logs.pause" defaultMessage="Pause" />
+                    <FormattedMessage
+                      id="common.pause"
+                      defaultMessage="Pause"
+                    />
                   ) : (
                     <FormattedMessage
-                      id="logs.resume"
+                      id="common.resume"
                       defaultMessage="Resume"
                     />
                   )}
@@ -879,21 +879,21 @@ const AdminDownloads = () => {
                       >
                         <option value="" disabled>
                           <FormattedMessage
-                            id="downloads.bulkActions"
+                            id="common.actions"
                             defaultMessage="Actions"
                           />
                         </option>
                         <option value="resume">
                           ▶️{' '}
                           {intl.formatMessage({
-                            id: 'downloads.actionResume',
+                            id: 'common.resume',
                             defaultMessage: 'Resume',
                           })}
                         </option>
                         <option value="pause">
                           ⏸️{' '}
                           {intl.formatMessage({
-                            id: 'downloads.actionPause',
+                            id: 'common.pause',
                             defaultMessage: 'Pause',
                           })}
                         </option>
@@ -907,7 +907,7 @@ const AdminDownloads = () => {
                         <option value="remove">
                           🗑️{' '}
                           {intl.formatMessage({
-                            id: 'downloads.actionRemoved',
+                            id: 'common.remove',
                             defaultMessage: 'Remove',
                           })}
                         </option>
@@ -1225,10 +1225,12 @@ const AdminDownloads = () => {
           torrentName={intl.formatMessage(
             {
               id: 'downloads.bulkRemoveTorrents',
-              defaultMessage: '{count} selected torrents',
+              defaultMessage:
+                '{count} selected {count, plural, one {torrent} other {torrents}}',
             },
             { count: selectedHashes.size }
           )}
+          torrentCount={selectedHashes.size}
           isProcessing={isBulkActing}
         />
       </div>

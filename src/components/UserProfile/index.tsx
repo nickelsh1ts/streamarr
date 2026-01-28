@@ -116,7 +116,7 @@ const UserProfile = () => {
                   <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
                     <ClockIcon className="size-5 mr-2" />
                     <FormattedMessage
-                      id="profile.trialPeriod"
+                      id="settings.trialPeriod"
                       defaultMessage="Trial Period"
                     />
                   </dt>

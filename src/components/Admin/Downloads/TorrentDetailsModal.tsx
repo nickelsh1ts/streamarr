@@ -304,12 +304,12 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
         okText={
           canResume
             ? intl.formatMessage({
-                id: 'downloads.resume',
+                id: 'common.resume',
                 defaultMessage: 'Resume',
               })
             : canPause
               ? intl.formatMessage({
-                  id: 'downloads.pause',
+                  id: 'common.pause',
                   defaultMessage: 'Pause',
                 })
               : ''
@@ -356,8 +356,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral">
-                  <FormattedMessage id="downloads.name" defaultMessage="Name" />
-                  :
+                  <FormattedMessage id="common.name" defaultMessage="Name" />:
                 </span>
                 <span className="font-medium break-all ml-4">
                   {torrent.name}
@@ -387,7 +386,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
               <div className="flex justify-between">
                 <span className="text-neutral">
                   <FormattedMessage
-                    id="downloads.status"
+                    id="common.status"
                     defaultMessage="Status"
                   />
                   :
@@ -447,7 +446,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-neutral">
                     <FormattedMessage
-                      id="downloads.progress"
+                      id="common.progress"
                       defaultMessage="Progress"
                     />
                   </span>
@@ -475,7 +474,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                     title={
                       <>
                         <FormattedMessage
-                          id="downloads.error"
+                          id="common.error"
                           defaultMessage="Error"
                         />
                         {':'}
@@ -490,11 +489,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-neutral">
-                    <FormattedMessage
-                      id="downloads.size"
-                      defaultMessage="Size"
-                    />
-                    :
+                    <FormattedMessage id="common.size" defaultMessage="Size" />:
                   </span>
                   <span className="font-medium ml-2">
                     {formatBytes(torrent.size)}
@@ -503,7 +498,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 <div>
                   <span className="text-neutral">
                     <FormattedMessage
-                      id="downloads.ratio"
+                      id="common.ratio"
                       defaultMessage="Ratio"
                     />
                     :
@@ -538,8 +533,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                   <span className="text-neutral">
-                    <FormattedMessage id="downloads.eta" defaultMessage="ETA" />
-                    :
+                    <FormattedMessage id="common.eta" defaultMessage="ETA" />:
                   </span>
                   <span className="font-medium ml-2">
                     {formatEta(torrent.eta)}
@@ -664,7 +658,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 <div className="flex justify-between">
                   <span className="text-neutral">
                     <FormattedMessage
-                      id="downloads.completedDate"
+                      id="common.completed"
                       defaultMessage="Completed"
                     />
                     :

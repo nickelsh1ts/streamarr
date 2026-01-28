@@ -20,6 +20,9 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "Ver en GitHub"
   },
+  "aboutSettings.alphaWarning": {
+    "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
+  },
   "aboutSettings.dataDirectory": {
     "defaultMessage": "Directorio de Datos"
   },
@@ -40,9 +43,6 @@
   },
   "aboutSettings.outOfDate": {
     "defaultMessage": "Desactualizado"
-  },
-  "aboutSettings.alphaWarning": {
-    "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
   },
   "aboutSettings.preferred": {
     "defaultMessage": "Preferido"
@@ -67,9 +67,6 @@
   },
   "admin.settings.services.description": {
     "defaultMessage": "Configura tus varios servicios a continuación."
-  },
-  "admin.settings.services.title": {
-    "defaultMessage": "Servicios"
   },
   "appData.warning": {
     "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
@@ -146,9 +143,6 @@
   "calendar.eventCategories": {
     "defaultMessage": "Categorías"
   },
-  "calendar.eventDate": {
-    "defaultMessage": "Fecha"
-  },
   "calendar.eventDates": {
     "defaultMessage": "Fechas de Inicio y Fin"
   },
@@ -158,9 +152,6 @@
   "calendar.eventId": {
     "defaultMessage": "UID"
   },
-  "calendar.eventStatus": {
-    "defaultMessage": "Estado"
-  },
   "calendar.eventSummary": {
     "defaultMessage": "Resumen"
   },
@@ -169,9 +160,6 @@
   },
   "calendar.noEventSelected": {
     "defaultMessage": "Ningún evento seleccionado"
-  },
-  "calendar.sendNotification": {
-    "defaultMessage": "Enviar Notificación"
   },
   "calendar.status": {
     "defaultMessage": "Estado"
@@ -206,9 +194,15 @@
   "common.about": {
     "defaultMessage": "Acerca de"
   },
+  "common.actions": {
+    "defaultMessage": "Acciones"
+  },
   "common.active": {
     "defaultMessage": "Activo",
     "description": "Spanish translation"
+  },
+  "common.addFirstTorrent": {
+    "defaultMessage": "Añade tu primer torrent para comenzar."
   },
   "common.addserver": {
     "defaultMessage": "Agregar servidor"
@@ -259,8 +253,14 @@
   "common.close": {
     "defaultMessage": "Cerrar"
   },
+  "common.completed": {
+    "defaultMessage": "Completado"
+  },
   "common.confirmPassword": {
     "defaultMessage": "Confirmar Contraseña"
+  },
+  "common.connected": {
+    "defaultMessage": "Conectado"
   },
   "common.continue": {
     "defaultMessage": "Continuar",
@@ -294,6 +294,9 @@
   "common.delete": {
     "defaultMessage": "Eliminar"
   },
+  "common.disconnected": {
+    "defaultMessage": "Desconectado"
+  },
   "common.displayLanguage": {
     "defaultMessage": "Idioma de Pantalla"
   },
@@ -317,6 +320,12 @@
   },
   "common.endTime": {
     "defaultMessage": "Hora de Fin"
+  },
+  "common.error": {
+    "defaultMessage": "Error"
+  },
+  "common.eta": {
+    "defaultMessage": "Tiempo Estimado"
   },
   "common.eventError": {
     "defaultMessage": "Algo salió mal al guardar el evento"
@@ -399,11 +408,17 @@
   "common.manageUsers": {
     "defaultMessage": "Administrar Usuarios"
   },
+  "common.message": {
+    "defaultMessage": "Mensaje"
+  },
   "common.movies": {
     "defaultMessage": "Películas"
   },
   "common.music": {
     "defaultMessage": "Música"
+  },
+  "common.name": {
+    "defaultMessage": "Nombre"
   },
   "common.never": {
     "defaultMessage": "Nunca"
@@ -413,6 +428,9 @@
   },
   "common.next": {
     "defaultMessage": "Siguiente"
+  },
+  "common.noDownloadsFound": {
+    "defaultMessage": "No se Encontraron Descargas"
   },
   "common.noResults": {
     "defaultMessage": "Sin Resultados"
@@ -429,6 +447,9 @@
   "common.optional": {
     "defaultMessage": "opcional"
   },
+  "common.or": {
+    "defaultMessage": "o"
+  },
   "common.owner": {
     "defaultMessage": "Propietario"
   },
@@ -440,6 +461,12 @@
   },
   "common.pastdays.description": {
     "defaultMessage": "Sincronizar eventos de los últimos X días"
+  },
+  "common.pause": {
+    "defaultMessage": "Pausar"
+  },
+  "common.paused": {
+    "defaultMessage": "Pausado"
   },
   "common.plex": {
     "defaultMessage": "Plex"
@@ -459,8 +486,17 @@
   "common.print": {
     "defaultMessage": "Imprimir"
   },
+  "common.priority": {
+    "defaultMessage": "Prioridad"
+  },
   "common.processing": {
     "defaultMessage": "Procesando..."
+  },
+  "common.progress": {
+    "defaultMessage": "Progreso"
+  },
+  "common.ratio": {
+    "defaultMessage": "Ratio"
   },
   "common.read": {
     "defaultMessage": "leído"
@@ -478,6 +514,12 @@
   "common.remaining": {
     "defaultMessage": "restante"
   },
+  "common.remove": {
+    "defaultMessage": "Eliminar"
+  },
+  "common.removing": {
+    "defaultMessage": "Eliminando..."
+  },
   "common.request": {
     "defaultMessage": "Solicitud"
   },
@@ -489,6 +531,9 @@
   },
   "common.resultsDisplay": {
     "defaultMessage": "Mostrar {select} resultados por página"
+  },
+  "common.resume": {
+    "defaultMessage": "Reanudar"
   },
   "common.role": {
     "defaultMessage": "Rol"
@@ -533,6 +578,9 @@
   "common.settingsSaveSuccess": {
     "defaultMessage": "Configuración guardada exitosamente por {appName}"
   },
+  "common.severity": {
+    "defaultMessage": "Severidad"
+  },
   "common.showAll": {
     "defaultMessage": "Mostrar Todo"
   },
@@ -549,6 +597,15 @@
     "defaultMessage": "Iniciando Sesión...",
     "description": "Spanish translation"
   },
+  "common.size": {
+    "defaultMessage": "Tamaño"
+  },
+  "common.somethingWentWrong": {
+    "defaultMessage": "¡Algo salió mal!"
+  },
+  "common.speed": {
+    "defaultMessage": "Velocidad"
+  },
   "common.ssl": {
     "defaultMessage": "SSL"
   },
@@ -558,20 +615,23 @@
   "common.status": {
     "defaultMessage": "Estado"
   },
-  "common.status.active": {
-    "defaultMessage": "Activo"
-  },
   "common.subtitles": {
     "defaultMessage": "Subtítulos"
   },
   "common.test": {
     "defaultMessage": "Probar"
   },
+  "common.testConnection": {
+    "defaultMessage": "Probar Conexión"
+  },
   "common.testing": {
     "defaultMessage": "Probando…"
   },
   "common.transcoding": {
     "defaultMessage": "Transcodificación"
+  },
+  "common.tryAdjustingFilters": {
+    "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
   },
   "common.tvShows": {
     "defaultMessage": "Series de TV"
@@ -608,6 +668,9 @@
   },
   "common.users": {
     "defaultMessage": "Usuarios"
+  },
+  "common.viewDetails": {
+    "defaultMessage": "Ver Detalles"
   },
   "common.viewMore": {
     "defaultMessage": "Ver Más"
@@ -667,52 +730,235 @@
   "devices.tv": {
     "defaultMessage": "TV"
   },
+  "downloads.actionBottomPriority": {
+    "defaultMessage": "Mover al Final"
+  },
+  "downloads.actionError": {
+    "defaultMessage": "Ocurrió un error al realizar la acción."
+  },
+  "downloads.actionForceRecheck": {
+    "defaultMessage": "Forzar Reverificación"
+  },
+  "downloads.actionQueueDown": {
+    "defaultMessage": "Bajar en la Cola"
+  },
+  "downloads.actionQueueUp": {
+    "defaultMessage": "Subir en la Cola"
+  },
+  "downloads.actionRemoved": {
+    "defaultMessage": "Eliminado"
+  },
+  "downloads.actionTopPriority": {
+    "defaultMessage": "Mover al Principio"
+  },
+  "downloads.activeClients": {
+    "defaultMessage": "Clientes Activos"
+  },
+  "downloads.addClientInstructions": {
+    "defaultMessage": "Añade un cliente de descarga en la configuración para comenzar. Actualmente soporta qBittorrent, Deluge y Transmission."
+  },
+  "downloads.addTorrent": {
+    "defaultMessage": "Añadir Torrent"
+  },
+  "downloads.addedDate": {
+    "defaultMessage": "Añadido"
+  },
+  "downloads.adding": {
+    "defaultMessage": "Añadiendo..."
+  },
+  "downloads.alsoDeleteFiles": {
+    "defaultMessage": "También eliminar permanentemente los archivos"
+  },
+  "downloads.bulkForceRecheck": {
+    "defaultMessage": "Reverificar Seleccionados"
+  },
+  "downloads.bulkPause": {
+    "defaultMessage": "Pausar Seleccionados"
+  },
+  "downloads.bulkRemove": {
+    "defaultMessage": "Eliminar Seleccionados"
+  },
+  "downloads.bulkRemoveTorrents": {
+    "defaultMessage": "{count} {count, plural, one {torrent} other {torrents}} seleccionado(s)"
+  },
+  "downloads.bulkResume": {
+    "defaultMessage": "Reanudar Seleccionados"
+  },
+  "downloads.categoryUpdated": {
+    "defaultMessage": "Categoría actualizada exitosamente"
+  },
+  "downloads.client": {
+    "defaultMessage": "Cliente"
+  },
   "downloads.clientAll": {
     "defaultMessage": "Todos los Clientes"
   },
-  "downloads.filterCompleted": {
-    "defaultMessage": "Completado"
+  "downloads.clientUnreachable": {
+    "defaultMessage": "Cliente No Disponible."
   },
-  "downloads.filterDownloading": {
-    "defaultMessage": "Descargando"
+  "downloads.clientsUnhealthy": {
+    "defaultMessage": "{count} {count, plural, one {cliente} other {clientes}} no disponible(s)"
   },
-  "downloads.filterErrored": {
-    "defaultMessage": "Con Error"
+  "downloads.configureClients": {
+    "defaultMessage": "Configurar Clientes"
   },
-  "downloads.filterPaused": {
-    "defaultMessage": "Pausado"
+  "downloads.confirmRemoveMessage": {
+    "defaultMessage": "¿Estás seguro de que deseas eliminar {count, plural, one {el torrent} other {los torrents}} seleccionado(s) del cliente de descarga?"
+  },
+  "downloads.connectedPeers": {
+    "defaultMessage": "Pares Conectados"
+  },
+  "downloads.connectedSeeds": {
+    "defaultMessage": "Semillas Conectadas"
+  },
+  "downloads.content": {
+    "defaultMessage": "Contenido"
+  },
+  "downloads.dates": {
+    "defaultMessage": "Fechas"
+  },
+  "downloads.deleteFilesWarning": {
+    "defaultMessage": "¡Esta acción no se puede deshacer!"
+  },
+  "downloads.downloadClient": {
+    "defaultMessage": "Cliente de Descarga"
+  },
+  "downloads.downloadManagement": {
+    "defaultMessage": "Gestión de Descargas"
+  },
+  "downloads.downloadSpeed": {
+    "defaultMessage": "Velocidad de Descarga"
+  },
+  "downloads.failedToChangeStatus": {
+    "defaultMessage": "Error al cambiar el estado del torrent"
+  },
+  "downloads.failedToForceRecheck": {
+    "defaultMessage": "Error al forzar reverificación"
+  },
+  "downloads.failedToLoadFiles": {
+    "defaultMessage": "Error al cargar archivos del torrent"
+  },
+  "downloads.failedToRemoveTorrent": {
+    "defaultMessage": "Error al eliminar torrent"
+  },
+  "downloads.failedToUpdateCategory": {
+    "defaultMessage": "Error al actualizar categoría"
+  },
+  "downloads.failedToUpdateFilePriority": {
+    "defaultMessage": "Error al actualizar prioridad de archivo"
+  },
+  "downloads.failedToUpdateSavePath": {
+    "defaultMessage": "Error al actualizar ruta de guardado"
+  },
+  "downloads.filterMetadata": {
+    "defaultMessage": "Obteniendo Metadatos"
+  },
+  "downloads.filterMoving": {
+    "defaultMessage": "Moviendo"
   },
   "downloads.filterSeeding": {
     "defaultMessage": "Sembrando"
   },
-  "downloads.sortAddedOn": {
-    "defaultMessage": "Fecha de Agregado"
+  "downloads.filterStalled": {
+    "defaultMessage": "Detenido"
   },
-  "downloads.sortCategory": {
-    "defaultMessage": "Categoría"
+  "downloads.forceRecheck": {
+    "defaultMessage": "Forzar Reverificación"
   },
-  "downloads.sortDone": {
-    "defaultMessage": "Completado"
+  "downloads.generalInfo": {
+    "defaultMessage": "Información General"
   },
-  "downloads.sortDownSpeed": {
-    "defaultMessage": "Velocidad de Descarga"
+  "downloads.hash": {
+    "defaultMessage": "Hash"
   },
-  "downloads.sortETA": {
-    "defaultMessage": "Tiempo Estimado"
+  "downloads.labelPlaceholder": {
+    "defaultMessage": "ej., películas, series-tv"
   },
-  "downloads.sortName": {
-    "defaultMessage": "Nombre"
+  "downloads.lastSeenComplete": {
+    "defaultMessage": "Última Vez Completado"
   },
-  "downloads.sortRatio": {
-    "defaultMessage": "Ratio"
+  "downloads.magnetOrUrl": {
+    "defaultMessage": "Enlace Magnet o URL"
   },
-  "downloads.sortSize": {
-    "defaultMessage": "Tamaño"
+  "downloads.noClientsConfigured": {
+    "defaultMessage": "No Hay Clientes de Descarga Configurados"
   },
-  "downloads.sortStatus": {
-    "defaultMessage": "Estado"
+  "downloads.noClientsConfiguredMessage": {
+    "defaultMessage": "No hay clientes de descarga configurados. Por favor añade un cliente en la configuración."
   },
-  "downloads.sortUpSpeed": {
+  "downloads.noFilesAvailable": {
+    "defaultMessage": "No Hay Archivos Disponibles"
+  },
+  "downloads.noFilesFound": {
+    "defaultMessage": "No se encontraron archivos"
+  },
+  "downloads.openClient": {
+    "defaultMessage": "Abrir {clientName}"
+  },
+  "downloads.peersSeeds": {
+    "defaultMessage": "Pares y Semillas"
+  },
+  "downloads.progressStats": {
+    "defaultMessage": "Progreso y Estadísticas"
+  },
+  "downloads.queueAction": {
+    "defaultMessage": "Cola"
+  },
+  "downloads.queueingDisabled": {
+    "defaultMessage": "N/A"
+  },
+  "downloads.refreshIntervalTooltip": {
+    "defaultMessage": "Intervalo de Actualización (segundos)"
+  },
+  "downloads.removeFile": {
+    "defaultMessage": "Eliminar archivo"
+  },
+  "downloads.removeTorrent": {
+    "defaultMessage": "Eliminar torrent"
+  },
+  "downloads.reset": {
+    "defaultMessage": "Restablecer"
+  },
+  "downloads.retry": {
+    "defaultMessage": "Reintentar"
+  },
+  "downloads.retryError": {
+    "defaultMessage": "Error al reintentar conexión del cliente"
+  },
+  "downloads.retryingIn": {
+    "defaultMessage": "reintentando en {time}"
+  },
+  "downloads.savePath": {
+    "defaultMessage": "Ruta de Guardado"
+  },
+  "downloads.savePathUpdated": {
+    "defaultMessage": "Ruta de guardado actualizada exitosamente"
+  },
+  "downloads.selected": {
+    "defaultMessage": "seleccionado(s)"
+  },
+  "downloads.staleData": {
+    "defaultMessage": "Los datos de este torrent pueden estar desactualizados porque el cliente de descarga está desconectado o no responde."
+  },
+  "downloads.staleDataWarning": {
+    "defaultMessage": "Cliente No Disponible"
+  },
+  "downloads.tags": {
+    "defaultMessage": "Etiquetas"
+  },
+  "downloads.torrentDetails": {
+    "defaultMessage": "Detalles del Torrent"
+  },
+  "downloads.torrentFile": {
+    "defaultMessage": "Subir Archivo .torrent"
+  },
+  "downloads.torrentRemoved": {
+    "defaultMessage": "Torrent eliminado exitosamente"
+  },
+  "downloads.totalDownloads": {
+    "defaultMessage": "Total de Descargas"
+  },
+  "downloads.uploadSpeed": {
     "defaultMessage": "Velocidad de Subida"
   },
   "email.required": {
@@ -721,9 +967,6 @@
   },
   "emailNotifications.allowSelfSigned": {
     "defaultMessage": "Permitir Certificados Auto-firmados"
-  },
-  "emailNotifications.enableAgent": {
-    "defaultMessage": "Habilitar Agente"
   },
   "emailNotifications.encryption.default": {
     "defaultMessage": "Usar STARTTLS si está disponible"
@@ -1014,9 +1257,6 @@
   "imageCache.title": {
     "defaultMessage": "Caché de Imágenes"
   },
-  "inAppNotifications.enableAgent": {
-    "defaultMessage": "Habilitar Agente"
-  },
   "inAppNotifications.saveError": {
     "defaultMessage": "Error al guardar la configuración de notificaciones en la aplicación."
   },
@@ -1080,14 +1320,8 @@
   "invite.disabledError": {
     "defaultMessage": "Algo salió mal al deshabilitar la invitación."
   },
-  "invite.downloads": {
-    "defaultMessage": "Descargas"
-  },
   "invite.editInvite": {
     "defaultMessage": "Editar invitación"
-  },
-  "invite.editTitle": {
-    "defaultMessage": "Editar Invitación"
   },
   "invite.enable": {
     "defaultMessage": "Habilitar invitación"
@@ -1267,9 +1501,6 @@
   "library.loading": {
     "defaultMessage": "Cargando bibliotecas..."
   },
-  "library.music": {
-    "defaultMessage": "Música"
-  },
   "library.photos": {
     "defaultMessage": "Fotos"
   },
@@ -1327,9 +1558,6 @@
   "logs.filter.debug": {
     "defaultMessage": "Depuración"
   },
-  "logs.filter.error": {
-    "defaultMessage": "Error"
-  },
   "logs.filter.info": {
     "defaultMessage": "Información"
   },
@@ -1345,35 +1573,17 @@
   "logs.modal.label": {
     "defaultMessage": "Etiqueta"
   },
-  "logs.modal.message": {
-    "defaultMessage": "Mensaje"
-  },
-  "logs.modal.severity": {
-    "defaultMessage": "Severidad"
-  },
   "logs.modal.timestamp": {
     "defaultMessage": "Marca de Tiempo"
   },
   "logs.modal.title": {
     "defaultMessage": "Detalles del Registro"
   },
-  "logs.pause": {
-    "defaultMessage": "Pausar"
-  },
-  "logs.resume": {
-    "defaultMessage": "Reanudar"
-  },
   "logs.table.copyToClipboard": {
     "defaultMessage": "Copiar al portapapeles"
   },
   "logs.table.logMessage": {
     "defaultMessage": "mensaje de registro"
-  },
-  "logs.table.viewDetails": {
-    "defaultMessage": "Ver Detalles"
-  },
-  "logs.title": {
-    "defaultMessage": "Registros"
   },
   "mobileMenu.libraries": {
     "defaultMessage": "Bibliotecas"
@@ -1416,9 +1626,6 @@
   },
   "notification.earlier": {
     "defaultMessage": "Anteriores"
-  },
-  "notification.header": {
-    "defaultMessage": "Notificaciones"
   },
   "notification.inAppDisabled": {
     "defaultMessage": "Notificaciones en la Aplicación Deshabilitadas"
@@ -1474,9 +1681,6 @@
   "notification.readError": {
     "defaultMessage": "Error al marcar la notificación como leída"
   },
-  "notification.sendNotification": {
-    "defaultMessage": "Enviar Notificación"
-  },
   "notification.settings": {
     "defaultMessage": "Configuración de Notificaciones"
   },
@@ -1510,9 +1714,6 @@
   "notificationModal.editNotification": {
     "defaultMessage": "Editar Notificación"
   },
-  "notificationModal.message": {
-    "defaultMessage": "Mensaje"
-  },
   "notificationModal.notifyUsers": {
     "defaultMessage": "Notificar Usuarios"
   },
@@ -1525,9 +1726,6 @@
   "notificationModal.sendTitle": {
     "defaultMessage": "Enviar una Notificación"
   },
-  "notificationModal.severity": {
-    "defaultMessage": "Severidad"
-  },
   "notificationModal.subject": {
     "defaultMessage": "Asunto"
   },
@@ -1536,6 +1734,9 @@
   },
   "notificationModal.subjectRequired": {
     "defaultMessage": "El asunto es requerido"
+  },
+  "notifications.enableAgent": {
+    "defaultMessage": "Habilitar Agente"
   },
   "plex.login.button": {
     "defaultMessage": "Iniciar sesión con"
@@ -1651,9 +1852,6 @@
   "profile.totalInvites": {
     "defaultMessage": "Total de Invitaciones"
   },
-  "profile.trialPeriod": {
-    "defaultMessage": "Período de Prueba"
-  },
   "profile.trialPeriodEnds": {
     "defaultMessage": "Finaliza el {date}"
   },
@@ -1738,12 +1936,6 @@
   "selectUsers": {
     "defaultMessage": "Seleccionar Usuarios"
   },
-  "servicesSettings.bazarr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Bazarr."
-  },
-  "servicesSettings.bazarr.title": {
-    "defaultMessage": "Configuración de Bazarr"
-  },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Error al deshabilitar la autenticación en {service}"
   },
@@ -1755,6 +1947,12 @@
   },
   "servicesSettings.authDisabledService": {
     "defaultMessage": "Autenticación deshabilitada en {service}"
+  },
+  "servicesSettings.bazarr.description": {
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Bazarr."
+  },
+  "servicesSettings.bazarr.title": {
+    "defaultMessage": "Configuración de Bazarr"
   },
   "servicesSettings.disableAuth": {
     "defaultMessage": "Autenticación"
@@ -1891,9 +2089,6 @@
   "settings.librariesSynced": {
     "defaultMessage": "Las bibliotecas se han sincronizado con Plex."
   },
-  "settings.notifications": {
-    "defaultMessage": "Configuración de Notificaciones"
-  },
   "settings.notifications.description": {
     "defaultMessage": "Configurar y habilitar agentes de notificación.",
     "description": "Professional Spanish translation"
@@ -2008,9 +2203,6 @@
   "sidebar.authorizedDevices": {
     "defaultMessage": "Dispositivos Autorizados"
   },
-  "sidebar.general": {
-    "defaultMessage": "General"
-  },
   "sidebar.manageLibraryAccess": {
     "defaultMessage": "Gestionar Acceso a Bibliotecas"
   },
@@ -2025,9 +2217,6 @@
   },
   "sidebar.quality": {
     "defaultMessage": "Calidad"
-  },
-  "sidebar.settings": {
-    "defaultMessage": "Configuración"
   },
   "sidebar.streamingServices": {
     "defaultMessage": "Servicios de Streaming"
@@ -2107,9 +2296,6 @@
   },
   "signUp.orEnterLocalAccount": {
     "defaultMessage": "o introduce los detalles de la cuenta local"
-  },
-  "signUp.pinLibraries": {
-    "defaultMessage": "Anclar Bibliotecas"
   },
   "signUp.plexAuthFailed": {
     "defaultMessage": "Falló la autenticación de Plex"
@@ -2282,9 +2468,6 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
-  },
-  "userSettings.enableTrialPeriod": {
-    "defaultMessage": "Habilitar Período de Prueba"
   },
   "userSettings.enableTrialPeriodDescription": {
     "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"

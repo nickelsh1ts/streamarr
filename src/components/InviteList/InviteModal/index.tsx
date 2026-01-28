@@ -324,7 +324,7 @@ const InviteModal = ({
             title={
               invite
                 ? intl.formatMessage({
-                    id: 'invite.editTitle',
+                    id: 'invite.editInvite',
                     defaultMessage: 'Edit Invite',
                   })
                 : intl.formatMessage({

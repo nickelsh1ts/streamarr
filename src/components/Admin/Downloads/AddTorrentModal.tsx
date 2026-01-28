@@ -125,7 +125,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
             })
           : intl.formatMessage({
               id: 'downloads.addTorrent',
-              defaultMessage: 'Add torrent',
+              defaultMessage: 'Add Torrent',
             })
       }
       okDisabled={
@@ -138,7 +138,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
       })}
       secondaryButtonType="warning"
       cancelText={intl.formatMessage({
-        id: 'downloads.cancel',
+        id: 'common.cancel',
         defaultMessage: 'Cancel',
       })}
       show={isOpen}
@@ -162,7 +162,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
           <Alert type="warning">
             <span>
               <FormattedMessage
-                id="downloads.noClientsConfigured"
+                id="downloads.noClientsConfiguredMessage"
                 defaultMessage="No download clients configured. Please add a client in settings."
               />
             </span>
@@ -176,7 +176,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               >
                 <span className="label-text">
                   <FormattedMessage
-                    id="downloads.client"
+                    id="downloads.downloadClient"
                     defaultMessage="Download Client"
                   />
                 </span>

@@ -164,7 +164,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
       Toast({
         type: 'error',
         message: intl.formatMessage({
-          id: 'downloads.removeError',
+          id: 'downloads.failedToRemoveTorrent',
           defaultMessage: 'Failed to remove torrent',
         }),
         icon: <XCircleIcon className="size-7" />,
@@ -216,7 +216,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           className="cursor-pointer group"
           onClick={() => setShowDetailsModal(true)}
           title={intl.formatMessage({
-            id: 'downloads.viewDetails',
+            id: 'common.viewDetails',
             defaultMessage: 'View Details',
           })}
         >
@@ -493,7 +493,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
             >
               <option value="" disabled>
                 <FormattedMessage
-                  id="downloads.actions"
+                  id="common.actions"
                   defaultMessage="Actions"
                 />
               </option>
@@ -501,7 +501,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                 <option value="resume">
                   ▶️{' '}
                   {intl.formatMessage({
-                    id: 'downloads.actionResume',
+                    id: 'common.resume',
                     defaultMessage: 'Resume',
                   })}
                 </option>
@@ -510,7 +510,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                 <option value="pause">
                   ⏸️{' '}
                   {intl.formatMessage({
-                    id: 'downloads.actionPause',
+                    id: 'common.pause',
                     defaultMessage: 'Pause',
                   })}
                 </option>
@@ -525,7 +525,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
               <option value="remove">
                 🗑️{' '}
                 {intl.formatMessage({
-                  id: 'downloads.actionRemoved',
+                  id: 'common.remove',
                   defaultMessage: 'Remove',
                 })}
               </option>
@@ -540,7 +540,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                   }
                   disabled={isActing || isSelected}
                   title={intl.formatMessage({
-                    id: 'downloads.actionResume',
+                    id: 'common.resume',
                     defaultMessage: 'Resume',
                   })}
                 >
@@ -556,7 +556,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                   }
                   disabled={isActing || isSelected}
                   title={intl.formatMessage({
-                    id: 'downloads.actionPause',
+                    id: 'common.pause',
                     defaultMessage: 'Pause',
                   })}
                 >

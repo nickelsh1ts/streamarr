@@ -149,7 +149,7 @@ const DownloadClientInstance = ({
             {isTesting ? (
               <Badge badgeType="warning">
                 <FormattedMessage
-                  id="common.status.testing"
+                  id="common.testing"
                   defaultMessage="Testing..."
                 />
               </Badge>
@@ -168,7 +168,7 @@ const DownloadClientInstance = ({
               <span className="flex items-center gap-1">
                 <Badge badgeType="success">
                   <FormattedMessage
-                    id="common.status.connected"
+                    id="common.connected"
                     defaultMessage="Connected"
                   />
                 </Badge>
@@ -186,7 +186,7 @@ const DownloadClientInstance = ({
               <span className="flex items-center gap-1">
                 <Badge badgeType="error">
                   <FormattedMessage
-                    id="common.status.disconnected"
+                    id="common.disconnected"
                     defaultMessage="Disconnected"
                   />
                 </Badge>

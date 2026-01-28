@@ -8,6 +8,7 @@ interface RemoveTorrentModalProps {
   onClose: () => void;
   onConfirm: (deleteFiles: boolean) => void;
   torrentName: string;
+  torrentCount?: number;
   isProcessing?: boolean;
 }
 
@@ -16,6 +17,7 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
   onClose,
   onConfirm,
   torrentName,
+  torrentCount = 1,
   isProcessing = false,
 }) => {
   const intl = useIntl();
@@ -62,7 +64,8 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
         <p className="text-sm">
           <FormattedMessage
             id="downloads.confirmRemoveMessage"
-            defaultMessage="Are you sure you want to remove the selected torrent from the download client?"
+            defaultMessage="Are you sure you want to remove the selected {count, plural, one {torrent} other {torrents}} from the download client?"
+            values={{ count: torrentCount }}
           />
         </p>
         <div className="form-control">

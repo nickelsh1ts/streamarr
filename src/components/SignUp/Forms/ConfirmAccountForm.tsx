@@ -387,7 +387,7 @@ const ConfirmAccountForm = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="autoPinLibraries" className="col-span-1">
                   <FormattedMessage
-                    id="signUp.pinLibraries"
+                    id="settings.pinLibraries"
                     defaultMessage="Pin Libraries"
                   />
                 </label>
@@ -522,7 +522,7 @@ const ConfirmAccountForm = ({
             <div className="mb-6 mt-3">
               <h3 className="text-2xl font-extrabold mb-2">
                 <FormattedMessage
-                  id="settings.notifications"
+                  id="notification.settings"
                   defaultMessage="Notification Settings"
                 />
               </h3>
