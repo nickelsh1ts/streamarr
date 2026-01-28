@@ -149,10 +149,7 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
                     onChange={(e) =>
                       handlePriorityChange(file.index, parseInt(e.target.value))
                     }
-                    disabled={
-                      isUpdating ||
-                      updatingFiles.has(file.index)
-                    }
+                    disabled={isUpdating || updatingFiles.has(file.index)}
                   >
                     {clientType === 'deluge' ? (
                       // Deluge: 0=skip, 1=low, 2=normal, 5=high
