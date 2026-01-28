@@ -78,6 +78,11 @@ const DownloadClientModal = ({
           defaultMessage: 'You must provide a valid port number',
         })
       ),
+    username: Yup.string().when('client', {
+      is: (client: string) => client !== 'deluge',
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   });
 
   const testConnection = useCallback(
@@ -265,7 +270,7 @@ const DownloadClientModal = ({
                 values.hostname &&
                 values.port &&
                 values.client &&
-                values.username &&
+                (values.client === 'deluge' || values.username) &&
                 values.password
               ) {
                 testConnection({
@@ -284,7 +289,7 @@ const DownloadClientModal = ({
               !values.hostname ||
               !values.port ||
               !values.client ||
-              !values.username ||
+              (values.client !== 'deluge' && !values.username) ||
               !values.password
             }
             okDisabled={isSubmitting || !isValidated || isTesting || !isValid}
@@ -428,27 +433,29 @@ const DownloadClientModal = ({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="username">
-                  <FormattedMessage
-                    id="common.username"
-                    defaultMessage="Username"
-                  />
-                  <span className="text-error ml-2">*</span>
-                </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    id="username"
-                    name="username"
-                    type="text"
-                    className="input input-primary input-sm rounded-md w-full"
-                    autoComplete="off"
-                    data-1pignore="true"
-                    data-lpignore="true"
-                    data-bwignore="true"
-                  />
+              {values.client !== 'deluge' && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="username">
+                    <FormattedMessage
+                      id="common.username"
+                      defaultMessage="Username"
+                    />
+                    <span className="text-error ml-2">*</span>
+                  </label>
+                  <div className="sm:col-span-2">
+                    <Field
+                      id="username"
+                      name="username"
+                      type="text"
+                      className="input input-primary input-sm rounded-md w-full"
+                      autoComplete="off"
+                      data-1pignore="true"
+                      data-lpignore="true"
+                      data-bwignore="true"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="password">
                   <FormattedMessage

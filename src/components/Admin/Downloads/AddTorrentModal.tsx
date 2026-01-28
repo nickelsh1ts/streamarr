@@ -270,36 +270,56 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                 </div>
               </div>
             </div>
-            <div className="gap-2 flex flex-col">
-              <div className="form-control">
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium leading-6 text-left"
-                >
-                  <span className="label-text">
-                    <FormattedMessage
-                      id="downloads.category"
-                      defaultMessage="Category"
+            {(() => {
+              const client = clients.find((c) => c.id === selectedClient);
+              const supportsCategory =
+                client?.client === 'qbittorrent' || client?.client === 'deluge';
+
+              if (!supportsCategory) return null;
+
+              return (
+                <div className="gap-2 flex flex-col">
+                  <div className="form-control">
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-medium leading-6 text-left"
+                    >
+                      <span className="label-text">
+                        <FormattedMessage
+                          id={
+                            client?.client === 'deluge'
+                              ? 'downloads.label'
+                              : 'downloads.category'
+                          }
+                          defaultMessage={
+                            client?.client === 'deluge' ? 'Label' : 'Category'
+                          }
+                        />
+                      </span>
+                      <span className="text-neutral ml-2">
+                        (
+                        <FormattedMessage
+                          id="common.optional"
+                          defaultMessage="optional"
+                        />
+                        )
+                      </span>
+                    </label>
+                    <input
+                      id="category"
+                      type="text"
+                      className="input input-sm input-primary"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder={intl.formatMessage({
+                        id: 'downloads.labelPlaceholder',
+                        defaultMessage: 'e.g., movies, tv-shows',
+                      })}
                     />
-                  </span>
-                  <span className="text-neutral ml-2">
-                    (
-                    <FormattedMessage
-                      id="common.optional"
-                      defaultMessage="optional"
-                    />
-                    )
-                  </span>
-                </label>
-                <input
-                  id="category"
-                  type="text"
-                  className="input input-sm input-primary"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-              </div>
-            </div>
+                  </div>
+                </div>
+              );
+            })()}
           </>
         )}
       </form>

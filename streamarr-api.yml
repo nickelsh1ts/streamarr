@@ -766,7 +766,8 @@ components:
           example: 'My qBittorrent'
         priority:
           type: number
-          description: Queue position in qBittorrent (-1 if queuing disabled)
+          description: Queue position/priority number. All clients show queue position. -1 if qBittorrent queueing is disabled.
+          nullable: true
           example: 5
     TorrentStats:
       type: object
@@ -822,7 +823,7 @@ components:
         clientId:
           type: number
           example: 0
-          description: Download client ID (qBittorrent only)
+          description: Download client ID (qBittorrent for categories, Deluge for labels, Transmission not supported)
         action:
           $ref: '#/components/schemas/CategoryAction'
         categoryName:
@@ -4248,6 +4249,7 @@ paths:
               - addedDate
               - speed
               - priority
+              - client
             default: addedDate
           description: Sort field
         - in: query
@@ -4417,8 +4419,12 @@ paths:
                         example: 1
   /downloads/category:
     post:
-      summary: Manage qBittorrent categories
-      description: Create, edit, or delete qBittorrent categories (qBittorrent only).
+      summary: Manage categories/labels
+      description: |
+        Create, edit, or delete categories (qBittorrent) or labels (Deluge).
+        - **qBittorrent**: Supports create/edit/delete categories with save paths
+        - **Deluge**: Supports create/delete labels (no edit support, no save paths)
+        - **Transmission**: Not supported
       tags:
         - downloads
       requestBody:
@@ -4441,7 +4447,9 @@ paths:
   /downloads/{hash}/files:
     get:
       summary: Get torrent file list
-      description: Retrieves the list of files within a specific torrent
+      description: |
+        Retrieves the list of files within a specific torrent.
+        Supported by all clients: qBittorrent, Deluge, and Transmission.
       tags:
         - downloads
       parameters:
@@ -4472,7 +4480,11 @@ paths:
   /downloads/{hash}:
     patch:
       summary: Update torrent metadata
-      description: Updates torrent category and/or save path
+      description: |
+        Update torrent category/label and/or save path.
+        - **qBittorrent**: Full support for categories and location changes
+        - **Deluge**: Supports labels and location changes via move_completed options
+        - **Transmission**: Supports labels and location moves via moveTorrent
       tags:
         - downloads
       parameters:
@@ -4513,7 +4525,11 @@ paths:
   /downloads/{hash}/files/priority:
     post:
       summary: Set file priority
-      description: Sets the priority for specific files within a torrent
+      description: |
+        Set priority for specific files within a torrent.
+        - **qBittorrent**: 0=skip, 1=normal, 6=high, 7=maximal
+        - **Deluge**: 0=skip, 1=low, 2=normal, 5=high (updates full priority array)
+        - **Transmission**: Mapped to priority-low/normal/high arrays
       tags:
         - downloads
       parameters:
@@ -4544,8 +4560,12 @@ paths:
                   description: Array of file indices to update
                 priority:
                   type: integer
-                  description: Priority level (0=skip, 1=normal, 6=high, 7=maximum)
-                  enum: [0, 1, 6, 7]
+                  description: |
+                    Priority level (client-specific):
+                    - qBittorrent: 0=skip, 1=normal, 6=high, 7=maximum
+                    - Deluge: 0=skip, 1=low, 2=normal, 5=high
+                    - Transmission: 0=skip, 1=low, 2=normal, 6=high
+                  enum: [0, 1, 2, 5, 6, 7]
       responses:
         '200':
           description: 'File priority updated successfully'

@@ -134,7 +134,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
 
     // Filter by clientId if specified
     let filteredTorrents = allTorrents;
-    if (clientId) {
+    if (clientId !== undefined) {
       const clientIdNum = parseInt(clientId as string, 10);
       filteredTorrents = filteredTorrents.filter(
         (t) => t.clientId === clientIdNum
@@ -195,6 +195,12 @@ downloadsRoutes.get('/', async (req, res, next) => {
               ? Infinity
               : b.priority;
           comparison = aPriority - bPriority;
+          break;
+        case 'client':
+          // Sort by client name, then by client type
+          comparison =
+            a.clientName.localeCompare(b.clientName) ||
+            a.clientType.localeCompare(b.clientType);
           break;
         case 'addedDate':
         default:

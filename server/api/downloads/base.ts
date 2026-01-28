@@ -29,6 +29,40 @@ interface QBittorrentRawTorrent {
   upspeed?: number;
   size?: number;
   seen_complete?: number; // Unix timestamp
+  last_activity?: number; // Unix timestamp of last activity
+  tracker_msg?: string; // Tracker message (can contain error info)
+  [key: string]: unknown;
+}
+
+// Deluge raw torrent response fields
+interface DelugeRawTorrent {
+  state: string; // 'Downloading', 'Seeding', 'Paused', 'Checking', 'Queued', 'Error', 'Moving'
+  label: string;
+  queue: number; // 0-indexed queue position
+  upload_payload_rate: number;
+  download_payload_rate: number;
+  progress: number; // 0-100
+  eta: number;
+  ratio: number;
+  total_size: number;
+  save_path: string;
+  [key: string]: unknown;
+}
+
+// Transmission raw torrent response fields
+interface TransmissionRawTorrent {
+  status: number; // 0=stopped, 1=check-wait, 2=checking, 3=download-wait, 4=downloading, 5=seed-wait, 6=seeding
+  queuePosition: number;
+  error: number;
+  errorString: string;
+  labels: string[];
+  percentDone: number;
+  eta: number;
+  uploadRatio: number;
+  rateUpload: number;
+  rateDownload: number;
+  totalSize: number;
+  downloadDir: string;
   [key: string]: unknown;
 }
 
@@ -64,7 +98,6 @@ async function getClient(
       const { Deluge } = await import('@ctrl/deluge');
       client = new Deluge({
         baseUrl,
-        username: settings.username,
         password: settings.password,
       });
       break;
@@ -150,6 +183,28 @@ export async function fetchClientData(
       }
     }
 
+    // For Deluge, enrich error torrents with message field
+    if (settings.client === 'deluge' && data.torrents) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const delugeClient = client as any;
+      for (const torrent of data.torrents) {
+        if (torrent.raw?.state === 'Error') {
+          try {
+            const statusData = await delugeClient.request(
+              'core.get_torrent_status',
+              [torrent.id, ['message']]
+            );
+            const message = statusData?._data?.result?.message;
+            if (message) {
+              torrent.raw.message = message;
+            }
+          } catch {
+            // Silently fail - will fall back to generic error message
+          }
+        }
+      }
+    }
+
     return { ...data, queueingEnabled };
   } catch (e) {
     logger.warn(`Failed to fetch data from ${settings.name}`, {
@@ -166,10 +221,12 @@ export async function fetchClientData(
  */
 function mapTorrentState(
   state: NormalizedTorrent['state'],
-  rawState?: string
+  clientType: 'qbittorrent' | 'deluge' | 'transmission',
+  rawData: QBittorrentRawTorrent | DelugeRawTorrent | TransmissionRawTorrent
 ): NormalizedDownloadItem['status'] {
-  // For qBittorrent, use the raw state for better accuracy
-  if (rawState) {
+  // qBittorrent: Use raw state string for better accuracy
+  if (clientType === 'qbittorrent') {
+    const rawState = (rawData as QBittorrentRawTorrent).state;
     const qbtStateMap: Record<string, NormalizedDownloadItem['status']> = {
       // Downloading states
       downloading: 'downloading',
@@ -198,7 +255,49 @@ function mapTorrentState(
     if (mapped) return mapped;
   }
 
-  // Fallback to normalized state mapping
+  // Deluge: Use string state (matches @ctrl/shared-torrent TorrentState enum)
+  if (clientType === 'deluge') {
+    const delugeState = (rawData as DelugeRawTorrent).state.toLowerCase();
+    const delugeStateMap: Record<string, NormalizedDownloadItem['status']> = {
+      downloading: 'downloading',
+      seeding: 'seeding',
+      paused: 'paused',
+      checking: 'checking',
+      queued: 'queued',
+      error: 'error',
+      moving: 'moving',
+      allocating: 'downloading',
+    };
+    const mapped = delugeStateMap[delugeState];
+    if (mapped) return mapped;
+  }
+
+  // Transmission: Use numeric status code
+  if (clientType === 'transmission') {
+    const transmissionData = rawData as TransmissionRawTorrent;
+    const status = transmissionData.status;
+
+    // Check for errors first - if error field is non-zero, it's an error
+    // Error codes: 0=no error, 1=tracker warning, 2=tracker error, 3=local error
+    if (transmissionData.error && transmissionData.error > 0) {
+      return 'error';
+    }
+
+    // Status codes: 0=stopped, 1=check-wait, 2=checking, 3=download-wait, 4=downloading, 5=seed-wait, 6=seeding
+    const statusMap: Record<number, NormalizedDownloadItem['status']> = {
+      0: 'paused',
+      1: 'queued',
+      2: 'checking',
+      3: 'queued',
+      4: 'downloading',
+      5: 'queued',
+      6: 'seeding',
+    };
+    const mapped = statusMap[status];
+    if (mapped) return mapped;
+  }
+
+  // Fallback to normalized state mapping from @ctrl/shared-torrent
   const stateMap: Record<string, NormalizedDownloadItem['status']> = {
     downloading: 'downloading',
     seeding: 'seeding',
@@ -219,28 +318,29 @@ export function normalizeTorrent(
   clientSettings: DownloadClientSettings,
   queueingEnabled?: boolean
 ): NormalizedDownloadItem {
-  // Extract raw qBittorrent state for accurate status mapping
-  const rawQbtState =
-    clientSettings.client === 'qbittorrent' &&
-    torrent.raw &&
-    typeof torrent.raw === 'object' &&
-    'state' in torrent.raw
-      ? (torrent.raw as { state: string }).state
-      : undefined;
+  // Extract raw data based on client type for proper type casting
+  let rawData:
+    | QBittorrentRawTorrent
+    | DelugeRawTorrent
+    | TransmissionRawTorrent;
 
-  const status = mapTorrentState(torrent.state, rawQbtState);
+  if (clientSettings.client === 'qbittorrent') {
+    rawData = (torrent.raw || {}) as QBittorrentRawTorrent;
+  } else if (clientSettings.client === 'deluge') {
+    rawData = (torrent.raw || {}) as DelugeRawTorrent;
+  } else {
+    rawData = (torrent.raw || {}) as TransmissionRawTorrent;
+  }
+
+  const status = mapTorrentState(torrent.state, clientSettings.client, rawData);
 
   // Calculate ETA, handling seeding time for qBittorrent
   let etaValue = torrent.eta;
   let lastSeenCompleteValue: string | undefined = undefined;
 
   // Capture last seen complete for qBittorrent (all statuses)
-  if (
-    clientSettings.client === 'qbittorrent' &&
-    torrent.raw &&
-    typeof torrent.raw === 'object'
-  ) {
-    const raw = torrent.raw as QBittorrentRawTorrent;
+  if (clientSettings.client === 'qbittorrent') {
+    const raw = rawData as QBittorrentRawTorrent;
     if (raw.seen_complete && raw.seen_complete > 0) {
       lastSeenCompleteValue = new Date(raw.seen_complete * 1000).toISOString();
     }
@@ -249,11 +349,9 @@ export function normalizeTorrent(
   // For qBittorrent seeding torrents, calculate ETA based on share limits
   if (
     clientSettings.client === 'qbittorrent' &&
-    torrent.raw &&
-    typeof torrent.raw === 'object' &&
     (status === 'seeding' || status === 'completed')
   ) {
-    const raw = torrent.raw as QBittorrentRawTorrent;
+    const raw = rawData as QBittorrentRawTorrent;
 
     // Check time-based seeding limit
     if (raw.seeding_time_limit && raw.seeding_time_limit > 0) {
@@ -279,6 +377,36 @@ export function normalizeTorrent(
     // Use raw ETA if it's not the magic "infinity" number (8640000 = 100 days)
     else if (raw.eta && raw.eta !== 8640000 && raw.eta > 0) {
       etaValue = raw.eta;
+    }
+  }
+
+  // Extract priority/queue position based on client
+  let priorityValue: number | undefined = undefined;
+  let errorMessage: string | undefined = undefined;
+
+  if (clientSettings.client === 'qbittorrent') {
+    const raw = rawData as QBittorrentRawTorrent;
+    priorityValue = raw.priority;
+    if (queueingEnabled === false) {
+      priorityValue = -1;
+    }
+    if (status === 'error') {
+      errorMessage = (raw.tracker_msg as string) || `State: ${raw.state}`;
+    }
+  } else if (clientSettings.client === 'deluge') {
+    priorityValue = torrent.queuePosition;
+    const raw = rawData as DelugeRawTorrent;
+    if (status === 'error') {
+      errorMessage =
+        (raw.message as string) ||
+        (raw.tracker_status as string) ||
+        `State: ${raw.state}`;
+    }
+  } else if (clientSettings.client === 'transmission') {
+    priorityValue = torrent.queuePosition;
+    const raw = rawData as TransmissionRawTorrent;
+    if (raw.error > 0 && raw.errorString) {
+      errorMessage = raw.errorString;
     }
   }
 
@@ -309,15 +437,8 @@ export function normalizeTorrent(
     peers: torrent.connectedPeers || 0,
     totalSeeds: torrent.totalSeeds,
     totalPeers: torrent.totalPeers,
-    priority:
-      torrent.raw &&
-      typeof torrent.raw === 'object' &&
-      'priority' in torrent.raw
-        ? // If queueing is explicitly disabled for qBittorrent, override to -1
-          clientSettings.client === 'qbittorrent' && queueingEnabled === false
-          ? -1
-          : (torrent.raw as { priority: number }).priority
-        : undefined,
+    priority: priorityValue,
+    errorMessage: errorMessage,
   };
 }
 
@@ -355,56 +476,82 @@ export async function performTorrentAction(
         await client.removeTorrent(hash, deleteFiles);
         break;
       case 'forceRecheck':
-        // Not all clients support this via normalized API
+        // All three clients support force recheck
         if (settings.client === 'qbittorrent') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await (client as any).recheckTorrent(hash);
+        } else if (settings.client === 'deluge') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (client as any).verifyTorrent(hash);
         } else if (settings.client === 'transmission') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await (client as any).verifyTorrent(hash);
-        } else if (settings.client === 'deluge') {
-          logger.warn('Force recheck not supported for Deluge', {
-            label: 'Downloads API',
-          });
-          return false;
         }
         break;
       case 'queueUp':
       case 'queueDown':
       case 'topPriority':
       case 'bottomPriority':
-        if (settings.client === 'qbittorrent') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const qbtClient = client as any;
+        // All three clients support queue management
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const anyClient = client as any;
 
-          try {
+        try {
+          if (settings.client === 'qbittorrent') {
             switch (action) {
               case 'queueUp':
-                await qbtClient.queueUp(hash);
+                await anyClient.queueUp(hash);
                 break;
               case 'queueDown':
-                await qbtClient.queueDown(hash);
+                await anyClient.queueDown(hash);
                 break;
               case 'topPriority':
-                await qbtClient.topPriority(hash);
+                await anyClient.topPriority(hash);
                 break;
               case 'bottomPriority':
-                await qbtClient.bottomPriority(hash);
+                await anyClient.bottomPriority(hash);
                 break;
             }
-          } catch (e) {
-            const errorMsg = e.message;
-            // 409 Conflict means torrent is already at desired position or ATM is enabled
-            if (!errorMsg.includes('409')) {
-              throw e;
+          } else if (settings.client === 'deluge') {
+            // Deluge uses different method names
+            switch (action) {
+              case 'queueUp':
+                await anyClient.queueUp(hash);
+                break;
+              case 'queueDown':
+                await anyClient.queueDown(hash);
+                break;
+              case 'topPriority':
+                await anyClient.queueTop(hash);
+                break;
+              case 'bottomPriority':
+                await anyClient.queueBottom(hash);
+                break;
+            }
+          } else if (settings.client === 'transmission') {
+            switch (action) {
+              case 'queueUp':
+                await anyClient.queueUp(hash);
+                break;
+              case 'queueDown':
+                await anyClient.queueDown(hash);
+                break;
+              case 'topPriority':
+                await anyClient.queueTop(hash);
+                break;
+              case 'bottomPriority':
+                await anyClient.queueBottom(hash);
+                break;
             }
           }
-        } else {
-          logger.warn('Queue management only supported for qBittorrent', {
-            label: 'Downloads API',
-            clientType: settings.client,
-          });
-          return false;
+        } catch (e) {
+          const errorMsg = e.message;
+          // 409 Conflict for qBittorrent means torrent is already at desired position or ATM is enabled
+          if (settings.client === 'qbittorrent' && errorMsg.includes('409')) {
+            // Silently ignore 409 conflicts for qBittorrent
+            break;
+          }
+          throw e;
         }
         break;
       default:
@@ -483,45 +630,60 @@ export async function addTorrent(
 }
 
 /**
- * Manage categories (qBittorrent only for now)
+ * Manage categories/labels (qBittorrent categories, Deluge/Transmission labels)
  */
 export async function manageCategory(
   settings: DownloadClientSettings,
   options: CategoryManagementRequest
 ): Promise<boolean> {
   try {
-    if (settings.client !== 'qbittorrent') {
-      logger.warn('Category management only supported for qBittorrent', {
+    const client = await getClient(settings);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyClient = client as any;
+
+    if (settings.client === 'qbittorrent') {
+      // qBittorrent uses categories with save paths
+      switch (options.action) {
+        case 'create':
+          await anyClient.createCategory(options.category, options.savePath);
+          break;
+        case 'edit':
+          await anyClient.editCategory(options.category, options.savePath);
+          break;
+        case 'delete':
+          await anyClient.removeCategory([options.category]);
+          break;
+        default:
+          return false;
+      }
+    } else if (settings.client === 'deluge') {
+      // Deluge uses labels (no save path support, no edit support)
+      switch (options.action) {
+        case 'create':
+          await anyClient.addLabel(options.category);
+          break;
+        case 'edit':
+          logger.warn('Deluge does not support editing labels', {
+            label: 'Downloads API',
+          });
+          return false;
+        case 'delete':
+          await anyClient.removeLabel(options.category);
+          break;
+        default:
+          return false;
+      }
+    } else if (settings.client === 'transmission') {
+      // Transmission doesn't support categories/labels via API
+      logger.warn('Transmission does not support category/label management', {
         label: 'Downloads API',
       });
       return false;
     }
 
-    const client = (await getClient(settings)) as QBittorrent;
-
-    switch (options.action) {
-      case 'create':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client as any).createCategory(
-          options.category,
-          options.savePath
-        );
-        break;
-      case 'edit':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client as any).editCategory(options.category, options.savePath);
-        break;
-      case 'delete':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client as any).removeCategory([options.category]);
-        break;
-      default:
-        return false;
-    }
-
     return true;
   } catch (e) {
-    logger.error(`Failed to ${options.action} category`, {
+    logger.error(`Failed to ${options.action} category/label`, {
       label: 'Downloads API',
       client: settings.name,
       error: e.message,
@@ -538,21 +700,103 @@ export async function getTorrentFiles(
   hash: string
 ): Promise<TorrentFile[]> {
   try {
-    if (settings.client !== 'qbittorrent') {
-      logger.warn('File listing only supported for qBittorrent', {
-        label: 'Downloads API',
+    const client = await getClient(settings);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyClient = client as any;
+
+    if (settings.client === 'qbittorrent') {
+      const files = await anyClient.torrentFiles(hash);
+      // Map and add index
+      return files.map((file: TorrentFile, index: number) => ({
+        ...file,
+        index,
+      }));
+    } else if (settings.client === 'deluge') {
+      // Deluge returns Record<string, TorrentContentFile>
+      const filesResponse = await anyClient.getTorrentFiles(hash);
+      const filesData = filesResponse.result?.contents || {};
+
+      // Convert Record to array and add index with proper typing
+      // Deluge priorities from API: 0=skip, 1=low, 2-4=normal, 5-7=high/highest
+      // Normalize to UI values: 0=skip, 1=low, 2=normal, 5=high
+      return Object.entries(filesData).map(([path, fileData], index) => {
+        const file = fileData as {
+          size?: number;
+          progress?: number;
+          priority?: number;
+        };
+        // Normalize Deluge priority to UI values
+        let priority = file.priority ?? 2;
+        if (priority === 0) {
+          priority = 0; // Skip
+        } else if (priority === 1) {
+          priority = 1; // Low
+        } else if (priority >= 2 && priority <= 4) {
+          priority = 2; // Normal
+        } else if (priority >= 5) {
+          priority = 5; // High
+        }
+        return {
+          name: path,
+          size: file.size || 0,
+          // Deluge progress is already 0-1 (not 0-100 like torrent progress)
+          progress: file.progress || 0,
+          priority: priority,
+          is_seed: false, // Not provided by Deluge
+          piece_range: [0, 0] as [number, number],
+          availability: 1, // Not provided by Deluge
+          index,
+        };
       });
-      return [];
+    } else if (settings.client === 'transmission') {
+      // Transmission requires fetching torrent with files and fileStats fields
+      // Use listTorrents instead of getTorrent because getTorrent doesn't accept additionalFields
+      const torrentData = await anyClient.listTorrents(
+        [hash],
+        ['files', 'fileStats']
+      );
+      const torrent = torrentData.arguments?.torrents?.[0];
+
+      if (!torrent || !torrent.files || !torrent.fileStats) {
+        return [];
+      }
+
+      // Combine files and fileStats arrays
+      // Transmission priorities: -1=low, 0=normal, 1=high, wanted=true/false for skip
+      // Map to UI values: 0=skip, 1=low, 2=normal, 6=high
+      return torrent.files.map(
+        (file: { name: string; length: number }, index: number) => {
+          const stats = torrent.fileStats[index] || {
+            bytesCompleted: 0,
+            priority: 0,
+            wanted: true,
+          };
+          // Map Transmission priority to UI values
+          let normalizedPriority = 2; // Default to normal
+          if (!stats.wanted) {
+            normalizedPriority = 0; // Don't download (unwanted)
+          } else if (stats.priority === -1) {
+            normalizedPriority = 1; // Low
+          } else if (stats.priority === 0) {
+            normalizedPriority = 2; // Normal
+          } else if (stats.priority === 1) {
+            normalizedPriority = 6; // High
+          }
+          return {
+            name: file.name,
+            size: file.length,
+            progress: file.length > 0 ? stats.bytesCompleted / file.length : 0,
+            priority: normalizedPriority,
+            is_seed: false, // Not provided by Transmission
+            piece_range: [0, 0] as [number, number],
+            availability: 1, // Not provided by Transmission
+            index,
+          };
+        }
+      );
     }
 
-    const client = (await getClient(settings)) as QBittorrent;
-    const files = await client.torrentFiles(hash);
-
-    // Map and add index
-    return files.map((file, index) => ({
-      ...file,
-      index,
-    }));
+    return [];
   } catch (e) {
     logger.error('Failed to get torrent files', {
       label: 'Downloads API',
@@ -564,59 +808,92 @@ export async function getTorrentFiles(
 }
 
 /**
- * Update torrent metadata (category, save path)
+ * Update torrent metadata (category/label, save path)
  */
 export async function updateTorrentMetadata(
   settings: DownloadClientSettings,
   options: UpdateTorrentRequest
 ): Promise<boolean> {
   try {
-    if (settings.client !== 'qbittorrent') {
-      logger.warn('Torrent metadata update only supported for qBittorrent', {
-        label: 'Downloads API',
-      });
-      return false;
-    }
+    const client = await getClient(settings);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyClient = client as any;
 
-    const client = (await getClient(settings)) as QBittorrent;
-
-    if (options.category !== undefined) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client as any).setTorrentCategory(
-          [options.hash],
-          options.category
-        );
-      } catch (error: unknown) {
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        // 409 Conflict means category doesn't exist - try to create it
-        if (errorMsg.includes('409')) {
-          logger.info('Category does not exist, creating it', {
-            label: 'Downloads API',
-            client: settings.name,
-            category: options.category,
-          });
-          // Create the category with default save path
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (client as any).createCategory(options.category, '');
-          // Retry setting the category
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (client as any).setTorrentCategory(
-            [options.hash],
-            options.category
-          );
-        } else {
-          throw error;
+    if (settings.client === 'qbittorrent') {
+      // qBittorrent supports both category and save path changes
+      if (options.category !== undefined) {
+        try {
+          await anyClient.setTorrentCategory([options.hash], options.category);
+        } catch (error: unknown) {
+          const errorMsg =
+            error instanceof Error ? error.message : String(error);
+          // 409 Conflict means category doesn't exist - try to create it
+          if (errorMsg.includes('409')) {
+            logger.info('Category does not exist, creating it', {
+              label: 'Downloads API',
+              client: settings.name,
+              category: options.category,
+            });
+            // Create the category with default save path
+            await anyClient.createCategory(options.category, '');
+            // Retry setting the category
+            await anyClient.setTorrentCategory(
+              [options.hash],
+              options.category
+            );
+          } else {
+            throw error;
+          }
         }
       }
-    }
 
-    if (options.savePath !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (client as any).setTorrentLocation(
-        [options.hash],
-        options.savePath
-      );
+      if (options.savePath !== undefined) {
+        await anyClient.setTorrentLocation([options.hash], options.savePath);
+      }
+    } else if (settings.client === 'deluge') {
+      // Deluge supports labels and move location via setTorrentOptions
+      if (options.category !== undefined) {
+        try {
+          await anyClient.setTorrentLabel(options.hash, options.category);
+        } catch (error: unknown) {
+          const errorMsg =
+            error instanceof Error ? error.message : String(error);
+          // If label doesn't exist, create it and retry
+          if (errorMsg.includes('not exist') || errorMsg.includes('invalid')) {
+            logger.info('Label does not exist, creating it', {
+              label: 'Downloads API',
+              client: settings.name,
+              category: options.category,
+            });
+            await anyClient.addLabel(options.category);
+            await anyClient.setTorrentLabel(options.hash, options.category);
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      if (options.savePath !== undefined) {
+        // Deluge uses core.move_storage RPC method to immediately move torrent data
+        await anyClient.request('core.move_storage', [
+          [options.hash],
+          options.savePath,
+        ]);
+      }
+    } else if (settings.client === 'transmission') {
+      // Transmission supports labels and move location
+      if (options.category !== undefined) {
+        // Transmission uses labels array in setTorrent
+        await anyClient.setTorrent([options.hash], {
+          labels: [options.category],
+        });
+      }
+
+      if (options.savePath !== undefined) {
+        // Transmission uses moveTorrent with move=true to physically move the data
+        // The moveTorrent method calls torrent-set-location RPC
+        await anyClient.moveTorrent(options.hash, options.savePath, true);
+      }
     }
 
     return true;
@@ -638,22 +915,125 @@ export async function setTorrentFilePriority(
   options: SetFilePriorityRequest
 ): Promise<boolean> {
   try {
-    if (settings.client !== 'qbittorrent') {
-      logger.warn('File priority setting only supported for qBittorrent', {
-        label: 'Downloads API',
-      });
-      return false;
-    }
-
-    const client = (await getClient(settings)) as QBittorrent;
-
-    // Pass fileIds as array - normalizeHashes will handle conversion
+    const client = await getClient(settings);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (client as any).setFilePriority(
-      options.hash,
-      options.fileIds.map(String),
-      options.priority
-    );
+    const anyClient = client as any;
+
+    if (settings.client === 'qbittorrent') {
+      // qBittorrent: priority 0=skip, 1=normal, 6=high, 7=maximal
+      // Pass fileIds as array - normalizeHashes will handle conversion
+      await anyClient.setFilePriority(
+        options.hash,
+        options.fileIds.map(String),
+        options.priority
+      );
+    } else if (settings.client === 'deluge') {
+      // Deluge: Get current file priorities, update specific indexes, set all
+      // Deluge priorities when setting: 0=skip, 1=low, 4=normal (middle of 2-4 range), 7=high
+      // UI sends: 0, 1, 2, 5 which we need to map to actual Deluge values
+      const filesResponse = await anyClient.getTorrentFiles(options.hash);
+      const filesData = filesResponse.result?.contents || {};
+      const fileCount = Object.keys(filesData).length;
+
+      // Build array of priorities (initialize with current or default to 4=normal)
+      const filePriorities = new Array(fileCount).fill(4);
+      Object.values(filesData).forEach((file, index) => {
+        filePriorities[index] = (file as { priority?: number }).priority || 4;
+      });
+
+      // Map UI priority values to actual Deluge API values
+      // Deluge API accepts: 0=skip, 1=low, 2-4=normal, 5=high, 7=highest
+      const mapUiToDelugePriority = (uiPriority: number): number => {
+        switch (uiPriority) {
+          case 0:
+            return 0; // Skip
+          case 1:
+            return 1; // Low
+          case 2:
+            return 4; // Normal (use 4, higher end of normal range for better consistency)
+          case 5:
+            return 5; // High
+          default:
+            return 4; // Default to normal
+        }
+      };
+
+      logger.debug('Setting Deluge file priorities', {
+        label: 'Downloads API',
+        hash: options.hash,
+        fileIds: options.fileIds,
+        uiPriority: options.priority,
+        delugePriority: mapUiToDelugePriority(options.priority),
+      });
+
+      // Update priorities for specified files
+      options.fileIds.forEach((fileId) => {
+        if (fileId < fileCount) {
+          filePriorities[fileId] = mapUiToDelugePriority(options.priority);
+        }
+      });
+
+      // Set all file priorities at once
+      await anyClient.setTorrentOptions(options.hash, {
+        file_priorities: filePriorities,
+      });
+
+      logger.info('Successfully set Deluge file priorities', {
+        label: 'Downloads API',
+        hash: options.hash,
+        fileCount,
+      });
+    } else if (settings.client === 'transmission') {
+      // Transmission: Uses separate arrays for each priority level
+      // Transmission API: -1=low, 0=normal, 1=high, plus wanted/unwanted for skip
+      // UI values: 0=skip, 1=low, 2=normal, 6=high
+      const priorityMap: Record<string, number[]> = {
+        'priority-high': [],
+        'priority-normal': [],
+        'priority-low': [],
+      };
+      const filesWanted: number[] = [];
+      const filesUnwanted: number[] = [];
+
+      // Map UI priority to Transmission priority levels
+      options.fileIds.forEach((fileId) => {
+        if (options.priority === 0) {
+          // Skip - set as unwanted
+          filesUnwanted.push(fileId);
+        } else {
+          // All other priorities are wanted
+          filesWanted.push(fileId);
+          if (options.priority === 1) {
+            // Low
+            priorityMap['priority-low'].push(fileId);
+          } else if (options.priority === 2) {
+            // Normal
+            priorityMap['priority-normal'].push(fileId);
+          } else if (options.priority === 6) {
+            // High
+            priorityMap['priority-high'].push(fileId);
+          }
+        }
+      });
+
+      // Build options object with non-empty arrays
+      const transmissionOptions: Record<string, number[]> = {};
+      if (filesWanted.length > 0) {
+        transmissionOptions['files-wanted'] = filesWanted;
+      }
+      if (filesUnwanted.length > 0) {
+        transmissionOptions['files-unwanted'] = filesUnwanted;
+      }
+      Object.entries(priorityMap).forEach(([key, ids]) => {
+        if (ids.length > 0) {
+          transmissionOptions[key] = ids;
+        }
+      });
+
+      if (Object.keys(transmissionOptions).length > 0) {
+        await anyClient.setTorrent([options.hash], transmissionOptions);
+      }
+    }
 
     return true;
   } catch (e) {

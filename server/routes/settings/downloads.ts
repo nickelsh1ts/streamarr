@@ -157,11 +157,13 @@ downloadsRoutes.post('/test', async (req, res, next) => {
       return next({ status: 400, message: 'Port is required' });
     }
 
-    if (!testSettings.username || !testSettings.password) {
-      return next({
-        status: 400,
-        message: 'Username and password are required',
-      });
+    // Username is not required for Deluge (Web UI uses password only)
+    if (testSettings.client !== 'deluge' && !testSettings.username) {
+      return next({ status: 400, message: 'Username is required' });
+    }
+
+    if (!testSettings.password) {
+      return next({ status: 400, message: 'Password is required' });
     }
 
     // Create temporary client settings for testing

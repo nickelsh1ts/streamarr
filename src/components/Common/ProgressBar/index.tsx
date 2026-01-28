@@ -4,7 +4,7 @@ interface ProgressBarProps {
   progress: number; // 0-100
   label?: string;
   size?: 'sm' | 'md' | 'lg';
-  color?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
+  color?: 'primary' | 'success' | 'warning' | 'error' | 'info';
   showPercentage?: boolean;
   animated?: boolean;
   className?: string;
@@ -32,16 +32,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     primary: 'bg-primary',
     success: 'bg-success',
     warning: 'bg-warning',
-    danger: 'bg-danger',
+    error: 'bg-error',
     info: 'bg-info',
   };
 
   const bgClasses = {
-    primary: 'bg-primary/20 dark:bg-primary/40',
-    success: 'bg-success/20 dark:bg-success/40',
-    warning: 'bg-warning/20 dark:bg-warning/40',
-    danger: 'bg-danger/20 dark:bg-danger/40',
-    info: 'bg-info/20 dark:bg-info/40',
+    primary: 'bg-primary/20',
+    success: 'bg-success/20',
+    warning: 'bg-warning/20',
+    error: 'bg-error/20',
+    info: 'bg-info/20',
   };
 
   return (

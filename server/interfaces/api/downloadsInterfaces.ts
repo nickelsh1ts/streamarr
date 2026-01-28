@@ -36,6 +36,7 @@ export interface NormalizedDownloadItem {
   totalSeeds: number;
   totalPeers: number;
   priority?: number; // Queue position (-1 if queuing disabled)
+  errorMessage?: string; // Error message if status is 'error'
 }
 
 export interface DownloadClientStats {

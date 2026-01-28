@@ -5,12 +5,14 @@ import { FormattedMessage } from 'react-intl';
 
 interface TorrentFileListProps {
   files: TorrentFile[];
+  clientType: 'qbittorrent' | 'deluge' | 'transmission';
   onSetPriority: (fileIds: number[], priority: number) => Promise<void>;
   isUpdating?: boolean;
 }
 
 const TorrentFileList: React.FC<TorrentFileListProps> = ({
   files,
+  clientType,
   onSetPriority,
   isUpdating = false,
 }) => {
@@ -28,17 +30,48 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
   };
 
   const getPriorityLabel = (priority: number): string => {
-    switch (priority) {
-      case 0:
-        return 'Do not download';
-      case 1:
-        return 'Normal';
-      case 6:
-        return 'High';
-      case 7:
-        return 'Maximum';
-      default:
-        return 'Mixed';
+    if (clientType === 'deluge') {
+      // Deluge uses: 0=skip, 1=low, 2=normal, 5=high
+      switch (priority) {
+        case 0:
+          return 'Skip';
+        case 1:
+          return 'Low';
+        case 2:
+          return 'Normal';
+        case 5:
+          return 'High';
+        default:
+          return 'Mixed';
+      }
+    } else if (clientType === 'transmission') {
+      // Transmission uses: 0=skip, 1=normal, 6=high (we map -1 to 1 for low)
+      switch (priority) {
+        case 0:
+          return 'Skip';
+        case 1:
+          return 'Low';
+        case 2:
+          return 'Normal';
+        case 6:
+          return 'High';
+        default:
+          return 'Mixed';
+      }
+    } else {
+      // qBittorrent uses: 0=skip, 1=normal, 6=high, 7=maximum
+      switch (priority) {
+        case 0:
+          return 'Do not download';
+        case 1:
+          return 'Normal';
+        case 6:
+          return 'High';
+        case 7:
+          return 'Maximum';
+        default:
+          return 'Mixed';
+      }
     }
   };
 
@@ -118,14 +151,34 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
                     }
                     disabled={
                       isUpdating ||
-                      updatingFiles.has(file.index) ||
-                      file.is_seed
+                      updatingFiles.has(file.index)
                     }
                   >
-                    <option value={0}>{getPriorityLabel(0)}</option>
-                    <option value={1}>{getPriorityLabel(1)}</option>
-                    <option value={6}>{getPriorityLabel(6)}</option>
-                    <option value={7}>{getPriorityLabel(7)}</option>
+                    {clientType === 'deluge' ? (
+                      // Deluge: 0=skip, 1=low, 2=normal, 5=high
+                      <>
+                        <option value={0}>{getPriorityLabel(0)}</option>
+                        <option value={1}>{getPriorityLabel(1)}</option>
+                        <option value={2}>{getPriorityLabel(2)}</option>
+                        <option value={5}>{getPriorityLabel(5)}</option>
+                      </>
+                    ) : clientType === 'transmission' ? (
+                      // Transmission: 0=skip, 1=low, 2=normal, 6=high
+                      <>
+                        <option value={0}>{getPriorityLabel(0)}</option>
+                        <option value={1}>{getPriorityLabel(1)}</option>
+                        <option value={2}>{getPriorityLabel(2)}</option>
+                        <option value={6}>{getPriorityLabel(6)}</option>
+                      </>
+                    ) : (
+                      // qBittorrent: 0=skip, 1=normal, 6=high, 7=maximum
+                      <>
+                        <option value={0}>{getPriorityLabel(0)}</option>
+                        <option value={1}>{getPriorityLabel(1)}</option>
+                        <option value={6}>{getPriorityLabel(6)}</option>
+                        <option value={7}>{getPriorityLabel(7)}</option>
+                      </>
+                    )}
                   </select>
                   {updatingFiles.has(file.index) && (
                     <span className="loading loading-spinner loading-xs"></span>

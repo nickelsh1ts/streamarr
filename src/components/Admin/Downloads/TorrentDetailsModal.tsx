@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from '@app/components/Common/Modal';
+import Alert from '@app/components/Common/Alert';
 import type {
   NormalizedDownloadItem,
   TorrentFile,
@@ -169,6 +170,13 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
 
     try {
       await setFilePriority(torrent.hash, torrent.clientId, fileIds, priority);
+
+      // Deluge has a delay in updating file priorities, so wait before refreshing
+      if (torrent.clientType === 'deluge') {
+        // Wait 2 seconds for Deluge to update
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
       // Reload files to get updated priorities
       const fileList = await getTorrentFiles(torrent.hash, torrent.clientId);
       setFiles(fileList);
@@ -362,22 +370,33 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 </span>
                 <span className="font-medium capitalize">{torrent.status}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-neutral">
-                  <FormattedMessage
-                    id="downloads.category"
-                    defaultMessage="Category"
-                  />
-                  :
-                </span>
-                <div>
-                  <EditableField
-                    value={torrent.category || ''}
-                    onSave={handleSaveCategory}
-                    placeholder="None"
-                  />
+              {(torrent.clientType === 'qbittorrent' ||
+                torrent.clientType === 'deluge') && (
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral">
+                    <FormattedMessage
+                      id={
+                        torrent.clientType === 'deluge'
+                          ? 'downloads.label'
+                          : 'downloads.category'
+                      }
+                      defaultMessage={
+                        torrent.clientType === 'deluge' ? 'Label' : 'Category'
+                      }
+                    />
+                    :
+                  </span>
+                  <div>
+                    <EditableField
+                      value={torrent.category || ''}
+                      onSave={handleSaveCategory}
+                      placeholder={
+                        torrent.clientType === 'deluge' ? 'No label' : 'None'
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               {torrent.tags && torrent.tags.length > 0 && (
                 <div className="flex justify-between">
                   <span className="text-neutral">
@@ -417,7 +436,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   size="md"
                   color={
                     torrent.status === 'error'
-                      ? 'danger'
+                      ? 'error'
                       : torrent.status === 'completed' ||
                           torrent.status === 'seeding'
                         ? 'success'
@@ -426,6 +445,24 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   showPercentage={false}
                 />
               </div>
+              {torrent.status === 'error' && torrent.errorMessage && (
+                <div className="mb-3">
+                  <Alert
+                    title={
+                      <>
+                        <FormattedMessage
+                          id="downloads.error"
+                          defaultMessage="Error"
+                        />
+                        {':'}
+                      </>
+                    }
+                    type="error"
+                  >
+                    <div className="line-clamp-3">{torrent.errorMessage}</div>
+                  </Alert>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-neutral">
@@ -501,54 +538,53 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
               </div>
             </div>
           </div>
-          {torrent.clientType === 'qbittorrent' && (
-            <div>
-              <Accordion single>
-                {({ handleClick, openIndexes, AccordionContent }) => (
-                  <>
-                    <button
-                      onClick={() => {
-                        handleClick(0);
-                        if (!filesLoaded && !isLoadingFiles) {
-                          loadFiles();
-                        }
-                      }}
-                      className={`flex items-center justify-between w-full text-lg font-semibold mb-1 bg-base-200 hover:text-primary hover:bg-base-300 transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} py-1 px-2`}
-                    >
-                      <FormattedMessage
-                        id="downloads.content"
-                        defaultMessage="Content"
+          <div>
+            <Accordion single>
+              {({ handleClick, openIndexes, AccordionContent }) => (
+                <>
+                  <button
+                    onClick={() => {
+                      handleClick(0);
+                      if (!filesLoaded && !isLoadingFiles) {
+                        loadFiles();
+                      }
+                    }}
+                    className={`flex items-center justify-between w-full text-lg font-semibold mb-1 bg-base-200 hover:text-primary hover:bg-base-300 transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} py-1 px-2`}
+                  >
+                    <FormattedMessage
+                      id="downloads.content"
+                      defaultMessage="Content"
+                    />
+                    <span className="text-sm">
+                      <ChevronDownIcon
+                        className={`size-6 transition-transform ${openIndexes.includes(0) ? 'rotate-180' : ''}`}
                       />
-                      <span className="text-sm">
-                        <ChevronDownIcon
-                          className={`size-6 transition-transform ${openIndexes.includes(0) ? 'rotate-180' : ''}`}
+                    </span>
+                  </button>
+                  <AccordionContent isOpen={openIndexes.includes(0)}>
+                    {isLoadingFiles ? (
+                      <div className="flex justify-center py-4">
+                        <span className="loading loading-spinner loading-md"></span>
+                      </div>
+                    ) : files.length > 0 ? (
+                      <TorrentFileList
+                        files={files}
+                        clientType={torrent.clientType}
+                        onSetPriority={handleSetFilePriority}
+                      />
+                    ) : (
+                      <div className="text-center text-neutral py-4">
+                        <FormattedMessage
+                          id="downloads.noFilesAvailable"
+                          defaultMessage="No Files Available"
                         />
-                      </span>
-                    </button>
-                    <AccordionContent isOpen={openIndexes.includes(0)}>
-                      {isLoadingFiles ? (
-                        <div className="flex justify-center py-4">
-                          <span className="loading loading-spinner loading-md"></span>
-                        </div>
-                      ) : files.length > 0 ? (
-                        <TorrentFileList
-                          files={files}
-                          onSetPriority={handleSetFilePriority}
-                        />
-                      ) : (
-                        <div className="text-center text-neutral py-4">
-                          <FormattedMessage
-                            id="downloads.noFilesAvailable"
-                            defaultMessage="No Files Available"
-                          />
-                        </div>
-                      )}
-                    </AccordionContent>
-                  </>
-                )}
-              </Accordion>
-            </div>
-          )}
+                      </div>
+                    )}
+                  </AccordionContent>
+                </>
+              )}
+            </Accordion>
+          </div>
           <div>
             <h3 className="text-lg font-semibold mb-3">
               <FormattedMessage

@@ -30,6 +30,7 @@ import { useDownloads, useDownloadActions } from '@app/hooks/useDownloads';
 import DownloadRow from './DownloadRow';
 import StatsCard from './StatsCard';
 import AddTorrentModal from './AddTorrentModal';
+import RemoveTorrentModal from './RemoveTorrentModal';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
@@ -57,7 +58,8 @@ type Sort =
   | 'ratio'
   | 'addedDate'
   | 'speed'
-  | 'priority';
+  | 'priority'
+  | 'client';
 
 const AdminDownloads = () => {
   const intl = useIntl();
@@ -141,6 +143,7 @@ const AdminDownloads = () => {
   const [selectedHashes, setSelectedHashes] = useState<Set<string>>(new Set());
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
   const [isBulkActing, setIsBulkActing] = useState(false);
+  const [showBulkRemoveModal, setShowBulkRemoveModal] = useState(false);
 
   const { performBulkAction } = useDownloadActions();
 
@@ -261,6 +264,12 @@ const AdminDownloads = () => {
     ) => {
       if (selectedHashes.size === 0 || !data?.results) return;
 
+      // Show confirmation modal for remove action
+      if (action === 'remove') {
+        setShowBulkRemoveModal(true);
+        return;
+      }
+
       setIsBulkActing(true);
       try {
         const selectedTorrents = data.results
@@ -273,6 +282,44 @@ const AdminDownloads = () => {
         // Clear selection after action
         setSelectedHashes(new Set());
         setIsSelectAllChecked(false);
+
+        // Refresh data
+        refetch(false);
+      } catch (e) {
+        Toast({
+          type: 'error',
+          message:
+            e.response?.data?.message ||
+            intl.formatMessage({
+              id: 'downloads.actionError',
+              defaultMessage: 'An error occurred while performing the action.',
+            }),
+          icon: <XCircleIcon className="size-7" />,
+        });
+      } finally {
+        setIsBulkActing(false);
+      }
+    },
+    [selectedHashes, data, performBulkAction, refetch, intl]
+  );
+
+  const handleBulkRemoveConfirm = useCallback(
+    async (deleteFiles: boolean) => {
+      if (selectedHashes.size === 0 || !data?.results) return;
+
+      setIsBulkActing(true);
+      try {
+        const selectedTorrents = data.results
+          .filter((t) => selectedHashes.has(t.hash))
+          .map((t) => ({ hash: t.hash, clientId: t.clientId }));
+
+        // Use bulk action API with deleteFiles option
+        await performBulkAction(selectedTorrents, 'remove', deleteFiles);
+
+        // Clear selection after action
+        setSelectedHashes(new Set());
+        setIsSelectAllChecked(false);
+        setShowBulkRemoveModal(false);
 
         // Refresh data
         refetch(false);
@@ -353,7 +400,7 @@ const AdminDownloads = () => {
                   />
                 </option>
                 {clients?.map((client) => (
-                  <option key={client.client} value={client.client}>
+                  <option key={client.id} value={client.id}>
                     {client.name}
                   </option>
                 ))}
@@ -970,11 +1017,24 @@ const AdminDownloads = () => {
                           ))}
                       </div>
                     </th>
-                    <th>
-                      <FormattedMessage
-                        id="downloads.client"
-                        defaultMessage="Client"
-                      />
+                    <th
+                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      onClick={() => handleSort('client')}
+                    >
+                      <div className="flex items-center gap-1">
+                        <span>
+                          <FormattedMessage
+                            id="downloads.client"
+                            defaultMessage="Client"
+                          />
+                        </span>
+                        {currentSort === 'client' &&
+                          (sortDirection === 'asc' ? (
+                            <ChevronUpIcon className="w-4 h-4" />
+                          ) : (
+                            <ChevronDownIcon className="w-4 h-4" />
+                          ))}
+                      </div>
                     </th>
                     <th
                       className="cursor-pointer select-none hover:bg-base-300 transition-colors"
@@ -1061,6 +1121,19 @@ const AdminDownloads = () => {
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           clients={clients ?? []}
+        />
+        <RemoveTorrentModal
+          isOpen={showBulkRemoveModal}
+          onClose={() => setShowBulkRemoveModal(false)}
+          onConfirm={handleBulkRemoveConfirm}
+          torrentName={intl.formatMessage(
+            {
+              id: 'downloads.bulkRemoveTorrents',
+              defaultMessage: '{count} selected torrents',
+            },
+            { count: selectedHashes.size }
+          )}
+          isProcessing={isBulkActing}
         />
       </div>
       <div className="mt-8 mb-4 border-t border-primary pt-5 mx-4">

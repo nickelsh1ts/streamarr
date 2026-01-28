@@ -70,7 +70,9 @@ export const useDownloads = (options: UseDownloadsOptions) => {
           ...(sort && { sort }),
           ...(sortDirection && { sortDirection }),
           ...(filter && { filter }),
-          ...(clientFilter && { clientId: clientFilter.toString() }),
+          ...(clientFilter !== undefined && {
+            clientId: clientFilter.toString(),
+          }),
           ...(statusFilter && { status: statusFilter }),
         });
 

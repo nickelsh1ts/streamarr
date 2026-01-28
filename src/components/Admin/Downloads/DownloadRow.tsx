@@ -230,7 +230,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
               size="sm"
               color={
                 torrent.status === 'error'
-                  ? 'danger'
+                  ? 'error'
                   : torrent.status === 'completed' ||
                       torrent.status === 'seeding'
                     ? 'success'
@@ -281,160 +281,158 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           </span>
         </td>
         <td>
-          {torrent.clientType === 'qbittorrent' && (
-            <div className="flex items-center">
-              {torrent.priority !== undefined && torrent.priority > 0 && (
-                <span className="text-xs font-mono min-w-[2rem]">
-                  #{torrent.priority}
+          <div className="flex items-center">
+            {torrent.priority !== undefined && torrent.priority > 0 && (
+              <span className="text-xs font-mono min-w-[2rem]">
+                #{torrent.priority}
+              </span>
+            )}
+            {torrent.priority !== undefined &&
+              (torrent.priority === -1 || torrent.priority === 0) && (
+                <span className="text-xs text-neutral">
+                  {torrent.priority === -1 ? (
+                    <FormattedMessage
+                      id="downloads.queueingDisabled"
+                      defaultMessage="N/A"
+                    />
+                  ) : (
+                    '-'
+                  )}
                 </span>
               )}
-              {torrent.priority !== undefined &&
-                (torrent.priority === -1 || torrent.priority === 0) && (
-                  <span className="text-xs text-neutral">
-                    {torrent.priority === -1 ? (
-                      <FormattedMessage
-                        id="downloads.queueingDisabled"
-                        defaultMessage="N/A"
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </span>
-                )}
-              {torrent.priority !== undefined && torrent.priority > 0 && (
-                <>
-                  <select
-                    className="select select-xs select-primary block sm:hidden"
+            {torrent.priority !== undefined && torrent.priority > 0 && (
+              <>
+                <select
+                  className="select select-xs select-primary block sm:hidden"
+                  disabled={isActing || isSelected}
+                  defaultValue=""
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'top') {
+                      handleAction(() =>
+                        topPriority(torrent.hash, torrent.clientId)
+                      );
+                    } else if (value === 'up') {
+                      handleAction(() =>
+                        queueUp(torrent.hash, torrent.clientId)
+                      );
+                    } else if (value === 'down') {
+                      handleAction(() =>
+                        queueDown(torrent.hash, torrent.clientId)
+                      );
+                    } else if (value === 'bottom') {
+                      handleAction(() =>
+                        bottomPriority(torrent.hash, torrent.clientId)
+                      );
+                    }
+                    // Reset to placeholder
+                    e.target.value = '';
+                  }}
+                >
+                  <option value="" disabled>
+                    <FormattedMessage
+                      id="downloads.queueAction"
+                      defaultMessage="Queue"
+                    />
+                  </option>
+                  <option value="top">
+                    ⏫{' '}
+                    {intl.formatMessage({
+                      id: 'downloads.actionTopPriority',
+                      defaultMessage: 'Move to Top',
+                    })}
+                  </option>
+                  <option value="up">
+                    ⬆️{' '}
+                    {intl.formatMessage({
+                      id: 'downloads.actionQueueUp',
+                      defaultMessage: 'Move Up',
+                    })}
+                  </option>
+                  <option value="down">
+                    ⬇️{' '}
+                    {intl.formatMessage({
+                      id: 'downloads.actionQueueDown',
+                      defaultMessage: 'Move Down',
+                    })}
+                  </option>
+                  <option value="bottom">
+                    ⏬{' '}
+                    {intl.formatMessage({
+                      id: 'downloads.actionBottomPriority',
+                      defaultMessage: 'Move to Bottom',
+                    })}
+                  </option>
+                </select>
+                <div className="hidden sm:flex gap-1 ">
+                  <Button
+                    buttonSize="xs"
+                    buttonType="ghost"
+                    onClick={() =>
+                      handleAction(() =>
+                        topPriority(torrent.hash, torrent.clientId)
+                      )
+                    }
                     disabled={isActing || isSelected}
-                    defaultValue=""
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === 'top') {
-                        handleAction(() =>
-                          topPriority(torrent.hash, torrent.clientId)
-                        );
-                      } else if (value === 'up') {
-                        handleAction(() =>
-                          queueUp(torrent.hash, torrent.clientId)
-                        );
-                      } else if (value === 'down') {
-                        handleAction(() =>
-                          queueDown(torrent.hash, torrent.clientId)
-                        );
-                      } else if (value === 'bottom') {
-                        handleAction(() =>
-                          bottomPriority(torrent.hash, torrent.clientId)
-                        );
-                      }
-                      // Reset to placeholder
-                      e.target.value = '';
-                    }}
+                    title={intl.formatMessage({
+                      id: 'downloads.actionTopPriority',
+                      defaultMessage: 'Move to Top',
+                    })}
                   >
-                    <option value="" disabled>
-                      <FormattedMessage
-                        id="downloads.queueAction"
-                        defaultMessage="Queue"
-                      />
-                    </option>
-                    <option value="top">
-                      ⏫{' '}
-                      {intl.formatMessage({
-                        id: 'downloads.actionTopPriority',
-                        defaultMessage: 'Move to Top',
-                      })}
-                    </option>
-                    <option value="up">
-                      ⬆️{' '}
-                      {intl.formatMessage({
-                        id: 'downloads.actionQueueUp',
-                        defaultMessage: 'Move Up',
-                      })}
-                    </option>
-                    <option value="down">
-                      ⬇️{' '}
-                      {intl.formatMessage({
-                        id: 'downloads.actionQueueDown',
-                        defaultMessage: 'Move Down',
-                      })}
-                    </option>
-                    <option value="bottom">
-                      ⏬{' '}
-                      {intl.formatMessage({
-                        id: 'downloads.actionBottomPriority',
-                        defaultMessage: 'Move to Bottom',
-                      })}
-                    </option>
-                  </select>
-                  <div className="hidden sm:flex gap-1 ">
-                    <Button
-                      buttonSize="xs"
-                      buttonType="ghost"
-                      onClick={() =>
-                        handleAction(() =>
-                          topPriority(torrent.hash, torrent.clientId)
-                        )
-                      }
-                      disabled={isActing || isSelected}
-                      title={intl.formatMessage({
-                        id: 'downloads.actionTopPriority',
-                        defaultMessage: 'Move to Top',
-                      })}
-                    >
-                      <ChevronDoubleUpIcon className="size-4" />
-                    </Button>
-                    <Button
-                      buttonSize="xs"
-                      buttonType="ghost"
-                      onClick={() =>
-                        handleAction(() =>
-                          queueUp(torrent.hash, torrent.clientId)
-                        )
-                      }
-                      disabled={isActing || isSelected}
-                      title={intl.formatMessage({
-                        id: 'downloads.actionQueueUp',
-                        defaultMessage: 'Move Up',
-                      })}
-                    >
-                      <ChevronUpIcon className="size-4" />
-                    </Button>
-                    <Button
-                      buttonSize="xs"
-                      buttonType="ghost"
-                      onClick={() =>
-                        handleAction(() =>
-                          queueDown(torrent.hash, torrent.clientId)
-                        )
-                      }
-                      disabled={isActing || isSelected}
-                      title={intl.formatMessage({
-                        id: 'downloads.actionQueueDown',
-                        defaultMessage: 'Move Down',
-                      })}
-                    >
-                      <ChevronDownIcon className="size-4" />
-                    </Button>
-                    <Button
-                      buttonSize="xs"
-                      buttonType="ghost"
-                      onClick={() =>
-                        handleAction(() =>
-                          bottomPriority(torrent.hash, torrent.clientId)
-                        )
-                      }
-                      disabled={isActing || isSelected}
-                      title={intl.formatMessage({
-                        id: 'downloads.actionBottomPriority',
-                        defaultMessage: 'Move to Bottom',
-                      })}
-                    >
-                      <ChevronDoubleDownIcon className="size-4" />
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+                    <ChevronDoubleUpIcon className="size-4" />
+                  </Button>
+                  <Button
+                    buttonSize="xs"
+                    buttonType="ghost"
+                    onClick={() =>
+                      handleAction(() =>
+                        queueUp(torrent.hash, torrent.clientId)
+                      )
+                    }
+                    disabled={isActing || isSelected}
+                    title={intl.formatMessage({
+                      id: 'downloads.actionQueueUp',
+                      defaultMessage: 'Move Up',
+                    })}
+                  >
+                    <ChevronUpIcon className="size-4" />
+                  </Button>
+                  <Button
+                    buttonSize="xs"
+                    buttonType="ghost"
+                    onClick={() =>
+                      handleAction(() =>
+                        queueDown(torrent.hash, torrent.clientId)
+                      )
+                    }
+                    disabled={isActing || isSelected}
+                    title={intl.formatMessage({
+                      id: 'downloads.actionQueueDown',
+                      defaultMessage: 'Move Down',
+                    })}
+                  >
+                    <ChevronDownIcon className="size-4" />
+                  </Button>
+                  <Button
+                    buttonSize="xs"
+                    buttonType="ghost"
+                    onClick={() =>
+                      handleAction(() =>
+                        bottomPriority(torrent.hash, torrent.clientId)
+                      )
+                    }
+                    disabled={isActing || isSelected}
+                    title={intl.formatMessage({
+                      id: 'downloads.actionBottomPriority',
+                      defaultMessage: 'Move to Bottom',
+                    })}
+                  >
+                    <ChevronDoubleDownIcon className="size-4" />
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </td>
         <td>
           <>
