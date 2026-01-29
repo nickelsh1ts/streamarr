@@ -14,6 +14,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Button from '@app/components/Common/Button';
 
+//TODO: update words to use intl
+
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
     type: 'or',

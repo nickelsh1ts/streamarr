@@ -31,6 +31,8 @@ import { momentWithLocale } from '@app/utils/momentLocale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+//TODO: Improve loading states - currently the whole page is loading state for all calls - plex call takes longer and should therefor show loading state in it's own section
+
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();

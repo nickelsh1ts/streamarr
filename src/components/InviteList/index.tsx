@@ -46,6 +46,8 @@ enum Filter {
 
 type Sort = 'created' | 'modified';
 
+//BUG: Something causes the invitelist for non-admins to show a loading state even though the invite list has loaded already (loading state does disappear after a few seconds - only on first page load, subsequent navigation in next work fine)
+
 const InviteList = () => {
   useRouteGuard(
     [

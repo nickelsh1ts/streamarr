@@ -56,6 +56,7 @@ const ClientLogo = ({
   }
 };
 
+//TODO: Update page to trigger test connection for each instance on first page load.
 interface DownloadClientInstanceProps {
   id: number;
   name: string;

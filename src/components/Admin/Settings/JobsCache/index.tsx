@@ -24,6 +24,8 @@ import { useEffect, useReducer, useState } from 'react';
 import useSWR from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
+//TODO: There's no cacheData loading state - improve visual with loading state
+
 interface Job {
   id: string;
   name?: string;

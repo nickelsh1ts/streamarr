@@ -13,6 +13,7 @@ const Stats = () => {
       : ''
   );
 
+  //BUG: Needs to be a public call as this route is admin only so failes to load for ensusers
   const { data: tautulliData } = useSWR<TautulliSettings>(
     '/api/v1/settings/tautulli'
   );

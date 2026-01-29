@@ -6,6 +6,8 @@ import { colord } from 'colord';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+//TODO: Add support for jellyfin - local users should access jellyfin and plex users access plex
+
 const Watch = ({ children, ...props }) => {
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);

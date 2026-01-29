@@ -9,6 +9,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+//TODO: Improve loading state of events to use cache for instant loading and update in background upon revalidation
+
 enum Filter {
   ALL = 'all',
   MOVIES = 'movies',

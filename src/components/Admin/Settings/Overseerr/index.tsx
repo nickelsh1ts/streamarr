@@ -11,6 +11,8 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 
+//TODO: update words to use intl
+
 const AdminOverseerr = () => {
   const [hostname] = useState(() =>
     typeof window !== 'undefined'

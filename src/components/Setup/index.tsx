@@ -20,6 +20,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Toast from '@app/components/Toast';
 import { XCircleIcon } from '@heroicons/react/24/solid';
 
+//TODO: Add support for the rest of the services in setup step 3
+
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);

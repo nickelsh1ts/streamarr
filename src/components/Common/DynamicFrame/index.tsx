@@ -7,6 +7,8 @@ import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 import useSettings from '@app/hooks/useSettings';
 
+//TODO: Add support for 404/error handling within iframe - custom component/page rendered instead of iframe
+
 // Type for Navigation API (not yet in standard TypeScript lib)
 interface NavigationDestination {
   url: string;
