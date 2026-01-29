@@ -12,6 +12,52 @@
 * formatting ([3434997](https://github.com/nickelsh1ts/streamarr/commit/3434997a21111d582a125fce15c4924608160a50))
 * implement dynamic imports for download clients & null results fix ([3a75228](https://github.com/nickelsh1ts/streamarr/commit/3a752280a634cad47c45ceabdc093508b63fc88f))
 * improve alignment of Alert component title and icon ([6df9b7a](https://github.com/nickelsh1ts/streamarr/commit/6df9b7a96a5e92cbf08587b9342589cc4fab13b0))
+* re-release ([8d942d6](https://github.com/nickelsh1ts/streamarr/commit/8d942d65a59156402f20722ad386da8248a148d5))
+* update default URL base paths for Bazarr, Prowlarr, and Lidarr settings ([6fe6ae1](https://github.com/nickelsh1ts/streamarr/commit/6fe6ae1d40407cfaf1b63bfabc32ebe67ae6f394))
+
+
+### Features
+
+* add additional translations and descriptions for settings and downloads ([3067923](https://github.com/nickelsh1ts/streamarr/commit/3067923f8636e35b99759cb12320d233fdc8157a))
+* add ARR proxy support and improve proxy path handling ([148320f](https://github.com/nickelsh1ts/streamarr/commit/148320fc68ce0ca6fee28fd9b1bd2eff28382669))
+* add base URL validation for Bazarr, Prowlarr, Lidarr, and Radarr services ([768775a](https://github.com/nickelsh1ts/streamarr/commit/768775ad70139770479f4b64c42b3ee01e7dea03))
+* Add rate limiting for authentication routes in Prowlarr, Radarr, and Sonarr ([d86d07e](https://github.com/nickelsh1ts/streamarr/commit/d86d07ec8f381780dcf15a772c81c2b9adf36864))
+* added size and type to buttons & fixed inviteList filter localstorage bug ([3ce5195](https://github.com/nickelsh1ts/streamarr/commit/3ce51955ccf4c55350f159cd285d6794dc6e7c34))
+* added ui components for downloads & updated existing w/ api calls ([6a469a1](https://github.com/nickelsh1ts/streamarr/commit/6a469a186b4a74969b06da7b11c5b0e5846861c5))
+* downloads service integration ([#140](https://github.com/nickelsh1ts/streamarr/issues/140)) ([1f43d7a](https://github.com/nickelsh1ts/streamarr/commit/1f43d7a7af474143d8ac4272678ed855da7a360e))
+* **downloads:** downloads api setup & add api routes for managing download clients and testing connections ([776c175](https://github.com/nickelsh1ts/streamarr/commit/776c175221878781f5c62b89fe3e4d2897cfe604))
+* **downloads:** enhance health check and client management features ([e335eb5](https://github.com/nickelsh1ts/streamarr/commit/e335eb59a8fb61040ebaa29ee037a66747e6b9da))
+* **downloads:** Extended download clients to deluge and transmission and added error handling ([b7459b0](https://github.com/nickelsh1ts/streamarr/commit/b7459b06a7465e91b15b0e4797f952c69ae1a2e0))
+* **downloads:** implement health check system for download clients with retry functionality ([d81425b](https://github.com/nickelsh1ts/streamarr/commit/d81425bba1c20e50b1f2b1bf2c24ba0daeb68be7))
+* enhance ARR proxy configuration and add support for single-instance services ([54b3965](https://github.com/nickelsh1ts/streamarr/commit/54b39652b8ef72d3ae5446fd22a4214d2504d52f))
+* Enhance arr services with authentication management and extended service test functionality ([a30e84a](https://github.com/nickelsh1ts/streamarr/commit/a30e84a3aeddff3bc6f9723d4f9ab7706e8aff6b))
+* **i18n:** added new translations and cleaned up duplicates ([cfd47e4](https://github.com/nickelsh1ts/streamarr/commit/cfd47e4688c447526999b7014b6ac60a0ac312e8))
+* implement migration ([4b4ebda](https://github.com/nickelsh1ts/streamarr/commit/4b4ebda3260c1976b69fb62abd33abddb5081b6f))
+* implement service frame container and enhance admin layout with loading states ([fbfe89e](https://github.com/nickelsh1ts/streamarr/commit/fbfe89e31e5d46898705a5ab6b63a0ad4fca04d2))
+* implement service proxy with Plex integration and add http-proxy-middleware ([c812cfc](https://github.com/nickelsh1ts/streamarr/commit/c812cfc807bd64817ee9ade8e6bb704e218ca365))
+* implement Tautulli proxy and stats page with settings integration ([1bf0273](https://github.com/nickelsh1ts/streamarr/commit/1bf02735a76b22fc22f72649874146d16fb29029))
+* implement Tdarr proxy support and remove urlBase configuration ([f721ab3](https://github.com/nickelsh1ts/streamarr/commit/f721ab3bcdf0f287f8dcd65820e7e1224c942c0d))
+* Internal service proxy and support ([#137](https://github.com/nickelsh1ts/streamarr/issues/137)) ([fcf753f](https://github.com/nickelsh1ts/streamarr/commit/fcf753f3374078befa10fc009bb2bf83e8e651fa))
+* remove SSL support for Bazarr and Tdarr services, update related configurations ([d0d3c14](https://github.com/nickelsh1ts/streamarr/commit/d0d3c14d4d55ed0d007ceb05d9d7e45197b1556b))
+* simplify Uptime settings form by removing unnecessary fields ([a95ee4a](https://github.com/nickelsh1ts/streamarr/commit/a95ee4a701b1ed7152e181843123498083ba4b29))
+* update download settings to mutli-instance and prepare download route for refactor ([9a2946e](https://github.com/nickelsh1ts/streamarr/commit/9a2946e9619ea933b92c42ad9d8f96f2227f8d9f))
+* update labels in invite logging to match ([33998fe](https://github.com/nickelsh1ts/streamarr/commit/33998fedbef5eb731e420eae9023ca33db1a03ae))
+* updated overseerr integration settings and warnings ([096dedd](https://github.com/nickelsh1ts/streamarr/commit/096dedd180f9c70b78d59d3122175c94f06b3d2f))
+
+# [1.2.0](https://github.com/nickelsh1ts/streamarr/compare/v1.1.0...v1.2.0) (2026-01-29)
+
+
+### Bug Fixes
+
+* added missing default tautulli baseUrl ([abf96d5](https://github.com/nickelsh1ts/streamarr/commit/abf96d542cba2d4f2f7e7ed87120f9bcb4c38127))
+* compute invite counts for users and update filter settings storage key ([55b65e3](https://github.com/nickelsh1ts/streamarr/commit/55b65e3167d7ad09f9f1bb27b4b052c18d1eae7f))
+* correct URL base key in validation messages and remove unnecessary required asterisks ([6c72587](https://github.com/nickelsh1ts/streamarr/commit/6c725874446f499187aa2e4a8bd5d684bde1af23))
+* disable conflicting WebSocket in createTdarrProxy ([b11df67](https://github.com/nickelsh1ts/streamarr/commit/b11df6700d00c6f8dced90d6f8a02d6718cd8e28))
+* formatting ([3af631a](https://github.com/nickelsh1ts/streamarr/commit/3af631afd1a724ff7e72ef7da468166c4592f06c))
+* formatting ([8013657](https://github.com/nickelsh1ts/streamarr/commit/801365791033d21302a41bb09149e3af5e477e8e))
+* formatting ([3434997](https://github.com/nickelsh1ts/streamarr/commit/3434997a21111d582a125fce15c4924608160a50))
+* implement dynamic imports for download clients & null results fix ([3a75228](https://github.com/nickelsh1ts/streamarr/commit/3a752280a634cad47c45ceabdc093508b63fc88f))
+* improve alignment of Alert component title and icon ([6df9b7a](https://github.com/nickelsh1ts/streamarr/commit/6df9b7a96a5e92cbf08587b9342589cc4fab13b0))
 * update default URL base paths for Bazarr, Prowlarr, and Lidarr settings ([6fe6ae1](https://github.com/nickelsh1ts/streamarr/commit/6fe6ae1d40407cfaf1b63bfabc32ebe67ae6f394))
 
 
