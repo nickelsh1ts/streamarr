@@ -1,6 +1,6 @@
 {
   "name": "streamarr",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "dev": "nodemon -e ts --watch server --watch streamarr-api.yml -e .json,.ts,.yml -x tsx --tsconfig server/tsconfig.json server/index.ts",
