@@ -686,15 +686,13 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
           </div>
         </div>
       </Modal>
-      {torrent && (
-        <RemoveTorrentModal
-          isOpen={showRemoveModal}
-          onClose={() => setShowRemoveModal(false)}
-          onConfirm={handleConfirmDelete}
-          torrentName={torrent.name}
-          isProcessing={isRemoving}
-        />
-      )}
+      <RemoveTorrentModal
+        isOpen={showRemoveModal}
+        onClose={() => setShowRemoveModal(false)}
+        onConfirm={handleConfirmDelete}
+        torrentName={torrent.name}
+        isProcessing={isRemoving}
+      />
     </>
   );
 };

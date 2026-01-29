@@ -287,7 +287,7 @@ const AdminDownloads = () => {
         setIsSelectAllChecked(false);
 
         // Refresh data
-        refetch(false);
+        refetch();
       } catch (e) {
         Toast({
           type: 'error',
@@ -325,7 +325,7 @@ const AdminDownloads = () => {
         setShowBulkRemoveModal(false);
 
         // Refresh data
-        refetch(false);
+        refetch();
       } catch (e) {
         Toast({
           type: 'error',
@@ -1163,7 +1163,7 @@ const AdminDownloads = () => {
                     <DownloadRow
                       key={torrent.id}
                       torrent={torrent}
-                      onRefresh={() => refetch(false)}
+                      onRefresh={refetch}
                       isSelected={selectedHashes.has(torrent.hash)}
                       onToggleSelect={handleToggleSelect}
                       clients={clients ?? []}

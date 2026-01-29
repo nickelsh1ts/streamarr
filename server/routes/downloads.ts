@@ -457,7 +457,9 @@ downloadsRoutes.post('/category', async (req, res, next) => {
     const categoryRequest = req.body as CategoryManagementRequest;
 
     if (
-      !categoryRequest.clientId ||
+      categoryRequest.clientId === undefined ||
+      categoryRequest.clientId === null ||
+      Number.isNaN(Number(categoryRequest.clientId)) ||
       !categoryRequest.action ||
       !categoryRequest.category
     ) {
@@ -619,19 +621,25 @@ downloadsRoutes.post('/:hash/files/priority', async (req, res, next) => {
 
 // Get health status for all download clients
 downloadsRoutes.get('/health', (_req, res) => {
+  const settings = getSettings();
   const allHealth = getAllClientsHealth();
-  res.json(
-    allHealth.map((h) => ({
-      clientId: h.clientId,
-      clientName: h.clientName,
-      status: h.status,
-      lastError: h.lastError,
-      cooldownUntil: h.cooldownUntil?.toISOString(),
-      lastSuccess: h.lastSuccess?.toISOString(),
-      lastFailure: h.lastFailure?.toISOString(),
-      consecutiveFailures: h.consecutiveFailures,
-    }))
-  );
+  const healthMap = new Map(allHealth.map((h) => [h.clientId, h]));
+
+  const response = settings.downloads.map((client) => {
+    const health = healthMap.get(client.id);
+    return {
+      clientId: client.id,
+      clientName: client.name,
+      status: health?.status ?? 'healthy',
+      lastError: health?.lastError,
+      cooldownUntil: health?.cooldownUntil?.toISOString(),
+      lastSuccess: health?.lastSuccess?.toISOString(),
+      lastFailure: health?.lastFailure?.toISOString(),
+      consecutiveFailures: health?.consecutiveFailures ?? 0,
+    };
+  });
+
+  res.json(response);
 });
 
 // Retry a specific client (reset health and attempt fetch)

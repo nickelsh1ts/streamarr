@@ -772,18 +772,28 @@ components:
     TorrentStats:
       type: object
       properties:
-        totalTorrents:
+        clientId:
           type: number
-          example: 42
-        downloading:
-          type: number
-          example: 5
-        seeding:
-          type: number
-          example: 30
-        paused:
-          type: number
-          example: 7
+          example: 0
+          description: Download client ID
+        clientName:
+          type: string
+          example: 'qBittorrent'
+          description: Download client name
+        clientType:
+          type: string
+          enum: [qbittorrent, deluge, transmission]
+          example: 'qbittorrent'
+          description: Download client type
+        connected:
+          type: boolean
+          example: true
+          description: Whether the client is connected
+        error:
+          type: string
+          nullable: true
+          example: 'Connection refused'
+          description: Error message if client failed to connect
         totalDownloadSpeed:
           type: number
           example: 5242880
@@ -792,6 +802,40 @@ components:
           type: number
           example: 2621440
           description: Total upload speed in bytes/sec
+        activeTorrents:
+          type: number
+          example: 5
+          description: Number of active (downloading/seeding) torrents
+        pausedTorrents:
+          type: number
+          example: 7
+          description: Number of paused torrents
+        totalTorrents:
+          type: number
+          example: 42
+          description: Total number of torrents
+        health:
+          type: object
+          nullable: true
+          properties:
+            status:
+              type: string
+              enum: [healthy, retrying, unhealthy]
+              example: 'healthy'
+              description: Health status of the client
+            lastError:
+              type: string
+              nullable: true
+              description: Last error message
+            cooldownUntil:
+              type: string
+              format: date-time
+              nullable: true
+              description: ISO timestamp when cooldown expires
+            isStale:
+              type: boolean
+              nullable: true
+              description: Whether the client is in cooldown
     AddTorrentRequest:
       type: object
       properties:
@@ -799,11 +843,12 @@ components:
           type: number
           example: 0
           description: Download client ID to use
-        magnetUri:
+        torrent:
           type: string
           nullable: true
           example: 'magnet:?xt=urn:btih:...'
-        torrentFile:
+          description: Magnet link or torrent URL
+        file:
           type: string
           nullable: true
           description: Base64-encoded .torrent file content
@@ -815,6 +860,10 @@ components:
           type: string
           nullable: true
           example: '/downloads/movies'
+        paused:
+          type: boolean
+          nullable: true
+          description: Whether to add torrent in paused state
       required:
         - clientId
     CategoryActionRequest:
@@ -825,15 +874,14 @@ components:
           example: 0
           description: Download client ID (qBittorrent for categories, Deluge for labels, Transmission not supported)
         action:
-          $ref: '#/components/schemas/CategoryAction'
-        categoryName:
+          type: string
+          enum: [create, edit, delete]
+          example: create
+          description: Action to perform on the category
+        category:
           type: string
           example: 'movies'
-        newCategoryName:
-          type: string
-          nullable: true
-          example: 'films'
-          description: New name for edit action
+          description: Category/label name
         savePath:
           type: string
           nullable: true
@@ -842,7 +890,7 @@ components:
       required:
         - clientId
         - action
-        - categoryName
+        - category
     TestConnectionResponse:
       type: object
       properties:
@@ -889,24 +937,33 @@ components:
     DownloadsResponse:
       type: object
       properties:
-        torrents:
+        results:
           type: array
           items:
             $ref: '#/components/schemas/NormalizedTorrent'
         stats:
-          $ref: '#/components/schemas/TorrentStats'
-        pagination:
+          type: array
+          items:
+            $ref: '#/components/schemas/TorrentStats'
+        pageInfo:
           type: object
           properties:
+            pages:
+              type: number
+              example: 3
+              description: Total number of pages
             page:
               type: number
               example: 1
+              description: Current page number
+            results:
+              type: number
+              example: 125
+              description: Total number of results
             pageSize:
               type: number
               example: 50
-            total:
-              type: number
-              example: 125
+              description: Number of items per page
     PublicSettings:
       type: object
       properties:

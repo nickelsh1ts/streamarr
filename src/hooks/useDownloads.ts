@@ -1,5 +1,6 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import axios from 'axios';
+import useSWR from 'swr';
 import type {
   DownloadsResponse,
   TorrentActionRequest,
@@ -33,96 +34,40 @@ export const useDownloads = (options: UseDownloadsOptions) => {
     isPaused = false,
   } = options;
 
-  const [data, setData] = useState<DownloadsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [isTabVisible, setIsTabVisible] = useState(true);
+  const queryString = useMemo(() => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+      ...(sort && { sort }),
+      ...(sortDirection && { sortDirection }),
+      ...(filter && { filter }),
+      ...(clientFilter !== undefined && {
+        clientId: clientFilter.toString(),
+      }),
+      ...(statusFilter && { status: statusFilter }),
+    });
+    return params.toString();
+  }, [page, pageSize, sort, sortDirection, filter, clientFilter, statusFilter]);
 
-  // Track tab visibility to pause polling when tab is inactive
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsTabVisible(!document.hidden);
-    };
+  const swrKey = enabled ? `/api/v1/downloads?${queryString}` : null;
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  const { data, error, isLoading, isValidating, mutate } =
+    useSWR<DownloadsResponse>(swrKey, {
+      refreshInterval: isPaused ? 0 : refreshInterval,
+      revalidateOnFocus: !isPaused,
+      dedupingInterval: 1000,
+    });
 
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
-  const fetchDownloads = useCallback(
-    async (isInitialLoad = false) => {
-      if (!enabled) return;
-
-      // Only show loading spinner on initial load, not on refreshes
-      if (isInitialLoad) {
-        setIsLoading(true);
-      } else {
-        setIsRefreshing(true);
-      }
-
-      try {
-        const params = new URLSearchParams({
-          page: page.toString(),
-          pageSize: pageSize.toString(),
-          ...(sort && { sort }),
-          ...(sortDirection && { sortDirection }),
-          ...(filter && { filter }),
-          ...(clientFilter !== undefined && {
-            clientId: clientFilter.toString(),
-          }),
-          ...(statusFilter && { status: statusFilter }),
-        });
-
-        const response = await axios.get<DownloadsResponse>(
-          `/api/v1/downloads?${params}`
-        );
-        setData(response.data);
-        setError(null);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-        setIsRefreshing(false);
-      }
-    },
-    [
-      page,
-      pageSize,
-      sort,
-      sortDirection,
-      filter,
-      clientFilter,
-      statusFilter,
-      enabled,
-    ]
-  );
-
-  // Initial fetch
-  useEffect(() => {
-    fetchDownloads(true);
-  }, [fetchDownloads]);
-
-  // Poll at configured interval (but don't show loading state)
-  // Pause polling when tab is hidden or user has paused
-  useEffect(() => {
-    if (!enabled || !refreshInterval || isPaused || !isTabVisible) return;
-
-    const interval = setInterval(() => {
-      fetchDownloads(false);
-    }, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [enabled, fetchDownloads, refreshInterval, isPaused, isTabVisible]);
+  const refetch = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   return {
-    data,
+    data: data ?? null,
     isLoading,
-    isRefreshing,
-    error,
-    refetch: fetchDownloads,
+    isRefreshing: isValidating && !isLoading,
+    error: error ?? null,
+    refetch,
   };
 };
 
@@ -140,6 +85,12 @@ export const useDownloadActions = () => {
         action,
         ...options,
       });
+
+      const { mutate } = await import('swr');
+      mutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+      );
+
       return response.data.success;
     },
     []
@@ -193,6 +144,12 @@ export const useDownloadActions = () => {
 
   const addTorrent = useCallback(async (options: AddTorrentRequest) => {
     const response = await axios.post('/api/v1/downloads/add', options);
+
+    const { mutate } = await import('swr');
+    mutate(
+      (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+    );
+
     return response.data;
   }, []);
 
@@ -216,6 +173,12 @@ export const useDownloadActions = () => {
         clientId,
         ...updates,
       });
+
+      const { mutate } = await import('swr');
+      mutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+      );
+
       return response.data;
     },
     []
@@ -236,6 +199,12 @@ export const useDownloadActions = () => {
           priority,
         }
       );
+
+      const { mutate } = await import('swr');
+      mutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+      );
+
       return response.data;
     },
     []
@@ -260,21 +229,30 @@ export const useDownloadActions = () => {
         action,
         deleteFiles,
       });
+
+      const { mutate } = await import('swr');
+      mutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+      );
+
       return response.data;
     },
     []
   );
 
   const retryClient = useCallback(async (clientId?: number) => {
-    if (clientId) {
-      const response = await axios.post(
-        `/api/v1/downloads/health/retry/${clientId}`
-      );
-      return response.data;
-    } else {
-      const response = await axios.post('/api/v1/downloads/health/retry');
-      return response.data;
-    }
+    const endpoint = clientId
+      ? `/api/v1/downloads/health/retry/${clientId}`
+      : '/api/v1/downloads/health/retry';
+
+    const response = await axios.post(endpoint);
+
+    const { mutate } = await import('swr');
+    mutate(
+      (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+    );
+
+    return response.data;
   }, []);
 
   return {

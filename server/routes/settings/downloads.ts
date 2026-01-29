@@ -90,7 +90,12 @@ downloadsRoutes.put<{ id: string }>('/:id', (req, res, next) => {
       ...existingClient,
       ...updates,
       id: clientId, // Ensure ID cannot be changed
-      externalUrl: updates.externalUrl ?? undefined,
+      externalUrl:
+        'externalUrl' in updates
+          ? updates.externalUrl === ''
+            ? undefined
+            : updates.externalUrl
+          : existingClient.externalUrl,
     };
 
     settings.downloads[clientIndex] = updatedClient;

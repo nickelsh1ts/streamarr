@@ -17,6 +17,7 @@ import {
   markClientFailed,
   markClientHealthy,
   setRetryTimeout,
+  getClientHealth,
 } from '@server/lib/healthCheck';
 
 // Type imports for client classes
@@ -227,13 +228,14 @@ export async function fetchClientData(
   } catch (e) {
     const errorMessage = e.message || 'Unknown error';
 
+    const healthState = getClientHealth(settings.id);
+    const wasHealthy = !healthState || healthState.consecutiveFailures === 0;
+
     // Mark client as failed
     markClientFailed(settings.id, settings.name, errorMessage);
 
-    // If this is the first failure, schedule a retry in 5 seconds
-    const cachedData = getCachedClientData(settings.id);
-    if (!cachedData) {
-      // Only schedule retry if this is first failure (no cached data means first time seeing this client fail)
+    // If this is the first failure (transitioning to retrying), schedule a retry in 5 seconds
+    if (wasHealthy) {
       const retryTimeout = setTimeout(async () => {
         try {
           // Attempt retry
@@ -248,6 +250,7 @@ export async function fetchClientData(
     }
 
     // Return cached data if available, otherwise null
+    const cachedData = getCachedClientData(settings.id);
     return cachedData || null;
   }
 }
