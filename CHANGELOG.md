@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/nickelsh1ts/streamarr/compare/v1.2.0...v1.2.1) (2026-01-29)
+
+
+### Bug Fixes
+
+* missing write permission ([01e45d1](https://github.com/nickelsh1ts/streamarr/commit/01e45d1b6bcdc2dfb3d5d30bd8cf23156f9b1f47))
+
 # [1.2.0](https://github.com/nickelsh1ts/streamarr/compare/v1.1.0...v1.2.0) (2026-01-29)
 
 
