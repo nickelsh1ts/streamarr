@@ -46,6 +46,10 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
       );
     });
 
+    if (usersToNotify.length === 0 || entity.id === 1) {
+      return;
+    }
+
     await Promise.all(
       usersToNotify.map(async (user) => {
         try {

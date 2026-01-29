@@ -506,7 +506,7 @@ export async function performTorrentAction(
             ? options.deleteFiles
             : false;
         if (deleteFiles) {
-          logger.warn('Removing torrent with file deletion', {
+          logger.debug('Removing torrent and deleting files', {
             label: 'Downloads API',
             hash,
             client: settings.name,

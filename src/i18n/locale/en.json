@@ -617,8 +617,8 @@
   "common.testing": {
     "defaultMessage": "Testing..."
   },
-  "common.transcoding": {
-    "defaultMessage": "Transcoding"
+  "common.transcodes": {
+    "defaultMessage": "Transcodes"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Try adjusting your filters or add a new torrent."

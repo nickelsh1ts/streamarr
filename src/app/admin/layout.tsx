@@ -121,8 +121,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
       {
         text: intl.formatMessage({
-          id: 'common.transcoding',
-          defaultMessage: 'Transcoding',
+          id: 'common.transcodes',
+          defaultMessage: 'Transcodes',
         }),
         route: '/admin/transcode',
         regex: /^\/admin\/transcode/,
@@ -130,8 +130,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
       {
         text: intl.formatMessage({
-          id: 'common.downloading',
-          defaultMessage: 'Downloading',
+          id: 'common.downloads',
+          defaultMessage: 'Downloads',
         }),
         route: '/admin/downloads',
         regex: /^\/admin\/downloads/,
