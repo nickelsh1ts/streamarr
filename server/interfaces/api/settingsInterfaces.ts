@@ -36,12 +36,14 @@ export interface PublicSettingsResponse {
   newPlexLogin: boolean;
   enableRequest: boolean;
   requestUrl: string;
+  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
   enableSignUp: boolean;
   releaseSched: boolean;
   statsUrl: string;
+  statsEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;

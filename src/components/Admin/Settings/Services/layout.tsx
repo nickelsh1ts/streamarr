@@ -63,10 +63,7 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="my-6">
       <h3 className="text-2xl font-extrabold">
-        <FormattedMessage
-          id="admin.settings.services.title"
-          defaultMessage="Services"
-        />
+        <FormattedMessage id="common.services" defaultMessage="Services" />
       </h3>
       <p className="mb-2">
         <FormattedMessage

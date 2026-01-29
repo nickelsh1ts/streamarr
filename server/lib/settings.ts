@@ -27,16 +27,15 @@ export interface PlexSettings {
   port: number;
   useSsl?: boolean;
   libraries: Library[];
-  webAppUrl?: string;
 }
 
 export interface TautulliSettings {
+  enabled?: boolean;
   hostname?: string;
   port?: number;
   useSsl?: boolean;
   urlBase?: string;
   apiKey?: string;
-  externalUrl?: string;
 }
 
 export interface ServiceSettings {
@@ -78,6 +77,20 @@ export interface RadarrSettings extends DVRSettings {
 
 export interface SonarrSettings extends DVRSettings {
   seriesType?: 'standard' | 'daily' | 'anime';
+}
+
+export type DownloadClientType = 'qbittorrent' | 'deluge' | 'transmission';
+
+export interface DownloadClientSettings {
+  id: number;
+  name: string;
+  client: DownloadClientType;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  username?: string;
+  password?: string;
+  externalUrl?: string;
 }
 
 interface Quota {
@@ -158,6 +171,7 @@ export interface FullPublicSettings extends PublicSettings {
   newPlexLogin: boolean;
   enableRequest: boolean;
   requestUrl: string;
+  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
@@ -167,6 +181,7 @@ export interface FullPublicSettings extends PublicSettings {
   statsUrl: string;
   releaseSched: boolean;
   statusUrl: string;
+  statsEnabled: boolean;
   statusEnabled: boolean;
   theme: Theme;
 }
@@ -235,7 +250,7 @@ interface AllSettings {
   radarr: RadarrSettings[];
   sonarr: SonarrSettings[];
   uptime: ServiceSettings;
-  downloads: ServiceSettings;
+  downloads: DownloadClientSettings[];
   tdarr: ServiceSettings;
   bazarr: ServiceSettings;
   prowlarr: ServiceSettings;
@@ -311,35 +326,33 @@ class Settings {
         ip: '',
         port: 32400,
         useSsl: false,
-        webAppUrl: '/web/index.html',
         libraries: [],
       },
-      tautulli: {},
+      tautulli: {
+        enabled: false,
+        urlBase: '/tautulli',
+      },
       radarr: [],
       sonarr: [],
       uptime: {
         enabled: false,
         externalUrl: 'https://status.streamarr.dev',
       },
-      downloads: {
-        enabled: false,
-        urlBase: '/admin/qbt',
-      },
+      downloads: [],
       tdarr: {
         enabled: false,
-        urlBase: '/admin/tdarr',
       },
       bazarr: {
         enabled: false,
-        urlBase: '/admin/bazarr',
+        urlBase: '/bazarr',
       },
       prowlarr: {
         enabled: false,
-        urlBase: '/admin/prowlarr',
+        urlBase: '/prowlarr',
       },
       lidarr: {
         enabled: false,
-        urlBase: '/admin/lidarr',
+        urlBase: '/lidarr',
       },
       overseerr: {
         enabled: false,
@@ -414,11 +427,11 @@ class Settings {
     this.data.uptime = data;
   }
 
-  get downloads(): ServiceSettings {
+  get downloads(): DownloadClientSettings[] {
     return this.data.downloads;
   }
 
-  set downloads(data: ServiceSettings) {
+  set downloads(data: DownloadClientSettings[]) {
     this.data.downloads = data;
   }
 
@@ -507,7 +520,10 @@ class Settings {
       enableSignUp: this.data.main.enableSignUp,
       enableRequest: this.data.overseerr.enabled,
       requestUrl: this.data.overseerr.urlBase,
-      statsUrl: this.data.tautulli.externalUrl,
+      requestHostname:
+        this.data.overseerr.hostname + ':' + this.data.overseerr.port,
+      statsUrl: this.data.tautulli.urlBase,
+      statsEnabled: this.data.tautulli.enabled || false,
       releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,

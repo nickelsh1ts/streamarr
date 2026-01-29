@@ -1,10 +1,8 @@
 'use client';
 import LibraryItem from '@app/components/Admin/Settings/LibraryItem';
 import Alert from '@app/components/Common/Alert';
-import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Tooltip from '@app/components/Common/ToolTip';
 import Toast, { dismissToast } from '@app/components/Toast';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import {
@@ -72,29 +70,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           id: 'generalSettings.validation.port',
           defaultMessage: 'You must provide a valid port number',
         })
-      ),
-    webAppUrl: Yup.string()
-      .required(
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.required',
-          defaultMessage: 'URL Base is required',
-        })
-      )
-      .test(
-        'leading-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.leadingSlash',
-          defaultMessage: 'URL Base must have a leading slash',
-        }),
-        (value) => !value || value.startsWith('/')
-      )
-      .test(
-        'no-trailing-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.noTrailingSlash',
-          defaultMessage: 'URL Base must not end in a trailing slash',
-        }),
-        (value) => !value || !value.endsWith('/')
       ),
   });
 
@@ -262,7 +237,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           port: data?.port ?? 32400,
           useSsl: data?.useSsl,
           selectedPreset: undefined,
-          webAppUrl: data?.webAppUrl ?? '/web/index.html',
         }}
         enableReinitialize
         validationSchema={PlexSettingsSchema}
@@ -287,7 +261,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               ip: values.hostname,
               port: Number(values.port),
               useSsl: values.useSsl,
-              webAppUrl: values.webAppUrl,
             } as PlexSettings);
 
             syncLibraries();
@@ -486,61 +459,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     }}
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="webAppUrl">
-                  <a
-                    href="https://support.plex.tv/articles/200288666-opening-plex-web-app/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="link-hover hover:cursor-help"
-                  >
-                    <FormattedMessage
-                      id="common.webApp"
-                      defaultMessage="Web App"
-                    />
-                  </a>{' '}
-                  <FormattedMessage
-                    id="common.urlBase"
-                    defaultMessage="URL Base"
-                  />{' '}
-                  <span className="ml-1 text-error">*</span>
-                  <Tooltip
-                    content={intl.formatMessage({
-                      id: 'plexSettings.urlBaseTooltip',
-                      defaultMessage:
-                        'It is recommended to leave this as the default value',
-                    })}
-                  >
-                    <Badge badgeType="error" className="ml-2">
-                      <FormattedMessage
-                        id="common.advanced"
-                        defaultMessage="Advanced"
-                      />
-                    </Badge>
-                  </Tooltip>
-                  <span className="block text-neutral text-sm">
-                    <FormattedMessage
-                      id="plexSettings.webAppDescription"
-                      defaultMessage="The Plex web app must be located on the same domain as to avoid cross-origin issues."
-                    />
-                  </span>
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="form-input-field">
-                    <Field
-                      type="text"
-                      id="webAppUrl"
-                      name="webAppUrl"
-                      className="input input-sm input-primary rounded-md w-full"
-                    />
-                  </div>
-                  {errors.webAppUrl &&
-                    touched.webAppUrl &&
-                    typeof errors.webAppUrl === 'string' && (
-                      <div className="text-error">{errors.webAppUrl}</div>
-                    )}
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />

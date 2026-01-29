@@ -189,7 +189,7 @@ const MobileMenu = () => {
     {
       href: '/watch/web/index.html#!/settings/web/general',
       content: intl.formatMessage({
-        id: 'sidebar.general',
+        id: 'common.general',
         defaultMessage: 'General',
       }),
       svgIcon: null,
@@ -359,7 +359,7 @@ const MobileMenu = () => {
                       className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <FormattedMessage
-                        id="sidebar.settings"
+                        id="common.settings"
                         defaultMessage="Settings"
                       />
                     </button>

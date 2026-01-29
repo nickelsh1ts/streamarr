@@ -1,6 +1,8 @@
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
+import LidarrAPI from '@server/api/servarr/lidarr';
+import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
@@ -40,6 +42,9 @@ import Invite from '@server/entity/Invite';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
+import downloadsRoutes from './downloads';
+import { validateBaseUrl } from '@server/lib/validation/baseUrl';
+import { arrAuthLimiter } from '@server/lib/rateLimiters';
 
 const settingsRoutes = Router();
 
@@ -47,6 +52,7 @@ settingsRoutes.use('/notifications', notificationRoutes);
 settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/logos', logoSettingsRoutes);
+settingsRoutes.use('/downloads', downloadsRoutes);
 
 const filteredMainSettings = (
   user: User,
@@ -257,7 +263,6 @@ settingsRoutes.get('/services', (_req, res) => {
 
   services.push(
     settings.bazarr,
-    settings.downloads,
     settings.lidarr,
     settings.overseerr,
     settings.prowlarr,
@@ -265,9 +270,13 @@ settingsRoutes.get('/services', (_req, res) => {
     settings.uptime
   );
 
+  const downloadsService: ServiceSettings = {
+    enabled: settings.downloads.length > 0,
+  };
+
   const servicesWithId = [
     { ...settings.bazarr, id: 'bazarr' },
-    { ...settings.downloads, id: 'downloads' },
+    { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
     { ...settings.overseerr, id: 'overseerr' },
     { ...settings.prowlarr, id: 'prowlarr' },
@@ -292,20 +301,6 @@ settingsRoutes.post('/uptime', async (req, res) => {
   res.status(200).json(settings.uptime);
 });
 
-settingsRoutes.get('/downloads', (_req, res) => {
-  const settings = getSettings();
-
-  res.status(200).json(settings.downloads);
-});
-
-settingsRoutes.post('/downloads', async (req, res) => {
-  const settings = getSettings();
-
-  Object.assign(settings.downloads, req.body);
-  settings.save();
-  res.status(200).json(settings.downloads);
-});
-
 settingsRoutes.get('/tdarr', (_req, res) => {
   const settings = getSettings();
 
@@ -326,8 +321,14 @@ settingsRoutes.get('/bazarr', (_req, res) => {
   res.status(200).json(settings.bazarr);
 });
 
-settingsRoutes.post('/bazarr', async (req, res) => {
+settingsRoutes.post('/bazarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'bazarr', 'bazarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.bazarr, req.body);
   settings.save();
@@ -340,13 +341,118 @@ settingsRoutes.get('/prowlarr', (_req, res) => {
   res.status(200).json(settings.prowlarr);
 });
 
-settingsRoutes.post('/prowlarr', async (req, res) => {
+settingsRoutes.post('/prowlarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'prowlarr', 'prowlarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.prowlarr, req.body);
   settings.save();
   res.status(200).json(settings.prowlarr);
 });
+
+settingsRoutes.post('/prowlarr/test', async (req, res, next) => {
+  try {
+    const prowlarr = new ProwlarrAPI({
+      apiKey: req.body.apiKey,
+      url: ProwlarrAPI.buildServiceUrl(req.body, '/api/v1'),
+    });
+
+    const urlBase = await prowlarr
+      .getSystemStatus()
+      .then((value) => value.urlBase)
+      .catch(() => req.body.urlBase);
+    const tags = await prowlarr.getTags();
+
+    res.status(200).json({
+      tags,
+      urlBase,
+    });
+  } catch (e) {
+    logger.error('Failed to test Prowlarr', {
+      label: 'Prowlarr',
+      message: e.message,
+    });
+
+    next({ status: 500, message: 'Failed to connect to Prowlarr' });
+  }
+});
+
+settingsRoutes.get('/prowlarr/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const prowlarrSettings = settings.prowlarr;
+
+  if (!prowlarrSettings.hostname || !prowlarrSettings.apiKey) {
+    return next({ status: 400, message: 'Prowlarr not configured' });
+  }
+
+  try {
+    const prowlarr = new ProwlarrAPI({
+      apiKey: prowlarrSettings.apiKey,
+      url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
+    });
+
+    const hostConfig = await prowlarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Prowlarr auth status', {
+      label: 'Prowlarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Prowlarr' });
+  }
+});
+
+settingsRoutes.post(
+  '/prowlarr/auth',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    const settings = getSettings();
+    const prowlarrSettings = settings.prowlarr;
+
+    if (!prowlarrSettings.hostname || !prowlarrSettings.apiKey) {
+      return next({ status: 400, message: 'Prowlarr not configured' });
+    }
+
+    try {
+      const prowlarr = new ProwlarrAPI({
+        apiKey: prowlarrSettings.apiKey,
+        url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
+      });
+
+      const hostConfig = await prowlarr.disableAuthentication();
+
+      logger.info('Authentication disabled on Prowlarr', {
+        label: 'Prowlarr',
+        userId: req.user?.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        authenticationMethod: hostConfig.authenticationMethod,
+      });
+    } catch (e) {
+      logger.error('Failed to disable Prowlarr authentication', {
+        label: 'Prowlarr',
+        message: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Failed to disable authentication on Prowlarr',
+      });
+    }
+  }
+);
 
 settingsRoutes.get('/lidarr', (_req, res) => {
   const settings = getSettings();
@@ -354,12 +460,123 @@ settingsRoutes.get('/lidarr', (_req, res) => {
   res.status(200).json(settings.lidarr);
 });
 
-settingsRoutes.post('/lidarr', async (req, res) => {
+settingsRoutes.post('/lidarr', async (req, res, next) => {
   const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'lidarr', 'lidarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
 
   Object.assign(settings.lidarr, req.body);
   settings.save();
   res.status(200).json(settings.lidarr);
+});
+
+settingsRoutes.post<undefined, Record<string, unknown>, ServiceSettings>(
+  '/lidarr/test',
+  async (req, res, next) => {
+    try {
+      const lidarr = new LidarrAPI({
+        apiKey: req.body.apiKey,
+        url: LidarrAPI.buildServiceUrl(req.body, '/api/v1'),
+      });
+
+      const urlBase = await lidarr
+        .getSystemStatus()
+        .then((value) => value.urlBase)
+        .catch(() => req.body.urlBase);
+      const profiles = await lidarr.getProfiles();
+      const folders = await lidarr.getRootFolders();
+      const tags = await lidarr.getTags();
+
+      res.status(200).json({
+        profiles,
+        rootFolders: folders.map((folder) => ({
+          id: folder.id,
+          path: folder.path,
+        })),
+        tags,
+        urlBase,
+      });
+    } catch (e) {
+      logger.error('Failed to test Lidarr', {
+        label: 'Lidarr',
+        message: e.message,
+      });
+
+      next({ status: 500, message: 'Failed to connect to Lidarr' });
+    }
+  }
+);
+
+settingsRoutes.get('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
+  const settings = getSettings();
+  const lidarrSettings = settings.lidarr;
+
+  if (!lidarrSettings.hostname || !lidarrSettings.apiKey) {
+    return next({ status: 400, message: 'Lidarr not configured' });
+  }
+
+  try {
+    const lidarr = new LidarrAPI({
+      apiKey: lidarrSettings.apiKey,
+      url: LidarrAPI.buildServiceUrl(lidarrSettings, '/api/v1'),
+    });
+
+    const hostConfig = await lidarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Lidarr auth status', {
+      label: 'Lidarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Lidarr' });
+  }
+});
+
+settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
+  const settings = getSettings();
+  const lidarrSettings = settings.lidarr;
+
+  if (!lidarrSettings.hostname || !lidarrSettings.apiKey) {
+    return next({ status: 400, message: 'Lidarr not configured' });
+  }
+
+  try {
+    const lidarr = new LidarrAPI({
+      apiKey: lidarrSettings.apiKey,
+      url: LidarrAPI.buildServiceUrl(lidarrSettings, '/api/v1'),
+    });
+
+    const hostConfig = await lidarr.disableAuthentication();
+
+    logger.info('Authentication disabled on Lidarr', {
+      label: 'Lidarr',
+      userId: req.user?.id,
+    });
+
+    res.status(200).json({
+      success: true,
+      authenticationMethod: hostConfig.authenticationMethod,
+    });
+  } catch (e) {
+    logger.error('Failed to disable Lidarr authentication', {
+      label: 'Lidarr',
+      message: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Failed to disable authentication on Lidarr',
+    });
+  }
 });
 
 settingsRoutes.get('/overseerr', (_req, res) => {

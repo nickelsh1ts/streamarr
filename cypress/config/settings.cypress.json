@@ -54,8 +54,7 @@
   "urlBase": "/admin/qbt"
  },
  "tdarr": {
-  "enabled": false,
-  "urlBase": "/admin/tdarr"
+  "enabled": false
  },
  "bazarr": {
   "enabled": false,
