@@ -5,6 +5,7 @@ import type {
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
+import { testConnection } from '@server/api/downloads/base';
 
 const downloadsRoutes = Router();
 
@@ -55,7 +56,7 @@ downloadsRoutes.post('/', (req, res, next) => {
     settings.downloads = [...settings.downloads, clientSettings];
     settings.save();
 
-    logger.info(`Download client created: ${clientSettings.name}`, {
+    logger.debug(`Download client created: ${clientSettings.name}`, {
       label: 'Downloads',
       client: clientSettings.client,
       externalUrl: clientSettings.externalUrl,
@@ -89,13 +90,18 @@ downloadsRoutes.put<{ id: string }>('/:id', (req, res, next) => {
       ...existingClient,
       ...updates,
       id: clientId, // Ensure ID cannot be changed
-      externalUrl: updates.externalUrl ?? existingClient.externalUrl,
+      externalUrl:
+        'externalUrl' in updates
+          ? updates.externalUrl === ''
+            ? undefined
+            : updates.externalUrl
+          : existingClient.externalUrl,
     };
 
     settings.downloads[clientIndex] = updatedClient;
     settings.save();
 
-    logger.info(`Download client updated: ${updatedClient.name}`, {
+    logger.debug(`Download client updated: ${updatedClient.name}`, {
       label: 'Downloads',
       client: updatedClient.client,
     });
@@ -125,7 +131,7 @@ downloadsRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
 
     settings.save();
 
-    logger.info(`Download client removed: ${removed.name}`, {
+    logger.debug(`Download client removed: ${removed.name}`, {
       label: 'Downloads',
       client: removed.client,
     });
@@ -137,6 +143,84 @@ downloadsRoutes.delete<{ id: string }>('/:id', (req, res, next) => {
       error: error instanceof Error ? error.message : 'Unknown error',
     });
     next({ status: 500, message: 'Failed to delete download client' });
+  }
+});
+
+downloadsRoutes.post('/test', async (req, res, next) => {
+  try {
+    const testSettings = req.body as Partial<DownloadClientSettings>;
+
+    if (!testSettings.client) {
+      return next({ status: 400, message: 'Client type is required' });
+    }
+
+    if (!testSettings.hostname) {
+      return next({ status: 400, message: 'Hostname is required' });
+    }
+
+    if (!testSettings.port) {
+      return next({ status: 400, message: 'Port is required' });
+    }
+
+    // Username is not required for Deluge (Web UI uses password only)
+    if (testSettings.client !== 'deluge' && !testSettings.username) {
+      return next({ status: 400, message: 'Username is required' });
+    }
+
+    if (!testSettings.password) {
+      return next({ status: 400, message: 'Password is required' });
+    }
+
+    // Create temporary client settings for testing
+    const clientSettings: DownloadClientSettings = {
+      id: -1, // Temporary ID for testing
+      name: testSettings.name || 'Test Client',
+      client: testSettings.client,
+      hostname: testSettings.hostname,
+      port: testSettings.port,
+      useSsl: testSettings.useSsl ?? false,
+      username: testSettings.username,
+      password: testSettings.password,
+    };
+
+    const result = await testConnection(clientSettings);
+
+    res.json(result);
+  } catch (e) {
+    logger.error('Failed to test download client connection', {
+      label: 'Downloads',
+      error: e.message ?? 'Unknown error',
+    });
+    next({ status: 500, message: 'Failed to test connection' });
+  }
+});
+
+downloadsRoutes.post('/test/:clientId', async (req, res, next) => {
+  try {
+    const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
+    const settings = getSettings();
+    const clientSettings = settings.downloads.find((c) => c.id === clientId);
+
+    if (!clientSettings) {
+      next({ status: 404, message: 'Download client not found' });
+      return;
+    }
+
+    const result = await testConnection(clientSettings);
+
+    res.json(result);
+  } catch (e) {
+    logger.error('Failed to test connection', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to test connection' });
   }
 });
 

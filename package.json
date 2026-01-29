@@ -35,6 +35,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@ctrl/deluge": "^7.5.0",
+    "@ctrl/qbittorrent": "^9.11.0",
+    "@ctrl/shared-torrent": "^6.5.0",
+    "@ctrl/transmission": "^7.4.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "axios": "^1.13.2",
@@ -63,6 +67,7 @@
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.1",
     "nodemailer": "^7.0.12",
+    "ofetch": "^1.5.1",
     "openpgp": "^6.3.0",
     "plex-api": "^5.3.2",
     "qrcode": "^1.5.4",

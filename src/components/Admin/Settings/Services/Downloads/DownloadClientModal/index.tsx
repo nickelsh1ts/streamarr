@@ -31,11 +31,6 @@ const CLIENT_NAMES: Record<DownloadClientType, string> = {
   transmission: 'Transmission',
 };
 
-const CLIENTS_WITH_USERNAME: DownloadClientType[] = [
-  'qbittorrent',
-  'transmission',
-];
-
 const DownloadClientModal = ({
   onClose,
   downloadClient,
@@ -83,10 +78,16 @@ const DownloadClientModal = ({
           defaultMessage: 'You must provide a valid port number',
         })
       ),
+    username: Yup.string().when('client', {
+      is: (client: string) => client !== 'deluge',
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   });
 
   const testConnection = useCallback(
     async ({
+      name,
       hostname,
       port,
       username,
@@ -94,6 +95,7 @@ const DownloadClientModal = ({
       client,
       useSsl,
     }: {
+      name: string;
       hostname: string;
       port: number;
       username?: string;
@@ -103,7 +105,8 @@ const DownloadClientModal = ({
     }) => {
       setIsTesting(true);
       try {
-        await axios.post('/api/v1/settings/downloads/test', {
+        const response = await axios.post('/api/v1/settings/downloads/test', {
+          name,
           hostname,
           port,
           username,
@@ -112,6 +115,9 @@ const DownloadClientModal = ({
           useSsl,
         });
 
+        if (!response.data.connected) {
+          throw new Error(response.data.error || 'Connection failed');
+        }
         setIsValidated(true);
         if (initialLoad.current) {
           Toast({
@@ -126,8 +132,8 @@ const DownloadClientModal = ({
             icon: <CheckBadgeIcon className="size-7" />,
           });
         }
-      } catch {
-        setIsValidated(true);
+      } catch (e) {
+        setIsValidated(false);
         if (initialLoad.current) {
           Toast({
             title: intl.formatMessage(
@@ -137,6 +143,7 @@ const DownloadClientModal = ({
               },
               { client: CLIENT_NAMES[client] }
             ),
+            message: e.response?.data?.message || e.message,
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
           });
@@ -152,10 +159,11 @@ const DownloadClientModal = ({
   useEffect(() => {
     if (downloadClient) {
       testConnection({
+        name: downloadClient.name,
         hostname: downloadClient.hostname,
         port: downloadClient.port,
         username: downloadClient.username,
-        password: '',
+        password: downloadClient.password,
         client: downloadClient.client,
         useSsl: downloadClient.useSsl,
       });
@@ -186,7 +194,7 @@ const DownloadClientModal = ({
             useSsl: values.useSsl,
             username: values.username || undefined,
             password: values.password || undefined,
-            externalUrl: values.externalUrl || undefined,
+            externalUrl: values.externalUrl.trim() || '',
           };
 
           if (!downloadClient) {
@@ -224,8 +232,6 @@ const DownloadClientModal = ({
         isSubmitting,
         isValid,
       }) => {
-        const requiresUsername = CLIENTS_WITH_USERNAME.includes(values.client);
-
         return (
           <Modal
             onCancel={onClose}
@@ -264,10 +270,11 @@ const DownloadClientModal = ({
                 values.hostname &&
                 values.port &&
                 values.client &&
-                (requiresUsername ? values.username : true) &&
+                (values.client === 'deluge' || values.username) &&
                 values.password
               ) {
                 testConnection({
+                  name: values.name,
                   hostname: values.hostname,
                   port: Number(values.port),
                   username: values.username,
@@ -282,7 +289,7 @@ const DownloadClientModal = ({
               !values.hostname ||
               !values.port ||
               !values.client ||
-              (requiresUsername ? !values.username : false) ||
+              (values.client !== 'deluge' && !values.username) ||
               !values.password
             }
             okDisabled={isSubmitting || !isValidated || isTesting || !isValid}
@@ -319,10 +326,6 @@ const DownloadClientModal = ({
                       setFieldValue('client', newClient);
                       // Update port to default for the selected client
                       setFieldValue('port', DEFAULT_PORTS[newClient]);
-                      // Clear username if the new client doesn't require it
-                      if (!CLIENTS_WITH_USERNAME.includes(newClient)) {
-                        setFieldValue('username', '');
-                      }
                     }}
                     disabled={!!downloadClient}
                   >
@@ -430,7 +433,7 @@ const DownloadClientModal = ({
                   />
                 </div>
               </div>
-              {requiresUsername && (
+              {values.client !== 'deluge' && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="username">
                     <FormattedMessage

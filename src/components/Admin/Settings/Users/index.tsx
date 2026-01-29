@@ -287,7 +287,7 @@ const UserSettings = () => {
                 </div>
                 <label htmlFor="enableTrialPeriod" className="font-bold block">
                   <FormattedMessage
-                    id="userSettings.enableTrialPeriod"
+                    id="settings.enableTrialPeriod"
                     defaultMessage="Enable Trial Period"
                   />
                   <span className="text-sm block font-light text-neutral">

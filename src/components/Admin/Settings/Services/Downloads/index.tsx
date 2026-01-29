@@ -57,6 +57,7 @@ const ClientLogo = ({
 };
 
 interface DownloadClientInstanceProps {
+  id: number;
   name: string;
   client: DownloadClientType;
   hostname: string;
@@ -67,6 +68,7 @@ interface DownloadClientInstanceProps {
 }
 
 const DownloadClientInstance = ({
+  id,
   name,
   client,
   hostname,
@@ -75,6 +77,30 @@ const DownloadClientInstance = ({
   onEdit,
   onDelete,
 }: DownloadClientInstanceProps) => {
+  const [connectionStatus, setConnectionStatus] = useState<{
+    connected: boolean;
+    version?: string;
+    error?: string;
+  } | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
+
+  const testConnection = async () => {
+    setIsTesting(true);
+    try {
+      const response = await axios.post(
+        `/api/v1/settings/downloads/test/${id}`
+      );
+      setConnectionStatus(response.data);
+    } catch (e) {
+      setConnectionStatus({
+        connected: false,
+        error: e.message || 'Connection failed',
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
   const internalUrl =
     (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);
 
@@ -116,16 +142,65 @@ const DownloadClientInstance = ({
               {internalUrl}
             </a>
           </p>
-          <p className="mt-1 truncate text-sm leading-5">
-            <span className="mr-2 font-bold">
+          <p className="mt-1 truncate text-sm leading-5 flex gap-2 items-center">
+            <span className="font-bold">
               <FormattedMessage id="common.status" defaultMessage="Status" />
             </span>
-            <Badge badgeType="success">
-              <FormattedMessage
-                id="common.status.active"
-                defaultMessage="Active"
-              />
-            </Badge>
+            {isTesting ? (
+              <Badge badgeType="warning">
+                <FormattedMessage
+                  id="common.testing"
+                  defaultMessage="Testing..."
+                />
+              </Badge>
+            ) : connectionStatus === null ? (
+              <Button
+                buttonType="primary"
+                buttonSize="xs"
+                onClick={testConnection}
+              >
+                <FormattedMessage
+                  id="common.testConnection"
+                  defaultMessage="Test Connection"
+                />
+              </Button>
+            ) : connectionStatus.connected ? (
+              <span className="flex items-center gap-1">
+                <Badge badgeType="success">
+                  <FormattedMessage
+                    id="common.connected"
+                    defaultMessage="Connected"
+                  />
+                </Badge>
+                <Button
+                  onClick={testConnection}
+                  buttonType="ghost"
+                  buttonSize="xs"
+                  className="!h-5 !min-h-5 px-1.5"
+                  title="Retest"
+                >
+                  ↻
+                </Button>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <Badge badgeType="error">
+                  <FormattedMessage
+                    id="common.disconnected"
+                    defaultMessage="Disconnected"
+                  />
+                </Badge>
+                <Button
+                  onClick={testConnection}
+                  buttonType="ghost"
+                  buttonSize="xs"
+                  className="!h-5 !min-h-5 px-1.5"
+                  title="Retest"
+                >
+                  ↻
+                </Button>
+              </span>
+            )}
           </p>
         </div>
         <a
@@ -259,6 +334,7 @@ const ServicesDownloads = () => {
             {downloadsData.map((client) => (
               <DownloadClientInstance
                 key={`download-client-${client.id}`}
+                id={client.id}
                 name={client.name}
                 client={client.client}
                 hostname={client.hostname}

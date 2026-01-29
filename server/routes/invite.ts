@@ -130,7 +130,7 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
             invite.status = InviteStatus.EXPIRED;
             await inviteRepository.save(invite);
             logger.debug('Invite marked as expired during lookup', {
-              label: 'API',
+              label: 'Invites',
               inviteId: invite.id,
               icode: invite.icode,
             });
@@ -257,7 +257,7 @@ inviteRoutes.post<
       res.status(200).json(newinvite);
     } catch (e) {
       logger.debug('Something went wrong creating invite.', {
-        label: 'API',
+        label: 'Invites',
         errorMessage: e.message,
       });
       next({
@@ -303,7 +303,7 @@ inviteRoutes.put<{ id: string }, Invite, Invite>(
       res.status(200).json(updatedInvite);
     } catch (e) {
       logger.debug('Something went wrong saving invite.', {
-        label: 'API',
+        label: 'Invites',
         errorMessage: e.message,
       });
       next({ status: 404, message: 'Invite not found' });
@@ -342,7 +342,7 @@ inviteRoutes.get('/count', async (req, res, next) => {
     });
   } catch (e) {
     logger.debug('Something went wrong retrieving invite counts.', {
-      label: 'API',
+      label: 'Invites',
       errorMessage: e.message,
     });
     next({ status: 500, message: 'Unable to retrieve invite counts.' });
@@ -392,7 +392,7 @@ inviteRoutes.get<{ inviteId: string }>(
       res.status(200).json(invite);
     } catch (e) {
       logger.debug('Failed to retrieve invite.', {
-        label: 'API',
+        label: 'Invites',
         errorMessage: e.message,
       });
       next({ status: 500, message: 'invite not found.' });
@@ -469,7 +469,7 @@ inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
       res.status(200).json(invite);
     } catch (e) {
       logger.debug('Something went wrong updating the invite.', {
-        label: 'API',
+        label: 'Invites',
         errorMessage: e.message,
       });
       next({ status: 500, message: 'invite not found.' });
@@ -575,7 +575,7 @@ inviteRoutes.delete(
       res.status(204).send();
     } catch (e) {
       logger.error('Something went wrong deleting an invite.', {
-        label: 'API',
+        label: 'Invites',
         errorMessage: e.message,
       });
       next({ status: 404, message: 'invite not found.' });

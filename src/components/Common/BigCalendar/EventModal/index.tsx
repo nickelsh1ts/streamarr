@@ -522,7 +522,7 @@ const EventModal = ({
                     />
                   ) : (
                     <FormattedMessage
-                      id="calendar.eventDate"
+                      id="calendar.date"
                       defaultMessage="Date"
                     />
                   )}
@@ -622,7 +622,7 @@ const EventModal = ({
                     }
                   />
                   <FormattedMessage
-                    id="calendar.sendNotification"
+                    id="common.sendNotification"
                     defaultMessage="Send Notification"
                   />
                 </label>
@@ -638,7 +638,7 @@ const EventModal = ({
                   className="block text-sm font-medium leading-6 text-left"
                 >
                   <FormattedMessage
-                    id="calendar.eventStatus"
+                    id="common.status"
                     defaultMessage="Status"
                   />
                 </label>

@@ -116,11 +116,11 @@ const Sidebar = () => {
                       toolTip
                       ttplacement="top"
                       title={intl.formatMessage({
-                        id: 'sidebar.settings',
+                        id: 'common.settings',
                         defaultMessage: 'Settings',
                       })}
                       tiptitle={intl.formatMessage({
-                        id: 'sidebar.settings',
+                        id: 'common.settings',
                         defaultMessage: 'Settings',
                       })}
                       dropdownIcon={
@@ -132,7 +132,7 @@ const Sidebar = () => {
                         href="/watch/web/index.html#!/settings/web/general"
                       >
                         <FormattedMessage
-                          id="sidebar.general"
+                          id="common.general"
                           defaultMessage="General"
                         />
                       </DropDownMenu.Item>
@@ -213,11 +213,11 @@ const Sidebar = () => {
           <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
             <DropDownMenu
               title={intl.formatMessage({
-                id: 'sidebar.settings',
+                id: 'common.settings',
                 defaultMessage: 'Settings',
               })}
               tiptitle={intl.formatMessage({
-                id: 'sidebar.settings',
+                id: 'common.settings',
                 defaultMessage: 'Settings',
               })}
               toolTip
@@ -226,7 +226,7 @@ const Sidebar = () => {
             >
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/general">
                 <FormattedMessage
-                  id="sidebar.general"
+                  id="common.general"
                   defaultMessage="General"
                 />
               </DropDownMenu.Item>

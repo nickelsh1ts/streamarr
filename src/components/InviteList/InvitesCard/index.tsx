@@ -135,7 +135,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <div className="flex flex-wrap w-full items-center gap-x-2 gap-y-1">
                   <p className="text-xs flex items-center">
                     <FormattedMessage
-                      id="invite.downloads"
+                      id="common.downloads"
                       defaultMessage="Downloads"
                     />{' '}
                     {invite?.downloads ? (

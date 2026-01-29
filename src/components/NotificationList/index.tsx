@@ -170,7 +170,7 @@ const NotificationsList = () => {
           ))}
         >
           <FormattedMessage
-            id="notification.header"
+            id="common.notifications"
             defaultMessage="Notifications"
           />
         </Header>
@@ -213,7 +213,7 @@ const NotificationsList = () => {
               disabled={!currentSettings?.inAppEnabled}
             >
               <FormattedMessage
-                id="notification.sendNotification"
+                id="common.sendNotification"
                 defaultMessage="Send Notification"
               />
             </Button>

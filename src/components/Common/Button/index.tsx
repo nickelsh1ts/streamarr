@@ -8,6 +8,7 @@ export type ButtonType =
   | 'error'
   | 'warning'
   | 'success'
+  | 'info'
   | 'ghost';
 
 // Helper type to override types (overrides onClick)
@@ -24,7 +25,7 @@ type Element<P extends ElementTypes = 'button'> = P extends 'a'
 
 type BaseProps<P> = {
   buttonType?: ButtonType;
-  buttonSize?: 'default' | 'lg' | 'md' | 'sm';
+  buttonSize?: 'default' | 'lg' | 'md' | 'sm' | 'xs';
   // Had to do declare this manually as typescript would assume e was of type any otherwise
   onClick?: (
     e: React.MouseEvent<P extends 'a' ? HTMLAnchorElement : HTMLButtonElement>
@@ -65,11 +66,17 @@ function Button<P extends ElementTypes = 'button'>(
     case 'ghost':
       buttonStyle.push('btn-ghost');
       break;
+    case 'info':
+      buttonStyle.push('btn-info');
+      break;
     default:
       buttonStyle.push('btn-neutral');
   }
 
   switch (buttonSize) {
+    case 'xs':
+      buttonStyle.push('text-xs btn-xs');
+      break;
     case 'sm':
       buttonStyle.push('text-xs btn-sm');
       break;
