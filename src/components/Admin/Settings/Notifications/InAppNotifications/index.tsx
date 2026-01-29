@@ -103,7 +103,7 @@ const InAppNotifications = () => {
           <Form className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
             <label htmlFor="preset">
               <FormattedMessage
-                id="inAppNotifications.enableAgent"
+                id="notifications.enableAgent"
                 defaultMessage="Enable Agent"
               />
               <span className="ml-1 text-error">*</span>

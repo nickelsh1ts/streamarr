@@ -24,8 +24,7 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import signupRoutes from './signup';
 import notificationRoutes from '@server/routes/notification';
-
-//TODO: Create API endpoints for services and Plex instead of using reverse proxies
+import downloadsRoutes from './downloads';
 
 export const createTmdbWithRegionLanguage = (): TheMovieDb => {
   return new TheMovieDb();
@@ -249,6 +248,7 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
 
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
 router.use('/invite', isAuthenticated(), inviteRoutes);
+router.use('/downloads', isAuthenticated(Permission.ADMIN), downloadsRoutes);
 router.use(
   '/notification',
   isAuthenticated(

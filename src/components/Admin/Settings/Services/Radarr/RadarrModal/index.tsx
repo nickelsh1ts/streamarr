@@ -1,13 +1,20 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import Badge from '@app/components/Common/Badge';
 import Toast from '@app/components/Toast';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import {
+  CheckBadgeIcon,
+  XCircleIcon,
+  ShieldExclamationIcon,
+} from '@heroicons/react/24/solid';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
+import { SmallLoadingEllipsis } from '@app/components/Common/LoadingEllipsis';
 
 interface TestResponse {
   urlBase?: string;
@@ -26,6 +33,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
   const [isValidated, setIsValidated] = useState(radarr ? true : false);
   const [isTesting, setIsTesting] = useState(false);
   const [testResponse, setTestResponse] = useState<TestResponse>();
+  const [authStatus, setAuthStatus] = useState<{
+    authenticationMethod: string;
+    isAuthDisabled: boolean;
+  } | null>(null);
+  const [isDisablingAuth, setIsDisablingAuth] = useState(false);
+
   const RadarrSettingsSchema = Yup.object().shape({
     name: Yup.string().required(
       intl.formatMessage({
@@ -62,6 +75,12 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       })
     ),
     baseUrl: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
       .test(
         'leading-slash',
         intl.formatMessage({
@@ -109,12 +128,23 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
 
         setIsValidated(true);
         setTestResponse(response.data);
+        // Fetch auth status after successful test
+        if (radarr) {
+          axios
+            .get(`/api/v1/settings/radarr/${radarr.id}/auth`)
+            .then((authRes) => setAuthStatus(authRes.data))
+            .catch(() => setAuthStatus(null));
+        }
         if (initialLoad.current) {
           Toast({
-            title: intl.formatMessage({
-              id: 'servicesSettings.radarr.testsuccess',
-              defaultMessage: 'Radarr connection established successfully!',
-            }),
+            title: intl.formatMessage(
+              {
+                id: 'servicesSettings.testsuccess',
+                defaultMessage:
+                  '{service} connection established successfully!',
+              },
+              { service: 'Radarr' }
+            ),
             type: 'success',
             icon: <CheckBadgeIcon className="size-7" />,
           });
@@ -123,10 +153,13 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         setIsValidated(false);
         if (initialLoad.current) {
           Toast({
-            title: intl.formatMessage({
-              id: 'servicesSettings.radarr.testfailed',
-              defaultMessage: 'Failed to connect to Radarr.',
-            }),
+            title: intl.formatMessage(
+              {
+                id: 'servicesSettings.testfailed',
+                defaultMessage: 'Failed to connect to {service}.',
+              },
+              { service: 'Radarr' }
+            ),
             type: 'error',
             icon: <XCircleIcon className="size-7" />,
           });
@@ -136,7 +169,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         initialLoad.current = true;
       }
     },
-    [intl]
+    [intl, radarr]
   );
 
   useEffect(() => {
@@ -150,6 +183,62 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       });
     }
   }, [radarr, testConnection]);
+
+  // Reset auth status and validation when modal closes
+  useEffect(() => {
+    if (!show) {
+      setAuthStatus(null);
+      if (radarr) {
+        setIsValidated(false);
+      }
+    }
+  }, [show, radarr]);
+
+  // Fetch auth status when modal opens with existing radarr
+  useEffect(() => {
+    if (radarr && isValidated) {
+      axios
+        .get(`/api/v1/settings/radarr/${radarr.id}/auth`)
+        .then((res) => setAuthStatus(res.data))
+        .catch(() => setAuthStatus(null));
+    }
+  }, [radarr, isValidated]);
+
+  // Handler for disable auth
+  const handleDisableAuth = async () => {
+    if (!radarr || isDisablingAuth) return;
+
+    setIsDisablingAuth(true);
+    try {
+      await axios.post(`/api/v1/settings/radarr/${radarr.id}/auth`);
+      setAuthStatus({ authenticationMethod: 'external', isAuthDisabled: true });
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisabledService',
+            defaultMessage: 'Authentication disabled on {service}',
+          },
+          { service: 'Radarr' }
+        ),
+        type: 'success',
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+    } catch {
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisableFailed',
+            defaultMessage: 'Failed to disable authentication on {service}',
+          },
+          { service: 'Radarr' }
+        ),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsDisablingAuth(false);
+    }
+  };
 
   return (
     <Formik
@@ -487,6 +576,13 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
+                  <span className="text-error mx-1">*</span>
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="arrSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route. A restart is required to take effect."
+                    />
+                  </span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -580,6 +676,76 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                   />
                 </div>
               </div>
+              {radarr && isValidated && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="authStatus" className="text-label">
+                    <FormattedMessage
+                      id="servicesSettings.disableAuth"
+                      defaultMessage="Authentication"
+                    />
+                  </label>
+                  <div className="sm:col-span-2">
+                    {!authStatus ? (
+                      <div className="place-items-start">
+                        <SmallLoadingEllipsis />
+                      </div>
+                    ) : authStatus?.authenticationMethod === 'external' ? (
+                      <div
+                        className="tooltip"
+                        data-tip={intl.formatMessage(
+                          {
+                            id: 'servicesSettings.authDisabled.tooltip',
+                            defaultMessage:
+                              'To re-enable authentication, change the setting directly in {service}',
+                          },
+                          { service: 'Radarr' }
+                        )}
+                      >
+                        <Badge badgeType="warning">
+                          <FormattedMessage
+                            id="servicesSettings.authDisabled"
+                            defaultMessage="Auth Disabled"
+                          />
+                        </Badge>
+                      </div>
+                    ) : (
+                      <>
+                        <ConfirmButton
+                          onClick={handleDisableAuth}
+                          confirmText={
+                            <FormattedMessage
+                              id="common.areYouSure"
+                              defaultMessage="Are you sure?"
+                            />
+                          }
+                          buttonSize="sm"
+                        >
+                          <ShieldExclamationIcon className="mr-1 size-5" />
+                          {isDisablingAuth ? (
+                            <FormattedMessage
+                              id="common.processing"
+                              defaultMessage="Processing..."
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="servicesSettings.disableAuth.button"
+                              defaultMessage="Disable {service} Auth"
+                              values={{ service: 'Radarr' }}
+                            />
+                          )}
+                        </ConfirmButton>
+                        <p className="mt-2 text-sm text-gray-500">
+                          <FormattedMessage
+                            id="servicesSettings.disableAuth.description"
+                            defaultMessage="Disables authentication on {service}. You must understand the risks before proceeding. Only do this if {service} is not directly exposed to the internet."
+                            values={{ service: 'Radarr' }}
+                          />
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </Modal>
         );

@@ -180,7 +180,7 @@ const LogsSettings = () => {
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
-                  id="logs.modal.severity"
+                  id="common.severity"
                   defaultMessage="Severity"
                 />
               </div>
@@ -218,7 +218,7 @@ const LogsSettings = () => {
             <div className="grid mt-5 grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
-                  id="logs.modal.message"
+                  id="common.message"
                   defaultMessage="Message"
                 />
               </div>
@@ -247,7 +247,7 @@ const LogsSettings = () => {
         )}
       </Modal>
       <h3 className="text-2xl font-extrabold">
-        <FormattedMessage id="logs.title" defaultMessage="Logs" />
+        <FormattedMessage id="common.logs" defaultMessage="Logs" />
       </h3>
       <p className="mb-5 overflow-hidden w-full">
         <FormattedMessage
@@ -291,9 +291,9 @@ const LogsSettings = () => {
             )}
             <span className="ml-2">
               {refreshInterval ? (
-                <FormattedMessage id="logs.pause" defaultMessage="Pause" />
+                <FormattedMessage id="common.pause" defaultMessage="Pause" />
               ) : (
-                <FormattedMessage id="logs.resume" defaultMessage="Resume" />
+                <FormattedMessage id="common.resume" defaultMessage="Resume" />
               )}
             </span>
           </Button>
@@ -330,7 +330,7 @@ const LogsSettings = () => {
               </option>
               <option value="error">
                 {intl.formatMessage({
-                  id: 'logs.filter.error',
+                  id: 'common.error',
                   defaultMessage: 'Error',
                 })}
               </option>
@@ -349,7 +349,7 @@ const LogsSettings = () => {
             </Table.TH>
             <Table.TH>
               <FormattedMessage
-                id="logs.modal.severity"
+                id="common.severity"
                 defaultMessage="Severity"
               />
             </Table.TH>
@@ -357,10 +357,7 @@ const LogsSettings = () => {
               <FormattedMessage id="logs.modal.label" defaultMessage="Label" />
             </Table.TH>
             <Table.TH>
-              <FormattedMessage
-                id="logs.modal.message"
-                defaultMessage="Message"
-              />
+              <FormattedMessage id="common.message" defaultMessage="Message" />
             </Table.TH>
             <Table.TH></Table.TH>
           </tr>
@@ -400,7 +397,7 @@ const LogsSettings = () => {
                     {row.data && (
                       <Tooltip
                         content={intl.formatMessage({
-                          id: 'logs.table.viewDetails',
+                          id: 'common.viewDetails',
                           defaultMessage: 'View Details',
                         })}
                         tooltipConfig={{

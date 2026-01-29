@@ -20,6 +20,8 @@ tags:
     description: Endpoints related to user management.
   - name: calendar
     description: Endpoints related to calendar events.
+  - name: downloads
+    description: Endpoints related to torrent download client management and operations.
 servers:
   - url: '{server}/api/v1'
     variables:
@@ -300,10 +302,6 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/PlexLibrary'
-        webAppUrl:
-          type: string
-          nullable: true
-          example: 'https://app.plex.tv/desktop'
       required:
         - name
         - machineId
@@ -602,6 +600,370 @@ components:
         externalUrl:
           type: string
           nullable: true
+    DownloadClientType:
+      type: string
+      enum:
+        - qbittorrent
+        - deluge
+        - transmission
+      example: qbittorrent
+    DownloadClientSettings:
+      type: object
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 0
+        name:
+          type: string
+          example: 'My qBittorrent'
+        client:
+          $ref: '#/components/schemas/DownloadClientType'
+        hostname:
+          type: string
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 8080
+        useSsl:
+          type: boolean
+          example: false
+        urlBase:
+          type: string
+          readOnly: true
+          description: Auto-generated URL base for proxy routing
+          example: '/qbt'
+        username:
+          type: string
+          nullable: true
+          example: 'admin'
+        password:
+          type: string
+          nullable: true
+          writeOnly: true
+        isDefault:
+          type: boolean
+          example: true
+          description: Whether this is the default download client shown in the UI
+      required:
+        - name
+        - client
+        - hostname
+    TorrentStatus:
+      type: string
+      enum:
+        - downloading
+        - seeding
+        - paused
+        - queued
+        - checking
+        - error
+        - completed
+        - stalled
+        - moving
+        - metadata
+        - unknown
+      example: downloading
+    TorrentAction:
+      type: string
+      enum:
+        - pause
+        - resume
+        - remove
+        - forceRecheck
+        - queueUp
+        - queueDown
+        - topPriority
+        - bottomPriority
+      example: pause
+    CategoryAction:
+      type: string
+      enum:
+        - create
+        - edit
+        - delete
+      example: create
+    NormalizedTorrent:
+      type: object
+      properties:
+        hash:
+          type: string
+          example: '5a8def1ffad4db26849d16f7c11c4854e1f2def8'
+        name:
+          type: string
+          example: 'Ubuntu 22.04 LTS'
+        status:
+          $ref: '#/components/schemas/TorrentStatus'
+        progress:
+          type: number
+          example: 75.5
+          description: Progress percentage (0-100)
+        size:
+          type: number
+          example: 3221225472
+          description: Total size in bytes
+        downloaded:
+          type: number
+          example: 2415919104
+          description: Downloaded bytes
+        uploaded:
+          type: number
+          example: 1073741824
+          description: Uploaded bytes
+        downloadSpeed:
+          type: number
+          example: 1048576
+          description: Download speed in bytes/sec
+        uploadSpeed:
+          type: number
+          example: 524288
+          description: Upload speed in bytes/sec
+        eta:
+          type: number
+          nullable: true
+          example: 3600
+          description: Estimated time remaining in seconds
+        peers:
+          type: number
+          example: 45
+        seeds:
+          type: number
+          example: 120
+        ratio:
+          type: number
+          example: 1.5
+        label:
+          type: string
+          nullable: true
+          example: 'movies'
+        category:
+          type: string
+          nullable: true
+          example: 'movies'
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['movies', 'hd']
+        dateAdded:
+          type: string
+          format: date-time
+          example: '2024-01-25T10:00:00Z'
+        dateCompleted:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2024-01-25T12:30:00Z'
+        savePath:
+          type: string
+          example: '/downloads/movies'
+        clientId:
+          type: number
+          example: 0
+          description: ID of the download client
+        clientName:
+          type: string
+          example: 'My qBittorrent'
+        priority:
+          type: number
+          description: Queue position/priority number. All clients show queue position. -1 if qBittorrent queueing is disabled.
+          nullable: true
+          example: 5
+    TorrentStats:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID
+        clientName:
+          type: string
+          example: 'qBittorrent'
+          description: Download client name
+        clientType:
+          type: string
+          enum: [qbittorrent, deluge, transmission]
+          example: 'qbittorrent'
+          description: Download client type
+        connected:
+          type: boolean
+          example: true
+          description: Whether the client is connected
+        error:
+          type: string
+          nullable: true
+          example: 'Connection refused'
+          description: Error message if client failed to connect
+        totalDownloadSpeed:
+          type: number
+          example: 5242880
+          description: Total download speed in bytes/sec
+        totalUploadSpeed:
+          type: number
+          example: 2621440
+          description: Total upload speed in bytes/sec
+        activeTorrents:
+          type: number
+          example: 5
+          description: Number of active (downloading/seeding) torrents
+        pausedTorrents:
+          type: number
+          example: 7
+          description: Number of paused torrents
+        totalTorrents:
+          type: number
+          example: 42
+          description: Total number of torrents
+        health:
+          type: object
+          nullable: true
+          properties:
+            status:
+              type: string
+              enum: [healthy, retrying, unhealthy]
+              example: 'healthy'
+              description: Health status of the client
+            lastError:
+              type: string
+              nullable: true
+              description: Last error message
+            cooldownUntil:
+              type: string
+              format: date-time
+              nullable: true
+              description: ISO timestamp when cooldown expires
+            isStale:
+              type: boolean
+              nullable: true
+              description: Whether the client is in cooldown
+    AddTorrentRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID to use
+        torrent:
+          type: string
+          nullable: true
+          example: 'magnet:?xt=urn:btih:...'
+          description: Magnet link or torrent URL
+        file:
+          type: string
+          nullable: true
+          description: Base64-encoded .torrent file content
+        category:
+          type: string
+          nullable: true
+          example: 'movies'
+        savePath:
+          type: string
+          nullable: true
+          example: '/downloads/movies'
+        paused:
+          type: boolean
+          nullable: true
+          description: Whether to add torrent in paused state
+      required:
+        - clientId
+    CategoryActionRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID (qBittorrent for categories, Deluge for labels, Transmission not supported)
+        action:
+          type: string
+          enum: [create, edit, delete]
+          example: create
+          description: Action to perform on the category
+        category:
+          type: string
+          example: 'movies'
+          description: Category/label name
+        savePath:
+          type: string
+          nullable: true
+          example: '/downloads/movies'
+          description: Save path for create/edit actions
+      required:
+        - clientId
+        - action
+        - category
+    TestConnectionResponse:
+      type: object
+      properties:
+        connected:
+          type: boolean
+          example: true
+        version:
+          type: string
+          nullable: true
+          example: 'v4.5.2'
+        error:
+          type: string
+          nullable: true
+          example: 'Connection refused'
+    TorrentFile:
+      type: object
+      properties:
+        name:
+          type: string
+          description: File name (including relative path)
+        size:
+          type: number
+          description: File size in bytes
+        progress:
+          type: number
+          description: File progress (percentage/100)
+        priority:
+          type: number
+          description: File priority (0=skip, 1=normal, 6=high, 7=maximum)
+        is_seed:
+          type: boolean
+          description: True if file is seeding/complete
+        piece_range:
+          type: array
+          items:
+            type: number
+          description: Starting and ending piece indices
+        availability:
+          type: number
+          description: Percentage of file pieces currently available
+        index:
+          type: number
+          description: File index
+    DownloadsResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NormalizedTorrent'
+        stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/TorrentStats'
+        pageInfo:
+          type: object
+          properties:
+            pages:
+              type: number
+              example: 3
+              description: Total number of pages
+            page:
+              type: number
+              example: 1
+              description: Current page number
+            results:
+              type: number
+              example: 125
+              description: Total number of results
+            pageSize:
+              type: number
+              example: 50
+              description: Number of items per page
     PublicSettings:
       type: object
       properties:
@@ -1480,20 +1842,22 @@ paths:
                 $ref: '#/components/schemas/ServiceSettings'
   /settings/downloads:
     get:
-      summary: Get downloads settings
-      description: Retrieves current downloads settings.
+      summary: Get download client settings
+      description: Returns all download client configurations in a JSON array.
       tags:
         - settings
       responses:
         '200':
-          description: OK
+          description: 'Values were returned'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DownloadClientSettings'
     post:
-      summary: Update downloads settings
-      description: Updates downloads settings with the provided values.
+      summary: Create download client instance
+      description: Creates a new download client configuration.
       tags:
         - settings
       requestBody:
@@ -1501,14 +1865,121 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceSettings'
+              $ref: '#/components/schemas/DownloadClientSettings'
       responses:
-        '200':
-          description: 'Values were successfully updated'
+        '201':
+          description: 'New download client created'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                $ref: '#/components/schemas/DownloadClientSettings'
+  /settings/downloads/{downloadId}:
+    put:
+      summary: Update download client instance
+      description: Updates an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadClientSettings'
+      responses:
+        '200':
+          description: 'Download client updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
+    delete:
+      summary: Delete download client instance
+      description: Deletes an existing download client configuration.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: downloadId
+          required: true
+          schema:
+            type: integer
+          description: Download client instance ID
+      responses:
+        '200':
+          description: 'Download client deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadClientSettings'
+  /settings/downloads/test:
+    post:
+      summary: Test download client connection
+      description: Tests connection to a download client with provided settings (for new/unsaved configurations).
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  $ref: '#/components/schemas/DownloadClientType'
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8080
+                useSsl:
+                  type: boolean
+                  example: false
+                username:
+                  type: string
+                  nullable: true
+                  example: 'admin'
+                password:
+                  type: string
+                  nullable: true
+              required:
+                - client
+                - hostname
+                - port
+      responses:
+        '200':
+          description: 'Connection test result'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestConnectionResponse'
+  /settings/downloads/test/{clientId}:
+    post:
+      summary: Test existing download client connection
+      description: Tests connection to an existing saved download client by ID.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: number
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Connection test result'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestConnectionResponse'
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -1602,6 +2073,100 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/prowlarr/test:
+    post:
+      summary: Test Prowlarr configuration
+      description: Tests if the Prowlarr configuration is valid. Returns tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 9696
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Prowlarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Prowlarr
+  /settings/prowlarr/auth:
+    get:
+      summary: Get Prowlarr authentication status
+      description: Returns the current authentication method configured on Prowlarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to connect to Prowlarr
+    post:
+      summary: Disable authentication on Prowlarr
+      description: |
+        Sets the authentication method to 'External' on Prowlarr.
+        This allows Streamarr to proxy the Prowlarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Prowlarr not configured
+        '500':
+          description: Failed to disable authentication on Prowlarr
   /settings/lidarr:
     get:
       summary: Get lidarr settings
@@ -1633,6 +2198,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/lidarr/test:
+    post:
+      summary: Test Lidarr configuration
+      description: Tests if the Lidarr configuration is valid. Returns profiles, root folders, and tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8686
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Lidarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Lidarr
+  /settings/lidarr/auth:
+    get:
+      summary: Get Lidarr authentication status
+      description: Returns the current authentication method configured on Lidarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to connect to Lidarr
+    post:
+      summary: Disable authentication on Lidarr
+      description: |
+        Sets the authentication method to 'External' on Lidarr.
+        This allows Streamarr to proxy the Lidarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Lidarr not configured
+        '500':
+          description: Failed to disable authentication on Lidarr
   /settings/overseerr:
     get:
       summary: Get overseerr settings
@@ -1817,6 +2484,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RadarrSettings'
+  /settings/radarr/{radarrId}/auth:
+    get:
+      summary: Get Radarr authentication status
+      description: Returns the current authentication method configured on the Radarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to connect to Radarr
+    post:
+      summary: Disable authentication on Radarr instance
+      description: |
+        Sets the authentication method to 'External' on the Radarr instance.
+        This allows Streamarr to proxy the Radarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: radarrId
+          required: true
+          schema:
+            type: integer
+          description: Radarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Radarr instance not found
+        '500':
+          description: Failed to disable authentication on Radarr
   /settings/radarr/{radarrId}/profiles:
     get:
       summary: Get available Radarr profiles
@@ -1961,6 +2689,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SonarrSettings'
+  /settings/sonarr/{sonarrId}/auth:
+    get:
+      summary: Get Sonarr authentication status
+      description: Returns the current authentication method configured on the Sonarr instance.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to connect to Sonarr
+    post:
+      summary: Disable authentication on Sonarr instance
+      description: |
+        Sets the authentication method to 'External' on the Sonarr instance.
+        This allows Streamarr to proxy the Sonarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: sonarrId
+          required: true
+          schema:
+            type: integer
+          description: Sonarr instance ID
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '404':
+          description: Sonarr instance not found
+        '500':
+          description: Failed to disable authentication on Sonarr
   /settings/public:
     get:
       summary: Get public settings
@@ -3464,6 +4253,501 @@ paths:
                   message:
                     type: string
                     example: Failed to pin libraries
+  /downloads:
+    get:
+      summary: Get all torrents from download clients
+      description: Returns torrents with pagination, filtering, and sorting support.
+      tags:
+        - downloads
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          schema:
+            type: number
+            default: 50
+          description: Number of items per page
+        - in: query
+          name: clientId
+          schema:
+            type: number
+          description: Filter by specific download client ID
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/TorrentStatus'
+          description: Filter by torrent status
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter by category/label
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search in torrent names
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - name
+              - progress
+              - size
+              - status
+              - eta
+              - ratio
+              - addedDate
+              - speed
+              - priority
+              - client
+            default: addedDate
+          description: Sort field
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          description: Sort direction (ascending or descending)
+      responses:
+        '200':
+          description: 'Torrents returned with stats'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadsResponse'
+  /downloads/add:
+    post:
+      summary: Add a new torrent
+      description: Adds a torrent via magnet link, URL, or .torrent file upload.
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTorrentRequest'
+      responses:
+        '200':
+          description: 'Torrent added successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    nullable: true
+                    example: '5a8def1ffad4db26849d16f7c11c4854e1f2def8'
+  /downloads/{hash}/action:
+    post:
+      summary: Perform action on a torrent
+      description: Perform pause, resume, remove, or forceRecheck actions on a torrent.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/TorrentAction'
+                clientId:
+                  type: number
+                  example: 0
+                  description: Download client ID
+                deleteFiles:
+                  type: boolean
+                  default: false
+                  description: Whether to delete files when removing torrent
+              required:
+                - action
+                - clientId
+              additionalProperties: false
+      responses:
+        '200':
+          description: 'Action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/action:
+    post:
+      summary: Perform action on multiple torrents
+      description: Perform pause, resume, remove, or forceRecheck actions on multiple torrents.
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                torrents:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      hash:
+                        type: string
+                        description: Torrent hash
+                      clientId:
+                        type: number
+                        description: Download client ID
+                    required:
+                      - hash
+                      - clientId
+                  description: Array of torrents to perform action on
+                  minItems: 1
+                action:
+                  $ref: '#/components/schemas/TorrentAction'
+                deleteFiles:
+                  type: boolean
+                  default: false
+                  description: Whether to delete files when removing torrents
+              required:
+                - torrents
+                - action
+              additionalProperties: false
+      responses:
+        '200':
+          description: 'Bulk action completed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True if all actions succeeded
+                    example: true
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hash:
+                          type: string
+                        clientId:
+                          type: number
+                        success:
+                          type: boolean
+                        error:
+                          type: string
+                          nullable: true
+                  summary:
+                    type: object
+                    properties:
+                      total:
+                        type: number
+                        example: 5
+                      success:
+                        type: number
+                        example: 4
+                      failed:
+                        type: number
+                        example: 1
+  /downloads/category:
+    post:
+      summary: Manage categories/labels
+      description: |
+        Create, edit, or delete categories (qBittorrent) or labels (Deluge).
+        - **qBittorrent**: Supports create/edit/delete categories with save paths
+        - **Deluge**: Supports create/delete labels (no edit support, no save paths)
+        - **Transmission**: Not supported
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryActionRequest'
+      responses:
+        '200':
+          description: 'Category action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/{hash}/files:
+    get:
+      summary: Get torrent file list
+      description: |
+        Retrieves the list of files within a specific torrent.
+        Supported by all clients: qBittorrent, Deluge, and Transmission.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+        - in: query
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Torrent files list'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TorrentFile'
+  /downloads/{hash}:
+    patch:
+      summary: Update torrent metadata
+      description: |
+        Update torrent category/label and/or save path.
+        - **qBittorrent**: Full support for categories and location changes
+        - **Deluge**: Supports labels and location changes via move_completed options
+        - **Transmission**: Supports labels and location moves via moveTorrent
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+              properties:
+                clientId:
+                  type: integer
+                  description: Download client ID
+                category:
+                  type: string
+                  description: New category name
+                savePath:
+                  type: string
+                  description: New save path
+      responses:
+        '200':
+          description: 'Torrent updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /downloads/{hash}/files/priority:
+    post:
+      summary: Set file priority
+      description: |
+        Set priority for specific files within a torrent.
+        - **qBittorrent**: 0=skip, 1=normal, 6=high, 7=maximal
+        - **Deluge**: 0=skip, 1=low, 2=normal, 5=high (updates full priority array)
+        - **Transmission**: Mapped to priority-low/normal/high arrays
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          description: Torrent hash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+                - fileIds
+                - priority
+              properties:
+                clientId:
+                  type: integer
+                  description: Download client ID
+                fileIds:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of file indices to update
+                priority:
+                  type: integer
+                  description: |
+                    Priority level (client-specific):
+                    - qBittorrent: 0=skip, 1=normal, 6=high, 7=maximum
+                    - Deluge: 0=skip, 1=low, 2=normal, 5=high
+                    - Transmission: 0=skip, 1=low, 2=normal, 6=high
+                  enum: [0, 1, 2, 5, 6, 7]
+      responses:
+        '200':
+          description: 'File priority updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /downloads/health:
+    get:
+      summary: Get health status for all download clients
+      description: Returns health status, error messages, and cooldown information for all configured download clients.
+      tags:
+        - downloads
+      responses:
+        '200':
+          description: 'Health status for all clients'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    clientId:
+                      type: number
+                      example: 0
+                    clientName:
+                      type: string
+                      example: 'qBittorrent'
+                    status:
+                      type: string
+                      enum: [healthy, retrying, unhealthy]
+                      example: 'healthy'
+                    lastError:
+                      type: string
+                      nullable: true
+                      example: 'Connection timeout'
+                    cooldownUntil:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    isStale:
+                      type: boolean
+                      example: false
+  /downloads/health/retry:
+    post:
+      summary: Retry all unhealthy download clients
+      description: Resets cooldown and attempts to reconnect to all unhealthy download clients.
+      tags:
+        - downloads
+      responses:
+        '200':
+          description: 'Retry results for all unhealthy clients'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        clientId:
+                          type: number
+                        clientName:
+                          type: string
+                        success:
+                          type: boolean
+                        health:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                              enum: [healthy, retrying, unhealthy]
+                            lastError:
+                              type: string
+                              nullable: true
+                            cooldownUntil:
+                              type: string
+                              format: date-time
+                              nullable: true
+                            isStale:
+                              type: boolean
+  /downloads/health/retry/{clientId}:
+    post:
+      summary: Retry specific download client
+      description: Resets cooldown and attempts to reconnect to a specific download client.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID to retry
+      responses:
+        '200':
+          description: 'Retry result for specific client'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  health:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [healthy, retrying, unhealthy]
+                      lastError:
+                        type: string
+                        nullable: true
+                      cooldownUntil:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      isStale:
+                        type: boolean
   /invite:
     get:
       summary: Get all invites

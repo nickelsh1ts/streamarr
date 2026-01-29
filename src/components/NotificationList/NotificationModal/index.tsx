@@ -324,7 +324,7 @@ const NotificationModal = ({
                   className="block text-sm font-medium leading-6 text-left"
                 >
                   <FormattedMessage
-                    id="notificationModal.message"
+                    id="common.message"
                     defaultMessage="Message"
                   />
                 </label>
@@ -419,7 +419,7 @@ const NotificationModal = ({
                   className="block text-sm font-medium leading-6 text-left"
                 >
                   <FormattedMessage
-                    id="notificationModal.severity"
+                    id="common.severity"
                     defaultMessage="Severity"
                   />
                 </label>

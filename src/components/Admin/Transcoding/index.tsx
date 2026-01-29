@@ -5,6 +5,9 @@ import type { ServiceSettings } from '@server/lib/settings';
 import { useState } from 'react';
 import useSWR from 'swr';
 
+/** Hardcoded proxy path - Tdarr has no base URL support */
+const TDARR_PROXY_PATH = '/tdarr';
+
 const AdminTranscoding = () => {
   const [hostname] = useState(() =>
     typeof window !== 'undefined'
@@ -22,7 +25,7 @@ const AdminTranscoding = () => {
       <DynamicFrame
         title={'transcoding'}
         domainURL={hostname}
-        basePath={data?.urlBase}
+        basePath={TDARR_PROXY_PATH}
         newBase={'/admin/transcode'}
       ></DynamicFrame>
     </div>

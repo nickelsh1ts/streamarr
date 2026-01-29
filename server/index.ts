@@ -23,6 +23,10 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
+import {
+  createServiceProxyRouter,
+  getActiveProxyPaths,
+} from '@server/routes/serviceProxy';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
@@ -94,16 +98,27 @@ app
     }
     server.use(cookieParser());
 
-    // Conditional body parsing - skip for file upload routes
+    // Get proxy paths to skip body parsing for proxied services
+    const proxyPaths = getActiveProxyPaths();
+    const isProxyPath = (path: string) =>
+      proxyPaths.some((p) => path.startsWith(p));
+
+    // Conditional body parsing - skip for file upload and proxy routes
     server.use((req, res, next) => {
-      if (req.path.includes('/settings/logos/upload')) {
+      if (
+        req.path.includes('/settings/logos/upload') ||
+        isProxyPath(req.path)
+      ) {
         return next();
       }
       express.json({ limit: '50mb' })(req, res, next);
     });
 
     server.use((req, res, next) => {
-      if (req.path.includes('/settings/logos/upload')) {
+      if (
+        req.path.includes('/settings/logos/upload') ||
+        isProxyPath(req.path)
+      ) {
         return next();
       }
       express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
@@ -167,11 +182,13 @@ app
     server.use('/logo', clearCookies, logoRoutes);
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
+    server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
-        ignorePaths: (path) => path.includes('/settings/logos/upload'),
+        ignorePaths: (path) =>
+          path.includes('/settings/logos/upload') || isProxyPath(path),
       })
     );
     server.use((_req, res, next) => {

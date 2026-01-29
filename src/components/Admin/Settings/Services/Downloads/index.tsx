@@ -1,276 +1,377 @@
 'use client';
+import QbtLogo from '@app/assets/services/qBittorrent.svg';
+import DelugeLogo from '@app/assets/services/deluge.svg';
+import TransmissionLogo from '@app/assets/services/transmission.png';
+import Image from 'next/image';
+import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import Modal from '@app/components/Common/Modal';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
+import DownloadClientModal from '@app/components/Admin/Settings/Services/Downloads/DownloadClientModal';
 import {
   ArrowDownTrayIcon,
-  CheckBadgeIcon,
-  XCircleIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
 } from '@heroicons/react/24/solid';
-import type { ServiceSettings } from '@server/lib/settings';
+import { FormattedMessage, useIntl } from 'react-intl';
+import type {
+  DownloadClientSettings,
+  DownloadClientType,
+} from '@server/lib/settings';
 import axios from 'axios';
-import { Field, Formik } from 'formik';
-import useSWR from 'swr';
-import * as Yup from 'yup';
+import { useState } from 'react';
+import useSWR, { mutate } from 'swr';
 
-//TODO: Allow multiple download servers (like sonarr/radarr)
+const CLIENT_NAMES: Record<DownloadClientType, string> = {
+  qbittorrent: 'qBittorrent',
+  deluge: 'Deluge',
+  transmission: 'Transmission',
+};
+
+const ClientLogo = ({
+  className,
+  client,
+}: {
+  className?: string;
+  client: DownloadClientType;
+}) => {
+  switch (client) {
+    case 'qbittorrent':
+      return <QbtLogo className={className} />;
+    case 'deluge':
+      return <DelugeLogo className={className} />;
+    case 'transmission':
+      return (
+        <Image
+          src={TransmissionLogo}
+          alt="Transmission"
+          className={className}
+          width={40}
+          height={40}
+        />
+      );
+    default:
+      return <ArrowDownTrayIcon className={className} />;
+  }
+};
+
+interface DownloadClientInstanceProps {
+  id: number;
+  name: string;
+  client: DownloadClientType;
+  hostname: string;
+  port: number;
+  isSSL?: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const DownloadClientInstance = ({
+  id,
+  name,
+  client,
+  hostname,
+  port,
+  isSSL = false,
+  onEdit,
+  onDelete,
+}: DownloadClientInstanceProps) => {
+  const [connectionStatus, setConnectionStatus] = useState<{
+    connected: boolean;
+    version?: string;
+    error?: string;
+  } | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
+
+  const testConnection = async () => {
+    setIsTesting(true);
+    try {
+      const response = await axios.post(
+        `/api/v1/settings/downloads/test/${id}`
+      );
+      setConnectionStatus(response.data);
+    } catch (e) {
+      setConnectionStatus({
+        connected: false,
+        error: e.message || 'Connection failed',
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
+  const internalUrl =
+    (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);
+
+  return (
+    <li className="col-span-1 rounded-lg bg-base-200 shadow">
+      <div className="flex w-full items-center justify-between space-x-6 p-6">
+        <div className="flex-1 truncate">
+          <div className="mb-2 flex items-center space-x-2">
+            <h3 className="truncate font-medium leading-5">
+              <a
+                href={internalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition duration-300 hover:underline"
+              >
+                {name}
+              </a>
+            </h3>
+            <Badge badgeType="default">{CLIENT_NAMES[client]}</Badge>
+            {isSSL && (
+              <Badge badgeType="success">
+                <FormattedMessage id="common.ssl" defaultMessage="SSL" />
+              </Badge>
+            )}
+          </div>
+          <p className="mt-1 truncate text-sm leading-5">
+            <span className="mr-2 font-bold">
+              <FormattedMessage
+                id="common.hostname"
+                defaultMessage="Hostname or IP Address"
+              />
+            </span>
+            <a
+              href={internalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition duration-300 hover:underline"
+            >
+              {internalUrl}
+            </a>
+          </p>
+          <p className="mt-1 truncate text-sm leading-5 flex gap-2 items-center">
+            <span className="font-bold">
+              <FormattedMessage id="common.status" defaultMessage="Status" />
+            </span>
+            {isTesting ? (
+              <Badge badgeType="warning">
+                <FormattedMessage
+                  id="common.testing"
+                  defaultMessage="Testing..."
+                />
+              </Badge>
+            ) : connectionStatus === null ? (
+              <Button
+                buttonType="primary"
+                buttonSize="xs"
+                onClick={testConnection}
+              >
+                <FormattedMessage
+                  id="common.testConnection"
+                  defaultMessage="Test Connection"
+                />
+              </Button>
+            ) : connectionStatus.connected ? (
+              <span className="flex items-center gap-1">
+                <Badge badgeType="success">
+                  <FormattedMessage
+                    id="common.connected"
+                    defaultMessage="Connected"
+                  />
+                </Badge>
+                <Button
+                  onClick={testConnection}
+                  buttonType="ghost"
+                  buttonSize="xs"
+                  className="!h-5 !min-h-5 px-1.5"
+                  title="Retest"
+                >
+                  ↻
+                </Button>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <Badge badgeType="error">
+                  <FormattedMessage
+                    id="common.disconnected"
+                    defaultMessage="Disconnected"
+                  />
+                </Badge>
+                <Button
+                  onClick={testConnection}
+                  buttonType="ghost"
+                  buttonSize="xs"
+                  className="!h-5 !min-h-5 px-1.5"
+                  title="Retest"
+                >
+                  ↻
+                </Button>
+              </span>
+            )}
+          </p>
+        </div>
+        <a
+          href={internalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="opacity-50 hover:opacity-100"
+        >
+          <ClientLogo client={client} className="h-10 w-10" />
+        </a>
+      </div>
+      <div className="border-t border-primary">
+        <div className="-mt-px flex">
+          <div className="flex w-0 flex-1 border-r border-primary">
+            <button
+              onClick={() => onEdit()}
+              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+            >
+              <PencilIcon className="mr-2 h-5 w-5" />
+              <span>
+                <FormattedMessage id="common.edit" defaultMessage="Edit" />
+              </span>
+            </button>
+          </div>
+          <div className="-ml-px flex w-0 flex-1">
+            <button
+              onClick={() => onDelete()}
+              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+            >
+              <TrashIcon className="mr-2 h-5 w-5" />
+              <span>
+                <FormattedMessage id="common.delete" defaultMessage="Delete" />
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+};
 
 const ServicesDownloads = () => {
   const intl = useIntl();
-  const { data: dataDownloads, mutate: revalidateDownloads } =
-    useSWR<ServiceSettings>('/api/v1/settings/downloads');
+  const {
+    data: downloadsData,
+    error: downloadsError,
+    mutate: revalidateDownloads,
+  } = useSWR<DownloadClientSettings[]>('/api/v1/settings/downloads');
 
-  const SettingsSchema = Yup.object().shape({
-    urlBase: Yup.string()
-      .test(
-        'leading-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.leadingSlash',
-          defaultMessage: 'URL Base must have a leading slash',
-        }),
-        (value) => !value || value.startsWith('/')
-      )
-      .test(
-        'no-trailing-slash',
-        intl.formatMessage({
-          id: 'servicesSettings.urlBase.noTrailingSlash',
-          defaultMessage: 'URL Base must not end in a trailing slash',
-        }),
-        (value) => !value || !value.endsWith('/')
-      ),
+  const [editModal, setEditModal] = useState<{
+    open: boolean;
+    client: DownloadClientSettings | null;
+  }>({
+    open: false,
+    client: null,
   });
 
-  if (!dataDownloads) {
-    return <LoadingEllipsis />;
-  }
+  const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    clientId: number | null;
+    clientName: string;
+  }>({
+    open: false,
+    clientId: null,
+    clientName: '',
+  });
+
+  const deleteClient = async () => {
+    await axios.delete(`/api/v1/settings/downloads/${deleteModal.clientId}`);
+    setDeleteModal({ open: false, clientId: null, clientName: '' });
+    revalidateDownloads();
+    mutate('/api/v1/settings/public');
+  };
 
   return (
-    <div className="max-w-6xl mb-10">
-      <div className="mb-6">
+    <>
+      <div className="mb-6 max-w-6xl">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.downloads.title"
             defaultMessage="Downloads Settings"
           />
         </h3>
-        <p className="mb-5">
+        <p className="description">
           <FormattedMessage
             id="servicesSettings.downloads.description"
-            defaultMessage="Configure the settings for the downloads service."
+            defaultMessage="Configure your download client(s) below. You can connect multiple download clients (qBittorrent, Deluge, Transmission)."
           />
         </p>
       </div>
-      <Formik
-        initialValues={{
-          enabled: dataDownloads?.enabled ?? false,
-          urlBase: dataDownloads?.urlBase,
-          hostname: dataDownloads?.hostname ?? '',
-          port: dataDownloads?.port ?? 8080,
-          useSsl: dataDownloads?.useSsl ?? false,
+      <DownloadClientModal
+        downloadClient={editModal.client}
+        onClose={() => setEditModal({ open: false, client: null })}
+        onSave={() => {
+          revalidateDownloads();
+          mutate('/api/v1/settings/public');
+          setEditModal({ open: false, client: null });
         }}
-        validationSchema={SettingsSchema}
-        onSubmit={async (values) => {
-          try {
-            await axios.post('/api/v1/settings/Downloads', {
-              hostname: values.hostname,
-              port: values.port,
-              useSsl: values.useSsl,
-              enabled: values.enabled,
-              urlBase: values.urlBase,
-            } as ServiceSettings);
-
-            Toast({
-              title: intl.formatMessage(
-                {
-                  id: 'common.settingsSaveSuccess',
-                  defaultMessage: '{appName} settings saved successfully',
-                },
-                { appName: 'Downloads' }
-              ),
-              type: 'success',
-              icon: <CheckBadgeIcon className="size-7" />,
-            });
-          } catch {
-            Toast({
-              title: intl.formatMessage(
-                {
-                  id: 'common.settingsSaveError',
-                  defaultMessage:
-                    'Something went wrong while saving {appName} settings.',
-                },
-                { appName: 'Downloads' }
-              ),
-              type: 'error',
-              icon: <XCircleIcon className="size-7" />,
-            });
-          } finally {
-            revalidateDownloads();
-          }
-        }}
+        show={editModal.open}
+      />
+      <Modal
+        okText={intl.formatMessage({
+          id: 'common.delete',
+          defaultMessage: 'Delete',
+        })}
+        okButtonType="error"
+        show={deleteModal.open}
+        onOk={() => deleteClient()}
+        onCancel={() =>
+          setDeleteModal({
+            open: false,
+            clientId: null,
+            clientName: '',
+          })
+        }
+        title={intl.formatMessage({
+          id: 'servicesSettings.downloads.deleteTitle',
+          defaultMessage: 'Delete Download Client',
+        })}
       >
-        {({
-          errors,
-          touched,
-          values,
-          handleSubmit,
-          setFieldValue,
-          isSubmitting,
-          isValid,
-        }) => {
-          return (
-            <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="service">
-                  <FormattedMessage
-                    id="common.settingsEnable"
-                    defaultMessage="Enable"
-                  />
-                  <span className="ml-1 text-error">*</span>
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      type="checkbox"
-                      id="enabled"
-                      name="enabled"
-                      onChange={() => {
-                        setFieldValue('enabled', !values.enabled);
-                      }}
-                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+        <FormattedMessage
+          id="servicesSettings.downloads.deleteConfirm"
+          defaultMessage='Are you sure you want to delete the download client "{name}"?'
+          values={{ name: deleteModal.clientName }}
+        />
+      </Modal>
+      <div className="section">
+        {!downloadsData && !downloadsError && <LoadingEllipsis />}
+        {downloadsData && !downloadsError && (
+          <ul className="grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            {downloadsData.map((client) => (
+              <DownloadClientInstance
+                key={`download-client-${client.id}`}
+                id={client.id}
+                name={client.name}
+                client={client.client}
+                hostname={client.hostname}
+                port={client.port}
+                isSSL={client.useSsl}
+                onEdit={() => setEditModal({ open: true, client })}
+                onDelete={() =>
+                  setDeleteModal({
+                    open: true,
+                    clientId: client.id,
+                    clientName: client.name,
+                  })
+                }
+              />
+            ))}
+            <li className="col-span-1 h-32 rounded-lg border-2 border-dashed border-primary shadow sm:h-44">
+              <div className="flex h-full w-full items-center justify-center">
+                <Button
+                  buttonType="ghost"
+                  className="mt-3 mb-3"
+                  onClick={() => setEditModal({ open: true, client: null })}
+                >
+                  <PlusIcon className="size-7 mr-2" />
+                  <span>
+                    <FormattedMessage
+                      id="servicesSettings.downloads.addClient"
+                      defaultMessage="Add Download Client"
                     />
-                  </div>
-                  {errors.enabled &&
-                    touched.enabled &&
-                    typeof errors.enabled === 'string' && (
-                      <div className="text-error">{errors.enabled}</div>
-                    )}
-                </div>
+                  </span>
+                </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="hostname">
-                  <FormattedMessage
-                    id="common.hostname"
-                    defaultMessage="Hostname or IP Address"
-                  />
-                  <span className="ml-1 text-error">*</span>
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8  sm:text-sm">
-                      {values.useSsl ? 'https://' : 'http://'}
-                    </span>
-                    <Field
-                      type="text"
-                      inputMode="url"
-                      id="hostname"
-                      name="hostname"
-                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
-                    />
-                  </div>
-                  {errors.hostname &&
-                    touched.hostname &&
-                    typeof errors.hostname === 'string' && (
-                      <div className="text-error">{errors.hostname}</div>
-                    )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="port">
-                  <FormattedMessage id="common.port" defaultMessage="Port" />
-                  <span className="ml-1 text-error">*</span>
-                </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    type="text"
-                    inputMode="numeric"
-                    id="port"
-                    name="port"
-                    className="input input-sm input-primary w-1/6 rounded-md"
-                    autoComplete="off"
-                    data-1pignore="true"
-                    data-lpignore="true"
-                    data-bwignore="true"
-                  />
-                  {errors.port &&
-                    touched.port &&
-                    typeof errors.port === 'string' && (
-                      <div className="text-error">{errors.port}</div>
-                    )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="useSsl">
-                  <FormattedMessage
-                    id="common.useSsl"
-                    defaultMessage="Use SSL"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <Field
-                    type="checkbox"
-                    id="useSsl"
-                    name="useSsl"
-                    onChange={() => {
-                      setFieldValue('useSsl', !values.useSsl);
-                    }}
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                <label htmlFor="urlBase">
-                  <FormattedMessage
-                    id="common.urlBase"
-                    defaultMessage="URL Base"
-                  />
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <Field
-                      className="input input-sm input-primary rounded-md w-full"
-                      id="urlBase"
-                      name="urlBase"
-                      inputMode="url"
-                      type="text"
-                    />
-                  </div>
-                  {errors.urlBase && touched.urlBase && (
-                    <div className="text-error">{errors.urlBase}</div>
-                  )}
-                </div>
-              </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
-                  <Button
-                    buttonType="primary"
-                    buttonSize="sm"
-                    type="submit"
-                    disabled={isSubmitting || !isValid}
-                  >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
-                    <span>
-                      {isSubmitting ? (
-                        <FormattedMessage
-                          id="common.saving"
-                          defaultMessage="Saving..."
-                        />
-                      ) : (
-                        <FormattedMessage
-                          id="common.saveChanges"
-                          defaultMessage="Save Changes"
-                        />
-                      )}
-                    </span>
-                  </Button>
-                </span>
-              </div>
-            </form>
-          );
-        }}
-      </Formik>
-    </div>
+            </li>
+          </ul>
+        )}
+      </div>
+    </>
   );
 };
+
 export default ServicesDownloads;

@@ -69,6 +69,12 @@ export interface Tag {
   label: string;
 }
 
+export interface HostConfig {
+  id: number;
+  authenticationMethod: 'None' | 'Basic' | 'Forms' | 'External';
+  authenticationRequired: 'Enabled' | 'DisabledForLocalAddresses';
+}
+
 interface QueueResponse<QueueItemAppendT> {
   page: number;
   pageSize: number;
@@ -196,6 +202,36 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
     } catch (e) {
       throw new Error(
         `[${this.apiName}] Failed to create tag: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  };
+
+  public getHostConfig = async (): Promise<HostConfig> => {
+    try {
+      const response = await this.axios.get<HostConfig>('/config/host');
+      return response.data;
+    } catch (e) {
+      throw new Error(
+        `[${this.apiName}] Failed to retrieve host config: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  };
+
+  public disableAuthentication = async (): Promise<HostConfig> => {
+    try {
+      // First get current config to preserve other settings
+      const current = await this.getHostConfig();
+
+      // Update only the authentication method
+      const response = await this.axios.put<HostConfig>('/config/host', {
+        ...current,
+        authenticationMethod: 'External',
+      });
+
+      return response.data;
+    } catch (e) {
+      throw new Error(
+        `[${this.apiName}] Failed to disable authentication: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   };

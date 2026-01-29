@@ -95,7 +95,7 @@ const UserSettingsNotifications = ({
       <div className="mb-6 mt-3">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
-            id="settings.notifications"
+            id="notification.settings"
             defaultMessage="Notification Settings"
           />
         </h3>

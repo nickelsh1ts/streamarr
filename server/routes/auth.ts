@@ -1,6 +1,7 @@
 import PlexTvAPI from '@server/api/plextv';
 import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
+import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -18,6 +19,12 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   const user = await userRepository.findOneOrFail({
     where: { id: req.user.id },
   });
+
+  // Compute inviteCount since it's not a stored column
+  const inviteCount = await getRepository(Invite).count({
+    where: { createdBy: { id: user.id } },
+  });
+  user.inviteCount = inviteCount;
 
   res.status(200).json(user);
 });

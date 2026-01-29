@@ -35,7 +35,7 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
   const computedRoutes = [
     {
       text: intl.formatMessage({
-        id: 'sidebar.general',
+        id: 'common.general',
         defaultMessage: 'General',
       }),
       route: '/settings/general',
