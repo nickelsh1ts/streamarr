@@ -3,6 +3,7 @@ import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { ServiceNotConfigured } from '@app/components/Common/ServiceError';
 import type { RadarrSettings } from '@server/lib/settings';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -15,13 +16,22 @@ const AdminMovies = () => {
       : ''
   );
   const params = useParams<{ id: string }>();
-  const { data: radarrData } = useSWR<RadarrSettings[]>(
+  const { data: radarrData, isLoading } = useSWR<RadarrSettings[]>(
     '/api/v1/settings/radarr'
   );
 
   // Wait for data to load
-  if (!radarrData || radarrData.length === 0) {
+  if (isLoading) {
     return <LoadingEllipsis />;
+  }
+
+  if (!radarrData || radarrData.length === 0) {
+    return (
+      <ServiceNotConfigured
+        serviceName="Radarr"
+        settingsPath="/admin/settings/services/radarr"
+      />
+    );
   }
 
   const radarrRoutes: AdminRoute[] = radarrData.map((d) => {
@@ -34,12 +44,18 @@ const AdminMovies = () => {
 
   // Find by param ID, or fall back to default instance, or first instance
   const defaultInstance = radarrData.find((d) => d.isDefault) ?? radarrData[0];
-  const baseUrl =
-    radarrData.find((d) => d.id === Number(params?.id))?.baseUrl ??
-    defaultInstance.baseUrl;
+  const currentInstance =
+    radarrData.find((d) => d.id === Number(params?.id)) ?? defaultInstance;
+  const baseUrl = currentInstance.baseUrl;
 
   const paramId = Array.isArray(params.id) ? params.id[0] : params.id;
   const newBaseUrl = `/admin/movies${Number(paramId) > 0 ? '/' + Number(paramId) : ''}`;
+
+  const isConfigured = !!(
+    currentInstance.hostname &&
+    currentInstance.port &&
+    currentInstance.apiKey
+  );
 
   return (
     <div className="relative mt-2">
@@ -53,6 +69,9 @@ const AdminMovies = () => {
         domainURL={hostname}
         basePath={baseUrl}
         newBase={newBaseUrl}
+        serviceName={currentInstance.name || 'Radarr'}
+        settingsPath="/admin/settings/services/radarr"
+        isConfigured={isConfigured}
       ></DynamicFrame>
     </div>
   );

@@ -1,8 +1,13 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import {
+  ServiceError,
+  ServiceNotConfigured,
+} from '@app/components/Common/ServiceError';
 import useRouteGuard from '@app/hooks/useRouteGuard';
+import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
-import { Permission } from '@server/lib/permissions';
+import { useUser, Permission } from '@app/hooks/useUser';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -23,6 +28,18 @@ const Request = ({ children, ...props }) => {
   const url = pathname.replace('/request', '');
   const router = useRouter();
   const { currentSettings } = useSettings();
+  const { hasPermission } = useUser();
+  const isAdmin = hasPermission(Permission.ADMIN);
+
+  const isConfigured = !!currentSettings?.requestUrl;
+  const {
+    status: proxyStatus,
+    error: proxyError,
+    retry,
+  } = useServiceProxy({
+    proxyPath: currentSettings?.requestUrl,
+    enabled: isConfigured,
+  });
 
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(
@@ -216,6 +233,39 @@ const Request = ({ children, ...props }) => {
           </Button>
         </div>
       </div>
+    );
+  }
+
+  if (!isConfigured) {
+    return (
+      <ServiceNotConfigured
+        serviceName="Overseerr"
+        settingsPath={
+          isAdmin ? '/admin/settings/services/overseerr' : undefined
+        }
+        isAdmin={isAdmin}
+        isAdminRoute={false}
+      />
+    );
+  }
+
+  if (proxyStatus === 'loading') {
+    return (
+      <div className="h-[calc(100dvh-4rem)] flex items-center justify-center bg-base-300">
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
+  if (proxyStatus === 'error') {
+    return (
+      <ServiceError
+        serviceName="Overseerr"
+        error={proxyError}
+        isAdmin={isAdmin}
+        onRetry={retry}
+        isAdminRoute={false}
+      />
     );
   }
 

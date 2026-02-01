@@ -1,13 +1,17 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import {
+  ServiceError,
+  ServiceNotConfigured,
+} from '@app/components/Common/ServiceError';
+import { useServiceProxy } from '@app/hooks/useServiceProxy';
+import useSettings from '@app/hooks/useSettings';
+import { useUser, Permission } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
-import useSettings from '@app/hooks/useSettings';
-
-//TODO: Add support for 404/error handling within iframe - custom component/page rendered instead of iframe
 
 // Type for Navigation API (not yet in standard TypeScript lib)
 interface NavigationDestination {
@@ -40,6 +44,9 @@ interface DynamicFrameProps {
   basePath?: string;
   newBase?: string;
   domainURL?: string;
+  serviceName?: string;
+  settingsPath?: string;
+  isConfigured?: boolean;
 }
 
 const DynamicFrame = ({
@@ -48,10 +55,14 @@ const DynamicFrame = ({
   basePath,
   newBase,
   domainURL,
+  serviceName = 'Service',
+  settingsPath,
+  isConfigured = true,
   ...props
 }: DynamicFrameProps) => {
   const pathname = usePathname();
   const { currentSettings } = useSettings();
+  const { hasPermission } = useUser();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [innerFrame, setInnerFrame] = useState<WindowWithNavigation | null>(
@@ -59,6 +70,16 @@ const DynamicFrame = ({
   );
   const [loadingIframe, setLoadingIframe] = useState(true);
   const isAdminRoute = pathname?.startsWith('/admin');
+  const isAdmin = hasPermission(Permission.ADMIN);
+
+  const {
+    status: proxyStatus,
+    error: proxyError,
+    retry,
+  } = useServiceProxy({
+    proxyPath: basePath,
+    enabled: isConfigured && !!basePath,
+  });
 
   // Use custom logos if available, otherwise fallback to defaults
   const logoSrc = currentSettings.customLogo || '/logo_full.png';
@@ -269,6 +290,39 @@ const DynamicFrame = ({
       innerFrame.navigation.removeEventListener('navigate', handleNavigate);
     };
   }, [innerFrame, basePath, newBase]);
+
+  if (!isConfigured) {
+    return (
+      <ServiceNotConfigured
+        serviceName={serviceName}
+        settingsPath={settingsPath}
+        isAdmin={isAdmin}
+        isAdminRoute={isAdminRoute}
+      />
+    );
+  }
+
+  if (proxyStatus === 'loading') {
+    return (
+      <div
+        className={`${isAdminRoute ? 'h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)]' : 'h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-4.35rem)]'} flex items-center justify-center`}
+      >
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
+  if (proxyStatus === 'error') {
+    return (
+      <ServiceError
+        serviceName={serviceName}
+        error={proxyError}
+        isAdmin={isAdmin}
+        onRetry={retry}
+        isAdminRoute={isAdminRoute}
+      />
+    );
+  }
 
   return (
     <>

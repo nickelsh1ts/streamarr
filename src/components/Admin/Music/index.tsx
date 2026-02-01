@@ -11,20 +11,27 @@ const AdminMusic = () => {
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/lidarr');
+  const { data, isLoading } = useSWR<ServiceSettings>(
+    '/api/v1/settings/lidarr'
+  );
 
-  if (!data) {
+  if (isLoading) {
     return <LoadingEllipsis />;
   }
+
+  const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
 
   return (
     <div className="relative mt-2">
       <DynamicFrame
-        title={'music'}
+        title="music"
         domainURL={hostname}
         basePath={data?.urlBase}
-        newBase={'/admin/music'}
-      ></DynamicFrame>
+        newBase="/admin/music"
+        serviceName="Lidarr"
+        settingsPath="/admin/settings/services/lidarr"
+        isConfigured={isConfigured}
+      />
     </div>
   );
 };

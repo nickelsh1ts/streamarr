@@ -57,15 +57,23 @@ export function createTdarrProxy(config: TdarrProxyConfig) {
         }
       },
       error: (err, req, res) => {
+        const target = getTarget(config);
+        const errorCode = (err as NodeJS.ErrnoException).code;
+
         logger.error(`Tdarr proxy error: ${err.message}`, {
           label: 'Proxy',
           path: req.url,
+          target,
+          errorCode,
         });
         if (res && 'headersSent' in res && !res.headersSent) {
           (res as Response).status(502).json({
             status: 502,
             error: 'Service unavailable',
             message: 'Unable to connect to Tdarr',
+            target,
+            reason: err.message,
+            code: errorCode,
           });
         }
       },
@@ -92,15 +100,23 @@ export function createTdarrStaticProxy(config: TdarrProxyConfig) {
         proxyReq.setHeader('X-Forwarded-For', clientIp);
       },
       error: (err, req, res) => {
+        const target = getTarget(config);
+        const errorCode = (err as NodeJS.ErrnoException).code;
+
         logger.error(`Tdarr static proxy error: ${err.message}`, {
           label: 'Proxy',
           path: req.url,
+          target,
+          errorCode,
         });
         if (res && 'headersSent' in res && !res.headersSent) {
           (res as Response).status(502).json({
             status: 502,
             error: 'Service unavailable',
             message: 'Unable to connect to Tdarr',
+            target,
+            reason: err.message,
+            code: errorCode,
           });
         }
       },

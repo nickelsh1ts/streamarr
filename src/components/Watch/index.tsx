@@ -1,6 +1,12 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import {
+  ServiceError,
+  ServiceNotConfigured,
+} from '@app/components/Common/ServiceError';
+import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
+import { useUser, Permission } from '@app/hooks/useUser';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 import { useEffect, useState } from 'react';
@@ -9,6 +15,15 @@ import { createPortal } from 'react-dom';
 //TODO: Add support for jellyfin - local users should access jellyfin and plex users access plex
 
 const Watch = ({ children, ...props }) => {
+  const { hasPermission } = useUser();
+  const isAdmin = hasPermission(Permission.ADMIN);
+
+  const {
+    status: proxyStatus,
+    error: proxyError,
+    retry,
+  } = useServiceProxy({ proxyPath: '/web' });
+
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
   let mountNode = null;
@@ -227,6 +242,33 @@ const Watch = ({ children, ...props }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iframeUrl, hostname]);
+
+  if (proxyStatus === 'loading') {
+    return <LoadingEllipsis fixed />;
+  }
+
+  if (proxyStatus === 'error' && proxyError?.type === 'not_found') {
+    return (
+      <ServiceNotConfigured
+        serviceName="Plex"
+        settingsPath={isAdmin ? '/admin/settings/plex' : undefined}
+        isAdmin={isAdmin}
+        isAdminRoute={false}
+      />
+    );
+  }
+
+  if (proxyStatus === 'error') {
+    return (
+      <ServiceError
+        serviceName="Plex"
+        error={proxyError}
+        isAdmin={isAdmin}
+        onRetry={retry}
+        isAdminRoute={false}
+      />
+    );
+  }
 
   return (
     <>

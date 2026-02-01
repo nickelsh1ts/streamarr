@@ -11,6 +11,7 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import { FormattedMessage } from 'react-intl';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 const AdminOverseerr = () => {
   const [hostname] = useState(() =>
@@ -18,7 +19,9 @@ const AdminOverseerr = () => {
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/overseerr');
+  const { data, isLoading } = useSWR<ServiceSettings>(
+    '/api/v1/settings/overseerr'
+  );
   const { currentSettings } = useSettings();
 
   const isLocalhost =
@@ -62,18 +65,25 @@ const AdminOverseerr = () => {
     );
   }
 
+  if (isLoading) {
+    return <LoadingEllipsis />;
+  }
+
+  const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
+
   return (
     <div className="relative mt-2 -mx-4">
-      {data?.urlBase && (
-        <DynamicFrame
-          title={'downloads'}
-          domainURL={hostname}
-          basePath={data?.urlBase}
-          newBase={'/admin/settings/overseerr'}
-        >
-          <link rel="stylesheet" href="/request.css" />
-        </DynamicFrame>
-      )}
+      <DynamicFrame
+        title="overseerr"
+        domainURL={hostname}
+        basePath={data?.urlBase}
+        newBase="/admin/settings/overseerr"
+        serviceName="Overseerr"
+        settingsPath="/admin/settings/services/overseerr"
+        isConfigured={isConfigured}
+      >
+        <link rel="stylesheet" href="/request.css" />
+      </DynamicFrame>
     </div>
   );
 };

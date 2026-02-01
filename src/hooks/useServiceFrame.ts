@@ -6,11 +6,22 @@ import type {
 } from '@server/lib/settings';
 import { usePathname } from 'next/navigation';
 
+export type ServiceType =
+  | 'radarr'
+  | 'sonarr'
+  | 'lidarr'
+  | 'prowlarr'
+  | 'bazarr'
+  | 'tdarr';
+
 export interface ServiceFrameConfig {
   id: string;
   basePath: string;
   newBase: string;
   title: string;
+  serviceName: string;
+  settingsPath: string;
+  serviceType: ServiceType;
 }
 
 export interface UseServiceFrameResult {
@@ -20,7 +31,7 @@ export interface UseServiceFrameResult {
 }
 
 type RouteInfo = {
-  serviceType: 'radarr' | 'sonarr' | 'lidarr' | 'prowlarr' | 'bazarr' | 'tdarr';
+  serviceType: ServiceType;
   instanceId: number;
   isMovies: boolean;
   isTv: boolean;
@@ -91,6 +102,9 @@ function getActiveFrame(
       basePath: instance.baseUrl,
       newBase: `/admin/movies${instance.id > 0 ? `/${instance.id}` : ''}`,
       title: `movies-${instance.name}`,
+      serviceName: instance.name || 'Radarr',
+      settingsPath: '/admin/settings/services/radarr',
+      serviceType: 'radarr',
     };
   }
 
@@ -107,14 +121,40 @@ function getActiveFrame(
       basePath: instance.baseUrl,
       newBase: `/admin/tv${instance.id > 0 ? `/${instance.id}` : ''}`,
       title: `tvshows-${instance.name}`,
+      serviceName: instance.name || 'Sonarr',
+      settingsPath: '/admin/settings/services/sonarr',
+      serviceType: 'sonarr',
     };
   }
 
   // Single-instance services with configurable urlBase
-  const serviceMap: Record<string, { newBase: string; title: string }> = {
-    lidarr: { newBase: '/admin/music', title: 'music' },
-    prowlarr: { newBase: '/admin/indexers', title: 'indexers' },
-    bazarr: { newBase: '/admin/srt', title: 'subtitles' },
+  const serviceMap: Record<
+    string,
+    {
+      newBase: string;
+      title: string;
+      serviceName: string;
+      settingsPath: string;
+    }
+  > = {
+    lidarr: {
+      newBase: '/admin/music',
+      title: 'music',
+      serviceName: 'Lidarr',
+      settingsPath: '/admin/settings/services/lidarr',
+    },
+    prowlarr: {
+      newBase: '/admin/indexers',
+      title: 'indexers',
+      serviceName: 'Prowlarr',
+      settingsPath: '/admin/settings/services/prowlarr',
+    },
+    bazarr: {
+      newBase: '/admin/srt',
+      title: 'subtitles',
+      serviceName: 'Bazarr',
+      settingsPath: '/admin/settings/services/bazarr',
+    },
   };
 
   // Tdarr has hardcoded path (no base URL support)
@@ -126,6 +166,9 @@ function getActiveFrame(
       basePath: '/tdarr',
       newBase: '/admin/transcode',
       title: 'transcoding',
+      serviceName: 'Tdarr',
+      settingsPath: '/admin/settings/services/tdarr',
+      serviceType: 'tdarr',
     };
   }
 
@@ -140,6 +183,9 @@ function getActiveFrame(
     basePath: service.urlBase,
     newBase: info.newBase,
     title: info.title,
+    serviceName: info.serviceName,
+    settingsPath: info.settingsPath,
+    serviceType: serviceType as ServiceFrameConfig['serviceType'],
   };
 }
 
