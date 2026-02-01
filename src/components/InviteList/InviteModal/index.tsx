@@ -53,10 +53,7 @@ const InviteModal = ({
     id: Number(searchParams.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
-  const {
-    data,
-    mutate: revalidate,
-  } = useSWR<UserSettingsGeneralResponse>(
+  const { data, mutate: revalidate } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
 

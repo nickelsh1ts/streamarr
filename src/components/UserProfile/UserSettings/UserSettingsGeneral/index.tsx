@@ -84,14 +84,9 @@ const UserSettingsGeneral = () => {
   );
   const { data: allLibrariesData } = useSWR<{
     libraries: { id: string; name: string; enabled: boolean }[];
-  }>(
-    currentHasPermission(Permission.ADMIN)
-      ? '/api/v1/settings/plex'
-      : null,
-    {
-      revalidateOnFocus: false,
-    }
-  );
+  }>(currentHasPermission(Permission.ADMIN) ? '/api/v1/settings/plex' : null, {
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
     setInviteQuotaEnabled(
