@@ -46,8 +46,6 @@ enum Filter {
 
 type Sort = 'created' | 'modified';
 
-//BUG: Something causes the invitelist for non-admins to show a loading state even though the invite list has loaded already (loading state does disappear after a few seconds - only on first page load, subsequent navigation in next work fine)
-
 const InviteList = () => {
   useRouteGuard(
     [
@@ -138,6 +136,7 @@ const InviteList = () => {
   const {
     data,
     error,
+    isLoading,
     mutate: revalidate,
   } = useSWR<InviteResultsResponse>(
     `/api/v1/invite?take=${currentPageSize}&skip=${
@@ -151,7 +150,12 @@ const InviteList = () => {
     }`
   );
 
-  const { data: quota, mutate: revalidateQuota } = useSWR<QuotaResponse>(
+  const {
+    data: quota,
+    error: quotaError,
+    isLoading: quotaLoading,
+    mutate: revalidateQuota,
+  } = useSWR<QuotaResponse>(
     user &&
       (user?.id === currentUser?.id || hasPermission(Permission.MANAGE_USERS))
       ? `/api/v1/user/${user?.id}/quota`
@@ -212,11 +216,11 @@ const InviteList = () => {
     );
   }, [currentFilter, currentSort, currentPageSize]);
 
-  if (!data && !error) {
+  if (isLoading && !error) {
     return <LoadingEllipsis />;
   }
 
-  if (!data) {
+  if (quotaLoading && !quotaError) {
     return <LoadingEllipsis />;
   }
 

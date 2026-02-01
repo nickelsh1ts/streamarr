@@ -1,6 +1,4 @@
 'use client';
-import Error from '@app/app/error';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import LibrarySelector from '@app/components/LibrarySelector';
 import type { User } from '@app/hooks/useUser';
@@ -57,7 +55,6 @@ const InviteModal = ({
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
   const {
     data,
-    error,
     mutate: revalidate,
   } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
@@ -171,22 +168,8 @@ const InviteModal = ({
     }
   }, [listboxOpen, dropdownPos.width]);
 
-  if (!data && !error) {
-    return <LoadingEllipsis />;
-  }
-
   if (!data && (!selectedUser || (filteredUserData ?? []).length < 2)) {
     return null;
-  }
-
-  if (!data) {
-    return (
-      <Error
-        statusCode={500}
-        error={{ name: 'Error', message: '' }}
-        reset={() => {}}
-      />
-    );
   }
 
   return (
