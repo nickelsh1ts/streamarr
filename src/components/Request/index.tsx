@@ -13,8 +13,7 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import Button from '@app/components/Common/Button';
-
-//TODO: update words to use intl
+import { FormattedMessage } from 'react-intl';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -191,12 +190,16 @@ const Request = ({ children, ...props }) => {
         <div className="text-center max-w-md">
           <LockClosedIcon className="w-16 h-16 mx-auto mb-4 text-primary" />
           <h2 className="text-xl font-semibold text-base-content mb-2">
-            Cross-Origin Access
+            <FormattedMessage
+              id="settings.crossOriginAccess"
+              defaultMessage="Cross-Origin Access"
+            />
           </h2>
           <p className="text-base-content/70 mb-6">
-            Overseerr cannot be embedded when accessing locally due to browser
-            security restrictions. Please open it in a new tab to continue or
-            access streamarr from a secure hostname.
+            <FormattedMessage
+              id="settings.overseerr.localhostDescription"
+              defaultMessage="Overseerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+            />
           </p>
           <Button
             buttonSize="sm"
@@ -205,7 +208,10 @@ const Request = ({ children, ...props }) => {
             target="_blank"
             href={overseerrUrl}
           >
-            Open Overseerr{' '}
+            <FormattedMessage
+              id="settings.openOverseerr"
+              defaultMessage="Open Overseerr"
+            />
             <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
           </Button>
         </div>
