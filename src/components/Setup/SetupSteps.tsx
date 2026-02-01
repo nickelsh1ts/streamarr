@@ -19,21 +19,20 @@ const SetupSteps = ({
     <li className="relative md:flex md:flex-1">
       <div className="flex items-center space-x-4 px-6 py-4 text-sm font-medium leading-5">
         <div
-          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center border-2
-          ${active ? 'border-primary ' : 'border-neutral-300 '}
-          ${completed ? 'border-primary bg-primary ' : ''} rounded-full`}
+          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center ${completed ? 'bg-primary border' : 'border-2'} ${active ? 'border-primary' : completed ? 'border-primary-content' : 'border-primary-content/60'} rounded-full`}
         >
-          {completed && <CheckIcon className="h-6 w-6 text-white" />}
-          {!completed && (
-            <p className={active ? 'text-white' : 'text-neutral'}>
+          {completed ? (
+            <CheckIcon className="h-6 w-6 text-primary-content" />
+          ) : (
+            <p
+              className={`${active ? 'text-primary-content' : 'text-primary-content/70'}`}
+            >
               {stepNumber}
             </p>
           )}
         </div>
         <p
-          className={`text-sm font-medium leading-5 ${
-            active ? 'text-white' : 'text-neutral'
-          }`}
+          className={`text-sm font-medium leading-5 ${active ? 'text-primary-content' : 'text-primary-content/70'}`}
         >
           {description}
         </p>
