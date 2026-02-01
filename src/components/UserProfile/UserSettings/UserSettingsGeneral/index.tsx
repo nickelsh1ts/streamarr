@@ -6,12 +6,13 @@ import LoadingEllipsis, {
   SmallLoadingEllipsis,
 } from '@app/components/Common/LoadingEllipsis';
 import QuotaSelector from '@app/components/QuotaSelector';
+import Toggle from '@app/components/Common/Toggle';
 import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
-import { XCircleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
@@ -23,6 +24,8 @@ import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
   CheckIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
@@ -31,13 +34,16 @@ import { momentWithLocale } from '@app/utils/momentLocale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-//TODO: Improve loading states - currently the whole page is loading state for all calls - plex call takes longer and should therefor show loading state in it's own section
-
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
+  const [plexLibrariesDiffer, setPlexLibrariesDiffer] = useState(false);
+  const [plexPermissionsDiffer, setPlexPermissionsDiffer] = useState<{
+    allowDownloads: boolean;
+    allowLiveTv: boolean;
+  }>({ allowDownloads: false, allowLiveTv: false });
   const searchParams = useParams<{ userid: string }>();
   const {
     user,
@@ -55,12 +61,98 @@ const UserSettingsGeneral = () => {
   } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
+  const {
+    data: plexLibrariesData,
+    isLoading: plexLibrariesLoading,
+    mutate: revalidatePlexLibraries,
+  } = useSWR<{
+    currentPlexLibraries: string | null;
+    canFetchFromPlex: boolean;
+    permissions?: {
+      allowSync: boolean;
+      allowCameraUpload: boolean;
+      allowChannels: boolean;
+    };
+    error?: string;
+  }>(
+    user?.userType === UserType.PLEX &&
+      user?.id !== 1 &&
+      currentHasPermission(Permission.MANAGE_USERS) &&
+      !hasPermission(Permission.MANAGE_USERS)
+      ? `/api/v1/user/${user?.id}/plex/libraries`
+      : null
+  );
+  const { data: allLibrariesData } = useSWR<{
+    libraries: { id: string; name: string; enabled: boolean }[];
+  }>(
+    currentHasPermission(Permission.ADMIN)
+      ? '/api/v1/settings/plex'
+      : null,
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   useEffect(() => {
     setInviteQuotaEnabled(
       data?.inviteQuotaLimit != undefined && data?.inviteQuotaDays != undefined
     );
   }, [data]);
+
+  // Compare database library/permission values with current Plex state
+  useEffect(() => {
+    if (!data || !plexLibrariesData?.canFetchFromPlex) {
+      setPlexLibrariesDiffer(false);
+      setPlexPermissionsDiffer({ allowDownloads: false, allowLiveTv: false });
+      return;
+    }
+
+    // === Library comparison ===
+    const plexLibraries = plexLibrariesData.currentPlexLibraries;
+    if (plexLibraries === null) {
+      setPlexLibrariesDiffer(false);
+    } else {
+      // Resolve DB value - if 'server'/null/empty, use global default
+      const dbValue =
+        !data.sharedLibraries || data.sharedLibraries === 'server'
+          ? data.globalSharedLibraries || 'all'
+          : data.sharedLibraries;
+
+      // Plex empty = all libraries
+      const plexValue = plexLibraries === '' ? 'all' : plexLibraries;
+
+      // Get all enabled library IDs for comparison
+      const allEnabledIds =
+        allLibrariesData?.libraries
+          ?.filter((lib) => lib.enabled)
+          ?.map((lib) => lib.id)
+          ?.sort()
+          ?.join('|') ?? '';
+
+      // Normalize both values
+      const normalizeValue = (val: string): string => {
+        if (val === 'all' || val === '') return 'all';
+        const sorted = val.split('|').sort().join('|');
+        // Treat full library list as 'all'
+        return sorted === allEnabledIds ? 'all' : sorted;
+      };
+
+      const normalizedDb = normalizeValue(dbValue);
+      const normalizedPlex = normalizeValue(plexValue);
+      setPlexLibrariesDiffer(normalizedDb !== normalizedPlex);
+    }
+
+    // === Permission comparison ===
+    const plexPerms = plexLibrariesData.permissions;
+    if (!plexPerms) {
+      setPlexPermissionsDiffer({ allowDownloads: false, allowLiveTv: false });
+    } else {
+      setPlexPermissionsDiffer({
+        allowDownloads: (data.allowDownloads ?? false) !== plexPerms.allowSync,
+        allowLiveTv: (data.allowLiveTv ?? false) !== plexPerms.allowChannels,
+      });
+    }
+  }, [data, plexLibrariesData, allLibrariesData]);
 
   if (!data && !error) {
     return <LoadingEllipsis />;
@@ -126,6 +218,13 @@ const UserSettingsGeneral = () => {
           const isPlexUser = user?.userType === UserType.PLEX;
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
 
+          const shouldForceSync =
+            (plexLibrariesDiffer ||
+              plexPermissionsDiffer.allowDownloads ||
+              plexPermissionsDiffer.allowLiveTv) &&
+            isPlexUser &&
+            canManageUsers;
+
           try {
             const submitData: {
               username: string;
@@ -136,6 +235,7 @@ const UserSettingsGeneral = () => {
               allowDownloads: boolean;
               allowLiveTv: boolean;
               trialPeriodEndsAt?: string | null;
+              forcePlexSync?: boolean;
             } = {
               username: values.displayName,
               locale: values.locale,
@@ -148,6 +248,7 @@ const UserSettingsGeneral = () => {
               sharedLibraries: newSharedLibraries,
               allowDownloads: values.allowDownloads,
               allowLiveTv: values.allowLiveTv,
+              forcePlexSync: shouldForceSync,
             };
 
             if (
@@ -188,7 +289,9 @@ const UserSettingsGeneral = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
               message:
-                isPlexUser && canManageUsers && librariesChanged
+                isPlexUser &&
+                canManageUsers &&
+                (librariesChanged || shouldForceSync)
                   ? intl.formatMessage({
                       id: 'settings.librariesSynced',
                       defaultMessage: 'Libraries have been synced with Plex.',
@@ -208,6 +311,9 @@ const UserSettingsGeneral = () => {
           } finally {
             revalidate();
             revalidateUser();
+            if (revalidatePlexLibraries) {
+              revalidatePlexLibraries();
+            }
           }
         }}
       >
@@ -353,134 +459,251 @@ const UserSettingsGeneral = () => {
                           </span>
                         </label>
                         <div className="col-span-2">
-                          <LibrarySelector
-                            value={values.sharedLibraries}
-                            serverValue={data.globalSharedLibraries}
-                            isUserSettings
-                            setFieldValue={setFieldValue}
-                          />
+                          {plexLibrariesLoading ? (
+                            <div className="animate-pulse">
+                              <div className="h-10 bg-neutral/20 rounded-md"></div>
+                            </div>
+                          ) : (
+                            <>
+                              <LibrarySelector
+                                value={values.sharedLibraries}
+                                serverValue={data.globalSharedLibraries}
+                                isUserSettings
+                                setFieldValue={setFieldValue}
+                              />
+                              {plexLibrariesDiffer &&
+                                plexLibrariesData?.currentPlexLibraries !==
+                                  null && (
+                                  <div className="mt-2 text-sm text-warning">
+                                    <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
+                                    <FormattedMessage
+                                      id="settings.librariesDifferWarning"
+                                      defaultMessage="Plex access differs from current settings: "
+                                    />
+                                    <span className="font-bold mr-1">
+                                      {plexLibrariesData.currentPlexLibraries ===
+                                      '' ? (
+                                        <FormattedMessage
+                                          id="settings.allLibraries"
+                                          defaultMessage="All Libraries"
+                                        />
+                                      ) : (
+                                        plexLibrariesData.currentPlexLibraries &&
+                                        plexLibrariesData.currentPlexLibraries !==
+                                          '' &&
+                                        allLibrariesData?.libraries &&
+                                        plexLibrariesData.currentPlexLibraries
+                                          .split('|')
+                                          .map((id) => {
+                                            const lib =
+                                              allLibrariesData.libraries.find(
+                                                (l) => l.id === id
+                                              );
+                                            return lib?.name || id;
+                                          })
+                                          .join(', ')
+                                      )}
+                                      .
+                                    </span>
+                                    <FormattedMessage
+                                      id="settings.saveChangesToSync"
+                                      defaultMessage="Save changes to sync."
+                                    />
+                                  </div>
+                                )}
+                            </>
+                          )}
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 sm:space-x-2">
                         <div className="col-span-1"></div>
-                        <div className="inline-flex items-center space-x-2">
-                          <span
-                            id="allowDownloads"
-                            role="checkbox"
-                            tabIndex={0}
-                            aria-checked={values.allowDownloads}
-                            onClick={() =>
-                              setFieldValue(
-                                'allowDownloads',
-                                !values.allowDownloads
-                              )
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === 'Space') {
-                                e.preventDefault();
-                                setFieldValue(
-                                  'allowDownloads',
-                                  !values.allowDownloads
-                                );
-                              }
-                            }}
-                            className={`${
-                              values.allowDownloads
-                                ? 'bg-primary'
-                                : 'bg-neutral'
-                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
-                          >
-                            <span
-                              aria-hidden="true"
-                              className={`${
-                                values.allowDownloads
-                                  ? 'translate-x-5'
-                                  : 'translate-x-0'
-                              } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
-                            >
-                              <span
-                                className={`${
-                                  values.allowDownloads
-                                    ? 'opacity-0 duration-100 ease-out'
-                                    : 'opacity-100 duration-200 ease-in'
-                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                              >
-                                <XMarkIcon className="h-3 w-3 text-neutral" />
-                              </span>
-                              <span
-                                className={`${
-                                  values.allowDownloads
-                                    ? 'opacity-100 duration-200 ease-in'
-                                    : 'opacity-0 duration-100 ease-out'
-                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                              >
-                                <CheckIcon className="h-3 w-3 text-primary" />
-                              </span>
-                            </span>
-                          </span>
-                          <label htmlFor="allowDownloads">
-                            <FormattedMessage
-                              id="invite.allowDownloads"
-                              defaultMessage="Allow Downloads"
-                            />
-                          </label>
+                        <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                          {!plexLibrariesLoading ? (
+                            <>
+                              <Toggle
+                                id="allowDownloads"
+                                valueOf={values.allowDownloads}
+                                onClick={() =>
+                                  setFieldValue(
+                                    'allowDownloads',
+                                    !values.allowDownloads
+                                  )
+                                }
+                                title={
+                                  <FormattedMessage
+                                    id="invite.allowDownloads"
+                                    defaultMessage="Allow Downloads"
+                                  />
+                                }
+                              />
+                              <Toggle
+                                id="allowLiveTv"
+                                valueOf={values.allowLiveTv}
+                                onClick={() =>
+                                  setFieldValue(
+                                    'allowLiveTv',
+                                    !values.allowLiveTv
+                                  )
+                                }
+                                title={
+                                  <FormattedMessage
+                                    id="settings.allowLiveTv"
+                                    defaultMessage="Allow Live TV Access"
+                                  />
+                                }
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <div className="inline-flex items-center space-x-2 animate-pulse">
+                                <span
+                                  className={`${
+                                    values.allowDownloads
+                                      ? 'bg-primary/70'
+                                      : 'bg-neutral/70'
+                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                >
+                                  <span
+                                    aria-hidden="true"
+                                    className={`${
+                                      values.allowDownloads
+                                        ? 'translate-x-5'
+                                        : 'translate-x-0'
+                                    } relative inline-block h-5 w-5 rounded-full bg-white/70 shadow transition duration-200 ease-in-out`}
+                                  >
+                                    <span
+                                      className={`${
+                                        values.allowDownloads
+                                          ? 'opacity-0 duration-100 ease-out'
+                                          : 'opacity-100 duration-200 ease-in'
+                                      } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                    >
+                                      <XMarkIcon className="h-3 w-3 text-neutral" />
+                                    </span>
+                                    <span
+                                      className={`${
+                                        values.allowDownloads
+                                          ? 'opacity-100 duration-200 ease-in'
+                                          : 'opacity-0 duration-100 ease-out'
+                                      } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                    >
+                                      <CheckIcon className="h-3 w-3 text-neutral" />
+                                    </span>
+                                  </span>
+                                </span>
+                                <span>
+                                  <FormattedMessage
+                                    id="settings.allowDownloads"
+                                    defaultMessage="Allow Downloads"
+                                  />
+                                </span>
+                              </div>
+                              <div className="inline-flex items-center space-x-2 animate-pulse">
+                                <span
+                                  className={`${
+                                    values.allowLiveTv
+                                      ? 'bg-primary/70'
+                                      : 'bg-neutral/70'
+                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                >
+                                  <span
+                                    aria-hidden="true"
+                                    className={`${
+                                      values.allowLiveTv
+                                        ? 'translate-x-5'
+                                        : 'translate-x-0'
+                                    } relative inline-block h-5 w-5 rounded-full bg-white/70 shadow transition duration-200 ease-in-out`}
+                                  >
+                                    <span
+                                      className={`${
+                                        values.allowLiveTv
+                                          ? 'opacity-0 duration-100 ease-out'
+                                          : 'opacity-100 duration-200 ease-in'
+                                      } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                    >
+                                      <XMarkIcon className="h-3 w-3 text-neutral" />
+                                    </span>
+                                    <span
+                                      className={`${
+                                        values.allowLiveTv
+                                          ? 'opacity-100 duration-200 ease-in'
+                                          : 'opacity-0 duration-100 ease-out'
+                                      } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
+                                    >
+                                      <CheckIcon className="h-3 w-3 text-neutral" />
+                                    </span>
+                                  </span>
+                                </span>
+                                <span>
+                                  <FormattedMessage
+                                    id="settings.allowLiveTv"
+                                    defaultMessage="Allow Live TV Access"
+                                  />
+                                </span>
+                              </div>
+                            </>
+                          )}
                         </div>
-                        <div className="inline-flex items-center space-x-2">
-                          <span
-                            id="allowLiveTv"
-                            role="checkbox"
-                            tabIndex={0}
-                            aria-checked={values.allowLiveTv}
-                            onClick={() =>
-                              setFieldValue('allowLiveTv', !values.allowLiveTv)
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === 'Space') {
-                                e.preventDefault();
-                                setFieldValue(
-                                  'allowLiveTv',
-                                  !values.allowLiveTv
-                                );
-                              }
-                            }}
-                            className={`${
-                              values.allowLiveTv ? 'bg-primary' : 'bg-neutral'
-                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
-                          >
-                            <span
-                              aria-hidden="true"
-                              className={`${
-                                values.allowLiveTv
-                                  ? 'translate-x-5'
-                                  : 'translate-x-0'
-                              } relative inline-block h-5 w-5 rounded-full bg-white shadow transition duration-200 ease-in-out`}
-                            >
-                              <span
-                                className={`${
-                                  values.allowLiveTv
-                                    ? 'opacity-0 duration-100 ease-out'
-                                    : 'opacity-100 duration-200 ease-in'
-                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                              >
-                                <XMarkIcon className="h-3 w-3 text-neutral" />
-                              </span>
-                              <span
-                                className={`${
-                                  values.allowLiveTv
-                                    ? 'opacity-100 duration-200 ease-in'
-                                    : 'opacity-0 duration-100 ease-out'
-                                } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
-                              >
-                                <CheckIcon className="h-3 w-3 text-primary" />
-                              </span>
-                            </span>
-                          </span>
-                          <label htmlFor="allowLiveTv">
-                            <FormattedMessage
-                              id="settings.allowLiveTv"
-                              defaultMessage="Allow Live TV Access"
-                            />
-                          </label>
+                        <div className="col-span-1"></div>
+                        <div className="col-span-2">
+                          {(plexPermissionsDiffer.allowDownloads ||
+                            plexPermissionsDiffer.allowLiveTv) && (
+                            <>
+                              <div className="text-sm text-warning">
+                                <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
+                                <FormattedMessage
+                                  id="settings.permissionsDifferWarning"
+                                  defaultMessage="Plex permissions differ from current settings:"
+                                />
+                                {plexPermissionsDiffer.allowDownloads && (
+                                  <span className="font-bold ml-1">
+                                    <FormattedMessage
+                                      id="settings.allowDownloads"
+                                      defaultMessage="Allow Downloads"
+                                    />
+                                    {plexLibrariesData?.permissions
+                                      ?.allowSync ? (
+                                      <CheckCircleIcon className="inline h-5 w-5 ml-1 text-success mb-0.5" />
+                                    ) : (
+                                      <XCircleIcon className="inline h-5 w-5 ml-1 text-error mb-0.5" />
+                                    )}
+                                  </span>
+                                )}
+                                {plexPermissionsDiffer.allowLiveTv && (
+                                  <span className="font-bold ml-1">
+                                    <FormattedMessage
+                                      id="settings.allowLiveTv"
+                                      defaultMessage=" Allow Live TV Access"
+                                    />
+                                    {plexLibrariesData?.permissions
+                                      ?.allowChannels ? (
+                                      <CheckCircleIcon className="inline h-5 w-5 ml-1 text-success mb-0.5" />
+                                    ) : (
+                                      <XCircleIcon className="inline h-5 w-5 ml-1 text-error mb-0.5" />
+                                    )}
+                                  </span>
+                                )}
+                                <FormattedMessage
+                                  id="settings.saveChangesToSync"
+                                  defaultMessage=" Save changes to sync."
+                                />
+                              </div>
+                            </>
+                          )}
+                          {plexLibrariesData?.permissions &&
+                            (values.allowDownloads !==
+                              plexLibrariesData.permissions.allowSync ||
+                              values.allowLiveTv !==
+                                plexLibrariesData.permissions
+                                  .allowChannels) && (
+                              <div className="text-sm text-error">
+                                <ExclamationCircleIcon className="inline h-5 w-5 mr-1" />
+                                <FormattedMessage
+                                  id="settings.permissionsWillSyncWarning"
+                                  defaultMessage="Changing these permissions will briefly remove and re-add the user's Plex server access to apply the changes."
+                                />
+                              </div>
+                            )}
                         </div>
                       </div>
                     </>

@@ -2,23 +2,24 @@
 'use client';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import type { TautulliSettings } from '@server/lib/settings';
+import { useUser } from '@app/hooks/useUser';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';
 import useSWR from 'swr';
 
 const Stats = () => {
+  const { user } = useUser();
   const [hostname] = useState(() =>
     typeof window !== 'undefined'
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
 
-  //BUG: Needs to be a public call as this route is admin only so failes to load for ensusers
-  const { data: tautulliData } = useSWR<TautulliSettings>(
-    '/api/v1/settings/tautulli'
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
 
-  if (!tautulliData || !tautulliData.urlBase) {
+  if (!userSettings || !userSettings.tautulliBaseUrl) {
     return <LoadingEllipsis />;
   }
 
@@ -27,7 +28,7 @@ const Stats = () => {
       <DynamicFrame
         title="Stats"
         domainURL={hostname}
-        basePath={tautulliData.urlBase}
+        basePath={userSettings.tautulliBaseUrl}
         newBase="/stats"
       >
         <link rel="stylesheet" href="/stats.css" />

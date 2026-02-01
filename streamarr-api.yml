@@ -3984,6 +3984,10 @@ paths:
                   globalTrialPeriodDays:
                     type: integer
                     description: Global default trial period in days
+                  tautulliBaseUrl:
+                    type: string
+                    nullable: true
+                    example: '/tautulli'
     post:
       summary: Update general settings for a user
       description: Updates and returns general settings for a specific user. Requires `MANAGE_USERS` permission if editing other users.
@@ -4037,6 +4041,51 @@ paths:
                   username:
                     type: string
                     example: 'Mr User'
+  /user/{userId}/plex/libraries:
+    get:
+      summary: Get user's current Plex library access
+      description: Fetches the user's current library access and permissions from Plex server. Only works for Plex users. Requires `MANAGE_USERS` permission if viewing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Current Plex library access and permissions returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  currentPlexLibraries:
+                    type: string
+                    nullable: true
+                    description: Pipe-separated list of library IDs user has access to in Plex (empty string means all libraries, null means unable to fetch)
+                    example: '1|2|3'
+                  canFetchFromPlex:
+                    type: boolean
+                    description: Whether the system can fetch from Plex (false for non-Plex users)
+                  permissions:
+                    type: object
+                    nullable: true
+                    description: User's current Plex permissions
+                    properties:
+                      allowSync:
+                        type: boolean
+                        description: Whether user can download/sync content
+                      allowCameraUpload:
+                        type: boolean
+                        description: Whether user can upload camera photos
+                      allowChannels:
+                        type: boolean
+                        description: Whether user can access live TV channels
+                  error:
+                    type: string
+                    nullable: true
   /user/{userId}/settings/password:
     get:
       summary: Get password page informatiom
