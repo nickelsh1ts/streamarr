@@ -18,8 +18,6 @@ import { Field, Form, Formik } from 'formik';
 import useSWR, { mutate } from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
-//BUG: Look at fixing the Allow Live TV flag for plex invites
-
 const UserSettings = () => {
   const intl = useIntl();
   const {

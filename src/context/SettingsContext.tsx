@@ -2,6 +2,8 @@
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import React, { useState } from 'react';
 
+//TODO: Refactor user settings into main from public settings where applicable
+
 const defaultSettings: PublicSettingsResponse = {
   initialized: false,
   applicationTitle: 'Streamarr',
