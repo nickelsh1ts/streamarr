@@ -25,8 +25,6 @@ const defaultSettings: PublicSettingsResponse = {
   extendedHome: true,
   releaseSched: false,
   enableSignUp: false,
-  statsUrl: '',
-  statsEnabled: false,
   statusUrl: '',
   statusEnabled: false,
   customLogo: undefined,

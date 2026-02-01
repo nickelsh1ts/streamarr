@@ -48,7 +48,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         enableTrialPeriod,
         trialPeriodDays,
       },
-      tautulli: { urlBase },
+      tautulli: { urlBase, enabled: tautulliEnabled },
     } = getSettings();
     const userRepository = getRepository(User);
 
@@ -82,6 +82,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalEnableTrialPeriod: enableTrialPeriod,
         globalTrialPeriodDays: trialPeriodDays,
         tautulliBaseUrl: urlBase,
+        tautulliEnabled: tautulliEnabled,
       });
     } catch (e) {
       next({ status: 500, message: e.message });

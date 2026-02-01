@@ -38,6 +38,10 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 export interface UserSettings {
   locale?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
+  emailEnabled?: boolean;
+  pgpKey?: string;
+  webPushEnabled?: boolean;
+  inAppEnabled?: boolean;
 }
 
 interface UserHookResponse {

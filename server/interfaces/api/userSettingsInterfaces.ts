@@ -21,6 +21,7 @@ export interface UserSettingsGeneralResponse {
   globalEnableTrialPeriod?: boolean;
   globalTrialPeriodDays?: number;
   tautulliBaseUrl?: string;
+  tautulliEnabled?: boolean;
   forcePlexSync?: boolean;
 }
 
