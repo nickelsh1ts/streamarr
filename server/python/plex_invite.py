@@ -39,6 +39,11 @@ class JSONLineLogger:
 
 logger = JSONLineLogger()
 
+# Helper function to get appropriate error status code for Flask responses
+def get_error_status(status_code):
+    """Convert HTTP status code to appropriate error status for Flask responses"""
+    return status_code if status_code >= 400 else 500
+
 app = Flask(__name__)
 
 @app.route('/invite', methods=['POST'])
@@ -310,10 +315,6 @@ def libraries():
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
-
-                # Helper function to get appropriate error status code
-                def get_error_status(status_code):
-                    return status_code if status_code >= 400 else 500
 
                 # First, update the library sections via PUT
                 sections_payload = {
