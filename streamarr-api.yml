@@ -3988,6 +3988,22 @@ paths:
                     type: string
                     nullable: true
                     example: '/tautulli'
+                  tautulliEnabled:
+                    type: boolean
+                    description: Whether Tautulli integration is enabled
+                  requestUrl:
+                    type: string
+                    nullable: true
+                    example: '/overseerr'
+                    description: Overseerr proxy URL base path
+                  requestHostname:
+                    type: string
+                    nullable: true
+                    example: 'localhost:5055'
+                    description: Overseerr hostname and port
+                  releaseSched:
+                    type: boolean
+                    description: Whether release schedule feature is enabled
     post:
       summary: Update general settings for a user
       description: Updates and returns general settings for a specific user. Requires `MANAGE_USERS` permission if editing other users.

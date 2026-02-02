@@ -19,6 +19,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Button from '@app/components/Common/Button';
 import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -28,22 +30,25 @@ const Request = ({ children, ...props }) => {
   const url = pathname.replace('/request', '');
   const router = useRouter();
   const { currentSettings } = useSettings();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
   const isAdmin = hasPermission(Permission.ADMIN);
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
-  const isConfigured = !!currentSettings?.requestUrl;
+  const isConfigured = !!userSettings?.requestUrl;
   const {
     status: proxyStatus,
     error: proxyError,
     retry,
   } = useServiceProxy({
-    proxyPath: currentSettings?.requestUrl,
+    proxyPath: userSettings?.requestUrl,
     enabled: isConfigured,
   });
 
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(
-    () => !currentSettings?.requestUrl
+    () => !userSettings?.requestUrl
   );
 
   const isLocalhost =
@@ -55,12 +60,12 @@ const Request = ({ children, ...props }) => {
   const innerFrame = contentRef?.contentWindow;
 
   const hostname =
-    typeof window !== 'undefined' && currentSettings?.requestUrl
-      ? `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
+    typeof window !== 'undefined' && userSettings?.requestUrl
+      ? `${window?.location?.protocol}//${window?.location?.host}${userSettings?.requestUrl}`
       : '';
 
   useEffect(() => {
-    if (!currentSettings?.requestUrl || !innerFrame?.navigation) {
+    if (!userSettings?.requestUrl || !innerFrame?.navigation) {
       return;
     }
 
@@ -70,14 +75,14 @@ const Request = ({ children, ...props }) => {
         if (
           url !==
             innerFrame?.location?.pathname.replace(
-              currentSettings?.requestUrl,
+              userSettings?.requestUrl,
               ''
             ) &&
           !innerFrame?.location?.pathname.includes('/search')
         ) {
           router.push(
             innerFrame?.location?.pathname.replace(
-              currentSettings?.requestUrl,
+              userSettings?.requestUrl,
               '/request'
             )
           );
@@ -93,7 +98,7 @@ const Request = ({ children, ...props }) => {
       innerFrame.navigation?.removeEventListener('navigate', handleNavigate);
     };
   }, [
-    currentSettings?.requestUrl,
+    userSettings?.requestUrl,
     innerFrame?.location?.pathname,
     innerFrame?.navigation,
     innerFrame,
@@ -200,8 +205,8 @@ const Request = ({ children, ...props }) => {
     }
   }, [mountNode, currentSettings.theme, innerFrame]);
 
-  if (isLocalhost && currentSettings?.requestHostname) {
-    const overseerrUrl = `http://${currentSettings.requestHostname}${url && url.replace('null', '')}`;
+  if (isLocalhost && userSettings?.requestHostname) {
+    const overseerrUrl = `http://${userSettings?.requestHostname}${url && url.replace('null', '')}`;
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100dvh-4rem)] bg-base-300 px-4">
         <div className="text-center max-w-md">

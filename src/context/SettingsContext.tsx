@@ -2,8 +2,6 @@
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import React, { useState } from 'react';
 
-//TODO: Refactor user settings into main from public settings where applicable
-
 const defaultSettings: PublicSettingsResponse = {
   initialized: false,
   applicationTitle: 'Streamarr',
@@ -15,15 +13,10 @@ const defaultSettings: PublicSettingsResponse = {
   vapidPublic: '',
   locale: 'en',
   emailEnabled: false,
-  inAppEnabled: false,
   newPlexLogin: true,
-  enableRequest: false,
-  requestUrl: '',
-  requestHostname: '',
   supportUrl: '',
   supportEmail: '',
   extendedHome: true,
-  releaseSched: false,
   enableSignUp: false,
   statusUrl: '',
   statusEnabled: false,

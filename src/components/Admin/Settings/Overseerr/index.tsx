@@ -3,9 +3,10 @@
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import Button from '@app/components/Common/Button';
 import type { ServiceSettings } from '@server/lib/settings';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';
 import useSWR from 'swr';
-import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
 import {
   ArrowTopRightOnSquareIcon,
   LockClosedIcon,
@@ -14,6 +15,7 @@ import { FormattedMessage } from 'react-intl';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 const AdminOverseerr = () => {
+  const { user } = useUser();
   const [hostname] = useState(() =>
     typeof window !== 'undefined'
       ? `${window?.location?.protocol}//${window?.location?.host}`
@@ -22,15 +24,17 @@ const AdminOverseerr = () => {
   const { data, isLoading } = useSWR<ServiceSettings>(
     '/api/v1/settings/overseerr'
   );
-  const { currentSettings } = useSettings();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   const isLocalhost =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1');
 
-  if (isLocalhost && currentSettings?.requestHostname) {
-    const overseerrUrl = `http://${currentSettings.requestHostname}/settings`;
+  if (isLocalhost && userSettings?.requestHostname) {
+    const overseerrUrl = `http://${userSettings.requestHostname}/settings`;
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100dvh-12rem)] bg-base-300 px-4 mt-2 -mx-4 rounded-lg">
         <div className="text-center max-w-md">

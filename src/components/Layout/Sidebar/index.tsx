@@ -24,6 +24,8 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useHash from '@app/hooks/useHash';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLinksProps {
   href: string;
@@ -309,12 +311,14 @@ interface SidebarProps {
 }
 
 export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
-  const { currentSettings } = useSettings();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
   const pathname = usePathname();
   const hash = useHash();
   const url = pathname + (hash || '');
   const intl = useIntl();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   return (
     <div className="space-y-1 mb-1 w-full">
@@ -358,7 +362,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             {hasPermission([Permission.REQUEST, Permission.STREAMARR], {
               type: 'or',
             }) &&
-              currentSettings?.enableRequest && (
+              userSettings?.requestUrl && (
                 <>
                   <div className="flex">
                     <SingleItem
@@ -426,7 +430,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
           regExp={/\/invites/}
         />
       )}
-      {currentSettings.releaseSched &&
+      {userSettings?.releaseSched &&
         hasPermission(
           [
             Permission.VIEW_SCHEDULE,

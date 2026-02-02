@@ -32,16 +32,11 @@ export interface PublicSettingsResponse {
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
-  inAppEnabled: boolean;
   newPlexLogin: boolean;
-  enableRequest: boolean;
-  requestUrl: string;
-  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
   enableSignUp: boolean;
-  releaseSched: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;

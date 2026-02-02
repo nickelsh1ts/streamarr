@@ -3,7 +3,6 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Header from '@app/components/Common/Header';
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { useNotifications } from '@app/hooks/useNotifications';
 import {
@@ -13,6 +12,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/solid';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { usePathname, useSearchParams, useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect } from 'react';
@@ -33,13 +33,18 @@ enum Filter {
 const NotificationsList = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { currentSettings } = useSettings();
   const searchParams = useSearchParams();
   const userQuery = useParams<{ userid: string }>();
   const { user } = useUser({
     id: Number(userQuery?.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      currentUser
+        ? `/api/v1/user/${currentUser?.id}/settings/notifications`
+        : null
+    );
   const intl = useIntl();
   const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
@@ -210,7 +215,7 @@ const NotificationsList = () => {
               }}
               buttonSize="sm"
               buttonType="primary"
-              disabled={!currentSettings?.inAppEnabled}
+              disabled={!notificationSettings?.inAppEnabled}
             >
               <FormattedMessage
                 id="common.sendNotification"
@@ -231,7 +236,7 @@ const NotificationsList = () => {
         }}
         show={editNotificationModal.open}
       />
-      {!currentSettings?.inAppEnabled && (
+      {!notificationSettings?.inAppEnabled && (
         <div className="mt-4">
           <Alert
             type="warning"
@@ -251,7 +256,7 @@ const NotificationsList = () => {
       )}
       <ul id="notification-list" className="flex flex-col gap-1 mt-4">
         {!data && !error && <LoadingEllipsis />}
-        {currentSettings?.inAppEnabled &&
+        {notificationSettings?.inAppEnabled &&
           data?.results.map((notification) => {
             return (
               <NotificationCard
@@ -271,7 +276,7 @@ const NotificationsList = () => {
             );
           })}
       </ul>
-      {currentSettings?.inAppEnabled && data?.results.length === 0 && (
+      {notificationSettings?.inAppEnabled && data?.results.length === 0 && (
         <div className="flex flex-col items-center justify-center p-6 md:w-full">
           <span className="text-base">
             <FormattedMessage
@@ -302,7 +307,7 @@ const NotificationsList = () => {
         >
           <div className="hidden lg:flex lg:flex-1">
             <p className="text-sm">
-              {currentSettings?.inAppEnabled &&
+              {notificationSettings?.inAppEnabled &&
                 (data?.results.length ?? 0) > 0 && (
                   <FormattedMessage
                     id="common.showingResults"
@@ -351,7 +356,7 @@ const NotificationsList = () => {
             <Button
               buttonSize="sm"
               buttonType="primary"
-              disabled={!hasPrevPage || !currentSettings?.inAppEnabled}
+              disabled={!hasPrevPage || !notificationSettings?.inAppEnabled}
               onClick={() => updateQueryParams('page', (page - 1).toString())}
             >
               <ChevronLeftIcon className="size-5" />
@@ -365,7 +370,7 @@ const NotificationsList = () => {
             <Button
               buttonSize="sm"
               buttonType="primary"
-              disabled={!hasNextPage || !currentSettings?.inAppEnabled}
+              disabled={!hasNextPage || !notificationSettings?.inAppEnabled}
               onClick={() => updateQueryParams('page', (page + 1).toString())}
             >
               <span>

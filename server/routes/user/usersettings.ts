@@ -47,8 +47,14 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         plexHome,
         enableTrialPeriod,
         trialPeriodDays,
+        releaseSched,
       },
       tautulli: { urlBase, enabled: tautulliEnabled },
+      overseerr: {
+        urlBase: requestUrl,
+        hostname: overseerrHostname,
+        port: overseerrPort,
+      },
     } = getSettings();
     const userRepository = getRepository(User);
 
@@ -83,6 +89,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalTrialPeriodDays: trialPeriodDays,
         tautulliBaseUrl: urlBase,
         tautulliEnabled: tautulliEnabled,
+        requestUrl: requestUrl,
+        requestHostname: `${overseerrHostname}:${overseerrPort}`,
+        releaseSched: releaseSched,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
