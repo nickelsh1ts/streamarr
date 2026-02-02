@@ -14,20 +14,25 @@ const AdminTranscoding = () => {
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/tdarr');
+  const { data, isLoading } = useSWR<ServiceSettings>('/api/v1/settings/tdarr');
 
-  if (!data) {
+  if (isLoading) {
     return <LoadingEllipsis />;
   }
+
+  const isConfigured = !!(data?.enabled && data?.hostname);
 
   return (
     <div className="relative mt-2">
       <DynamicFrame
-        title={'transcoding'}
+        title="transcoding"
         domainURL={hostname}
         basePath={TDARR_PROXY_PATH}
-        newBase={'/admin/transcode'}
-      ></DynamicFrame>
+        newBase="/admin/transcode"
+        serviceName="Tdarr"
+        settingsPath="/admin/settings/services/tdarr"
+        isConfigured={isConfigured}
+      />
     </div>
   );
 };

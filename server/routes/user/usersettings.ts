@@ -47,6 +47,13 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         plexHome,
         enableTrialPeriod,
         trialPeriodDays,
+        releaseSched,
+      },
+      tautulli: { urlBase, enabled: tautulliEnabled },
+      overseerr: {
+        urlBase: requestUrl,
+        hostname: overseerrHostname,
+        port: overseerrPort,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -58,29 +65,6 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
 
       if (!user) {
         return next({ status: 404, message: 'User not found.' });
-      }
-
-      let sharedLibraries: string;
-      if (user.userType === UserType.PLEX && user.id !== 1) {
-        try {
-          const currentPlexLibraries =
-            await plexSync.getCurrentPlexLibraries(user);
-
-          if (currentPlexLibraries.length > 0) {
-            sharedLibraries = currentPlexLibraries.join('|');
-          } else {
-            sharedLibraries = user.settings?.sharedLibraries || 'server';
-          }
-        } catch (error) {
-          logger.warn(
-            `Could not fetch current Plex libraries for user ${user.email}`,
-            {
-              userId: user.id,
-              error: error.message,
-            }
-          );
-          sharedLibraries = user.settings?.sharedLibraries || 'server';
-        }
       }
 
       res.status(200).json({
@@ -96,13 +80,18 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalAllowDownloads: downloads,
         globalLiveTv: liveTv,
         globalPlexHome: plexHome,
-        sharedLibraries: sharedLibraries ?? 'server',
+        sharedLibraries: user.settings?.sharedLibraries ?? null,
         allowDownloads: user.settings?.allowDownloads ?? false,
         allowLiveTv: user.settings?.allowLiveTv ?? false,
         globalSharedLibraries: defaultSharedLibraries,
         trialPeriodEndsAt: user.settings?.trialPeriodEndsAt ?? null,
         globalEnableTrialPeriod: enableTrialPeriod,
         globalTrialPeriodDays: trialPeriodDays,
+        tautulliBaseUrl: urlBase,
+        tautulliEnabled: tautulliEnabled,
+        requestUrl: requestUrl,
+        requestHostname: `${overseerrHostname}:${overseerrPort}`,
+        releaseSched: releaseSched,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
@@ -144,6 +133,7 @@ userSettingsRoutes.post<
         : req.body.sharedLibraries;
     const newAllowDownloads = req.body.allowDownloads;
     const newAllowLiveTv = req.body.allowLiveTv;
+    const forcePlexSync = req.body.forcePlexSync === true;
 
     user.username = req.body.username;
 
@@ -196,12 +186,16 @@ userSettingsRoutes.post<
 
     await userRepository.save(user);
 
-    // Sync with Plex if sharedLibraries changed and user has permissions to manage users
+    // Sync with Plex if sharedLibraries changed, or forcePlexSync is true, and user has permissions
+    const shouldSync =
+      previousSharedLibraries !== newSharedLibraries ||
+      previousAllowDownloads !== newAllowDownloads ||
+      previousAllowLiveTv !== newAllowLiveTv ||
+      forcePlexSync;
+
     if (
       req.user?.hasPermission(Permission.MANAGE_USERS) &&
-      (previousSharedLibraries !== newSharedLibraries ||
-        previousAllowDownloads !== newAllowDownloads ||
-        previousAllowLiveTv !== newAllowLiveTv) &&
+      shouldSync &&
       user.email &&
       user.userType === UserType.PLEX
     ) {

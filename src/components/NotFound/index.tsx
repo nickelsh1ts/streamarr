@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FormattedMessage } from 'react-intl';
 
-//BUG: Fix duplicate header/sidebar on nested 404 (iframes)
-
 export default function NotFound() {
   const router = useRouter();
 

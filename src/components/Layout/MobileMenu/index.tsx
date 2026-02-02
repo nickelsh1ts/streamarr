@@ -3,7 +3,6 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
@@ -29,6 +28,8 @@ import Link from 'next/link';
 import type { JSX } from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLink {
   href: string;
@@ -43,8 +44,10 @@ interface MenuLink {
 
 const MobileMenu = () => {
   const intl = useIntl();
-  const { currentSettings } = useSettings();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
@@ -86,7 +89,7 @@ const MobileMenu = () => {
   );
 
   const scheduleDisabled =
-    !currentSettings?.releaseSched ||
+    !userSettings?.releaseSched ||
     !hasPermission(
       [
         Permission.VIEW_SCHEDULE,
@@ -99,7 +102,7 @@ const MobileMenu = () => {
   const requestDisabled =
     !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
       type: 'or',
-    }) || !currentSettings?.enableRequest;
+    }) || !userSettings?.requestUrl;
 
   const isWatchRoute = url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/);
 

@@ -153,7 +153,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               {errorMessage ||
                 intl.formatMessage({
                   id: 'common.somethingWentWrong',
-                  defaultMessage: 'Something went wrong!',
+                  defaultMessage: 'Something Went Wrong!',
                 })}
             </span>
           </Alert>

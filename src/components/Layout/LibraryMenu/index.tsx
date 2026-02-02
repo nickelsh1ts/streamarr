@@ -1,4 +1,3 @@
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import useLibraryLinks from '@app/hooks/useLibraryLinks';
 import {
@@ -18,6 +17,8 @@ import { usePathname } from 'next/navigation';
 import type { SetStateAction } from 'react';
 import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLinksProps {
   href: string;
@@ -49,9 +50,11 @@ const LibraryMenu = ({
   const pathname = usePathname();
   const hash = useHash();
   const url = pathname + (hash || '');
-  const { hasPermission } = useUser();
-  const { currentSettings } = useSettings();
+  const { hasPermission, user } = useUser();
   const { libraryLinks, loading } = useLibraryLinks('id');
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   // Group libraries by type
   const groupedLibraries = libraryLinks.reduce(
@@ -110,7 +113,7 @@ const LibraryMenu = ({
       icon: <BookmarkIcon className="w-7 h-7" />,
       regExp: '=watchlist&pivot=discover',
       hidden:
-        (isMobile && !currentSettings?.releaseSched) ||
+        (isMobile && !userSettings?.releaseSched) ||
         !hasPermission(
           [
             Permission.VIEW_SCHEDULE,

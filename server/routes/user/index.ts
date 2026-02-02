@@ -21,6 +21,7 @@ import path from 'path';
 import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
+import { plexSync } from '@server/lib/plexSync';
 
 const router = Router();
 
@@ -919,5 +920,63 @@ router.delete<{ userId: string; notificationId: string }>(
     }
   }
 );
+
+router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
+  if (
+    !req.user?.hasPermission(Permission.MANAGE_USERS) &&
+    req.user?.id !== Number(req.params.id)
+  ) {
+    return next({
+      status: 403,
+      message: "You do not have permission to view this user's Plex libraries.",
+    });
+  }
+
+  const userRepository = getRepository(User);
+
+  try {
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    if (user.userType !== UserType.PLEX || user.id === 1) {
+      res.status(200).json({
+        currentPlexLibraries: null,
+        canFetchFromPlex: false,
+      });
+      return;
+    }
+
+    try {
+      const plexData = await plexSync.getCurrentPlexLibraries(user);
+
+      res.status(200).json({
+        currentPlexLibraries:
+          plexData.libraries.length > 0 ? plexData.libraries.join('|') : '',
+        canFetchFromPlex: true,
+        permissions: plexData.permissions,
+      });
+    } catch (error) {
+      logger.warn(
+        `Could not fetch current Plex libraries for user ${user.email}`,
+        {
+          userId: user.id,
+          error: error.message,
+        }
+      );
+      res.status(200).json({
+        currentPlexLibraries: null,
+        canFetchFromPlex: true,
+        error: error.message,
+      });
+    }
+  } catch (e) {
+    next({ status: 500, message: e.message });
+  }
+});
 
 export default router;

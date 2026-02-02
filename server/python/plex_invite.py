@@ -39,6 +39,11 @@ class JSONLineLogger:
 
 logger = JSONLineLogger()
 
+# Helper function to get appropriate error status code for Flask responses
+def get_error_status(status_code):
+    """Convert HTTP status code to appropriate error status for Flask responses"""
+    return status_code if status_code >= 400 else 500
+
 app = Flask(__name__)
 
 @app.route('/invite', methods=['POST'])
@@ -56,39 +61,53 @@ def invite():
 
     try:
         account = MyPlexAccount(token=token)
-        server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-        plex_server = server_resource.connect(timeout=15)
     except Exception as e:
-        logger.error('Server not found or connection failed', {'error': str(e)})
-        return jsonify({'success': False, 'error': 'Server not found or connection failed'}), 404
+        logger.error('Failed to authenticate with Plex', {'error': str(e)})
+        return jsonify({'success': False, 'error': 'Failed to authenticate with Plex'}), 401
 
     try:
-        # Select libraries: grant all if empty array/null, else filter by specific IDs
+        # Get section info from Plex API directly (no server connection needed)
+        plex_sections_url = f'https://plex.tv/api/servers/{server_id}'
+        headers = {'X-Plex-Token': token, 'Accept': 'application/xml'}
+        sections_response = requests.get(plex_sections_url, headers=headers, timeout=10)
+        sections_response.raise_for_status()
+
+        # Parse the XML response to get section info
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(sections_response.text)
+
+        # Build mappings of section key to title (key is what Node.js sends)
+        key_to_title = {}
+        all_section_names = []
+        for section in root.findall('.//Section'):
+            title = section.get('title')
+            section_key = section.get('key') or section.get('id')
+            if title and section_key:
+                key_to_title[section_key] = title
+                all_section_names.append(title)
+
+        # Select libraries: grant all if empty, else filter by specific IDs
         if not libraries or libraries == '' or (isinstance(libraries, list) and len(libraries) == 0):
-            selected_sections = plex_server.library.sections()
+            section_names = all_section_names
         else:
-            if isinstance(libraries, str):
-                library_ids = [lib_id.strip() for lib_id in libraries.split(',') if lib_id.strip()]
-            else:
-                library_ids = [str(lib_id) for lib_id in libraries]
+            library_ids = [lib_id.strip() for lib_id in libraries.split(',')] if isinstance(libraries, str) else [str(lib_id) for lib_id in libraries]
+            section_names = []
+            for lib_id in library_ids:
+                if lib_id in key_to_title:
+                    section_names.append(key_to_title[lib_id])
+                else:
+                    logger.error('Invalid library section ID', {'library_id': lib_id})
+                    return jsonify({'success': False, 'error': f'Invalid library section ID: {lib_id}'}), 400
 
-            all_sections = plex_server.library.sections()
-            id_to_section = {str(section.key): section for section in all_sections}
-            selected_sections = [id_to_section[lib_id] for lib_id in library_ids if lib_id in id_to_section]
-
-            if len(selected_sections) != len(library_ids):
-                logger.error('Invalid library section IDs', {'library_ids': libraries})
-                return jsonify({'success': False, 'error': 'Invalid library section IDs'}), 400
-        section_names = [section.title for section in selected_sections]
     except Exception as e:
-        logger.error('Invalid library section IDs', {'error': str(e)})
-        return jsonify({'success': False, 'error': 'Invalid library section IDs'}), 400
+        logger.error('Failed to get section info from Plex API', {'error': str(e)})
+        return jsonify({'success': False, 'error': 'Failed to get library sections'}), 400
 
     try:
         if plex_home:
             account.createExistingUser(
                 user=email,
-                server=plex_server,
+                server=server_id,
                 sections=section_names,
                 allowSync=allow_sync,
                 allowChannels=allow_channels,
@@ -98,48 +117,32 @@ def invite():
         else:
             account.inviteFriend(
                 email,
-                server=plex_server,
+                server=server_id,
                 sections=section_names,
                 allowSync=allow_sync,
                 allowCameraUpload=allow_camera_upload,
                 allowChannels=allow_channels
             )
-            message = 'User invited successfully. Will attempt to auto-accept if user_token is provided.'
+            message = 'User invited successfully.'
 
             if user_token:
                 try:
                     time.sleep(3)
-
                     user_account = MyPlexAccount(token=user_token)
-
                     pending_invites = user_account.pendingInvites()
 
                     if pending_invites and len(pending_invites) > 0:
-                        matching_invite = pending_invites[0]
-
-                        user_account.acceptInvite(matching_invite)
-
-                        logger.info('Invite auto-accepted successfully', {
-                            'email': email,
-                            'invite_id': matching_invite.id
-                        })
-                        message = 'User Invited successfully and automatically accepted.'
-                    else:
-                        logger.info('No pending invites found to accept', {
-                            'email': email
-                        })
-
+                        user_account.acceptInvite(pending_invites[0])
+                        message = 'User invited and automatically accepted.'
                 except Exception as accept_error:
                     logger.error('Unable to auto-accept invite', {
                         'email': email,
-                        'error': str(accept_error),
-                        'traceback': traceback.format_exc()
+                        'error': str(accept_error)
                     })
 
         return jsonify({'success': True, 'message': message})
     except Exception as e:
         logger.error('Invite error', {'error': str(e)})
-        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/libraries', methods=['GET', 'POST'])
@@ -181,39 +184,27 @@ def libraries():
         if request.method == 'GET':
             # Get user's current library access from their server permissions
             user_sections = []
-            user_has_all_libraries = False
 
             for server in target_user.servers:
                 if server.machineIdentifier == server_id:
                     # Check if user has unrestricted access to all libraries
-                    user_has_all_libraries = getattr(server, 'allLibraries', False)
-
-                    # Get sections the user can access
-                    sections_list = list(server.sections())
-                    user_section_ids = [str(section.key) for section in sections_list]
-
-                    # Get all sections available on the server for comparison
-                    try:
-                        server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-                        plex_server = server_resource.connect(timeout=15)
-                        all_server_sections = list(plex_server.library.sections())
-                        all_server_section_ids = [str(section.key) for section in all_server_sections]
-                    except Exception as e:
-                        logger.error(f'Could not get server sections for comparison: {str(e)}')
-                        all_server_section_ids = []
-
-                    # Determine if user has restricted access
-                    if user_has_all_libraries or len(user_section_ids) == len(all_server_section_ids):
-                        # User has unrestricted access - return empty array to indicate "all"
-                        user_sections = []
+                    if getattr(server, 'allLibraries', False):
+                        user_sections = []  # Empty = all libraries
                     else:
-                        # User has restricted access - return specific sections
-                        user_sections = user_section_ids
+                        # Filter to only sections that are actually shared with the user
+                        sections_list = list(server.sections())
+                        user_sections = [str(s.key) for s in sections_list if getattr(s, 'shared', True)]
                     break
 
+            # Get user-level permissions
             return jsonify({
                 'success': True,
-                'libraries': user_sections
+                'libraries': user_sections,
+                'permissions': {
+                    'allowSync': getattr(target_user, 'allowSync', False) or False,
+                    'allowCameraUpload': getattr(target_user, 'allowCameraUpload', False) or False,
+                    'allowChannels': getattr(target_user, 'allowChannels', False) or False
+                }
             })
 
         elif request.method == 'POST':
@@ -224,67 +215,195 @@ def libraries():
             allow_camera_upload = data.get('allow_camera_upload', None)
             allow_channels = data.get('allow_channels', None)
 
-            try:
-                server_resource = next(s for s in account.resources() if s.clientIdentifier == server_id)
-                plex_server = server_resource.connect(timeout=15)
-            except Exception as e:
-                logger.error('Server not found or connection failed', {'error': str(e)})
-                return jsonify({'success': False, 'error': 'Server not found or connection failed'}), 404
+            # Get section info from user's server share
+            user_server = None
+            for server in target_user.servers:
+                if server.machineIdentifier == server_id:
+                    user_server = server
+                    break
+
+            if not user_server:
+                logger.error('Server not found in user shares', {'server_id': server_id})
+                return jsonify({'success': False, 'error': 'Server not found in user shares'}), 404
 
             try:
+                # Get all available sections from user's server share
+                all_sections = list(user_server.sections())
+                id_to_title = {str(section.key): section.title for section in all_sections}
+
                 # Select libraries: grant all if empty array/null, else filter by specific IDs
                 if not libraries or libraries == '' or (isinstance(libraries, list) and len(libraries) == 0):
-                    selected_sections = plex_server.library.sections()
+                    # Grant all libraries
+                    section_names = [section.title for section in all_sections]
                 else:
                     if isinstance(libraries, str):
                         library_ids = [lib_id.strip() for lib_id in libraries.split(',') if lib_id.strip()]
                     else:
                         library_ids = [str(lib_id) for lib_id in libraries]
 
-                    all_sections = plex_server.library.sections()
-                    id_to_section = {str(section.key): section for section in all_sections}
-                    selected_sections = [id_to_section[lib_id] for lib_id in library_ids if lib_id in id_to_section]
+                    # Map library IDs to names
+                    section_names = []
+                    for lib_id in library_ids:
+                        if lib_id in id_to_title:
+                            section_names.append(id_to_title[lib_id])
+                        else:
+                            logger.error(f'Library ID {lib_id} not found in user sections')
+                            return jsonify({'success': False, 'error': f'Invalid library section ID: {lib_id}'}), 400
 
-                    if len(selected_sections) != len(library_ids):
-                        logger.error('Invalid library section IDs', {'library_ids': libraries})
-                        return jsonify({'success': False, 'error': 'Invalid library section IDs'}), 400
-
-                section_names = [section.title for section in selected_sections]
             except Exception as e:
-                logger.error('Invalid library section IDs', {'error': str(e)})
-                return jsonify({'success': False, 'error': 'Invalid library section IDs'}), 400
+                logger.error('Failed to get section info', {'error': str(e)})
+                return jsonify({'success': False, 'error': 'Failed to get section info'}), 400
 
-            # Update user library access using updateFriend
+            # Get the sharing ID from the user's server share
+            sharing_id = user_server.id
+
+            # Get section IDs for the API call
+            # We need to call the Plex API to get section IDs from names
             try:
-                account.updateFriend(
-                    user=target_user,
-                    server=plex_server,
-                    sections=section_names,
-                    allowSync=allow_sync,
-                    allowCameraUpload=allow_camera_upload,
-                    allowChannels=allow_channels
-                )
+                plex_sections_url = f'https://plex.tv/api/servers/{server_id}'
+                headers = {
+                    'X-Plex-Token': token,
+                    'Accept': 'application/xml'
+                }
+                sections_response = requests.get(plex_sections_url, headers=headers, timeout=10)
+                sections_response.raise_for_status()
+
+                # Parse the XML response to get section IDs
+                import xml.etree.ElementTree as ET
+                root = ET.fromstring(sections_response.text)
+
+                # Build a mapping of section title to section id
+                title_to_id = {}
+                for section in root.findall('.//Section'):
+                    title = section.get('title', '').lower()
+                    section_id = section.get('id')
+                    if title and section_id:
+                        title_to_id[title] = int(section_id)
+
+                # Convert section names to IDs
+                section_ids = []
+                for name in section_names:
+                    name_lower = name.lower()
+                    if name_lower in title_to_id:
+                        section_ids.append(title_to_id[name_lower])
+                    else:
+                        logger.error(f'Section name not found: {name}')
+                        return jsonify({'success': False, 'error': f'Section not found: {name}'}), 400
+
+            except Exception as e:
+                logger.error('Failed to get section IDs from Plex API', {'error': str(e)})
+                return jsonify({'success': False, 'error': 'Failed to get section IDs'}), 500
+
+            # Get current user permissions to check if they've changed
+            current_allow_sync = getattr(target_user, 'allowSync', False) or False
+            current_allow_camera_upload = getattr(target_user, 'allowCameraUpload', False) or False
+            current_allow_channels = getattr(target_user, 'allowChannels', False) or False
+
+            # Determine if permissions have changed
+            permissions_changed = (
+                (allow_sync is not None and allow_sync != current_allow_sync) or
+                (allow_camera_upload is not None and allow_camera_upload != current_allow_camera_upload) or
+                (allow_channels is not None and allow_channels != current_allow_channels)
+            )
+
+            # Update using the correct API endpoint
+            try:
+                update_url = f'https://plex.tv/api/servers/{server_id}/shared_servers/{sharing_id}'
+
+                headers = {
+                    'X-Plex-Token': token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+
+                # First, update the library sections via PUT
+                sections_payload = {
+                    'server_id': server_id,
+                    'shared_server': {
+                        'library_section_ids': section_ids
+                    }
+                }
+
+                update_response = requests.put(update_url, json=sections_payload, headers=headers, timeout=15)
+
+                # Ensure the library section update succeeded
+                if update_response.status_code not in [200, 204]:
+                    logger.error('Failed to update shared server library sections', {
+                        'email': email,
+                        'status_code': update_response.status_code,
+                        'response_text': update_response.text
+                    })
+                    return jsonify({
+                        'success': False,
+                        'error': 'Failed to update library access on Plex (library sections update failed).'
+                    }), get_error_status(update_response.status_code)
+
+                # Only DELETE and re-POST the share if permissions have actually changed
+                # This is the only reliable way to update allowSync/allowChannels/allowCameraUpload
+                if permissions_changed:
+                    delete_response = requests.delete(update_url, headers=headers, timeout=15)
+
+                    # Ensure the delete succeeded before recreating the share
+                    if delete_response.status_code not in [200, 204]:
+                        logger.error('Failed to delete existing shared server before recreating', {
+                            'email': email,
+                            'status_code': delete_response.status_code,
+                            'response_text': delete_response.text
+                        })
+                        return jsonify({
+                            'success': False,
+                            'error': 'Failed to update library access on Plex (could not delete existing share).'
+                        }), get_error_status(delete_response.status_code)
+
+                    # Recreate the share with the correct permissions
+                    create_url = f'https://plex.tv/api/servers/{server_id}/shared_servers'
+                    create_payload = {
+                        'server_id': server_id,
+                        'shared_server': {
+                            'library_section_ids': section_ids,
+                            'invited_id': target_user.id
+                        },
+                        'sharing_settings': {
+                            'allowSync': '1' if allow_sync else '0',
+                            'allowCameraUpload': '1' if allow_camera_upload else '0',
+                            'allowChannels': '1' if allow_channels else '0',
+                            'filterMovies': '',
+                            'filterTelevision': '',
+                            'filterMusic': ''
+                        }
+                    }
+
+                    create_response = requests.post(create_url, json=create_payload, headers=headers, timeout=15)
+
+                    # Ensure the share recreation succeeded
+                    if create_response.status_code not in [200, 204]:
+                        logger.error('Failed to recreate shared server with updated permissions', {
+                            'email': email,
+                            'status_code': create_response.status_code,
+                            'response_text': create_response.text
+                        })
+                        return jsonify({
+                            'success': False,
+                            'error': 'Failed to update library access on Plex (share recreation failed).'
+                        }), get_error_status(create_response.status_code)
 
                 return jsonify({
                     'success': True,
                     'message': 'User library access updated successfully.',
-                    'libraries_shared': len(selected_sections)
+                    'libraries_shared': len(section_names),
+                    'permissions_updated': permissions_changed
                 })
 
             except Exception as update_error:
-                # Plex API often returns 404 for successful updateFriend calls
-                if '404' in str(update_error) or 'not_found' in str(update_error):
-                    return jsonify({
-                        'success': True,
-                        'message': 'User library access updated successfully.',
-                        'libraries_shared': len(selected_sections)
-                    })
-                else:
-                    logger.error(f'updateFriend failed for user {email}: {str(update_error)}')
-                    return jsonify({
-                        'success': False,
-                        'error': f'Failed to update library access: {str(update_error)}'
-                    }), 500
+                logger.error('Failed to update library access', {
+                    'email': email,
+                    'error': str(update_error),
+                    'traceback': traceback.format_exc()
+                })
+                return jsonify({
+                    'success': False,
+                    'error': f'Failed to update library access: {str(update_error)}'
+                }), 500
 
     except Exception as e:
         logger.error(f'Libraries {request.method} error', {'error': str(e)})

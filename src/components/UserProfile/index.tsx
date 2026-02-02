@@ -6,6 +6,7 @@ import type {
   UserInvitesResponse,
   UserNotificationsResponse,
 } from '@server/interfaces/api/userInterfaces';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { ArrowRightCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -20,13 +21,18 @@ import useSettings from '@app/hooks/useSettings';
 import { momentWithLocale } from '@app/utils/momentLocale';
 
 const UserProfile = () => {
-  const currentSettings = useSettings().currentSettings;
+  const { currentSettings } = useSettings();
   const userQuery = useParams<{ userid: string }>();
   const { user, error, hasPermission } = useUser({
     id: Number(userQuery.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
-
+  const { data: notificationSettings } =
+    useSWR<UserSettingsNotificationsResponse>(
+      currentUser
+        ? `/api/v1/user/${currentUser?.id}/settings/notifications`
+        : null
+    );
   const { data: invites, error: inviteError } = useSWR<UserInvitesResponse>(
     user &&
       currentSettings.enableSignUp &&
@@ -52,7 +58,7 @@ const UserProfile = () => {
   const { data: notifications, error: notificationError } =
     useSWR<UserNotificationsResponse>(
       user &&
-        currentSettings.inAppEnabled &&
+        notificationSettings?.inAppEnabled &&
         (user.id === currentUser?.id ||
           currentHasPermission(
             [Permission.VIEW_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],

@@ -97,12 +97,19 @@ class PlexSync {
   /**
    * Get the current shared libraries for a user from Plex
    * @param user The user to check
-   * @returns Promise resolving to array of library IDs that user currently has access to
+   * @returns Promise resolving to object with library IDs and permissions
    */
-  public async getCurrentPlexLibraries(user: User): Promise<string[]> {
+  public async getCurrentPlexLibraries(user: User): Promise<{
+    libraries: string[];
+    permissions?: {
+      allowSync: boolean;
+      allowCameraUpload: boolean;
+      allowChannels: boolean;
+    };
+  }> {
     try {
       if (!user.email) {
-        return [];
+        return { libraries: [] };
       }
 
       const { plexToken } = await this.getAdminPlexToken();
@@ -114,9 +121,15 @@ class PlexSync {
         },
       });
 
-      return response.data.success ? response.data.libraries || [] : [];
+      if (response.data.success) {
+        return {
+          libraries: response.data.libraries || [],
+          permissions: response.data.permissions,
+        };
+      }
+      return { libraries: [] };
     } catch {
-      return [];
+      return { libraries: [] };
     }
   }
 

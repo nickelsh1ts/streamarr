@@ -6,7 +6,10 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import { socket } from '@app/utils/webSocket';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type {
+  UserSettingsGeneralResponse,
+  UserSettingsNotificationsResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -22,6 +25,9 @@ const UserDropdown = ({
 }: UserDropdownProps) => {
   const { user } = useUser();
   const { currentSettings } = useSettings();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
   const intl = useIntl();
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
@@ -84,7 +90,7 @@ const UserDropdown = ({
             defaultMessage="Account Settings"
           />
         </DropDownMenu.Item>
-        {currentSettings?.statsUrl && currentSettings?.statsEnabled && (
+        {userSettings?.tautulliEnabled && userSettings?.tautulliBaseUrl && (
           <DropDownMenu.Item href="/stats">
             <FormattedMessage
               id="userDropdown.watchHistory"

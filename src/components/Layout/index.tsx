@@ -11,7 +11,10 @@ import { useEffect, useMemo, useRef } from 'react';
 import { publicRoutes } from '@app/proxy';
 import useSettings from '@app/hooks/useSettings';
 import Notifications from '@app/components/Layout/Notifications';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type {
+  UserSettingsGeneralResponse,
+  UserSettingsNotificationsResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 
 const Layout = ({
   children,
@@ -27,6 +30,10 @@ const Layout = ({
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
       user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
+  const { data: userSettings, isLoading: userSettingsLoading } =
+    useSWR<UserSettingsGeneralResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/main` : null
     );
   const { data: dynamicSettings } = useSWR('/api/v1/settings/public');
 
@@ -124,11 +131,12 @@ const Layout = ({
 
     // Feature-disabled redirects
     if (
-      ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
-        (pathname.match(/request/) && !currentSettings.enableRequest) ||
-        (pathname.match(/stats/) && !currentSettings.statsEnabled)) &&
       user &&
-      !loading
+      !loading &&
+      !userSettingsLoading &&
+      userSettings &&
+      ((pathname.match(/schedule/) && !userSettings.releaseSched) ||
+        (pathname.match(/request/) && !userSettings.requestUrl))
     ) {
       redirect('/watch');
     }

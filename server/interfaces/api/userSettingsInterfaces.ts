@@ -20,6 +20,12 @@ export interface UserSettingsGeneralResponse {
   trialPeriodEndsAt?: Date | null;
   globalEnableTrialPeriod?: boolean;
   globalTrialPeriodDays?: number;
+  tautulliBaseUrl?: string;
+  tautulliEnabled?: boolean;
+  forcePlexSync?: boolean;
+  requestUrl?: string;
+  requestHostname?: string;
+  releaseSched?: boolean;
 }
 
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;

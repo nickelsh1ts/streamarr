@@ -127,7 +127,7 @@ function Footer() {
               defaultMessage="Help Centre"
             />
           </Link>
-          {currentSettings.statusEnabled && currentSettings.statsUrl && (
+          {currentSettings.statusEnabled && currentSettings.statusUrl && (
             <Link
               className="link-neutral text-decoration-none"
               href={currentSettings.statusUrl}
