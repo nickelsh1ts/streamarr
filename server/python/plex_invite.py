@@ -311,6 +311,10 @@ def libraries():
                     'Accept': 'application/json'
                 }
 
+                # Helper function to get appropriate error status code
+                def get_error_status(status_code):
+                    return status_code if status_code >= 400 else 500
+
                 # First, update the library sections via PUT
                 sections_payload = {
                     'server_id': server_id,
@@ -331,7 +335,7 @@ def libraries():
                     return jsonify({
                         'success': False,
                         'error': 'Failed to update library access on Plex (library sections update failed).'
-                    }), update_response.status_code if update_response.status_code >= 400 else 500
+                    }), get_error_status(update_response.status_code)
 
                 # Only DELETE and re-POST the share if permissions have actually changed
                 # This is the only reliable way to update allowSync/allowChannels/allowCameraUpload
@@ -348,7 +352,7 @@ def libraries():
                         return jsonify({
                             'success': False,
                             'error': 'Failed to update library access on Plex (could not delete existing share).'
-                        }), delete_response.status_code if delete_response.status_code >= 400 else 500
+                        }), get_error_status(delete_response.status_code)
 
                     # Recreate the share with the correct permissions
                     create_url = f'https://plex.tv/api/servers/{server_id}/shared_servers'
@@ -380,7 +384,7 @@ def libraries():
                         return jsonify({
                             'success': False,
                             'error': 'Failed to update library access on Plex (share recreation failed).'
-                        }), create_response.status_code if create_response.status_code >= 400 else 500
+                        }), get_error_status(create_response.status_code)
 
                 return jsonify({
                     'success': True,
