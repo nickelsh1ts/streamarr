@@ -39,6 +39,11 @@ class JSONLineLogger:
 
 logger = JSONLineLogger()
 
+# Helper function to get appropriate error status code for Flask responses
+def get_error_status(status_code):
+    """Convert HTTP status code to appropriate error status for Flask responses"""
+    return status_code if status_code >= 400 else 500
+
 app = Flask(__name__)
 
 @app.route('/invite', methods=['POST'])
@@ -321,31 +326,66 @@ def libraries():
 
                 update_response = requests.put(update_url, json=sections_payload, headers=headers, timeout=15)
 
+                # Ensure the library section update succeeded
+                if update_response.status_code not in [200, 204]:
+                    logger.error('Failed to update shared server library sections', {
+                        'email': email,
+                        'status_code': update_response.status_code,
+                        'response_text': update_response.text
+                    })
+                    return jsonify({
+                        'success': False,
+                        'error': 'Failed to update library access on Plex (library sections update failed).'
+                    }), get_error_status(update_response.status_code)
+
                 # Only DELETE and re-POST the share if permissions have actually changed
                 # This is the only reliable way to update allowSync/allowChannels/allowCameraUpload
                 if permissions_changed:
                     delete_response = requests.delete(update_url, headers=headers, timeout=15)
 
-                    # Recreate the share with the correct permissions
-                    if delete_response.status_code in [200, 204]:
-                        create_url = f'https://plex.tv/api/servers/{server_id}/shared_servers'
-                        create_payload = {
-                            'server_id': server_id,
-                            'shared_server': {
-                                'library_section_ids': section_ids,
-                                'invited_id': target_user.id
-                            },
-                            'sharing_settings': {
-                                'allowSync': '1' if allow_sync else '0',
-                                'allowCameraUpload': '1' if allow_camera_upload else '0',
-                                'allowChannels': '1' if allow_channels else '0',
-                                'filterMovies': '',
-                                'filterTelevision': '',
-                                'filterMusic': ''
-                            }
-                        }
+                    # Ensure the delete succeeded before recreating the share
+                    if delete_response.status_code not in [200, 204]:
+                        logger.error('Failed to delete existing shared server before recreating', {
+                            'email': email,
+                            'status_code': delete_response.status_code,
+                            'response_text': delete_response.text
+                        })
+                        return jsonify({
+                            'success': False,
+                            'error': 'Failed to update library access on Plex (could not delete existing share).'
+                        }), get_error_status(delete_response.status_code)
 
-                        create_response = requests.post(create_url, json=create_payload, headers=headers, timeout=15)
+                    # Recreate the share with the correct permissions
+                    create_url = f'https://plex.tv/api/servers/{server_id}/shared_servers'
+                    create_payload = {
+                        'server_id': server_id,
+                        'shared_server': {
+                            'library_section_ids': section_ids,
+                            'invited_id': target_user.id
+                        },
+                        'sharing_settings': {
+                            'allowSync': '1' if allow_sync else '0',
+                            'allowCameraUpload': '1' if allow_camera_upload else '0',
+                            'allowChannels': '1' if allow_channels else '0',
+                            'filterMovies': '',
+                            'filterTelevision': '',
+                            'filterMusic': ''
+                        }
+                    }
+
+                    create_response = requests.post(create_url, json=create_payload, headers=headers, timeout=15)
+
+                    # Ensure the share recreation succeeded
+                    if create_response.status_code not in [200, 204]:
+                        logger.error('Failed to recreate shared server with updated permissions', {
+                            'email': email,
+                            'status_code': create_response.status_code,
+                            'response_text': create_response.text
+                        })
+                        return jsonify({
+                            'success': False,
+                            'error': 'Failed to update library access on Plex (share recreation failed).'
+                        }), get_error_status(create_response.status_code)
 
                 return jsonify({
                     'success': True,
