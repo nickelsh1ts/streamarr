@@ -47,7 +47,7 @@ const AdminOverseerr = () => {
           </h2>
           <p className="text-base-content/70 mb-6">
             <FormattedMessage
-              id="settings.overseerr.localhostDescription"
+              id="settings.overseerr.localhostDescriptionSettings"
               defaultMessage="Overseerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
             />
           </p>

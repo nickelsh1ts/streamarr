@@ -1,4 +1,22 @@
 {
+  "ServiceErrorGeneric.description": {
+    "defaultMessage": "An error occurred while trying to connect to {serviceName}."
+  },
+  "ServiceNotConfigured.descriptionAdmin": {
+    "defaultMessage": "{serviceName} hasn't been set up or enabled yet."
+  },
+  "ServiceNotConfigured.descriptionUser": {
+    "defaultMessage": "{serviceName} is not available. Please contact your administrator."
+  },
+  "ServiceNotConfigured.setUp": {
+    "defaultMessage": "Set Up {serviceName}"
+  },
+  "ServiceNotConfigured.title": {
+    "defaultMessage": "{serviceName} Not Enabled"
+  },
+  "ServiceNotFound.description": {
+    "defaultMessage": "This usually means Streamarr hasn't been restarted since {serviceName} was added or updated."
+  },
   "aboutReleases.changelogTitle": {
     "defaultMessage": "{version} Changelog"
   },
@@ -425,6 +443,9 @@
   "common.noDownloadsFound": {
     "defaultMessage": "No Downloads Found"
   },
+  "common.noErrorDetails": {
+    "defaultMessage": "Couldn't retrieve error details."
+  },
   "common.noResults": {
     "defaultMessage": "No Results"
   },
@@ -527,6 +548,9 @@
   "common.resume": {
     "defaultMessage": "Resume"
   },
+  "common.retry": {
+    "defaultMessage": "Retry"
+  },
   "common.role": {
     "defaultMessage": "Role"
   },
@@ -553,6 +577,9 @@
   },
   "common.servername": {
     "defaultMessage": "Server Name"
+  },
+  "common.service": {
+    "defaultMessage": "Service"
   },
   "common.services": {
     "defaultMessage": "Services"
@@ -591,7 +618,7 @@
     "defaultMessage": "Size"
   },
   "common.somethingWentWrong": {
-    "defaultMessage": "Something went wrong!"
+    "defaultMessage": "Something Went Wrong!"
   },
   "common.speed": {
     "defaultMessage": "Speed"
@@ -631,6 +658,9 @@
   },
   "common.unknown": {
     "defaultMessage": "Unknown"
+  },
+  "common.unknownError": {
+    "defaultMessage": "Unknown error"
   },
   "common.unknownUser": {
     "defaultMessage": "Unknown User"
@@ -1916,6 +1946,18 @@
   "selectUsers": {
     "defaultMessage": "Select Users"
   },
+  "serviceNotFound.notFound": {
+    "defaultMessage": "Not found"
+  },
+  "serviceUnavailable.timeoutMessage": {
+    "defaultMessage": "Something went wrong. {serviceName} did not respond in time."
+  },
+  "serviceUnavailable.title": {
+    "defaultMessage": "{serviceName} Unavailable"
+  },
+  "serviceUnavailable.unreachableMessage": {
+    "defaultMessage": "Unable to connect to {serviceName}. Service is unreachable."
+  },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Failed to disable authentication on {service}"
   },
@@ -2057,8 +2099,17 @@
   "settings.accountType": {
     "defaultMessage": "Account Type"
   },
+  "settings.allLibraries": {
+    "defaultMessage": "All Libraries"
+  },
+  "settings.allowDownloads": {
+    "defaultMessage": "Allow Downloads"
+  },
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.crossOriginAccess": {
+    "defaultMessage": "Cross-Origin Access"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Enable Trial Period"
@@ -2066,20 +2117,41 @@
   "settings.inviteQuota": {
     "defaultMessage": "Invite Quota"
   },
+  "settings.librariesDifferWarning": {
+    "defaultMessage": "Plex access differs from current settings:"
+  },
   "settings.librariesSynced": {
     "defaultMessage": "Libraries have been synced with Plex."
   },
   "settings.notifications.description": {
     "defaultMessage": "Configure and enable notification agents."
   },
+  "settings.openOverseerr": {
+    "defaultMessage": "Open Overseerr"
+  },
+  "settings.openOverseerrSettings": {
+    "defaultMessage": "Open Overseerr Settings"
+  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Override Global Limit"
+  },
+  "settings.overseerr.localhostDescription": {
+    "defaultMessage": "Overseerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+  },
+  "settings.overseerr.localhostDescriptionSettings": {
+    "defaultMessage": "Overseerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
   },
   "settings.permissions": {
     "defaultMessage": "Permissions"
   },
   "settings.permissions.error": {
     "defaultMessage": "You do not have permission to modify this user's settings."
+  },
+  "settings.permissionsDifferWarning": {
+    "defaultMessage": "Plex permissions differ from current settings:"
+  },
+  "settings.permissionsWillSyncWarning": {
+    "defaultMessage": "Changing these permissions will briefly remove and re-add the user's Plex server access to apply the changes."
   },
   "settings.pinLibraries": {
     "defaultMessage": "Pin Libraries"
@@ -2117,6 +2189,9 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Changes will sync with Plex automatically on save."
   },
+  "settings.saveChangesToSync": {
+    "defaultMessage": "Save changes to sync."
+  },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
   },
@@ -2144,11 +2219,17 @@
   "settingsBadge.restartRequired.tooltip": {
     "defaultMessage": "Streamarr must be restarted for changes to this setting to take effect"
   },
+  "setup.arrServices": {
+    "defaultMessage": "*Arr Services"
+  },
   "setup.configurePlex": {
     "defaultMessage": "Configure Plex"
   },
   "setup.configureServices": {
     "defaultMessage": "Configure Services"
+  },
+  "setup.downloads": {
+    "defaultMessage": "Downloads"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completing setup"
@@ -2164,6 +2245,12 @@
   },
   "setup.loginError": {
     "defaultMessage": "Login error"
+  },
+  "setup.mediaServices": {
+    "defaultMessage": "Media Services"
+  },
+  "setup.monitoring": {
+    "defaultMessage": "Monitoring"
   },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Only enabled libraries will be scanned."

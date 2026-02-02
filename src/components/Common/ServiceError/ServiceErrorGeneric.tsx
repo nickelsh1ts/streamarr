@@ -47,7 +47,7 @@ export default function ServiceErrorGeneric({
         <h2 className="text-2xl font-semibold text-base-content mb-2">
           <FormattedMessage
             id="common.somethingWentWrong"
-            defaultMessage="Something Went Wrong"
+            defaultMessage="Something Went Wrong!"
           />
         </h2>
         <p className="text-base-content/70 mb-4">

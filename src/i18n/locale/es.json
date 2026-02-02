@@ -1,4 +1,22 @@
 {
+  "ServiceErrorGeneric.description": {
+    "defaultMessage": "Ocurrió un error al intentar conectar con {serviceName}."
+  },
+  "ServiceNotConfigured.descriptionAdmin": {
+    "defaultMessage": "{serviceName} aún no ha sido configurado o habilitado."
+  },
+  "ServiceNotConfigured.descriptionUser": {
+    "defaultMessage": "{serviceName} no está disponible. Por favor contacta a tu administrador."
+  },
+  "ServiceNotConfigured.setUp": {
+    "defaultMessage": "Configurar {serviceName}"
+  },
+  "ServiceNotConfigured.title": {
+    "defaultMessage": "{serviceName} No Habilitado"
+  },
+  "ServiceNotFound.description": {
+    "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
+  },
   "aboutReleases.changelogTitle": {
     "defaultMessage": "Registro de Cambios de {version}"
   },
@@ -432,6 +450,9 @@
   "common.noDownloadsFound": {
     "defaultMessage": "No se Encontraron Descargas"
   },
+  "common.noErrorDetails": {
+    "defaultMessage": "No se pudieron obtener los detalles del error."
+  },
   "common.noResults": {
     "defaultMessage": "Sin Resultados"
   },
@@ -535,6 +556,9 @@
   "common.resume": {
     "defaultMessage": "Reanudar"
   },
+  "common.retry": {
+    "defaultMessage": "Reintentar"
+  },
   "common.role": {
     "defaultMessage": "Rol"
   },
@@ -562,6 +586,9 @@
   },
   "common.servername": {
     "defaultMessage": "Nombre del servidor"
+  },
+  "common.service": {
+    "defaultMessage": "Servicio"
   },
   "common.services": {
     "defaultMessage": "Servicios"
@@ -601,7 +628,7 @@
     "defaultMessage": "Tamaño"
   },
   "common.somethingWentWrong": {
-    "defaultMessage": "¡Algo salió mal!"
+    "defaultMessage": "¡Algo Salió Mal!"
   },
   "common.speed": {
     "defaultMessage": "Velocidad"
@@ -641,6 +668,9 @@
   },
   "common.unknown": {
     "defaultMessage": "Desconocido"
+  },
+  "common.unknownError": {
+    "defaultMessage": "Error desconocido"
   },
   "common.unknownUser": {
     "defaultMessage": "Usuario Desconocido"
@@ -1936,6 +1966,18 @@
   "selectUsers": {
     "defaultMessage": "Seleccionar Usuarios"
   },
+  "serviceNotFound.notFound": {
+    "defaultMessage": "No encontrado"
+  },
+  "serviceUnavailable.timeoutMessage": {
+    "defaultMessage": "Algo salió mal. {serviceName} no respondió a tiempo."
+  },
+  "serviceUnavailable.title": {
+    "defaultMessage": "{serviceName} No Disponible"
+  },
+  "serviceUnavailable.unreachableMessage": {
+    "defaultMessage": "No se puede conectar con {serviceName}. El servicio no está accesible."
+  },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Error al deshabilitar la autenticación en {service}"
   },
@@ -2077,14 +2119,26 @@
   "settings.accountType": {
     "defaultMessage": "Tipo de Cuenta"
   },
+  "settings.allLibraries": {
+    "defaultMessage": "Todas las Bibliotecas"
+  },
+  "settings.allowDownloads": {
+    "defaultMessage": "Permitir Descargas"
+  },
   "settings.allowLiveTv": {
     "defaultMessage": "Permitir Acceso a TV en Vivo"
+  },
+  "settings.crossOriginAccess": {
+    "defaultMessage": "Acceso de Origen Cruzado"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Habilitar Período de Prueba"
   },
   "settings.inviteQuota": {
     "defaultMessage": "Cuota de Invitaciones"
+  },
+  "settings.librariesDifferWarning": {
+    "defaultMessage": "El acceso a Plex difiere de la configuración actual:"
   },
   "settings.librariesSynced": {
     "defaultMessage": "Las bibliotecas se han sincronizado con Plex."
@@ -2093,8 +2147,20 @@
     "defaultMessage": "Configurar y habilitar agentes de notificación.",
     "description": "Professional Spanish translation"
   },
+  "settings.openOverseerr": {
+    "defaultMessage": "Abrir Overseerr"
+  },
+  "settings.openOverseerrSettings": {
+    "defaultMessage": "Abrir Configuración de Overseerr"
+  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Anular Límite Global"
+  },
+  "settings.overseerr.localhostDescription": {
+    "defaultMessage": "Overseerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
+  },
+  "settings.overseerr.localhostDescriptionSettings": {
+    "defaultMessage": "La configuración de Overseerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.permissions": {
     "defaultMessage": "Permisos",
@@ -2103,6 +2169,12 @@
   "settings.permissions.error": {
     "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
     "description": "Professional Spanish translation"
+  },
+  "settings.permissionsDifferWarning": {
+    "defaultMessage": "Los permisos de Plex difieren de la configuración actual:"
+  },
+  "settings.permissionsWillSyncWarning": {
+    "defaultMessage": "Cambiar estos permisos eliminará y volverá a agregar brevemente el acceso al servidor Plex del usuario para aplicar los cambios."
   },
   "settings.pinLibraries": {
     "defaultMessage": "Anclar Bibliotecas"
@@ -2140,6 +2212,9 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Los cambios se sincronizarán con Plex automáticamente al guardar."
   },
+  "settings.saveChangesToSync": {
+    "defaultMessage": "Guarda los cambios para sincronizar."
+  },
   "settings.saveError": {
     "defaultMessage": "Algo salió mal al guardar la configuración."
   },
@@ -2167,11 +2242,17 @@
   "settingsBadge.restartRequired.tooltip": {
     "defaultMessage": "Streamarr debe reiniciarse para que los cambios a esta configuración tengan efecto"
   },
+  "setup.arrServices": {
+    "defaultMessage": "Servicios *Arr"
+  },
   "setup.configurePlex": {
     "defaultMessage": "Configurar Plex"
   },
   "setup.configureServices": {
     "defaultMessage": "Configurar Servicios"
+  },
+  "setup.downloads": {
+    "defaultMessage": "Descargas"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completando la configuración"
@@ -2187,6 +2268,12 @@
   },
   "setup.loginError": {
     "defaultMessage": "Error de inicio de sesión"
+  },
+  "setup.mediaServices": {
+    "defaultMessage": "Servicios de Medios"
+  },
+  "setup.monitoring": {
+    "defaultMessage": "Monitoreo"
   },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Solo las bibliotecas habilitadas serán escaneadas."
