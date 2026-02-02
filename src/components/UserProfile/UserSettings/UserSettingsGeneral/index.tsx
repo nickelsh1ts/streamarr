@@ -473,9 +473,9 @@ const UserSettingsGeneral = () => {
                                     <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
                                     <FormattedMessage
                                       id="settings.librariesDifferWarning"
-                                      defaultMessage="Plex access differs from current settings: "
+                                      defaultMessage="Plex access differs from current settings:"
                                     />
-                                    <span className="font-bold mr-1">
+                                    <span className="font-bold mx-1">
                                       {plexLibrariesData.currentPlexLibraries ===
                                       '' ? (
                                         <FormattedMessage
