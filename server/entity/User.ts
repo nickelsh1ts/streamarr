@@ -87,8 +87,9 @@ export class User {
   @Column('text')
   public avatar: string;
 
-  // Computed in queries, not stored in DB
   public inviteCount?: number;
+
+  public inviteCountRedeemed?: number;
 
   @Column({ type: 'integer', nullable: true })
   public inviteQuotaLimit?: number;

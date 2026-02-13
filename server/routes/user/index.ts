@@ -304,13 +304,25 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 
     const user = await userRepository.findOneOrFail({
       where: { id: Number(req.params.id) },
+      relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
     });
 
-    // Compute inviteCount separately since it's not a stored column
-    const inviteCount = await getRepository(Invite).count({
+    const invites = await getRepository(Invite).find({
       where: { createdBy: { id: user.id } },
+      relations: ['redeemedBy'],
     });
-    user.inviteCount = inviteCount;
+    user.inviteCount = invites.length;
+    user.inviteCountRedeemed = invites.filter(
+      (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+    ).length;
+
+    if (user.redeemedInvite?.createdBy) {
+      const { id, displayName, avatar } = user.redeemedInvite.createdBy;
+      user.redeemedInvite = {
+        id: user.redeemedInvite.id,
+        createdBy: { id, displayName, avatar },
+      } as Invite;
+    }
 
     res
       .status(200)

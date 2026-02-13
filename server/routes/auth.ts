@@ -18,13 +18,22 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   }
   const user = await userRepository.findOneOrFail({
     where: { id: req.user.id },
+    relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
   });
 
-  // Compute inviteCount since it's not a stored column
-  const inviteCount = await getRepository(Invite).count({
+  const invites = await getRepository(Invite).find({
     where: { createdBy: { id: user.id } },
+    relations: ['redeemedBy'],
   });
-  user.inviteCount = inviteCount;
+  user.inviteCount = invites.length;
+  user.inviteCountRedeemed = invites.filter(
+    (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+  ).length;
+
+  if (user.redeemedInvite?.createdBy) {
+    const { id, displayName, avatar } = user.redeemedInvite.createdBy;
+    user.redeemedInvite.createdBy = { id, displayName, avatar } as User;
+  }
 
   res.status(200).json(user);
 });
