@@ -40,7 +40,6 @@ enum Filter {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   EXPIRED = 'expired',
-  DELETED = 'deleted',
   REDEEMED = 'redeemed',
 }
 
