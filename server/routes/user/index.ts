@@ -321,7 +321,11 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
     if (user.redeemedInvite?.createdBy) {
       const { id, displayName, avatar } = user.redeemedInvite.createdBy;
       // Reduce response size by only including necessary user fields
-      user.redeemedInvite.createdBy = { id, displayName, avatar } as InviteCreatorSummary as User;
+      user.redeemedInvite.createdBy = {
+        id,
+        displayName,
+        avatar,
+      } as InviteCreatorSummary as User;
     }
 
     res
