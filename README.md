@@ -5,11 +5,11 @@
 <img src="./public/logo_full.png" alt="Streamarr" style="margin: 20px 0;">
 </p>
 
-**Streamarr** is a an open source web application meant to wrap an existing \*Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overserr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience.
+**Streamarr** is an open source web application meant to wrap an existing \*Arr ecosystem such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**, **[Overseerr](https://overseerr.dev/)**, and **[Plex](https://www.plex.tv/)** enabling a smooth user friendly experience.
 
 ## Overview
 
-Currently under active development Streamarr aims to be a complete (or at least semi-complete) web application for those who heavily manage a plex server with various *Arr applications and many users. Featuring a full front end to make accessing both streaming and backend *Arr services easy and straightforward. Integrating with Overseerr to manage requests and a fully featured invite system to make end user experiences a breeze.
+Streamarr provides a unified dashboard for managing your Plex server alongside your \*Arr ecosystem. It simplifies common tasks like inviting users to Plex, tracking upcoming releases, monitoring downloads, and proxying access to your backend services—all from a single, polished interface designed for both administrators and end users.
 
 [![GitHub last commit](https://img.shields.io/github/release-date/nickelsh1ts/streamarr?style=for-the-badge&logo=github)](https://github.com/nickelsh1ts/streamarr)
 [![GitHub last release](https://img.shields.io/github/v/release/nickelsh1ts/streamarr?style=for-the-badge&logo=github)](https://github.com/nickelsh1ts/streamarr)
@@ -20,28 +20,30 @@ Currently under active development Streamarr aims to be a complete (or at least 
 
 ## Major Features
 
-- Admin Centre for easy to manage settings and users.
-- A robust and customizable invite management system.
-- A fully featured release schedule with integrations to Sonarr and Radarr.
-- Integrated with Overseerr for a complete user experience for streaming, requesting and reporting issues.
-- A fully customizable user permission system.
-- Built as a PWA so users can access on-the-go or on a PC.
-- Supports most\* Plex library types: Movies, TV Shows, Music and live TV.
-- An integrated Help Center for clear user instructions and support.
-- An integrated notification system with custom notification triggers.
-- Theme and Logo customization.
+- **Full Plex Integration** — Sign in with Plex, embedded Plex Web player, user management
+- **Robust Invite System** — Usage limits, expiry dates, library access controls, QR codes
+- **Release Calendar** — Upcoming releases from Sonarr and Radarr, plus custom events
+- **\*Arr Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, and more
+- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission
+- **Flexible Notifications** — Email (with PGP encryption), Web Push, and In-App notifications
+- **Internal Service Proxy** — Securely access embedded \*Arr services through Streamarr
+- **Granular Permissions** — 15+ permission types for fine-grained access control
+- **Trial Periods** — Optionally restrict new users during a configurable trial period
+- **Custom Theming** — Fully customize colors and logo to match your brand
+- **PWA Support** — Install as a Progressive Web App on mobile devices
+- **Multi-language Support** — Localized interface
 
 ## Planned Features
 
-- Enable Customization of the Help Center.
-- Fully customizable email newsletters and communications.
-- Customizable & interactive "new user" tutorial/welcome
-
-With more features planned!
+- **Jellyfin Support** — Dual-backend support for both Plex and Jellyfin users
+- **Help Center Customization** — Fully customizable help center content
+- **Email Newsletters** — Customizable email newsletters and communications
+- **New User Onboarding** — Interactive tutorial and welcome experience for new users
+- **Additional Services** — Huntarr, Cleanuparr, and Kometa integrations
 
 ## Getting Started
 
-As I am still actively developing I have not yet created docs, but once available, you can visit the below link.
+Check out our documentation for installation instructions and configuration guides:
 
 https://docs.streamarr.dev
 
