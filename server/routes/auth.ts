@@ -3,6 +3,7 @@ import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
+import type { UserSummary } from '@server/interfaces/api/userInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -25,17 +26,25 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
     where: { createdBy: { id: user.id } },
     relations: ['redeemedBy'],
   });
-  user.inviteCount = invites.length;
-  user.inviteCountRedeemed = invites.filter(
-    (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
-  ).length;
 
-  if (user.redeemedInvite?.createdBy) {
-    const { id, displayName, avatar } = user.redeemedInvite.createdBy;
-    user.redeemedInvite.createdBy = { id, displayName, avatar } as User;
-  }
+  const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy
+    ? {
+        id: user.redeemedInvite.createdBy.id,
+        displayName: user.redeemedInvite.createdBy.displayName,
+        avatar: user.redeemedInvite.createdBy.avatar,
+      }
+    : null;
 
-  res.status(200).json(user);
+  res.status(200).json({
+    ...user,
+    inviteCount: invites.length,
+    inviteCountRedeemed: invites.filter(
+      (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+    ).length,
+    redeemedInvite: user.redeemedInvite
+      ? { ...user.redeemedInvite, createdBy: createdBySummary }
+      : null,
+  });
 });
 
 authRoutes.post('/plex', async (req, res, next) => {

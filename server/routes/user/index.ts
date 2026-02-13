@@ -8,6 +8,7 @@ import type {
   QuotaResponse,
   UserInvitesResponse,
   UserResultsResponse,
+  UserSummary,
 } from '@server/interfaces/api/userInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -311,22 +312,27 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
       where: { createdBy: { id: user.id } },
       relations: ['redeemedBy'],
     });
-    user.inviteCount = invites.length;
-    user.inviteCountRedeemed = invites.filter(
-      (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
-    ).length;
 
-    if (user.redeemedInvite?.createdBy) {
-      const { id, displayName, avatar } = user.redeemedInvite.createdBy;
-      user.redeemedInvite = {
-        id: user.redeemedInvite.id,
-        createdBy: { id, displayName, avatar },
-      } as Invite;
-    }
+    const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy
+      ? {
+          id: user.redeemedInvite.createdBy.id,
+          displayName: user.redeemedInvite.createdBy.displayName,
+          avatar: user.redeemedInvite.createdBy.avatar,
+        }
+      : null;
 
-    res
-      .status(200)
-      .json(user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)));
+    const response = {
+      ...user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)),
+      inviteCount: invites.length,
+      inviteCountRedeemed: invites.filter(
+        (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+      ).length,
+      redeemedInvite: user.redeemedInvite
+        ? { ...user.redeemedInvite, createdBy: createdBySummary }
+        : null,
+    };
+
+    res.status(200).json(response);
   } catch {
     next({ status: 404, message: 'User not found.' });
   }
