@@ -3,6 +3,9 @@ import type Invite from '@server/entity/Invite';
 import type { PaginatedResponse } from './common';
 import type { Notification } from '@server/entity/Notification';
 
+// Type for partial user data returned in invite responses
+export type InviteCreatorSummary = Pick<User, 'id' | 'displayName' | 'avatar'>;
+
 export interface UserResultsResponse extends PaginatedResponse {
   results: User[];
 }

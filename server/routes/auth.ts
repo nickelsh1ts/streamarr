@@ -8,9 +8,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
-
-// Type for partial user data returned in invite responses
-type InviteCreatorSummary = Pick<User, 'id' | 'displayName' | 'avatar'>;
+import type { InviteCreatorSummary } from '@server/interfaces/api/userInterfaces';
 
 const authRoutes = Router();
 

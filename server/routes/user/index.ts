@@ -8,6 +8,7 @@ import type {
   QuotaResponse,
   UserInvitesResponse,
   UserResultsResponse,
+  InviteCreatorSummary,
 } from '@server/interfaces/api/userInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -23,8 +24,6 @@ import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
 import { plexSync } from '@server/lib/plexSync';
 
-// Type for partial user data returned in invite responses
-type InviteCreatorSummary = Pick<User, 'id' | 'displayName' | 'avatar'>;
 const router = Router();
 
 router.get('/', async (req, res, next) => {
