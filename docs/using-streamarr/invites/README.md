@@ -175,10 +175,11 @@ Click on an invite to view details and:
 
 {% hint style="info" %}
 **Reactivating invites:**
+
 - Toggle between Active/Inactive at any time
 - Increase usage limit on a redeemed invite to automatically reactivate it
 - Expired invites (past their date) cannot be redeemed even if manually set to Active
-{% endhint %}
+  {% endhint %}
 
 ---
 
