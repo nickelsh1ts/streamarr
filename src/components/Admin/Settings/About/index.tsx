@@ -40,8 +40,8 @@ const AboutSettings = () => {
       <Alert type="primary">
         <p className="text-sm leading-5 flex-1">
           <FormattedMessage
-            id="aboutSettings.alphaWarning"
-            defaultMessage="This is ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+            id="aboutSettings.betaWarning"
+            defaultMessage="This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
           />
         </p>
         <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
@@ -199,16 +199,6 @@ const AboutSettings = () => {
               className="text-primary transition duration-300 hover:underline"
             >
               https://github.com/nickelsh1ts/streamarr/discussions
-            </a>
-          </List.Item>
-          <List.Item title="Discord">
-            <a
-              href="https://discord.gg/streamarr"
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary transition duration-300 hover:underline"
-            >
-              https://discord.gg/streamarr
             </a>
           </List.Item>
         </List>
