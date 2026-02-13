@@ -21,7 +21,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
         id: 'iCodeForm.inviteCodeRequired',
         defaultMessage: 'Invite code is required',
       });
-    } else if (values.icode.length < 4) {
+    } else if (values.icode.length < 8) {
       errors.icode = intl.formatMessage({
         id: 'iCodeForm.inviteCodeTooShort',
         defaultMessage: 'Invite code is too short',

@@ -2,6 +2,7 @@ import type { PlexLibraryItem } from '@server/api/plexapi';
 import PlexAPI from '@server/api/plexapi';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import cacheManager from '@server/lib/cache';
 import type {
   RunnableScanner,
   StatusBase,
@@ -61,6 +62,7 @@ class PlexScanner
     } catch (e) {
       this.log('Scan interrupted', 'error', { errorMessage: e.message });
     } finally {
+      cacheManager.getCache('plexguid').flush();
       this.endRun(sessionId);
     }
   }

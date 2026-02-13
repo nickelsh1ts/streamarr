@@ -38,8 +38,8 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "View on GitHub"
   },
-  "aboutSettings.alphaWarning": {
-    "defaultMessage": "This is ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+  "aboutSettings.betaWarning": {
+    "defaultMessage": "This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
   },
   "aboutSettings.dataDirectory": {
     "defaultMessage": "Data Directory"
@@ -1847,6 +1847,9 @@
   "profile.editSettings": {
     "defaultMessage": "Edit Settings"
   },
+  "profile.invitedBy": {
+    "defaultMessage": "Invited By"
+  },
   "profile.invitesLifetime": {
     "defaultMessage": "Invites (Lifetime)"
   },
@@ -1876,6 +1879,9 @@
   },
   "profile.userId": {
     "defaultMessage": "User ID: {userId}"
+  },
+  "profile.usersInvited": {
+    "defaultMessage": "Users Invited"
   },
   "profile.viewProfile": {
     "defaultMessage": "View Profile"

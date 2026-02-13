@@ -41,6 +41,9 @@
   "aboutSettings.alphaWarning": {
     "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
   },
+  "aboutSettings.betaWarning": {
+    "defaultMessage": "Este es software BETA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
+  },
   "aboutSettings.dataDirectory": {
     "defaultMessage": "Directorio de Datos"
   },
@@ -656,6 +659,9 @@
   },
   "common.transcoding": {
     "defaultMessage": "Transcodificación"
+  },
+  "common.transcodes": {
+    "defaultMessage": "Transcodificaciones"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
@@ -1861,6 +1867,9 @@
   "profile.editSettings": {
     "defaultMessage": "Editar Configuración"
   },
+  "profile.invitedBy": {
+    "defaultMessage": "Invitado Por"
+  },
   "profile.invitesLifetime": {
     "defaultMessage": "Invitaciones (Historial)"
   },
@@ -1890,6 +1899,9 @@
   },
   "profile.userId": {
     "defaultMessage": "ID de Usuario: {userId}"
+  },
+  "profile.usersInvited": {
+    "defaultMessage": "Usuarios Invitados"
   },
   "profile.viewProfile": {
     "defaultMessage": "Ver Perfil"

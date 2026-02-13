@@ -8,6 +8,7 @@ import type {
   QuotaResponse,
   UserInvitesResponse,
   UserResultsResponse,
+  UserSummary,
 } from '@server/interfaces/api/userInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -304,17 +305,34 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 
     const user = await userRepository.findOneOrFail({
       where: { id: Number(req.params.id) },
+      relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
     });
 
-    // Compute inviteCount separately since it's not a stored column
-    const inviteCount = await getRepository(Invite).count({
+    const invites = await getRepository(Invite).find({
       where: { createdBy: { id: user.id } },
+      relations: ['redeemedBy'],
     });
-    user.inviteCount = inviteCount;
 
-    res
-      .status(200)
-      .json(user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)));
+    const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy
+      ? {
+          id: user.redeemedInvite.createdBy.id,
+          displayName: user.redeemedInvite.createdBy.displayName,
+          avatar: user.redeemedInvite.createdBy.avatar,
+        }
+      : null;
+
+    const response = {
+      ...user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)),
+      inviteCount: invites.length,
+      inviteCountRedeemed: invites.filter(
+        (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+      ).length,
+      redeemedInvite: user.redeemedInvite
+        ? { ...user.redeemedInvite, createdBy: createdBySummary }
+        : null,
+    };
+
+    res.status(200).json(response);
   } catch {
     next({ status: 404, message: 'User not found.' });
   }

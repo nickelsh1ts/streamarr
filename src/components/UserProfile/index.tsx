@@ -91,30 +91,57 @@ const UserProfile = () => {
           )) && (
           <div className="relative">
             <dl className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-              <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
-                <dt className="truncate text-sm font-bold text-primary-content">
-                  <FormattedMessage
-                    id="profile.totalInvites"
-                    defaultMessage="Total Invites"
-                  />
-                </dt>
-                <dd className="mt-1 text-3xl font-semibold text-primary-content">
-                  <Link
-                    className="link-hover"
-                    href={
-                      user.id === currentUser?.id
-                        ? '/profile/invites?filter=all'
-                        : `/admin/users/${user?.id}/invites?filter=all`
-                    }
-                  >
-                    {user.inviteCount || (
-                      <FormattedMessage
-                        id="common.none"
-                        defaultMessage="None"
-                      />
-                    )}
-                  </Link>
-                </dd>
+              <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+                <div>
+                  <dt className="truncate text-sm font-bold text-primary-content">
+                    <FormattedMessage
+                      id="profile.totalInvites"
+                      defaultMessage="Total Invites"
+                    />
+                  </dt>
+                  <dd className="mt-1 text-3xl font-semibold text-primary-content">
+                    <Link
+                      className="link-hover"
+                      href={
+                        user.id === currentUser?.id
+                          ? '/profile/invites?filter=all'
+                          : `/admin/users/${user?.id}/invites?filter=all`
+                      }
+                    >
+                      {user.inviteCount || (
+                        <FormattedMessage
+                          id="common.none"
+                          defaultMessage="None"
+                        />
+                      )}
+                    </Link>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="truncate text-sm font-bold text-primary-content">
+                    <FormattedMessage
+                      id="profile.usersInvited"
+                      defaultMessage="Users Invited"
+                    />
+                  </dt>
+                  <dd className="mt-1 text-3xl font-semibold text-primary-content">
+                    <Link
+                      className="link-hover"
+                      href={
+                        user.id === currentUser?.id
+                          ? '/profile/invites?filter=redeemed'
+                          : `/admin/users/${user?.id}/invites?filter=redeemed`
+                      }
+                    >
+                      {user.inviteCountRedeemed || (
+                        <FormattedMessage
+                          id="common.none"
+                          defaultMessage="None"
+                        />
+                      )}
+                    </Link>
+                  </dd>
+                </div>
               </div>
               {quota.invite.trialPeriodActive &&
               quota.invite.trialPeriodEnabled ? (
@@ -202,7 +229,7 @@ const UserProfile = () => {
                           useHeatLevel
                           className="mr-2 h-8 w-8"
                         />
-                        <div>
+                        <div className="w-full overflow-hidden truncate">
                           <span className="text-3xl font-semibold">
                             <FormattedMessage
                               id="profile.invitesRemaining"
@@ -230,6 +257,34 @@ const UserProfile = () => {
                         )}
                       </span>
                     )}
+                  </dd>
+                </div>
+              )}
+              {user.redeemedInvite?.createdBy && (
+                <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6">
+                  <dt className="truncate text-sm font-bold text-primary-content">
+                    <FormattedMessage
+                      id="profile.invitedBy"
+                      defaultMessage="Invited By"
+                    />
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-primary-content">
+                    <div className="text-3xl overflow-hidden truncate">
+                      {currentHasPermission(Permission.MANAGE_USERS) ? (
+                        <Link
+                          className="link-hover"
+                          href={
+                            user.redeemedInvite.createdBy.id === currentUser?.id
+                              ? '/profile'
+                              : `/admin/users/${user.redeemedInvite.createdBy.id}`
+                          }
+                        >
+                          {user.redeemedInvite.createdBy.displayName}
+                        </Link>
+                      ) : (
+                        user.redeemedInvite.createdBy.displayName
+                      )}
+                    </div>
                   </dd>
                 </div>
               )}

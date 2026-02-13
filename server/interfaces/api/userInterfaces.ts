@@ -3,6 +3,12 @@ import type Invite from '@server/entity/Invite';
 import type { PaginatedResponse } from './common';
 import type { Notification } from '@server/entity/Notification';
 
+export interface UserSummary {
+  id: number;
+  displayName: string;
+  avatar: string;
+}
+
 export interface UserResultsResponse extends PaginatedResponse {
   results: User[];
 }

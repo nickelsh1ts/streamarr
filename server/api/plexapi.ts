@@ -1,6 +1,8 @@
+import cacheManager from '@server/lib/cache';
 import type { Library, PlexSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import type NodeCache from 'node-cache';
 import NodePlexAPI from 'plex-api';
 
 export interface PlexLibraryItem {
@@ -72,6 +74,7 @@ interface PlexMetadataResponse {
 
 class PlexAPI {
   private plexClient: NodePlexAPI;
+  private cache: NodeCache;
 
   constructor({
     plexToken,
@@ -112,6 +115,8 @@ class PlexAPI {
         platform: 'Streamarr',
       },
     });
+
+    this.cache = cacheManager.getCache('plexguid').data;
   }
 
   public async getStatus() {
@@ -198,13 +203,24 @@ class PlexAPI {
     key: string,
     options: { includeChildren?: boolean } = {}
   ): Promise<PlexMetadata> {
+    const cacheKey = `plex:metadata:${key}:${options.includeChildren ? '1' : '0'}`;
+
+    const cached = this.cache.get<PlexMetadata>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     try {
       const response = await this.plexClient.query<PlexMetadataResponse>(
         `/library/metadata/${key}${
           options.includeChildren ? '?includeChildren=1' : ''
         }`
       );
-      return response.MediaContainer.Metadata[0];
+      const metadata = response.MediaContainer.Metadata[0];
+
+      this.cache.set(cacheKey, metadata);
+
+      return metadata;
     } catch (e) {
       logger.error('Failed to fetch Plex metadata', {
         label: 'Plex API',
@@ -215,11 +231,22 @@ class PlexAPI {
   }
 
   public async getChildrenMetadata(key: string): Promise<PlexMetadata[]> {
+    const cacheKey = `plex:children:${key}`;
+
+    const cached = this.cache.get<PlexMetadata[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     try {
       const response = await this.plexClient.query<PlexMetadataResponse>(
         `/library/metadata/${key}/children`
       );
-      return response.MediaContainer.Metadata;
+      const metadata = response.MediaContainer.Metadata;
+
+      this.cache.set(cacheKey, metadata);
+
+      return metadata;
     } catch (e) {
       logger.error('Failed to fetch Plex children metadata', {
         label: 'Plex API',

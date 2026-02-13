@@ -54,6 +54,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         urlBase: requestUrl,
         hostname: overseerrHostname,
         port: overseerrPort,
+        enabled: overseerrEnabled,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -91,6 +92,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         tautulliEnabled: tautulliEnabled,
         requestUrl: requestUrl,
         requestHostname: `${overseerrHostname}:${overseerrPort}`,
+        requestEnabled: overseerrEnabled,
         releaseSched: releaseSched,
       });
     } catch (e) {
