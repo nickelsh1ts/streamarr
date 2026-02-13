@@ -9,6 +9,9 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 
+// Type for partial user data returned in invite responses
+type InviteCreatorSummary = Pick<User, 'id' | 'displayName' | 'avatar'>;
+
 const authRoutes = Router();
 
 authRoutes.get('/me', isAuthenticated(), async (req, res) => {
@@ -32,7 +35,8 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
 
   if (user.redeemedInvite?.createdBy) {
     const { id, displayName, avatar } = user.redeemedInvite.createdBy;
-    user.redeemedInvite.createdBy = { id, displayName, avatar } as User;
+    // Reduce response size by only including necessary user fields
+    user.redeemedInvite.createdBy = { id, displayName, avatar } as InviteCreatorSummary as User;
   }
 
   res.status(200).json(user);

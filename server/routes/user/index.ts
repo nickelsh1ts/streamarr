@@ -23,6 +23,8 @@ import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
 import { plexSync } from '@server/lib/plexSync';
 
+// Type for partial user data returned in invite responses
+type InviteCreatorSummary = Pick<User, 'id' | 'displayName' | 'avatar'>;
 const router = Router();
 
 router.get('/', async (req, res, next) => {
@@ -318,10 +320,8 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 
     if (user.redeemedInvite?.createdBy) {
       const { id, displayName, avatar } = user.redeemedInvite.createdBy;
-      user.redeemedInvite = {
-        id: user.redeemedInvite.id,
-        createdBy: { id, displayName, avatar },
-      } as Invite;
+      // Reduce response size by only including necessary user fields
+      user.redeemedInvite.createdBy = { id, displayName, avatar } as InviteCreatorSummary as User;
     }
 
     res

@@ -17,7 +17,6 @@ jobs:
         with:
           output: swagger-ui
           spec-file: streamarr-api.yml
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
