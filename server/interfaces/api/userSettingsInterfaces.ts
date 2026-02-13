@@ -25,6 +25,7 @@ export interface UserSettingsGeneralResponse {
   forcePlexSync?: boolean;
   requestUrl?: string;
   requestHostname?: string;
+  requestEnabled?: boolean;
   releaseSched?: boolean;
 }
 

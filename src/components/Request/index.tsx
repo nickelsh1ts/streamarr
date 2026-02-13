@@ -36,7 +36,8 @@ const Request = ({ children, ...props }) => {
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
 
-  const isConfigured = !!userSettings?.requestUrl;
+  const isConfigured =
+    !!userSettings?.requestUrl && !!userSettings?.requestEnabled;
   const {
     status: proxyStatus,
     error: proxyError,
@@ -54,7 +55,9 @@ const Request = ({ children, ...props }) => {
   const isLocalhost =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1');
+      /^(127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(
+        window.location.hostname
+      ));
 
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
