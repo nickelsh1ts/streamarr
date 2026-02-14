@@ -15791,9 +15791,9 @@ __metadata:
   linkType: hard
 
 "lodash-es@npm:^4.17.21":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
+  version: 4.17.23
+  resolution: "lodash-es@npm:4.17.23"
+  checksum: 10c0/3150fb6660c14c7a6b5f23bd11597d884b140c0e862a17fdb415aaa5ef7741523182904a6b7929f04e5f60a11edb5a79499eb448734381c99ffb3c4734beeddd
   languageName: node
   linkType: hard
 
@@ -17647,6 +17647,13 @@ __metadata:
   version: 7.0.12
   resolution: "nodemailer@npm:7.0.12"
   checksum: 10c0/b03948744423386b5fd7cb5bdf60797f2f71c4d3db202eedf7e0037429b5887cb90b641e7ca244af3b96e0b76949e3135cba96336fb0d3ade00ae33727ca8cf8
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^7.0.13":
+  version: 7.0.13
+  resolution: "nodemailer@npm:7.0.13"
+  checksum: 10c0/b26aa5b9fa4a033bbc1e1c16ef75ee2a9c8641fd290c00a8361d6a251b3c1b8bad545a23efa627f59cb266340a448891ea8aa49d8a9307c767b8505219d95079
   languageName: node
   linkType: hard
 
@@ -21498,7 +21505,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:8.51.0"
     "@typescript-eslint/parser": "npm:8.51.0"
     autoprefixer: "npm:^10.4.23"
-    axios: "npm:^1.13.2"
+    axios: "npm:^1.13.5"
     axios-rate-limit: "npm:^1.4.0"
     bcrypt: "npm:^6.0.0"
     bowser: "npm:^2.13.1"
@@ -21541,7 +21548,7 @@ __metadata:
     nextjs-toploader: "npm:^3.9.17"
     node-cache: "npm:^5.1.2"
     node-schedule: "npm:^2.1.1"
-    nodemailer: "npm:^7.0.12"
+    nodemailer: "npm:^7.0.13"
     nodemon: "npm:^3.1.11"
     ofetch: "npm:^1.5.1"
     openpgp: "npm:^6.3.0"
