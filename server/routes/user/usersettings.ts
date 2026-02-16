@@ -15,7 +15,7 @@ import { canMakePermissionsChange } from '@server/routes/user';
 import { UserType } from '@server/constants/user';
 import axios from 'axios';
 
-const isOwnProfileOrAdmin = () => {
+export const isOwnProfileOrAdmin = () => {
   const authMiddleware = (req, res, next) => {
     if (
       !req.user?.hasPermission(Permission.MANAGE_USERS) &&

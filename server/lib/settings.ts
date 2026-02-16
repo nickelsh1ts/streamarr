@@ -222,6 +222,17 @@ interface NotificationSettings {
   agents: NotificationAgents;
 }
 
+export interface OnboardingSettings {
+  initialized: boolean;
+  welcomeEnabled: boolean;
+  tutorialEnabled: boolean;
+  tutorialMode: 'spotlight' | 'wizard' | 'both';
+  allowSkipWelcome: boolean;
+  allowSkipTutorial: boolean;
+  tutorialAutostart: boolean;
+  tutorialAutostartDelay: number;
+}
+
 interface JobSettings {
   schedule: string;
 }
@@ -251,6 +262,7 @@ interface AllSettings {
   overseerr: ServiceSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
+  onboarding: OnboardingSettings;
   jobs: Record<JobId, JobSettings>;
 }
 
@@ -377,6 +389,16 @@ class Settings {
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
+      },
+      onboarding: {
+        initialized: false,
+        welcomeEnabled: true,
+        tutorialEnabled: true,
+        tutorialMode: 'both',
+        allowSkipWelcome: true,
+        allowSkipTutorial: true,
+        tutorialAutostart: true,
+        tutorialAutostartDelay: 500,
       },
     };
     if (initialSettings) {
@@ -530,6 +552,14 @@ class Settings {
 
   set jobs(data: Record<JobId, JobSettings>) {
     this.data.jobs = data;
+  }
+
+  get onboarding(): OnboardingSettings {
+    return this.data.onboarding;
+  }
+
+  set onboarding(data: OnboardingSettings) {
+    this.data.onboarding = data;
   }
 
   get clientId(): string {

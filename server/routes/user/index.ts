@@ -16,7 +16,8 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { In } from 'typeorm';
-import userSettingsRoutes from './usersettings';
+import userSettingsRoutes, { isOwnProfileOrAdmin } from './usersettings';
+import userOnboardingRoutes from './onboarding';
 import PreparedEmail from '@server/lib/email';
 import path from 'path';
 import crypto from 'crypto';
@@ -339,6 +340,7 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 });
 
 router.use('/:id/settings', userSettingsRoutes);
+router.use('/:id/onboarding', isOwnProfileOrAdmin(), userOnboardingRoutes);
 
 router.get<{ id: string }, UserInvitesResponse>(
   '/:id/invites',
