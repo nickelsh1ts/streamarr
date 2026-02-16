@@ -126,7 +126,10 @@ const LibraryMenu = ({
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto">
+    <ul
+      className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto"
+      data-tutorial="library-menu"
+    >
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
         <SingleItem
           liKey={item.title}
@@ -239,6 +242,7 @@ interface SingleItemProps {
   regExp: string | RegExp;
   type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
   defaultPivot?: string;
+  'data-tutorial'?: string;
 }
 
 const matchesLibrarySource = (url: string, sourceId: string): boolean => {
@@ -258,6 +262,7 @@ export const SingleItem = ({
   regExp,
   type,
   defaultPivot = 'library',
+  'data-tutorial': dataTutorial,
 }: SingleItemProps) => {
   const isActive =
     typeof regExp === 'string'
@@ -287,6 +292,7 @@ export const SingleItem = ({
     <li
       className={`pointer-events-auto ${className ? className : ''}`}
       key={liKey}
+      data-tutorial={dataTutorial}
     >
       <Link
         onClick={onClick}

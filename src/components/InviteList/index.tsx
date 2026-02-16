@@ -380,6 +380,7 @@ const InviteList = () => {
             <Button
               buttonSize="sm"
               buttonType="primary"
+              data-tutorial="create-invite-btn"
               onClick={() => setEditInviteModal({ show: true, Invite: null })}
               disabled={
                 (quota?.invite.limit === -1

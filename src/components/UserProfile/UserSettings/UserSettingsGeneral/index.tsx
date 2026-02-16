@@ -32,11 +32,14 @@ import { useParams } from 'next/navigation';
 import LibrarySelector from '@app/components/LibrarySelector';
 import { momentWithLocale } from '@app/utils/momentLocale';
 import DatePicker from 'react-datepicker';
+import { useOnboardingContext } from '@app/context/OnboardingContext';
 import 'react-datepicker/dist/react-datepicker.css';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
 
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();
+  const { resetOnboarding, data: onboardingData } = useOnboardingContext();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
   const [plexLibrariesDiffer, setPlexLibrariesDiffer] = useState(false);
@@ -722,6 +725,7 @@ const UserSettingsGeneral = () => {
                       </div>
                       <div className="col-span-2">
                         <Button
+                          data-tutorial="library-pin"
                           buttonType="primary"
                           buttonSize="sm"
                           disabled={isPinning}
@@ -953,6 +957,77 @@ const UserSettingsGeneral = () => {
                               {errors.trialPeriodEndsAt}
                             </div>
                           )}
+                      </div>
+                    </div>
+                  )}
+                {(user?.id === currentUser.id ||
+                  (currentHasPermission(Permission.MANAGE_USERS) &&
+                    !hasPermission(Permission.MANAGE_USERS))) &&
+                  (onboardingData?.settings?.welcomeEnabled ||
+                    onboardingData?.settings?.tutorialEnabled) &&
+                  (onboardingData?.status?.welcomeCompleted ||
+                    onboardingData?.status?.welcomeDismissed ||
+                    onboardingData?.status?.tutorialCompleted ||
+                    (onboardingData?.status?.tutorialProgress?.length ?? 0) >
+                      0) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="col-span-1">
+                        <FormattedMessage
+                          id="settings.user.onboarding"
+                          defaultMessage="Onboarding"
+                        />
+                        <span className="block text-xs text-neutral mt-1">
+                          <FormattedMessage
+                            id="settings.user.onboardingDescription"
+                            defaultMessage="Reset the welcome modal and tutorial {ownProfile, select, true {} other {for this user}}"
+                            values={{ ownProfile: user?.id === currentUser.id }}
+                          />
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <ConfirmButton
+                          buttonSize="sm"
+                          confirmText={intl.formatMessage({
+                            id: 'common.areYouSure',
+                            defaultMessage: 'Are you sure?',
+                          })}
+                          onClick={async () => {
+                            try {
+                              await axios.post(
+                                `/api/v1/user/${user?.id}/onboarding/reset`
+                              );
+                              if (user?.id === currentUser?.id) {
+                                await resetOnboarding();
+                              }
+                              Toast({
+                                title: intl.formatMessage({
+                                  id: 'settings.user.onboardingResetSuccess',
+                                  defaultMessage: 'Onboarding reset.',
+                                }),
+                                icon: <CheckBadgeIcon className="size-7" />,
+                                type: 'success',
+                              });
+                            } catch (e) {
+                              Toast({
+                                title: intl.formatMessage({
+                                  id: 'settings.user.onboardingResetError',
+                                  defaultMessage: 'Failed to reset onboarding.',
+                                }),
+                                icon: <XCircleIcon className="size-7" />,
+                                type: 'error',
+                                message:
+                                  e.response?.data?.message ||
+                                  e.message ||
+                                  String(e),
+                              });
+                            }
+                          }}
+                        >
+                          <FormattedMessage
+                            id="settings.user.resetOnboarding"
+                            defaultMessage="Reset Onboarding"
+                          />
+                        </ConfirmButton>
                       </div>
                     </div>
                   )}

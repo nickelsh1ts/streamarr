@@ -114,7 +114,11 @@ const AdminTabs = ({
       </div>
       {tabType === 'button' ? (
         <div className="hidden sm:block">
-          <nav className="-mx-2 -my-1 flex flex-wrap" aria-label="Tabs">
+          <nav
+            className="-mx-2 -my-1 flex flex-wrap"
+            aria-label="Tabs"
+            data-tutorial="admin-tabs"
+          >
             {AdminRoutes.map((route, index) => (
               <AdminLink
                 tabType={tabType}
@@ -131,7 +135,11 @@ const AdminTabs = ({
         </div>
       ) : (
         <div className="hide-scrollbar hidden overflow-x-scroll border-b border-neutral sm:block m-0">
-          <nav className="flex" data-testid="Admin-nav-desktop">
+          <nav
+            className="flex"
+            data-testid="Admin-nav-desktop"
+            data-tutorial="admin-tabs"
+          >
             {AdminRoutes.filter((route) => !route.hidden).map(
               (route, index) => (
                 <AdminLink
