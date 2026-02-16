@@ -973,7 +973,7 @@ const UserSettingsGeneral = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                       <div className="col-span-1">
                         <FormattedMessage
-                          id="settings.user.onboarding"
+                          id="common.onboarding"
                           defaultMessage="Onboarding"
                         />
                         <span className="block text-xs text-neutral mt-1">

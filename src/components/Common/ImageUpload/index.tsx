@@ -170,7 +170,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             className="absolute bottom-2 right-2"
           >
             <FormattedMessage
-              id="imageUpload.changeImage"
+              id="common.change"
               defaultMessage="Change"
             />
           </Button>

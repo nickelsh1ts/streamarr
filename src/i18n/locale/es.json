@@ -259,6 +259,9 @@
   "common.arrEdit4k": {
     "defaultMessage": "Editar Servidor 4K {arrApp}"
   },
+  "common.back": {
+    "defaultMessage": "Atrás"
+  },
   "common.by": {
     "defaultMessage": "por"
   },
@@ -270,6 +273,9 @@
   },
   "common.cancel": {
     "defaultMessage": "Cancelar"
+  },
+  "common.change": {
+    "defaultMessage": "Cambiar"
   },
   "common.close": {
     "defaultMessage": "Cerrar"
@@ -315,6 +321,12 @@
   "common.delete": {
     "defaultMessage": "Eliminar"
   },
+  "common.description": {
+    "defaultMessage": "Descripción"
+  },
+  "common.disable": {
+    "defaultMessage": "Deshabilitar"
+  },
   "common.disconnected": {
     "defaultMessage": "Desconectado"
   },
@@ -339,6 +351,9 @@
   "common.emailAddress": {
     "defaultMessage": "Dirección de correo electrónico"
   },
+  "common.enable": {
+    "defaultMessage": "Habilitar"
+  },
   "common.endTime": {
     "defaultMessage": "Hora de Fin"
   },
@@ -361,6 +376,9 @@
   "common.externalUrl": {
     "defaultMessage": "URL externa"
   },
+  "common.finish": {
+    "defaultMessage": "Finalizar"
+  },
   "common.futuredays": {
     "defaultMessage": "Días Futuros"
   },
@@ -378,6 +396,9 @@
   },
   "common.hostname": {
     "defaultMessage": "Nombre del host"
+  },
+  "common.image": {
+    "defaultMessage": "Imagen"
   },
   "common.inApp": {
     "defaultMessage": "En la Aplicación"
@@ -438,6 +459,9 @@
   "common.music": {
     "defaultMessage": "Música"
   },
+  "common.muted": {
+    "defaultMessage": "silenciado"
+  },
   "common.name": {
     "defaultMessage": "Nombre"
   },
@@ -467,6 +491,9 @@
   },
   "common.notifications": {
     "defaultMessage": "Notificaciones"
+  },
+  "common.onboarding": {
+    "defaultMessage": "Incorporación"
   },
   "common.optional": {
     "defaultMessage": "opcional"
@@ -550,6 +577,9 @@
   "common.requests": {
     "defaultMessage": "Solicitudes"
   },
+  "common.reset": {
+    "defaultMessage": "Restablecer"
+  },
   "common.resetToDefault": {
     "defaultMessage": "Restablecer a Predeterminado"
   },
@@ -630,6 +660,9 @@
   "common.size": {
     "defaultMessage": "Tamaño"
   },
+  "common.skip": {
+    "defaultMessage": "Omitir"
+  },
   "common.somethingWentWrong": {
     "defaultMessage": "¡Algo Salió Mal!"
   },
@@ -657,11 +690,14 @@
   "common.testing": {
     "defaultMessage": "Probando…"
   },
-  "common.transcoding": {
-    "defaultMessage": "Transcodificación"
+  "common.title": {
+    "defaultMessage": "Título"
   },
   "common.transcodes": {
     "defaultMessage": "Transcodificaciones"
+  },
+  "common.transcoding": {
+    "defaultMessage": "Transcodificación"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
@@ -704,6 +740,18 @@
   },
   "common.users": {
     "defaultMessage": "Usuarios"
+  },
+  "common.validation.descriptionRequired": {
+    "defaultMessage": "Debes proporcionar una descripción válida"
+  },
+  "common.validation.invalidUrl": {
+    "defaultMessage": "URL inválida"
+  },
+  "common.validation.titleRequired": {
+    "defaultMessage": "Debes proporcionar un título válido"
+  },
+  "common.videoUrl": {
+    "defaultMessage": "URL del Video"
   },
   "common.viewDetails": {
     "defaultMessage": "Ver Detalles"
@@ -1292,6 +1340,21 @@
   },
   "imageCache.title": {
     "defaultMessage": "Caché de Imágenes"
+  },
+  "imageUpload.dropOrClick": {
+    "defaultMessage": "Arrastra una imagen o haz clic para subir"
+  },
+  "imageUpload.fileTooLarge": {
+    "defaultMessage": "El archivo es demasiado grande. El tamaño máximo es 10MB."
+  },
+  "imageUpload.formats": {
+    "defaultMessage": "JPG, PNG, WebP, GIF (máx 5MB)"
+  },
+  "imageUpload.uploadFailed": {
+    "defaultMessage": "Error al subir la imagen."
+  },
+  "imageUpload.uploading": {
+    "defaultMessage": "Subiendo..."
   },
   "inAppNotifications.saveError": {
     "defaultMessage": "Error al guardar la configuración de notificaciones en la aplicación."
@@ -2159,6 +2222,216 @@
     "defaultMessage": "Configurar y habilitar agentes de notificación.",
     "description": "Professional Spanish translation"
   },
+  "settings.onboarding.addASlide": {
+    "defaultMessage": "Agregar una Diapositiva"
+  },
+  "settings.onboarding.addAStep": {
+    "defaultMessage": "Agregar un Paso"
+  },
+  "settings.onboarding.addSlide": {
+    "defaultMessage": "Agregar Diapositiva"
+  },
+  "settings.onboarding.addStep": {
+    "defaultMessage": "Agregar Paso"
+  },
+  "settings.onboarding.allowSkip": {
+    "defaultMessage": "Permitir Omitir"
+  },
+  "settings.onboarding.allowSkipTutorialTip": {
+    "defaultMessage": "Permitir que los usuarios omitan el tutorial."
+  },
+  "settings.onboarding.allowSkipWelcomeTip": {
+    "defaultMessage": "Permitir que los usuarios omitan o descarten el modal de bienvenida."
+  },
+  "settings.onboarding.customHtml": {
+    "defaultMessage": "HTML Personalizado"
+  },
+  "settings.onboarding.customHtmlTip": {
+    "defaultMessage": "Contenido HTML personalizado."
+  },
+  "settings.onboarding.deleteConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer."
+  },
+  "settings.onboarding.deleteError": {
+    "defaultMessage": "Error al eliminar el elemento."
+  },
+  "settings.onboarding.deleteSuccess": {
+    "defaultMessage": "Elemento eliminado exitosamente."
+  },
+  "settings.onboarding.deleteTutorialTitle": {
+    "defaultMessage": "Eliminar Paso del Tutorial"
+  },
+  "settings.onboarding.deleteWelcomeTitle": {
+    "defaultMessage": "Eliminar Contenido de Bienvenida"
+  },
+  "settings.onboarding.description": {
+    "defaultMessage": "Configura el modal de bienvenida y la experiencia de tutorial para nuevos usuarios."
+  },
+  "settings.onboarding.editSlide": {
+    "defaultMessage": "Editar Diapositiva"
+  },
+  "settings.onboarding.editStep": {
+    "defaultMessage": "Editar Paso"
+  },
+  "settings.onboarding.imageAvailableAfterSave": {
+    "defaultMessage": "La carga de imagen estará disponible después de guardar."
+  },
+  "settings.onboarding.mode.both": {
+    "defaultMessage": "Ambos (Destacado + Asistente)"
+  },
+  "settings.onboarding.mode.spotlight": {
+    "defaultMessage": "Destacado (Resaltado de Elemento)"
+  },
+  "settings.onboarding.mode.wizard": {
+    "defaultMessage": "Asistente (Diapositiva de Carrusel)"
+  },
+  "settings.onboarding.noTutorialSteps": {
+    "defaultMessage": "No hay pasos de tutorial configurados. Agrega tu primer paso para comenzar."
+  },
+  "settings.onboarding.noWelcomeContent": {
+    "defaultMessage": "No hay contenido de bienvenida configurado. Agrega tu primera diapositiva para comenzar."
+  },
+  "settings.onboarding.position.auto": {
+    "defaultMessage": "Automático (Mejor Ajuste)"
+  },
+  "settings.onboarding.position.bottom": {
+    "defaultMessage": "Inferior"
+  },
+  "settings.onboarding.position.left": {
+    "defaultMessage": "Izquierda"
+  },
+  "settings.onboarding.position.right": {
+    "defaultMessage": "Derecha"
+  },
+  "settings.onboarding.position.top": {
+    "defaultMessage": "Superior"
+  },
+  "settings.onboarding.previewDescription": {
+    "defaultMessage": "Prueba el modal de bienvenida y el tutorial sin afectar los datos del usuario. El modo vista previa no guarda el progreso."
+  },
+  "settings.onboarding.previewMode": {
+    "defaultMessage": "Modo Vista Previa"
+  },
+  "settings.onboarding.previewSection": {
+    "defaultMessage": "Vista Previa y Prueba"
+  },
+  "settings.onboarding.previewTutorial": {
+    "defaultMessage": "Vista Previa del Tutorial"
+  },
+  "settings.onboarding.previewWelcome": {
+    "defaultMessage": "Vista Previa de Bienvenida"
+  },
+  "settings.onboarding.reorderError": {
+    "defaultMessage": "Error al reordenar los elementos."
+  },
+  "settings.onboarding.resetAllUsersButton": {
+    "defaultMessage": "Restablecer Todos los Usuarios"
+  },
+  "settings.onboarding.resetAllUsersConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas restablecer el progreso de incorporación para todos los usuarios? Esto mostrará el modal de bienvenida y el tutorial a todos los usuarios nuevamente en su próxima visita."
+  },
+  "settings.onboarding.resetAllUsersError": {
+    "defaultMessage": "Error al restablecer la incorporación para todos los usuarios."
+  },
+  "settings.onboarding.resetAllUsersSuccess": {
+    "defaultMessage": "¡Incorporación restablecida para todos los usuarios!"
+  },
+  "settings.onboarding.resetAllUsersTitle": {
+    "defaultMessage": "Restablecer Todos los Usuarios"
+  },
+  "settings.onboarding.resetConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas restablecer todo el contenido de bienvenida y los pasos del tutorial a sus valores predeterminados? Esto eliminará cualquier contenido personalizado que hayas creado."
+  },
+  "settings.onboarding.resetError": {
+    "defaultMessage": "Error al restablecer el contenido de incorporación."
+  },
+  "settings.onboarding.resetSection": {
+    "defaultMessage": "Restablecer a Predeterminados"
+  },
+  "settings.onboarding.resetSectionDescription": {
+    "defaultMessage": "Restablece todo el contenido de bienvenida y los pasos del tutorial a sus valores predeterminados. Esto eliminará cualquier personalización."
+  },
+  "settings.onboarding.resetSuccess": {
+    "defaultMessage": "¡Contenido de incorporación restablecido a los valores predeterminados!"
+  },
+  "settings.onboarding.resetTitle": {
+    "defaultMessage": "Restablecer a Predeterminados"
+  },
+  "settings.onboarding.route": {
+    "defaultMessage": "Ruta"
+  },
+  "settings.onboarding.routeTip": {
+    "defaultMessage": "Navegar a esta ruta cuando este paso esté activo."
+  },
+  "settings.onboarding.selectPreset": {
+    "defaultMessage": "Seleccionar un preset..."
+  },
+  "settings.onboarding.stepMode": {
+    "defaultMessage": "Estilo de Renderizado del Paso"
+  },
+  "settings.onboarding.stepModeTip": {
+    "defaultMessage": "Elige cómo se renderiza este paso: destacado resalta un elemento, asistente muestra una diapositiva de carrusel."
+  },
+  "settings.onboarding.targetSelector": {
+    "defaultMessage": "Selector de Destino"
+  },
+  "settings.onboarding.targetSelectorTip": {
+    "defaultMessage": "Selector CSS o nombre del atributo data-tutorial a resaltar."
+  },
+  "settings.onboarding.title": {
+    "defaultMessage": "Configuración de Incorporación"
+  },
+  "settings.onboarding.tooltipPosition": {
+    "defaultMessage": "Posición del Tooltip"
+  },
+  "settings.onboarding.tutorialAutostart": {
+    "defaultMessage": "Inicio Automático del Tutorial"
+  },
+  "settings.onboarding.tutorialAutostartDelay": {
+    "defaultMessage": "Retraso de Inicio Automático (ms)"
+  },
+  "settings.onboarding.tutorialAutostartDelayTip": {
+    "defaultMessage": "Retraso en milisegundos antes del inicio automático del tutorial."
+  },
+  "settings.onboarding.tutorialAutostartTip": {
+    "defaultMessage": "Iniciar automáticamente el tutorial después del modal de bienvenida o en el primer inicio de sesión."
+  },
+  "settings.onboarding.tutorialEnabled": {
+    "defaultMessage": "Habilitar Tutorial"
+  },
+  "settings.onboarding.tutorialEnabledTip": {
+    "defaultMessage": "Guía a los usuarios a través de las funciones clave con un tutorial interactivo."
+  },
+  "settings.onboarding.tutorialMode": {
+    "defaultMessage": "Modo de Tutorial"
+  },
+  "settings.onboarding.tutorialModeTip": {
+    "defaultMessage": "Elige cómo el tutorial guía a los usuarios a través de las funciones."
+  },
+  "settings.onboarding.tutorialSteps": {
+    "defaultMessage": "Pasos del Tutorial"
+  },
+  "settings.onboarding.tutorialStepsDescription": {
+    "defaultMessage": "Configura los pasos interactivos del tutorial."
+  },
+  "settings.onboarding.videoAutoplay": {
+    "defaultMessage": "Reproducción Automática de Video"
+  },
+  "settings.onboarding.videoUrlTip": {
+    "defaultMessage": "URL de video de YouTube (se incrustará de forma segura)."
+  },
+  "settings.onboarding.welcomeContent": {
+    "defaultMessage": "Contenido de Bienvenida"
+  },
+  "settings.onboarding.welcomeContentDescription": {
+    "defaultMessage": "Configura las diapositivas mostradas en el carrusel del modal de bienvenida."
+  },
+  "settings.onboarding.welcomeEnabled": {
+    "defaultMessage": "Habilitar Modal de Bienvenida"
+  },
+  "settings.onboarding.welcomeEnabledTip": {
+    "defaultMessage": "Mostrar un carrusel de bienvenida a nuevos usuarios en su primer inicio de sesión."
+  },
   "settings.openOverseerr": {
     "defaultMessage": "Abrir Overseerr"
   },
@@ -2238,6 +2511,18 @@
   },
   "settings.trialPeriodEndDateDescription": {
     "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha"
+  },
+  "settings.user.onboardingDescription": {
+    "defaultMessage": "Restablecer el modal de bienvenida y el tutorial {ownProfile, select, true {} other {para este usuario}}"
+  },
+  "settings.user.onboardingResetError": {
+    "defaultMessage": "Error al restablecer la incorporación."
+  },
+  "settings.user.onboardingResetSuccess": {
+    "defaultMessage": "Incorporación restablecida."
+  },
+  "settings.user.resetOnboarding": {
+    "defaultMessage": "Restablecer Incorporación"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
@@ -2444,6 +2729,24 @@
   "sonarrSettings.title": {
     "defaultMessage": "Configuración de Sonarr"
   },
+  "tutorial.ready.description": {
+    "defaultMessage": "Te guiaremos a través de las funciones clave de {applicationTitle} con un recorrido rápido."
+  },
+  "tutorial.ready.title": {
+    "defaultMessage": "Tutorial Interactivo"
+  },
+  "tutorial.skipTour": {
+    "defaultMessage": "Omitir Recorrido"
+  },
+  "tutorial.startTour": {
+    "defaultMessage": "Iniciar Recorrido"
+  },
+  "tutorial.stepProgress": {
+    "defaultMessage": "Paso {current} de {total}"
+  },
+  "tutorial.wizard.routeHint": {
+    "defaultMessage": "Esta función está disponible en: {route}"
+  },
   "userDropdown.account": {
     "defaultMessage": "Cuenta"
   },
@@ -2455,6 +2758,9 @@
   },
   "userDropdown.signOut": {
     "defaultMessage": "Cerrar Sesión de {applicationTitle}"
+  },
+  "userDropdown.startTutorial": {
+    "defaultMessage": "Iniciar Tutorial"
   },
   "userDropdown.watchHistory": {
     "defaultMessage": "Historial de Visualización"
@@ -2763,5 +3069,8 @@
   },
   "webpushNotifications.testSuccess": {
     "defaultMessage": "¡Notificación de prueba web push enviada!"
+  },
+  "welcome.getStarted": {
+    "defaultMessage": "Comenzar"
   }
 }

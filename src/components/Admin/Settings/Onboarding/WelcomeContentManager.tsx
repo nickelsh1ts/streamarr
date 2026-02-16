@@ -278,19 +278,26 @@ const WelcomeContentManager = () => {
       revalidate();
       setModalOpen(false);
       Toast({
-        title: intl.formatMessage({
-          id: 'settings.onboarding.saveSuccess',
-          defaultMessage: 'Saved successfully.',
-        }),
+        title: intl.formatMessage(
+          {
+            id: 'common.settingsSaveSuccess',
+            defaultMessage: '{appName} settings saved successfully',
+          },
+          { appName: 'Onboarding' }
+        ),
         icon: <CheckBadgeIcon className="size-7" />,
         type: 'success',
       });
     } catch {
       Toast({
-        title: intl.formatMessage({
-          id: 'settings.onboarding.saveError',
-          defaultMessage: 'Failed to save.',
-        }),
+        title: intl.formatMessage(
+          {
+            id: 'common.settingsSaveError',
+            defaultMessage:
+              'Something went wrong while saving {appName} settings.',
+          },
+          { appName: 'onboarding' }
+        ),
         icon: <XCircleIcon className="size-7" />,
         type: 'error',
       });
@@ -342,8 +349,8 @@ const WelcomeContentManager = () => {
       </Button>
       <Modal
         title={intl.formatMessage({
-          id: 'common.confirmDelete',
-          defaultMessage: 'Confirm Delete',
+          id: 'settings.onboarding.deleteWelcomeTitle',
+          defaultMessage: 'Delete Welcome Content',
         })}
         onCancel={() => setDeleteConfirm(null)}
         onOk={() => deleteConfirm && handleDelete(deleteConfirm)}
@@ -615,7 +622,7 @@ const WelcomeContentManager = () => {
                 <span className="text-xs text-neutral">
                   <FormattedMessage
                     id="settings.onboarding.customHtmlTip"
-                    defaultMessage="Custom HTML content (sanitized for security)."
+                    defaultMessage="Custom HTML content."
                   />
                 </span>
               </div>

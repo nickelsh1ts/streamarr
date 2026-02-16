@@ -328,19 +328,26 @@ const TutorialStepManager = () => {
       revalidate();
       setModalOpen(false);
       Toast({
-        title: intl.formatMessage({
-          id: 'settings.onboarding.saveSuccess',
-          defaultMessage: 'Saved successfully.',
-        }),
+        title: intl.formatMessage(
+          {
+            id: 'common.settingsSaveSuccess',
+            defaultMessage: '{appName} settings saved successfully',
+          },
+          { appName: 'Onboarding' }
+        ),
         icon: <CheckBadgeIcon className="size-7" />,
         type: 'success',
       });
     } catch {
       Toast({
-        title: intl.formatMessage({
-          id: 'settings.onboarding.saveError',
-          defaultMessage: 'Failed to save.',
-        }),
+        title: intl.formatMessage(
+          {
+            id: 'common.settingsSaveError',
+            defaultMessage:
+              'Something went wrong while saving {appName} settings.',
+          },
+          { appName: 'onboarding' }
+        ),
         icon: <XCircleIcon className="size-7" />,
         type: 'error',
       });
@@ -392,8 +399,8 @@ const TutorialStepManager = () => {
       </Button>
       <Modal
         title={intl.formatMessage({
-          id: 'common.confirmDelete',
-          defaultMessage: 'Confirm Delete',
+          id: 'settings.onboarding.deleteTutorialTitle',
+          defaultMessage: 'Delete Tutorial Step',
         })}
         onCancel={() => setDeleteConfirm(null)}
         onOk={() => deleteConfirm && handleDelete(deleteConfirm)}
@@ -544,7 +551,6 @@ const TutorialStepManager = () => {
                   <span className="text-error">{errors.description}</span>
                 )}
               </div>
-              {/* Only show mode selector when global mode is 'both' */}
               {globalTutorialMode === 'both' && (
                 <div>
                   <label
@@ -567,7 +573,7 @@ const TutorialStepManager = () => {
                     <option value="spotlight">
                       {intl.formatMessage({
                         id: 'settings.onboarding.mode.spotlight',
-                        defaultMessage: 'Spotlight (Highlight Element)',
+                        defaultMessage: 'Spotlight (Element Highlighting)',
                       })}
                     </option>
                     <option value="wizard">
@@ -858,7 +864,7 @@ const TutorialStepManager = () => {
                 <span className="text-xs text-neutral">
                   <FormattedMessage
                     id="settings.onboarding.customHtmlTip"
-                    defaultMessage="Custom HTML content (sanitized for security)."
+                    defaultMessage="Custom HTML content."
                   />
                 </span>
               </div>

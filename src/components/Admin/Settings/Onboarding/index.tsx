@@ -203,19 +203,25 @@ const OnboardingSettings = () => {
               revalidate();
               refetchOnboarding();
               Toast({
-                title: intl.formatMessage({
-                  id: 'settings.onboarding.saveSuccess',
-                  defaultMessage: 'Onboarding settings saved successfully!',
-                }),
+                title: intl.formatMessage(
+                  {
+                    id: 'common.settingsSaveSuccess',
+                    defaultMessage: '{appName} settings saved successfully',
+                  },
+                  { appName: 'Onboarding' }
+                ),
                 icon: <CheckBadgeIcon className="size-7" />,
                 type: 'success',
               });
             } catch (e) {
               Toast({
-                title: intl.formatMessage({
-                  id: 'settings.onboarding.saveError',
-                  defaultMessage: 'Failed to save onboarding settings.',
-                }),
+                title: intl.formatMessage(
+                  {
+                    id: 'common.settingsSaveError',
+                    defaultMessage: 'Something went wrong while saving {appName} settings.',
+                  },
+                  { appName: 'onboarding' }
+                ),
                 icon: <XCircleIcon className="size-7" />,
                 type: 'error',
                 message:
@@ -355,7 +361,7 @@ const OnboardingSettings = () => {
                       <option value="wizard">
                         {intl.formatMessage({
                           id: 'settings.onboarding.mode.wizard',
-                          defaultMessage: 'Wizard (Step-by-Step Modal)',
+                          defaultMessage: 'Wizard (Carousel Slide)',
                         })}
                       </option>
                       <option value="both">
@@ -548,7 +554,7 @@ const OnboardingSettings = () => {
           >
             <ArrowPathIcon className="size-5 mr-2" />
             <FormattedMessage
-              id="settings.onboarding.resetButton"
+              id="settings.onboarding.resetTitle"
               defaultMessage="Reset to Defaults"
             />
           </Button>

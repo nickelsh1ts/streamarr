@@ -6,6 +6,7 @@ import Carousel, { type CarouselHandle } from '@app/components/Common/Carousel';
 import ContentRenderer from '@app/components/Common/ContentRenderer';
 import YouTubeEmbed from '@app/components/Common/YouTubeEmbed';
 import { useOnboardingContext } from '@app/context/OnboardingContext';
+import useSettings from '@app/hooks/useSettings';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import {
   ChevronLeftIcon,
@@ -81,6 +82,7 @@ const TutorialWizard: React.FC = () => {
     isPreviewMode,
     endPreview,
   } = useOnboardingContext();
+  const { applicationTitle } = useSettings().currentSettings;
 
   const carouselRef = useRef<CarouselHandle>(null);
   const [localIndex, setLocalIndex] = useState(currentStepIndex);
@@ -194,7 +196,8 @@ const TutorialWizard: React.FC = () => {
                 <p className="text-base-content/70 mb-6">
                   <FormattedMessage
                     id="tutorial.ready.description"
-                    defaultMessage="We'll guide you through the key features of the app with a quick interactive tour."
+                    defaultMessage="We'll guide you through key features of {applicationTitle} with a quick tour."
+                    values={{ applicationTitle }}
                   />
                 </p>
                 <div className="flex gap-3 justify-end">
@@ -321,7 +324,7 @@ const TutorialWizard: React.FC = () => {
                   >
                     {isLastStep ? (
                       <FormattedMessage
-                        id="tutorial.finish"
+                        id="common.finish"
                         defaultMessage="Finish"
                       />
                     ) : (

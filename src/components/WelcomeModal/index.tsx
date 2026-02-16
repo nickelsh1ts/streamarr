@@ -108,7 +108,7 @@ const WelcomeModal: React.FC = () => {
                     >
                       <ChevronLeftIcon className="h-4 w-4 mr-2" />
                       <FormattedMessage
-                        id="welcome.previous"
+                        id="common.previous"
                         defaultMessage="Previous"
                       />
                     </Button>
@@ -122,7 +122,7 @@ const WelcomeModal: React.FC = () => {
                       onClick={handleClose}
                     >
                       <FormattedMessage
-                        id="welcome.skip"
+                        id="common.skip"
                         defaultMessage="Skip"
                       />
                     </Button>
@@ -141,7 +141,7 @@ const WelcomeModal: React.FC = () => {
                     ) : (
                       <>
                         <FormattedMessage
-                          id="welcome.next"
+                          id="common.next"
                           defaultMessage="Next"
                         />
                         <ChevronRightIcon className="h-4 w-4 ml-2" />

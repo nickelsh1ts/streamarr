@@ -386,7 +386,7 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
       <div className="bg-base-200" style={arrowStyle} />
       <div className="text-xs text-base-content/50 mb-2">
         <FormattedMessage
-          id="tutorial.stepIndicator"
+          id="tutorial.stepProgress"
           defaultMessage="Step {current} of {total}"
           values={{ current: currentIndex + 1, total: totalSteps }}
         />
@@ -433,14 +433,14 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
               className="flex items-center gap-1"
             >
               <ChevronLeftIcon className="h-4 w-4" />
-              <FormattedMessage id="tutorial.prev" defaultMessage="Back" />
+              <FormattedMessage id="common.back" defaultMessage="Back" />
             </Button>
           )}
         </div>
         <div className="flex gap-2">
           {onSkip && !isLast && (
             <Button buttonType="ghost" buttonSize="sm" onClick={onSkip}>
-              <FormattedMessage id="tutorial.skip" defaultMessage="Skip" />
+              <FormattedMessage id="common.skip" defaultMessage="Skip" />
             </Button>
           )}
           <Button
@@ -450,10 +450,10 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
             className="flex items-center gap-1"
           >
             {isLast ? (
-              <FormattedMessage id="tutorial.finish" defaultMessage="Finish" />
+              <FormattedMessage id="common.finish" defaultMessage="Finish" />
             ) : (
               <>
-                <FormattedMessage id="tutorial.next" defaultMessage="Next" />
+                <FormattedMessage id="common.next" defaultMessage="Next" />
                 <ChevronRightIcon className="h-4 w-4" />
               </>
             )}
