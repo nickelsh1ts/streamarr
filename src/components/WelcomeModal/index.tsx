@@ -115,7 +115,7 @@ const WelcomeModal: React.FC = () => {
                   )}
                 </div>
                 <div className="flex gap-3">
-                  {canDismiss && (
+                  {canDismiss && !isLastSlide && (
                     <Button
                       buttonSize="sm"
                       buttonType="ghost"

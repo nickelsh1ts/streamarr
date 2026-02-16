@@ -169,10 +169,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             disabled={disabled || isUploading}
             className="absolute bottom-2 right-2"
           >
-            <FormattedMessage
-              id="common.change"
-              defaultMessage="Change"
-            />
+            <FormattedMessage id="common.change" defaultMessage="Change" />
           </Button>
         </div>
       ) : (

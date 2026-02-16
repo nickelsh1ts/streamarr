@@ -218,7 +218,8 @@ const OnboardingSettings = () => {
                 title: intl.formatMessage(
                   {
                     id: 'common.settingsSaveError',
-                    defaultMessage: 'Something went wrong while saving {appName} settings.',
+                    defaultMessage:
+                      'Something went wrong while saving {appName} settings.',
                   },
                   { appName: 'onboarding' }
                 ),
