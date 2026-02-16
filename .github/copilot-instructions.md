@@ -120,7 +120,11 @@ const user = await userRepository.findOne({ where: { id: userId } });
 
 **Entity Methods**: Complex business logic lives in entity static/instance methods (e.g., `User.createLocal()`, `Invite.invite()`). See `server/entity/User.ts` and `server/entity/Invite.ts` for examples.
 
-**Entity Subscribers**: Use TypeORM subscribers for lifecycle hooks (`server/subscriber/`). Example: `UserSubscriber` sends welcome notifications on user creation.
+**Entity Subscribers**: Use TypeORM subscribers for lifecycle hooks (`server/subscriber/`):
+
+- `UserSubscriber`: Welcome notifications on user creation
+- `InviteSubscriber`: Notifications for invite create/redeem/expire
+- `CalEventSubscriber`: Notifications for calendar events
 
 ### Frontend Data Fetching
 
@@ -135,6 +139,32 @@ const { data, error, mutate } = useSWR<ResponseType>('/api/v1/endpoint');
 **SWR Config**: Global config in `src/components/Layout/index.tsx` with automatic retries and revalidation.
 
 **Server Components**: Root layout (`src/app/layout.tsx`) fetches initial settings and user server-side, then passes to client context providers.
+
+### Frontend Hooks
+
+Key custom hooks in `src/hooks/`:
+
+- `useOnboarding`: Onboarding data and actions (SWR-based)
+- `useServiceProxy`, `useServiceFrame`: Service proxy iframe management
+- `useDownloads`: Download client status and torrents
+- `useNotifications`: In-app notification handling
+- `useSettings`, `useUser`: Settings and user context
+- `useLocale`: Internationalization with react-intl
+- `useBreakpoint`: Responsive design breakpoints
+- `useDeepLinks`: Handle Plex deep links for media
+- `useRouteGuard`: Permission-based route protection
+
+### Frontend Contexts
+
+React contexts in `src/context/`:
+
+- `SettingsContext`: Application settings
+- `UserContext`: Current user data
+- `OnboardingContext`: Onboarding state and actions
+- `NotificationContext`: Socket.IO notifications
+- `LanguageContext`: Locale and translations
+- `InteractionContext`: User interaction state (mobile/touch detection)
+- `NotificationSidebarContext`: Notification panel visibility
 
 ### Logging
 
@@ -185,11 +215,66 @@ Trigger notifications via `notificationManager.sendNotification()`. Notification
 Jobs defined in `server/job/schedule.ts` using `node-schedule`. Key jobs:
 
 - `plex-full-scan`: Full library scan (24h)
-- `plex-recent-scan`: Recent items scan (5min intervals)
+- `plex-refresh-token`: Refresh Plex auth token
 - `image-cache-cleanup`: Clean old cached images (24h)
-- `expired-invites`: Clean expired invites (24h)
+- `invites-qrcode-cleanup`: Clean expired invites and QR codes (24h)
+- `notification-cleanup`: Clean old notifications (24h)
 
-Jobs configurable via settings (`getSettings().jobs`).
+Jobs configurable via settings (`getSettings().jobs`). Job IDs defined as `JobId` type in `server/lib/settings.ts`.
+
+### Onboarding System
+
+The onboarding system guides new users through the application:
+
+**Entities** (`server/entity/`):
+
+- `WelcomeContent`: Carousel slides for welcome modal (type: user/admin)
+- `TutorialStep`: Interactive tutorial steps with modes (spotlight/wizard/both)
+- `UserOnboarding`: Per-user progress tracking (welcome/tutorial completion)
+
+**Library** (`server/lib/onboarding.ts`):
+
+- `initializeOnboardingDefaults()`: Creates default content on first startup
+- `resetOnboardingDefaults()`: Resets content to defaults
+- `onboardingImageService`: Image upload/serving for onboarding content
+
+**Routes** (`server/routes/settings/onboarding.ts`):
+
+- Admin CRUD for welcome content and tutorial steps
+- Image upload for slides
+- Reordering support via drag-and-drop
+
+**User Routes** (`server/routes/user/onboarding.ts`):
+
+- `GET /user/:id/onboarding`: Full onboarding data for user
+- `POST /user/:id/onboarding/welcome/complete|dismiss`: Mark welcome as done
+- `POST /user/:id/onboarding/tutorial/complete|skip|progress`: Tutorial state
+- `POST /user/:id/onboarding/reset`: Reset user's onboarding
+
+**Frontend**:
+
+- `OnboardingContext` (`src/context/OnboardingContext.tsx`): Global state
+- `useOnboarding` hook: SWR data fetching
+- Tutorial uses `data-tutorial` attributes to find target elements
+- DOM utilities in `src/utils/domHelpers.ts` for iframe handling
+- Preset selectors in `src/utils/tutorialPresets.ts`
+
+**Settings** (`getSettings().onboarding`):
+
+```typescript
+interface OnboardingSettings {
+  initialized: boolean; // Whether defaults have been created
+  welcomeEnabled: boolean; // Show welcome modal
+  tutorialEnabled: boolean; // Show tutorial
+  tutorialMode: 'spotlight' | 'wizard' | 'both';
+  allowSkipWelcome: boolean;
+  allowSkipTutorial: boolean;
+  tutorialAutostart: boolean;
+  tutorialAutostartDelay: number; // ms
+}
+```
+
+**Content Sanitization**: Custom HTML sanitized via DOMPurify (`server/lib/sanitize.ts`). YouTube URLs converted to privacy-enhanced nocookie embeds.
 
 ## Integration Points
 
@@ -215,6 +300,95 @@ Jobs configurable via settings (`getSettings().jobs`).
 
 **Tautulli**: Optional integration for Plex stats (`server/api/tautulli.ts`).
 
+**Additional \*Arr Services**:
+
+- **Lidarr**: Music library management (`settings.lidarr`)
+- **Prowlarr**: Indexer management (`settings.prowlarr`)
+- **Bazarr**: Subtitle management (`settings.bazarr`)
+- **Overseerr**: Request management (`settings.overseerr`)
+
+All configured via `ServiceSettings` interface with hostname, port, API key, SSL, and URL base options.
+
+**Tdarr**: Transcoding automation service (`settings.tdarr`, `server/lib/proxy/tdarrProxy.ts`). Includes WebSocket proxy for real-time updates.
+
+### Download Clients
+
+Download client integration (`server/api/downloads/base.ts`, `server/routes/downloads.ts`):
+
+**Supported Clients** (via `@ctrl/*` packages):
+
+- **qBittorrent** (`@ctrl/qbittorrent`)
+- **Deluge** (`@ctrl/deluge`)
+- **Transmission** (`@ctrl/transmission`)
+
+**Health Monitoring** (`server/lib/healthCheck.ts`):
+
+- Automatic cooldown on repeated failures
+- Cached client data to reduce API calls
+- Health status tracking per client
+
+**Configuration**: `DownloadClientSettings` in `server/lib/settings.ts`:
+
+```typescript
+interface DownloadClientSettings {
+  id: number;
+  name: string;
+  client: 'qbittorrent' | 'deluge' | 'transmission';
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  username?: string;
+  password?: string;
+  externalUrl?: string;
+}
+```
+
+### Service Proxy System
+
+Embeds external services in iframes within Streamarr (`server/routes/serviceProxy.ts`, `server/lib/proxy/`):
+
+**Available Proxies**:
+
+- **Plex Web** (`/web/*`): Full Plex web app embedding
+- **Sonarr/Radarr** (dynamic base URLs): DVR service embedding
+- **Lidarr/Prowlarr/Bazarr** (via `urlBase`): Additional \*Arr service embedding
+- **Tdarr** (`/tdarr/*`): Includes WebSocket handler for real-time updates
+- **Tautulli** (`/tautulli/*`): Stats dashboard embedding
+
+**Frontend Hooks**:
+
+- `useServiceProxy`: Manages proxy state and iframe loading
+- `useServiceFrame`: Handles iframe communication
+
+**Permissions**: Each proxy route requires appropriate permissions (e.g., `Permission.VIEW_SCHEDULE`, `Permission.ADMIN`).
+
+### Calendar System
+
+Release schedule and local events (`server/routes/calendar.ts`, `server/lib/calendarCache.ts`):
+
+**Sources**:
+
+- **Sonarr/Radarr Calendars**: Fetched and cached from \*Arr services
+- **Local Events**: Custom events stored in `Event` entity
+
+**Event Entity** (`server/entity/Event.ts`):
+
+- User-created calendar events
+- Supports all-day events, notifications
+- Status: TENTATIVE, CONFIRMED, CANCELLED
+- Linked to creator via `ManyToOne` relation
+
+**Entity Subscribers**: `CalEventSubscriber` sends notifications for new events.
+
+### Logo Upload
+
+Custom branding via logo upload (`server/lib/logoUpload.ts`, `server/routes/logo.ts`):
+
+- Full logo (`logo_full.png`) and small logo (`logo_sm.png`)
+- Stored in `config/cache/logos/`
+- Served via `/api/v1/logo/:filename`
+- Settings: `main.customLogo`, `main.customLogoSmall`
+
 ### Image Proxy
 
 Images proxied through `/api/v1/imageproxy` to:
@@ -224,6 +398,30 @@ Images proxied through `/api/v1/imageproxy` to:
 - Handle auth for Plex images
 
 Implemented in `server/lib/imageproxy.ts` with scheduled cleanup.
+
+### Image Upload Service
+
+Reusable service for uploading and serving images (`server/lib/imageUpload.ts`):
+
+- Processes images via `sharp` (resize, quality optimization)
+- Generates unique filenames via content hash
+- Creates Express router for serving uploaded images
+- Used by onboarding system for slide/step images
+
+```typescript
+import ImageUploadService from '@server/lib/imageUpload';
+
+const imageService = new ImageUploadService({
+  directory: 'my-feature', // Subdirectory in config/cache/images/
+  urlPrefix: '/my-images', // URL path
+  maxWidth: 1200, // Max dimensions
+  maxHeight: 1200,
+  quality: 85,
+});
+
+// Upload: await imageService.uploadImage({ buffer, originalname, mimetype })
+// Serve: app.use('/my-images', imageService.createRouter({ requireAuth: true }))
+```
 
 ## Common Gotchas
 
@@ -274,5 +472,8 @@ Implemented in `server/lib/imageproxy.ts` with scheduled cleanup.
 - `streamarr-api.yml`: OpenAPI spec (source of truth for API)
 - `server/datasource.ts`: Database configuration
 - `server/lib/settings.ts`: Settings schema and defaults
+- `server/lib/onboarding.ts`: Onboarding initialization and defaults
+- `server/lib/sanitize.ts`: HTML/URL sanitization utilities
 - `src/app/layout.tsx`: Root layout with server-side data
+- `src/context/OnboardingContext.tsx`: Onboarding state management
 - `package.json`: All scripts and dependencies

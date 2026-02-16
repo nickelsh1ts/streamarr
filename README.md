@@ -32,13 +32,13 @@ Streamarr provides a unified dashboard for managing your Plex server alongside y
 - **Custom Theming** — Fully customize colors and logo to match your brand
 - **PWA Support** — Install as a Progressive Web App on mobile devices
 - **Multi-language Support** — Localized interface
+- **Interactive Onboarding** — Welcome modals and interactive tutorials for new users with customizable content
 
 ## Planned Features
 
 - **Jellyfin Support** — Dual-backend support for both Plex and Jellyfin users
 - **Help Center Customization** — Fully customizable help center content
 - **Email Newsletters** — Customizable email newsletters and communications
-- **New User Onboarding** — Interactive tutorial and welcome experience for new users
 - **Additional Services** — Huntarr, Cleanuparr, and Kometa integrations
 
 ## Getting Started

@@ -59,7 +59,7 @@ Unlike push notifications, In-App notifications are:
 
 ### Retention
 
-Notifications are automatically cleaned up by the scheduled **Notification Cleanup** job. By default, old notifications are removed after 30 days.
+Notifications are automatically cleaned up by the scheduled **Notification Cleanup** job. By default, old notifications are removed after 1 year.
 
 ---
 

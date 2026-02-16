@@ -181,6 +181,23 @@ Local user passwords must meet minimum complexity requirements:
 
 - Minimum 8 characters
 
-### Session Management
+---
 
-Users can view and revoke active sessions from their account settings. Admins can revoke sessions for any user.
+## Onboarding
+
+Streamarr includes an interactive onboarding system for new users. See [Onboarding Settings](../settings/onboarding.md) for configuration details.
+
+### Reset Onboarding
+
+Users and administrators can reset onboarding progress:
+
+- **For yourself**: Go to your account settings and click "Reset Onboarding"
+- **For other users** (admins only): Edit the user and click "Reset Onboarding"
+
+This causes the welcome modal and tutorial to show again on the next login.
+
+### Start Tutorial Manually
+
+Users can start the tutorial at any time from the user dropdown menu (click your avatar, then "Start Tutorial") as long as it hasn't been completed or skipped.
+
+To re-experience the full onboarding flow (welcome modal + tutorial), use the "Reset Onboarding" option in account settings.
