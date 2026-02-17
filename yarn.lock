@@ -21834,7 +21834,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:8.54.0"
     "@typescript-eslint/parser": "npm:8.51.0"
     autoprefixer: "npm:^10.4.23"
-    axios: "npm:^1.13.2"
+    axios: "npm:^1.13.5"
     axios-rate-limit: "npm:^1.4.0"
     bcrypt: "npm:^6.0.0"
     bowser: "npm:^2.13.1"

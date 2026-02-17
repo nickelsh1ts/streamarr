@@ -44,7 +44,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "axios-rate-limit": "^1.4.0",
     "bcrypt": "^6.0.0",
     "bowser": "^2.13.1",
