@@ -200,7 +200,17 @@ const WelcomeContentManager = () => {
             return false;
           }
 
-          // Note: Path normalization happens on server side
+          // Simple path normalization (remove duplicate slashes and trailing slashes)
+          // This matches the basic normalization that path.posix.normalize would do
+          const normalizedPath = decodedValue
+            .replace(/\/+/g, '/') // Replace multiple slashes with single slash
+            .replace(/\/$/, ''); // Remove trailing slash
+
+          // After normalization, ensure it still starts with /
+          if (!normalizedPath || !normalizedPath.startsWith('/')) {
+            return false;
+          }
+
           return true;
         }
         // For external URLs, validate http/https protocol

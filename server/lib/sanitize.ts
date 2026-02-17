@@ -178,7 +178,8 @@ export const sanitizeImageUrl = (url: string): string | null => {
       return null;
     }
 
-    return url;
+    // Return the normalized and decoded path
+    return normalizedPath;
   }
 
   // For external URLs, validate the protocol
