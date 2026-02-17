@@ -242,7 +242,7 @@ export class ImageUploadService {
       authMiddleware,
       imageRateLimiter,
       (req, res): void => {
-        const { filename } = req.params;
+        const filename = req.params.filename as string;
 
         const sanitizedFilename = path.basename(filename);
         const filePath = path.join(this.uploadsDir, sanitizedFilename);
