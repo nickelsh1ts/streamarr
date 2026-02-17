@@ -151,7 +151,7 @@ export const sanitizeImageUrl = (url: string): string | null => {
   // Allow internal paths starting with /
   if (url.startsWith('/')) {
     // Decode the URL to catch encoded path traversal attempts
-    let decodedUrl = url;
+    let decodedUrl;
     try {
       decodedUrl = decodeURIComponent(url);
     } catch {
