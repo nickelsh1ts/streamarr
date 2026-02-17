@@ -43,6 +43,7 @@ import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
 import downloadsRoutes from './downloads';
+import onboardingRoutes from './onboarding';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import { arrAuthLimiter } from '@server/lib/rateLimiters';
 
@@ -53,6 +54,7 @@ settingsRoutes.use('/radarr', radarrRoutes);
 settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/logos', logoSettingsRoutes);
 settingsRoutes.use('/downloads', downloadsRoutes);
+settingsRoutes.use('/onboarding', onboardingRoutes);
 
 const filteredMainSettings = (
   user: User,

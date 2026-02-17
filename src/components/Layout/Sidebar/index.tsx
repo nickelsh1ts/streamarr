@@ -49,6 +49,7 @@ const Sidebar = () => {
     <>
       <header
         id="sidebar"
+        data-tutorial="sidebar-nav"
         className="w-fit transition duration-500 drawer font-bold z-[1006] max-sm:hidden lg:hidden"
       >
         <input
@@ -334,6 +335,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                 className="flex-1"
                 linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
                 liKey={'home'}
+                data-tutorial="nav-home"
                 onClick={() => {
                   onClick && onClick(!isOpen);
                   handleClick(0);
@@ -369,6 +371,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                       className="flex-1"
                       linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
                       liKey={'request'}
+                      data-tutorial="nav-request"
                       onClick={() => {
                         onClick && onClick(!isOpen);
                         handleClick(1);
@@ -419,6 +422,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
       ) && (
         <SingleItem
           liKey={'invites'}
+          data-tutorial="nav-invites"
           onClick={() => onClick && onClick(!isOpen)}
           href={'/invites'}
           title={intl.formatMessage({
@@ -441,6 +445,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         ) && (
           <SingleItem
             liKey={'schedule'}
+            data-tutorial="nav-schedule"
             onClick={() => onClick && onClick(!isOpen)}
             href={'/schedule'}
             title={intl.formatMessage({

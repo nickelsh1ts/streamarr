@@ -30,6 +30,7 @@ import { AfterDate } from '@server/utils/dateHelpers';
 import { InviteStatus } from '@server/constants/invite';
 import Event from '@server/entity/Event';
 import { Notification } from '@server/entity/Notification';
+import { UserOnboarding } from './UserOnboarding';
 
 @Entity()
 export class User {
@@ -127,6 +128,9 @@ export class User {
     onDelete: 'CASCADE',
   })
   public settings?: UserSettings;
+
+  @OneToOne(() => UserOnboarding, (onboarding) => onboarding.user)
+  public onboarding?: UserOnboarding;
 
   @OneToMany(() => UserPushSubscription, (pushSub) => pushSub.user)
   public pushSubscriptions: UserPushSubscription[];

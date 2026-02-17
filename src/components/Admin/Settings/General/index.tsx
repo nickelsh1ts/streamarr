@@ -30,8 +30,6 @@ import { useIntl, FormattedMessage } from 'react-intl';
 import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
 import { SettingsContext } from '@app/context/SettingsContext';
 
-//TODO: Add customizable & interactive new user tutorial/welcome
-
 const GeneralSettings = () => {
   const intl = useIntl();
   const { user: currentUser, hasPermission: userHasPermission } = useUser();

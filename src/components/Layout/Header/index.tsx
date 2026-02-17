@@ -17,6 +17,7 @@ const Header = ({ isInView = true }) => {
   return (
     <header
       id="top"
+      data-tutorial="main-header"
       className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-secondary backdrop-brightness-50' : 'bg-base-200') : ''} font-bold z-20`}
     >
       <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
@@ -26,6 +27,7 @@ const Header = ({ isInView = true }) => {
         {(!path.match(/^\/$/) || user) && <BackButton />}
         <Link
           href={user ? '/watch' : '/'}
+          data-tutorial="logo"
           className={`hover:brightness-75 transition-opacity duration-500 ml-0.5 -mt-1 md:ml-0.5 md:-mt-0.5 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >
           <DynamicLogo />

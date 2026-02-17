@@ -12,11 +12,14 @@ import LocalAgent, {
 import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
+import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
+import { checkUser } from '@server/middleware/auth';
 import routes from '@server/routes';
 import imageproxy from '@server/routes/imageproxy';
 import logoRoutes from '@server/routes/logo';
+import { onboardingImageService } from '@server/lib/onboarding';
 import { getAppVersion } from '@server/utils/appVersion';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
@@ -62,6 +65,7 @@ app
 
     // Load Settings
     const settings = getSettings().load();
+    await initializeOnboardingDefaults();
 
     // Migrate library types
     if (
@@ -180,6 +184,12 @@ app
     });
     server.use('/imageproxy', clearCookies, imageproxy);
     server.use('/logo', clearCookies, logoRoutes);
+    server.use(
+      '/onboarding/images',
+      sessionMiddleware,
+      checkUser,
+      onboardingImageService.createRouter({ requireAuth: true })
+    );
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
@@ -188,7 +198,9 @@ app
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
         ignorePaths: (path) =>
-          path.includes('/settings/logos/upload') || isProxyPath(path),
+          path.includes('/settings/logos/upload') ||
+          (path.includes('/settings/onboarding/') && path.includes('/image')) ||
+          isProxyPath(path),
       })
     );
     server.use((_req, res, next) => {

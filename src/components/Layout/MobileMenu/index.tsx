@@ -40,6 +40,7 @@ interface MenuLink {
   as?: string;
   dataTestId?: string;
   hidden?: boolean;
+  tutorialId?: string;
 }
 
 const MobileMenu = () => {
@@ -116,6 +117,7 @@ const MobileMenu = () => {
       svgIcon: <HomeIcon className="size-7" />,
       svgIconSelected: <FilledHomeIcon className="size-7" />,
       activeRegExp: /^\/watch\/web\/index\.html#!\/?$/,
+      tutorialId: 'nav-home',
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
@@ -127,6 +129,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
       hidden: !invitesDisabled, // Show when invites is disabled
+      tutorialId: 'nav-discover',
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
@@ -138,6 +141,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledBookmarkIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
       hidden: !scheduleDisabled, // Show when schedule is disabled
+      tutorialId: 'nav-watchlist',
     },
     {
       href: '/request',
@@ -163,6 +167,7 @@ const MobileMenu = () => {
       ),
       activeRegExp: /^\/request\/?$/,
       hidden: requestDisabled,
+      tutorialId: 'nav-request',
     },
     {
       href: '/invites',
@@ -174,6 +179,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
       hidden: invitesDisabled,
+      tutorialId: 'nav-invites',
     },
     {
       href: '/schedule',
@@ -185,6 +191,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
       hidden: scheduleDisabled,
+      tutorialId: 'nav-schedule',
     },
   ];
 
@@ -277,7 +284,11 @@ const MobileMenu = () => {
   const filteredLinks = menuLinks.filter((link) => !link.hidden);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]" ref={ref}>
+    <div
+      className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]"
+      ref={ref}
+      data-tutorial="mobile-nav"
+    >
       <Transition
         show={isOpen}
         as="div"
@@ -293,6 +304,7 @@ const MobileMenu = () => {
                 className={`flex items-center space-x-2 px-4 py-2 last:mb-2 ${
                   isActive ? 'text-primary' : ''
                 }`}
+                data-tutorial={link.tutorialId}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     setIsOpen(false);
@@ -376,6 +388,7 @@ const MobileMenu = () => {
       <div className="padding-bottom-safe border-t border-primary bg-primary bg-opacity-30 backdrop-blur">
         <div className="flex h-full items-center justify-between px-6 py-2 text-primary-content backdrop-filter-none">
           <button
+            data-tutorial="mobile-menu-toggle"
             className={`flex flex-col items-center space-y-1 ${
               isOpen &&
               (menuType === 'library' ||
@@ -429,6 +442,7 @@ const MobileMenu = () => {
                   className={`flex flex-col items-center space-y-1 ${
                     isActive ? 'text-primary' : ''
                   }`}
+                  data-tutorial={link.tutorialId}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       setIsOpen(false);

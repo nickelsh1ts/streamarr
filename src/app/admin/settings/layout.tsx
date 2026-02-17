@@ -31,6 +31,14 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/admin\/settings\/users/,
     },
     {
+      text: intl.formatMessage({
+        id: 'common.onboarding',
+        defaultMessage: 'Onboarding',
+      }),
+      route: '/admin/settings/onboarding',
+      regex: /^\/admin\/settings\/onboarding/,
+    },
+    {
       text: intl.formatMessage({ id: 'common.plex', defaultMessage: 'Plex' }),
       route: '/admin/settings/plex',
       regex: /^\/admin\/settings\/plex/,
