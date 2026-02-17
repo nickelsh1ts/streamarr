@@ -133,7 +133,6 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^25.2.3",
     "@types/node-schedule": "^2.1.8",
-    "@types/nodemailer": "^7.0.10",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",
     "@types/react-big-calendar": "^1.16.3",
