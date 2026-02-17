@@ -20,7 +20,7 @@ import type {
   TutorialStepReorderRequest,
   OnboardingSettingsResponse,
 } from '@server/interfaces/api/onboardingInterfaces';
-import { Permission } from '@server/lib/permissions';
+import { Permission, hasPermission } from '@server/lib/permissions';
 import {
   sanitizeHtml,
   sanitizeYouTubeUrl,
@@ -72,6 +72,7 @@ router.post<Record<string, never>, OnboardingSettingsResponse>(
         allowSkipTutorial,
         tutorialAutostart,
         tutorialAutostartDelay,
+        adminOnboardingCompleted,
       } = req.body;
 
       settings.onboarding = {
@@ -87,6 +88,9 @@ router.post<Record<string, never>, OnboardingSettingsResponse>(
           tutorialAutostart ?? settings.onboarding.tutorialAutostart,
         tutorialAutostartDelay:
           tutorialAutostartDelay ?? settings.onboarding.tutorialAutostartDelay,
+        adminOnboardingCompleted:
+          adminOnboardingCompleted ??
+          settings.onboarding.adminOnboardingCompleted,
       };
 
       settings.save();
@@ -774,21 +778,38 @@ router.post<
     try {
       const onboardingRepo = getRepository(UserOnboarding);
 
-      const allOnboardings = await onboardingRepo.find();
-
-      logger.debug(`Resetting onboarding for ${allOnboardings.length} users`, {
-        label: 'Onboarding',
+      const allOnboardings = await onboardingRepo.find({
+        relations: ['user'],
       });
 
-      for (const onboarding of allOnboardings) {
+      // Filter out users with ADMIN or MANAGE_USERS permissions
+      const nonAdminOnboardings = allOnboardings.filter((onboarding) => {
+        const userPermissions = onboarding.user.permissions ?? 0;
+        const isAdminOrManager = hasPermission(
+          [Permission.ADMIN, Permission.MANAGE_USERS],
+          userPermissions,
+          { type: 'or' }
+        );
+        return !isAdminOrManager;
+      });
+
+      logger.debug(
+        `Resetting onboarding for ${nonAdminOnboardings.length} users`,
+        {
+          label: 'Onboarding',
+          excluded: `${allOnboardings.length - nonAdminOnboardings.length} ${allOnboardings.length - nonAdminOnboardings.length === 1 ? 'admin' : 'admins'}`,
+        }
+      );
+
+      for (const onboarding of nonAdminOnboardings) {
         onboarding.reset();
       }
 
-      await onboardingRepo.save(allOnboardings);
+      await onboardingRepo.save(nonAdminOnboardings);
 
       res.status(200).json({
         success: true,
-        count: allOnboardings.length,
+        count: nonAdminOnboardings.length,
       });
     } catch (e) {
       logger.error('Failed to reset onboarding for all users', {
@@ -797,6 +818,31 @@ router.post<
         stack: e instanceof Error ? e.stack : undefined,
       });
       next({ status: 500, message: 'Failed to reset all users' });
+    }
+  }
+);
+
+router.post<Record<string, never>, { success: boolean } | { error: string }>(
+  '/admin-complete',
+  isAuthenticated(Permission.ADMIN),
+  async (_req, res, next) => {
+    try {
+      const settings = getSettings();
+
+      settings.onboarding = {
+        ...settings.onboarding,
+        adminOnboardingCompleted: true,
+      };
+      settings.save();
+
+      res.status(200).json({ success: true });
+    } catch (e) {
+      logger.error('Failed to complete admin onboarding', {
+        label: 'Onboarding',
+        error: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      });
+      next({ status: 500, message: 'Failed to complete admin onboarding' });
     }
   }
 );

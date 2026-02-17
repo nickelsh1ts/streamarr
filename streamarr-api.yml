@@ -1626,6 +1626,9 @@ components:
         tutorialAutostartDelay:
           type: integer
           description: Delay in milliseconds before auto-starting the tutorial
+        adminOnboardingCompleted:
+          type: boolean
+          description: When true, admin onboarding has been completed (shown once on first admin startup)
     OnboardingSettingsRequest:
       type: object
       properties:
@@ -1644,6 +1647,8 @@ components:
           type: boolean
         tutorialAutostartDelay:
           type: integer
+        adminOnboardingCompleted:
+          type: boolean
     UserOnboardingData:
       type: object
       properties:
@@ -6008,7 +6013,7 @@ paths:
   /settings/onboarding/reset-all-users:
     post:
       summary: Reset onboarding for all users
-      description: Resets onboarding progress for all users.
+      description: Resets onboarding progress for all users. Excludes users with admin or manage_users permissions.
       tags:
         - settings
       security:
@@ -6027,6 +6032,27 @@ paths:
                   count:
                     type: integer
                     description: Number of users reset
+  /settings/onboarding/admin-complete:
+    post:
+      summary: Mark admin onboarding as completed
+      description: Marks the admin onboarding as completed globally. Only shown once on first admin startup.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: Admin onboarding marked as completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Forbidden - Admin permission required
   /settings/onboarding/welcome:
     get:
       summary: Get all welcome content

@@ -71,7 +71,6 @@ const TutorialWizard: React.FC = () => {
   const {
     showTutorial,
     tutorialActive,
-    data,
     currentStepIndex,
     nextStep,
     prevStep,
@@ -81,19 +80,23 @@ const TutorialWizard: React.FC = () => {
     startTutorial,
     isPreviewMode,
     endPreview,
+    allowSkipTutorial,
+    canAlwaysSkip,
+    tutorialSteps,
+    tutorialMode = 'both',
   } = useOnboardingContext();
   const { applicationTitle } = useSettings().currentSettings;
 
   const carouselRef = useRef<CarouselHandle>(null);
   const [localIndex, setLocalIndex] = useState(currentStepIndex);
 
-  const steps = useMemo(() => data?.tutorialSteps ?? [], [data?.tutorialSteps]);
+  const steps = useMemo(() => tutorialSteps ?? [], [tutorialSteps]);
   const currentStep = steps[currentStepIndex] as
     | (typeof steps)[number]
     | undefined;
   const canDismiss =
-    (data?.settings.allowSkipTutorial ?? true) || isPreviewMode;
-  const tutorialMode = data?.settings.tutorialMode ?? 'both';
+    (allowSkipTutorial ?? true) || isPreviewMode || canAlwaysSkip;
+  isPreviewMode || canAlwaysSkip;
 
   const isFullWizardMode = tutorialMode === 'wizard';
   const isMixedModeWizardStep =

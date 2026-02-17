@@ -24,6 +24,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       }),
       route: '/admin/settings/general',
       regex: /^\/admin(\/settings)?(\/general)?$/,
+      dataTutorial: 'general-settings-tab',
     },
     {
       text: intl.formatMessage({ id: 'common.users', defaultMessage: 'Users' }),
@@ -37,6 +38,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       }),
       route: '/admin/settings/onboarding',
       regex: /^\/admin\/settings\/onboarding/,
+      dataTutorial: 'admin-settings-onboarding',
     },
     {
       text: intl.formatMessage({ id: 'common.plex', defaultMessage: 'Plex' }),
@@ -58,6 +60,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       }),
       route: '/admin/settings/services',
       regex: /^\/admin\/settings\/services/,
+      dataTutorial: 'services-settings-tab',
     },
     {
       text: intl.formatMessage({
@@ -89,7 +92,11 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
 
   return (
     <div className="mt-4 mx-4">
-      <AdminTabs tabType="button" AdminRoutes={AdminRoutes} />
+      <AdminTabs
+        tabType="button"
+        AdminRoutes={AdminRoutes}
+        dataTutorial="admin-settings-tabs"
+      />
       <div className="mt-4">{children}</div>
     </div>
   );

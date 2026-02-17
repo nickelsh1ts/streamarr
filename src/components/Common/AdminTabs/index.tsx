@@ -9,6 +9,7 @@ export interface AdminRoute {
   route: string;
   regex: RegExp;
   hidden?: boolean;
+  dataTutorial?: string;
 }
 
 type AdminLinkProps = {
@@ -18,6 +19,7 @@ type AdminLinkProps = {
   regex: RegExp;
   hidden?: boolean;
   isMobile?: boolean;
+  dataTutorial?: string;
   children: React.ReactNode;
 };
 
@@ -29,6 +31,7 @@ const AdminLink = ({
   regex,
   hidden = false,
   isMobile = false,
+  dataTutorial,
 }: AdminLinkProps) => {
   if (hidden) {
     return null;
@@ -59,6 +62,7 @@ const AdminLink = ({
         currentPath.match(regex) ? activeLinkColor : inactiveLinkColor
       }`}
       aria-current="page"
+      data-tutorial={dataTutorial}
     >
       {children}
     </Link>
@@ -68,9 +72,11 @@ const AdminLink = ({
 const AdminTabs = ({
   tabType = 'default',
   AdminRoutes,
+  dataTutorial = 'admin-tabs',
 }: {
   tabType?: 'default' | 'button';
   AdminRoutes: AdminRoute[];
+  dataTutorial?: string;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -117,7 +123,7 @@ const AdminTabs = ({
           <nav
             className="-mx-2 -my-1 flex flex-wrap"
             aria-label="Tabs"
-            data-tutorial="admin-tabs"
+            data-tutorial={dataTutorial}
           >
             {AdminRoutes.map((route, index) => (
               <AdminLink
@@ -126,6 +132,7 @@ const AdminTabs = ({
                 route={route.route}
                 regex={route.regex}
                 hidden={route.hidden ?? false}
+                dataTutorial={route.dataTutorial}
                 key={`button-Admin-link-${index}`}
               >
                 {route.content ?? route.text}
@@ -138,7 +145,7 @@ const AdminTabs = ({
           <nav
             className="flex"
             data-testid="Admin-nav-desktop"
-            data-tutorial="admin-tabs"
+            data-tutorial={dataTutorial}
           >
             {AdminRoutes.filter((route) => !route.hidden).map(
               (route, index) => (
@@ -147,6 +154,7 @@ const AdminTabs = ({
                   currentPath={pathname}
                   route={route.route}
                   regex={route.regex}
+                  dataTutorial={route.dataTutorial}
                   key={`standard-Admin-link-${index}`}
                 >
                   {route.text}

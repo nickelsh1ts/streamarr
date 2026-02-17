@@ -67,6 +67,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }),
         route: '/admin/users',
         regex: /^\/admin\/users/,
+        dataTutorial: 'admin-users-tab',
       },
       {
         text: intl.formatMessage({
@@ -176,7 +177,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="max-sm:mb-14">
       <div className="mt-2 px-4">
-        <AdminTabs AdminRoutes={visibleRoutes} />
+        <AdminTabs AdminRoutes={visibleRoutes} dataTutorial="admin-tabs" />
       </div>
       <div>
         {canShowContent &&

@@ -10,6 +10,7 @@ import type {
   UserOnboardingDataResponse,
   TutorialProgressRequest,
 } from '@server/interfaces/api/onboardingInterfaces';
+import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
@@ -193,7 +194,8 @@ router.post<{ id: string }>('/welcome/dismiss', async (req, res, next) => {
     }
 
     const settings = getSettings();
-    if (!settings.onboarding.allowSkipWelcome) {
+    const isAdmin = req.user?.hasPermission(Permission.ADMIN);
+    if (!settings.onboarding.allowSkipWelcome && !isAdmin) {
       next({ status: 400, message: 'Skipping is not allowed' });
       return;
     }
@@ -317,7 +319,8 @@ router.post<{ id: string }>('/tutorial/skip', async (req, res, next) => {
     }
 
     const settings = getSettings();
-    if (!settings.onboarding.allowSkipTutorial) {
+    const isAdmin = req.user?.hasPermission(Permission.ADMIN);
+    if (!settings.onboarding.allowSkipTutorial && !isAdmin) {
       next({ status: 400, message: 'Skipping is not allowed' });
       return;
     }

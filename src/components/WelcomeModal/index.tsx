@@ -5,38 +5,42 @@ import { useOnboardingContext } from '@app/context/OnboardingContext';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import WelcomeSlide from './WelcomeSlide';
 import Badge from '@app/components/Common/Badge';
+import type { AdminWelcomeSlide } from '@app/utils/adminOnboarding';
 
 const WelcomeModal: React.FC = () => {
   const {
     showWelcome,
-    data,
     completeWelcome,
     dismissWelcome,
     isPreviewMode,
     endPreview,
+    allowSkipWelcome,
+    canAlwaysSkip,
+    showAdminWelcome,
+    welcomeContent,
   } = useOnboardingContext();
 
   const carouselRef = useRef<CarouselHandle>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = useMemo(() => data?.welcomeContent ?? [], [data]);
-  const canDismiss = (data?.settings.allowSkipWelcome ?? true) || isPreviewMode;
+  const canDismiss =
+    (allowSkipWelcome ?? true) || isPreviewMode || canAlwaysSkip;
 
   const handleSlideChange = useCallback((index: number) => {
     setCurrentSlide(index);
   }, []);
 
   const handleNext = useCallback(() => {
-    if (currentSlide < slides.length - 1) {
+    if (currentSlide < welcomeContent.length - 1) {
       carouselRef.current?.next();
     } else {
       completeWelcome();
     }
-  }, [currentSlide, slides.length, completeWelcome]);
+  }, [currentSlide, welcomeContent.length, completeWelcome]);
 
   const handlePrev = useCallback(() => {
     carouselRef.current?.prev();
@@ -52,9 +56,9 @@ const WelcomeModal: React.FC = () => {
     }
   }, [canDismiss, dismissWelcome, isPreviewMode, endPreview]);
 
-  const isLastSlide = currentSlide === slides.length - 1;
+  const isLastSlide = currentSlide === welcomeContent.length - 1;
 
-  if (slides.length === 0) {
+  if (welcomeContent.length === 0) {
     return null;
   }
 
@@ -70,7 +74,7 @@ const WelcomeModal: React.FC = () => {
             transition
             className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-2xl border border-primary/30 bg-base-200 transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0"
           >
-            {canDismiss && (
+            {canDismiss && !showAdminWelcome && (
               <button
                 type="button"
                 onClick={handleClose}
@@ -90,9 +94,12 @@ const WelcomeModal: React.FC = () => {
                 dotClassName="mb-6"
                 className="flex-1"
               >
-                {slides.map((slide) => (
+                {welcomeContent.map((slide) => (
                   <div key={slide.id} className="p-6 sm:p-8 h-full">
-                    <WelcomeSlide content={slide} />
+                    <WelcomeSlide
+                      content={slide}
+                      icon={(slide as AdminWelcomeSlide).icon}
+                    />
                   </div>
                 ))}
               </Carousel>

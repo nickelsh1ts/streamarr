@@ -20,7 +20,6 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -34,7 +33,6 @@ const TutorialSpotlight: React.FC = () => {
   const {
     showTutorial,
     tutorialActive,
-    data,
     currentStepIndex,
     nextStep,
     prevStep,
@@ -43,6 +41,11 @@ const TutorialSpotlight: React.FC = () => {
     skipTutorial,
     startTutorial,
     isPreviewMode,
+    allowSkipTutorial,
+    canAlwaysSkip,
+    showAdminTutorial,
+    tutorialSteps,
+    tutorialMode,
   } = useOnboardingContext();
   const { applicationTitle } = useSettings().currentSettings;
 
@@ -56,15 +59,12 @@ const TutorialSpotlight: React.FC = () => {
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const [iframeReady, setIframeReady] = useState(false);
 
-  // Derived values
-  const steps = useMemo(() => data?.tutorialSteps ?? [], [data]);
-  const currentStep = steps[currentStepIndex] as
+  const currentStep = tutorialSteps[currentStepIndex] as
     | TutorialStepResponse
     | undefined;
   const canDismiss =
-    (data?.settings.allowSkipTutorial ?? true) || isPreviewMode;
-  const isLastStep = currentStepIndex === steps.length - 1;
-  const tutorialMode = data?.settings.tutorialMode ?? 'both';
+    (allowSkipTutorial ?? true) || isPreviewMode || canAlwaysSkip;
+  const isLastStep = currentStepIndex === tutorialSteps.length - 1;
   const isWatchRoute = pathname?.startsWith('/watch') ?? false;
 
   // Determine if TutorialWizard should handle this step instead
@@ -329,6 +329,7 @@ const TutorialSpotlight: React.FC = () => {
       nextStep();
     }
   }, [currentStep, isLastStep, completeStep, completeTutorial, nextStep]);
+  const handleSkip = canDismiss ? skipTutorial : undefined;
 
   // Don't render for wizard-only mode or wizard-mode steps
   if (tutorialMode === 'wizard' || (shouldUseWizard && tutorialActive)) {
@@ -336,7 +337,12 @@ const TutorialSpotlight: React.FC = () => {
   }
 
   // Start tutorial prompt (shows before tutorial begins)
-  if (showTutorial && !tutorialActive && steps.length > 0) {
+  if (showTutorial && !tutorialActive && tutorialSteps.length > 0) {
+    if (showAdminTutorial) {
+      setTimeout(() => startTutorial(), 0);
+      return null;
+    }
+
     return createPortal(
       <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-30 animate-fade-in">
         <div className="bg-base-200 rounded-xl p-4 sm:p-6 max-w-md mx-1 shadow-2xl border border-primary/30 animate-scale-in">
@@ -405,10 +411,10 @@ const TutorialSpotlight: React.FC = () => {
         step={currentStep}
         targetRect={targetRect}
         currentIndex={currentStepIndex}
-        totalSteps={steps.length}
+        totalSteps={tutorialSteps.length}
         onNext={handleNext}
         onPrev={prevStep}
-        onSkip={canDismiss ? skipTutorial : undefined}
+        onSkip={handleSkip}
         isFirst={currentStepIndex === 0}
         isLast={isLastStep}
       />
