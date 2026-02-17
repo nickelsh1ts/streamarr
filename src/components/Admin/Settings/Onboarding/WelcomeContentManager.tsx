@@ -180,12 +180,23 @@ const WelcomeContentManager = () => {
       .test('image-url', 'Invalid image URL', (value) => {
         if (!value) return true; // Allow empty/null
         // Accept relative paths for uploaded images or full URLs
-        // Must match sanitizeImageUrl logic: check for path traversal
+        // Must match sanitizeImageUrl logic: check for path traversal including encoded forms
         if (value.startsWith('/')) {
+          // Decode to catch encoded path traversal attempts
+          let decodedValue = value;
+          try {
+            decodedValue = decodeURIComponent(value);
+          } catch {
+            return false; // Invalid encoding
+          }
+
           // Check for path traversal like sanitizeImageUrl does
-          if (value.includes('..')) {
+          if (decodedValue.includes('..')) {
             return false;
           }
+
+          // Ensure path stays within root after normalization
+          // Note: path.normalize is not available in browser, but server will validate
           return true;
         }
         // For external URLs, validate http/https protocol

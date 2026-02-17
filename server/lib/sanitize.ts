@@ -1,4 +1,5 @@
 import DOMPurify from 'isomorphic-dompurify';
+import path from 'path';
 
 // Allowed HTML tags for custom content
 const ALLOWED_TAGS = [
@@ -149,10 +150,27 @@ export const sanitizeImageUrl = (url: string): string | null => {
 
   // Allow internal paths starting with /
   if (url.startsWith('/')) {
-    // Validate it doesn't contain path traversal
-    if (url.includes('..')) {
+    // Decode the URL to catch encoded path traversal attempts
+    let decodedUrl = url;
+    try {
+      decodedUrl = decodeURIComponent(url);
+    } catch {
+      // Invalid encoding
       return null;
     }
+
+    // Validate it doesn't contain path traversal (including encoded forms)
+    if (decodedUrl.includes('..')) {
+      return null;
+    }
+
+    // Normalize the path to resolve any remaining path issues
+    const normalizedPath = path.normalize(decodedUrl);
+    // Ensure normalized path still starts with / (prevents going above root)
+    if (!normalizedPath.startsWith('/')) {
+      return null;
+    }
+
     return url;
   }
 
