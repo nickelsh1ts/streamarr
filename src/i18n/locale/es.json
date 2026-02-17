@@ -89,6 +89,60 @@
   "admin.settings.services.description": {
     "defaultMessage": "Configura tus varios servicios a continuación."
   },
+  "adminOnboarding.notifications.description": {
+    "defaultMessage": "Mantén a tus usuarios informados con notificaciones por correo electrónico, alertas push web y mensajes en la aplicación. Configúralas en la sección de Notificaciones cuando estés listo."
+  },
+  "adminOnboarding.notifications.title": {
+    "defaultMessage": "Configurar Notificaciones"
+  },
+  "adminOnboarding.services.description": {
+    "defaultMessage": "Amplía la funcionalidad de tu servidor integrándote con servicios externos. Puedes configurar Radarr y Sonarr para descargas automatizadas, conectar clientes de descarga y otras integraciones en la configuración de Servicios."
+  },
+  "adminOnboarding.services.title": {
+    "defaultMessage": "Configura Tus Servicios"
+  },
+  "adminOnboarding.users.description": {
+    "defaultMessage": "Controla quién tiene acceso a tu contenido multimedia de Plex. Puedes establecer valores predeterminados, importar usuarios existentes, gestionar permisos, establecer cuotas y cambiar el acceso a bibliotecas desde la configuración de Usuarios."
+  },
+  "adminOnboarding.users.title": {
+    "defaultMessage": "Gestiona Tus Usuarios"
+  },
+  "adminOnboarding.welcome.description": {
+    "defaultMessage": "Streamarr es tu solución integral de gestión de servidor multimedia. Vamos a configurarte con algunos consejos rápidos para comenzar y aprovechar al máximo tu nuevo servidor."
+  },
+  "adminOnboarding.welcome.title": {
+    "defaultMessage": "¡Bienvenido a Streamarr!"
+  },
+  "adminTutorial.generalSettings.description": {
+    "defaultMessage": "La configuración general es donde puedes configurar las preferencias de todo el servidor y personalizar la experiencia del usuario."
+  },
+  "adminTutorial.generalSettings.title": {
+    "defaultMessage": "Configuración General"
+  },
+  "adminTutorial.manageUsers.description": {
+    "defaultMessage": "Ve y gestiona tus usuarios, actualiza sus permisos y controla su acceso a tus bibliotecas multimedia."
+  },
+  "adminTutorial.manageUsers.title": {
+    "defaultMessage": "Gestionar Usuarios"
+  },
+  "adminTutorial.onboarding.description": {
+    "defaultMessage": "Personaliza la experiencia de bienvenida para nuevos usuarios. Crea diapositivas de bienvenida, pasos de tutorial y controla cómo se introducen los usuarios a tu servidor."
+  },
+  "adminTutorial.onboarding.title": {
+    "defaultMessage": "Incorporación de Usuarios"
+  },
+  "adminTutorial.servicesSettings.description": {
+    "defaultMessage": "Intégrate con servicios externos para ampliar las capacidades de tu servidor. Configura Seerr, Radarr, Sonarr y otras integraciones aquí."
+  },
+  "adminTutorial.servicesSettings.title": {
+    "defaultMessage": "Configuración de Servicios"
+  },
+  "adminTutorial.tabs.description": {
+    "defaultMessage": "Usa estas pestañas para navegar entre diferentes funciones de administración. Configuración, Usuarios y tus servicios multimedia habilitados son accesibles desde aquí."
+  },
+  "adminTutorial.tabs.title": {
+    "defaultMessage": "Navegación de Administrador"
+  },
   "appData.warning": {
     "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
   },
@@ -868,6 +922,9 @@
   "downloads.bulkResume": {
     "defaultMessage": "Reanudar Seleccionados"
   },
+  "downloads.category": {
+    "defaultMessage": "Categoría"
+  },
   "downloads.categoryUpdated": {
     "defaultMessage": "Categoría actualizada exitosamente"
   },
@@ -955,6 +1012,9 @@
   "downloads.hash": {
     "defaultMessage": "Hash"
   },
+  "downloads.label": {
+    "defaultMessage": "Etiqueta"
+  },
   "downloads.labelPlaceholder": {
     "defaultMessage": "ej., películas, series-tv"
   },
@@ -1026,6 +1086,39 @@
   },
   "downloads.staleDataWarning": {
     "defaultMessage": "Cliente No Disponible"
+  },
+  "downloads.statusChecking": {
+    "defaultMessage": "Verificando"
+  },
+  "downloads.statusCompleted": {
+    "defaultMessage": "Completado"
+  },
+  "downloads.statusDownloading": {
+    "defaultMessage": "Descargando"
+  },
+  "downloads.statusError": {
+    "defaultMessage": "Error"
+  },
+  "downloads.statusMetadata": {
+    "defaultMessage": "Obteniendo Metadatos"
+  },
+  "downloads.statusMoving": {
+    "defaultMessage": "Moviendo"
+  },
+  "downloads.statusPaused": {
+    "defaultMessage": "Pausado"
+  },
+  "downloads.statusQueued": {
+    "defaultMessage": "En Cola"
+  },
+  "downloads.statusSeeding": {
+    "defaultMessage": "Sembrando"
+  },
+  "downloads.statusStalled": {
+    "defaultMessage": "Detenido"
+  },
+  "downloads.statusUnknown": {
+    "defaultMessage": "Desconocido"
   },
   "downloads.tags": {
     "defaultMessage": "Etiquetas"

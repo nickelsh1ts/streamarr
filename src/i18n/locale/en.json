@@ -86,6 +86,60 @@
   "admin.settings.services.description": {
     "defaultMessage": "Configure your various services below."
   },
+  "adminOnboarding.notifications.description": {
+    "defaultMessage": "Keep your users informed with email notifications, web push alerts, and in-app messages. Configure these in the Notifications settings when you're ready."
+  },
+  "adminOnboarding.notifications.title": {
+    "defaultMessage": "Set Up Notifications"
+  },
+  "adminOnboarding.services.description": {
+    "defaultMessage": "Expand the functionality of your server by integrating with external services. You can set up Radarr and Sonarr for automated downloads, connect to download clients and other integrations in the Services settings."
+  },
+  "adminOnboarding.services.title": {
+    "defaultMessage": "Configure Your Services"
+  },
+  "adminOnboarding.users.description": {
+    "defaultMessage": "Control who has access to your Plex media. You can set defaults, import existing users, manage permissions, set quotas, and change library access from the User settings."
+  },
+  "adminOnboarding.users.title": {
+    "defaultMessage": "Manage Your Users"
+  },
+  "adminOnboarding.welcome.description": {
+    "defaultMessage": "Streamarr is your all-in-one media server management solution. Let's get you set up with some quick tips to get started and make the most of your new server."
+  },
+  "adminOnboarding.welcome.title": {
+    "defaultMessage": "Welcome to Streamarr!"
+  },
+  "adminTutorial.generalSettings.description": {
+    "defaultMessage": "General settings are where you can configure your server-wide preferences and customize the user experience."
+  },
+  "adminTutorial.generalSettings.title": {
+    "defaultMessage": "General Settings"
+  },
+  "adminTutorial.manageUsers.description": {
+    "defaultMessage": "View and manage your users, update their permissions, and control their access to your media libraries."
+  },
+  "adminTutorial.manageUsers.title": {
+    "defaultMessage": "Manage Users"
+  },
+  "adminTutorial.onboarding.description": {
+    "defaultMessage": "Customize the welcome experience for new users. Create welcome slides, tutorial steps, and control how users are introduced to your server."
+  },
+  "adminTutorial.onboarding.title": {
+    "defaultMessage": "User Onboarding"
+  },
+  "adminTutorial.servicesSettings.description": {
+    "defaultMessage": "Integrate with external services to expand your server's capabilities. Configure Seerr, Radarr, Sonarr, and other integrations here."
+  },
+  "adminTutorial.servicesSettings.title": {
+    "defaultMessage": "Services Settings"
+  },
+  "adminTutorial.tabs.description": {
+    "defaultMessage": "Use these tabs to navigate between different admin features. Settings, Users, and your enabled media services are all accessible from here."
+  },
+  "adminTutorial.tabs.title": {
+    "defaultMessage": "Admin Navigation"
+  },
   "appData.warning": {
     "defaultMessage": "The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
   },
@@ -851,6 +905,9 @@
   "downloads.bulkResume": {
     "defaultMessage": "Resume Selected"
   },
+  "downloads.category": {
+    "defaultMessage": "Category"
+  },
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
@@ -938,6 +995,9 @@
   "downloads.hash": {
     "defaultMessage": "Hash"
   },
+  "downloads.label": {
+    "defaultMessage": "Label"
+  },
   "downloads.labelPlaceholder": {
     "defaultMessage": "e.g., movies, tv-shows"
   },
@@ -1009,6 +1069,39 @@
   },
   "downloads.staleDataWarning": {
     "defaultMessage": "Client Unreachable"
+  },
+  "downloads.statusChecking": {
+    "defaultMessage": "Checking"
+  },
+  "downloads.statusCompleted": {
+    "defaultMessage": "Completed"
+  },
+  "downloads.statusDownloading": {
+    "defaultMessage": "Downloading"
+  },
+  "downloads.statusError": {
+    "defaultMessage": "Error"
+  },
+  "downloads.statusMetadata": {
+    "defaultMessage": "Fetching Metadata"
+  },
+  "downloads.statusMoving": {
+    "defaultMessage": "Moving"
+  },
+  "downloads.statusPaused": {
+    "defaultMessage": "Paused"
+  },
+  "downloads.statusQueued": {
+    "defaultMessage": "Queued"
+  },
+  "downloads.statusSeeding": {
+    "defaultMessage": "Seeding"
+  },
+  "downloads.statusStalled": {
+    "defaultMessage": "Stalled"
+  },
+  "downloads.statusUnknown": {
+    "defaultMessage": "Unknown"
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
