@@ -180,11 +180,16 @@ const WelcomeContentManager = () => {
       .test('image-url', 'Invalid image URL', (value) => {
         if (!value) return true; // Allow empty/null
         // Accept relative paths for uploaded images or full URLs
-        return (
-          value.startsWith('/onboarding/') ||
-          value.startsWith('http://') ||
-          value.startsWith('https://')
-        );
+        // Must match sanitizeImageUrl logic: check for path traversal
+        if (value.startsWith('/')) {
+          // Check for path traversal like sanitizeImageUrl does
+          if (value.includes('..')) {
+            return false;
+          }
+          return true;
+        }
+        // For external URLs, validate http/https protocol
+        return value.startsWith('http://') || value.startsWith('https://');
       })
       .nullable(),
     videoUrl: Yup.string().url().nullable(),

@@ -1348,7 +1348,7 @@
     "defaultMessage": "El archivo es demasiado grande. El tamaño máximo es 10MB."
   },
   "imageUpload.formats": {
-    "defaultMessage": "JPG, PNG, WebP, GIF (máx 5MB)"
+    "defaultMessage": "JPG, PNG, WebP, GIF (máx 10MB)"
   },
   "imageUpload.uploadFailed": {
     "defaultMessage": "Error al subir la imagen."

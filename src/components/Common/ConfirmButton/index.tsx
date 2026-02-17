@@ -1,6 +1,6 @@
 import Button from '@app/components/Common/Button';
 import useClickOutside from '@app/hooks/useClickOutside';
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 interface ConfirmButtonProps {
   onClick: () => void | Promise<void>;
@@ -16,9 +16,16 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
     parentRef
   ) => {
     const ref = useRef(null);
+    const isMountedRef = useRef(true);
     const [isClicked, setIsClicked] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     useClickOutside(ref, () => setIsClicked(false));
+
+    useEffect(() => {
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
     return (
       <Button
         ref={parentRef}
@@ -36,8 +43,10 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
             try {
               await onClick();
             } finally {
-              setIsLoading(false);
-              setIsClicked(false);
+              if (isMountedRef.current) {
+                setIsLoading(false);
+                setIsClicked(false);
+              }
             }
           }
         }}
