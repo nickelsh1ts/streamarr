@@ -1329,7 +1329,7 @@
     "defaultMessage": "File is too large. Maximum size is 10MB."
   },
   "imageUpload.formats": {
-    "defaultMessage": "JPG, PNG, WebP, GIF (max 5MB)"
+    "defaultMessage": "JPG, PNG, WebP, GIF (max 10MB)"
   },
   "imageUpload.uploadFailed": {
     "defaultMessage": "Failed to upload image."

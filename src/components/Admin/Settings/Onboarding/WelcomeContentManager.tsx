@@ -180,11 +180,44 @@ const WelcomeContentManager = () => {
       .test('image-url', 'Invalid image URL', (value) => {
         if (!value) return true; // Allow empty/null
         // Accept relative paths for uploaded images or full URLs
-        return (
-          value.startsWith('/onboarding/') ||
-          value.startsWith('http://') ||
-          value.startsWith('https://')
-        );
+        // Must match sanitizeImageUrl logic: check for path traversal including encoded forms
+        if (value.startsWith('/')) {
+          // Decode to catch encoded path traversal attempts
+          let decodedValue = value;
+          try {
+            decodedValue = decodeURIComponent(value);
+          } catch {
+            return false; // Invalid encoding
+          }
+
+          // Check for path traversal like sanitizeImageUrl does
+          if (decodedValue.includes('..')) {
+            return false;
+          }
+
+          // Reject paths containing backslashes (Windows directory traversal)
+          if (decodedValue.includes('\\')) {
+            return false;
+          }
+
+          // Simple path normalization (basic duplicate/trailing slash removal)
+          // Note: This doesn't handle all cases that path.posix.normalize handles (e.g., /./../, /./foo)
+          // but provides basic consistency. Server will perform full validation with path.posix.normalize.
+          // Edge cases with /. or /.. segments are validated server-side only.
+          let normalizedPath = decodedValue.replace(/\/+/g, '/'); // Replace multiple slashes
+          if (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
+            normalizedPath = normalizedPath.slice(0, -1); // Remove trailing slash (except for root "/")
+          }
+
+          // After normalization, ensure it still starts with /
+          if (!normalizedPath || !normalizedPath.startsWith('/')) {
+            return false;
+          }
+
+          return true;
+        }
+        // For external URLs, validate http/https protocol
+        return value.startsWith('http://') || value.startsWith('https://');
       })
       .nullable(),
     videoUrl: Yup.string().url().nullable(),

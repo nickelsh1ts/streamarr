@@ -1,4 +1,5 @@
 import DOMPurify from 'isomorphic-dompurify';
+import path from 'path';
 
 // Allowed HTML tags for custom content
 const ALLOWED_TAGS = [
@@ -149,11 +150,41 @@ export const sanitizeImageUrl = (url: string): string | null => {
 
   // Allow internal paths starting with /
   if (url.startsWith('/')) {
-    // Validate it doesn't contain path traversal
-    if (url.includes('..')) {
+    // Decode the URL to catch encoded path traversal attempts
+    let decodedUrl = url;
+    try {
+      decodedUrl = decodeURIComponent(url);
+    } catch {
+      // Invalid encoding
       return null;
     }
-    return url;
+
+    // Validate it doesn't contain path traversal (including encoded forms)
+    if (decodedUrl.includes('..')) {
+      return null;
+    }
+
+    // Reject paths containing backslashes (could be directory traversal on Windows)
+    // Check before normalization to prevent bypassing the check
+    if (decodedUrl.includes('\\')) {
+      return null;
+    }
+
+    // Normalize the path to resolve any remaining path issues
+    // Use posix.normalize for consistent behavior across platforms
+    const normalizedPath = path.posix.normalize(decodedUrl);
+    // Ensure normalized path still starts with / (prevents going above root)
+    if (!normalizedPath.startsWith('/')) {
+      return null;
+    }
+
+    // Defense-in-depth: Verify no backslashes remain after normalization
+    if (normalizedPath.includes('\\')) {
+      return null;
+    }
+
+    // Return the normalized and decoded path
+    return normalizedPath;
   }
 
   // For external URLs, validate the protocol
