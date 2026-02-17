@@ -182,7 +182,7 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
       // Calculate arrow offset based on target center relative to tooltip
       const targetCenterX = targetRect.left + targetRect.width / 2;
       const targetCenterY = targetRect.top + targetRect.height / 2;
-      let offset = 50;
+      let offset;
 
       if (position === 'top' || position === 'bottom') {
         // Arrow moves horizontally - calculate where target center falls on tooltip width

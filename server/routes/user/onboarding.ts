@@ -171,11 +171,14 @@ router.post<{ id: string }>('/welcome/complete', async (req, res, next) => {
 
     res.status(200).json({ success: true });
   } catch (e) {
-    logger.error(`Failed to complete welcome for user ${req.params.id}`, {
-      label: 'UserOnboarding',
-      error: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? e.stack : undefined,
-    });
+    logger.error(
+      `Failed to complete welcome for user ${Number(req.params.id)}`,
+      {
+        label: 'UserOnboarding',
+        error: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      }
+    );
     next({ status: 500, message: 'Failed to complete welcome' });
   }
 });
@@ -210,11 +213,14 @@ router.post<{ id: string }>('/welcome/dismiss', async (req, res, next) => {
 
     res.status(200).json({ success: true });
   } catch (e) {
-    logger.error(`Failed to dismiss welcome for user ${req.params.id}`, {
-      label: 'UserOnboarding',
-      error: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? e.stack : undefined,
-    });
+    logger.error(
+      `Failed to dismiss welcome for user ${Number(req.params.id)}`,
+      {
+        label: 'UserOnboarding',
+        error: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      }
+    );
     next({ status: 500, message: 'Failed to dismiss welcome' });
   }
 });
@@ -254,7 +260,7 @@ router.post<{ id: string }>('/tutorial/progress', async (req, res, next) => {
     });
   } catch (e) {
     logger.error(
-      `Failed to update tutorial progress for user ${req.params.id}`,
+      `Failed to update tutorial progress for user ${Number(req.params.id)}`,
       {
         label: 'UserOnboarding',
         error: e instanceof Error ? e.message : String(e),
@@ -289,11 +295,14 @@ router.post<{ id: string }>('/tutorial/complete', async (req, res, next) => {
 
     res.status(200).json({ success: true });
   } catch (e) {
-    logger.error(`Failed to complete tutorial for user ${req.params.id}`, {
-      label: 'UserOnboarding',
-      error: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? e.stack : undefined,
-    });
+    logger.error(
+      `Failed to complete tutorial for user ${Number(req.params.id)}`,
+      {
+        label: 'UserOnboarding',
+        error: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      }
+    );
     next({ status: 500, message: 'Failed to complete tutorial' });
   }
 });
@@ -328,7 +337,7 @@ router.post<{ id: string }>('/tutorial/skip', async (req, res, next) => {
 
     res.status(200).json({ success: true });
   } catch (e) {
-    logger.error(`Failed to skip tutorial for user ${req.params.id}`, {
+    logger.error(`Failed to skip tutorial for user ${Number(req.params.id)}`, {
       label: 'UserOnboarding',
       error: e instanceof Error ? e.message : String(e),
       stack: e instanceof Error ? e.stack : undefined,
@@ -357,11 +366,14 @@ router.post<{ id: string }>('/reset', async (req, res, next) => {
 
     res.status(200).json({ success: true });
   } catch (e) {
-    logger.error(`Failed to reset onboarding for user ${req.params.id}`, {
-      label: 'UserOnboarding',
-      error: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? e.stack : undefined,
-    });
+    logger.error(
+      `Failed to reset onboarding for user ${Number(req.params.id)}`,
+      {
+        label: 'UserOnboarding',
+        error: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      }
+    );
     next({ status: 500, message: 'Failed to reset onboarding' });
   }
 });

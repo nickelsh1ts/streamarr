@@ -7,6 +7,7 @@ import fs from 'fs';
 import { writeFile, mkdir, unlink } from 'fs/promises';
 import crypto from 'crypto';
 import sharp from 'sharp';
+import rateLimit from 'express-rate-limit';
 
 export interface ImageFile {
   buffer: Buffer;
@@ -229,33 +230,45 @@ export class ImageUploadService {
         : isAuthenticated()
       : (_req: unknown, _res: unknown, next: () => void) => next();
 
-    router.get('/:filename', authMiddleware, (req, res): void => {
-      const { filename } = req.params;
-
-      const sanitizedFilename = path.basename(filename);
-      const filePath = path.join(this.uploadsDir, sanitizedFilename);
-
-      if (!fs.existsSync(filePath)) {
-        logger.warn('Image not found', {
-          label: this.label,
-          filename: sanitizedFilename,
-        });
-        res.status(404).send('Image not found');
-        return;
-      }
-
-      const ext = path.extname(sanitizedFilename).toLowerCase();
-      let contentType = 'image/jpeg';
-      if (ext === '.png') contentType = 'image/png';
-      else if (ext === '.webp') contentType = 'image/webp';
-      else if (ext === '.gif') contentType = 'image/gif';
-
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
-
-      const stream = fs.createReadStream(filePath);
-      stream.pipe(res);
+    const imageRateLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 image requests per windowMs
+      standardHeaders: true,
+      legacyHeaders: false,
     });
+
+    router.get(
+      '/:filename',
+      authMiddleware,
+      imageRateLimiter,
+      (req, res): void => {
+        const { filename } = req.params;
+
+        const sanitizedFilename = path.basename(filename);
+        const filePath = path.join(this.uploadsDir, sanitizedFilename);
+
+        if (!fs.existsSync(filePath)) {
+          logger.warn('Image not found', {
+            label: this.label,
+            filename: sanitizedFilename,
+          });
+          res.status(404).send('Image not found');
+          return;
+        }
+
+        const ext = path.extname(sanitizedFilename).toLowerCase();
+        let contentType = 'image/jpeg';
+        if (ext === '.png') contentType = 'image/png';
+        else if (ext === '.webp') contentType = 'image/webp';
+        else if (ext === '.gif') contentType = 'image/gif';
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+
+        const stream = fs.createReadStream(filePath);
+        stream.pipe(res);
+      }
+    );
 
     return router;
   }
