@@ -6811,15 +6811,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nodemailer@npm:^7.0.10":
-  version: 7.0.10
-  resolution: "@types/nodemailer@npm:7.0.10"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/14e4389a71a154cad898c6ad21fbf12309f86fa504c6d11bf0911190697164f1c3b0c0d9f6cb425c189af73137cc49eb10dbb41574174bf822cfe37755b87c03
-  languageName: node
-  linkType: hard
-
 "@types/normalize-package-data@npm:^2.4.3, @types/normalize-package-data@npm:^2.4.4":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -20654,7 +20645,6 @@ __metadata:
     "@types/multer": "npm:^2.0.0"
     "@types/node": "npm:^25.2.3"
     "@types/node-schedule": "npm:^2.1.8"
-    "@types/nodemailer": "npm:^7.0.10"
     "@types/qrcode": "npm:^1.5.6"
     "@types/react": "npm:^19.2.14"
     "@types/react-big-calendar": "npm:^1.16.3"
