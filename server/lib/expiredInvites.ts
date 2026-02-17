@@ -3,6 +3,7 @@ import Invite from '@server/entity/Invite';
 import { InviteStatus } from '@server/constants/invite';
 import { In, LessThanOrEqual } from 'typeorm';
 import logger from '@server/logger';
+import { getSettings } from '@server/lib/settings';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
 import fs from 'fs/promises';
 
@@ -37,8 +38,14 @@ class ExpiredInvites {
     }
 
     // Clean up orphaned QR codes (no associated invite)
+    const settings = getSettings();
     const cacheDir = qrProxy.getCacheDirectory();
     let orphanDeletedCount = 0;
+
+    if (!settings.main.cacheImages) {
+      return;
+    }
+
     try {
       const allInvites = await inviteRepository.find({
         select: ['id', 'icode'],

@@ -1,4 +1,5 @@
 import logger from '@server/logger';
+import { getSettings } from '@server/lib/settings';
 import axios from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';
@@ -24,6 +25,12 @@ const baseCacheDirectory = process.env.CONFIG_DIRECTORY
 
 class ImageProxy {
   public static async clearCache(key: string) {
+    const settings = getSettings();
+
+    if (!settings.main.cacheImages) {
+      return;
+    }
+
     let deletedImages = 0;
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
