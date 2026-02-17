@@ -131,7 +131,7 @@
     "@types/express": "^5.0.6",
     "@types/ical": "^0.8.3",
     "@types/multer": "^2.0.0",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.2.0",
     "@types/node-schedule": "^2.1.8",
     "@types/nodemailer": "^7.0.4",
     "@types/qrcode": "^1.5.6",
