@@ -397,16 +397,17 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 torrent.clientType === 'deluge') && (
                 <div className="flex items-center justify-between">
                   <span className="text-neutral">
-                    <FormattedMessage
-                      id={
-                        torrent.clientType === 'deluge'
-                          ? 'downloads.label'
-                          : 'downloads.category'
-                      }
-                      defaultMessage={
-                        torrent.clientType === 'deluge' ? 'Label' : 'Category'
-                      }
-                    />
+                    {torrent.clientType === 'deluge' ? (
+                      <FormattedMessage
+                        id="downloads.label"
+                        defaultMessage="Label"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="downloads.category"
+                        defaultMessage="Category"
+                      />
+                    )}
                     :
                   </span>
                   <div>
