@@ -183,7 +183,7 @@ const WelcomeContentManager = () => {
         // Must match sanitizeImageUrl logic: check for path traversal including encoded forms
         if (value.startsWith('/')) {
           // Decode to catch encoded path traversal attempts
-          let decodedValue = value;
+          let decodedValue;
           try {
             decodedValue = decodeURIComponent(value);
           } catch {
