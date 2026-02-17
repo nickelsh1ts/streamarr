@@ -1447,6 +1447,235 @@ components:
       required:
         - valid
         - message
+    WelcomeContent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          type: string
+          enum: [user, admin]
+        order:
+          type: integer
+        enabled:
+          type: boolean
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        videoUrl:
+          type: string
+          nullable: true
+        videoAutoplay:
+          type: boolean
+          default: false
+        customHtml:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    WelcomeContentRequest:
+      type: object
+      required:
+        - title
+      properties:
+        type:
+          type: string
+          enum: [user, admin]
+        order:
+          type: integer
+        enabled:
+          type: boolean
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        videoUrl:
+          type: string
+        videoAutoplay:
+          type: boolean
+        customHtml:
+          type: string
+    TutorialStep:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+        enabled:
+          type: boolean
+        mode:
+          type: string
+          enum: [spotlight, wizard, both]
+        targetSelector:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        tooltipPosition:
+          type: string
+          enum: [auto, top, bottom, left, right]
+        route:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    TutorialStepRequest:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        order:
+          type: integer
+        enabled:
+          type: boolean
+        mode:
+          type: string
+          enum: [spotlight, wizard, both]
+        targetSelector:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        tooltipPosition:
+          type: string
+          enum: [auto, top, bottom, left, right]
+        route:
+          type: string
+        imageUrl:
+          type: string
+    UserOnboardingStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        userId:
+          type: integer
+        welcomeCompleted:
+          type: boolean
+        welcomeCompletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        welcomeDismissed:
+          type: boolean
+        tutorialCompleted:
+          type: boolean
+        tutorialCompletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        tutorialProgress:
+          type: array
+          items:
+            type: integer
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    OnboardingSettings:
+      type: object
+      properties:
+        welcomeEnabled:
+          type: boolean
+        tutorialEnabled:
+          type: boolean
+        tutorialMode:
+          type: string
+          enum: [spotlight, wizard, both]
+        allowSkipWelcome:
+          type: boolean
+          description: When false, users cannot skip the welcome modal
+        allowSkipTutorial:
+          type: boolean
+          description: When false, users cannot skip the tutorial
+        tutorialAutostart:
+          type: boolean
+        tutorialAutostartDelay:
+          type: integer
+          description: Delay in milliseconds before auto-starting the tutorial
+    OnboardingSettingsRequest:
+      type: object
+      properties:
+        welcomeEnabled:
+          type: boolean
+        tutorialEnabled:
+          type: boolean
+        tutorialMode:
+          type: string
+          enum: [spotlight, wizard, both]
+        allowSkipWelcome:
+          type: boolean
+        allowSkipTutorial:
+          type: boolean
+        tutorialAutostart:
+          type: boolean
+        tutorialAutostartDelay:
+          type: integer
+    UserOnboardingData:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/UserOnboardingStatus'
+        settings:
+          $ref: '#/components/schemas/OnboardingSettings'
+        welcomeContent:
+          type: array
+          items:
+            $ref: '#/components/schemas/WelcomeContent'
+        tutorialSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TutorialStep'
+    ReorderRequest:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - order
+            properties:
+              id:
+                type: integer
+              order:
+                type: integer
   securitySchemes:
     cookieAuth:
       type: apiKey
@@ -5706,3 +5935,615 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SignupCompleteResponse'
+  /settings/onboarding:
+    get:
+      summary: Get onboarding settings
+      description: Returns the current onboarding configuration.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: Onboarding settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingSettings'
+    post:
+      summary: Update onboarding settings
+      description: Updates the onboarding configuration.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingSettingsRequest'
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingSettings'
+  /settings/onboarding/reset:
+    post:
+      summary: Reset onboarding content to defaults
+      description: Resets all welcome content and tutorial steps to default values.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [welcome, tutorial]
+                  description: Which content type to reset (both if not specified)
+      responses:
+        '200':
+          description: Content reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  welcomeCount:
+                    type: integer
+                  tutorialCount:
+                    type: integer
+  /settings/onboarding/reset-all-users:
+    post:
+      summary: Reset onboarding for all users
+      description: Resets onboarding progress for all users.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: All users reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                    description: Number of users reset
+  /settings/onboarding/welcome:
+    get:
+      summary: Get all welcome content
+      description: Returns all welcome content items including disabled.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of welcome content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WelcomeContent'
+    post:
+      summary: Create welcome content
+      description: Creates a new welcome content item.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WelcomeContentRequest'
+      responses:
+        '201':
+          description: Content created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WelcomeContent'
+  /settings/onboarding/welcome/{contentId}:
+    put:
+      summary: Update welcome content
+      description: Updates an existing welcome content item.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: contentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WelcomeContentRequest'
+      responses:
+        '200':
+          description: Content updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WelcomeContent'
+    delete:
+      summary: Delete welcome content
+      description: Deletes a welcome content item.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: contentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Content deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /settings/onboarding/welcome/{id}/image:
+    post:
+      summary: Upload image for welcome content
+      description: Uploads an image for a welcome content item.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+      responses:
+        '200':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+        '400':
+          description: No file uploaded
+        '404':
+          description: Welcome content not found
+  /settings/onboarding/welcome/reorder:
+    post:
+      summary: Reorder welcome content
+      description: Updates the order of welcome content items.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+      responses:
+        '200':
+          description: Content reordered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /settings/onboarding/tutorial:
+    get:
+      summary: Get all tutorial steps
+      description: Returns all tutorial steps including disabled.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of tutorial steps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TutorialStep'
+    post:
+      summary: Create tutorial step
+      description: Creates a new tutorial step.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TutorialStepRequest'
+      responses:
+        '201':
+          description: Step created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TutorialStep'
+  /settings/onboarding/tutorial/{stepId}:
+    put:
+      summary: Update tutorial step
+      description: Updates an existing tutorial step.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: stepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TutorialStepRequest'
+      responses:
+        '200':
+          description: Step updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TutorialStep'
+    delete:
+      summary: Delete tutorial step
+      description: Deletes a tutorial step.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: stepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Step deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /settings/onboarding/tutorial/{id}/image:
+    post:
+      summary: Upload image for tutorial step
+      description: Uploads an image for a tutorial step.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+      responses:
+        '200':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+        '400':
+          description: No file uploaded
+        '404':
+          description: Tutorial step not found
+  /settings/onboarding/tutorial/reorder:
+    post:
+      summary: Reorder tutorial steps
+      description: Updates the order of tutorial steps.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+      responses:
+        '200':
+          description: Steps reordered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding:
+    get:
+      summary: Get user onboarding data
+      description: Returns full onboarding data for a user including status, settings, and content.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User onboarding data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOnboardingData'
+  /user/{userId}/onboarding/status:
+    get:
+      summary: Get user onboarding status
+      description: Returns only the onboarding status for a user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User onboarding status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOnboardingStatus'
+  /user/{userId}/onboarding/welcome/complete:
+    post:
+      summary: Mark welcome as completed
+      description: Marks the welcome modal as completed for the user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Welcome marked as completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding/welcome/dismiss:
+    post:
+      summary: Dismiss welcome modal
+      description: Marks the welcome modal as dismissed (skipped) for the user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Welcome dismissed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding/tutorial/complete:
+    post:
+      summary: Mark tutorial as completed
+      description: Marks the tutorial as completed for the user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tutorial marked as completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding/tutorial/skip:
+    post:
+      summary: Skip tutorial
+      description: Marks the tutorial as skipped for the user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tutorial skipped
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding/tutorial/progress:
+    post:
+      summary: Update tutorial progress
+      description: Updates the tutorial progress by marking a step as completed.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - stepId
+              properties:
+                stepId:
+                  type: integer
+                  description: ID of the completed step
+      responses:
+        '200':
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /user/{userId}/onboarding/reset:
+    post:
+      summary: Reset user onboarding
+      description: Resets the onboarding progress for a user.
+      tags:
+        - users
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Onboarding reset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
