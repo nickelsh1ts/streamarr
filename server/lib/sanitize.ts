@@ -164,15 +164,17 @@ export const sanitizeImageUrl = (url: string): string | null => {
       return null;
     }
 
+    // Reject paths containing backslashes (could be directory traversal on Windows)
+    // Check before normalization to prevent bypassing the check
+    if (decodedUrl.includes('\\')) {
+      return null;
+    }
+
     // Normalize the path to resolve any remaining path issues
-    // Use posix.normalize for consistent behavior across platforms (prevents backslash issues on Windows)
+    // Use posix.normalize for consistent behavior across platforms
     const normalizedPath = path.posix.normalize(decodedUrl);
     // Ensure normalized path still starts with / (prevents going above root)
     if (!normalizedPath.startsWith('/')) {
-      return null;
-    }
-    // Reject paths containing backslashes (could be directory traversal on Windows)
-    if (normalizedPath.includes('\\')) {
       return null;
     }
 

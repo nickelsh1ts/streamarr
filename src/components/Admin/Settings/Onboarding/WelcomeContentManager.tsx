@@ -195,8 +195,12 @@ const WelcomeContentManager = () => {
             return false;
           }
 
-          // Ensure path stays within root after normalization
-          // Note: path.normalize is not available in browser, but server will validate
+          // Reject paths containing backslashes (Windows directory traversal)
+          if (decodedValue.includes('\\')) {
+            return false;
+          }
+
+          // Note: Path normalization happens on server side
           return true;
         }
         // For external URLs, validate http/https protocol
