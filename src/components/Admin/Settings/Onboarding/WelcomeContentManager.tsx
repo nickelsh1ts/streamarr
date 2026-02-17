@@ -200,11 +200,12 @@ const WelcomeContentManager = () => {
             return false;
           }
 
-          // Simple path normalization (remove duplicate slashes and trailing slashes)
-          // This matches the basic normalization that path.posix.normalize would do
+          // Simple path normalization (basic duplicate/trailing slash removal)
+          // Note: This doesn't handle all cases that path.posix.normalize handles (e.g., /./../)
+          // but provides basic consistency. Server will perform full validation with path.posix.normalize.
           const normalizedPath = decodedValue
             .replace(/\/+/g, '/') // Replace multiple slashes with single slash
-            .replace(/\/$/, ''); // Remove trailing slash
+            .replace(/\/$/, ''); // Remove trailing slash (unless it's the root "/")
 
           // After normalization, ensure it still starts with /
           if (!normalizedPath || !normalizedPath.startsWith('/')) {

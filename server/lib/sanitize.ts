@@ -178,6 +178,11 @@ export const sanitizeImageUrl = (url: string): string | null => {
       return null;
     }
 
+    // Defense-in-depth: Verify no backslashes remain after normalization
+    if (normalizedPath.includes('\\')) {
+      return null;
+    }
+
     // Return the normalized and decoded path
     return normalizedPath;
   }
