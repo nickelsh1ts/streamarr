@@ -12,9 +12,12 @@ import {
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const ServicesBazarr = () => {
   const intl = useIntl();
@@ -67,6 +70,7 @@ const ServicesBazarr = () => {
           />
         </p>
       </div>
+      <RestartRequiredAlert filterServices={['Bazarr']} />
       <Formik
         initialValues={{
           enabled: dataBazarr?.enabled ?? false,
@@ -97,6 +101,8 @@ const ServicesBazarr = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
+
+            mutate(RESTART_REQUIRED_SWR_KEY);
           } catch (e) {
             Toast({
               title: intl.formatMessage(

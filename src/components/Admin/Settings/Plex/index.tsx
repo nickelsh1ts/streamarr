@@ -1,5 +1,8 @@
 'use client';
 import LibraryItem from '@app/components/Admin/Settings/LibraryItem';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -16,7 +19,7 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { orderBy } from 'lodash';
 import { useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 interface PresetServerDisplay {
@@ -208,6 +211,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             defaultMessage="Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
           />
         </p>
+        <RestartRequiredAlert filterServices={['Plex']} />
         {!!onComplete && (
           <Alert type="primary">
             <p className="text-sm leading-5 flex-1">
@@ -274,6 +278,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
+
+            mutate(RESTART_REQUIRED_SWR_KEY);
 
             if (onComplete) {
               onComplete();

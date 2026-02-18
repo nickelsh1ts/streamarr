@@ -6,6 +6,9 @@ import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import RadarrModal from '@app/components/Admin/Settings/Services/Radarr/RadarrModal';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { FormattedMessage, useIntl } from 'react-intl';
 import type { RadarrSettings } from '@server/lib/settings';
@@ -183,6 +186,7 @@ const SettingsServicesRadarr = () => {
     setDeleteServerModal({ open: false, serverId: null, type: 'radarr' });
     revalidateRadarr();
     mutate('/api/v1/settings/public');
+    mutate(RESTART_REQUIRED_SWR_KEY);
   };
 
   return (
@@ -201,12 +205,14 @@ const SettingsServicesRadarr = () => {
           />
         </p>
       </div>
+      <RestartRequiredAlert filterServices={['Radarr']} />
       <RadarrModal
         radarr={editRadarrModal.radarr}
         onClose={() => setEditRadarrModal({ open: false, radarr: null })}
         onSave={() => {
           revalidateRadarr();
           mutate('/api/v1/settings/public');
+          mutate(RESTART_REQUIRED_SWR_KEY);
           setEditRadarrModal({ open: false, radarr: null });
         }}
         show={editRadarrModal.open}

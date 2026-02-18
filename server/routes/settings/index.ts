@@ -22,6 +22,7 @@ import type {
   MainSettings,
   ServiceSettings,
 } from '@server/lib/settings';
+import restartManager from '@server/lib/restartManager';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -984,5 +985,22 @@ settingsRoutes.get('/about', async (req, res) => {
     appDataPath: appDataPath(),
   } as SettingsAboutResponse);
 });
+
+settingsRoutes.get(
+  '/restart-required',
+  isAuthenticated(Permission.ADMIN),
+  (_req, res) => {
+    res.status(200).json(restartManager.getRestartStatus());
+  }
+);
+
+settingsRoutes.post(
+  '/restart',
+  isAuthenticated(Permission.ADMIN),
+  (_req, res) => {
+    res.status(200).json({ success: true, message: 'Restarting server...' });
+    setTimeout(() => restartManager.triggerRestart(), 500);
+  }
+);
 
 export default settingsRoutes;

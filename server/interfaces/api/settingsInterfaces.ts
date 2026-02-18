@@ -70,3 +70,13 @@ export interface StatusResponse {
   updateAvailable: boolean;
   commitsBehind: number;
 }
+
+export interface RestartStatusResponse {
+  required: boolean;
+  services: string[];
+}
+
+export interface RestartResponse {
+  success: boolean;
+  message: string;
+}

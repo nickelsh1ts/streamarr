@@ -6,6 +6,8 @@ import ImageFader from '@app/components/Common/ImageFader';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SettingsPlex from '@app/components/Admin/Settings/Plex';
 import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
+import RestartModal from '@app/components/Setup/RestartModal';
+import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
@@ -27,11 +29,14 @@ import ServicesTautulli from '@app/components/Admin/Settings/Services/Tautulli';
 import ServicesDownloads from '@app/components/Admin/Settings/Services/Downloads';
 import ServicesUptime from '@app/components/Admin/Settings/Services/Uptime';
 import Tabs from '@app/components/Common/Tabs';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
+  const [showRestartModal, setShowRestartModal] = useState(false);
+  const [restartServices, setRestartServices] = useState<string[]>([]);
   const { locale } = useLocale();
   const { revalidate } = useUser();
   const { currentSettings } = useSettings();
@@ -50,6 +55,21 @@ const Setup = () => {
         // Update main settings and refresh data
         await axios.post('/api/v1/settings/main', { locale });
         await Promise.all([mutate('/api/v1/settings/public'), revalidate()]);
+
+        // Check if restart is required for any services
+        try {
+          const restartStatus = await axios.get<RestartStatusResponse>(
+            RESTART_REQUIRED_SWR_KEY
+          );
+
+          if (restartStatus.data.required) {
+            setRestartServices(restartStatus.data.services);
+            setShowRestartModal(true);
+            return;
+          }
+        } catch {
+          // If check fails, just proceed to admin
+        }
 
         // Redirect to admin page
         window.location.href = '/admin';
@@ -254,6 +274,14 @@ const Setup = () => {
           )}
         </div>
       </div>
+      <RestartModal
+        show={showRestartModal}
+        onSkip={() => {
+          setShowRestartModal(false);
+          window.location.href = '/admin';
+        }}
+        services={restartServices}
+      />
     </div>
   );
 };

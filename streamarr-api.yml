@@ -1173,6 +1173,28 @@ components:
         types:
           type: number
           example: 2
+    RestartStatus:
+      type: object
+      properties:
+        required:
+          type: boolean
+          description: Whether a restart is required
+          example: true
+        services:
+          type: array
+          items:
+            type: string
+          description: List of services that have changed and require a restart
+          example: ['Lidarr', 'Tautulli']
+    RestartResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Restarting server...'
     NotificationEmailSettings:
       type: object
       properties:
@@ -3425,6 +3447,34 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
+  /settings/restart-required:
+    get:
+      summary: Check if server restart is required
+      description: Returns whether a restart is required and which services have changed since startup.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Restart status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartStatus'
+  /settings/restart:
+    post:
+      summary: Trigger server restart
+      description: Initiates a graceful server restart. The server will close connections, disconnect sockets, and exit. Docker/PM2/systemd will restart the process.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Restart initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
+        '500':
+          description: Failed to trigger restart
   /auth/me:
     get:
       summary: Get logged-in user
