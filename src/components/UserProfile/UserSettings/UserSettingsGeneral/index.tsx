@@ -37,6 +37,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
 
+//BUG: Fix bug where server admin/owner cannot pin libraries or hide button if this is expected
+
 const UserSettingsGeneral = () => {
   const intl = useIntl();
   const { locale, setLocale } = useLocale();

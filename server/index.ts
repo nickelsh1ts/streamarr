@@ -174,7 +174,10 @@ app
     pythonService.initialize();
     process.on('exit', () => pythonService.destroy());
     process.on('SIGINT', () => process.exit(0));
-    process.on('SIGTERM', () => process.exit(0));
+    process.on('SIGTERM', () => {
+      pythonService.prepareForServerRestart();
+      process.exit(0);
+    });
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user

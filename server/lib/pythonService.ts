@@ -2,23 +2,15 @@ import type { PythonServiceStatusResponse } from '@server/interfaces/api/setting
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
 import axios from 'axios';
-import {
-  existsSync,
-  readFileSync,
-  readdirSync,
-  utimesSync,
-  unlinkSync,
-  writeFileSync,
-} from 'fs';
-import { spawn } from 'child_process';
+import { existsSync, readFileSync, readdirSync } from 'fs';
+import { execSync } from 'child_process';
 import { createConnection } from 'net';
-import path from 'path';
 
 const LABEL = 'Plex Sync';
 const HEALTH_URL = 'http://localhost:5005/health';
 const HEALTH_TIMEOUT = 3000;
 const POLL_INTERVAL = 30_000;
-const PID_FILE = path.join(process.cwd(), 'tmp', 'gunicorn.pid');
+const SERVICE_PORT = 5005;
 
 type ServiceStatus = 'healthy' | 'unhealthy' | 'unknown';
 
@@ -30,7 +22,7 @@ class PythonServiceManager {
   private pollTimer: NodeJS.Timeout | null = null;
   private isRestarting = false;
   private preserveProcesses = false;
-  private spawnedPids: Set<number> = new Set();
+  private spawnedPid: number | null = null;
 
   private markHealthy(): void {
     this.status = 'healthy';
@@ -48,21 +40,13 @@ class PythonServiceManager {
     }
   }
 
-  private readPidFile(): number | null {
-    try {
-      if (!existsSync(PID_FILE)) return null;
-      const pid = parseInt(readFileSync(PID_FILE, 'utf-8').trim(), 10);
-      return pid && !isNaN(pid) ? pid : null;
-    } catch {
-      return null;
-    }
-  }
-
   public prepareForServerRestart(): void {
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
     }
+
+    this.spawnedPid = null;
     this.preserveProcesses = true;
   }
 
@@ -90,17 +74,8 @@ class PythonServiceManager {
     this.isRestarting = true;
 
     try {
-      if (process.env.NODE_ENV !== 'production') {
-        return await this.restartDev();
-      }
-
-      const killedPids = this.killExistingProcess();
-      if (killedPids.length > 0) {
-        await this.waitForProcessExit(killedPids, 5);
-        await this.waitForPortFree(5005, 10);
-      }
-
-      this.removePidFile();
+      await this.killExistingProcesses();
+      await this.waitForPortFree(SERVICE_PORT, 10);
       this.spawnPythonService();
 
       const healthy = await this.waitForHealthy(15);
@@ -111,13 +86,13 @@ class PythonServiceManager {
         });
         return { success: true, message: 'Plex Sync service restarted' };
       } else {
-        logger.warn("Plex Sync service restarted but couldn't be reached", {
+        logger.warn("Plex Sync service couldn't be reached after restart", {
           label: LABEL,
         });
         return {
-          success: true,
+          success: false,
           message:
-            'Plex Sync service restarted but remains unreachable after 15s',
+            'Plex Sync service process started but health check failed after 15s',
         };
       }
     } catch (e) {
@@ -132,57 +107,6 @@ class PythonServiceManager {
     }
   }
 
-  private async restartDev(): Promise<{ success: boolean; message: string }> {
-    const scriptPath = path.join(
-      process.cwd(),
-      'server',
-      'python',
-      'plex_invite.py'
-    );
-
-    const isRunning = await this.isServiceResponding();
-
-    if (isRunning) {
-      if (!existsSync(scriptPath)) {
-        return {
-          success: false,
-          message: `Cannot find ${scriptPath} to trigger reload`,
-        };
-      }
-
-      const now = new Date();
-      utimesSync(scriptPath, now, now);
-    } else {
-      logger.debug('Plex Sync service is down, spawning new process', {
-        label: LABEL,
-      });
-      this.spawnPythonService();
-    }
-
-    const healthy = await this.waitForHealthy(isRunning ? 10 : 15);
-    if (healthy) {
-      return { success: true, message: 'Plex Sync service restarted' };
-    }
-
-    logger.warn(`Plex Sync service not responding after restart`, {
-      label: LABEL,
-    });
-    return {
-      success: isRunning,
-      message: isRunning
-        ? 'Plex Sync service restart triggered but it remains unreachable after 10s'
-        : 'Failed to start Plex Sync service',
-    };
-  }
-
-  private async isServiceResponding(): Promise<boolean> {
-    try {
-      await axios.get(HEALTH_URL, { timeout: 2000 });
-      return true;
-    } catch {
-      return false;
-    }
-  }
 
   private async checkHealth(): Promise<void> {
     if (this.isRestarting) return;
@@ -200,32 +124,40 @@ class PythonServiceManager {
       this.consecutiveFailures++;
       this.lastChecked = new Date();
 
-      if (this.consecutiveFailures >= 2) {
-        if (this.status !== 'unhealthy') {
-          this.status = 'unhealthy';
-          logger.warn('Plex Sync service is unreachable', { label: LABEL });
-        }
+      if (this.consecutiveFailures >= 2 && this.status !== 'unhealthy') {
+        this.status = 'unhealthy';
+        logger.warn('Plex Sync service is unreachable', { label: LABEL });
       }
     }
   }
 
-  private killExistingProcess(): number[] {
-    const killed: number[] = [];
-    const filePid = this.readPidFile();
-    if (filePid && this.tryKill(filePid, 'SIGTERM')) {
-      killed.push(filePid);
+  private async killExistingProcesses(): Promise<void> {
+    const pidsToKill: number[] = [];
+
+    if (this.spawnedPid && this.tryKill(this.spawnedPid, 'SIGTERM')) {
+      pidsToKill.push(this.spawnedPid);
+      this.spawnedPid = null;
     }
 
     for (const pid of this.findPythonServicePids()) {
-      if (!killed.includes(pid) && this.tryKill(pid, 'SIGTERM')) {
-        killed.push(pid);
+      if (!pidsToKill.includes(pid) && this.tryKill(pid, 'SIGTERM')) {
+        pidsToKill.push(pid);
       }
     }
 
-    return killed;
+    if (pidsToKill.length > 0) {
+      await this.waitForProcessExit(pidsToKill, 5);
+    }
   }
 
   private findPythonServicePids(): number[] {
+    if (existsSync('/proc')) {
+      return this.findPidsViaProc();
+    }
+    return this.findPidsViaPgrep();
+  }
+
+  private findPidsViaProc(): number[] {
     try {
       const entries = readdirSync('/proc').filter((e) => /^\d+$/.test(e));
       const pids: number[] = [];
@@ -256,14 +188,19 @@ class PythonServiceManager {
     }
   }
 
-  private removePidFile(): void {
+  private findPidsViaPgrep(): number[] {
     try {
-      if (existsSync(PID_FILE)) {
-        unlinkSync(PID_FILE);
-        logger.debug('Removed stale PID file', { label: LABEL });
-      }
+      const output = execSync('pgrep -f plex_invite', {
+        encoding: 'utf-8',
+        timeout: 3000,
+      }).trim();
+      if (!output) return [];
+      return output
+        .split('\n')
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((pid) => !isNaN(pid) && pid !== process.pid);
     } catch {
-      // Non-critical
+      return [];
     }
   }
 
@@ -271,8 +208,7 @@ class PythonServiceManager {
     pids: number[],
     gracefulSeconds: number
   ): Promise<void> {
-    const start = Date.now();
-    const deadline = start + gracefulSeconds * 1000;
+    const deadline = Date.now() + gracefulSeconds * 1000;
 
     while (Date.now() < deadline) {
       if (pids.every((pid) => !this.tryKill(pid, 0))) {
@@ -291,8 +227,7 @@ class PythonServiceManager {
     port: number,
     maxSeconds: number
   ): Promise<void> {
-    const start = Date.now();
-    const deadline = start + maxSeconds * 1000;
+    const deadline = Date.now() + maxSeconds * 1000;
 
     while (Date.now() < deadline) {
       const inUse = await new Promise<boolean>((resolve) => {
@@ -330,26 +265,21 @@ class PythonServiceManager {
     if (inDocker && process.env.NODE_ENV === 'production') {
       command = './venv/bin/gunicorn';
       args = [
-        '--pid',
-        PID_FILE,
         '--no-control-socket',
         '-w',
         '2',
         '-b',
-        '0.0.0.0:5005',
+        `0.0.0.0:${SERVICE_PORT}`,
         'python.plex_invite:app',
       ];
       cwd = process.cwd();
     } else if (process.env.NODE_ENV === 'production') {
       command = 'gunicorn';
       args = [
-        '--pid',
-        PID_FILE,
-        '--no-control-socket',
         '-w',
         '2',
         '-b',
-        '0.0.0.0:5005',
+        `0.0.0.0:${SERVICE_PORT}`,
         '--timeout',
         '60',
         '--graceful-timeout',
@@ -365,49 +295,52 @@ class PythonServiceManager {
       cwd = `${process.cwd()}/server/python`;
     }
 
-    const env = {
-      ...process.env,
-      CONFIG_DIRECTORY:
-        process.env.CONFIG_DIRECTORY ||
-        (inDocker ? '/app/config' : `${process.cwd()}/config`),
-    };
+    const configDir =
+      process.env.CONFIG_DIRECTORY ||
+      (inDocker ? '/app/config' : `${process.cwd()}/config`);
 
-    const child = spawn(command, args, {
-      cwd,
-      env,
-      stdio: 'ignore',
-      detached: true,
-    });
+    const logDir = `${configDir}/logs`;
+    const shellCmd = `CONFIG_DIRECTORY=${configDir} ${command} ${args.join(' ')} > /dev/null 2>>${logDir}/plex-sync-stderr.log & echo $!`;
 
-    child.on('error', (e) => {
-      logger.error(`Plex Sync service spawn error`, {
-        label: LABEL,
-        message: e.message || String(e),
+    try {
+      const output = execSync(shellCmd, {
+        cwd,
+        encoding: 'utf-8',
+        timeout: 5000,
       });
-    });
 
-    child.unref();
-    this.spawnedPids.clear();
-    if (child.pid) {
-      this.spawnedPids.add(child.pid);
-      if (!inDocker && process.env.NODE_ENV !== 'production') {
-        try {
-          writeFileSync(PID_FILE, String(child.pid));
-        } catch {
-          // Non-critical
-        }
+      const pid = parseInt(output.trim(), 10);
+      if (isNaN(pid) || pid <= 0) {
+        throw new Error(`Invalid PID from spawn: ${output.trim()}`);
       }
-    }
 
-    logger.debug(
-      `Plex Sync service started successfully with PID ${child.pid}`,
-      { label: LABEL }
-    );
+      this.spawnedPid = pid;
+      logger.debug(`Plex Sync service spawned with PID ${pid}`, {
+        label: LABEL,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      logger.error('Failed to spawn Plex Sync service', {
+        label: LABEL,
+        message: msg,
+      });
+      throw e;
+    }
   }
 
   private async waitForHealthy(maxAttempts: number): Promise<boolean> {
     for (let i = 0; i < maxAttempts; i++) {
       await new Promise((r) => setTimeout(r, 1000));
+
+      if (this.spawnedPid !== null && !this.tryKill(this.spawnedPid, 0)) {
+        logger.error(
+          `Plex Sync service (PID ${this.spawnedPid}) exited before becoming healthy`,
+          { label: LABEL }
+        );
+        this.spawnedPid = null;
+        return false;
+      }
+
       try {
         await axios.get(HEALTH_URL, { timeout: HEALTH_TIMEOUT });
         this.markHealthy();
@@ -426,43 +359,32 @@ class PythonServiceManager {
     }
 
     if (this.preserveProcesses) {
-      this.spawnedPids.clear();
+      this.spawnedPid = null;
       return;
     }
 
     const killed: number[] = [];
-    for (const pid of this.spawnedPids) {
-      if (this.tryKill(pid, 'SIGTERM')) killed.push(pid);
+
+    if (this.spawnedPid && this.tryKill(this.spawnedPid, 'SIGTERM')) {
+      killed.push(this.spawnedPid);
+      this.spawnedPid = null;
     }
 
-    const filePid = this.readPidFile();
-    if (
-      filePid &&
-      !killed.includes(filePid) &&
-      this.tryKill(filePid, 'SIGTERM')
-    ) {
-      killed.push(filePid);
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-      for (const pid of this.findPythonServicePids()) {
-        if (!killed.includes(pid) && this.tryKill(pid, 'SIGTERM')) {
-          killed.push(pid);
-        }
+    for (const pid of this.findPythonServicePids()) {
+      if (!killed.includes(pid) && this.tryKill(pid, 'SIGTERM')) {
+        killed.push(pid);
       }
     }
 
     if (killed.length > 0) {
       const deadline = Date.now() + 2000;
       while (Date.now() < deadline) {
-        if (killed.every((pid) => !this.tryKill(pid, 0))) break;
+        if (killed.every((pid) => !this.tryKill(pid, 0))) return;
       }
 
-      killed.forEach((pid) => this.tryKill(pid, 'SIGKILL'));
+      const remaining = killed.filter((pid) => this.tryKill(pid, 0));
+      remaining.forEach((pid) => this.tryKill(pid, 'SIGKILL'));
     }
-
-    this.spawnedPids.clear();
-    this.removePidFile();
   }
 }
 
