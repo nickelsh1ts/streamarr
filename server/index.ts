@@ -14,6 +14,7 @@ import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import restartManager from '@server/lib/restartManager';
+import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
@@ -170,6 +171,10 @@ app
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
+    pythonService.initialize();
+    process.on('exit', () => pythonService.destroy());
+    process.on('SIGINT', () => process.exit(0));
+    process.on('SIGTERM', () => process.exit(0));
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user

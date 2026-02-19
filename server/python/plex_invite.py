@@ -46,6 +46,10 @@ def get_error_status(status_code):
 
 app = Flask(__name__)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'})
+
 @app.route('/invite', methods=['POST'])
 def invite():
     data = request.json

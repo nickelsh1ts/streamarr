@@ -2,7 +2,9 @@ import type { Server } from 'http';
 import type { Server as SocketIOServer } from 'socket.io';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import { getSettings } from './settings';
+import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
+import { isDocker } from '@server/utils/isDocker';
 import dataSource from '@server/datasource';
 import { existsSync, utimesSync } from 'fs';
 import { spawn } from 'child_process';
@@ -191,6 +193,7 @@ class RestartManager {
   }
 
   private devRestart(): void {
+    pythonService.prepareForServerRestart();
     const touchFile = path.join(__dirname, '../index.ts');
 
     if (existsSync(touchFile)) {
@@ -233,22 +236,24 @@ class RestartManager {
       if (dataSource.isInitialized) {
         await dataSource.destroy();
       }
+      pythonService.prepareForServerRestart();
 
-      const isContainer =
-        existsSync('/.dockerenv') ||
-        existsSync('/run/.containerenv') ||
-        process.env.CONTAINER === 'true';
-
-      if (!isContainer) {
-        const child = spawn(process.argv[0], process.argv.slice(1), {
-          cwd: process.cwd(),
-          env: process.env,
-          stdio: 'inherit',
-        });
-        child.unref();
+      if (isDocker()) {
+        process.exit(0);
       }
+      process.removeAllListeners('SIGINT');
+      process.removeAllListeners('SIGTERM');
+      process.removeAllListeners('exit');
 
-      process.exit(0);
+      const child = spawn(process.argv[0], process.argv.slice(1), {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit',
+      });
+
+      process.on('SIGINT', () => child.kill('SIGINT'));
+      process.on('SIGTERM', () => child.kill('SIGTERM'));
+      child.on('exit', (code) => process.exit(code ?? 0));
     } catch (e) {
       logger.error(`Could not restart the server - restart manually`, {
         label: LABEL,

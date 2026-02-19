@@ -1195,6 +1195,31 @@ components:
         message:
           type: string
           example: 'Restarting server...'
+    PythonServiceStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - healthy
+            - unhealthy
+            - unknown
+          description: Current health status of the Python service
+          example: healthy
+        lastChecked:
+          type: string
+          nullable: true
+          description: ISO timestamp of last health check
+          example: '2026-02-17T12:00:00.000Z'
+        lastHealthy:
+          type: string
+          nullable: true
+          description: ISO timestamp of last successful health check
+          example: '2026-02-17T12:00:00.000Z'
+        consecutiveFailures:
+          type: number
+          description: Number of consecutive failed health checks
+          example: 0
     NotificationEmailSettings:
       type: object
       properties:
@@ -3475,6 +3500,38 @@ paths:
                 $ref: '#/components/schemas/RestartResponse'
         '500':
           description: Failed to trigger restart
+  /settings/python/status:
+    get:
+      summary: Get Python service health status
+      description: Returns the current health status of the Python (Plex Sync) service.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Python service status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PythonServiceStatus'
+  /settings/python/restart:
+    post:
+      summary: Restart Python service
+      description: Restarts the Python (Plex Sync) service without restarting the main Streamarr server.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Python service restarted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
+        '500':
+          description: Failed to restart Python service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
   /auth/me:
     get:
       summary: Get logged-in user

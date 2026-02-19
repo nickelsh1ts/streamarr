@@ -1,27 +1,49 @@
 'use client';
 import Error from '@app/app/error';
-import Releases from '@app/components/Admin/Settings/About/Releases';
+import Releases from '@app/components/Admin/Settings/System/Releases';
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
+import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
 import List from '@app/components/Common/List';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { usePythonRestart } from '@app/hooks/usePythonRestart';
+import { useServerRestart } from '@app/hooks/useServerRestart';
+import { ArrowPathIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import type {
+  RestartStatusResponse,
   SettingsAboutResponse,
   StatusResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 
-const AboutSettings = () => {
+const SystemSettings = () => {
   const intl = useIntl();
+  const {
+    isRestarting: isRestartingServer,
+    isReconnecting,
+    restart: handleRestartServer,
+  } = useServerRestart();
+
+  const {
+    status: pythonStatus,
+    isRestarting: isRestartingPython,
+    restart: handleRestartPython,
+  } = usePythonRestart({ refreshInterval: 15_000 });
+  const { data: restartData, error: restartError } =
+    useSWR<RestartStatusResponse>(RESTART_REQUIRED_SWR_KEY, {
+      revalidateOnFocus: true,
+    });
+
   const { data, error } = useSWR<SettingsAboutResponse>(
     '/api/v1/settings/about'
   );
 
   const { data: status } = useSWR<StatusResponse>('/api/v1/status');
 
-  if (!data && !error) {
+  if (!data && !error && !restartError) {
     return <LoadingEllipsis />;
   }
 
@@ -40,7 +62,7 @@ const AboutSettings = () => {
       <Alert type="primary">
         <p className="text-sm leading-5 flex-1">
           <FormattedMessage
-            id="aboutSettings.betaWarning"
+            id="systemSettings.betaWarning"
             defaultMessage="This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
           />
         </p>
@@ -55,31 +77,72 @@ const AboutSettings = () => {
           </a>
         </p>
       </Alert>
+      <div className="mt-6 flex justify-between items-center">
+        <h3 className="text-2xl font-extrabold gap-2 flex items-center">
+          <FormattedMessage id="system.health.title" defaultMessage="Health" />
+        </h3>
+      </div>
+      <div className="mt-4">
+        {data.version.startsWith('develop-') && (
+          <Alert>
+            <p className="text-sm leading-5 flex-1">
+              <FormattedMessage
+                id="systemSettings.developWarning"
+                defaultMessage="You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
+                values={{
+                  code: (chunks: React.ReactNode) => <code>{chunks}</code>,
+                }}
+              />
+            </p>
+          </Alert>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        <HealthCard
+          title={intl.formatMessage({
+            id: 'system.streamarr.title',
+            defaultMessage: 'Streamarr',
+          })}
+          description={
+            restartData?.required
+              ? intl.formatMessage({
+                  id: 'system.restartRequiredDescription',
+                  defaultMessage:
+                    'A restart is required to apply recent changes. Please restart the server as soon as possible.',
+                })
+              : intl.formatMessage({
+                  id: 'system.streamarr.description',
+                  defaultMessage: 'Main server process for Streamarr.',
+                })
+          }
+          status={restartData?.required ? 'Restart Required' : 'healthy'}
+          isRestarting={isRestartingServer || isReconnecting}
+          onRestart={handleRestartServer}
+        />
+        <HealthCard
+          title={intl.formatMessage({
+            id: 'system.python.title',
+            defaultMessage: 'Plex Sync Service',
+          })}
+          description={intl.formatMessage({
+            id: 'system.python.description',
+            defaultMessage: 'Handles Plex invites and library synchronization.',
+          })}
+          status={pythonStatus?.status}
+          isRestarting={isRestartingPython}
+          onRestart={handleRestartPython}
+        />
+      </div>
       <div className="mt-6">
         <List
           title={intl.formatMessage({
-            id: 'aboutSettings.title',
+            id: 'systemSettings.title',
             defaultMessage: 'About Streamarr',
           })}
         >
-          <div className="mt-4">
-            {data.version.startsWith('develop-') && (
-              <Alert>
-                <p className="text-sm leading-5 flex-1">
-                  <FormattedMessage
-                    id="aboutSettings.developWarning"
-                    defaultMessage="You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
-                    values={{
-                      code: (chunks: React.ReactNode) => <code>{chunks}</code>,
-                    }}
-                  />
-                </p>
-              </Alert>
-            )}
-          </div>
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.version',
+              id: 'systemSettings.version',
               defaultMessage: 'Version',
             })}
             className="flex flex-row items-center truncate"
@@ -101,7 +164,7 @@ const AboutSettings = () => {
                     className="ml-2 !cursor-pointer transition"
                   >
                     <FormattedMessage
-                      id="aboutSettings.outOfDate"
+                      id="systemSettings.outOfDate"
                       defaultMessage="Out of date"
                     />
                   </Badge>
@@ -121,7 +184,7 @@ const AboutSettings = () => {
                     className="ml-2 !cursor-pointer transition"
                   >
                     <FormattedMessage
-                      id="aboutSettings.upToDate"
+                      id="systemSettings.upToDate"
                       defaultMessage="Up to date"
                     />
                   </Badge>
@@ -130,7 +193,7 @@ const AboutSettings = () => {
           </List.Item>
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.totalUsers',
+              id: 'systemSettings.totalUsers',
               defaultMessage: 'Total Users',
             })}
           >
@@ -146,7 +209,7 @@ const AboutSettings = () => {
           </List.Item>
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.dataDirectory',
+              id: 'systemSettings.dataDirectory',
               defaultMessage: 'Data Directory',
             })}
           >
@@ -155,7 +218,7 @@ const AboutSettings = () => {
           {data.tz && (
             <List.Item
               title={intl.formatMessage({
-                id: 'aboutSettings.timeZone',
+                id: 'systemSettings.timeZone',
                 defaultMessage: 'Time Zone',
               })}
             >
@@ -167,13 +230,13 @@ const AboutSettings = () => {
       <div className="mt-6">
         <List
           title={intl.formatMessage({
-            id: 'aboutSettings.gettingSupport',
+            id: 'systemSettings.gettingSupport',
             defaultMessage: 'Getting Support',
           })}
         >
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.documentation',
+              id: 'systemSettings.documentation',
               defaultMessage: 'Documentation',
             })}
           >
@@ -188,7 +251,7 @@ const AboutSettings = () => {
           </List.Item>
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.githubDiscussions',
+              id: 'systemSettings.githubDiscussions',
               defaultMessage: 'GitHub Discussions',
             })}
           >
@@ -206,13 +269,13 @@ const AboutSettings = () => {
       <div className="mt-6">
         <List
           title={intl.formatMessage({
-            id: 'aboutSettings.supportStreamarr',
+            id: 'systemSettings.supportStreamarr',
             defaultMessage: 'Support Streamarr',
           })}
         >
           <List.Item
             title={intl.formatMessage({
-              id: 'aboutSettings.helpPayForCoffee',
+              id: 'systemSettings.helpPayForCoffee',
               defaultMessage: 'Help Pay for Coffee ☕️',
             })}
           >
@@ -226,7 +289,7 @@ const AboutSettings = () => {
             </a>
             <Badge className="ml-2">
               <FormattedMessage
-                id="aboutSettings.preferred"
+                id="systemSettings.preferred"
                 defaultMessage="Preferred"
               />
             </Badge>
@@ -243,10 +306,101 @@ const AboutSettings = () => {
           </List.Item>
         </List>
       </div>
+
       <div className="section">
         <Releases currentVersion={data.version} />
       </div>
     </div>
   );
 };
-export default AboutSettings;
+
+const HealthCard = ({
+  title,
+  description,
+  status,
+  isRestarting,
+  onRestart,
+}: {
+  title: string;
+  description: string;
+  status?: string;
+  isRestarting: boolean;
+  onRestart: () => void;
+}) => {
+  const intl = useIntl();
+
+  const getStatusBadge = () => {
+    switch (status) {
+      case 'healthy':
+        return (
+          <Badge badgeType="success">
+            <FormattedMessage
+              id="system.status.healthy"
+              defaultMessage="Healthy"
+            />
+          </Badge>
+        );
+      case 'unhealthy':
+        return (
+          <Badge badgeType="error">
+            <FormattedMessage
+              id="system.status.unhealthy"
+              defaultMessage="Unhealthy"
+            />
+          </Badge>
+        );
+      default:
+        return (
+          <Badge badgeType="warning">
+            {status ? (
+              status
+            ) : (
+              <FormattedMessage
+                id="system.status.unknown"
+                defaultMessage="Unknown"
+              />
+            )}
+          </Badge>
+        );
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-base-content/10 bg-base-200/50 hover:bg-base-200/30 py-2 px-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h4 className="text-lg font-bold flex gap-2">
+            {title} {status && <span>{getStatusBadge()}</span>}
+          </h4>
+          <p className="text-sm text-neutral">{description}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {isRestarting ? (
+            <Button buttonSize="sm" buttonType="error" disabled>
+              <ArrowPathIcon className="size-4 mr-1 animate-spin" />
+              <FormattedMessage
+                id="system.restarting"
+                defaultMessage="Restarting..."
+              />
+            </Button>
+          ) : (
+            <ConfirmButton
+              onClick={onRestart}
+              confirmText={intl.formatMessage({
+                id: 'common.areYouSure',
+                defaultMessage: 'Are you sure?',
+              })}
+              buttonSize="sm"
+              className="max-sm:btn-block"
+            >
+              <ArrowPathIcon className="size-4 mr-1" />
+              <FormattedMessage id="system.restart" defaultMessage="Restart" />
+            </ConfirmButton>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SystemSettings;

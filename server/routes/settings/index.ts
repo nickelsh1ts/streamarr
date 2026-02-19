@@ -23,6 +23,7 @@ import type {
   ServiceSettings,
 } from '@server/lib/settings';
 import restartManager from '@server/lib/restartManager';
+import pythonService from '@server/lib/pythonService';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -1000,6 +1001,23 @@ settingsRoutes.post(
   (_req, res) => {
     res.status(200).json({ success: true, message: 'Restarting server...' });
     setTimeout(() => restartManager.triggerRestart(), 500);
+  }
+);
+
+settingsRoutes.get(
+  '/python/status',
+  isAuthenticated(Permission.ADMIN),
+  (_req, res) => {
+    res.status(200).json(pythonService.getStatus());
+  }
+);
+
+settingsRoutes.post(
+  '/python/restart',
+  isAuthenticated(Permission.ADMIN),
+  async (_req, res) => {
+    const result = await pythonService.restart();
+    res.status(result.success ? 200 : 500).json(result);
   }
 );
 

@@ -3,6 +3,7 @@ import LibraryItem from '@app/components/Admin/Settings/LibraryItem';
 import RestartRequiredAlert, {
   RESTART_REQUIRED_SWR_KEY,
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -211,7 +212,6 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             defaultMessage="Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
           />
         </p>
-        <RestartRequiredAlert filterServices={['Plex']} />
         {!!onComplete && (
           <Alert type="primary">
             <p className="text-sm leading-5 flex-1">
@@ -307,6 +307,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
+              <RestartRequiredAlert filterServices={['Plex']} />
+              <PythonServiceAlert />
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="preset">
                   <FormattedMessage

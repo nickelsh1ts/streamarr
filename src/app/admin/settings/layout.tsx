@@ -84,9 +84,12 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/admin\/settings\/jobs/,
     },
     {
-      text: intl.formatMessage({ id: 'common.about', defaultMessage: 'About' }),
-      route: '/admin/settings/about',
-      regex: /^\/admin\/settings\/about/,
+      text: intl.formatMessage({
+        id: 'common.system',
+        defaultMessage: 'System',
+      }),
+      route: '/admin/settings/system',
+      regex: /^\/admin\/settings\/system/,
     },
   ];
 

@@ -80,3 +80,10 @@ export interface RestartResponse {
   success: boolean;
   message: string;
 }
+
+export interface PythonServiceStatusResponse {
+  status: 'healthy' | 'unhealthy' | 'unknown';
+  lastChecked: string | null;
+  lastHealthy: string | null;
+  consecutiveFailures: number;
+}
