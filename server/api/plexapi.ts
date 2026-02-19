@@ -119,6 +119,8 @@ class PlexAPI {
     this.cache = cacheManager.getCache('plexguid').data;
   }
 
+  // TODO: Fix getStatus (failing to get status: {"errorMessage":""})
+
   public async getStatus() {
     try {
       return await this.plexClient.query('/');
