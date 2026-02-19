@@ -70,4 +70,4 @@ ENV PORT=3000
 
 ENTRYPOINT [ "/sbin/tini", "--" ]
 
-CMD ["/bin/sh", "-c", "./venv/bin/gunicorn --no-control-socket -w 2 -b 0.0.0.0:5005 python.plex_invite:app & yarn start"]
+CMD ["yarn", "start"]

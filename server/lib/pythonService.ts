@@ -2,7 +2,7 @@ import type { PythonServiceStatusResponse } from '@server/interfaces/api/setting
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
 import axios from 'axios';
-import { existsSync, readFileSync, readdirSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { createConnection } from 'net';
 
@@ -21,8 +21,8 @@ class PythonServiceManager {
   private consecutiveFailures = 0;
   private pollTimer: NodeJS.Timeout | null = null;
   private isRestarting = false;
-  private preserveProcesses = false;
   private spawnedPid: number | null = null;
+  private preserveProcesses = false;
 
   private markHealthy(): void {
     this.status = 'healthy';
@@ -46,15 +46,49 @@ class PythonServiceManager {
       this.pollTimer = null;
     }
 
-    this.spawnedPid = null;
     this.preserveProcesses = true;
   }
 
-  public initialize(): void {
+  public async start(): Promise<void> {
+    try {
+      await axios.get(HEALTH_URL, { timeout: HEALTH_TIMEOUT });
+      this.markHealthy();
+
+      const adoptedPids = this.findPythonServicePids();
+      if (adoptedPids.length > 0) {
+        this.spawnedPid = adoptedPids[0];
+      }
+      logger.info(
+        `Plex Sync service running (PID ${this.spawnedPid ?? 'unknown'})`,
+        { label: LABEL }
+      );
+      this.initialize();
+      return;
+    } catch {
+      // Not running or unhealthy — do a full start
+    }
+
+    await this.killExistingProcesses();
+    await this.waitForPortFree(SERVICE_PORT, 10);
+    this.spawnPythonService();
+
+    const healthy = await this.waitForHealthy(15);
+
+    if (healthy) {
+      logger.info('Plex Sync service started successfully', { label: LABEL });
+    } else {
+      logger.warn(
+        'Plex Sync service spawned but health check failed after 15s',
+        { label: LABEL }
+      );
+    }
+
+    this.initialize();
+  }
+
+  private initialize(): void {
     this.checkHealth();
     this.pollTimer = setInterval(() => this.checkHealth(), POLL_INTERVAL);
-
-    logger.info('Service health monitoring started', { label: LABEL });
   }
 
   public getStatus(): PythonServiceStatusResponse {
@@ -106,7 +140,6 @@ class PythonServiceManager {
       this.isRestarting = false;
     }
   }
-
 
   private async checkHealth(): Promise<void> {
     if (this.isRestarting) return;
@@ -300,6 +333,10 @@ class PythonServiceManager {
       (inDocker ? '/app/config' : `${process.cwd()}/config`);
 
     const logDir = `${configDir}/logs`;
+    if (!existsSync(logDir)) {
+      mkdirSync(logDir, { recursive: true });
+    }
+
     const shellCmd = `CONFIG_DIRECTORY=${configDir} ${command} ${args.join(' ')} > /dev/null 2>>${logDir}/plex-sync-stderr.log & echo $!`;
 
     try {
@@ -315,9 +352,6 @@ class PythonServiceManager {
       }
 
       this.spawnedPid = pid;
-      logger.debug(`Plex Sync service spawned with PID ${pid}`, {
-        label: LABEL,
-      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       logger.error('Failed to spawn Plex Sync service', {
@@ -360,13 +394,16 @@ class PythonServiceManager {
 
     if (this.preserveProcesses) {
       this.spawnedPid = null;
+      this.preserveProcesses = false;
       return;
     }
 
     const killed: number[] = [];
 
-    if (this.spawnedPid && this.tryKill(this.spawnedPid, 'SIGTERM')) {
-      killed.push(this.spawnedPid);
+    if (this.spawnedPid) {
+      if (this.tryKill(this.spawnedPid, 'SIGTERM')) {
+        killed.push(this.spawnedPid);
+      }
       this.spawnedPid = null;
     }
 
