@@ -191,24 +191,55 @@ Categories help organize downloads by type:
 
 ## Client Health
 
-Streamarr monitors download client health:
+Streamarr monitors download client health automatically and protects against repeated connection failures.
 
 ### Health Status
 
-| Status        | Description                                  |
-| ------------- | -------------------------------------------- |
-| **Healthy**   | Client responding normally                   |
-| **Degraded**  | Experiencing intermittent issues             |
-| **Unhealthy** | Failed to connect                            |
-| **Cooldown**  | Temporarily disabled after repeated failures |
+Each client transitions through the following states:
+
+| Status        | Description                                                        |
+| ------------- | ------------------------------------------------------------------ |
+| **Healthy**   | Client is responding normally                                      |
+| **Retrying**  | First connection failure detected; retrying on next request        |
+| **Unhealthy** | Two consecutive failures; client enters a 5-minute cooldown period |
+
+### State Transitions
+
+1. **Healthy → Retrying**: The first failed connection attempt marks the client as retrying
+2. **Retrying → Unhealthy**: A second consecutive failure puts the client into a 5-minute cooldown
+3. **Unhealthy → Healthy**: A successful connection (or manual retry) restores healthy status
+4. **Retrying → Healthy**: A successful connection during the retrying state restores immediately
+
+### Cooldown Behavior
+
+When a client enters cooldown:
+
+- No new connection attempts are made to the client for **5 minutes**
+- The last successfully fetched data is served from cache during cooldown
+- After the cooldown period expires, the next request will attempt a fresh connection
+
+### Manual Retry
+
+You can manually reset client health without waiting for cooldown to expire:
+
+- **Retry a specific client** — Reset one client to healthy and retry immediately
+- **Retry all clients** — Reset all unhealthy clients at once
+
+### Health API
+
+| Endpoint                                   | Method | Description                      |
+| ------------------------------------------ | ------ | -------------------------------- |
+| `/api/v1/downloads/health`                 | GET    | Get health status of all clients |
+| `/api/v1/downloads/health/retry/:clientId` | POST   | Retry a specific client          |
+| `/api/v1/downloads/health/retry`           | POST   | Retry all unhealthy clients      |
 
 ### Health Recovery
 
 If a client enters cooldown:
 
-1. Check the client is running
-2. Verify network connectivity
-3. Reset client health in Settings to retry immediately
+1. Check the client is running and accessible
+2. Verify network connectivity between Streamarr and the client
+3. Use the retry button to reset health and attempt an immediate reconnection
 
 ---
 

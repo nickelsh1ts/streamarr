@@ -1,20 +1,7 @@
 import Stats from '@app/components/Stats';
-import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
-import type { Metadata } from 'next';
+import { generatePageMetadata } from '@app/utils/serverFetchHelpers';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const res = await fetch(
-    `http://${process.env.HOST || 'localhost'}:${
-      process.env.PORT || 3000
-    }/api/v1/settings/public`,
-    { cache: 'no-store' }
-  );
-  const currentSettings: PublicSettingsResponse = await res.json();
-
-  return {
-    title: `Stats - ${currentSettings.applicationTitle}`,
-  };
-}
+export const generateMetadata = () => generatePageMetadata('Stats');
 
 const StatsPage = () => {
   return <Stats />;

@@ -68,22 +68,96 @@ This setting is **disabled** by default.
 
 Set the default display language for Streamarr. Users can override this in their individual settings.
 
+### Support URL
+
+Set the URL for the "Get Support" link shown in the [Help Centre](../help.md) and footer.
+
+### Support Email
+
+Set the support email address displayed in the [Help Centre](../help.md).
+
+### Enable Release Schedule
+
+When enabled, the Release Schedule (Calendar) page is available in the navigation menu. This shows upcoming releases from Sonarr and Radarr, plus custom events.
+
+This setting is **disabled** by default.
+
+{% hint style="info" %}
+This setting controls the visibility of the schedule feature. You still need to configure Sonarr and/or Radarr in [Services](#services) for release data to appear.
+{% endhint %}
+
+### Enable Extended Homepage
+
+When enabled, the homepage displays additional sections including FAQs and feature highlights below the main hero area.
+
+When disabled, the homepage shows a minimal layout.
+
+This setting is **enabled** by default.
+
 ### Custom Logo
 
-Upload a custom logo to replace the default Streamarr branding. Both full and small (icon) variants can be customized.
+Upload custom logos to replace the default Streamarr branding. Two variants are supported:
+
+| Variant        | Recommended Size | Where Used                                 |
+| -------------- | ---------------- | ------------------------------------------ |
+| **Full Logo**  | 190 × 45 px      | Sidebar, sign-in page, desktop navigation  |
+| **Small Logo** | 45 × 45 px       | Mobile navigation, PWA icon, compact views |
+
+**Supported formats**: JPG, PNG, GIF, SVG (max 5 MB each).
+
+Uploaded logos are stored in `config/cache/logos/` and served via the API. To remove a custom logo and revert to the default Streamarr branding, click the delete button next to the logo preview.
 
 ### Theme
 
-Customize the application colors to match your brand. All DaisyUI theme colors can be configured:
+Customize the application colors to match your brand. Streamarr uses [DaisyUI](https://daisyui.com/docs/themes/) theme tokens stored in OKLCH color space for perceptually uniform colors.
 
-- **Primary** — Main accent color
-- **Secondary** — Secondary accent color
-- **Accent** — Highlight color
-- **Neutral** — Neutral/gray tones
-- **Base** — Background colors (100, 200, 300 variants)
-- **Info/Success/Warning/Error** — Status colors
+#### Color Tokens
 
-<!-- TODO: Add screenshot of theme editor -->
+The following 20 color tokens can be customized:
+
+| Token               | Default   | Purpose                                 |
+| ------------------- | --------- | --------------------------------------- |
+| `primary`           | `#974ede` | Main brand/accent color                 |
+| `primary-content`   | `#fff`    | Text on primary backgrounds             |
+| `secondary`         | `#080011` | Secondary accent color                  |
+| `secondary-content` | `#cfcbdc` | Text on secondary backgrounds           |
+| `accent`            | `#e5a00d` | Highlight/emphasis color                |
+| `accent-content`    | `#fff`    | Text on accent backgrounds              |
+| `neutral`           | `#737373` | Neutral/gray tones                      |
+| `neutral-content`   | `#e0e2e4` | Text on neutral backgrounds             |
+| `base-100`          | `#121212` | Primary background color                |
+| `base-200`          | `#161616` | Secondary background (cards, panels)    |
+| `base-300`          | `#1f1f1f` | Tertiary background (borders, dividers) |
+| `base-content`      | `#fff`    | Default text color on base backgrounds  |
+| `info`              | `#2563eb` | Informational status color              |
+| `info-content`      | `#d2e2ff` | Text on info backgrounds                |
+| `success`           | `#84cc16` | Success status color                    |
+| `success-content`   | `#fff`    | Text on success backgrounds             |
+| `warning`           | `#ffc107` | Warning status color                    |
+| `warning-content`   | `#fff`    | Text on warning backgrounds             |
+| `error`             | `#b91c1c` | Error/danger status color               |
+| `error-content`     | `#fff`    | Text on error backgrounds               |
+
+#### Color Picker
+
+Click any color swatch in the theme grid to open the color picker. The picker supports three selection modes:
+
+1. **Palette** — Choose from a curated grid of Tailwind colors
+2. **Picker** — Visual color wheel for freeform selection
+3. **Sliders** — HSL sliders for precise control (Hue, Saturation, Lightness)
+
+Colors can be entered or displayed in four formats via the dropdown:
+
+- **OKLCH** — `oklch(L C H)` (perceptually uniform, used internally)
+- **HSL** — `hsl(H, S%, L%)`
+- **RGB** — `rgb(R, G, B)`
+- **Hex** — `#RRGGBB`
+
+#### Theme Application
+
+Theme colors are applied globally at runtime via CSS custom properties. They also propagate to embedded service iframes (Plex Web, \*Arr services) for a consistent look across the application.
+
+To reset all colors to defaults, click the **"Reset to Default"** button in the theme section.
 
 ---
 
@@ -279,11 +353,18 @@ Connect Tautulli for Plex statistics.
 
 #### Uptime Kuma
 
-Connect Uptime Kuma for status page integration.
+Connect an Uptime Kuma instance (or any status page) to provide users with a link to your server status page.
 
-| Setting          | Description                    |
-| ---------------- | ------------------------------ |
-| **External URL** | Public URL to your status page |
+| Setting          | Description                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| **Enable**       | Enable or disable the status page integration                                        |
+| **External URL** | The publicly-accessible URL of your status page (e.g., `https://status.example.com`) |
+
+When enabled, the status page URL is exposed publicly (accessible without authentication) and displayed in the [Help Centre](../help.md). This allows users to check if your services are experiencing issues without needing to sign in.
+
+{% hint style="info" %}
+While this setting is named "Uptime Kuma," it works with any status page URL — you are not required to use Uptime Kuma specifically.
+{% endhint %}
 
 ---
 

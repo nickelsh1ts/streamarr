@@ -1,6 +1,12 @@
 'use client';
 import type { UserOnboardingDataResponse } from '@server/interfaces/api/onboardingInterfaces';
+import type {
+  TutorialStepResponse,
+  WelcomeContentResponse,
+} from '@server/interfaces/api/onboardingInterfaces';
+import { Permission } from '@server/lib/permissions';
 import axios from 'axios';
+import { usePathname } from 'next/navigation';
 import React, {
   createContext,
   useCallback,
@@ -9,21 +15,36 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { useIntl } from 'react-intl';
 import { useOnboarding } from '@app/hooks/useOnboarding';
 import { useUser } from '@app/hooks/useUser';
+import useSettings from '@app/hooks/useSettings';
+import {
+  getAdminWelcomeSlides,
+  getAdminTutorialSteps,
+} from '@app/utils/adminOnboarding';
 
 interface OnboardingContextType {
   data?: UserOnboardingDataResponse;
   loading: boolean;
   error: unknown;
 
+  isAdminOnboarding: boolean;
+  showAdminWelcome: boolean;
+  showAdminTutorial: boolean;
+  allowSkipWelcome: boolean;
+  allowSkipTutorial: boolean;
+  canAlwaysSkip: boolean;
+
+  welcomeContent: WelcomeContentResponse[];
+  tutorialSteps: TutorialStepResponse[];
+  tutorialMode: 'spotlight' | 'wizard' | 'both';
+
   showWelcome: boolean;
-  setShowWelcome: (show: boolean) => void;
   completeWelcome: () => Promise<void>;
   dismissWelcome: () => Promise<void>;
 
   showTutorial: boolean;
-  setShowTutorial: (show: boolean) => void;
   tutorialActive: boolean;
   startTutorial: () => void;
   closeTutorial: () => void;
@@ -51,22 +72,121 @@ interface OnboardingProviderProps {
   children: React.ReactNode;
 }
 
+type AdminPhase = 'idle' | 'welcome' | 'tutorial';
+
 export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   children,
 }) => {
-  const { user } = useUser();
+  const { user, hasPermission } = useUser();
+  const { currentSettings } = useSettings();
+  const intl = useIntl();
   const { data, loading, error, mutate } = useOnboarding(user?.id);
+  const pathname = usePathname();
 
-  const [showWelcome, setShowWelcome] = useState(false);
+  const isSetupRoute = pathname?.startsWith('/setup');
+  const isAdmin = hasPermission(Permission.ADMIN);
+  const allowSkipWelcome = data?.settings.allowSkipWelcome ?? true;
+  const allowSkipTutorial = data?.settings.allowSkipTutorial ?? true;
+  const canAlwaysSkip = isAdmin;
 
-  const [showTutorial, setShowTutorial] = useState(false);
+  const tutorialMode = data?.settings.tutorialMode ?? 'both';
+
+  const [adminPhase, setAdminPhase] = useState<AdminPhase>('idle');
+  const [adminOnboardingJustCompleted, setAdminOnboardingJustCompleted] =
+    useState(false);
+
+  const showAdminWelcome = adminPhase === 'welcome';
+  const showAdminTutorial = adminPhase === 'tutorial';
+
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
+
+  const [tutorialOpen, setTutorialOpen] = useState(false);
   const [tutorialActive, setTutorialActive] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-  const shouldShowWelcomeModal = useMemo(() => {
+  const resetTutorialState = useCallback(() => {
+    setTutorialActive(false);
+    setTutorialOpen(false);
+    setCurrentStepIndex(0);
+  }, []);
+
+  const isAdminOnboarding = useMemo(() => {
+    if (!isAdmin || !user || loading || !currentSettings.initialized)
+      return false;
+
+    const adminOnboardingCompleted =
+      data?.settings?.adminOnboardingCompleted ?? false;
+    return !adminOnboardingCompleted;
+  }, [isAdmin, user, loading, currentSettings.initialized, data?.settings]);
+
+  const welcomeContent = useMemo((): WelcomeContentResponse[] => {
+    if (isAdminOnboarding) {
+      return getAdminWelcomeSlides(intl);
+    }
+    return data?.welcomeContent ?? [];
+  }, [isAdminOnboarding, intl, data?.welcomeContent]);
+
+  const tutorialSteps = useMemo((): TutorialStepResponse[] => {
+    if (isAdminOnboarding) {
+      return getAdminTutorialSteps(intl);
+    }
+    return data?.tutorialSteps ?? [];
+  }, [isAdminOnboarding, intl, data?.tutorialSteps]);
+
+  const shouldBlockUserOnboarding = useMemo(() => {
+    return (
+      isSetupRoute ||
+      isAdminOnboarding ||
+      adminOnboardingJustCompleted ||
+      adminPhase !== 'idle'
+    );
+  }, [
+    isSetupRoute,
+    isAdminOnboarding,
+    adminOnboardingJustCompleted,
+    adminPhase,
+  ]);
+
+  useEffect(() => {
+    if (isSetupRoute) return;
+    if (adminOnboardingJustCompleted) return;
+    if (isAdminOnboarding && adminPhase === 'idle') {
+      setAdminPhase('welcome');
+    }
+  }, [
+    isAdminOnboarding,
+    adminPhase,
+    isSetupRoute,
+    adminOnboardingJustCompleted,
+  ]);
+
+  const finalizeAdminOnboarding = useCallback(async () => {
+    setAdminOnboardingJustCompleted(true);
+    setAdminPhase('idle');
+    resetTutorialState();
+
+    try {
+      await axios.post('/api/v1/settings/onboarding/admin-complete');
+      if (user?.id) {
+        await axios.post(`/api/v1/user/${user.id}/onboarding/welcome/dismiss`);
+        await axios.post(`/api/v1/user/${user.id}/onboarding/tutorial/skip`);
+      }
+      await mutate();
+    } catch {
+      // Silently fail - UI state already updated
+    }
+  }, [mutate, user?.id, resetTutorialState]);
+
+  const completeAdminTutorial = finalizeAdminOnboarding;
+
+  const showWelcome = showAdminWelcome || welcomeOpen;
+  const showTutorial = showAdminTutorial || tutorialOpen;
+
+  const shouldwelcomeOpenModal = useMemo(() => {
     if (loading || error || !data || !user) return false;
+    if (shouldBlockUserOnboarding) return false;
 
     const { settings, status, welcomeContent } = data;
 
@@ -75,15 +195,16 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
       welcomeContent.length > 0 &&
       (!status || (!status.welcomeCompleted && !status.welcomeDismissed))
     );
-  }, [data, loading, error, user]);
+  }, [data, loading, error, user, shouldBlockUserOnboarding]);
 
   useEffect(() => {
-    setShowWelcome(shouldShowWelcomeModal);
-  }, [shouldShowWelcomeModal]);
+    setWelcomeOpen(shouldwelcomeOpenModal);
+  }, [shouldwelcomeOpenModal]);
 
   // After welcome completes (or is disabled), check if tutorial should show
   useEffect(() => {
     if (loading || error || !data || !user) return;
+    if (shouldBlockUserOnboarding) return;
 
     const { settings, status } = data;
 
@@ -97,63 +218,70 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
       welcomeDone &&
       !status?.tutorialCompleted;
 
-    if (shouldAutoStartTutorial && !showWelcome) {
+    if (shouldAutoStartTutorial && !welcomeOpen) {
       const delay = settings.tutorialAutostartDelay || 3000;
       const timeout = setTimeout(() => {
-        setShowTutorial(true);
+        setTutorialOpen(true);
       }, delay);
       return () => clearTimeout(timeout);
     }
-  }, [data, loading, error, user, showWelcome]);
+  }, [data, loading, error, user, welcomeOpen, shouldBlockUserOnboarding]);
 
-  // Welcome actions
   const completeWelcome = useCallback(async () => {
     // In preview mode, just close without saving
     if (isPreviewMode) {
-      setShowWelcome(false);
+      setWelcomeOpen(false);
+      return;
+    }
+    if (showAdminWelcome) {
+      setAdminPhase('tutorial');
       return;
     }
     if (!user?.id) return;
     try {
       await axios.post(`/api/v1/user/${user.id}/onboarding/welcome/complete`);
-      setShowWelcome(false);
+      setWelcomeOpen(false);
       await mutate();
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [user, mutate, isPreviewMode]);
+  }, [user, mutate, isPreviewMode, showAdminWelcome]);
 
   const dismissWelcome = useCallback(async () => {
     // In preview mode, just close without saving
     if (isPreviewMode) {
-      setShowWelcome(false);
+      setWelcomeOpen(false);
+      return;
+    }
+    if (showAdminWelcome) {
+      setAdminPhase('tutorial');
       return;
     }
     if (!user?.id) return;
     try {
-      await axios.post(`/api/v1/user/${user.id}/onboarding/welcome/dismiss`);
-      setShowWelcome(false);
+      await axios.post(`/api/v1/user/${user?.id}/onboarding/welcome/dismiss`);
+      setWelcomeOpen(false);
       await mutate();
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [user, mutate, isPreviewMode]);
+  }, [isPreviewMode, showAdminWelcome, user?.id, mutate]);
 
   const startTutorial = useCallback(() => {
     setTutorialActive(true);
-    setShowTutorial(true);
+    setTutorialOpen(true);
     setCurrentStepIndex(0);
   }, []);
 
   const closeTutorial = useCallback(() => {
     setTutorialActive(false);
-    setShowTutorial(false);
+    setTutorialOpen(false);
   }, []);
 
   const nextStep = useCallback(() => {
-    const stepsLength = data?.tutorialSteps?.length ?? 0;
+    const stepsLength = tutorialSteps.length;
     setCurrentStepIndex((prev) => (prev < stepsLength - 1 ? prev + 1 : prev));
-  }, [data?.tutorialSteps?.length]);
+  }, [tutorialSteps.length]);
 
   const prevStep = useCallback(() => {
     setCurrentStepIndex((prev) => (prev > 0 ? prev - 1 : prev));
@@ -162,16 +290,14 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   // Preview mode functions
   const endPreview = useCallback(() => {
     setIsPreviewMode(false);
-    setShowWelcome(false);
-    setShowTutorial(false);
-    setTutorialActive(false);
-    setCurrentStepIndex(0);
-  }, []);
+    setWelcomeOpen(false);
+    resetTutorialState();
+  }, [resetTutorialState]);
 
   const completeStep = useCallback(
     async (stepId: number) => {
-      // In preview mode, skip API call
-      if (isPreviewMode) return;
+      // In preview mode or admin mode, skip API call
+      if (isPreviewMode || showAdminTutorial) return;
       if (!user?.id) return;
       try {
         await axios.post(
@@ -185,72 +311,73 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
         // Silently fail - step progress is non-critical
       }
     },
-    [user, mutate, isPreviewMode]
+    [user, mutate, isPreviewMode, showAdminTutorial]
   );
 
-  const completeTutorial = useCallback(async () => {
-    // In preview mode, just close
-    if (isPreviewMode) {
-      endPreview();
-      return;
-    }
-    if (!user?.id) return;
-    try {
-      await axios.post(`/api/v1/user/${user.id}/onboarding/tutorial/complete`);
-      closeTutorial();
-      await mutate();
-    } catch {
-      // Silently fail - UI state already handles this
-    }
-  }, [user, mutate, closeTutorial, isPreviewMode, endPreview]);
+  const endTutorial = useCallback(
+    async (endpoint: 'complete' | 'skip') => {
+      if (isPreviewMode) {
+        endPreview();
+        return;
+      }
+      if (showAdminTutorial) {
+        await completeAdminTutorial();
+        return;
+      }
+      if (!user?.id) return;
+      try {
+        await axios.post(
+          `/api/v1/user/${user.id}/onboarding/tutorial/${endpoint}`
+        );
+        closeTutorial();
+        await mutate();
+      } catch {
+        // Silently fail - UI state already handles this
+      }
+    },
+    [
+      user,
+      mutate,
+      closeTutorial,
+      isPreviewMode,
+      endPreview,
+      showAdminTutorial,
+      completeAdminTutorial,
+    ]
+  );
 
-  const skipTutorial = useCallback(async () => {
-    // In preview mode, just close
-    if (isPreviewMode) {
-      endPreview();
-      return;
-    }
-    if (!user?.id) return;
-    try {
-      await axios.post(`/api/v1/user/${user.id}/onboarding/tutorial/skip`);
-      closeTutorial();
-      await mutate();
-    } catch {
-      // Silently fail - UI state already handles this
-    }
-  }, [user, mutate, closeTutorial, isPreviewMode, endPreview]);
+  const completeTutorial = useCallback(
+    () => endTutorial('complete'),
+    [endTutorial]
+  );
+
+  const skipTutorial = useCallback(() => endTutorial('skip'), [endTutorial]);
 
   // Reset
   const resetOnboarding = useCallback(async () => {
     if (!user?.id) return;
     try {
       await axios.post(`/api/v1/user/${user.id}/onboarding/reset`);
-      setShowWelcome(false);
-      setShowTutorial(false);
-      setTutorialActive(false);
-      setCurrentStepIndex(0);
+      setWelcomeOpen(false);
+      resetTutorialState();
       await mutate();
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [user, mutate]);
+  }, [user, mutate, resetTutorialState]);
 
   // Preview mode start functions
   const startWelcomePreview = useCallback(() => {
     setIsPreviewMode(true);
-    setShowWelcome(true);
-    setShowTutorial(false);
-    setTutorialActive(false);
-    setCurrentStepIndex(0);
-  }, []);
+    setWelcomeOpen(true);
+    resetTutorialState();
+  }, [resetTutorialState]);
 
   const startTutorialPreview = useCallback(() => {
     setIsPreviewMode(true);
-    setShowWelcome(false);
-    setShowTutorial(true);
-    setTutorialActive(true);
-    setCurrentStepIndex(0);
-  }, []);
+    setWelcomeOpen(false);
+    startTutorial();
+  }, [startTutorial]);
 
   const refetch = useCallback(async () => {
     await mutate();
@@ -262,12 +389,19 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
         data,
         loading,
         error,
+        isAdminOnboarding,
+        showAdminWelcome,
+        showAdminTutorial,
+        allowSkipWelcome,
+        allowSkipTutorial,
+        canAlwaysSkip,
+        welcomeContent,
+        tutorialSteps,
+        tutorialMode,
         showWelcome,
-        setShowWelcome,
         completeWelcome,
         dismissWelcome,
         showTutorial,
-        setShowTutorial,
         tutorialActive,
         startTutorial,
         closeTutorial,

@@ -63,7 +63,7 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
     transition,
     isDragging,
   } = useSortable({ id: step.id });
-  const { data: onboardingData } = useOnboardingContext();
+  const { tutorialMode } = useOnboardingContext();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -88,14 +88,12 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
         <Bars3Icon className="size-5" />
       </button>
       <div className="flex-shrink-0">
-        {(step.mode === 'spotlight' &&
-          onboardingData?.settings?.tutorialMode === 'both') ||
-        onboardingData?.settings?.tutorialMode === 'spotlight' ? (
+        {(step.mode === 'spotlight' && tutorialMode === 'both') ||
+        tutorialMode === 'spotlight' ? (
           <CursorArrowRippleIcon className="size-5 text-primary" />
         ) : (
-          ((step.mode === 'wizard' &&
-            onboardingData?.settings?.tutorialMode === 'both') ||
-            onboardingData?.settings?.tutorialMode === 'wizard') && (
+          ((step.mode === 'wizard' && tutorialMode === 'both') ||
+            tutorialMode === 'wizard') && (
             <DocumentTextIcon className="size-5 text-primary" />
           )
         )}
@@ -103,11 +101,11 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
       <div className="flex-1 min-w-0">
         <p className="font-medium truncate">{step.title}</p>
         <p className="text-xs text-neutral truncate">
-          {onboardingData?.settings?.tutorialMode !== 'wizard' &&
+          {tutorialMode !== 'wizard' &&
             step.targetSelector &&
             step.mode !== 'wizard' &&
             `Target: ${step.targetSelector}`}
-          {onboardingData?.settings?.tutorialMode !== 'wizard' &&
+          {tutorialMode !== 'wizard' &&
             step.targetSelector &&
             step.mode !== 'wizard' &&
             step.route &&

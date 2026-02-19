@@ -1173,6 +1173,53 @@ components:
         types:
           type: number
           example: 2
+    RestartStatus:
+      type: object
+      properties:
+        required:
+          type: boolean
+          description: Whether a restart is required
+          example: true
+        services:
+          type: array
+          items:
+            type: string
+          description: List of services that have changed and require a restart
+          example: ['Lidarr', 'Tautulli']
+    RestartResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Restarting server...'
+    PythonServiceStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - healthy
+            - unhealthy
+            - unknown
+          description: Current health status of the Python service
+          example: healthy
+        lastChecked:
+          type: string
+          nullable: true
+          description: ISO timestamp of last health check
+          example: '2026-02-17T12:00:00.000Z'
+        lastHealthy:
+          type: string
+          nullable: true
+          description: ISO timestamp of last successful health check
+          example: '2026-02-17T12:00:00.000Z'
+        consecutiveFailures:
+          type: number
+          description: Number of consecutive failed health checks
+          example: 0
     NotificationEmailSettings:
       type: object
       properties:
@@ -1626,6 +1673,9 @@ components:
         tutorialAutostartDelay:
           type: integer
           description: Delay in milliseconds before auto-starting the tutorial
+        adminOnboardingCompleted:
+          type: boolean
+          description: When true, admin onboarding has been completed (shown once on first admin startup)
     OnboardingSettingsRequest:
       type: object
       properties:
@@ -1644,6 +1694,8 @@ components:
           type: boolean
         tutorialAutostartDelay:
           type: integer
+        adminOnboardingCompleted:
+          type: boolean
     UserOnboardingData:
       type: object
       properties:
@@ -3420,6 +3472,66 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
+  /settings/restart-required:
+    get:
+      summary: Check if server restart is required
+      description: Returns whether a restart is required and which services have changed since startup.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Restart status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartStatus'
+  /settings/restart:
+    post:
+      summary: Trigger server restart
+      description: Initiates a graceful server restart. The server will close connections, disconnect sockets, and exit. Docker/PM2/systemd will restart the process.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Restart initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
+        '500':
+          description: Failed to trigger restart
+  /settings/python/status:
+    get:
+      summary: Get Python service health status
+      description: Returns the current health status of the Python (Plex Sync) service.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Python service status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PythonServiceStatus'
+  /settings/python/restart:
+    post:
+      summary: Restart Python service
+      description: Restarts the Python (Plex Sync) service without restarting the main Streamarr server.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Python service restarted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
+        '500':
+          description: Failed to restart Python service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestartResponse'
   /auth/me:
     get:
       summary: Get logged-in user
@@ -6008,7 +6120,7 @@ paths:
   /settings/onboarding/reset-all-users:
     post:
       summary: Reset onboarding for all users
-      description: Resets onboarding progress for all users.
+      description: Resets onboarding progress for all users. Excludes users with admin or manage_users permissions.
       tags:
         - settings
       security:
@@ -6027,6 +6139,27 @@ paths:
                   count:
                     type: integer
                     description: Number of users reset
+  /settings/onboarding/admin-complete:
+    post:
+      summary: Mark admin onboarding as completed
+      description: Marks the admin onboarding as completed globally. Only shown once on first admin startup.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: Admin onboarding marked as completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Forbidden - Admin permission required
   /settings/onboarding/welcome:
     get:
       summary: Get all welcome content

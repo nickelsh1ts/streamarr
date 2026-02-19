@@ -28,7 +28,7 @@ Primary configuration for your Streamarr instance:
 - **Onboarding** — Welcome modal and tutorial configuration
 - **Jobs & Cache** — Scheduled tasks and cache management
 - **Logs** — Application log viewer
-- **About** — Version information and update status
+- **System** — Server health, restart controls, version, and release history
 
 See [Settings](settings/README.md) for detailed documentation.
 
@@ -149,14 +149,16 @@ View application logs:
 - Search log entries
 - Real-time log streaming
 
-### About
+### System
 
-View system information:
+Monitor and manage your Streamarr instance:
 
-- Current version
-- Update availability
-- GitHub links
-- Support resources
+- Server and Plex Sync service health status with restart controls
+- Current version and update availability
+- Release history and changelogs
+- Support and sponsor links
+
+See [System](settings/system.md) for detailed documentation.
 
 ---
 

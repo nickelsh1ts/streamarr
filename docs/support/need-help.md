@@ -105,7 +105,7 @@ When asking for help, include:
 
 ### Basic Information
 
-- Streamarr version (found in Settings → About)
+- Streamarr version (found in Settings → System)
 - Installation method (Docker, Docker Compose)
 - Operating system
 - Browser (for UI issues)

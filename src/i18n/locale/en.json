@@ -38,53 +38,62 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "View on GitHub"
   },
-  "aboutSettings.betaWarning": {
-    "defaultMessage": "This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
-  },
-  "aboutSettings.dataDirectory": {
-    "defaultMessage": "Data Directory"
-  },
-  "aboutSettings.developWarning": {
-    "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
-  },
-  "aboutSettings.documentation": {
-    "defaultMessage": "Documentation"
-  },
-  "aboutSettings.gettingSupport": {
-    "defaultMessage": "Getting Support"
-  },
-  "aboutSettings.githubDiscussions": {
-    "defaultMessage": "GitHub Discussions"
-  },
-  "aboutSettings.helpPayForCoffee": {
-    "defaultMessage": "Help Pay for Coffee ☕️"
-  },
-  "aboutSettings.outOfDate": {
-    "defaultMessage": "Out of date"
-  },
-  "aboutSettings.preferred": {
-    "defaultMessage": "Preferred"
-  },
-  "aboutSettings.supportStreamarr": {
-    "defaultMessage": "Support Streamarr"
-  },
-  "aboutSettings.timeZone": {
-    "defaultMessage": "Time Zone"
-  },
-  "aboutSettings.title": {
-    "defaultMessage": "About Streamarr"
-  },
-  "aboutSettings.totalUsers": {
-    "defaultMessage": "Total Users"
-  },
-  "aboutSettings.upToDate": {
-    "defaultMessage": "Up to date"
-  },
-  "aboutSettings.version": {
-    "defaultMessage": "Version"
-  },
   "admin.settings.services.description": {
     "defaultMessage": "Configure your various services below."
+  },
+  "adminOnboarding.notifications.description": {
+    "defaultMessage": "Keep your users informed with email notifications, web push alerts, and in-app messages. Configure these in the Notifications settings when you're ready."
+  },
+  "adminOnboarding.notifications.title": {
+    "defaultMessage": "Set Up Notifications"
+  },
+  "adminOnboarding.services.description": {
+    "defaultMessage": "Expand the functionality of your server by integrating with external services. You can set up Radarr and Sonarr for automated downloads, connect to download clients and other integrations in the Services settings."
+  },
+  "adminOnboarding.services.title": {
+    "defaultMessage": "Configure Your Services"
+  },
+  "adminOnboarding.users.description": {
+    "defaultMessage": "Control who has access to your Plex media. You can set defaults, import existing users, manage permissions, set quotas, and change library access from the User settings."
+  },
+  "adminOnboarding.users.title": {
+    "defaultMessage": "Manage Your Users"
+  },
+  "adminOnboarding.welcome.description": {
+    "defaultMessage": "Streamarr is your all-in-one media server management solution. Let's get you set up with some quick tips to get started and make the most of your new server."
+  },
+  "adminOnboarding.welcome.title": {
+    "defaultMessage": "Welcome to Streamarr!"
+  },
+  "adminTutorial.generalSettings.description": {
+    "defaultMessage": "General settings are where you can configure your server-wide preferences and customize the user experience."
+  },
+  "adminTutorial.generalSettings.title": {
+    "defaultMessage": "General Settings"
+  },
+  "adminTutorial.manageUsers.description": {
+    "defaultMessage": "View and manage your users, update their permissions, and control their access to your media libraries."
+  },
+  "adminTutorial.manageUsers.title": {
+    "defaultMessage": "Manage Users"
+  },
+  "adminTutorial.onboarding.description": {
+    "defaultMessage": "Customize the welcome experience for new users. Create welcome slides, tutorial steps, and control how users are introduced to your server."
+  },
+  "adminTutorial.onboarding.title": {
+    "defaultMessage": "User Onboarding"
+  },
+  "adminTutorial.servicesSettings.description": {
+    "defaultMessage": "Integrate with external services to expand your server's capabilities. Configure Seerr, Radarr, Sonarr, and other integrations here."
+  },
+  "adminTutorial.servicesSettings.title": {
+    "defaultMessage": "Services Settings"
+  },
+  "adminTutorial.tabs.description": {
+    "defaultMessage": "Use these tabs to navigate between different admin features. Settings, Users, and your enabled media services are all accessible from here."
+  },
+  "adminTutorial.tabs.title": {
+    "defaultMessage": "Admin Navigation"
   },
   "appData.warning": {
     "defaultMessage": "The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
@@ -208,9 +217,6 @@
   },
   "common.4kserver": {
     "defaultMessage": "4K Server"
-  },
-  "common.about": {
-    "defaultMessage": "About"
   },
   "common.actions": {
     "defaultMessage": "Actions"
@@ -572,6 +578,12 @@
   "common.resetToDefault": {
     "defaultMessage": "Reset to Default"
   },
+  "common.restart": {
+    "defaultMessage": "Restart"
+  },
+  "common.restartRequired": {
+    "defaultMessage": "Restart Required"
+  },
   "common.resultsDisplay": {
     "defaultMessage": "Display {select} results per page"
   },
@@ -667,6 +679,9 @@
   },
   "common.subtitles": {
     "defaultMessage": "Subtitles"
+  },
+  "common.system": {
+    "defaultMessage": "System"
   },
   "common.test": {
     "defaultMessage": "Test"
@@ -851,6 +866,9 @@
   "downloads.bulkResume": {
     "defaultMessage": "Resume Selected"
   },
+  "downloads.category": {
+    "defaultMessage": "Category"
+  },
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
@@ -938,6 +956,9 @@
   "downloads.hash": {
     "defaultMessage": "Hash"
   },
+  "downloads.label": {
+    "defaultMessage": "Label"
+  },
   "downloads.labelPlaceholder": {
     "defaultMessage": "e.g., movies, tv-shows"
   },
@@ -1009,6 +1030,39 @@
   },
   "downloads.staleDataWarning": {
     "defaultMessage": "Client Unreachable"
+  },
+  "downloads.statusChecking": {
+    "defaultMessage": "Checking"
+  },
+  "downloads.statusCompleted": {
+    "defaultMessage": "Completed"
+  },
+  "downloads.statusDownloading": {
+    "defaultMessage": "Downloading"
+  },
+  "downloads.statusError": {
+    "defaultMessage": "Error"
+  },
+  "downloads.statusMetadata": {
+    "defaultMessage": "Fetching Metadata"
+  },
+  "downloads.statusMoving": {
+    "defaultMessage": "Moving"
+  },
+  "downloads.statusPaused": {
+    "defaultMessage": "Paused"
+  },
+  "downloads.statusQueued": {
+    "defaultMessage": "Queued"
+  },
+  "downloads.statusSeeding": {
+    "defaultMessage": "Seeding"
+  },
+  "downloads.statusStalled": {
+    "defaultMessage": "Stalled"
+  },
+  "downloads.statusUnknown": {
+    "defaultMessage": "Unknown"
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
@@ -2468,6 +2522,12 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Changes will sync with Plex automatically on save."
   },
+  "settings.restartRequired.failed": {
+    "defaultMessage": "Restart failed. Please restart the server manually."
+  },
+  "settings.restartRequired.message": {
+    "defaultMessage": "Changes to {services} require a server restart to take effect."
+  },
   "settings.saveChangesToSync": {
     "defaultMessage": "Save changes to sync."
   },
@@ -2545,6 +2605,15 @@
   },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Only enabled libraries will be scanned."
+  },
+  "setup.restartRequired.message": {
+    "defaultMessage": "Services were configured that require a server restart to be available. Would you like to restart now?"
+  },
+  "setup.restartRequired.servicesConfigured": {
+    "defaultMessage": "The following services need proxy routes registered via restart:"
+  },
+  "setup.restartRequired.skipButton": {
+    "defaultMessage": "Skip for Now"
   },
   "setup.signInWithPlex": {
     "defaultMessage": "Sign in with Plex"
@@ -2692,6 +2761,108 @@
   },
   "sonarrSettings.title": {
     "defaultMessage": "Sonarr Settings"
+  },
+  "system.health.title": {
+    "defaultMessage": "Health"
+  },
+  "system.python.alertMessage": {
+    "defaultMessage": "The Plex Sync service is unreachable. Plex invites and library sync are currently unavailable."
+  },
+  "system.python.alertTitle": {
+    "defaultMessage": "Plex Sync Service Down"
+  },
+  "system.python.description": {
+    "defaultMessage": "Handles Plex invites and library synchronization."
+  },
+  "system.python.restart": {
+    "defaultMessage": "Restart Service"
+  },
+  "system.python.restartFailed": {
+    "defaultMessage": "Failed to restart Plex Sync service"
+  },
+  "system.python.restartSuccess": {
+    "defaultMessage": "Plex Sync service restarted successfully"
+  },
+  "system.python.title": {
+    "defaultMessage": "Plex Sync Service"
+  },
+  "system.reconnecting": {
+    "defaultMessage": "Reconnecting..."
+  },
+  "system.restartNow": {
+    "defaultMessage": "Restart Now"
+  },
+  "system.restartRequiredDescription": {
+    "defaultMessage": "A restart is required to apply recent changes. Please restart the server as soon as possible."
+  },
+  "system.restarting": {
+    "defaultMessage": "Restarting..."
+  },
+  "system.server.restartFailed": {
+    "defaultMessage": "Restart failed. Please restart the server manually."
+  },
+  "system.server.restartSuccess": {
+    "defaultMessage": "Server restarted successfully"
+  },
+  "system.status.healthy": {
+    "defaultMessage": "Healthy"
+  },
+  "system.status.unhealthy": {
+    "defaultMessage": "Unhealthy"
+  },
+  "system.status.unknown": {
+    "defaultMessage": "Unknown"
+  },
+  "system.streamarr.description": {
+    "defaultMessage": "Main server process for Streamarr."
+  },
+  "system.streamarr.title": {
+    "defaultMessage": "Streamarr"
+  },
+  "systemSettings.betaWarning": {
+    "defaultMessage": "This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+  },
+  "systemSettings.dataDirectory": {
+    "defaultMessage": "Data Directory"
+  },
+  "systemSettings.developWarning": {
+    "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
+  },
+  "systemSettings.documentation": {
+    "defaultMessage": "Documentation"
+  },
+  "systemSettings.gettingSupport": {
+    "defaultMessage": "Getting Support"
+  },
+  "systemSettings.githubDiscussions": {
+    "defaultMessage": "GitHub Discussions"
+  },
+  "systemSettings.helpPayForCoffee": {
+    "defaultMessage": "Help Pay for Coffee ☕️"
+  },
+  "systemSettings.outOfDate": {
+    "defaultMessage": "Out of date"
+  },
+  "systemSettings.preferred": {
+    "defaultMessage": "Preferred"
+  },
+  "systemSettings.supportStreamarr": {
+    "defaultMessage": "Support Streamarr"
+  },
+  "systemSettings.timeZone": {
+    "defaultMessage": "Time Zone"
+  },
+  "systemSettings.title": {
+    "defaultMessage": "About Streamarr"
+  },
+  "systemSettings.totalUsers": {
+    "defaultMessage": "Total Users"
+  },
+  "systemSettings.upToDate": {
+    "defaultMessage": "Up to date"
+  },
+  "systemSettings.version": {
+    "defaultMessage": "Version"
   },
   "tutorial.ready.description": {
     "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."

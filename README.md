@@ -24,15 +24,17 @@ Streamarr provides a unified dashboard for managing your Plex server alongside y
 - **Robust Invite System** — Usage limits, expiry dates, library access controls, QR codes
 - **Release Calendar** — Upcoming releases from Sonarr and Radarr, plus custom events
 - **\*Arr Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, and more
-- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission
+- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring
 - **Flexible Notifications** — Email (with PGP encryption), Web Push, and In-App notifications
 - **Internal Service Proxy** — Securely access embedded \*Arr services through Streamarr
 - **Granular Permissions** — 15+ permission types for fine-grained access control
 - **Trial Periods** — Optionally restrict new users during a configurable trial period
-- **Custom Theming** — Fully customize colors and logo to match your brand
+- **Custom Theming** — Fully customize 20 color tokens and logos to match your brand
+- **System Health & Restart** — Real-time health monitoring for server and Plex Sync service with in-app restart controls
+- **Status Page Integration** — Link to Uptime Kuma or any external status page
 - **PWA Support** — Install as a Progressive Web App on mobile devices
 - **Multi-language Support** — Localized interface
-- **Interactive Onboarding** — Welcome modals and interactive tutorials for new users with customizable content
+- **Interactive Onboarding** — Welcome modals and interactive tutorials for both users and administrators
 
 ## Planned Features
 

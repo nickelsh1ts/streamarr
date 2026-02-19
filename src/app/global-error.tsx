@@ -1,28 +1,11 @@
 'use client'; // Error components must be Client Components
 
-import Alert from '@app/components/Common/Alert';
 import {
   ArrowLeftCircleIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid';
-import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { useEffect } from 'react';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const res = await fetch(
-    `http://${process.env.HOST || 'localhost'}:${
-      process.env.PORT || 3000
-    }/api/v1/settings/public`,
-    { cache: 'no-store' }
-  );
-  const currentSettings: PublicSettingsResponse = await res.json();
-
-  return {
-    title: `Error - ${currentSettings.applicationTitle}`,
-  };
-}
 
 export default function Error({
   error,
@@ -35,27 +18,83 @@ export default function Error({
     console.error(error);
   }, [error]);
 
+  // global-error replaces the entire root layout, so no CSS is available.
+  // All styles must be inline.
   return (
-    // global-error must include html and body tags
     <html lang="en">
-      <body>
-        <main className="w-full h-dvh place-items-center my-auto">
-          <div className="flex flex-col items-center w-full h-full place-content-center">
-            <ExclamationTriangleIcon className="size-14 text-error" />
-            <h3 className="text-3xl font-bold mb-8 text-center">
+      <body
+        style={{
+          margin: 0,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          backgroundColor: '#1f1f1f',
+          color: '#fff',
+        }}
+      >
+        <main
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100dvh',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '1rem',
+              padding: '2rem',
+              maxWidth: '480px',
+              textAlign: 'center',
+            }}
+          >
+            <ExclamationTriangleIcon
+              style={{ width: 56, height: 56, color: '#ffc107' }}
+            />
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>
               500 - Server Error
             </h3>
-            <Alert type="error">
-              <div className="flex flex-col w-full">
-                <h2 className="text-xl -mt-1 mb-2 ml-2">{error.name}</h2>
-                <code className="whitespace-normal">{error.message}</code>
-              </div>
-            </Alert>
-            <Link
-              className="btn btn-error btn-outline btn-sm rounded-md"
-              href={'/'}
+            <div
+              style={{
+                backgroundColor: '#2a1515',
+                border: '1px solid #b91c1c',
+                borderRadius: 8,
+                padding: '1rem',
+                width: '100%',
+              }}
             >
-              Home Page <ArrowLeftCircleIcon className="size-5" />
+              <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem' }}>
+                {error.name}
+              </h4>
+              <code
+                style={{
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  fontSize: '0.875rem',
+                  color: '#f87171',
+                }}
+              >
+                {error.message}
+              </code>
+            </div>
+            <Link
+              href="/"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '0.5rem 1rem',
+                border: '1px solid #b91c1c',
+                borderRadius: 6,
+                color: '#f87171',
+                textDecoration: 'none',
+                fontSize: '0.875rem',
+              }}
+            >
+              Home Page
+              <ArrowLeftCircleIcon style={{ width: 20, height: 20 }} />
             </Link>
           </div>
         </main>

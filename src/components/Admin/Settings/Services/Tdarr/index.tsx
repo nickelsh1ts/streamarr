@@ -11,7 +11,10 @@ import {
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const ServicesTdarr = () => {
   const intl = useIntl();
@@ -39,6 +42,7 @@ const ServicesTdarr = () => {
           />
         </p>
       </div>
+      <RestartRequiredAlert filterServices={['Tdarr']} />
       <Formik
         initialValues={{
           enabled: dataTdarr?.enabled ?? false,
@@ -64,6 +68,8 @@ const ServicesTdarr = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
+
+            mutate(RESTART_REQUIRED_SWR_KEY);
           } catch {
             Toast({
               title: intl.formatMessage(

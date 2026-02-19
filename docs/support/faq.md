@@ -49,11 +49,13 @@ PWA features include:
 - Full-screen app experience
 - App icon on home screen
 
+See [Progressive Web App (PWA)](../using-streamarr/pwa.md) for detailed installation instructions.
+
 ### Where can I find the changelog?
 
 You can find the changelog in:
 
-- **Settings → About** in your Streamarr instance
+- **Settings → System** in your Streamarr instance (see [System](../using-streamarr/settings/system.md))
 - [GitHub Releases](https://github.com/nickelsh1ts/streamarr/releases) for stable releases
 - [GitHub Commits](https://github.com/nickelsh1ts/streamarr/commits/develop) for development changes
 
@@ -180,6 +182,8 @@ Real-time notifications require WebSocket support. Ensure your reverse proxy sup
 2. Verify Web UI is enabled
 3. Test credentials directly in the client's Web UI
 4. Check firewall rules
+
+See [Client Health](../using-streamarr/downloads/README.md#client-health) for details on health states, cooldown behavior, and retry options.
 
 ---
 

@@ -24,11 +24,11 @@ COPY next.config.mjs tsconfig.json tailwind.config.ts postcss.config.js streamar
 COPY server ./server
 
 RUN if [ -f server/python/requirements.txt ]; then \
-    python3 -m venv /app/venv && \
-    . /app/venv/bin/activate && \
-    pip install --no-cache-dir -r server/python/requirements.txt && \
-    pip install --no-cache-dir gunicorn; \
-fi
+  python3 -m venv /app/venv && \
+  . /app/venv/bin/activate && \
+  pip install --no-cache-dir -r server/python/requirements.txt && \
+  pip install --no-cache-dir gunicorn; \
+  fi
 
 RUN yarn build
 
@@ -70,4 +70,4 @@ ENV PORT=3000
 
 ENTRYPOINT [ "/sbin/tini", "--" ]
 
-CMD ["/bin/sh", "-c", "./venv/bin/gunicorn -w 2 -b 0.0.0.0:5005 python.plex_invite:app & yarn start"]
+CMD ["/bin/sh", "-c", "./venv/bin/gunicorn --pid /tmp/gunicorn.pid --no-control-socket -w 2 -b 0.0.0.0:5005 python.plex_invite:app & yarn start"]

@@ -123,9 +123,15 @@ class PlexAPI {
     try {
       return await this.plexClient.query('/');
     } catch (e) {
+      const errMsg =
+        e instanceof Error
+          ? e.message || (e as NodeJS.ErrnoException).code || 'unknown status'
+          : typeof e === 'string'
+            ? e || 'unknown status'
+            : 'unknown status';
       logger.error('Failed to get Plex status', {
         label: 'Plex API',
-        errorMessage: e.message,
+        errorMessage: errMsg,
       });
       throw new Error('Failed to get Plex status');
     }

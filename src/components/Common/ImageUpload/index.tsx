@@ -208,7 +208,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               <span className="text-xs text-neutral/70 mt-1">
                 <FormattedMessage
                   id="imageUpload.formats"
-                  defaultMessage="JPG, PNG, WebP, GIF (max 5MB)"
+                  defaultMessage="JPG, PNG, WebP, GIF (max 10MB)"
                 />
               </span>
             </>

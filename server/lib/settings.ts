@@ -224,6 +224,7 @@ interface NotificationSettings {
 
 export interface OnboardingSettings {
   initialized: boolean;
+  adminOnboardingCompleted: boolean;
   welcomeEnabled: boolean;
   tutorialEnabled: boolean;
   tutorialMode: 'spotlight' | 'wizard' | 'both';
@@ -392,6 +393,7 @@ class Settings {
       },
       onboarding: {
         initialized: false,
+        adminOnboardingCompleted: false,
         welcomeEnabled: true,
         tutorialEnabled: true,
         tutorialMode: 'both',

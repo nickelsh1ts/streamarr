@@ -35,6 +35,7 @@ import DatePicker from 'react-datepicker';
 import { useOnboardingContext } from '@app/context/OnboardingContext';
 import 'react-datepicker/dist/react-datepicker.css';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
+import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
 
 const UserSettingsGeneral = () => {
   const intl = useIntl();
@@ -326,6 +327,7 @@ const UserSettingsGeneral = () => {
           return (
             <Form className="mt-5">
               <div className="max-w-6xl space-y-5">
+                <PythonServiceAlert />
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <div className="col-span-1">
                     <FormattedMessage

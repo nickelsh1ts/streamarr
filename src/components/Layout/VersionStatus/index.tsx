@@ -31,7 +31,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
 
   return (
     <Link
-      href="/admin/settings/about"
+      href="/admin/settings/system"
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && onClick) {

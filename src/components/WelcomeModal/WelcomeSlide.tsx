@@ -7,11 +7,13 @@ import React from 'react';
 
 interface WelcomeSlideProps {
   content: WelcomeContentResponse;
+  icon?: React.ReactNode;
 }
 
-const WelcomeSlide: React.FC<WelcomeSlideProps> = ({ content }) => {
+const WelcomeSlide: React.FC<WelcomeSlideProps> = ({ content, icon }) => {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full text-center">
+      {icon && <div className="mb-4">{icon}</div>}
       <h2 className="text-2xl sm:text-3xl font-bold text-base-content mb-4">
         {content.title}
       </h2>
