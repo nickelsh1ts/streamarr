@@ -6,10 +6,15 @@ Streamarr includes an interactive onboarding system to welcome new users and gui
 
 The onboarding system consists of two components:
 
-1. **Welcome Modal** — A carousel of slides shown to new users on first login
+1. **Welcome Modal** — A carousel of slides shown on first login
 2. **Interactive Tutorial** — A guided tour that highlights key UI elements
 
-Both components are fully customizable by administrators.
+Streamarr provides **two separate onboarding tracks**:
+
+- **User Onboarding** — Welcomes regular users and guides them through the main interface (watching, invites, schedule, etc.)
+- **Admin Onboarding** — Welcomes administrators and guides them through admin-specific features (settings, services, user management)
+
+Each track has its own welcome slides and tutorial steps, and is triggered independently based on the user's role. Both tracks are fully customizable by administrators.
 
 ---
 
@@ -199,17 +204,68 @@ Alternatively, users can reset their entire onboarding progress from their accou
 
 ---
 
+## Admin Onboarding
+
+In addition to user onboarding, Streamarr includes a dedicated onboarding experience for administrators. This is triggered automatically when an admin first signs in, and is tracked separately from user onboarding.
+
+### How It Works
+
+1. When the admin first accesses Streamarr, the **admin welcome modal** is displayed
+2. After completing or dismissing the welcome modal, the **admin tutorial** begins (if auto-start is enabled)
+3. Once complete, admin onboarding is marked as finished via the `adminOnboardingCompleted` setting
+
+Admin onboarding is independent of user onboarding — resetting user onboarding does not affect admin onboarding, and vice versa.
+
+### Default Admin Welcome Slides
+
+Streamarr ships with four admin-specific welcome slides:
+
+| Order | Title                   | Description                                                                            |
+| ----- | ----------------------- | -------------------------------------------------------------------------------------- |
+| 1     | Welcome to Streamarr!   | Introduction to Streamarr as a media server management solution                        |
+| 2     | Manage Your Users       | Overview of user management: permissions, quotas, library access, and Plex user import |
+| 3     | Configure Your Services | Guide to integrating Radarr, Sonarr, download clients, and other services              |
+| 4     | Set Up Notifications    | Introduction to email, web push, and in-app notification configuration                 |
+
+### Default Admin Tutorial Steps
+
+Streamarr ships with five admin-specific tutorial steps (all in spotlight mode):
+
+| Order | Title             | Description                                                  | Navigates To                 |
+| ----- | ----------------- | ------------------------------------------------------------ | ---------------------------- |
+| 1     | Admin Navigation  | Overview of the admin tabs for settings, users, and services | `/admin`                     |
+| 2     | General Settings  | Server-wide preferences and user experience customization    | `/admin/settings`            |
+| 3     | User Onboarding   | Customize welcome slides and tutorial steps for new users    | `/admin/settings/onboarding` |
+| 4     | Services Settings | Integrate with Seerr, Radarr, Sonarr, and other services     | `/admin/settings/services`   |
+| 5     | Manage Users      | View and manage users, permissions, and library access       | `/admin/settings`            |
+
+### Customizing Admin Onboarding
+
+Admin welcome slides and tutorial steps can be customized using the same editor interface as user onboarding. The onboarding settings page separates content by type — switch between **User** and **Admin** content using the content type selector.
+
+All the same features are available: custom images, video embeds, custom HTML, drag-and-drop reordering, and preview mode.
+
+### Resetting Admin Onboarding
+
+To trigger the admin onboarding again:
+
+1. Navigate to **Settings → Onboarding**
+2. Use the **Reset** option to reset admin onboarding
+3. The admin welcome modal and tutorial will be shown again on next page load
+
+---
+
 ## API Reference
 
 The onboarding system exposes several API endpoints:
 
-| Endpoint                                 | Method | Description                      |
-| ---------------------------------------- | ------ | -------------------------------- |
-| `/api/v1/settings/onboarding`            | GET    | Get onboarding settings          |
-| `/api/v1/settings/onboarding`            | POST   | Update onboarding settings       |
-| `/api/v1/settings/onboarding/welcome`    | GET    | Get all welcome content          |
-| `/api/v1/settings/onboarding/tutorial`   | GET    | Get all tutorial steps           |
-| `/api/v1/user/{userId}/onboarding`       | GET    | Get user's onboarding data       |
-| `/api/v1/user/{userId}/onboarding/reset` | POST   | Reset user's onboarding progress |
+| Endpoint                                 | Method | Description                          |
+| ---------------------------------------- | ------ | ------------------------------------ |
+| `/api/v1/settings/onboarding`            | GET    | Get onboarding settings              |
+| `/api/v1/settings/onboarding`            | POST   | Update onboarding settings           |
+| `/api/v1/settings/onboarding/welcome`    | GET    | Get all welcome content (user/admin) |
+| `/api/v1/settings/onboarding/tutorial`   | GET    | Get all tutorial steps               |
+| `/api/v1/user/{userId}/onboarding`       | GET    | Get user's onboarding data           |
+| `/api/v1/user/{userId}/onboarding/reset` | POST   | Reset user's onboarding progress     |
 
 See the [API Documentation](https://api-docs.streamarr.dev) for complete details.

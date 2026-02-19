@@ -70,6 +70,14 @@ Override which Plex libraries this user has access to:
 - **All Libraries** — Access to all enabled libraries
 - **Specific Libraries** — Select specific library IDs
 
+#### Pin Libraries
+
+Pin selected libraries to the user's Plex sidebar so they appear prominently when the user opens Plex. This uses the Plex Sync (Python) service to set library pins on the Plex server.
+
+{% hint style="info" %}
+Library pinning requires the Plex Sync service to be running. Check the [System](../settings/system.md) page if pinning fails.
+{% endhint %}
+
 ### Deleting Users
 
 Admins can delete users from the user list or user settings page.

@@ -65,6 +65,12 @@ Information on how to reach administrators for additional help:
 - Support URL (if configured)
 - GitHub links for bug reports
 
+### Server Status
+
+If your administrator has configured a status page (e.g., Uptime Kuma), a link to check service status is displayed in the Help Centre. This allows users to check whether services are experiencing issues without needing to sign in.
+
+See [Uptime Kuma](settings/README.md#uptime-kuma) in Settings for configuration.
+
 ---
 
 ## Configuration
@@ -108,3 +114,8 @@ The Help Centre complements the onboarding system:
 - Welcome slides can reference the Help Centre for more information
 
 See [Onboarding](settings/onboarding.md) for tutorial configuration.
+
+## Related Pages
+
+- [Progressive Web App (PWA)](pwa.md) — Install Streamarr on your device
+- [System](settings/system.md) — Server health, version info, and support links

@@ -11,6 +11,7 @@
 - [Admin Panel](using-streamarr/admin.md)
 - [Settings](using-streamarr/settings/README.md)
   - [Onboarding](using-streamarr/settings/onboarding.md)
+  - [System](using-streamarr/settings/system.md)
 - [Users](using-streamarr/users/README.md)
 - [Invites](using-streamarr/invites/README.md)
 - [Plex Web](using-streamarr/plex-web.md)
@@ -22,6 +23,7 @@
   - [Email](using-streamarr/notifications/email.md)
   - [Web Push](using-streamarr/notifications/webpush.md)
   - [In-App](using-streamarr/notifications/inapp.md)
+- [Progressive Web App (PWA)](using-streamarr/pwa.md)
 - [Help Centre](using-streamarr/help.md)
 
 ## Support
