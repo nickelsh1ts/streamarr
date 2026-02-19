@@ -18,7 +18,7 @@ const LABEL = 'Plex Sync';
 const HEALTH_URL = 'http://localhost:5005/health';
 const HEALTH_TIMEOUT = 3000;
 const POLL_INTERVAL = 30_000;
-const PID_FILE = '/tmp/gunicorn.pid';
+const PID_FILE = path.join(process.cwd(), 'tmp', 'gunicorn.pid');
 
 type ServiceStatus = 'healthy' | 'unhealthy' | 'unknown';
 
