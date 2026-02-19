@@ -253,15 +253,19 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
       setWelcomeOpen(false);
       return;
     }
+    if (showAdminWelcome) {
+      setAdminPhase('tutorial');
+      return;
+    }
     if (!user?.id) return;
     try {
-      await axios.post(`/api/v1/user/${user.id}/onboarding/welcome/dismiss`);
+      await axios.post(`/api/v1/user/${user?.id}/onboarding/welcome/dismiss`);
       setWelcomeOpen(false);
       await mutate();
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [user, mutate, isPreviewMode]);
+  }, [isPreviewMode, showAdminWelcome, user?.id, mutate]);
 
   const startTutorial = useCallback(() => {
     setTutorialActive(true);

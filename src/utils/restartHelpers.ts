@@ -27,6 +27,7 @@ export const waitForRestart = async (): Promise<boolean> => {
   for (let i = 0; i < MAX_UP_ATTEMPTS; i++) {
     try {
       await axios.get(STATUS_ENDPOINT, { timeout: STATUS_TIMEOUT });
+      await new Promise((r) => setTimeout(r, 1000));
       return true;
     } catch {
       await new Promise((r) => setTimeout(r, POLL_INTERVAL));
