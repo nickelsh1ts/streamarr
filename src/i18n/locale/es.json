@@ -38,54 +38,6 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "Ver en GitHub"
   },
-  "aboutSettings.alphaWarning": {
-    "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
-  },
-  "aboutSettings.betaWarning": {
-    "defaultMessage": "Este es software BETA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
-  },
-  "aboutSettings.dataDirectory": {
-    "defaultMessage": "Directorio de Datos"
-  },
-  "aboutSettings.developWarning": {
-    "defaultMessage": "Estás ejecutando la rama <code>develop</code> de Streamarr, que solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
-  },
-  "aboutSettings.documentation": {
-    "defaultMessage": "Documentación"
-  },
-  "aboutSettings.gettingSupport": {
-    "defaultMessage": "Obtener Soporte"
-  },
-  "aboutSettings.githubDiscussions": {
-    "defaultMessage": "Discusiones de GitHub"
-  },
-  "aboutSettings.helpPayForCoffee": {
-    "defaultMessage": "Ayuda a Pagar el Café ☕️"
-  },
-  "aboutSettings.outOfDate": {
-    "defaultMessage": "Desactualizado"
-  },
-  "aboutSettings.preferred": {
-    "defaultMessage": "Preferido"
-  },
-  "aboutSettings.supportStreamarr": {
-    "defaultMessage": "Apoyar Streamarr"
-  },
-  "aboutSettings.timeZone": {
-    "defaultMessage": "Zona Horaria"
-  },
-  "aboutSettings.title": {
-    "defaultMessage": "Acerca de Streamarr"
-  },
-  "aboutSettings.totalUsers": {
-    "defaultMessage": "Total de Usuarios"
-  },
-  "aboutSettings.upToDate": {
-    "defaultMessage": "Actualizado"
-  },
-  "aboutSettings.version": {
-    "defaultMessage": "Versión"
-  },
   "admin.settings.services.description": {
     "defaultMessage": "Configura tus varios servicios a continuación."
   },
@@ -265,9 +217,6 @@
   },
   "common.4kserver": {
     "defaultMessage": "Servidor 4K"
-  },
-  "common.about": {
-    "defaultMessage": "Acerca de"
   },
   "common.actions": {
     "defaultMessage": "Acciones"
@@ -637,6 +586,12 @@
   "common.resetToDefault": {
     "defaultMessage": "Restablecer a Predeterminado"
   },
+  "common.restart": {
+    "defaultMessage": "Reiniciar"
+  },
+  "common.restartRequired": {
+    "defaultMessage": "Reinicio Requerido"
+  },
   "common.resultsDisplay": {
     "defaultMessage": "Mostrar {select} resultados por página"
   },
@@ -735,6 +690,9 @@
   "common.subtitles": {
     "defaultMessage": "Subtítulos"
   },
+  "common.system": {
+    "defaultMessage": "Sistema"
+  },
   "common.test": {
     "defaultMessage": "Probar"
   },
@@ -749,9 +707,6 @@
   },
   "common.transcodes": {
     "defaultMessage": "Transcodificaciones"
-  },
-  "common.transcoding": {
-    "defaultMessage": "Transcodificación"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
@@ -2590,6 +2545,12 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Los cambios se sincronizarán con Plex automáticamente al guardar."
   },
+  "settings.restartRequired.failed": {
+    "defaultMessage": "El reinicio falló. Por favor, reinicie el servidor manualmente."
+  },
+  "settings.restartRequired.message": {
+    "defaultMessage": "Los cambios en {services} requieren un reinicio del servidor para aplicarse."
+  },
   "settings.saveChangesToSync": {
     "defaultMessage": "Guarda los cambios para sincronizar."
   },
@@ -2667,6 +2628,15 @@
   },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Solo las bibliotecas habilitadas serán escaneadas."
+  },
+  "setup.restartRequired.message": {
+    "defaultMessage": "Se configuraron servicios que requieren un reinicio del servidor para estar disponibles. ¿Desea reiniciar ahora?"
+  },
+  "setup.restartRequired.servicesConfigured": {
+    "defaultMessage": "Los siguientes servicios necesitan registrar rutas de proxy mediante reinicio:"
+  },
+  "setup.restartRequired.skipButton": {
+    "defaultMessage": "Omitir por Ahora"
   },
   "setup.signInWithPlex": {
     "defaultMessage": "Iniciar sesión con Plex"
@@ -2821,6 +2791,108 @@
   },
   "sonarrSettings.title": {
     "defaultMessage": "Configuración de Sonarr"
+  },
+  "system.health.title": {
+    "defaultMessage": "Salud"
+  },
+  "system.python.alertMessage": {
+    "defaultMessage": "El servicio de sincronización de Plex no está disponible. Las invitaciones y la sincronización de bibliotecas de Plex no están disponibles actualmente."
+  },
+  "system.python.alertTitle": {
+    "defaultMessage": "Servicio de Sincronización de Plex Caído"
+  },
+  "system.python.description": {
+    "defaultMessage": "Gestiona las invitaciones de Plex y la sincronización de bibliotecas."
+  },
+  "system.python.restart": {
+    "defaultMessage": "Reiniciar Servicio"
+  },
+  "system.python.restartFailed": {
+    "defaultMessage": "Error al reiniciar el servicio de sincronización de Plex"
+  },
+  "system.python.restartSuccess": {
+    "defaultMessage": "El servicio de sincronización de Plex se reinició exitosamente"
+  },
+  "system.python.title": {
+    "defaultMessage": "Servicio de Sincronización de Plex"
+  },
+  "system.reconnecting": {
+    "defaultMessage": "Reconectando..."
+  },
+  "system.restartNow": {
+    "defaultMessage": "Reiniciar Ahora"
+  },
+  "system.restartRequiredDescription": {
+    "defaultMessage": "Se requiere un reinicio para aplicar los cambios recientes. Por favor, reinicie el servidor lo antes posible."
+  },
+  "system.restarting": {
+    "defaultMessage": "Reiniciando..."
+  },
+  "system.server.restartFailed": {
+    "defaultMessage": "El reinicio falló. Por favor, reinicie el servidor manualmente."
+  },
+  "system.server.restartSuccess": {
+    "defaultMessage": "El servidor se reinició exitosamente"
+  },
+  "system.status.healthy": {
+    "defaultMessage": "Saludable"
+  },
+  "system.status.unhealthy": {
+    "defaultMessage": "No Saludable"
+  },
+  "system.status.unknown": {
+    "defaultMessage": "Desconocido"
+  },
+  "system.streamarr.description": {
+    "defaultMessage": "Proceso principal del servidor de Streamarr."
+  },
+  "system.streamarr.title": {
+    "defaultMessage": "Streamarr"
+  },
+  "systemSettings.betaWarning": {
+    "defaultMessage": "Este es un software BETA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Consulte GitHub para actualizaciones de estado."
+  },
+  "systemSettings.dataDirectory": {
+    "defaultMessage": "Directorio de Datos"
+  },
+  "systemSettings.developWarning": {
+    "defaultMessage": "Está ejecutando la rama <code>develop</code> de Streamarr, lo cual solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
+  },
+  "systemSettings.documentation": {
+    "defaultMessage": "Documentación"
+  },
+  "systemSettings.gettingSupport": {
+    "defaultMessage": "Obtener Soporte"
+  },
+  "systemSettings.githubDiscussions": {
+    "defaultMessage": "Discusiones de GitHub"
+  },
+  "systemSettings.helpPayForCoffee": {
+    "defaultMessage": "Ayuda a Pagar el Café ☕️"
+  },
+  "systemSettings.outOfDate": {
+    "defaultMessage": "Desactualizado"
+  },
+  "systemSettings.preferred": {
+    "defaultMessage": "Preferido"
+  },
+  "systemSettings.supportStreamarr": {
+    "defaultMessage": "Apoyar Streamarr"
+  },
+  "systemSettings.timeZone": {
+    "defaultMessage": "Zona Horaria"
+  },
+  "systemSettings.title": {
+    "defaultMessage": "Acerca de Streamarr"
+  },
+  "systemSettings.totalUsers": {
+    "defaultMessage": "Usuarios Totales"
+  },
+  "systemSettings.upToDate": {
+    "defaultMessage": "Actualizado"
+  },
+  "systemSettings.version": {
+    "defaultMessage": "Versión"
   },
   "tutorial.ready.description": {
     "defaultMessage": "Te guiaremos a través de las funciones clave de {applicationTitle} con un recorrido rápido."

@@ -394,7 +394,7 @@ const HealthCard = ({
               className="max-sm:btn-block"
             >
               <ArrowPathIcon className="size-4 mr-1" />
-              <FormattedMessage id="system.restart" defaultMessage="Restart" />
+              <FormattedMessage id="common.restart" defaultMessage="Restart" />
             </ConfirmButton>
           )}
         </div>

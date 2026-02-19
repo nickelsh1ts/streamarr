@@ -43,7 +43,7 @@ const RestartRequiredAlert = ({
       type="warning"
       title={
         <FormattedMessage
-          id="settings.restartRequired.title"
+          id="common.restartRequired"
           defaultMessage="Restart Required"
         />
       }
@@ -63,12 +63,12 @@ const RestartRequiredAlert = ({
               <span>
                 {isReconnecting ? (
                   <FormattedMessage
-                    id="settings.restartRequired.reconnecting"
+                    id="system.reconnecting"
                     defaultMessage="Reconnecting..."
                   />
                 ) : (
                   <FormattedMessage
-                    id="settings.restartRequired.restarting"
+                    id="system.restarting"
                     defaultMessage="Restarting..."
                   />
                 )}
@@ -86,7 +86,7 @@ const RestartRequiredAlert = ({
             >
               <ArrowPathIcon className="size-4 mr-1" />
               <FormattedMessage
-                id="settings.restartRequired.button"
+                id="system.restartNow"
                 defaultMessage="Restart Now"
               />
             </ConfirmButton>

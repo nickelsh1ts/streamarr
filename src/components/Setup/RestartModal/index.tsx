@@ -48,23 +48,23 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
     <Modal
       show={show}
       title={intl.formatMessage({
-        id: 'setup.restartRequired.title',
+        id: 'common.restartRequired',
         defaultMessage: 'Restart Required',
       })}
       onOk={handleRestart}
       okText={
         isRestarting
           ? intl.formatMessage({
-              id: 'settings.restartRequired.restarting',
+              id: 'system.restarting',
               defaultMessage: 'Restarting...',
             })
           : isReconnecting
             ? intl.formatMessage({
-                id: 'settings.restartRequired.reconnecting',
+                id: 'system.reconnecting',
                 defaultMessage: 'Reconnecting...',
               })
             : intl.formatMessage({
-                id: 'settings.restartRequired.button',
+                id: 'system.restartNow',
                 defaultMessage: 'Restart Now',
               })
       }
@@ -84,12 +84,12 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
             <p className="text-lg">
               {isReconnecting ? (
                 <FormattedMessage
-                  id="settings.restartRequired.reconnecting"
+                  id="system.reconnecting"
                   defaultMessage="Reconnecting..."
                 />
               ) : (
                 <FormattedMessage
-                  id="settings.restartRequired.restarting"
+                  id="system.restarting"
                   defaultMessage="Restarting..."
                 />
               )}
