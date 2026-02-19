@@ -96,7 +96,6 @@ const TutorialWizard: React.FC = () => {
     | undefined;
   const canDismiss =
     (allowSkipTutorial ?? true) || isPreviewMode || canAlwaysSkip;
-  isPreviewMode || canAlwaysSkip;
 
   const isFullWizardMode = tutorialMode === 'wizard';
   const isMixedModeWizardStep =
