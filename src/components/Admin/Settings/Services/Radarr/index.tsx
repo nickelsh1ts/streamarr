@@ -205,7 +205,6 @@ const SettingsServicesRadarr = () => {
           />
         </p>
       </div>
-      <RestartRequiredAlert filterServices={['Radarr']} />
       <RadarrModal
         radarr={editRadarrModal.radarr}
         onClose={() => setEditRadarrModal({ open: false, radarr: null })}
@@ -247,6 +246,7 @@ const SettingsServicesRadarr = () => {
         {radarrData && !radarrError && (
           <>
             <div className="max-w-6xl">
+              <RestartRequiredAlert filterServices={['Radarr']} />
               {radarrData.length > 0 &&
                 (!radarrData.some((radarr) => radarr.isDefault) ? (
                   <Alert

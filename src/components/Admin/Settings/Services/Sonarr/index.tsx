@@ -65,7 +65,6 @@ const SettingsServicesSonarr = () => {
           />
         </p>
       </div>
-      <RestartRequiredAlert filterServices={['Sonarr']} />
       <SonarrModal
         sonarr={editSonarrModal.sonarr}
         onClose={() => setEditSonarrModal({ open: false, sonarr: null })}
@@ -107,6 +106,7 @@ const SettingsServicesSonarr = () => {
         {sonarrData && !sonarrError && (
           <>
             <div className="max-w-6xl">
+              <RestartRequiredAlert filterServices={['Sonarr']} />
               {sonarrData.length > 0 &&
                 (!sonarrData.some((sonarr) => sonarr.isDefault) ? (
                   <Alert
