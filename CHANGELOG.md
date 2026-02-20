@@ -1,3 +1,58 @@
+# [1.3.0](https://github.com/nickelsh1ts/streamarr/compare/v1.2.1...v1.3.0) (2026-02-20)
+
+
+### Bug Fixes
+
+* add error handling for Plex API operations and optimize UserSubscriber logic ([#148](https://github.com/nickelsh1ts/streamarr/issues/148)) ([344ac8e](https://github.com/nickelsh1ts/streamarr/commit/344ac8e9b6ec8591edec6e64fc8fe5ec4e77141f))
+* add inviteCountRedeemed and InvitedBy to profile and update invite counting logic ([c4224ec](https://github.com/nickelsh1ts/streamarr/commit/c4224ecf14d167424e439167f20e56462f455c44))
+* added cache check to image jobs ([593ce4e](https://github.com/nickelsh1ts/streamarr/commit/593ce4e611c5e647a91aba6867679caa97d8c904))
+* address PR review comments for onboarding feature ([06dbfc4](https://github.com/nickelsh1ts/streamarr/commit/06dbfc4b605542547c73fe2f3a68330cb7305cb2))
+* address security and consistency issues in onboarding feature ([#153](https://github.com/nickelsh1ts/streamarr/issues/153)) ([495d2a2](https://github.com/nickelsh1ts/streamarr/commit/495d2a25311a72545c4cc60419b043986d6285c0))
+* adjust alignment of alert icon in Alert component ([ceb8ea1](https://github.com/nickelsh1ts/streamarr/commit/ceb8ea157407e81383fb83e3d6ee37f15df2594a))
+* **i18n:** refactored dynamic formatMessage ids to dynamic render ([8960e52](https://github.com/nickelsh1ts/streamarr/commit/8960e52f64d12bb7edef6efbb2b0f88248864d02))
+* implement caching for Plex metadata retrieval and flush cache after scan ([48091d6](https://github.com/nickelsh1ts/streamarr/commit/48091d670e94b3e055c2e1d38581bd5a652beb46))
+* Improve error handling in getStatus method for Plex API ([4a7413b](https://github.com/nickelsh1ts/streamarr/commit/4a7413b8a3d51891095efae5d79935950af56f17))
+* improve error handling in UserSubscriber and plex_invite.py ([af5a93c](https://github.com/nickelsh1ts/streamarr/commit/af5a93cd4804babc9a939f78be26cc341adb6108))
+* minor style fix ([c02d036](https://github.com/nickelsh1ts/streamarr/commit/c02d03638997fe0875e733267f9473b68095d3ad))
+* moved RestartRequiredAlert for Radarr and Sonarr services into layout ([2ec4671](https://github.com/nickelsh1ts/streamarr/commit/2ec4671319286669420595d9b6b9caf0866fbb68))
+* optimize expired invites handling ([69ade20](https://github.com/nickelsh1ts/streamarr/commit/69ade20d5f66629b3c05a99676cf65baaf132884))
+* preserve root slash in client-side normalization ([74f6841](https://github.com/nickelsh1ts/streamarr/commit/74f6841958196fa3b592e28dc0c7a8d857340ab2))
+* Resolve issue preventing server admin/owner from pinning libraries ([37f1fb3](https://github.com/nickelsh1ts/streamarr/commit/37f1fb3906cdfddd3f7f641320af55c847e21571))
+* return normalized path and add client-side normalization ([be2a0ed](https://github.com/nickelsh1ts/streamarr/commit/be2a0edb935d231a6e5059d719debca50a73e160))
+* unsafe type casts on partial users ([75ec9f1](https://github.com/nickelsh1ts/streamarr/commit/75ec9f18c3dae0417dcd8162f208c56a0890ed14))
+* update gunicorn command with PID and control socket options ([dd3103a](https://github.com/nickelsh1ts/streamarr/commit/dd3103ac6dcb5841cabd3757fb9d16c3a7854572))
+* Update PID file path for Python service to use dynamic resolution ([9c1a8b7](https://github.com/nickelsh1ts/streamarr/commit/9c1a8b74967c31580abccbfeda97e3c9e9e2d242))
+* Update process spawning logic to satisfy no shell injection ([e713941](https://github.com/nickelsh1ts/streamarr/commit/e7139419f224bda28d5f183cc7a2523b5b1dcb95))
+* Update Python service management and improve process handling ([c03b494](https://github.com/nickelsh1ts/streamarr/commit/c03b494ac3a613bcdf77f24e1e9d4e6ecb90f636))
+* update warning message to reflect BETA status and remove Discord support link ([5e94241](https://github.com/nickelsh1ts/streamarr/commit/5e94241a36e09afe6341883587d528dffafe03b1))
+
+
+### Features
+
+* add connection testing on initial load for download client instances ([0b6b202](https://github.com/nickelsh1ts/streamarr/commit/0b6b202b283cbc04d34ebdfc25fb5af48c3a03eb))
+* add GitHub Actions workflow for deploying API documentation ([afd365b](https://github.com/nickelsh1ts/streamarr/commit/afd365b2a0ae728b285c0d097c88da58a3c7c86e))
+* add loading state for cache data in JobsCacheSettings and improve event loading in Schedule ([37f670e](https://github.com/nickelsh1ts/streamarr/commit/37f670ed3158b938c6a3e8aaf7062d414b61ebad))
+* added services to setup & plex api fixes & service proxy error handling ([#147](https://github.com/nickelsh1ts/streamarr/issues/147)) ([a1a8cb4](https://github.com/nickelsh1ts/streamarr/commit/a1a8cb4702cc86384b5a2b3000e96a7019618f34))
+* backend implementation for user onboarding ([d0d5537](https://github.com/nickelsh1ts/streamarr/commit/d0d55372903c0e735b708bca129ba45fc14ec8bf))
+* **ConfirmButton:** allow onClick to return a promise and manage loading state ([28f89f9](https://github.com/nickelsh1ts/streamarr/commit/28f89f926dcb9136550614c5b819d85a1d766245))
+* Enhance service error handling and loading states with custom components ([bbd2f4a](https://github.com/nickelsh1ts/streamarr/commit/bbd2f4aa0b10cc9d84327cc0bf81300bcb3f714f))
+* enhance setup process by adding support for additional services and style fixes for steps ([4c8a6a6](https://github.com/nickelsh1ts/streamarr/commit/4c8a6a6969ec6a26cb0da279a96d9b6a66d57e0d))
+* enhance user settings and Plex integration ([497e657](https://github.com/nickelsh1ts/streamarr/commit/497e657eb8f0aecc4ad12a45ad2e7a3856712d0b))
+* expanded onboarding process to admin first time setup ([f79256b](https://github.com/nickelsh1ts/streamarr/commit/f79256b36b356a1e990067086dd292d38f99f019))
+* Implement Python service health check and restart functionality & refactored about to system / added health section ([bf33380](https://github.com/nickelsh1ts/streamarr/commit/bf33380c1bf698ee133448c5c9f521b2fa50b6b5))
+* implement server restart functionality with alert and modal support ([621f4d9](https://github.com/nickelsh1ts/streamarr/commit/621f4d9d33ca27a463b8aaad0485381ad9838eb8))
+* improve loading state handling in InviteList and InviteModal components ([ed3abec](https://github.com/nickelsh1ts/streamarr/commit/ed3abec6a303ee3ee86d6beba25d081eb077a7fe))
+* initial docs ([709eccc](https://github.com/nickelsh1ts/streamarr/commit/709eccc42579e7d006fdc964cee98035e54114c7))
+* Initial docs deploy and minor bug fixes ([#150](https://github.com/nickelsh1ts/streamarr/issues/150)) ([b36f703](https://github.com/nickelsh1ts/streamarr/commit/b36f7037ab7f0316d027523f6280a8684d0267af))
+* **onboarding:** implement onboarding context, welcome modal, and tutorial slides ([896010d](https://github.com/nickelsh1ts/streamarr/commit/896010dc5d24814531f0da441d715981b0d4958c))
+* update TypeScript target to ES2020 for improved compatibility ([96b4468](https://github.com/nickelsh1ts/streamarr/commit/96b44688d41b3034924a4d7b3b328910b9d0c6eb))
+* user onboarding with welcome modal & interactive spotlight tutorial ([#152](https://github.com/nickelsh1ts/streamarr/issues/152)) ([7846f2a](https://github.com/nickelsh1ts/streamarr/commit/7846f2ac5fc69d5ecfaa825960b0e2e0053cefc5)), closes [#153](https://github.com/nickelsh1ts/streamarr/issues/153)
+
+
+### Performance Improvements
+
+* optimize ConfirmButton with useCallback for click outside handler ([7a77e93](https://github.com/nickelsh1ts/streamarr/commit/7a77e93634dc4d6c052a3559f557eebb1cdb632a))
+
 ## [1.2.1](https://github.com/nickelsh1ts/streamarr/compare/v1.2.0...v1.2.1) (2026-01-29)
 
 
