@@ -24,6 +24,8 @@ import { useEffect, useReducer, useState } from 'react';
 import useSWR from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
+//BUG: github api makes excessive hits and misses
+
 interface Job {
   id: string;
   name?: string;
