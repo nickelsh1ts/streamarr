@@ -13,8 +13,11 @@ import Toast from '@app/components/Toast';
 import type { TautulliSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Formik, Field } from 'formik';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const ServicesTautulli = () => {
   const intl = useIntl();
@@ -140,6 +143,7 @@ const ServicesTautulli = () => {
           />
         </p>
       </div>
+      <RestartRequiredAlert filterServices={['Tautulli']} />
       <Formik
         initialValues={{
           tautulliEnabled: dataTautulli?.enabled ?? false,
@@ -172,6 +176,8 @@ const ServicesTautulli = () => {
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
             });
+
+            mutate(RESTART_REQUIRED_SWR_KEY);
           } catch {
             Toast({
               title: intl.formatMessage(

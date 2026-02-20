@@ -1,4 +1,22 @@
 {
+  "ServiceErrorGeneric.description": {
+    "defaultMessage": "An error occurred while trying to connect to {serviceName}."
+  },
+  "ServiceNotConfigured.descriptionAdmin": {
+    "defaultMessage": "{serviceName} hasn't been set up or enabled yet."
+  },
+  "ServiceNotConfigured.descriptionUser": {
+    "defaultMessage": "{serviceName} is not available. Please contact your administrator."
+  },
+  "ServiceNotConfigured.setUp": {
+    "defaultMessage": "Set Up {serviceName}"
+  },
+  "ServiceNotConfigured.title": {
+    "defaultMessage": "{serviceName} Not Enabled"
+  },
+  "ServiceNotFound.description": {
+    "defaultMessage": "This usually means Streamarr hasn't been restarted since {serviceName} was added or updated."
+  },
   "aboutReleases.changelogTitle": {
     "defaultMessage": "{version} Changelog"
   },
@@ -20,53 +38,62 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "View on GitHub"
   },
-  "aboutSettings.alphaWarning": {
-    "defaultMessage": "This is ALPHA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
-  },
-  "aboutSettings.dataDirectory": {
-    "defaultMessage": "Data Directory"
-  },
-  "aboutSettings.developWarning": {
-    "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
-  },
-  "aboutSettings.documentation": {
-    "defaultMessage": "Documentation"
-  },
-  "aboutSettings.gettingSupport": {
-    "defaultMessage": "Getting Support"
-  },
-  "aboutSettings.githubDiscussions": {
-    "defaultMessage": "GitHub Discussions"
-  },
-  "aboutSettings.helpPayForCoffee": {
-    "defaultMessage": "Help Pay for Coffee ☕️"
-  },
-  "aboutSettings.outOfDate": {
-    "defaultMessage": "Out of date"
-  },
-  "aboutSettings.preferred": {
-    "defaultMessage": "Preferred"
-  },
-  "aboutSettings.supportStreamarr": {
-    "defaultMessage": "Support Streamarr"
-  },
-  "aboutSettings.timeZone": {
-    "defaultMessage": "Time Zone"
-  },
-  "aboutSettings.title": {
-    "defaultMessage": "About Streamarr"
-  },
-  "aboutSettings.totalUsers": {
-    "defaultMessage": "Total Users"
-  },
-  "aboutSettings.upToDate": {
-    "defaultMessage": "Up to date"
-  },
-  "aboutSettings.version": {
-    "defaultMessage": "Version"
-  },
   "admin.settings.services.description": {
     "defaultMessage": "Configure your various services below."
+  },
+  "adminOnboarding.notifications.description": {
+    "defaultMessage": "Keep your users informed with email notifications, web push alerts, and in-app messages. Configure these in the Notifications settings when you're ready."
+  },
+  "adminOnboarding.notifications.title": {
+    "defaultMessage": "Set Up Notifications"
+  },
+  "adminOnboarding.services.description": {
+    "defaultMessage": "Expand the functionality of your server by integrating with external services. You can set up Radarr and Sonarr for automated downloads, connect to download clients and other integrations in the Services settings."
+  },
+  "adminOnboarding.services.title": {
+    "defaultMessage": "Configure Your Services"
+  },
+  "adminOnboarding.users.description": {
+    "defaultMessage": "Control who has access to your Plex media. You can set defaults, import existing users, manage permissions, set quotas, and change library access from the User settings."
+  },
+  "adminOnboarding.users.title": {
+    "defaultMessage": "Manage Your Users"
+  },
+  "adminOnboarding.welcome.description": {
+    "defaultMessage": "Streamarr is your all-in-one media server management solution. Let's get you set up with some quick tips to get started and make the most of your new server."
+  },
+  "adminOnboarding.welcome.title": {
+    "defaultMessage": "Welcome to Streamarr!"
+  },
+  "adminTutorial.generalSettings.description": {
+    "defaultMessage": "General settings are where you can configure your server-wide preferences and customize the user experience."
+  },
+  "adminTutorial.generalSettings.title": {
+    "defaultMessage": "General Settings"
+  },
+  "adminTutorial.manageUsers.description": {
+    "defaultMessage": "View and manage your users, update their permissions, and control their access to your media libraries."
+  },
+  "adminTutorial.manageUsers.title": {
+    "defaultMessage": "Manage Users"
+  },
+  "adminTutorial.onboarding.description": {
+    "defaultMessage": "Customize the welcome experience for new users. Create welcome slides, tutorial steps, and control how users are introduced to your server."
+  },
+  "adminTutorial.onboarding.title": {
+    "defaultMessage": "User Onboarding"
+  },
+  "adminTutorial.servicesSettings.description": {
+    "defaultMessage": "Integrate with external services to expand your server's capabilities. Configure Seerr, Radarr, Sonarr, and other integrations here."
+  },
+  "adminTutorial.servicesSettings.title": {
+    "defaultMessage": "Services Settings"
+  },
+  "adminTutorial.tabs.description": {
+    "defaultMessage": "Use these tabs to navigate between different admin features. Settings, Users, and your enabled media services are all accessible from here."
+  },
+  "adminTutorial.tabs.title": {
+    "defaultMessage": "Admin Navigation"
   },
   "appData.warning": {
     "defaultMessage": "The <code>{appDataPath}</code> volume mount was not configured properly. All data will be cleared when the container is stopped or restarted."
@@ -191,9 +218,6 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
-  "common.about": {
-    "defaultMessage": "About"
-  },
   "common.actions": {
     "defaultMessage": "Actions"
   },
@@ -236,6 +260,9 @@
   "common.arrEdit4k": {
     "defaultMessage": "Edit 4K {arrApp} Server"
   },
+  "common.back": {
+    "defaultMessage": "Back"
+  },
   "common.by": {
     "defaultMessage": "by"
   },
@@ -247,6 +274,9 @@
   },
   "common.cancel": {
     "defaultMessage": "Cancel"
+  },
+  "common.change": {
+    "defaultMessage": "Change"
   },
   "common.close": {
     "defaultMessage": "Close"
@@ -290,6 +320,12 @@
   "common.delete": {
     "defaultMessage": "Delete"
   },
+  "common.description": {
+    "defaultMessage": "Description"
+  },
+  "common.disable": {
+    "defaultMessage": "Disable"
+  },
   "common.disconnected": {
     "defaultMessage": "Disconnected"
   },
@@ -314,6 +350,9 @@
   "common.emailAddress": {
     "defaultMessage": "Email Address"
   },
+  "common.enable": {
+    "defaultMessage": "Enable"
+  },
   "common.endTime": {
     "defaultMessage": "End Time"
   },
@@ -335,6 +374,9 @@
   "common.externalUrl": {
     "defaultMessage": "External URL"
   },
+  "common.finish": {
+    "defaultMessage": "Finish"
+  },
   "common.futuredays": {
     "defaultMessage": "Future Days"
   },
@@ -352,6 +394,9 @@
   },
   "common.hostname": {
     "defaultMessage": "Hostname or IP Address"
+  },
+  "common.image": {
+    "defaultMessage": "Image"
   },
   "common.inApp": {
     "defaultMessage": "In-App"
@@ -410,6 +455,9 @@
   "common.music": {
     "defaultMessage": "Music"
   },
+  "common.muted": {
+    "defaultMessage": "muted"
+  },
   "common.name": {
     "defaultMessage": "Name"
   },
@@ -425,6 +473,9 @@
   "common.noDownloadsFound": {
     "defaultMessage": "No Downloads Found"
   },
+  "common.noErrorDetails": {
+    "defaultMessage": "Couldn't retrieve error details."
+  },
   "common.noResults": {
     "defaultMessage": "No Results"
   },
@@ -436,6 +487,9 @@
   },
   "common.notifications": {
     "defaultMessage": "Notifications"
+  },
+  "common.onboarding": {
+    "defaultMessage": "Onboarding"
   },
   "common.optional": {
     "defaultMessage": "optional"
@@ -518,14 +572,26 @@
   "common.requests": {
     "defaultMessage": "Requests"
   },
+  "common.reset": {
+    "defaultMessage": "Reset"
+  },
   "common.resetToDefault": {
     "defaultMessage": "Reset to Default"
+  },
+  "common.restart": {
+    "defaultMessage": "Restart"
+  },
+  "common.restartRequired": {
+    "defaultMessage": "Restart Required"
   },
   "common.resultsDisplay": {
     "defaultMessage": "Display {select} results per page"
   },
   "common.resume": {
     "defaultMessage": "Resume"
+  },
+  "common.retry": {
+    "defaultMessage": "Retry"
   },
   "common.role": {
     "defaultMessage": "Role"
@@ -553,6 +619,9 @@
   },
   "common.servername": {
     "defaultMessage": "Server Name"
+  },
+  "common.service": {
+    "defaultMessage": "Service"
   },
   "common.services": {
     "defaultMessage": "Services"
@@ -590,8 +659,11 @@
   "common.size": {
     "defaultMessage": "Size"
   },
+  "common.skip": {
+    "defaultMessage": "Skip"
+  },
   "common.somethingWentWrong": {
-    "defaultMessage": "Something went wrong!"
+    "defaultMessage": "Something Went Wrong!"
   },
   "common.speed": {
     "defaultMessage": "Speed"
@@ -608,6 +680,9 @@
   "common.subtitles": {
     "defaultMessage": "Subtitles"
   },
+  "common.system": {
+    "defaultMessage": "System"
+  },
   "common.test": {
     "defaultMessage": "Test"
   },
@@ -617,8 +692,11 @@
   "common.testing": {
     "defaultMessage": "Testing..."
   },
-  "common.transcoding": {
-    "defaultMessage": "Transcoding"
+  "common.title": {
+    "defaultMessage": "Title"
+  },
+  "common.transcodes": {
+    "defaultMessage": "Transcodes"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Try adjusting your filters or add a new torrent."
@@ -631,6 +709,9 @@
   },
   "common.unknown": {
     "defaultMessage": "Unknown"
+  },
+  "common.unknownError": {
+    "defaultMessage": "Unknown error"
   },
   "common.unknownUser": {
     "defaultMessage": "Unknown User"
@@ -658,6 +739,18 @@
   },
   "common.users": {
     "defaultMessage": "Users"
+  },
+  "common.validation.descriptionRequired": {
+    "defaultMessage": "You must provide a valid description"
+  },
+  "common.validation.invalidUrl": {
+    "defaultMessage": "Invalid URL"
+  },
+  "common.validation.titleRequired": {
+    "defaultMessage": "You must provide a valid title"
+  },
+  "common.videoUrl": {
+    "defaultMessage": "Video URL"
   },
   "common.viewDetails": {
     "defaultMessage": "View Details"
@@ -773,6 +866,9 @@
   "downloads.bulkResume": {
     "defaultMessage": "Resume Selected"
   },
+  "downloads.category": {
+    "defaultMessage": "Category"
+  },
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
@@ -860,6 +956,9 @@
   "downloads.hash": {
     "defaultMessage": "Hash"
   },
+  "downloads.label": {
+    "defaultMessage": "Label"
+  },
   "downloads.labelPlaceholder": {
     "defaultMessage": "e.g., movies, tv-shows"
   },
@@ -931,6 +1030,39 @@
   },
   "downloads.staleDataWarning": {
     "defaultMessage": "Client Unreachable"
+  },
+  "downloads.statusChecking": {
+    "defaultMessage": "Checking"
+  },
+  "downloads.statusCompleted": {
+    "defaultMessage": "Completed"
+  },
+  "downloads.statusDownloading": {
+    "defaultMessage": "Downloading"
+  },
+  "downloads.statusError": {
+    "defaultMessage": "Error"
+  },
+  "downloads.statusMetadata": {
+    "defaultMessage": "Fetching Metadata"
+  },
+  "downloads.statusMoving": {
+    "defaultMessage": "Moving"
+  },
+  "downloads.statusPaused": {
+    "defaultMessage": "Paused"
+  },
+  "downloads.statusQueued": {
+    "defaultMessage": "Queued"
+  },
+  "downloads.statusSeeding": {
+    "defaultMessage": "Seeding"
+  },
+  "downloads.statusStalled": {
+    "defaultMessage": "Stalled"
+  },
+  "downloads.statusUnknown": {
+    "defaultMessage": "Unknown"
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
@@ -1243,6 +1375,21 @@
   },
   "imageCache.title": {
     "defaultMessage": "Image Cache"
+  },
+  "imageUpload.dropOrClick": {
+    "defaultMessage": "Drop an image or click to upload"
+  },
+  "imageUpload.fileTooLarge": {
+    "defaultMessage": "File is too large. Maximum size is 10MB."
+  },
+  "imageUpload.formats": {
+    "defaultMessage": "JPG, PNG, WebP, GIF (max 10MB)"
+  },
+  "imageUpload.uploadFailed": {
+    "defaultMessage": "Failed to upload image."
+  },
+  "imageUpload.uploading": {
+    "defaultMessage": "Uploading..."
   },
   "inAppNotifications.saveError": {
     "defaultMessage": "In App notification settings failed to save."
@@ -1817,6 +1964,9 @@
   "profile.editSettings": {
     "defaultMessage": "Edit Settings"
   },
+  "profile.invitedBy": {
+    "defaultMessage": "Invited By"
+  },
   "profile.invitesLifetime": {
     "defaultMessage": "Invites (Lifetime)"
   },
@@ -1846,6 +1996,9 @@
   },
   "profile.userId": {
     "defaultMessage": "User ID: {userId}"
+  },
+  "profile.usersInvited": {
+    "defaultMessage": "Users Invited"
   },
   "profile.viewProfile": {
     "defaultMessage": "View Profile"
@@ -1915,6 +2068,18 @@
   },
   "selectUsers": {
     "defaultMessage": "Select Users"
+  },
+  "serviceNotFound.notFound": {
+    "defaultMessage": "Not found"
+  },
+  "serviceUnavailable.timeoutMessage": {
+    "defaultMessage": "Something went wrong. {serviceName} did not respond in time."
+  },
+  "serviceUnavailable.title": {
+    "defaultMessage": "{serviceName} Unavailable"
+  },
+  "serviceUnavailable.unreachableMessage": {
+    "defaultMessage": "Unable to connect to {serviceName}. Service is unreachable."
   },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Failed to disable authentication on {service}"
@@ -2057,8 +2222,17 @@
   "settings.accountType": {
     "defaultMessage": "Account Type"
   },
+  "settings.allLibraries": {
+    "defaultMessage": "All Libraries"
+  },
+  "settings.allowDownloads": {
+    "defaultMessage": "Allow Downloads"
+  },
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.crossOriginAccess": {
+    "defaultMessage": "Cross-Origin Access"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Enable Trial Period"
@@ -2066,20 +2240,251 @@
   "settings.inviteQuota": {
     "defaultMessage": "Invite Quota"
   },
+  "settings.librariesDifferWarning": {
+    "defaultMessage": "Plex access differs from current settings:"
+  },
   "settings.librariesSynced": {
     "defaultMessage": "Libraries have been synced with Plex."
   },
   "settings.notifications.description": {
     "defaultMessage": "Configure and enable notification agents."
   },
+  "settings.onboarding.addASlide": {
+    "defaultMessage": "Add a Slide"
+  },
+  "settings.onboarding.addAStep": {
+    "defaultMessage": "Add a Step"
+  },
+  "settings.onboarding.addSlide": {
+    "defaultMessage": "Add Slide"
+  },
+  "settings.onboarding.addStep": {
+    "defaultMessage": "Add Step"
+  },
+  "settings.onboarding.allowSkip": {
+    "defaultMessage": "Allow Skip"
+  },
+  "settings.onboarding.allowSkipTutorialTip": {
+    "defaultMessage": "Allow users to skip the tutorial."
+  },
+  "settings.onboarding.allowSkipWelcomeTip": {
+    "defaultMessage": "Allow users to skip or dismiss the welcome modal."
+  },
+  "settings.onboarding.customHtml": {
+    "defaultMessage": "Custom HTML"
+  },
+  "settings.onboarding.customHtmlTip": {
+    "defaultMessage": "Custom HTML content."
+  },
+  "settings.onboarding.deleteConfirm": {
+    "defaultMessage": "Are you sure you want to delete this item? This action cannot be undone."
+  },
+  "settings.onboarding.deleteError": {
+    "defaultMessage": "Failed to delete item."
+  },
+  "settings.onboarding.deleteSuccess": {
+    "defaultMessage": "Item deleted successfully."
+  },
+  "settings.onboarding.deleteTutorialTitle": {
+    "defaultMessage": "Delete Tutorial Step"
+  },
+  "settings.onboarding.deleteWelcomeTitle": {
+    "defaultMessage": "Delete Welcome Content"
+  },
+  "settings.onboarding.description": {
+    "defaultMessage": "Configure the welcome modal and tutorial experience for new users."
+  },
+  "settings.onboarding.editSlide": {
+    "defaultMessage": "Edit Slide"
+  },
+  "settings.onboarding.editStep": {
+    "defaultMessage": "Edit Step"
+  },
+  "settings.onboarding.imageAvailableAfterSave": {
+    "defaultMessage": "Image upload will be available after saving."
+  },
+  "settings.onboarding.mode.both": {
+    "defaultMessage": "Both (Spotlight + Wizard)"
+  },
+  "settings.onboarding.mode.spotlight": {
+    "defaultMessage": "Spotlight (Element Highlighting)"
+  },
+  "settings.onboarding.mode.wizard": {
+    "defaultMessage": "Wizard (Carousel Slide)"
+  },
+  "settings.onboarding.noTutorialSteps": {
+    "defaultMessage": "No tutorial steps configured. Add your first step to get started."
+  },
+  "settings.onboarding.noWelcomeContent": {
+    "defaultMessage": "No welcome content configured. Add your first slide to get started."
+  },
+  "settings.onboarding.position.auto": {
+    "defaultMessage": "Auto (Best Fit)"
+  },
+  "settings.onboarding.position.bottom": {
+    "defaultMessage": "Bottom"
+  },
+  "settings.onboarding.position.left": {
+    "defaultMessage": "Left"
+  },
+  "settings.onboarding.position.right": {
+    "defaultMessage": "Right"
+  },
+  "settings.onboarding.position.top": {
+    "defaultMessage": "Top"
+  },
+  "settings.onboarding.previewDescription": {
+    "defaultMessage": "Test the welcome modal and tutorial without affecting user data. Preview mode does not save progress."
+  },
+  "settings.onboarding.previewMode": {
+    "defaultMessage": "Preview Mode"
+  },
+  "settings.onboarding.previewSection": {
+    "defaultMessage": "Preview & Test"
+  },
+  "settings.onboarding.previewTutorial": {
+    "defaultMessage": "Preview Tutorial"
+  },
+  "settings.onboarding.previewWelcome": {
+    "defaultMessage": "Preview Welcome"
+  },
+  "settings.onboarding.reorderError": {
+    "defaultMessage": "Failed to reorder items."
+  },
+  "settings.onboarding.resetAllUsersButton": {
+    "defaultMessage": "Reset All Users"
+  },
+  "settings.onboarding.resetAllUsersConfirm": {
+    "defaultMessage": "Are you sure you want to reset onboarding progress for all users? This will show the welcome modal and tutorial to all users again on their next visit."
+  },
+  "settings.onboarding.resetAllUsersError": {
+    "defaultMessage": "Failed to reset onboarding for all users."
+  },
+  "settings.onboarding.resetAllUsersSuccess": {
+    "defaultMessage": "Onboarding reset for all users!"
+  },
+  "settings.onboarding.resetAllUsersTitle": {
+    "defaultMessage": "Reset All Users"
+  },
+  "settings.onboarding.resetConfirm": {
+    "defaultMessage": "Are you sure you want to reset all welcome content and tutorial steps to their defaults? This will delete any custom content you have created."
+  },
+  "settings.onboarding.resetError": {
+    "defaultMessage": "Failed to reset onboarding content."
+  },
+  "settings.onboarding.resetSection": {
+    "defaultMessage": "Reset to Defaults"
+  },
+  "settings.onboarding.resetSectionDescription": {
+    "defaultMessage": "Reset all welcome content and tutorial steps to their default values. This will delete any customizations."
+  },
+  "settings.onboarding.resetSuccess": {
+    "defaultMessage": "Onboarding content reset to defaults!"
+  },
+  "settings.onboarding.resetTitle": {
+    "defaultMessage": "Reset to Defaults"
+  },
+  "settings.onboarding.route": {
+    "defaultMessage": "Route"
+  },
+  "settings.onboarding.routeTip": {
+    "defaultMessage": "Navigate to this route when this step is active."
+  },
+  "settings.onboarding.selectPreset": {
+    "defaultMessage": "Select a preset..."
+  },
+  "settings.onboarding.stepMode": {
+    "defaultMessage": "Step Rendering Style"
+  },
+  "settings.onboarding.stepModeTip": {
+    "defaultMessage": "Choose how this step renders: spotlight highlights an element, wizard shows a carousel slide."
+  },
+  "settings.onboarding.targetSelector": {
+    "defaultMessage": "Target Selector"
+  },
+  "settings.onboarding.targetSelectorTip": {
+    "defaultMessage": "CSS selector or data-tutorial attribute name to highlight."
+  },
+  "settings.onboarding.title": {
+    "defaultMessage": "Onboarding Settings"
+  },
+  "settings.onboarding.tooltipPosition": {
+    "defaultMessage": "Tooltip Position"
+  },
+  "settings.onboarding.tutorialAutostart": {
+    "defaultMessage": "Auto-Start Tutorial"
+  },
+  "settings.onboarding.tutorialAutostartDelay": {
+    "defaultMessage": "Auto-Start Delay (ms)"
+  },
+  "settings.onboarding.tutorialAutostartDelayTip": {
+    "defaultMessage": "Delay in milliseconds before auto-starting the tutorial."
+  },
+  "settings.onboarding.tutorialAutostartTip": {
+    "defaultMessage": "Automatically start the tutorial after the welcome modal or on first login."
+  },
+  "settings.onboarding.tutorialEnabled": {
+    "defaultMessage": "Enable Tutorial"
+  },
+  "settings.onboarding.tutorialEnabledTip": {
+    "defaultMessage": "Guide users through key features with an interactive tutorial."
+  },
+  "settings.onboarding.tutorialMode": {
+    "defaultMessage": "Tutorial Mode"
+  },
+  "settings.onboarding.tutorialModeTip": {
+    "defaultMessage": "Choose how the tutorial guides users through features."
+  },
+  "settings.onboarding.tutorialSteps": {
+    "defaultMessage": "Tutorial Steps"
+  },
+  "settings.onboarding.tutorialStepsDescription": {
+    "defaultMessage": "Configure the interactive tutorial steps."
+  },
+  "settings.onboarding.videoAutoplay": {
+    "defaultMessage": "Autoplay Video"
+  },
+  "settings.onboarding.videoUrlTip": {
+    "defaultMessage": "YouTube video URL (will be embedded securely)."
+  },
+  "settings.onboarding.welcomeContent": {
+    "defaultMessage": "Welcome Content"
+  },
+  "settings.onboarding.welcomeContentDescription": {
+    "defaultMessage": "Configure the slides shown in the welcome modal carousel."
+  },
+  "settings.onboarding.welcomeEnabled": {
+    "defaultMessage": "Enable Welcome Modal"
+  },
+  "settings.onboarding.welcomeEnabledTip": {
+    "defaultMessage": "Show a welcome carousel to new users on first login."
+  },
+  "settings.openOverseerr": {
+    "defaultMessage": "Open Overseerr"
+  },
+  "settings.openOverseerrSettings": {
+    "defaultMessage": "Open Overseerr Settings"
+  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Override Global Limit"
+  },
+  "settings.overseerr.localhostDescription": {
+    "defaultMessage": "Overseerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+  },
+  "settings.overseerr.localhostDescriptionSettings": {
+    "defaultMessage": "Overseerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
   },
   "settings.permissions": {
     "defaultMessage": "Permissions"
   },
   "settings.permissions.error": {
     "defaultMessage": "You do not have permission to modify this user's settings."
+  },
+  "settings.permissionsDifferWarning": {
+    "defaultMessage": "Plex permissions differ from current settings:"
+  },
+  "settings.permissionsWillSyncWarning": {
+    "defaultMessage": "Changing these permissions will briefly remove and re-add the user's Plex server access to apply the changes."
   },
   "settings.pinLibraries": {
     "defaultMessage": "Pin Libraries"
@@ -2117,6 +2522,15 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Changes will sync with Plex automatically on save."
   },
+  "settings.restartRequired.failed": {
+    "defaultMessage": "Restart failed. Please restart the server manually."
+  },
+  "settings.restartRequired.message": {
+    "defaultMessage": "Changes to {services} require a server restart to take effect."
+  },
+  "settings.saveChangesToSync": {
+    "defaultMessage": "Save changes to sync."
+  },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
   },
@@ -2128,6 +2542,18 @@
   },
   "settings.trialPeriodEndDateDescription": {
     "defaultMessage": "Cannot create invites until after this date"
+  },
+  "settings.user.onboardingDescription": {
+    "defaultMessage": "Reset the welcome modal and tutorial {ownProfile, select, true {} other {for this user}}"
+  },
+  "settings.user.onboardingResetError": {
+    "defaultMessage": "Failed to reset onboarding."
+  },
+  "settings.user.onboardingResetSuccess": {
+    "defaultMessage": "Onboarding reset."
+  },
+  "settings.user.resetOnboarding": {
+    "defaultMessage": "Reset Onboarding"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
@@ -2144,11 +2570,17 @@
   "settingsBadge.restartRequired.tooltip": {
     "defaultMessage": "Streamarr must be restarted for changes to this setting to take effect"
   },
+  "setup.arrServices": {
+    "defaultMessage": "*Arr Services"
+  },
   "setup.configurePlex": {
     "defaultMessage": "Configure Plex"
   },
   "setup.configureServices": {
     "defaultMessage": "Configure Services"
+  },
+  "setup.downloads": {
+    "defaultMessage": "Downloads"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completing setup"
@@ -2165,8 +2597,23 @@
   "setup.loginError": {
     "defaultMessage": "Login error"
   },
+  "setup.mediaServices": {
+    "defaultMessage": "Media Services"
+  },
+  "setup.monitoring": {
+    "defaultMessage": "Monitoring"
+  },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Only enabled libraries will be scanned."
+  },
+  "setup.restartRequired.message": {
+    "defaultMessage": "Services were configured that require a server restart to be available. Would you like to restart now?"
+  },
+  "setup.restartRequired.servicesConfigured": {
+    "defaultMessage": "The following services need proxy routes registered via restart:"
+  },
+  "setup.restartRequired.skipButton": {
+    "defaultMessage": "Skip for Now"
   },
   "setup.signInWithPlex": {
     "defaultMessage": "Sign in with Plex"
@@ -2315,6 +2762,126 @@
   "sonarrSettings.title": {
     "defaultMessage": "Sonarr Settings"
   },
+  "system.health.title": {
+    "defaultMessage": "Health"
+  },
+  "system.python.alertMessage": {
+    "defaultMessage": "The Plex Sync service is unreachable. Plex invites and library sync are currently unavailable."
+  },
+  "system.python.alertTitle": {
+    "defaultMessage": "Plex Sync Service Down"
+  },
+  "system.python.description": {
+    "defaultMessage": "Handles Plex invites and library synchronization."
+  },
+  "system.python.restart": {
+    "defaultMessage": "Restart Service"
+  },
+  "system.python.restartFailed": {
+    "defaultMessage": "Failed to restart Plex Sync service"
+  },
+  "system.python.restartSuccess": {
+    "defaultMessage": "Plex Sync service restarted successfully"
+  },
+  "system.python.title": {
+    "defaultMessage": "Plex Sync Service"
+  },
+  "system.reconnecting": {
+    "defaultMessage": "Reconnecting..."
+  },
+  "system.restartNow": {
+    "defaultMessage": "Restart Now"
+  },
+  "system.restartRequiredDescription": {
+    "defaultMessage": "A restart is required to apply recent changes. Please restart the server as soon as possible."
+  },
+  "system.restarting": {
+    "defaultMessage": "Restarting..."
+  },
+  "system.server.restartFailed": {
+    "defaultMessage": "Restart failed. Please restart the server manually."
+  },
+  "system.server.restartSuccess": {
+    "defaultMessage": "Server restarted successfully"
+  },
+  "system.status.healthy": {
+    "defaultMessage": "Healthy"
+  },
+  "system.status.unhealthy": {
+    "defaultMessage": "Unhealthy"
+  },
+  "system.status.unknown": {
+    "defaultMessage": "Unknown"
+  },
+  "system.streamarr.description": {
+    "defaultMessage": "Main server process for Streamarr."
+  },
+  "system.streamarr.title": {
+    "defaultMessage": "Streamarr"
+  },
+  "systemSettings.betaWarning": {
+    "defaultMessage": "This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
+  },
+  "systemSettings.dataDirectory": {
+    "defaultMessage": "Data Directory"
+  },
+  "systemSettings.developWarning": {
+    "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
+  },
+  "systemSettings.documentation": {
+    "defaultMessage": "Documentation"
+  },
+  "systemSettings.gettingSupport": {
+    "defaultMessage": "Getting Support"
+  },
+  "systemSettings.githubDiscussions": {
+    "defaultMessage": "GitHub Discussions"
+  },
+  "systemSettings.helpPayForCoffee": {
+    "defaultMessage": "Help Pay for Coffee ☕️"
+  },
+  "systemSettings.outOfDate": {
+    "defaultMessage": "Out of date"
+  },
+  "systemSettings.preferred": {
+    "defaultMessage": "Preferred"
+  },
+  "systemSettings.supportStreamarr": {
+    "defaultMessage": "Support Streamarr"
+  },
+  "systemSettings.timeZone": {
+    "defaultMessage": "Time Zone"
+  },
+  "systemSettings.title": {
+    "defaultMessage": "About Streamarr"
+  },
+  "systemSettings.totalUsers": {
+    "defaultMessage": "Total Users"
+  },
+  "systemSettings.upToDate": {
+    "defaultMessage": "Up to date"
+  },
+  "systemSettings.version": {
+    "defaultMessage": "Version"
+  },
+  "tutorial.ready.description": {
+    "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."
+  },
+  "tutorial.ready.title": {
+    "defaultMessage": "Interactive Tutorial"
+  },
+  "tutorial.skipTour": {
+    "defaultMessage": "Skip Tour"
+  },
+  "tutorial.startTour": {
+    "defaultMessage": "Start Tour"
+  },
+  "tutorial.stepProgress": {
+    "defaultMessage": "Step {current} of {total}"
+  },
+  "tutorial.wizard.routeHint": {
+    "defaultMessage": "This feature is available at: {route}"
+  },
   "userDropdown.account": {
     "defaultMessage": "Account"
   },
@@ -2326,6 +2893,9 @@
   },
   "userDropdown.signOut": {
     "defaultMessage": "Sign Out of {applicationTitle}"
+  },
+  "userDropdown.startTutorial": {
+    "defaultMessage": "Start Tutorial"
   },
   "userDropdown.watchHistory": {
     "defaultMessage": "Watch History"
@@ -2632,5 +3202,8 @@
   },
   "webpushNotifications.testSuccess": {
     "defaultMessage": "Web push test notification sent!"
+  },
+  "welcome.getStarted": {
+    "defaultMessage": "Get Started"
   }
 }

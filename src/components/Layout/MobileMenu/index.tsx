@@ -3,7 +3,6 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
@@ -29,6 +28,8 @@ import Link from 'next/link';
 import type { JSX } from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLink {
   href: string;
@@ -39,12 +40,15 @@ interface MenuLink {
   as?: string;
   dataTestId?: string;
   hidden?: boolean;
+  tutorialId?: string;
 }
 
 const MobileMenu = () => {
   const intl = useIntl();
-  const { currentSettings } = useSettings();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
@@ -86,7 +90,7 @@ const MobileMenu = () => {
   );
 
   const scheduleDisabled =
-    !currentSettings?.releaseSched ||
+    !userSettings?.releaseSched ||
     !hasPermission(
       [
         Permission.VIEW_SCHEDULE,
@@ -99,7 +103,7 @@ const MobileMenu = () => {
   const requestDisabled =
     !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
       type: 'or',
-    }) || !currentSettings?.enableRequest;
+    }) || !userSettings?.requestUrl;
 
   const isWatchRoute = url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/);
 
@@ -113,6 +117,7 @@ const MobileMenu = () => {
       svgIcon: <HomeIcon className="size-7" />,
       svgIconSelected: <FilledHomeIcon className="size-7" />,
       activeRegExp: /^\/watch\/web\/index\.html#!\/?$/,
+      tutorialId: 'nav-home',
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
@@ -124,6 +129,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
       hidden: !invitesDisabled, // Show when invites is disabled
+      tutorialId: 'nav-discover',
     },
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=watchlist&pivot=discover.watchlist',
@@ -135,6 +141,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledBookmarkIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=watchlist&pivot=discover))/,
       hidden: !scheduleDisabled, // Show when schedule is disabled
+      tutorialId: 'nav-watchlist',
     },
     {
       href: '/request',
@@ -160,6 +167,7 @@ const MobileMenu = () => {
       ),
       activeRegExp: /^\/request\/?$/,
       hidden: requestDisabled,
+      tutorialId: 'nav-request',
     },
     {
       href: '/invites',
@@ -171,6 +179,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledPaperAirplaneIcon className="h-6 w-6" />,
       activeRegExp: /^\/invites\/?/,
       hidden: invitesDisabled,
+      tutorialId: 'nav-invites',
     },
     {
       href: '/schedule',
@@ -182,6 +191,7 @@ const MobileMenu = () => {
       svgIconSelected: <FilledCalendarDateRangeIcon className="h-6 w-6" />,
       activeRegExp: /^\/schedule\/?/,
       hidden: scheduleDisabled,
+      tutorialId: 'nav-schedule',
     },
   ];
 
@@ -274,7 +284,11 @@ const MobileMenu = () => {
   const filteredLinks = menuLinks.filter((link) => !link.hidden);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]" ref={ref}>
+    <div
+      className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]"
+      ref={ref}
+      data-tutorial="mobile-nav"
+    >
       <Transition
         show={isOpen}
         as="div"
@@ -290,6 +304,7 @@ const MobileMenu = () => {
                 className={`flex items-center space-x-2 px-4 py-2 last:mb-2 ${
                   isActive ? 'text-primary' : ''
                 }`}
+                data-tutorial={link.tutorialId}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     setIsOpen(false);
@@ -373,6 +388,7 @@ const MobileMenu = () => {
       <div className="padding-bottom-safe border-t border-primary bg-primary bg-opacity-30 backdrop-blur">
         <div className="flex h-full items-center justify-between px-6 py-2 text-primary-content backdrop-filter-none">
           <button
+            data-tutorial="mobile-menu-toggle"
             className={`flex flex-col items-center space-y-1 ${
               isOpen &&
               (menuType === 'library' ||
@@ -426,6 +442,7 @@ const MobileMenu = () => {
                   className={`flex flex-col items-center space-y-1 ${
                     isActive ? 'text-primary' : ''
                   }`}
+                  data-tutorial={link.tutorialId}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       setIsOpen(false);

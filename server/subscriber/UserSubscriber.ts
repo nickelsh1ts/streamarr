@@ -18,6 +18,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     return User;
   }
   private async sendNewUserNotification(entity: User) {
+    // Skip notifications if this is the admin user (ID 1) being created
+    if (entity.id === 1) {
+      return;
+    }
+
     const userRepository = getRepository(User);
 
     const permittedUsers = await userRepository.find({
@@ -45,6 +50,10 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
         )
       );
     });
+
+    if (usersToNotify.length === 0) {
+      return;
+    }
 
     await Promise.all(
       usersToNotify.map(async (user) => {

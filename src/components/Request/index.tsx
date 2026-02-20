@@ -1,8 +1,13 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import {
+  ServiceError,
+  ServiceNotConfigured,
+} from '@app/components/Common/ServiceError';
 import useRouteGuard from '@app/hooks/useRouteGuard';
+import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
-import { Permission } from '@server/lib/permissions';
+import { useUser, Permission } from '@app/hooks/useUser';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -13,6 +18,9 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import Button from '@app/components/Common/Button';
+import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -22,27 +30,45 @@ const Request = ({ children, ...props }) => {
   const url = pathname.replace('/request', '');
   const router = useRouter();
   const { currentSettings } = useSettings();
+  const { hasPermission, user } = useUser();
+  const isAdmin = hasPermission(Permission.ADMIN);
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
+
+  const isConfigured =
+    !!userSettings?.requestUrl && !!userSettings?.requestEnabled;
+  const {
+    status: proxyStatus,
+    error: proxyError,
+    retry,
+  } = useServiceProxy({
+    proxyPath: userSettings?.requestUrl,
+    enabled: isConfigured,
+  });
 
   const [contentRef, setContentRef] = useState(null);
   const [loadingIframe, setLoadingIframe] = useState(
-    () => !currentSettings?.requestUrl
+    () => !userSettings?.requestUrl
   );
 
   const isLocalhost =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1');
+      /^(127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(
+        window.location.hostname
+      ));
 
   const mountNode = contentRef?.contentWindow?.document?.body;
   const innerFrame = contentRef?.contentWindow;
 
   const hostname =
-    typeof window !== 'undefined' && currentSettings?.requestUrl
-      ? `${window?.location?.protocol}//${window?.location?.host}${currentSettings?.requestUrl}`
+    typeof window !== 'undefined' && userSettings?.requestUrl
+      ? `${window?.location?.protocol}//${window?.location?.host}${userSettings?.requestUrl}`
       : '';
 
   useEffect(() => {
-    if (!currentSettings?.requestUrl || !innerFrame?.navigation) {
+    if (!userSettings?.requestUrl || !innerFrame?.navigation) {
       return;
     }
 
@@ -52,14 +78,14 @@ const Request = ({ children, ...props }) => {
         if (
           url !==
             innerFrame?.location?.pathname.replace(
-              currentSettings?.requestUrl,
+              userSettings?.requestUrl,
               ''
             ) &&
           !innerFrame?.location?.pathname.includes('/search')
         ) {
           router.push(
             innerFrame?.location?.pathname.replace(
-              currentSettings?.requestUrl,
+              userSettings?.requestUrl,
               '/request'
             )
           );
@@ -75,7 +101,7 @@ const Request = ({ children, ...props }) => {
       innerFrame.navigation?.removeEventListener('navigate', handleNavigate);
     };
   }, [
-    currentSettings?.requestUrl,
+    userSettings?.requestUrl,
     innerFrame?.location?.pathname,
     innerFrame?.navigation,
     innerFrame,
@@ -182,19 +208,23 @@ const Request = ({ children, ...props }) => {
     }
   }, [mountNode, currentSettings.theme, innerFrame]);
 
-  if (isLocalhost && currentSettings?.requestHostname) {
-    const overseerrUrl = `http://${currentSettings.requestHostname}${url && url.replace('null', '')}`;
+  if (isLocalhost && userSettings?.requestHostname) {
+    const overseerrUrl = `http://${userSettings?.requestHostname}${url && url.replace('null', '')}`;
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100dvh-4rem)] bg-base-300 px-4">
         <div className="text-center max-w-md">
           <LockClosedIcon className="w-16 h-16 mx-auto mb-4 text-primary" />
           <h2 className="text-xl font-semibold text-base-content mb-2">
-            Cross-Origin Access
+            <FormattedMessage
+              id="settings.crossOriginAccess"
+              defaultMessage="Cross-Origin Access"
+            />
           </h2>
           <p className="text-base-content/70 mb-6">
-            Overseerr cannot be embedded when accessing locally due to browser
-            security restrictions. Please open it in a new tab to continue or
-            access streamarr from a secure hostname.
+            <FormattedMessage
+              id="settings.overseerr.localhostDescription"
+              defaultMessage="Overseerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+            />
           </p>
           <Button
             buttonSize="sm"
@@ -203,11 +233,47 @@ const Request = ({ children, ...props }) => {
             target="_blank"
             href={overseerrUrl}
           >
-            Open Overseerr{' '}
+            <FormattedMessage
+              id="settings.openOverseerr"
+              defaultMessage="Open Overseerr"
+            />
             <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </div>
+    );
+  }
+
+  if (!isConfigured) {
+    return (
+      <ServiceNotConfigured
+        serviceName="Overseerr"
+        settingsPath={
+          isAdmin ? '/admin/settings/services/overseerr' : undefined
+        }
+        isAdmin={isAdmin}
+        isAdminRoute={false}
+      />
+    );
+  }
+
+  if (proxyStatus === 'loading') {
+    return (
+      <div className="h-[calc(100dvh-4rem)] flex items-center justify-center bg-base-300">
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
+  if (proxyStatus === 'error') {
+    return (
+      <ServiceError
+        serviceName="Overseerr"
+        error={proxyError}
+        isAdmin={isAdmin}
+        onRetry={retry}
+        isAdminRoute={false}
+      />
     );
   }
 

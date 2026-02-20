@@ -1,5 +1,6 @@
 import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
+import { In, LessThanOrEqual } from 'typeorm';
 import Invite from '@server/entity/Invite';
 import type { User } from '@server/entity/User';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
@@ -73,6 +74,33 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
         ];
     }
 
+    const inviteRepository = getRepository(Invite);
+
+    const now = new Date();
+    const expiredInvites = await inviteRepository.find({
+      where: {
+        status: In([InviteStatus.ACTIVE, InviteStatus.INACTIVE]),
+        expiresAt: LessThanOrEqual(now),
+      },
+    });
+
+    for (const invite of expiredInvites) {
+      invite.status = InviteStatus.EXPIRED;
+      await inviteRepository.save(invite);
+    }
+
+    if (expiredInvites.length > 0) {
+      logger.debug('Invites marked as expired', {
+        label: 'Invites',
+        count: expiredInvites.length,
+        invites: expiredInvites.map((invite) => ({
+          id: invite.id,
+          icode: invite.icode,
+          expiresAt: invite.expiresAt,
+        })),
+      });
+    }
+
     let query = getRepository(Invite)
       .createQueryBuilder('invite')
       .leftJoinAndSelect('invite.createdBy', 'createdBy')
@@ -105,39 +133,6 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
       .take(pageSize)
       .skip(skip)
       .getManyAndCount();
-
-    // Explicitly run expiry/status update logic for each invite
-    const inviteRepository = getRepository(Invite);
-    await Promise.all(
-      invites.map(async (invite) => {
-        if (
-          invite.status !== InviteStatus.EXPIRED &&
-          invite.status !== InviteStatus.REDEEMED
-        ) {
-          let expiryDate;
-          if (invite.expiresAt) {
-            expiryDate = new Date(invite.expiresAt);
-          } else if (invite.expiryLimit !== 0) {
-            let msPerUnit = 86400000;
-            if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
-            if (invite.expiryTime === 'months') msPerUnit = 2629800000;
-            expiryDate = new Date(
-              invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
-            );
-          }
-          const now = Date.now();
-          if (expiryDate && now > expiryDate.getTime()) {
-            invite.status = InviteStatus.EXPIRED;
-            await inviteRepository.save(invite);
-            logger.debug('Invite marked as expired during lookup', {
-              label: 'Invites',
-              inviteId: invite.id,
-              icode: invite.icode,
-            });
-          }
-        }
-      })
-    );
 
     res.status(200).json({
       pageInfo: {
@@ -315,25 +310,30 @@ inviteRoutes.get('/count', async (req, res, next) => {
   const inviteRepository = getRepository(Invite);
 
   try {
-    const query = inviteRepository.createQueryBuilder('invite');
+    const counts = await inviteRepository
+      .createQueryBuilder('invite')
+      .select('invite.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('invite.status')
+      .getRawMany<{ status: number; count: string }>();
 
-    const totalCount = await query.getCount();
+    const statusCounts = counts.reduce(
+      (acc, { status, count }) => {
+        acc[status] = parseInt(count, 10);
+        return acc;
+      },
+      {} as Record<number, number>
+    );
 
-    const activeCount = await query
-      .where('invite.status = :InviteStatus', {
-        InviteStatus: InviteStatus.ACTIVE,
-      })
-      .getCount();
-
-    const inactiveCount = await query
-      .where('invite.status IN (:...InviteStatuses)', {
-        InviteStatuses: [
-          InviteStatus.REDEEMED,
-          InviteStatus.EXPIRED,
-          InviteStatus.INACTIVE,
-        ],
-      })
-      .getCount();
+    const activeCount = statusCounts[InviteStatus.ACTIVE] || 0;
+    const inactiveCount =
+      (statusCounts[InviteStatus.REDEEMED] || 0) +
+      (statusCounts[InviteStatus.EXPIRED] || 0) +
+      (statusCounts[InviteStatus.INACTIVE] || 0);
+    const totalCount = counts.reduce(
+      (sum, { count }) => sum + parseInt(count, 10),
+      0
+    );
 
     res.status(200).json({
       total: totalCount,
@@ -429,7 +429,7 @@ inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
         invite.createdBy.id !== req.user?.id
       ) {
         return next({
-          status: 401,
+          status: 403,
           message: 'You do not have permission to modify this invite.',
         });
       }
@@ -460,9 +460,6 @@ inviteRoutes.post<{ inviteId: string; status: string }, Invite>(
 
       invite.status = newStatus;
       invite.updatedBy = req.user;
-      if (newStatus === InviteStatus.REDEEMED) {
-        invite.redeemedBy = [...(invite.redeemedBy || []), req.user];
-      }
 
       await inviteRepository.save(invite);
 
@@ -499,7 +496,7 @@ inviteRoutes.get<{ inviteId: string }>(
         invite.createdBy.id !== req.user?.id
       ) {
         return next({
-          status: 401,
+          status: 403,
           message: 'You do not have permission to view this QR Code.',
         });
       }
@@ -555,7 +552,7 @@ inviteRoutes.delete(
         invite.createdBy.id !== req.user?.id
       ) {
         return next({
-          status: 401,
+          status: 403,
           message: 'You do not have permission to delete this invite.',
         });
       }
@@ -607,7 +604,7 @@ inviteRoutes.delete(
         invite.createdBy.id !== req.user?.id
       ) {
         return next({
-          status: 401,
+          status: 403,
           message: 'You do not have permission to delete this QR Code.',
         });
       }

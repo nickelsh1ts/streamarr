@@ -153,7 +153,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               {errorMessage ||
                 intl.formatMessage({
                   id: 'common.somethingWentWrong',
-                  defaultMessage: 'Something went wrong!',
+                  defaultMessage: 'Something Went Wrong!',
                 })}
             </span>
           </Alert>
@@ -285,16 +285,17 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                       className="block text-sm font-medium leading-6 text-left"
                     >
                       <span className="label-text">
-                        <FormattedMessage
-                          id={
-                            client?.client === 'deluge'
-                              ? 'downloads.label'
-                              : 'downloads.category'
-                          }
-                          defaultMessage={
-                            client?.client === 'deluge' ? 'Label' : 'Category'
-                          }
-                        />
+                        {client?.client === 'deluge' ? (
+                          <FormattedMessage
+                            id="downloads.label"
+                            defaultMessage="Label"
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="downloads.category"
+                            defaultMessage="Category"
+                          />
+                        )}
                       </span>
                       <span className="text-neutral ml-2">
                         (

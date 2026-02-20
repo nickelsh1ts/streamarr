@@ -3,6 +3,9 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import SonarrModal from '@app/components/Admin/Settings/Services/Sonarr/SonarrModal';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import type { SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
@@ -43,6 +46,7 @@ const SettingsServicesSonarr = () => {
     setDeleteServerModal({ open: false, serverId: null, type: 'sonarr' });
     revalidateSonarr();
     mutate('/api/v1/settings/public');
+    mutate(RESTART_REQUIRED_SWR_KEY);
   };
 
   return (
@@ -67,6 +71,7 @@ const SettingsServicesSonarr = () => {
         onSave={() => {
           revalidateSonarr();
           mutate('/api/v1/settings/public');
+          mutate(RESTART_REQUIRED_SWR_KEY);
           setEditSonarrModal({ open: false, sonarr: null });
         }}
         show={editSonarrModal.open}
@@ -101,6 +106,7 @@ const SettingsServicesSonarr = () => {
         {sonarrData && !sonarrError && (
           <>
             <div className="max-w-6xl">
+              <RestartRequiredAlert filterServices={['Sonarr']} />
               {sonarrData.length > 0 &&
                 (!sonarrData.some((sonarr) => sonarr.isDefault) ? (
                   <Alert

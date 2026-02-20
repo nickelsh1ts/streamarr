@@ -22,6 +22,7 @@ export interface User {
   inviteQuotaLimit?: number;
   inviteQuotaDays?: number;
   inviteCount?: number;
+  inviteCountRedeemed?: number;
   settings?: UserSettings;
   redeemedInvite?: {
     id: number;
@@ -38,6 +39,10 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 export interface UserSettings {
   locale?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
+  emailEnabled?: boolean;
+  pgpKey?: string;
+  webPushEnabled?: boolean;
+  inAppEnabled?: boolean;
 }
 
 interface UserHookResponse {

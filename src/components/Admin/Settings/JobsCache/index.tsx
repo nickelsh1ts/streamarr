@@ -24,6 +24,8 @@ import { useEffect, useReducer, useState } from 'react';
 import useSWR from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
+//BUG: github api makes excessive hits and misses
+
 interface Job {
   id: string;
   name?: string;
@@ -96,12 +98,13 @@ const JobsCacheSettings = () => {
     refreshInterval: 5000,
   });
   const { data: appData } = useSWR('/api/v1/status/appdata');
-  const { data: cacheData, mutate: cacheRevalidate } = useSWR<CacheResponse>(
-    '/api/v1/settings/cache',
-    {
-      refreshInterval: 10000,
-    }
-  );
+  const {
+    data: cacheData,
+    mutate: cacheRevalidate,
+    isLoading,
+  } = useSWR<CacheResponse>('/api/v1/settings/cache', {
+    refreshInterval: 10000,
+  });
 
   const [jobModalState, dispatch] = useReducer(jobModalReducer, {
     isOpen: false,
@@ -514,30 +517,38 @@ const JobsCacheSettings = () => {
             </tr>
           </thead>
           <Table.TBody>
-            {cacheData?.apiCaches.map((cache) => (
-              <tr key={`cache-list-${cache.id}`}>
-                <Table.TD>{cache.name}</Table.TD>
-                <Table.TD>{cache.stats.hits}</Table.TD>
-                <Table.TD>{cache.stats.misses}</Table.TD>
-                <Table.TD>{cache.stats.keys}</Table.TD>
-                <Table.TD>{formatBytes(cache.stats.ksize)}</Table.TD>
-                <Table.TD>{formatBytes(cache.stats.vsize)}</Table.TD>
-                <Table.TD alignText="right">
-                  <Button
-                    buttonSize="sm"
-                    buttonType="error"
-                    className="overflow-hidden truncate"
-                    onClick={() => flushCache(cache)}
-                  >
-                    <TrashIcon className="size-5 mr-2" />
-                    <FormattedMessage
-                      id="cache.flushCache"
-                      defaultMessage="Flush Cache"
-                    />
-                  </Button>
+            {!isLoading ? (
+              cacheData?.apiCaches.map((cache) => (
+                <tr key={`cache-list-${cache.id}`}>
+                  <Table.TD>{cache.name}</Table.TD>
+                  <Table.TD>{cache.stats.hits}</Table.TD>
+                  <Table.TD>{cache.stats.misses}</Table.TD>
+                  <Table.TD>{cache.stats.keys}</Table.TD>
+                  <Table.TD>{formatBytes(cache.stats.ksize)}</Table.TD>
+                  <Table.TD>{formatBytes(cache.stats.vsize)}</Table.TD>
+                  <Table.TD alignText="right">
+                    <Button
+                      buttonSize="sm"
+                      buttonType="error"
+                      className="overflow-hidden truncate"
+                      onClick={() => flushCache(cache)}
+                    >
+                      <TrashIcon className="size-5 mr-2" />
+                      <FormattedMessage
+                        id="cache.flushCache"
+                        defaultMessage="Flush Cache"
+                      />
+                    </Button>
+                  </Table.TD>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <Table.TD colSpan={7} className="text-center">
+                  <LoadingEllipsis />
                 </Table.TD>
               </tr>
-            ))}
+            )}
           </Table.TBody>
         </Table>
       </div>

@@ -1,15 +1,18 @@
 'use client';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { ServiceNotConfigured } from '@app/components/Common/ServiceError';
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import { useServiceFrame } from '@app/hooks/useServiceFrame';
+import { useUser, Permission } from '@app/hooks/useUser';
 import type {
   RadarrSettings,
   ServiceSettings,
   SonarrSettings,
 } from '@server/lib/settings';
 import { useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Props {
   services: ServiceSettings[];
@@ -30,6 +33,9 @@ const ServiceFrameContainer = ({
       ? `${window.location.protocol}//${window.location.host}`
       : ''
   );
+  const pathname = usePathname();
+  const { hasPermission } = useUser();
+  const isAdmin = hasPermission(Permission.ADMIN);
 
   const { activeFrame, isMoviesRoute, isTvRoute } = useServiceFrame(
     services,
@@ -61,13 +67,40 @@ const ServiceFrameContainer = ({
     }));
   }, [sonarrInstances]);
 
+  const getSettingsPathForRoute = (): string => {
+    if (isMoviesRoute) return '/admin/settings/services/radarr';
+    if (isTvRoute) return '/admin/settings/services/sonarr';
+    if (pathname?.startsWith('/admin/music'))
+      return '/admin/settings/services/lidarr';
+    if (pathname?.startsWith('/admin/indexers'))
+      return '/admin/settings/services/prowlarr';
+    if (pathname?.startsWith('/admin/srt'))
+      return '/admin/settings/services/bazarr';
+    if (pathname?.startsWith('/admin/transcode'))
+      return '/admin/settings/services/tdarr';
+    return '/admin/settings/services';
+  };
+
+  const getServiceNameForRoute = (): string => {
+    if (isMoviesRoute) return 'Radarr';
+    if (isTvRoute) return 'Sonarr';
+    if (pathname?.startsWith('/admin/music')) return 'Lidarr';
+    if (pathname?.startsWith('/admin/indexers')) return 'Prowlarr';
+    if (pathname?.startsWith('/admin/srt')) return 'Bazarr';
+    if (pathname?.startsWith('/admin/transcode')) return 'Tdarr';
+    return 'Service';
+  };
+
   if (!hostname) return <LoadingEllipsis />;
 
   if (!activeFrame) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-base-content/60">Service not configured</p>
-      </div>
+      <ServiceNotConfigured
+        serviceName={getServiceNameForRoute()}
+        settingsPath={getSettingsPathForRoute()}
+        isAdmin={isAdmin}
+        isAdminRoute={true}
+      />
     );
   }
 
@@ -89,6 +122,9 @@ const ServiceFrameContainer = ({
         domainURL={hostname}
         basePath={activeFrame.basePath}
         newBase={activeFrame.newBase}
+        serviceName={activeFrame.serviceName}
+        settingsPath={activeFrame.settingsPath}
+        isConfigured={true}
       />
     </div>
   );

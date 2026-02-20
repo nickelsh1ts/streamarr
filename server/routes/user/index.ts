@@ -8,6 +8,7 @@ import type {
   QuotaResponse,
   UserInvitesResponse,
   UserResultsResponse,
+  UserSummary,
 } from '@server/interfaces/api/userInterfaces';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -15,12 +16,14 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { In } from 'typeorm';
-import userSettingsRoutes from './usersettings';
+import userSettingsRoutes, { isOwnProfileOrAdmin } from './usersettings';
+import userOnboardingRoutes from './onboarding';
 import PreparedEmail from '@server/lib/email';
 import path from 'path';
 import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
+import { plexSync } from '@server/lib/plexSync';
 
 const router = Router();
 
@@ -303,23 +306,41 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 
     const user = await userRepository.findOneOrFail({
       where: { id: Number(req.params.id) },
+      relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
     });
 
-    // Compute inviteCount separately since it's not a stored column
-    const inviteCount = await getRepository(Invite).count({
+    const invites = await getRepository(Invite).find({
       where: { createdBy: { id: user.id } },
+      relations: ['redeemedBy'],
     });
-    user.inviteCount = inviteCount;
 
-    res
-      .status(200)
-      .json(user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)));
+    const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy
+      ? {
+          id: user.redeemedInvite.createdBy.id,
+          displayName: user.redeemedInvite.createdBy.displayName,
+          avatar: user.redeemedInvite.createdBy.avatar,
+        }
+      : null;
+
+    const response = {
+      ...user.filter(req.user?.hasPermission(Permission.MANAGE_USERS)),
+      inviteCount: invites.length,
+      inviteCountRedeemed: invites.filter(
+        (invite) => invite.redeemedBy && invite.redeemedBy.length > 0
+      ).length,
+      redeemedInvite: user.redeemedInvite
+        ? { ...user.redeemedInvite, createdBy: createdBySummary }
+        : null,
+    };
+
+    res.status(200).json(response);
   } catch {
     next({ status: 404, message: 'User not found.' });
   }
 });
 
 router.use('/:id/settings', userSettingsRoutes);
+router.use('/:id/onboarding', isOwnProfileOrAdmin(), userOnboardingRoutes);
 
 router.get<{ id: string }, UserInvitesResponse>(
   '/:id/invites',
@@ -919,5 +940,63 @@ router.delete<{ userId: string; notificationId: string }>(
     }
   }
 );
+
+router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
+  if (
+    !req.user?.hasPermission(Permission.MANAGE_USERS) &&
+    req.user?.id !== Number(req.params.id)
+  ) {
+    return next({
+      status: 403,
+      message: "You do not have permission to view this user's Plex libraries.",
+    });
+  }
+
+  const userRepository = getRepository(User);
+
+  try {
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    if (user.userType !== UserType.PLEX || user.id === 1) {
+      res.status(200).json({
+        currentPlexLibraries: null,
+        canFetchFromPlex: false,
+      });
+      return;
+    }
+
+    try {
+      const plexData = await plexSync.getCurrentPlexLibraries(user);
+
+      res.status(200).json({
+        currentPlexLibraries:
+          plexData.libraries.length > 0 ? plexData.libraries.join('|') : '',
+        canFetchFromPlex: true,
+        permissions: plexData.permissions,
+      });
+    } catch (error) {
+      logger.warn(
+        `Could not fetch current Plex libraries for user ${user.email}`,
+        {
+          userId: user.id,
+          error: error.message,
+        }
+      );
+      res.status(200).json({
+        currentPlexLibraries: null,
+        canFetchFromPlex: true,
+        error: error.message,
+      });
+    }
+  } catch (e) {
+    next({ status: 500, message: e.message });
+  }
+});
 
 export default router;

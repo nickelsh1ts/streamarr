@@ -1,55 +1,60 @@
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { InviteStatus } from '@server/constants/invite';
-import { Not, In } from 'typeorm';
+import { In, LessThanOrEqual } from 'typeorm';
 import logger from '@server/logger';
+import { getSettings } from '@server/lib/settings';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
 import fs from 'fs/promises';
 
 class ExpiredInvites {
   public async run() {
     const inviteRepository = getRepository(Invite);
-    const invites = await inviteRepository.find({
-      where: { status: Not(In([InviteStatus.EXPIRED, InviteStatus.REDEEMED])) },
+    const qrProxy = new QRCodeProxy();
+    const now = new Date();
+    const expiredInvites = await inviteRepository.find({
+      where: {
+        status: In([InviteStatus.ACTIVE, InviteStatus.INACTIVE]),
+        expiresAt: LessThanOrEqual(now),
+      },
     });
+
     let updatedCount = 0;
     let qrDeletedCount = 0;
-    const qrProxy = new QRCodeProxy();
-    for (const invite of invites) {
-      if (invite.expiryLimit !== 0) {
-        let msPerUnit = 86400000;
-        if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
-        if (invite.expiryTime === 'months') msPerUnit = 2629800000;
-        const expiryDate = new Date(
-          invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
-        );
-        if (
-          Date.now() > expiryDate.getTime() &&
-          invite.status !== InviteStatus.EXPIRED &&
-          invite.status !== InviteStatus.REDEEMED
-        ) {
-          invite.status = InviteStatus.EXPIRED;
-          await inviteRepository.save(invite);
-          updatedCount++;
-          logger.info(`Invite ${invite.id} marked as expired.`, {
-            label: 'Jobs',
-          });
-          // Delete QR code image for expired invite
-          const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
-          const deleted = await qrProxy.deleteImage(cacheKey);
-          if (deleted) qrDeletedCount++;
-        }
-      }
+
+    for (const invite of expiredInvites) {
+      invite.status = InviteStatus.EXPIRED;
+      await inviteRepository.save(invite);
+      updatedCount++;
+
+      logger.info(`Invite ${invite.icode} marked as expired.`, {
+        label: 'Jobs',
+      });
+
+      // Delete QR code for expired invite
+      const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
+      const deleted = await qrProxy.deleteImage(cacheKey);
+      if (deleted) qrDeletedCount++;
     }
+
     // Clean up orphaned QR codes (no associated invite)
+    const settings = getSettings();
     const cacheDir = qrProxy.getCacheDirectory();
     let orphanDeletedCount = 0;
+
+    if (!settings.main.cacheImages) {
+      return;
+    }
+
     try {
+      const allInvites = await inviteRepository.find({
+        select: ['id', 'icode'],
+      });
       const files = await fs.readdir(cacheDir);
       for (const file of files) {
         if (file.endsWith('.png')) {
           const cacheKey = file.replace('.png', '');
-          const inviteExists = invites.some(
+          const inviteExists = allInvites.some(
             (invite) =>
               qrProxy.getCacheKey(invite.id, invite.icode) === cacheKey
           );
@@ -65,8 +70,9 @@ class ExpiredInvites {
         errorMessage: e.message,
       });
     }
+
     logger.info(
-      `Expired invites fixed: ${updatedCount}, QR codes deleted: ${qrDeletedCount}, orphaned QR codes deleted: ${orphanDeletedCount}`,
+      `Expired invites: ${updatedCount}, QR codes deleted: ${qrDeletedCount}, orphaned QR codes deleted: ${orphanDeletedCount}`,
       { label: 'Jobs' }
     );
   }

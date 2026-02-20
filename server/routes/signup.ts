@@ -31,7 +31,7 @@ signupRoutes.get('/validate/:icode', async (req, res, next) => {
         .json({ valid: false, message: 'Invite code is not active.' });
       return;
     }
-    if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
+    if (invite.isExpired()) {
       res
         .status(400)
         .json({ valid: false, message: 'Invite code has expired.' });
@@ -74,23 +74,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
       return;
     }
 
-    // Check invite expiry
-    let isExpired = false;
-    let expiryDate;
-    if (invite.expiresAt) {
-      expiryDate = new Date(invite.expiresAt);
-    } else if (invite.expiryLimit !== 0) {
-      let msPerUnit = 86400000;
-      if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
-      if (invite.expiryTime === 'months') msPerUnit = 2629800000;
-      expiryDate = new Date(
-        invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
-      );
-    }
-    if (expiryDate && Date.now() > expiryDate.getTime()) {
-      isExpired = true;
-    }
-    if (isExpired) {
+    if (invite.isExpired()) {
       invite.status = InviteStatus.EXPIRED;
       await inviteRepository.save(invite);
       res
@@ -570,23 +554,7 @@ signupRoutes.post('/localauth', async (req, res) => {
       return;
     }
 
-    // Check invite expiry
-    let isExpired = false;
-    let expiryDate;
-    if (invite.expiresAt) {
-      expiryDate = new Date(invite.expiresAt);
-    } else if (invite.expiryLimit !== 0) {
-      let msPerUnit = 86400000;
-      if (invite.expiryTime === 'weeks') msPerUnit = 604800000;
-      if (invite.expiryTime === 'months') msPerUnit = 2629800000;
-      expiryDate = new Date(
-        invite.createdAt.getTime() + invite.expiryLimit * msPerUnit
-      );
-    }
-    if (expiryDate && Date.now() > expiryDate.getTime()) {
-      isExpired = true;
-    }
-    if (isExpired) {
+    if (invite.isExpired()) {
       invite.status = InviteStatus.EXPIRED;
       await inviteRepository.save(invite);
       res

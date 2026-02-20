@@ -24,6 +24,8 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import { usePathname } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useHash from '@app/hooks/useHash';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLinksProps {
   href: string;
@@ -47,6 +49,7 @@ const Sidebar = () => {
     <>
       <header
         id="sidebar"
+        data-tutorial="sidebar-nav"
         className="w-fit transition duration-500 drawer font-bold z-[1006] max-sm:hidden lg:hidden"
       >
         <input
@@ -309,12 +312,14 @@ interface SidebarProps {
 }
 
 export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
-  const { currentSettings } = useSettings();
-  const { hasPermission } = useUser();
+  const { hasPermission, user } = useUser();
   const pathname = usePathname();
   const hash = useHash();
   const url = pathname + (hash || '');
   const intl = useIntl();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   return (
     <div className="space-y-1 mb-1 w-full">
@@ -330,6 +335,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                 className="flex-1"
                 linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
                 liKey={'home'}
+                data-tutorial="nav-home"
                 onClick={() => {
                   onClick && onClick(!isOpen);
                   handleClick(0);
@@ -358,13 +364,14 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             {hasPermission([Permission.REQUEST, Permission.STREAMARR], {
               type: 'or',
             }) &&
-              currentSettings?.enableRequest && (
+              userSettings?.requestUrl && (
                 <>
                   <div className="flex">
                     <SingleItem
                       className="flex-1"
                       linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
                       liKey={'request'}
+                      data-tutorial="nav-request"
                       onClick={() => {
                         onClick && onClick(!isOpen);
                         handleClick(1);
@@ -415,6 +422,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
       ) && (
         <SingleItem
           liKey={'invites'}
+          data-tutorial="nav-invites"
           onClick={() => onClick && onClick(!isOpen)}
           href={'/invites'}
           title={intl.formatMessage({
@@ -426,7 +434,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
           regExp={/\/invites/}
         />
       )}
-      {currentSettings.releaseSched &&
+      {userSettings?.releaseSched &&
         hasPermission(
           [
             Permission.VIEW_SCHEDULE,
@@ -437,6 +445,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         ) && (
           <SingleItem
             liKey={'schedule'}
+            data-tutorial="nav-schedule"
             onClick={() => onClick && onClick(!isOpen)}
             href={'/schedule'}
             title={intl.formatMessage({

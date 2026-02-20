@@ -2,11 +2,15 @@
 import CachedImage from '@app/components/Common/CachedImage';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import UserCard from '@app/components/Layout/UserCard';
+import { useOnboardingContext } from '@app/context/OnboardingContext';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import { socket } from '@app/utils/webSocket';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type {
+  UserSettingsGeneralResponse,
+  UserSettingsNotificationsResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -22,6 +26,10 @@ const UserDropdown = ({
 }: UserDropdownProps) => {
   const { user } = useUser();
   const { currentSettings } = useSettings();
+  const { data: onboardingData, startTutorial } = useOnboardingContext();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
   const intl = useIntl();
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
@@ -33,6 +41,24 @@ const UserDropdown = ({
   );
   const unread = data?.results.filter((notification) => !notification.isRead);
 
+  const tutorialEnabled = onboardingData?.settings.tutorialEnabled ?? false;
+  const hasSteps = (onboardingData?.tutorialSteps?.length ?? 0) > 0;
+  const allowSkip = onboardingData?.settings.allowSkipTutorial ?? false;
+  const tutorialAutostart = onboardingData?.settings.tutorialAutostart ?? true;
+  const tutorialCompleted = onboardingData?.status?.tutorialCompleted ?? false;
+  const welcomeEnabled = onboardingData?.settings.welcomeEnabled ?? false;
+
+  const welcomeDone =
+    !welcomeEnabled ||
+    onboardingData?.status?.welcomeCompleted ||
+    onboardingData?.status?.welcomeDismissed;
+
+  const canShowTutorialOption =
+    tutorialEnabled &&
+    hasSteps &&
+    !tutorialCompleted &&
+    (allowSkip || (!tutorialAutostart && welcomeDone));
+
   useEffect(() => {
     socket.on('newNotification', () => {
       revalidate();
@@ -40,7 +66,7 @@ const UserDropdown = ({
   }, [revalidate]);
 
   return (
-    <div className="indicator">
+    <div className="indicator" data-tutorial="user-dropdown">
       {notificationSettings?.inAppEnabled && unread?.length > 0 && (
         <div className="indicator-item indicator-bottom indicator-start left-2 bottom-2 content-center pointer-events-none">
           <span className="absolute badge badge-xs badge-error text-xs top-1.5" />
@@ -84,7 +110,7 @@ const UserDropdown = ({
             defaultMessage="Account Settings"
           />
         </DropDownMenu.Item>
-        {currentSettings?.statsUrl && currentSettings?.statsEnabled && (
+        {userSettings?.tautulliEnabled && userSettings?.tautulliBaseUrl && (
           <DropDownMenu.Item href="/stats">
             <FormattedMessage
               id="userDropdown.watchHistory"
@@ -95,6 +121,14 @@ const UserDropdown = ({
         <DropDownMenu.Item href="/help">
           <FormattedMessage id="help.helpCentre" defaultMessage="Help Centre" />
         </DropDownMenu.Item>
+        {canShowTutorialOption && (
+          <DropDownMenu.Item onClick={startTutorial}>
+            <FormattedMessage
+              id="userDropdown.startTutorial"
+              defaultMessage="Start Tutorial"
+            />
+          </DropDownMenu.Item>
+        )}
         {(currentSettings.supportUrl || currentSettings.supportEmail) && (
           <DropDownMenu.Item
             href={

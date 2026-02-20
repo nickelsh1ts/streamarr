@@ -48,7 +48,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
   return (
     <div className={`mb-4 rounded-md p-4 ${design.bgColor}`}>
       <div className={`flex flex-wrap gap-2 ${design.titleColor}`}>
-        <div className={`flex-shrink-0 content-center ${design.titleColor}`}>
+        <div className={`flex-shrink-0 content-start ${design.titleColor}`}>
           {design.svg}
         </div>
         {title && (

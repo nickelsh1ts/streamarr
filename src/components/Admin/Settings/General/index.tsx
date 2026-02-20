@@ -1,5 +1,8 @@
 'use client';
 import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Button from '@app/components/Common/Button';
 import CopyButton from '@app/components/Common/CopyButton';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -29,8 +32,6 @@ import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
 import { SettingsContext } from '@app/context/SettingsContext';
-
-//TODO: Add customizable & interactive new user tutorial/welcome
 
 const GeneralSettings = () => {
   const intl = useIntl();
@@ -129,6 +130,9 @@ const GeneralSettings = () => {
           defaultMessage="Configure global and default Streamarr settings"
         />
       </p>
+      <RestartRequiredAlert
+        filterServices={['Proxy Support', 'CSRF Protection']}
+      />
       <Formik
         initialValues={{
           applicationTitle: data?.applicationTitle,
@@ -194,6 +198,7 @@ const GeneralSettings = () => {
             mutate('/api/v1/settings/main');
             mutate('/api/v1/settings/public');
             mutate('/api/v1/status');
+            mutate(RESTART_REQUIRED_SWR_KEY);
 
             if (setLocale) {
               setLocale(

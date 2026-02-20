@@ -167,21 +167,14 @@ export interface FullPublicSettings extends PublicSettings {
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
-  inAppEnabled: boolean;
   newPlexLogin: boolean;
-  enableRequest: boolean;
-  requestUrl: string;
-  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
   customLogo?: string;
   customLogoSmall?: string;
   enableSignUp: boolean;
-  statsUrl: string;
-  releaseSched: boolean;
   statusUrl: string;
-  statsEnabled: boolean;
   statusEnabled: boolean;
   theme: Theme;
 }
@@ -229,6 +222,18 @@ interface NotificationSettings {
   agents: NotificationAgents;
 }
 
+export interface OnboardingSettings {
+  initialized: boolean;
+  adminOnboardingCompleted: boolean;
+  welcomeEnabled: boolean;
+  tutorialEnabled: boolean;
+  tutorialMode: 'spotlight' | 'wizard' | 'both';
+  allowSkipWelcome: boolean;
+  allowSkipTutorial: boolean;
+  tutorialAutostart: boolean;
+  tutorialAutostartDelay: number;
+}
+
 interface JobSettings {
   schedule: string;
 }
@@ -258,6 +263,7 @@ interface AllSettings {
   overseerr: ServiceSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
+  onboarding: OnboardingSettings;
   jobs: Record<JobId, JobSettings>;
 }
 
@@ -385,6 +391,17 @@ class Settings {
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
       },
+      onboarding: {
+        initialized: false,
+        adminOnboardingCompleted: false,
+        welcomeEnabled: true,
+        tutorialEnabled: true,
+        tutorialMode: 'both',
+        allowSkipWelcome: true,
+        allowSkipTutorial: true,
+        tutorialAutostart: true,
+        tutorialAutostartDelay: 500,
+      },
     };
     if (initialSettings) {
       this.data = merge(this.data, initialSettings);
@@ -510,7 +527,6 @@ class Settings {
       enablePushRegistration: this.data.notifications.agents.webpush.enabled,
       locale: this.data.main.locale,
       emailEnabled: this.data.notifications.agents.email.enabled,
-      inAppEnabled: this.data.notifications.agents.inApp.enabled,
       newPlexLogin: this.data.main.newPlexLogin,
       supportUrl: this.data.main.supportUrl,
       supportEmail: this.data.main.supportEmail,
@@ -518,13 +534,6 @@ class Settings {
       customLogo: this.data.main.customLogo,
       customLogoSmall: this.data.main.customLogoSmall,
       enableSignUp: this.data.main.enableSignUp,
-      enableRequest: this.data.overseerr.enabled,
-      requestUrl: this.data.overseerr.urlBase,
-      requestHostname:
-        this.data.overseerr.hostname + ':' + this.data.overseerr.port,
-      statsUrl: this.data.tautulli.urlBase,
-      statsEnabled: this.data.tautulli.enabled || false,
-      releaseSched: this.data.main.releaseSched,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,
@@ -545,6 +554,14 @@ class Settings {
 
   set jobs(data: Record<JobId, JobSettings>) {
     this.data.jobs = data;
+  }
+
+  get onboarding(): OnboardingSettings {
+    return this.data.onboarding;
+  }
+
+  set onboarding(data: OnboardingSettings) {
+    this.data.onboarding = data;
   }
 
   get clientId(): string {

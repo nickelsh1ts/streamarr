@@ -203,8 +203,8 @@ notificationRoutes.post<
             notifyUser: user,
             actionUrl: req.body.actionUrl,
             actionUrlTitle: req.body.actionUrlTitle,
-            createdBy: { id: req.user.id } as User,
-            updatedBy: { id: req.user.id } as User,
+            createdBy: req.user,
+            updatedBy: req.user,
             notifySystem: false,
             notifyAdmin: false,
           };

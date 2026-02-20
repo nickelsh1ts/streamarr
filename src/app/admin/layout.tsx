@@ -67,6 +67,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }),
         route: '/admin/users',
         regex: /^\/admin\/users/,
+        dataTutorial: 'admin-users-tab',
       },
       {
         text: intl.formatMessage({
@@ -121,8 +122,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
       {
         text: intl.formatMessage({
-          id: 'common.transcoding',
-          defaultMessage: 'Transcoding',
+          id: 'common.transcodes',
+          defaultMessage: 'Transcodes',
         }),
         route: '/admin/transcode',
         regex: /^\/admin\/transcode/,
@@ -130,8 +131,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
       {
         text: intl.formatMessage({
-          id: 'common.downloading',
-          defaultMessage: 'Downloading',
+          id: 'common.downloads',
+          defaultMessage: 'Downloads',
         }),
         route: '/admin/downloads',
         regex: /^\/admin\/downloads/,
@@ -176,7 +177,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="max-sm:mb-14">
       <div className="mt-2 px-4">
-        <AdminTabs AdminRoutes={visibleRoutes} />
+        <AdminTabs AdminRoutes={visibleRoutes} dataTutorial="admin-tabs" />
       </div>
       <div>
         {canShowContent &&

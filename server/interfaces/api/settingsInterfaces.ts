@@ -32,18 +32,11 @@ export interface PublicSettingsResponse {
   enablePushRegistration: boolean;
   locale: string;
   emailEnabled: boolean;
-  inAppEnabled: boolean;
   newPlexLogin: boolean;
-  enableRequest: boolean;
-  requestUrl: string;
-  requestHostname: string;
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
   enableSignUp: boolean;
-  releaseSched: boolean;
-  statsUrl: string;
-  statsEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;
@@ -76,4 +69,21 @@ export interface StatusResponse {
   commitTag: string;
   updateAvailable: boolean;
   commitsBehind: number;
+}
+
+export interface RestartStatusResponse {
+  required: boolean;
+  services: string[];
+}
+
+export interface RestartResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface PythonServiceStatusResponse {
+  status: 'healthy' | 'unhealthy' | 'unknown';
+  lastChecked: string | null;
+  lastHealthy: string | null;
+  consecutiveFailures: number;
 }

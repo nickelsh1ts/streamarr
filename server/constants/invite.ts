@@ -3,5 +3,4 @@ export enum InviteStatus {
   REDEEMED,
   ACTIVE,
   INACTIVE,
-  DELETED,
 }

@@ -12,11 +12,16 @@ import LocalAgent, {
 import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
+import { initializeOnboardingDefaults } from '@server/lib/onboarding';
+import restartManager from '@server/lib/restartManager';
+import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
+import { checkUser } from '@server/middleware/auth';
 import routes from '@server/routes';
 import imageproxy from '@server/routes/imageproxy';
 import logoRoutes from '@server/routes/logo';
+import { onboardingImageService } from '@server/lib/onboarding';
 import { getAppVersion } from '@server/utils/appVersion';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
@@ -48,6 +53,10 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+process.on('exit', () => pythonService.destroy());
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
+
 app
   .prepare()
   .then(async () => {
@@ -62,6 +71,7 @@ app
 
     // Load Settings
     const settings = getSettings().load();
+    await initializeOnboardingDefaults();
 
     // Migrate library types
     if (
@@ -92,6 +102,7 @@ app
     ]);
     // Start Jobs
     startJobs();
+    const pythonReady = pythonService.start();
     const server = express();
     if (settings.main.trustProxy) {
       server.set('trust proxy', 1);
@@ -164,6 +175,7 @@ app
     io.engine.use(sessionMiddleware);
     server.set('io', io);
     setSocketIO(io);
+    restartManager.initialize(httpServer, io);
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user
@@ -180,6 +192,12 @@ app
     });
     server.use('/imageproxy', clearCookies, imageproxy);
     server.use('/logo', clearCookies, logoRoutes);
+    server.use(
+      '/onboarding/images',
+      sessionMiddleware,
+      checkUser,
+      onboardingImageService.createRouter({ requireAuth: true })
+    );
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
     server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
@@ -188,7 +206,9 @@ app
         apiSpec: API_SPEC_PATH,
         validateRequests: true,
         ignorePaths: (path) =>
-          path.includes('/settings/logos/upload') || isProxyPath(path),
+          path.includes('/settings/logos/upload') ||
+          (path.includes('/settings/onboarding/') && path.includes('/image')) ||
+          isProxyPath(path),
       })
     );
     server.use((_req, res, next) => {
@@ -220,6 +240,7 @@ app
           .json({ message: errorInfo.message, errors: errorInfo.errors });
       }
     );
+    await pythonReady;
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {

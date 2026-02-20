@@ -115,42 +115,91 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
       metadata: 'badge-info whitespace-nowrap',
     };
 
-    const statusMessages: Record<
-      string,
-      { id: string; defaultMessage: string }
-    > = {
-      downloading: {
-        id: 'downloads.statusDownloading',
-        defaultMessage: 'Downloading',
-      },
-      seeding: { id: 'downloads.statusSeeding', defaultMessage: 'Seeding' },
-      paused: { id: 'downloads.statusPaused', defaultMessage: 'Paused' },
-      completed: {
-        id: 'downloads.statusCompleted',
-        defaultMessage: 'Completed',
-      },
-      checking: { id: 'downloads.statusChecking', defaultMessage: 'Checking' },
-      queued: { id: 'downloads.statusQueued', defaultMessage: 'Queued' },
-      error: { id: 'downloads.statusError', defaultMessage: 'Error' },
-      stalled: { id: 'downloads.statusStalled', defaultMessage: 'Stalled' },
-      moving: { id: 'downloads.statusMoving', defaultMessage: 'Moving' },
-      metadata: {
-        id: 'downloads.statusMetadata',
-        defaultMessage: 'Fetching Metadata',
-      },
-    };
-
-    const message = statusMessages[status] || {
-      id: 'downloads.statusUnknown',
-      defaultMessage: 'Unknown',
+    const renderStatusMessage = () => {
+      switch (status) {
+        case 'downloading':
+          return (
+            <FormattedMessage
+              id="downloads.statusDownloading"
+              defaultMessage="Downloading"
+            />
+          );
+        case 'seeding':
+          return (
+            <FormattedMessage
+              id="downloads.statusSeeding"
+              defaultMessage="Seeding"
+            />
+          );
+        case 'paused':
+          return (
+            <FormattedMessage
+              id="downloads.statusPaused"
+              defaultMessage="Paused"
+            />
+          );
+        case 'completed':
+          return (
+            <FormattedMessage
+              id="downloads.statusCompleted"
+              defaultMessage="Completed"
+            />
+          );
+        case 'checking':
+          return (
+            <FormattedMessage
+              id="downloads.statusChecking"
+              defaultMessage="Checking"
+            />
+          );
+        case 'queued':
+          return (
+            <FormattedMessage
+              id="downloads.statusQueued"
+              defaultMessage="Queued"
+            />
+          );
+        case 'error':
+          return (
+            <FormattedMessage
+              id="downloads.statusError"
+              defaultMessage="Error"
+            />
+          );
+        case 'stalled':
+          return (
+            <FormattedMessage
+              id="downloads.statusStalled"
+              defaultMessage="Stalled"
+            />
+          );
+        case 'moving':
+          return (
+            <FormattedMessage
+              id="downloads.statusMoving"
+              defaultMessage="Moving"
+            />
+          );
+        case 'metadata':
+          return (
+            <FormattedMessage
+              id="downloads.statusMetadata"
+              defaultMessage="Fetching Metadata"
+            />
+          );
+        default:
+          return (
+            <FormattedMessage
+              id="downloads.statusUnknown"
+              defaultMessage="Unknown"
+            />
+          );
+      }
     };
 
     return (
       <span className={`badge ${statusColors[status] || 'badge-neutral'}`}>
-        <FormattedMessage
-          id={message.id}
-          defaultMessage={message.defaultMessage}
-        />
+        {renderStatusMessage()}
       </span>
     );
   };

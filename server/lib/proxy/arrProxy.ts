@@ -67,9 +67,14 @@ export function createArrProxy(config: ArrServiceConfig) {
         }
       },
       error: (err, req, res) => {
+        const target = getTarget(config);
+        const errorCode = (err as NodeJS.ErrnoException).code;
+
         logger.error(`${name} proxy error: ${err.message}`, {
           label: 'Proxy',
           path: req.url,
+          target,
+          errorCode,
         });
 
         if (res && 'headersSent' in res && !res.headersSent) {
@@ -77,6 +82,9 @@ export function createArrProxy(config: ArrServiceConfig) {
             status: 502,
             error: 'Service unavailable',
             message: `Unable to connect to ${name}`,
+            target,
+            reason: err.message,
+            code: errorCode,
           });
         }
       },

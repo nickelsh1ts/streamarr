@@ -11,7 +11,14 @@ import { useEffect, useMemo, useRef } from 'react';
 import { publicRoutes } from '@app/proxy';
 import useSettings from '@app/hooks/useSettings';
 import Notifications from '@app/components/Layout/Notifications';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { OnboardingProvider } from '@app/context/OnboardingContext';
+import WelcomeModal from '@app/components/WelcomeModal';
+import TutorialSpotlight from '@app/components/TutorialSpotlight';
+import TutorialWizard from '@app/components/TutorialWizard';
+import type {
+  UserSettingsGeneralResponse,
+  UserSettingsNotificationsResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 
 const Layout = ({
   children,
@@ -27,6 +34,10 @@ const Layout = ({
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
       user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    );
+  const { data: userSettings, isLoading: userSettingsLoading } =
+    useSWR<UserSettingsGeneralResponse>(
+      user ? `/api/v1/user/${user?.id}/settings/main` : null
     );
   const { data: dynamicSettings } = useSWR('/api/v1/settings/public');
 
@@ -124,11 +135,12 @@ const Layout = ({
 
     // Feature-disabled redirects
     if (
-      ((pathname.match(/schedule/) && !currentSettings.releaseSched) ||
-        (pathname.match(/request/) && !currentSettings.enableRequest) ||
-        (pathname.match(/stats/) && !currentSettings.statsEnabled)) &&
       user &&
-      !loading
+      !loading &&
+      !userSettingsLoading &&
+      userSettings &&
+      ((pathname.match(/schedule/) && !userSettings.releaseSched) ||
+        (pathname.match(/request/) && !userSettings.requestUrl))
     ) {
       redirect('/watch');
     }
@@ -136,28 +148,33 @@ const Layout = ({
 
   return (
     <SWRConfig value={swrConfigValue}>
-      {notificationSettings?.inAppEnabled && user && <Notifications />}
-      {isMainLayout ? (
-        <main className="flex flex-col relative h-full min-h-full min-w-0">
-          <Header />
-          {user && <MobileMenu />}
-          {isAuthLayout && <FaderBackground />}
-          <div className={`${isSidebar && 'lg:ms-56'} relative`}>
-            <div
-              className={`${
-                isFooterLayout
-                  ? 'min-h-[calc(100dvh-4rem)]'
-                  : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
-              } flex flex-col flex-grow relative`}
-            >
-              {children}
+      <OnboardingProvider>
+        {notificationSettings?.inAppEnabled && user && <Notifications />}
+        <WelcomeModal />
+        <TutorialSpotlight />
+        <TutorialWizard />
+        {isMainLayout ? (
+          <main className="flex flex-col relative h-full min-h-full min-w-0">
+            <Header />
+            {user && <MobileMenu />}
+            {isAuthLayout && <FaderBackground />}
+            <div className={`${isSidebar && 'lg:ms-56'} relative`}>
+              <div
+                className={`${
+                  isFooterLayout
+                    ? 'min-h-[calc(100dvh-4rem)]'
+                    : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
+                } flex flex-col flex-grow relative`}
+              >
+                {children}
+              </div>
+              {isFooterLayout && <Footer />}
             </div>
-            {isFooterLayout && <Footer />}
-          </div>
-        </main>
-      ) : (
-        children
-      )}
+          </main>
+        ) : (
+          children
+        )}
+      </OnboardingProvider>
     </SWRConfig>
   );
 };

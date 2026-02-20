@@ -45,11 +45,14 @@ export function createServiceProxy(config: ServiceProxyConfig) {
         }
       },
       error: (err, req, res) => {
-        logger.error(`${name} proxy error`, {
+        const target = getTarget();
+        const errorCode = (err as NodeJS.ErrnoException).code;
+
+        logger.error(`${name} proxy error: ${err.message}`, {
           label: 'Proxy',
-          service: name,
           path: req.url,
-          error: err.message,
+          target,
+          errorCode,
         });
 
         if (
@@ -62,6 +65,9 @@ export function createServiceProxy(config: ServiceProxyConfig) {
             status: 502,
             error: 'Service unavailable',
             message: `Unable to connect to ${name}`,
+            target,
+            reason: err.message,
+            code: errorCode,
           });
         }
       },

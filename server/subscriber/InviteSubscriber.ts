@@ -12,7 +12,7 @@ import type {
   InsertEvent,
   UpdateEvent,
 } from 'typeorm';
-import { EventSubscriber, In, Not } from 'typeorm';
+import { EventSubscriber } from 'typeorm';
 
 @EventSubscriber()
 export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
@@ -67,13 +67,17 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
   private async notifyNewInvite(entity: Invite) {
     const userRepository = getRepository(User);
 
-    const admins = await userRepository.find({
-      where: {
-        permissions: In([Permission.MANAGE_INVITES, Permission.ADMIN]),
-        id: Not(entity.createdBy?.id),
-      },
+    const allUsers = await userRepository.find({
       relations: ['settings'],
     });
+
+    const admins = allUsers.filter(
+      (user) =>
+        user.id !== entity.createdBy?.id &&
+        user.hasPermission([Permission.MANAGE_INVITES, Permission.ADMIN], {
+          type: 'or',
+        })
+    );
 
     const adminsToNotify = admins.filter((user: User) => {
       const settings = user.settings;
@@ -129,14 +133,6 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
 
   public afterUpdate(event: UpdateEvent<Invite>): void {
     if (!event.entity) {
-      return;
-    }
-    if (
-      !event.entity.createdBy.hasPermission(
-        [Permission.CREATE_INVITES, Permission.STREAMARR],
-        { type: 'or' }
-      )
-    ) {
       return;
     }
 

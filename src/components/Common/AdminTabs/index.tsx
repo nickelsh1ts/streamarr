@@ -9,6 +9,7 @@ export interface AdminRoute {
   route: string;
   regex: RegExp;
   hidden?: boolean;
+  dataTutorial?: string;
 }
 
 type AdminLinkProps = {
@@ -18,6 +19,7 @@ type AdminLinkProps = {
   regex: RegExp;
   hidden?: boolean;
   isMobile?: boolean;
+  dataTutorial?: string;
   children: React.ReactNode;
 };
 
@@ -29,6 +31,7 @@ const AdminLink = ({
   regex,
   hidden = false,
   isMobile = false,
+  dataTutorial,
 }: AdminLinkProps) => {
   if (hidden) {
     return null;
@@ -59,6 +62,7 @@ const AdminLink = ({
         currentPath.match(regex) ? activeLinkColor : inactiveLinkColor
       }`}
       aria-current="page"
+      data-tutorial={dataTutorial}
     >
       {children}
     </Link>
@@ -68,9 +72,11 @@ const AdminLink = ({
 const AdminTabs = ({
   tabType = 'default',
   AdminRoutes,
+  dataTutorial = 'admin-tabs',
 }: {
   tabType?: 'default' | 'button';
   AdminRoutes: AdminRoute[];
+  dataTutorial?: string;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -114,7 +120,11 @@ const AdminTabs = ({
       </div>
       {tabType === 'button' ? (
         <div className="hidden sm:block">
-          <nav className="-mx-2 -my-1 flex flex-wrap" aria-label="Tabs">
+          <nav
+            className="-mx-2 -my-1 flex flex-wrap"
+            aria-label="Tabs"
+            data-tutorial={dataTutorial}
+          >
             {AdminRoutes.map((route, index) => (
               <AdminLink
                 tabType={tabType}
@@ -122,6 +132,7 @@ const AdminTabs = ({
                 route={route.route}
                 regex={route.regex}
                 hidden={route.hidden ?? false}
+                dataTutorial={route.dataTutorial}
                 key={`button-Admin-link-${index}`}
               >
                 {route.content ?? route.text}
@@ -131,7 +142,11 @@ const AdminTabs = ({
         </div>
       ) : (
         <div className="hide-scrollbar hidden overflow-x-scroll border-b border-neutral sm:block m-0">
-          <nav className="flex" data-testid="Admin-nav-desktop">
+          <nav
+            className="flex"
+            data-testid="Admin-nav-desktop"
+            data-tutorial={dataTutorial}
+          >
             {AdminRoutes.filter((route) => !route.hidden).map(
               (route, index) => (
                 <AdminLink
@@ -139,6 +154,7 @@ const AdminTabs = ({
                   currentPath={pathname}
                   route={route.route}
                   regex={route.regex}
+                  dataTutorial={route.dataTutorial}
                   key={`standard-Admin-link-${index}`}
                 >
                   {route.text}

@@ -11,20 +11,27 @@ const AdminIndexers = () => {
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/prowlarr');
+  const { data, isLoading } = useSWR<ServiceSettings>(
+    '/api/v1/settings/prowlarr'
+  );
 
-  if (!data) {
+  if (isLoading) {
     return <LoadingEllipsis />;
   }
+
+  const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
 
   return (
     <div className="relative mt-2">
       <DynamicFrame
-        title={'indexers'}
+        title="indexers"
         domainURL={hostname}
         basePath={data?.urlBase}
-        newBase={'/admin/indexers'}
-      ></DynamicFrame>
+        newBase="/admin/indexers"
+        serviceName="Prowlarr"
+        settingsPath="/admin/settings/services/prowlarr"
+        isConfigured={isConfigured}
+      />
     </div>
   );
 };

@@ -1,4 +1,22 @@
 {
+  "ServiceErrorGeneric.description": {
+    "defaultMessage": "Ocurrió un error al intentar conectar con {serviceName}."
+  },
+  "ServiceNotConfigured.descriptionAdmin": {
+    "defaultMessage": "{serviceName} aún no ha sido configurado o habilitado."
+  },
+  "ServiceNotConfigured.descriptionUser": {
+    "defaultMessage": "{serviceName} no está disponible. Por favor contacta a tu administrador."
+  },
+  "ServiceNotConfigured.setUp": {
+    "defaultMessage": "Configurar {serviceName}"
+  },
+  "ServiceNotConfigured.title": {
+    "defaultMessage": "{serviceName} No Habilitado"
+  },
+  "ServiceNotFound.description": {
+    "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
+  },
   "aboutReleases.changelogTitle": {
     "defaultMessage": "Registro de Cambios de {version}"
   },
@@ -20,53 +38,62 @@
   "aboutReleases.viewOnGitHub": {
     "defaultMessage": "Ver en GitHub"
   },
-  "aboutSettings.alphaWarning": {
-    "defaultMessage": "Este es software ALPHA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Por favor revisa GitHub para actualizaciones de estado."
-  },
-  "aboutSettings.dataDirectory": {
-    "defaultMessage": "Directorio de Datos"
-  },
-  "aboutSettings.developWarning": {
-    "defaultMessage": "Estás ejecutando la rama <code>develop</code> de Streamarr, que solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
-  },
-  "aboutSettings.documentation": {
-    "defaultMessage": "Documentación"
-  },
-  "aboutSettings.gettingSupport": {
-    "defaultMessage": "Obtener Soporte"
-  },
-  "aboutSettings.githubDiscussions": {
-    "defaultMessage": "Discusiones de GitHub"
-  },
-  "aboutSettings.helpPayForCoffee": {
-    "defaultMessage": "Ayuda a Pagar el Café ☕️"
-  },
-  "aboutSettings.outOfDate": {
-    "defaultMessage": "Desactualizado"
-  },
-  "aboutSettings.preferred": {
-    "defaultMessage": "Preferido"
-  },
-  "aboutSettings.supportStreamarr": {
-    "defaultMessage": "Apoyar Streamarr"
-  },
-  "aboutSettings.timeZone": {
-    "defaultMessage": "Zona Horaria"
-  },
-  "aboutSettings.title": {
-    "defaultMessage": "Acerca de Streamarr"
-  },
-  "aboutSettings.totalUsers": {
-    "defaultMessage": "Total de Usuarios"
-  },
-  "aboutSettings.upToDate": {
-    "defaultMessage": "Actualizado"
-  },
-  "aboutSettings.version": {
-    "defaultMessage": "Versión"
-  },
   "admin.settings.services.description": {
     "defaultMessage": "Configura tus varios servicios a continuación."
+  },
+  "adminOnboarding.notifications.description": {
+    "defaultMessage": "Mantén a tus usuarios informados con notificaciones por correo electrónico, alertas push web y mensajes en la aplicación. Configúralas en la sección de Notificaciones cuando estés listo."
+  },
+  "adminOnboarding.notifications.title": {
+    "defaultMessage": "Configurar Notificaciones"
+  },
+  "adminOnboarding.services.description": {
+    "defaultMessage": "Amplía la funcionalidad de tu servidor integrándote con servicios externos. Puedes configurar Radarr y Sonarr para descargas automatizadas, conectar clientes de descarga y otras integraciones en la configuración de Servicios."
+  },
+  "adminOnboarding.services.title": {
+    "defaultMessage": "Configura Tus Servicios"
+  },
+  "adminOnboarding.users.description": {
+    "defaultMessage": "Controla quién tiene acceso a tu contenido multimedia de Plex. Puedes establecer valores predeterminados, importar usuarios existentes, gestionar permisos, establecer cuotas y cambiar el acceso a bibliotecas desde la configuración de Usuarios."
+  },
+  "adminOnboarding.users.title": {
+    "defaultMessage": "Gestiona Tus Usuarios"
+  },
+  "adminOnboarding.welcome.description": {
+    "defaultMessage": "Streamarr es tu solución integral de gestión de servidor multimedia. Vamos a configurarte con algunos consejos rápidos para comenzar y aprovechar al máximo tu nuevo servidor."
+  },
+  "adminOnboarding.welcome.title": {
+    "defaultMessage": "¡Bienvenido a Streamarr!"
+  },
+  "adminTutorial.generalSettings.description": {
+    "defaultMessage": "La configuración general es donde puedes configurar las preferencias de todo el servidor y personalizar la experiencia del usuario."
+  },
+  "adminTutorial.generalSettings.title": {
+    "defaultMessage": "Configuración General"
+  },
+  "adminTutorial.manageUsers.description": {
+    "defaultMessage": "Ve y gestiona tus usuarios, actualiza sus permisos y controla su acceso a tus bibliotecas multimedia."
+  },
+  "adminTutorial.manageUsers.title": {
+    "defaultMessage": "Gestionar Usuarios"
+  },
+  "adminTutorial.onboarding.description": {
+    "defaultMessage": "Personaliza la experiencia de bienvenida para nuevos usuarios. Crea diapositivas de bienvenida, pasos de tutorial y controla cómo se introducen los usuarios a tu servidor."
+  },
+  "adminTutorial.onboarding.title": {
+    "defaultMessage": "Incorporación de Usuarios"
+  },
+  "adminTutorial.servicesSettings.description": {
+    "defaultMessage": "Intégrate con servicios externos para ampliar las capacidades de tu servidor. Configura Seerr, Radarr, Sonarr y otras integraciones aquí."
+  },
+  "adminTutorial.servicesSettings.title": {
+    "defaultMessage": "Configuración de Servicios"
+  },
+  "adminTutorial.tabs.description": {
+    "defaultMessage": "Usa estas pestañas para navegar entre diferentes funciones de administración. Configuración, Usuarios y tus servicios multimedia habilitados son accesibles desde aquí."
+  },
+  "adminTutorial.tabs.title": {
+    "defaultMessage": "Navegación de Administrador"
   },
   "appData.warning": {
     "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
@@ -191,9 +218,6 @@
   "common.4kserver": {
     "defaultMessage": "Servidor 4K"
   },
-  "common.about": {
-    "defaultMessage": "Acerca de"
-  },
   "common.actions": {
     "defaultMessage": "Acciones"
   },
@@ -238,6 +262,9 @@
   "common.arrEdit4k": {
     "defaultMessage": "Editar Servidor 4K {arrApp}"
   },
+  "common.back": {
+    "defaultMessage": "Atrás"
+  },
   "common.by": {
     "defaultMessage": "por"
   },
@@ -249,6 +276,9 @@
   },
   "common.cancel": {
     "defaultMessage": "Cancelar"
+  },
+  "common.change": {
+    "defaultMessage": "Cambiar"
   },
   "common.close": {
     "defaultMessage": "Cerrar"
@@ -294,6 +324,12 @@
   "common.delete": {
     "defaultMessage": "Eliminar"
   },
+  "common.description": {
+    "defaultMessage": "Descripción"
+  },
+  "common.disable": {
+    "defaultMessage": "Deshabilitar"
+  },
   "common.disconnected": {
     "defaultMessage": "Desconectado"
   },
@@ -318,6 +354,9 @@
   "common.emailAddress": {
     "defaultMessage": "Dirección de correo electrónico"
   },
+  "common.enable": {
+    "defaultMessage": "Habilitar"
+  },
   "common.endTime": {
     "defaultMessage": "Hora de Fin"
   },
@@ -340,6 +379,9 @@
   "common.externalUrl": {
     "defaultMessage": "URL externa"
   },
+  "common.finish": {
+    "defaultMessage": "Finalizar"
+  },
   "common.futuredays": {
     "defaultMessage": "Días Futuros"
   },
@@ -357,6 +399,9 @@
   },
   "common.hostname": {
     "defaultMessage": "Nombre del host"
+  },
+  "common.image": {
+    "defaultMessage": "Imagen"
   },
   "common.inApp": {
     "defaultMessage": "En la Aplicación"
@@ -417,6 +462,9 @@
   "common.music": {
     "defaultMessage": "Música"
   },
+  "common.muted": {
+    "defaultMessage": "silenciado"
+  },
   "common.name": {
     "defaultMessage": "Nombre"
   },
@@ -432,6 +480,9 @@
   "common.noDownloadsFound": {
     "defaultMessage": "No se Encontraron Descargas"
   },
+  "common.noErrorDetails": {
+    "defaultMessage": "No se pudieron obtener los detalles del error."
+  },
   "common.noResults": {
     "defaultMessage": "Sin Resultados"
   },
@@ -443,6 +494,9 @@
   },
   "common.notifications": {
     "defaultMessage": "Notificaciones"
+  },
+  "common.onboarding": {
+    "defaultMessage": "Incorporación"
   },
   "common.optional": {
     "defaultMessage": "opcional"
@@ -526,14 +580,26 @@
   "common.requests": {
     "defaultMessage": "Solicitudes"
   },
+  "common.reset": {
+    "defaultMessage": "Restablecer"
+  },
   "common.resetToDefault": {
     "defaultMessage": "Restablecer a Predeterminado"
+  },
+  "common.restart": {
+    "defaultMessage": "Reiniciar"
+  },
+  "common.restartRequired": {
+    "defaultMessage": "Reinicio Requerido"
   },
   "common.resultsDisplay": {
     "defaultMessage": "Mostrar {select} resultados por página"
   },
   "common.resume": {
     "defaultMessage": "Reanudar"
+  },
+  "common.retry": {
+    "defaultMessage": "Reintentar"
   },
   "common.role": {
     "defaultMessage": "Rol"
@@ -562,6 +628,9 @@
   },
   "common.servername": {
     "defaultMessage": "Nombre del servidor"
+  },
+  "common.service": {
+    "defaultMessage": "Servicio"
   },
   "common.services": {
     "defaultMessage": "Servicios"
@@ -600,8 +669,11 @@
   "common.size": {
     "defaultMessage": "Tamaño"
   },
+  "common.skip": {
+    "defaultMessage": "Omitir"
+  },
   "common.somethingWentWrong": {
-    "defaultMessage": "¡Algo salió mal!"
+    "defaultMessage": "¡Algo Salió Mal!"
   },
   "common.speed": {
     "defaultMessage": "Velocidad"
@@ -618,6 +690,9 @@
   "common.subtitles": {
     "defaultMessage": "Subtítulos"
   },
+  "common.system": {
+    "defaultMessage": "Sistema"
+  },
   "common.test": {
     "defaultMessage": "Probar"
   },
@@ -627,8 +702,11 @@
   "common.testing": {
     "defaultMessage": "Probando…"
   },
-  "common.transcoding": {
-    "defaultMessage": "Transcodificación"
+  "common.title": {
+    "defaultMessage": "Título"
+  },
+  "common.transcodes": {
+    "defaultMessage": "Transcodificaciones"
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
@@ -641,6 +719,9 @@
   },
   "common.unknown": {
     "defaultMessage": "Desconocido"
+  },
+  "common.unknownError": {
+    "defaultMessage": "Error desconocido"
   },
   "common.unknownUser": {
     "defaultMessage": "Usuario Desconocido"
@@ -668,6 +749,18 @@
   },
   "common.users": {
     "defaultMessage": "Usuarios"
+  },
+  "common.validation.descriptionRequired": {
+    "defaultMessage": "Debes proporcionar una descripción válida"
+  },
+  "common.validation.invalidUrl": {
+    "defaultMessage": "URL inválida"
+  },
+  "common.validation.titleRequired": {
+    "defaultMessage": "Debes proporcionar un título válido"
+  },
+  "common.videoUrl": {
+    "defaultMessage": "URL del Video"
   },
   "common.viewDetails": {
     "defaultMessage": "Ver Detalles"
@@ -784,6 +877,9 @@
   "downloads.bulkResume": {
     "defaultMessage": "Reanudar Seleccionados"
   },
+  "downloads.category": {
+    "defaultMessage": "Categoría"
+  },
   "downloads.categoryUpdated": {
     "defaultMessage": "Categoría actualizada exitosamente"
   },
@@ -871,6 +967,9 @@
   "downloads.hash": {
     "defaultMessage": "Hash"
   },
+  "downloads.label": {
+    "defaultMessage": "Etiqueta"
+  },
   "downloads.labelPlaceholder": {
     "defaultMessage": "ej., películas, series-tv"
   },
@@ -942,6 +1041,39 @@
   },
   "downloads.staleDataWarning": {
     "defaultMessage": "Cliente No Disponible"
+  },
+  "downloads.statusChecking": {
+    "defaultMessage": "Verificando"
+  },
+  "downloads.statusCompleted": {
+    "defaultMessage": "Completado"
+  },
+  "downloads.statusDownloading": {
+    "defaultMessage": "Descargando"
+  },
+  "downloads.statusError": {
+    "defaultMessage": "Error"
+  },
+  "downloads.statusMetadata": {
+    "defaultMessage": "Obteniendo Metadatos"
+  },
+  "downloads.statusMoving": {
+    "defaultMessage": "Moviendo"
+  },
+  "downloads.statusPaused": {
+    "defaultMessage": "Pausado"
+  },
+  "downloads.statusQueued": {
+    "defaultMessage": "En Cola"
+  },
+  "downloads.statusSeeding": {
+    "defaultMessage": "Sembrando"
+  },
+  "downloads.statusStalled": {
+    "defaultMessage": "Detenido"
+  },
+  "downloads.statusUnknown": {
+    "defaultMessage": "Desconocido"
   },
   "downloads.tags": {
     "defaultMessage": "Etiquetas"
@@ -1256,6 +1388,21 @@
   },
   "imageCache.title": {
     "defaultMessage": "Caché de Imágenes"
+  },
+  "imageUpload.dropOrClick": {
+    "defaultMessage": "Arrastra una imagen o haz clic para subir"
+  },
+  "imageUpload.fileTooLarge": {
+    "defaultMessage": "El archivo es demasiado grande. El tamaño máximo es 10MB."
+  },
+  "imageUpload.formats": {
+    "defaultMessage": "JPG, PNG, WebP, GIF (máx 10MB)"
+  },
+  "imageUpload.uploadFailed": {
+    "defaultMessage": "Error al subir la imagen."
+  },
+  "imageUpload.uploading": {
+    "defaultMessage": "Subiendo..."
   },
   "inAppNotifications.saveError": {
     "defaultMessage": "Error al guardar la configuración de notificaciones en la aplicación."
@@ -1831,6 +1978,9 @@
   "profile.editSettings": {
     "defaultMessage": "Editar Configuración"
   },
+  "profile.invitedBy": {
+    "defaultMessage": "Invitado Por"
+  },
   "profile.invitesLifetime": {
     "defaultMessage": "Invitaciones (Historial)"
   },
@@ -1860,6 +2010,9 @@
   },
   "profile.userId": {
     "defaultMessage": "ID de Usuario: {userId}"
+  },
+  "profile.usersInvited": {
+    "defaultMessage": "Usuarios Invitados"
   },
   "profile.viewProfile": {
     "defaultMessage": "Ver Perfil"
@@ -1935,6 +2088,18 @@
   },
   "selectUsers": {
     "defaultMessage": "Seleccionar Usuarios"
+  },
+  "serviceNotFound.notFound": {
+    "defaultMessage": "No encontrado"
+  },
+  "serviceUnavailable.timeoutMessage": {
+    "defaultMessage": "Algo salió mal. {serviceName} no respondió a tiempo."
+  },
+  "serviceUnavailable.title": {
+    "defaultMessage": "{serviceName} No Disponible"
+  },
+  "serviceUnavailable.unreachableMessage": {
+    "defaultMessage": "No se puede conectar con {serviceName}. El servicio no está accesible."
   },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Error al deshabilitar la autenticación en {service}"
@@ -2077,14 +2242,26 @@
   "settings.accountType": {
     "defaultMessage": "Tipo de Cuenta"
   },
+  "settings.allLibraries": {
+    "defaultMessage": "Todas las Bibliotecas"
+  },
+  "settings.allowDownloads": {
+    "defaultMessage": "Permitir Descargas"
+  },
   "settings.allowLiveTv": {
     "defaultMessage": "Permitir Acceso a TV en Vivo"
+  },
+  "settings.crossOriginAccess": {
+    "defaultMessage": "Acceso de Origen Cruzado"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Habilitar Período de Prueba"
   },
   "settings.inviteQuota": {
     "defaultMessage": "Cuota de Invitaciones"
+  },
+  "settings.librariesDifferWarning": {
+    "defaultMessage": "El acceso a Plex difiere de la configuración actual:"
   },
   "settings.librariesSynced": {
     "defaultMessage": "Las bibliotecas se han sincronizado con Plex."
@@ -2093,8 +2270,230 @@
     "defaultMessage": "Configurar y habilitar agentes de notificación.",
     "description": "Professional Spanish translation"
   },
+  "settings.onboarding.addASlide": {
+    "defaultMessage": "Agregar una Diapositiva"
+  },
+  "settings.onboarding.addAStep": {
+    "defaultMessage": "Agregar un Paso"
+  },
+  "settings.onboarding.addSlide": {
+    "defaultMessage": "Agregar Diapositiva"
+  },
+  "settings.onboarding.addStep": {
+    "defaultMessage": "Agregar Paso"
+  },
+  "settings.onboarding.allowSkip": {
+    "defaultMessage": "Permitir Omitir"
+  },
+  "settings.onboarding.allowSkipTutorialTip": {
+    "defaultMessage": "Permitir que los usuarios omitan el tutorial."
+  },
+  "settings.onboarding.allowSkipWelcomeTip": {
+    "defaultMessage": "Permitir que los usuarios omitan o descarten el modal de bienvenida."
+  },
+  "settings.onboarding.customHtml": {
+    "defaultMessage": "HTML Personalizado"
+  },
+  "settings.onboarding.customHtmlTip": {
+    "defaultMessage": "Contenido HTML personalizado."
+  },
+  "settings.onboarding.deleteConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer."
+  },
+  "settings.onboarding.deleteError": {
+    "defaultMessage": "Error al eliminar el elemento."
+  },
+  "settings.onboarding.deleteSuccess": {
+    "defaultMessage": "Elemento eliminado exitosamente."
+  },
+  "settings.onboarding.deleteTutorialTitle": {
+    "defaultMessage": "Eliminar Paso del Tutorial"
+  },
+  "settings.onboarding.deleteWelcomeTitle": {
+    "defaultMessage": "Eliminar Contenido de Bienvenida"
+  },
+  "settings.onboarding.description": {
+    "defaultMessage": "Configura el modal de bienvenida y la experiencia de tutorial para nuevos usuarios."
+  },
+  "settings.onboarding.editSlide": {
+    "defaultMessage": "Editar Diapositiva"
+  },
+  "settings.onboarding.editStep": {
+    "defaultMessage": "Editar Paso"
+  },
+  "settings.onboarding.imageAvailableAfterSave": {
+    "defaultMessage": "La carga de imagen estará disponible después de guardar."
+  },
+  "settings.onboarding.mode.both": {
+    "defaultMessage": "Ambos (Destacado + Asistente)"
+  },
+  "settings.onboarding.mode.spotlight": {
+    "defaultMessage": "Destacado (Resaltado de Elemento)"
+  },
+  "settings.onboarding.mode.wizard": {
+    "defaultMessage": "Asistente (Diapositiva de Carrusel)"
+  },
+  "settings.onboarding.noTutorialSteps": {
+    "defaultMessage": "No hay pasos de tutorial configurados. Agrega tu primer paso para comenzar."
+  },
+  "settings.onboarding.noWelcomeContent": {
+    "defaultMessage": "No hay contenido de bienvenida configurado. Agrega tu primera diapositiva para comenzar."
+  },
+  "settings.onboarding.position.auto": {
+    "defaultMessage": "Automático (Mejor Ajuste)"
+  },
+  "settings.onboarding.position.bottom": {
+    "defaultMessage": "Inferior"
+  },
+  "settings.onboarding.position.left": {
+    "defaultMessage": "Izquierda"
+  },
+  "settings.onboarding.position.right": {
+    "defaultMessage": "Derecha"
+  },
+  "settings.onboarding.position.top": {
+    "defaultMessage": "Superior"
+  },
+  "settings.onboarding.previewDescription": {
+    "defaultMessage": "Prueba el modal de bienvenida y el tutorial sin afectar los datos del usuario. El modo vista previa no guarda el progreso."
+  },
+  "settings.onboarding.previewMode": {
+    "defaultMessage": "Modo Vista Previa"
+  },
+  "settings.onboarding.previewSection": {
+    "defaultMessage": "Vista Previa y Prueba"
+  },
+  "settings.onboarding.previewTutorial": {
+    "defaultMessage": "Vista Previa del Tutorial"
+  },
+  "settings.onboarding.previewWelcome": {
+    "defaultMessage": "Vista Previa de Bienvenida"
+  },
+  "settings.onboarding.reorderError": {
+    "defaultMessage": "Error al reordenar los elementos."
+  },
+  "settings.onboarding.resetAllUsersButton": {
+    "defaultMessage": "Restablecer Todos los Usuarios"
+  },
+  "settings.onboarding.resetAllUsersConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas restablecer el progreso de incorporación para todos los usuarios? Esto mostrará el modal de bienvenida y el tutorial a todos los usuarios nuevamente en su próxima visita."
+  },
+  "settings.onboarding.resetAllUsersError": {
+    "defaultMessage": "Error al restablecer la incorporación para todos los usuarios."
+  },
+  "settings.onboarding.resetAllUsersSuccess": {
+    "defaultMessage": "¡Incorporación restablecida para todos los usuarios!"
+  },
+  "settings.onboarding.resetAllUsersTitle": {
+    "defaultMessage": "Restablecer Todos los Usuarios"
+  },
+  "settings.onboarding.resetConfirm": {
+    "defaultMessage": "¿Estás seguro de que deseas restablecer todo el contenido de bienvenida y los pasos del tutorial a sus valores predeterminados? Esto eliminará cualquier contenido personalizado que hayas creado."
+  },
+  "settings.onboarding.resetError": {
+    "defaultMessage": "Error al restablecer el contenido de incorporación."
+  },
+  "settings.onboarding.resetSection": {
+    "defaultMessage": "Restablecer a Predeterminados"
+  },
+  "settings.onboarding.resetSectionDescription": {
+    "defaultMessage": "Restablece todo el contenido de bienvenida y los pasos del tutorial a sus valores predeterminados. Esto eliminará cualquier personalización."
+  },
+  "settings.onboarding.resetSuccess": {
+    "defaultMessage": "¡Contenido de incorporación restablecido a los valores predeterminados!"
+  },
+  "settings.onboarding.resetTitle": {
+    "defaultMessage": "Restablecer a Predeterminados"
+  },
+  "settings.onboarding.route": {
+    "defaultMessage": "Ruta"
+  },
+  "settings.onboarding.routeTip": {
+    "defaultMessage": "Navegar a esta ruta cuando este paso esté activo."
+  },
+  "settings.onboarding.selectPreset": {
+    "defaultMessage": "Seleccionar un preset..."
+  },
+  "settings.onboarding.stepMode": {
+    "defaultMessage": "Estilo de Renderizado del Paso"
+  },
+  "settings.onboarding.stepModeTip": {
+    "defaultMessage": "Elige cómo se renderiza este paso: destacado resalta un elemento, asistente muestra una diapositiva de carrusel."
+  },
+  "settings.onboarding.targetSelector": {
+    "defaultMessage": "Selector de Destino"
+  },
+  "settings.onboarding.targetSelectorTip": {
+    "defaultMessage": "Selector CSS o nombre del atributo data-tutorial a resaltar."
+  },
+  "settings.onboarding.title": {
+    "defaultMessage": "Configuración de Incorporación"
+  },
+  "settings.onboarding.tooltipPosition": {
+    "defaultMessage": "Posición del Tooltip"
+  },
+  "settings.onboarding.tutorialAutostart": {
+    "defaultMessage": "Inicio Automático del Tutorial"
+  },
+  "settings.onboarding.tutorialAutostartDelay": {
+    "defaultMessage": "Retraso de Inicio Automático (ms)"
+  },
+  "settings.onboarding.tutorialAutostartDelayTip": {
+    "defaultMessage": "Retraso en milisegundos antes del inicio automático del tutorial."
+  },
+  "settings.onboarding.tutorialAutostartTip": {
+    "defaultMessage": "Iniciar automáticamente el tutorial después del modal de bienvenida o en el primer inicio de sesión."
+  },
+  "settings.onboarding.tutorialEnabled": {
+    "defaultMessage": "Habilitar Tutorial"
+  },
+  "settings.onboarding.tutorialEnabledTip": {
+    "defaultMessage": "Guía a los usuarios a través de las funciones clave con un tutorial interactivo."
+  },
+  "settings.onboarding.tutorialMode": {
+    "defaultMessage": "Modo de Tutorial"
+  },
+  "settings.onboarding.tutorialModeTip": {
+    "defaultMessage": "Elige cómo el tutorial guía a los usuarios a través de las funciones."
+  },
+  "settings.onboarding.tutorialSteps": {
+    "defaultMessage": "Pasos del Tutorial"
+  },
+  "settings.onboarding.tutorialStepsDescription": {
+    "defaultMessage": "Configura los pasos interactivos del tutorial."
+  },
+  "settings.onboarding.videoAutoplay": {
+    "defaultMessage": "Reproducción Automática de Video"
+  },
+  "settings.onboarding.videoUrlTip": {
+    "defaultMessage": "URL de video de YouTube (se incrustará de forma segura)."
+  },
+  "settings.onboarding.welcomeContent": {
+    "defaultMessage": "Contenido de Bienvenida"
+  },
+  "settings.onboarding.welcomeContentDescription": {
+    "defaultMessage": "Configura las diapositivas mostradas en el carrusel del modal de bienvenida."
+  },
+  "settings.onboarding.welcomeEnabled": {
+    "defaultMessage": "Habilitar Modal de Bienvenida"
+  },
+  "settings.onboarding.welcomeEnabledTip": {
+    "defaultMessage": "Mostrar un carrusel de bienvenida a nuevos usuarios en su primer inicio de sesión."
+  },
+  "settings.openOverseerr": {
+    "defaultMessage": "Abrir Overseerr"
+  },
+  "settings.openOverseerrSettings": {
+    "defaultMessage": "Abrir Configuración de Overseerr"
+  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Anular Límite Global"
+  },
+  "settings.overseerr.localhostDescription": {
+    "defaultMessage": "Overseerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
+  },
+  "settings.overseerr.localhostDescriptionSettings": {
+    "defaultMessage": "La configuración de Overseerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.permissions": {
     "defaultMessage": "Permisos",
@@ -2103,6 +2502,12 @@
   "settings.permissions.error": {
     "defaultMessage": "No tienes permiso para modificar la configuración de este usuario.",
     "description": "Professional Spanish translation"
+  },
+  "settings.permissionsDifferWarning": {
+    "defaultMessage": "Los permisos de Plex difieren de la configuración actual:"
+  },
+  "settings.permissionsWillSyncWarning": {
+    "defaultMessage": "Cambiar estos permisos eliminará y volverá a agregar brevemente el acceso al servidor Plex del usuario para aplicar los cambios."
   },
   "settings.pinLibraries": {
     "defaultMessage": "Anclar Bibliotecas"
@@ -2140,6 +2545,15 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Los cambios se sincronizarán con Plex automáticamente al guardar."
   },
+  "settings.restartRequired.failed": {
+    "defaultMessage": "El reinicio falló. Por favor, reinicie el servidor manualmente."
+  },
+  "settings.restartRequired.message": {
+    "defaultMessage": "Los cambios en {services} requieren un reinicio del servidor para aplicarse."
+  },
+  "settings.saveChangesToSync": {
+    "defaultMessage": "Guarda los cambios para sincronizar."
+  },
   "settings.saveError": {
     "defaultMessage": "Algo salió mal al guardar la configuración."
   },
@@ -2151,6 +2565,18 @@
   },
   "settings.trialPeriodEndDateDescription": {
     "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha"
+  },
+  "settings.user.onboardingDescription": {
+    "defaultMessage": "Restablecer el modal de bienvenida y el tutorial {ownProfile, select, true {} other {para este usuario}}"
+  },
+  "settings.user.onboardingResetError": {
+    "defaultMessage": "Error al restablecer la incorporación."
+  },
+  "settings.user.onboardingResetSuccess": {
+    "defaultMessage": "Incorporación restablecida."
+  },
+  "settings.user.resetOnboarding": {
+    "defaultMessage": "Restablecer Incorporación"
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Configurar incorrectamente esta opción puede resultar en funcionalidad rota"
@@ -2167,11 +2593,17 @@
   "settingsBadge.restartRequired.tooltip": {
     "defaultMessage": "Streamarr debe reiniciarse para que los cambios a esta configuración tengan efecto"
   },
+  "setup.arrServices": {
+    "defaultMessage": "Servicios *Arr"
+  },
   "setup.configurePlex": {
     "defaultMessage": "Configurar Plex"
   },
   "setup.configureServices": {
     "defaultMessage": "Configurar Servicios"
+  },
+  "setup.downloads": {
+    "defaultMessage": "Descargas"
   },
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completando la configuración"
@@ -2188,8 +2620,23 @@
   "setup.loginError": {
     "defaultMessage": "Error de inicio de sesión"
   },
+  "setup.mediaServices": {
+    "defaultMessage": "Servicios de Medios"
+  },
+  "setup.monitoring": {
+    "defaultMessage": "Monitoreo"
+  },
   "setup.onlyEnabledLibraries": {
     "defaultMessage": "Solo las bibliotecas habilitadas serán escaneadas."
+  },
+  "setup.restartRequired.message": {
+    "defaultMessage": "Se configuraron servicios que requieren un reinicio del servidor para estar disponibles. ¿Desea reiniciar ahora?"
+  },
+  "setup.restartRequired.servicesConfigured": {
+    "defaultMessage": "Los siguientes servicios necesitan registrar rutas de proxy mediante reinicio:"
+  },
+  "setup.restartRequired.skipButton": {
+    "defaultMessage": "Omitir por Ahora"
   },
   "setup.signInWithPlex": {
     "defaultMessage": "Iniciar sesión con Plex"
@@ -2345,6 +2792,126 @@
   "sonarrSettings.title": {
     "defaultMessage": "Configuración de Sonarr"
   },
+  "system.health.title": {
+    "defaultMessage": "Salud"
+  },
+  "system.python.alertMessage": {
+    "defaultMessage": "El servicio de sincronización de Plex no está disponible. Las invitaciones y la sincronización de bibliotecas de Plex no están disponibles actualmente."
+  },
+  "system.python.alertTitle": {
+    "defaultMessage": "Servicio de Sincronización de Plex Caído"
+  },
+  "system.python.description": {
+    "defaultMessage": "Gestiona las invitaciones de Plex y la sincronización de bibliotecas."
+  },
+  "system.python.restart": {
+    "defaultMessage": "Reiniciar Servicio"
+  },
+  "system.python.restartFailed": {
+    "defaultMessage": "Error al reiniciar el servicio de sincronización de Plex"
+  },
+  "system.python.restartSuccess": {
+    "defaultMessage": "El servicio de sincronización de Plex se reinició exitosamente"
+  },
+  "system.python.title": {
+    "defaultMessage": "Servicio de Sincronización de Plex"
+  },
+  "system.reconnecting": {
+    "defaultMessage": "Reconectando..."
+  },
+  "system.restartNow": {
+    "defaultMessage": "Reiniciar Ahora"
+  },
+  "system.restartRequiredDescription": {
+    "defaultMessage": "Se requiere un reinicio para aplicar los cambios recientes. Por favor, reinicie el servidor lo antes posible."
+  },
+  "system.restarting": {
+    "defaultMessage": "Reiniciando..."
+  },
+  "system.server.restartFailed": {
+    "defaultMessage": "El reinicio falló. Por favor, reinicie el servidor manualmente."
+  },
+  "system.server.restartSuccess": {
+    "defaultMessage": "El servidor se reinició exitosamente"
+  },
+  "system.status.healthy": {
+    "defaultMessage": "Saludable"
+  },
+  "system.status.unhealthy": {
+    "defaultMessage": "No Saludable"
+  },
+  "system.status.unknown": {
+    "defaultMessage": "Desconocido"
+  },
+  "system.streamarr.description": {
+    "defaultMessage": "Proceso principal del servidor de Streamarr."
+  },
+  "system.streamarr.title": {
+    "defaultMessage": "Streamarr"
+  },
+  "systemSettings.betaWarning": {
+    "defaultMessage": "Este es un software BETA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Consulte GitHub para actualizaciones de estado."
+  },
+  "systemSettings.dataDirectory": {
+    "defaultMessage": "Directorio de Datos"
+  },
+  "systemSettings.developWarning": {
+    "defaultMessage": "Está ejecutando la rama <code>develop</code> de Streamarr, lo cual solo se recomienda para quienes contribuyen al desarrollo o ayudan con pruebas de vanguardia."
+  },
+  "systemSettings.documentation": {
+    "defaultMessage": "Documentación"
+  },
+  "systemSettings.gettingSupport": {
+    "defaultMessage": "Obtener Soporte"
+  },
+  "systemSettings.githubDiscussions": {
+    "defaultMessage": "Discusiones de GitHub"
+  },
+  "systemSettings.helpPayForCoffee": {
+    "defaultMessage": "Ayuda a Pagar el Café ☕️"
+  },
+  "systemSettings.outOfDate": {
+    "defaultMessage": "Desactualizado"
+  },
+  "systemSettings.preferred": {
+    "defaultMessage": "Preferido"
+  },
+  "systemSettings.supportStreamarr": {
+    "defaultMessage": "Apoyar Streamarr"
+  },
+  "systemSettings.timeZone": {
+    "defaultMessage": "Zona Horaria"
+  },
+  "systemSettings.title": {
+    "defaultMessage": "Acerca de Streamarr"
+  },
+  "systemSettings.totalUsers": {
+    "defaultMessage": "Usuarios Totales"
+  },
+  "systemSettings.upToDate": {
+    "defaultMessage": "Actualizado"
+  },
+  "systemSettings.version": {
+    "defaultMessage": "Versión"
+  },
+  "tutorial.ready.description": {
+    "defaultMessage": "Te guiaremos a través de las funciones clave de {applicationTitle} con un recorrido rápido."
+  },
+  "tutorial.ready.title": {
+    "defaultMessage": "Tutorial Interactivo"
+  },
+  "tutorial.skipTour": {
+    "defaultMessage": "Omitir Recorrido"
+  },
+  "tutorial.startTour": {
+    "defaultMessage": "Iniciar Recorrido"
+  },
+  "tutorial.stepProgress": {
+    "defaultMessage": "Paso {current} de {total}"
+  },
+  "tutorial.wizard.routeHint": {
+    "defaultMessage": "Esta función está disponible en: {route}"
+  },
   "userDropdown.account": {
     "defaultMessage": "Cuenta"
   },
@@ -2356,6 +2923,9 @@
   },
   "userDropdown.signOut": {
     "defaultMessage": "Cerrar Sesión de {applicationTitle}"
+  },
+  "userDropdown.startTutorial": {
+    "defaultMessage": "Iniciar Tutorial"
   },
   "userDropdown.watchHistory": {
     "defaultMessage": "Historial de Visualización"
@@ -2664,5 +3234,8 @@
   },
   "webpushNotifications.testSuccess": {
     "defaultMessage": "¡Notificación de prueba web push enviada!"
+  },
+  "welcome.getStarted": {
+    "defaultMessage": "Comenzar"
   }
 }

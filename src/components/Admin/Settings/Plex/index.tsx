@@ -1,5 +1,9 @@
 'use client';
 import LibraryItem from '@app/components/Admin/Settings/LibraryItem';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -16,7 +20,7 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { orderBy } from 'lodash';
 import { useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 interface PresetServerDisplay {
@@ -275,6 +279,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               icon: <CheckBadgeIcon className="size-7" />,
             });
 
+            mutate(RESTART_REQUIRED_SWR_KEY);
+
             if (onComplete) {
               onComplete();
             }
@@ -301,6 +307,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
+              <RestartRequiredAlert filterServices={['Plex']} />
+              <PythonServiceAlert />
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                 <label htmlFor="preset">
                   <FormattedMessage

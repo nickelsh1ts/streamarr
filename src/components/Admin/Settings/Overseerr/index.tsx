@@ -3,41 +3,53 @@
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import Button from '@app/components/Common/Button';
 import type { ServiceSettings } from '@server/lib/settings';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';
 import useSWR from 'swr';
-import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
 import {
   ArrowTopRightOnSquareIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
+import { FormattedMessage } from 'react-intl';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 const AdminOverseerr = () => {
+  const { user } = useUser();
   const [hostname] = useState(() =>
     typeof window !== 'undefined'
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/overseerr');
-  const { currentSettings } = useSettings();
+  const { data, isLoading } = useSWR<ServiceSettings>(
+    '/api/v1/settings/overseerr'
+  );
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   const isLocalhost =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1');
 
-  if (isLocalhost && currentSettings?.requestHostname) {
-    const overseerrUrl = `http://${currentSettings.requestHostname}/settings`;
+  if (isLocalhost && userSettings?.requestHostname) {
+    const overseerrUrl = `http://${userSettings.requestHostname}/settings`;
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100dvh-12rem)] bg-base-300 px-4 mt-2 -mx-4 rounded-lg">
         <div className="text-center max-w-md">
           <LockClosedIcon className="w-16 h-16 mx-auto mb-4 text-primary" />
           <h2 className="text-xl font-semibold text-base-content mb-2">
-            Cross-Origin Access
+            <FormattedMessage
+              id="settings.crossOriginAccess"
+              defaultMessage="Cross-Origin Access"
+            />
           </h2>
           <p className="text-base-content/70 mb-6">
-            Overseerr settings cannot be embedded when accessing locally due to
-            browser security restrictions. Please open it in a new tab to
-            continue or access streamarr from a secure hostname.
+            <FormattedMessage
+              id="settings.overseerr.localhostDescriptionSettings"
+              defaultMessage="Overseerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+            />
           </p>
           <Button
             buttonSize="sm"
@@ -46,7 +58,10 @@ const AdminOverseerr = () => {
             target="_blank"
             href={overseerrUrl}
           >
-            Open Overseerr Settings{' '}
+            <FormattedMessage
+              id="settings.openOverseerrSettings"
+              defaultMessage="Open Overseerr Settings"
+            />
             <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -54,18 +69,25 @@ const AdminOverseerr = () => {
     );
   }
 
+  if (isLoading) {
+    return <LoadingEllipsis />;
+  }
+
+  const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
+
   return (
     <div className="relative mt-2 -mx-4">
-      {data?.urlBase && (
-        <DynamicFrame
-          title={'downloads'}
-          domainURL={hostname}
-          basePath={data?.urlBase}
-          newBase={'/admin/settings/overseerr'}
-        >
-          <link rel="stylesheet" href="/request.css" />
-        </DynamicFrame>
-      )}
+      <DynamicFrame
+        title="overseerr"
+        domainURL={hostname}
+        basePath={data?.urlBase}
+        newBase="/admin/settings/overseerr"
+        serviceName="Overseerr"
+        settingsPath="/admin/settings/services/overseerr"
+        isConfigured={isConfigured}
+      >
+        <link rel="stylesheet" href="/request.css" />
+      </DynamicFrame>
     </div>
   );
 };

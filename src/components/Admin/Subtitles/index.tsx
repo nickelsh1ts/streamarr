@@ -11,20 +11,27 @@ const AdminSubtitles = () => {
       ? `${window?.location?.protocol}//${window?.location?.host}`
       : ''
   );
-  const { data } = useSWR<ServiceSettings>('/api/v1/settings/bazarr');
+  const { data, isLoading } = useSWR<ServiceSettings>(
+    '/api/v1/settings/bazarr'
+  );
 
-  if (!data) {
+  if (isLoading) {
     return <LoadingEllipsis />;
   }
+
+  const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
 
   return (
     <div className="relative mt-2">
       <DynamicFrame
-        title={'subtitles'}
+        title="subtitles"
         domainURL={hostname}
         basePath={data?.urlBase}
-        newBase={'/admin/srt'}
-      ></DynamicFrame>
+        newBase="/admin/srt"
+        serviceName="Bazarr"
+        settingsPath="/admin/settings/services/bazarr"
+        isConfigured={isConfigured}
+      />
     </div>
   );
 };

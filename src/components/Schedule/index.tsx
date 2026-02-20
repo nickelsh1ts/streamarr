@@ -9,6 +9,13 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+const calendarSwrOptions = {
+  revalidateOnFocus: true,
+  revalidateOnReconnect: true,
+  dedupingInterval: 5000,
+  keepPreviousData: true,
+};
+
 enum Filter {
   ALL = 'all',
   MOVIES = 'movies',
@@ -31,13 +38,29 @@ const Schedule = () => {
     return Filter.ALL;
   });
 
-  // Fetch calendar events from API
-  const { data: sonarrEvents } = useSWR('/api/v1/calendar/sonarr', fetcher);
-  const { data: radarrEvents } = useSWR('/api/v1/calendar/radarr', fetcher);
-  const { data: localEvents, mutate: revalidateEvents } = useSWR(
-    '/api/v1/calendar/local',
-    fetcher
-  );
+  // Fetch calendar events from API with SWR caching
+  const {
+    data: sonarrEvents,
+    isLoading: isSonarrLoading,
+    isValidating: isSonarrValidating,
+  } = useSWR('/api/v1/calendar/sonarr', fetcher, calendarSwrOptions);
+  const {
+    data: radarrEvents,
+    isLoading: isRadarrLoading,
+    isValidating: isRadarrValidating,
+  } = useSWR('/api/v1/calendar/radarr', fetcher, calendarSwrOptions);
+  const {
+    data: localEvents,
+    isLoading: isLocalLoading,
+    isValidating: isLocalValidating,
+    mutate: revalidateEvents,
+  } = useSWR('/api/v1/calendar/local', fetcher, calendarSwrOptions);
+
+  // Loading states
+  const isInitialLoading = isSonarrLoading || isRadarrLoading || isLocalLoading;
+  const isRevalidating =
+    !isInitialLoading &&
+    (isSonarrValidating || isRadarrValidating || isLocalValidating);
 
   // Combine and filter events as needed
   const events = useMemo(() => {
@@ -91,10 +114,15 @@ const Schedule = () => {
     <div className="relative max-sm:mb-16 flex flex-col">
       <div className="flex flex-col justify-between sm:flex-row sm:items-end px-4">
         <Header>
-          <FormattedMessage
-            id="common.releaseSchedule"
-            defaultMessage="Release Schedule"
-          />
+          <span className="flex items-center gap-2">
+            <FormattedMessage
+              id="common.releaseSchedule"
+              defaultMessage="Release Schedule"
+            />
+            {(isRevalidating || isInitialLoading) && (
+              <span className="loading loading-spinner text-primary loading-sm sm:loading-md opacity-50" />
+            )}
+          </span>
         </Header>
         <div className="mt-2 flex flex-grow flex-col sm:flex-grow-0 sm:flex-row">
           <div className="flex flex-grow sm:flex-grow-0">

@@ -10,25 +10,19 @@ import NotificationProvider from '@app/context/NotificationContext';
 import { NotificationSidebarProvider } from '@app/context/NotificationSidebarContext';
 import { SettingsProvider } from '@app/context/SettingsContext';
 import type { ReactNode } from 'react';
-import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import type { User } from '@app/hooks/useUser';
 import { cookies } from 'next/headers';
 import { UserContext } from '@app/context/UserContext';
 import Layout from '@app/components/Layout';
 import ThemeSetter from '@app/components/ThemeSetter';
+import { getPublicSettings } from '@app/utils/serverFetchHelpers';
 
 export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const res = await fetch(
-    `http://${process.env.HOST || 'localhost'}:${
-      process.env.PORT || 3000
-    }/api/v1/settings/public`,
-    { cache: 'no-store' }
-  );
-  const currentSettings: PublicSettingsResponse = await res.json();
+  const currentSettings = await getPublicSettings();
 
   let user: User | undefined = undefined;
   try {
@@ -61,9 +55,9 @@ export default async function RootLayout({
       </head>
       <body
         className="min-h-dvh"
-        style={{ background: currentSettings.theme['base-300'] }}
+        style={{ background: currentSettings.theme?.['base-300'] ?? '#1f1f1f' }}
       >
-        <NextTopLoader color={currentSettings.theme.primary} />
+        <NextTopLoader color={currentSettings.theme?.primary ?? '#974ede'} />
         <PullToRefresh />
         <Toaster />
         <LanguageProvider>

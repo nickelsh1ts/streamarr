@@ -20,7 +20,7 @@ import type {
   DownloadClientType,
 } from '@server/lib/settings';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 
 const CLIENT_NAMES: Record<DownloadClientType, string> = {
@@ -100,6 +100,11 @@ const DownloadClientInstance = ({
       setIsTesting(false);
     }
   };
+
+  useEffect(() => {
+    testConnection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const internalUrl =
     (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);

@@ -6,6 +6,8 @@ import ImageFader from '@app/components/Common/ImageFader';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import SettingsPlex from '@app/components/Admin/Settings/Plex';
 import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
+import RestartModal from '@app/components/Setup/RestartModal';
+import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import SetupSteps from '@app/components/Setup/SetupSteps';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
@@ -19,11 +21,22 @@ import { useUser } from '@app/hooks/useUser';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Toast from '@app/components/Toast';
 import { XCircleIcon } from '@heroicons/react/24/solid';
+import ServicesLidarr from '@app/components/Admin/Settings/Services/Lidarr';
+import ServicesProwlarr from '@app/components/Admin/Settings/Services/Prowlarr';
+import ServicesBazarr from '@app/components/Admin/Settings/Services/Bazarr';
+import ServicesTdarr from '@app/components/Admin/Settings/Services/Tdarr';
+import ServicesTautulli from '@app/components/Admin/Settings/Services/Tautulli';
+import ServicesDownloads from '@app/components/Admin/Settings/Services/Downloads';
+import ServicesUptime from '@app/components/Admin/Settings/Services/Uptime';
+import Tabs from '@app/components/Common/Tabs';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
+  const [showRestartModal, setShowRestartModal] = useState(false);
+  const [restartServices, setRestartServices] = useState<string[]>([]);
   const { locale } = useLocale();
   const { revalidate } = useUser();
   const { currentSettings } = useSettings();
@@ -42,6 +55,21 @@ const Setup = () => {
         // Update main settings and refresh data
         await axios.post('/api/v1/settings/main', { locale });
         await Promise.all([mutate('/api/v1/settings/public'), revalidate()]);
+
+        // Check if restart is required for any services
+        try {
+          const restartStatus = await axios.get<RestartStatusResponse>(
+            RESTART_REQUIRED_SWR_KEY
+          );
+
+          if (restartStatus.data.required) {
+            setRestartServices(restartStatus.data.services);
+            setShowRestartModal(true);
+            return;
+          }
+        } catch {
+          // If check fails, just proceed to admin
+        }
 
         // Redirect to admin page
         window.location.href = '/admin';
@@ -80,10 +108,10 @@ const Setup = () => {
       <div className="absolute top-4 right-4 z-50">
         <LanguagePicker />
       </div>
-      <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl">
+      <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl xl:max-w-6xl mt-4">
         <Image
           src={logoSrc}
-          className="mb-10 max-w-full sm:mx-auto sm:max-w-md"
+          className="mb-10 max-w-full mx-auto sm:max-w-md"
           alt="Logo"
           width={448}
           height={196}
@@ -162,8 +190,63 @@ const Setup = () => {
           )}
           {currentStep === 3 && (
             <div className="flex flex-col gap-4">
-              <SettingsServicesRadarr />
-              <SettingsServicesSonarr />
+              <Tabs
+                tabs={[
+                  {
+                    id: 'arr-services',
+                    title: intl.formatMessage({
+                      id: 'setup.arrServices',
+                      defaultMessage: '*Arr Services',
+                    }),
+                    content: (
+                      <div className="flex flex-col gap-4">
+                        <SettingsServicesRadarr />
+                        <SettingsServicesSonarr />
+                        <ServicesLidarr />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'media-services',
+                    title: intl.formatMessage({
+                      id: 'setup.mediaServices',
+                      defaultMessage: 'Media Services',
+                    }),
+                    content: (
+                      <div className="flex flex-col gap-4">
+                        <ServicesProwlarr />
+                        <ServicesBazarr />
+                        <ServicesTdarr />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'monitoring',
+                    title: intl.formatMessage({
+                      id: 'setup.monitoring',
+                      defaultMessage: 'Monitoring',
+                    }),
+                    content: (
+                      <div className="flex flex-col gap-4">
+                        <ServicesTautulli />
+                        <ServicesUptime />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'downloads',
+                    title: intl.formatMessage({
+                      id: 'setup.downloads',
+                      defaultMessage: 'Downloads',
+                    }),
+                    content: (
+                      <div className="flex flex-col gap-4 mb-4">
+                        <ServicesDownloads />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
               <div className="actions">
                 <div className="flex justify-end">
                   <span className="ml-3 inline-flex rounded-md shadow-sm">
@@ -191,6 +274,14 @@ const Setup = () => {
           )}
         </div>
       </div>
+      <RestartModal
+        show={showRestartModal}
+        onSkip={() => {
+          setShowRestartModal(false);
+          window.location.href = '/admin';
+        }}
+        services={restartServices}
+      />
     </div>
   );
 };

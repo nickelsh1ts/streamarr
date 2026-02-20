@@ -1,4 +1,3 @@
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import useLibraryLinks from '@app/hooks/useLibraryLinks';
 import {
@@ -18,6 +17,8 @@ import { usePathname } from 'next/navigation';
 import type { SetStateAction } from 'react';
 import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLinksProps {
   href: string;
@@ -49,9 +50,11 @@ const LibraryMenu = ({
   const pathname = usePathname();
   const hash = useHash();
   const url = pathname + (hash || '');
-  const { hasPermission } = useUser();
-  const { currentSettings } = useSettings();
+  const { hasPermission, user } = useUser();
   const { libraryLinks, loading } = useLibraryLinks('id');
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/main` : null
+  );
 
   // Group libraries by type
   const groupedLibraries = libraryLinks.reduce(
@@ -110,7 +113,7 @@ const LibraryMenu = ({
       icon: <BookmarkIcon className="w-7 h-7" />,
       regExp: '=watchlist&pivot=discover',
       hidden:
-        (isMobile && !currentSettings?.releaseSched) ||
+        (isMobile && !userSettings?.releaseSched) ||
         !hasPermission(
           [
             Permission.VIEW_SCHEDULE,
@@ -123,7 +126,10 @@ const LibraryMenu = ({
   ];
 
   return (
-    <ul className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto">
+    <ul
+      className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto"
+      data-tutorial="library-menu"
+    >
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
         <SingleItem
           liKey={item.title}
@@ -236,6 +242,7 @@ interface SingleItemProps {
   regExp: string | RegExp;
   type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
   defaultPivot?: string;
+  'data-tutorial'?: string;
 }
 
 const matchesLibrarySource = (url: string, sourceId: string): boolean => {
@@ -255,6 +262,7 @@ export const SingleItem = ({
   regExp,
   type,
   defaultPivot = 'library',
+  'data-tutorial': dataTutorial,
 }: SingleItemProps) => {
   const isActive =
     typeof regExp === 'string'
@@ -284,6 +292,7 @@ export const SingleItem = ({
     <li
       className={`pointer-events-auto ${className ? className : ''}`}
       key={liKey}
+      data-tutorial={dataTutorial}
     >
       <Link
         onClick={onClick}
