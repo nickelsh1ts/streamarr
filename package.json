@@ -25,9 +25,7 @@
     "cypress:build": "yarn build && yarn cypress:prepare",
     "css-build": "tailwindcss -o public/tailwind.css",
     "css-watch": "tailwindcss -o public/tailwind.css --watch",
-    "start:python": "cd server/python && CONFIG_DIRECTORY=../../config gunicorn --pid /tmp/gunicorn.pid -w 2 -b 0.0.0.0:5005 --timeout 60 --graceful-timeout 30 --keep-alive 5 plex_invite:app",
-    "dev:all": "concurrently \"yarn dev\" \"cd server/python && CONFIG_DIRECTORY=../../config python3 plex_invite.py\"",
-    "start:all": "concurrently \"yarn start\" \"yarn start:python\""
+    "start:python": "cd server/python && CONFIG_DIRECTORY=../../config gunicorn -w 2 -b 0.0.0.0:5005 --timeout 60 --graceful-timeout 30 --keep-alive 5 plex_invite:app"
   },
   "repository": {
     "type": "git",
@@ -147,7 +145,6 @@
     "@typescript-eslint/parser": "8.56.0",
     "autoprefixer": "^10.4.24",
     "commitizen": "4.3.1",
-    "concurrently": "^9.2.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.10.0",

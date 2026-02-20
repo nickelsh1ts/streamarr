@@ -53,6 +53,10 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+process.on('exit', () => pythonService.destroy());
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
+
 app
   .prepare()
   .then(async () => {
@@ -98,6 +102,7 @@ app
     ]);
     // Start Jobs
     startJobs();
+    const pythonReady = pythonService.start();
     const server = express();
     if (settings.main.trustProxy) {
       server.set('trust proxy', 1);
@@ -171,10 +176,6 @@ app
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
-    pythonService.initialize();
-    process.on('exit', () => pythonService.destroy());
-    process.on('SIGINT', () => process.exit(0));
-    process.on('SIGTERM', () => process.exit(0));
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user
@@ -239,6 +240,7 @@ app
           .json({ message: errorInfo.message, errors: errorInfo.errors });
       }
     );
+    await pythonReady;
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {

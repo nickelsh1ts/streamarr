@@ -236,11 +236,12 @@ class RestartManager {
       if (dataSource.isInitialized) {
         await dataSource.destroy();
       }
-      pythonService.prepareForServerRestart();
 
       if (isDocker()) {
         process.exit(0);
       }
+
+      pythonService.prepareForServerRestart();
       process.removeAllListeners('SIGINT');
       process.removeAllListeners('SIGTERM');
       process.removeAllListeners('exit');

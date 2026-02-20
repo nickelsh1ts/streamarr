@@ -528,45 +528,55 @@ userSettingsRoutes.post<{ id: string }>(
         });
       }
 
-      const librariesResponse = await axios.get(
-        'http://localhost:5005/library-details',
-        {
-          params: {
-            token: mainUser.plexToken,
-            server_id: plexSettings.machineId,
-            email: user.email,
-          },
-          timeout: 15000,
+      let librariesToPin: { id: string; name: string; type: string }[];
+
+      if (user.id === 1) {
+        librariesToPin = plexSettings.libraries.map((lib) => ({
+          id: lib.id,
+          name: lib.name,
+          type: lib.type,
+        }));
+      } else {
+        const librariesResponse = await axios.get(
+          'http://localhost:5005/library-details',
+          {
+            params: {
+              token: mainUser.plexToken,
+              server_id: plexSettings.machineId,
+              email: user.email,
+            },
+            timeout: 15000,
+          }
+        );
+
+        if (
+          !librariesResponse.data.success ||
+          !librariesResponse.data.libraries
+        ) {
+          return next({
+            status: 500,
+            message: 'Failed to get library information.',
+          });
         }
-      );
 
-      if (
-        !librariesResponse.data.success ||
-        !librariesResponse.data.libraries
-      ) {
-        return next({
-          status: 500,
-          message: 'Failed to get library information.',
-        });
-      }
-
-      const allLibraries = librariesResponse.data.libraries;
-      const userSharedLibraries = user.settings?.sharedLibraries;
-      let librariesToPin = allLibraries.filter((lib: { id: string }) =>
-        getSettings().main.sharedLibraries.split('|').includes(lib.id)
-      );
-
-      if (userSharedLibraries && userSharedLibraries !== 'all') {
-        const allowedLibraryIds = userSharedLibraries.split('|');
+        const allLibraries = librariesResponse.data.libraries;
+        const userSharedLibraries = user.settings?.sharedLibraries;
         librariesToPin = allLibraries.filter((lib: { id: string }) =>
-          allowedLibraryIds.includes(lib.id)
+          getSettings().main.sharedLibraries.split('|').includes(lib.id)
         );
-      } else if (userSharedLibraries && userSharedLibraries === 'all') {
-        librariesToPin = allLibraries.filter((lib: { id: string }) =>
-          getSettings().plex.libraries.some(
-            (library) => library.id === lib.id && library.enabled
-          )
-        );
+
+        if (userSharedLibraries && userSharedLibraries !== 'all') {
+          const allowedLibraryIds = userSharedLibraries.split('|');
+          librariesToPin = allLibraries.filter((lib: { id: string }) =>
+            allowedLibraryIds.includes(lib.id)
+          );
+        } else if (userSharedLibraries && userSharedLibraries === 'all') {
+          librariesToPin = allLibraries.filter((lib: { id: string }) =>
+            getSettings().plex.libraries.some(
+              (library) => library.id === lib.id && library.enabled
+            )
+          );
+        }
       }
 
       if (librariesToPin.length === 0) {
