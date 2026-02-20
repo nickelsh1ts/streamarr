@@ -86,27 +86,21 @@ Users with **Create Events** or **Manage Events** permission can create local ev
 1. Click **Create Event** or click on a calendar date
 2. Fill in event details:
 
-| Field                 | Description                       |
-| --------------------- | --------------------------------- |
-| **Summary**           | Event title                       |
-| **Description**       | Event details (supports Markdown) |
-| **Start Date/Time**   | When the event starts             |
-| **End Date/Time**     | When the event ends (optional)    |
-| **All Day**           | Mark as an all-day event          |
-| **Category**          | Event category for filtering      |
-| **Send Notification** | Notify users about this event     |
+| Field                 | Description                        |
+| --------------------- | ---------------------------------- |
+| **Summary**           | Event title                        |
+| **Description**       | Event details                      |
+| **Start Date/Time**   | When the event starts              |
+| **End Date/Time**     | When the event ends (optional)     |
+| **All Day**           | Mark as an all-day event           |
+| **Categories**        | Optional categories for organizing |
+| **Send Notification** | Notify users about this event      |
 
 3. Click **Create**
 
 ### Event Categories
 
-Organize events with categories:
-
-- **Announcement** — Server announcements
-- **Maintenance** — Scheduled maintenance
-- **Release** — Content releases
-- **Watch Party** — Group watching events
-- **Custom** — Other events
+Events can be tagged with free-form categories for organization and filtering. Categories are stored as a text field — there are no predefined values, so you can use whatever labels make sense for your server (e.g., "Announcement", "Maintenance", "Watch Party").
 
 ---
 

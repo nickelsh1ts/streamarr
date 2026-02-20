@@ -87,13 +87,13 @@ The restart behavior depends on your environment:
 | **Docker (Production)**     | Exits the process (`process.exit(0)`); the container restart policy restarts the service |
 | **Bare Metal (Production)** | Gracefully shuts down connections, then respawns the process automatically               |
 
-During a restart:
+During a production restart:
 
 1. Socket.IO connections are disconnected
 2. The HTTP server is closed (with a 3-second drain timeout)
 3. The database connection is destroyed
-4. The Python service is prepared for shutdown
-5. The server restarts in its new configuration
+4. **Docker**: The process exits — the container restart policy handles the rest
+5. **Bare Metal**: The Plex Sync service is preserved (kept running across the restart), signal handlers are reset, and a new server process is spawned
 
 The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it waits for the server to come back online (up to 45 seconds).
 

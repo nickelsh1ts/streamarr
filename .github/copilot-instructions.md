@@ -153,6 +153,12 @@ Key custom hooks in `src/hooks/`:
 - `useBreakpoint`: Responsive design breakpoints
 - `useDeepLinks`: Handle Plex deep links for media
 - `useRouteGuard`: Permission-based route protection
+- `useServerRestart`, `usePythonRestart`: Server and Python service restart controls
+- `useClickOutside`: Detect clicks outside an element
+- `useDebouncedState`: Debounced state updates
+- `useIsTouch`, `useInteraction`: Touch/mobile detection
+- `useLockBodyScroll`: Prevent body scrolling (modals)
+- `useLibraryLinks`: Plex library navigation links
 
 ### Frontend Contexts
 
@@ -264,6 +270,7 @@ The onboarding system guides new users through the application:
 ```typescript
 interface OnboardingSettings {
   initialized: boolean; // Whether defaults have been created
+  adminOnboardingCompleted: boolean; // Whether admin has completed their onboarding
   welcomeEnabled: boolean; // Show welcome modal
   tutorialEnabled: boolean; // Show tutorial
   tutorialMode: 'spotlight' | 'wizard' | 'both';
@@ -275,6 +282,52 @@ interface OnboardingSettings {
 ```
 
 **Content Sanitization**: Custom HTML sanitized via DOMPurify (`server/lib/sanitize.ts`). YouTube URLs converted to privacy-enhanced nocookie embeds.
+
+### Restart System
+
+The restart system tracks proxy-affecting settings changes and provides graceful server/service restarts.
+
+**Core Components**:
+
+- `server/lib/restartManager.ts`: Singleton that captures a boot-time snapshot of proxy-affecting settings (Plex IP, \*Arr hostnames/API keys, Tdarr, Tautulli, trust proxy, CSRF). `getRestartStatus()` compares current settings against the snapshot to determine which services need a restart.
+- `server/lib/pythonService.ts`: Manages the Python (Plex Sync) service lifecycle — health polling (every 30s), independent restart, and graceful shutdown. `prepareForServerRestart()` preserves Python processes across a Node server restart.
+- `src/utils/restartHelpers.ts`: Two-phase frontend polling utility — waits for server to go down (max 15s), then waits for it to come back up (max 30s).
+
+**Frontend Hooks**:
+
+- `useServerRestart`: Triggers server restart via `POST /api/v1/settings/restart`, then polls with `waitForRestart()` and reloads the page on success.
+- `usePythonRestart`: Triggers Python service restart via `POST /api/v1/settings/python/restart`, SWR-based health status polling.
+
+**UI Components**:
+
+- `RestartRequiredAlert`: Warning banner on admin settings pages with filtered service display (e.g., Plex page only shows Plex changes). Hidden during `/setup` flow.
+- `PythonServiceAlert`: Error banner shown on Plex Settings and User Settings General pages when Plex Sync service is unhealthy.
+- `RestartModal`: Modal used during initial setup flow when services are configured that need a restart.
+- `HealthCard` (in System page): Displays health status badges and restart buttons for both Streamarr server and Plex Sync service.
+
+**Restart Behavior**:
+
+- **Development**: Touches `server/index.ts` to trigger nodemon restart.
+- **Docker (Production)**: Disconnects sockets, closes HTTP server (3s drain), destroys DB, then `process.exit(0)`. Container restart policy handles respawn.
+- **Bare Metal (Production)**: Same graceful shutdown, then preserves Python processes and spawns a new Node process.
+
+**Tracked Settings** (changes trigger restart requirement):
+
+| Service                | Fields Tracked                                                     |
+| ---------------------- | ------------------------------------------------------------------ |
+| Plex                   | `plex.ip`                                                          |
+| Radarr/Sonarr          | `hostname`, `baseUrl`, `apiKey` (array — add/remove also triggers) |
+| Lidarr/Prowlarr/Bazarr | `hostname`, `urlBase`, `apiKey`                                    |
+| Tdarr                  | `hostname`, `enabled`                                              |
+| Tautulli               | `hostname`, `urlBase`                                              |
+| General                | `main.trustProxy`, `main.csrfProtection`                           |
+
+**API Endpoints**:
+
+- `GET /api/v1/settings/restart-required`: Returns `{ required, services[] }`
+- `POST /api/v1/settings/restart`: Triggers server restart (responds immediately, restarts after 500ms)
+- `GET /api/v1/settings/python/status`: Returns Python service health status
+- `POST /api/v1/settings/python/restart`: Restarts Python service synchronously
 
 ## Integration Points
 
@@ -473,6 +526,8 @@ const imageService = new ImageUploadService({
 - `server/datasource.ts`: Database configuration
 - `server/lib/settings.ts`: Settings schema and defaults
 - `server/lib/onboarding.ts`: Onboarding initialization and defaults
+- `server/lib/restartManager.ts`: Server restart detection and execution
+- `server/lib/pythonService.ts`: Plex Sync service lifecycle management
 - `server/lib/sanitize.ts`: HTML/URL sanitization utilities
 - `src/app/layout.tsx`: Root layout with server-side data
 - `src/context/OnboardingContext.tsx`: Onboarding state management

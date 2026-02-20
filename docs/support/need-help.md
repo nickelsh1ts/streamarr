@@ -148,8 +148,8 @@ Available log levels:
 
 - `error` — Errors only
 - `warn` — Warnings and errors
-- `info` — General information (default)
-- `debug` — Detailed debugging information
+- `info` — General information
+- `debug` — Detailed debugging information (default)
 
 ---
 
