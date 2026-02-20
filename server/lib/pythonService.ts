@@ -2,8 +2,8 @@ import type { PythonServiceStatusResponse } from '@server/interfaces/api/setting
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
 import axios from 'axios';
-import { existsSync, mkdirSync, readFileSync, readdirSync } from 'fs';
-import { execSync } from 'child_process';
+import { existsSync, readFileSync, readdirSync } from 'fs';
+import { execFileSync, execSync } from 'child_process';
 import { createConnection } from 'net';
 
 const LABEL = 'Plex Sync';
@@ -332,23 +332,32 @@ class PythonServiceManager {
       process.env.CONFIG_DIRECTORY ||
       (inDocker ? '/app/config' : `${process.cwd()}/config`);
 
-    const logDir = `${configDir}/logs`;
-    if (!existsSync(logDir)) {
-      mkdirSync(logDir, { recursive: true });
-    }
-
-    const shellCmd = `CONFIG_DIRECTORY=${configDir} ${command} ${args.join(' ')} > /dev/null 2>>${logDir}/plex-sync-stderr.log & echo $!`;
+    const env = { ...process.env, CONFIG_DIRECTORY: configDir };
 
     try {
-      const output = execSync(shellCmd, {
-        cwd,
-        encoding: 'utf-8',
-        timeout: 5000,
-      });
+      const pid = parseInt(
+        execFileSync(
+          '/bin/sh',
+          [
+            '-c',
+            '"$@" >/dev/null 2>/dev/null & echo "$!"',
+            '_',
+            command,
+            ...args,
+          ],
+          {
+            cwd,
+            env,
+            encoding: 'utf-8',
+            timeout: 5000,
+            stdio: ['ignore', 'pipe', 'ignore'],
+          }
+        ).trim(),
+        10
+      );
 
-      const pid = parseInt(output.trim(), 10);
       if (isNaN(pid) || pid <= 0) {
-        throw new Error(`Invalid PID from spawn: ${output.trim()}`);
+        throw new Error(`Invalid PID from spawn: ${pid}`);
       }
 
       this.spawnedPid = pid;
@@ -417,6 +426,7 @@ class PythonServiceManager {
       const deadline = Date.now() + 2000;
       while (Date.now() < deadline) {
         if (killed.every((pid) => !this.tryKill(pid, 0))) return;
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250);
       }
 
       const remaining = killed.filter((pid) => this.tryKill(pid, 0));
