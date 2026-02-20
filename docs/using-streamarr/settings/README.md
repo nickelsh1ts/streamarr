@@ -335,10 +335,11 @@ Connect Overseerr for request management.
 
 Connect Tdarr for transcoding management.
 
-| Setting            | Description                  |
-| ------------------ | ---------------------------- |
-| **Hostname or IP** | Address of your Tdarr server |
-| **Port**           | Default is `8265`            |
+| Setting            | Description                             |
+| ------------------ | --------------------------------------- |
+| **Enable**         | Enable or disable the Tdarr integration |
+| **Hostname or IP** | Address of your Tdarr server            |
+| **Port**           | Default is `8265`                       |
 
 #### Tautulli
 

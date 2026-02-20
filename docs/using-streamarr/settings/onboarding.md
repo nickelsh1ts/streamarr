@@ -14,7 +14,7 @@ Streamarr provides **two separate onboarding tracks**:
 - **User Onboarding** — Welcomes regular users and guides them through the main interface (watching, invites, schedule, etc.)
 - **Admin Onboarding** — Welcomes administrators and guides them through admin-specific features (settings, services, user management)
 
-Each track has its own welcome slides and tutorial steps, and is triggered independently based on the user's role. Both tracks are fully customizable by administrators.
+Each track has its own welcome slides and tutorial steps, and is triggered independently based on the user's role. User onboarding content is fully customizable by administrators, while admin onboarding content is built into the application.
 
 ---
 
@@ -239,11 +239,11 @@ Streamarr ships with five admin-specific tutorial steps (all in spotlight mode):
 | 4     | Services Settings | Integrate with Seerr, Radarr, Sonarr, and other services     | `/admin/settings/services`   |
 | 5     | Manage Users      | View and manage users, permissions, and library access       | `/admin/settings`            |
 
-### Customizing Admin Onboarding
+### Admin Onboarding Content
 
-Admin welcome slides and tutorial steps can be customized using the same editor interface as user onboarding. The onboarding settings page separates content by type — switch between **User** and **Admin** content using the content type selector.
+Admin welcome slides and tutorial steps are **built into the application** and are not editable from the admin settings UI. Unlike user onboarding content (which is stored in the database and fully customizable), admin onboarding content is defined in the frontend code (`src/utils/adminOnboarding.tsx`) and provides a consistent first-run experience for all administrators.
 
-All the same features are available: custom images, video embeds, custom HTML, drag-and-drop reordering, and preview mode.
+The admin onboarding content covers core admin tasks (user management, service configuration, notification setup) and is designed to get new administrators up and running quickly.
 
 ### Resetting Admin Onboarding
 
