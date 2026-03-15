@@ -1280,6 +1280,12 @@
   "generalSettings.extendedHome.label": {
     "defaultMessage": "Habilitar Página de Inicio Extendida"
   },
+  "generalSettings.libraryCounts.description": {
+    "defaultMessage": "Mostrar la cantidad de elementos en cada biblioteca en la página de inicio"
+  },
+  "generalSettings.libraryCounts.label": {
+    "defaultMessage": "Mostrar Conteo de Bibliotecas"
+  },
   "generalSettings.logo.uploadError": {
     "defaultMessage": "Error al subir los logos"
   },
