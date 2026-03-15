@@ -1651,6 +1651,9 @@
   "library.photos": {
     "defaultMessage": "Fotos"
   },
+  "library.playlists": {
+    "defaultMessage": "Listas de Reproducción"
+  },
   "library.watchlist": {
     "defaultMessage": "Lista de Reproducción"
   },
@@ -1921,8 +1924,20 @@
   "plexSettings.connectionSuccess": {
     "defaultMessage": "¡Conexión con Plex establecida exitosamente!"
   },
+  "plexSettings.defaultPivot": {
+    "defaultMessage": "Vista Predeterminada de Biblioteca"
+  },
+  "plexSettings.defaultPivotTip": {
+    "defaultMessage": "La vista predeterminada cuando se selecciona una biblioteca"
+  },
   "plexSettings.description": {
     "defaultMessage": "Configura los ajustes para tu servidor Plex. Streamarr escanea tus bibliotecas de Plex para generar menús y compartir con usuarios invitados."
+  },
+  "plexSettings.enablePlaylists": {
+    "defaultMessage": "Habilitar Listas de Reproducción"
+  },
+  "plexSettings.enablePlaylistsTip": {
+    "defaultMessage": "Mostrar un elemento de menú y opción de vista de Listas de Reproducción"
   },
   "plexSettings.libraries.description": {
     "defaultMessage": "Las bibliotecas que Streamarr usará. Configura y guarda tus ajustes de conexión de Plex, luego haz clic en el botón de abajo si no aparecen bibliotecas listadas."
@@ -1944,6 +1959,15 @@
   },
   "plexSettings.manualConfiguration": {
     "defaultMessage": "Configuración manual"
+  },
+  "plexSettings.pivot.categories": {
+    "defaultMessage": "Categorías"
+  },
+  "plexSettings.pivot.collections": {
+    "defaultMessage": "Colecciones"
+  },
+  "plexSettings.pivot.library": {
+    "defaultMessage": "Biblioteca"
   },
   "plexSettings.remote": {
     "defaultMessage": "remoto"
