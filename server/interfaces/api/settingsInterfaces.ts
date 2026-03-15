@@ -36,6 +36,7 @@ export interface PublicSettingsResponse {
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
+  libraryCounts?: boolean;
   enableSignUp: boolean;
   statusUrl: string;
   statusEnabled: boolean;
