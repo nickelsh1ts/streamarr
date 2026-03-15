@@ -72,6 +72,22 @@ interface PlexMetadataResponse {
   MediaContainer: { Metadata: PlexMetadata[] };
 }
 
+export interface PlexPlaylist {
+  ratingKey: string;
+  title: string;
+  type: string;
+  playlistType: string;
+  leafCount: number;
+}
+
+interface PlexPlaylistsResponse {
+  MediaContainer: { Metadata?: PlexPlaylist[] };
+}
+
+interface PlexPlaylistItemsResponse {
+  MediaContainer: { Metadata?: { librarySectionID?: number }[] };
+}
+
 class PlexAPI {
   private plexClient: NodePlexAPI;
   private cache: NodeCache;
@@ -285,6 +301,54 @@ class PlexAPI {
       });
       throw new Error('Failed to fetch Plex recently added');
     }
+  }
+
+  public async getPlaylistLibraryIds(): Promise<Set<string>> {
+    const cacheKey = 'plex:playlistLibraryIds';
+    const cached = this.cache.get<Set<string>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const libraryIds = new Set<string>();
+    try {
+      const response =
+        await this.plexClient.query<PlexPlaylistsResponse>('/playlists');
+      const playlists = response.MediaContainer.Metadata ?? [];
+
+      await Promise.all(
+        playlists.map(async (playlist) => {
+          try {
+            const itemsResponse =
+              await this.plexClient.query<PlexPlaylistItemsResponse>({
+                uri: `/playlists/${playlist.ratingKey}/items`,
+                extraHeaders: {
+                  'X-Plex-Container-Start': '0',
+                  'X-Plex-Container-Size': '1',
+                },
+              });
+            const items = itemsResponse.MediaContainer.Metadata ?? [];
+            for (const item of items) {
+              if (item.librarySectionID) {
+                libraryIds.add(String(item.librarySectionID));
+              }
+            }
+          } catch {
+            // Skip playlists we can't read
+          }
+        })
+      );
+
+      this.cache.set(cacheKey, libraryIds, 300);
+    } catch (e) {
+      logger.error('Failed to fetch Plex playlists', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex playlists');
+    }
+
+    return libraryIds;
   }
 }
 

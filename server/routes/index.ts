@@ -188,7 +188,12 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           requestedLibs.includes(lib.id)
         );
       } else {
-        res.status(200).json([]);
+        res.status(200).json({
+          machineId: settings.plex.machineId ?? '',
+          enablePlaylists: settings.plex.enablePlaylists ?? false,
+          defaultPivot: settings.plex.defaultPivot ?? 'library',
+          libraries: [],
+        });
         return;
       }
     }
@@ -212,6 +217,11 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
     const machineId = settings.plex.machineId;
 
+    // Fetch playlist library IDs if playlists are enabled
+    const playlistLibraryIds = settings.plex.enablePlaylists
+      ? await plexApi.getPlaylistLibraryIds()
+      : new Set<string>();
+
     // Build library links with proper Plex URLs
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {
@@ -229,11 +239,17 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           mediaCount: totalSize,
           href: plexUrl,
           regExp: regExp,
+          hasPlaylists: playlistLibraryIds.has(lib.id),
         };
       })
     );
 
-    res.status(200).json(results);
+    res.status(200).json({
+      machineId: machineId ?? '',
+      enablePlaylists: settings.plex.enablePlaylists ?? false,
+      defaultPivot: settings.plex.defaultPivot ?? 'library',
+      libraries: results,
+    });
   } catch (e) {
     logger.error('Something went wrong getting plex library links', {
       label: 'API',
