@@ -146,6 +146,7 @@ const GeneralSettings = () => {
           supportUrl: data?.supportUrl,
           supportEmail: data?.supportEmail,
           extendedHome: data?.extendedHome,
+          libraryCounts: data?.libraryCounts,
           theme: data?.theme,
           customLogo: null as File | null,
           customLogoSmall: null as File | null,
@@ -166,6 +167,7 @@ const GeneralSettings = () => {
               supportUrl: values.supportUrl,
               supportEmail: values.supportEmail,
               extendedHome: values.extendedHome,
+              libraryCounts: values.libraryCounts,
               theme: values.theme,
             });
             updateSettings({ theme: values.theme });
@@ -858,6 +860,31 @@ const GeneralSettings = () => {
                     name="extendedHome"
                     onChange={() => {
                       setFieldValue('extendedHome', !values.extendedHome);
+                    }}
+                    className="checkbox-primary checkbox"
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="libraryCounts" className="col-span-1">
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.libraryCounts.label"
+                        defaultMessage="Show Library Counts"
+                      />
+                    </span>
+                    <p className="text-sm text-neutral">
+                      <FormattedMessage
+                        id="generalSettings.libraryCounts.description"
+                        defaultMessage="Display the number of items in each library on the homepage"
+                      />
+                    </p>
+                  </label>
+                  <Field
+                    type="checkbox"
+                    id="libraryCounts"
+                    name="libraryCounts"
+                    onChange={() => {
+                      setFieldValue('libraryCounts', !values.libraryCounts);
                     }}
                     className="checkbox-primary checkbox"
                   />

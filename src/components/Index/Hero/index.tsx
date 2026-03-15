@@ -151,6 +151,7 @@ export default function Hero() {
               </div>
             </form>
           )}
+          {currentSettings.libraryCounts && (
           <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
             {mediaLibraries ? (
               mediaLibraries.length > 0 && (
@@ -175,6 +176,7 @@ export default function Hero() {
               <LoadingEllipsis />
             )}
           </div>
+          )}
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">
           {currentSettings.extendedHome && (
