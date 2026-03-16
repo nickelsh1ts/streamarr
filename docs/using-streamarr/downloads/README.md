@@ -36,6 +36,22 @@ Configure download clients in **Settings → Downloads**.
 4. Click **Test** to verify connection
 5. Click **Save**
 
+### Connection Testing
+
+When you open the Downloads settings page, Streamarr automatically tests the connection to each configured download client. Each client displays a status badge:
+
+| Status             | Badge Color | Description                                    |
+| ------------------ | ----------- | ---------------------------------------------- |
+| **Testing...**     | Yellow      | Connection test in progress                    |
+| **Connected**      | Green       | Client is reachable and authenticated          |
+| **Disconnected**   | Red         | Client is unreachable or authentication failed |
+
+After the initial test completes, a **retest button** (↻) appears next to the status badge. Click it to manually re-check the connection at any time.
+
+{% hint style="info" %}
+All configured clients are tested in parallel on page load for faster feedback. You can also test a new client before saving by clicking the **Test** button in the add/edit form.
+{% endhint %}
+
 ### Client-Specific Setup
 
 {% tabs %}

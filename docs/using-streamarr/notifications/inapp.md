@@ -31,8 +31,6 @@ Access the full notification center to:
 - Mark notifications as read
 - Delete notifications
 
-<!-- TODO: Add screenshot of notification center -->
-
 ---
 
 ## Notification Display
@@ -60,6 +58,26 @@ Unlike push notifications, In-App notifications are:
 ### Retention
 
 Notifications are automatically cleaned up by the scheduled **Notification Cleanup** job. By default, old notifications are removed after 1 year.
+
+---
+
+## Swipe Actions (Mobile)
+
+On touch-enabled devices, notifications support a swipe-to-reveal gesture:
+
+### How It Works
+
+1. **Swipe left** on a notification card to reveal the delete button
+2. **Release** to keep the delete button visible; the card will stop moving once the delete action is revealed
+3. **Swipe right** to close the reveal and return the card to its normal state
+4. **Tap the delete button** to remove the notification
+
+### Behavior
+
+- Only one notification card can be in the revealed state at a time — opening a new card automatically closes any previously revealed card
+- Tapping outside a revealed card closes it
+- The swipe gesture uses direction locking: once a horizontal swipe is detected (10px threshold), vertical scrolling is prevented to avoid accidental scrolls
+- The feature is only active on touch-enabled devices; desktop users use the standard delete button
 
 ---
 

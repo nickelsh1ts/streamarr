@@ -141,13 +141,23 @@ The config directory contains:
 After starting Streamarr for the first time:
 
 1. Navigate to `http://[your-server-ip]:3000` in your browser
-2. Sign in with your Plex account (the first user becomes the admin)
-3. Configure your Plex server connection
-4. (Optional) Add your \*Arr services (Radarr, Sonarr, etc.)
-5. (Optional) Configure notification agents
+2. **Sign in with Plex** — The first user becomes the admin
+3. **Configure Plex** — Enter your Plex server connection details and select libraries
+4. **Configure Services** — Optionally set up integrations across four tabs:
+
+| Tab                | Services                                  |
+| ------------------ | ----------------------------------------- |
+| **\*Arr Services** | Radarr, Sonarr, Lidarr                    |
+| **Media Services** | Prowlarr, Bazarr, Tdarr                   |
+| **Monitoring**     | Tautulli, Uptime Kuma                     |
+| **Downloads**      | qBittorrent, Deluge, Transmission clients |
+
+5. **Finish setup** — If any configured services require a restart (e.g., Plex IP, \*Arr connections), a restart modal will appear with the option to restart now or skip for later
+
+{% hint style="info" %}
+You can skip service configuration during setup and add services later in **Settings → Services**. The setup wizard is a convenience to get everything running in one flow.
+{% endhint %}
 
 {% hint style="info" %}
 The admin account is always user ID 1 and has full permissions. This user cannot be deleted.
 {% endhint %}
-
-<!-- TODO: Add screenshot of initial setup page -->

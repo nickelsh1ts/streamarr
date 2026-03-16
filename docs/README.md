@@ -11,14 +11,17 @@ Welcome to the Streamarr Documentation.
 - **\*Arr Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, and more
 - **Powerful Invite System** — Generate invite codes with usage limits, expiry dates, library access controls, and QR codes
 - **Release Calendar** — View upcoming releases from Sonarr and Radarr, plus create custom events
-- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring
-- **Flexible Notifications** — Email (with PGP encryption support), Web Push, and In-App notifications
+- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring and automatic connection testing
+- **Flexible Notifications** — Email (with PGP encryption support), Web Push, and In-App notifications with swipe-to-dismiss on mobile
 - **Internal Proxy** — Securely access embedded \*Arr services and Plex Web through Streamarr
 - **Granular Permissions** — Fine-grained permission system to control user access
 - **Trial Periods** — Optionally restrict new users during a configurable trial period
 - **Interactive Onboarding** — Welcome modals and interactive tutorials for both new users and administrators
+- **Guided Setup Wizard** — Tabbed setup flow for configuring all services on first launch with restart handling
 - **Custom Theming** — Fully customize 20 color tokens with a visual picker (OKLCH, RGB, HSL, Hex)
 - **Custom Branding** — Upload custom logos to replace default Streamarr branding
+- **Library Counts** — Display Plex library item counts on the homepage
+- **Playlist Support** — Optional Plex playlists integration with configurable default library views
 - **System Health Monitoring** — Real-time health status for server and Plex Sync service with restart controls
 - **Status Page Integration** — Link to Uptime Kuma or any external status page
 - **Multi-language Support** — Localized interface with per-user language settings

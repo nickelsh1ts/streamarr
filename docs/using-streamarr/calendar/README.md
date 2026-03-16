@@ -10,8 +10,6 @@ Streamarr's calendar integrates with:
 - **Radarr** — Movie releases
 - **Local Events** — Custom events created within Streamarr
 
-<!-- TODO: Add screenshot of calendar view -->
-
 ---
 
 ## Calendar Views
