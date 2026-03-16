@@ -1268,6 +1268,12 @@
   "generalSettings.extendedHome.label": {
     "defaultMessage": "Enable Extended Homepage"
   },
+  "generalSettings.libraryCounts.description": {
+    "defaultMessage": "Display the number of items in each library on the homepage"
+  },
+  "generalSettings.libraryCounts.label": {
+    "defaultMessage": "Show Library Counts"
+  },
   "generalSettings.logo.uploadError": {
     "defaultMessage": "Failed to upload logos"
   },

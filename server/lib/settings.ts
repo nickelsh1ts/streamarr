@@ -151,6 +151,7 @@ export interface MainSettings {
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
+  libraryCounts?: boolean;
   customLogo?: string;
   customLogoSmall?: string;
   enableTrialPeriod: boolean;
@@ -175,6 +176,7 @@ export interface FullPublicSettings extends PublicSettings {
   supportUrl: string;
   supportEmail: string;
   extendedHome: boolean;
+  libraryCounts?: boolean;
   customLogo?: string;
   customLogoSmall?: string;
   enableSignUp: boolean;
@@ -306,6 +308,7 @@ class Settings {
         supportUrl: '',
         supportEmail: '',
         extendedHome: true,
+        libraryCounts: true,
         enableTrialPeriod: false,
         trialPeriodDays: 30,
         theme: {
@@ -537,6 +540,7 @@ class Settings {
       supportUrl: this.data.main.supportUrl,
       supportEmail: this.data.main.supportEmail,
       extendedHome: this.data.main.extendedHome,
+      libraryCounts: this.data.main.libraryCounts,
       customLogo: this.data.main.customLogo,
       customLogoSmall: this.data.main.customLogoSmall,
       enableSignUp: this.data.main.enableSignUp,
