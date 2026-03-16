@@ -61,14 +61,14 @@ Notifications are automatically cleaned up by the scheduled **Notification Clean
 
 ---
 
-## Swipe to Dismiss (Mobile)
+## Swipe Actions (Mobile)
 
-On touch-enabled devices, notifications support a swipe-to-dismiss gesture:
+On touch-enabled devices, notifications support a swipe-to-reveal gesture:
 
 ### How It Works
 
 1. **Swipe left** on a notification card to reveal the delete button
-2. **Release** to keep the delete button visible, or continue swiping to dismiss
+2. **Release** to keep the delete button visible; the card will stop moving once the delete action is revealed
 3. **Swipe right** to close the reveal and return the card to its normal state
 4. **Tap the delete button** to remove the notification
 
