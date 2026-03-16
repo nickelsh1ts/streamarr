@@ -24,8 +24,6 @@ import { useEffect, useReducer, useState } from 'react';
 import useSWR from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
-//BUG: github api makes excessive hits and misses
-
 interface Job {
   id: string;
   name?: string;
@@ -599,27 +597,39 @@ const JobsCacheSettings = () => {
             </tr>
           </thead>
           <Table.TBody>
-            <tr>
-              <Table.TD>The Movie Database (tmdb)</Table.TD>
-              <Table.TD>{cacheData?.imageCache.tmdb.imageCount ?? 0}</Table.TD>
-              <Table.TD>
-                {formatBytes(cacheData?.imageCache.tmdb.size ?? 0)}
-              </Table.TD>
-            </tr>
-            <tr>
-              <Table.TD>
-                <FormattedMessage
-                  id="imageCache.qrcode"
-                  defaultMessage="Invite QR Codes"
-                />
-              </Table.TD>
-              <Table.TD>
-                {cacheData?.imageCache.qrcode?.imageCount ?? 0}
-              </Table.TD>
-              <Table.TD>
-                {formatBytes(cacheData?.imageCache.qrcode?.size ?? 0)}
-              </Table.TD>
-            </tr>
+            {!isLoading ? (
+              <>
+                <tr>
+                  <Table.TD>The Movie Database (tmdb)</Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.tmdb.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.tmdb.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
+                  <Table.TD>
+                    <FormattedMessage
+                      id="imageCache.qrcode"
+                      defaultMessage="Invite QR Codes"
+                    />
+                  </Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.qrcode?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.qrcode?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+              </>
+            ) : (
+              <tr>
+                <Table.TD colSpan={3} className="text-center">
+                  <LoadingEllipsis />
+                </Table.TD>
+              </tr>
+            )}
           </Table.TBody>
         </Table>
       </div>

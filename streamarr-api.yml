@@ -3507,6 +3507,42 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
+  /settings/releases:
+    get:
+      summary: Get GitHub releases
+      description: Returns a list of Streamarr releases from GitHub, served through the server-side cache.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: List of releases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    html_url:
+                      type: string
+                    id:
+                      type: number
+                    tag_name:
+                      type: string
+                    name:
+                      type: string
+                    draft:
+                      type: boolean
+                    prerelease:
+                      type: boolean
+                    created_at:
+                      type: string
+                    published_at:
+                      type: string
+                    body:
+                      type: string
   /settings/restart-required:
     get:
       summary: Check if server restart is required
