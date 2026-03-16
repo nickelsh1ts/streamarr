@@ -40,11 +40,11 @@ Configure download clients in **Settings → Downloads**.
 
 When you open the Downloads settings page, Streamarr automatically tests the connection to each configured download client. Each client displays a status badge:
 
-| Status             | Badge Color | Description                                    |
-| ------------------ | ----------- | ---------------------------------------------- |
-| **Testing...**     | Yellow      | Connection test in progress                    |
-| **Connected**      | Green       | Client is reachable and authenticated          |
-| **Disconnected**   | Red         | Client is unreachable or authentication failed |
+| Status           | Badge Color | Description                                    |
+| ---------------- | ----------- | ---------------------------------------------- |
+| **Testing...**   | Yellow      | Connection test in progress                    |
+| **Connected**    | Green       | Client is reachable and authenticated          |
+| **Disconnected** | Red         | Client is unreachable or authentication failed |
 
 After the initial test completes, a **retest button** (↻) appears next to the status badge. Click it to manually re-check the connection at any time.
 
