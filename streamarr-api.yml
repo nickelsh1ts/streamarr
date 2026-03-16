@@ -3507,6 +3507,62 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
+  /settings/releases:
+    get:
+      summary: Get GitHub releases
+      description: Returns a list of Streamarr releases from GitHub, served through the server-side cache. Requires admin authentication.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of releases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    assets_url:
+                      type: string
+                    upload_url:
+                      type: string
+                    html_url:
+                      type: string
+                    id:
+                      type: number
+                    node_id:
+                      type: string
+                    tag_name:
+                      type: string
+                    target_commitish:
+                      type: string
+                    name:
+                      type: string
+                    draft:
+                      type: boolean
+                    prerelease:
+                      type: boolean
+                    created_at:
+                      type: string
+                    published_at:
+                      type: string
+                    tarball_url:
+                      type: string
+                    zipball_url:
+                      type: string
+                    body:
+                      type: string
+                  additionalProperties: true
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - user lacks admin permission
   /settings/restart-required:
     get:
       summary: Check if server restart is required

@@ -13,27 +13,7 @@ import { useIntl, FormattedMessage } from 'react-intl';
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false,
 });
-const REPO_RELEASE_API =
-  'https://api.github.com/repos/nickelsh1ts/streamarr/releases?per_page=20';
-
-interface GitHubRelease {
-  url: string;
-  assets_url: string;
-  upload_url: string;
-  html_url: string;
-  id: number;
-  node_id: string;
-  tag_name: string;
-  target_commitish: string;
-  name: string;
-  draft: boolean;
-  prerelease: boolean;
-  created_at: string;
-  published_at: string;
-  tarball_url: string;
-  zipball_url: string;
-  body: string;
-}
+import type { GitHubRelease } from '@server/interfaces/api/settingsInterfaces';
 
 interface ReleaseProps {
   release: GitHubRelease;
@@ -115,7 +95,7 @@ interface ReleasesProps {
 }
 
 const Releases = ({ currentVersion }: ReleasesProps) => {
-  const { data, error } = useSWR<GitHubRelease[]>(REPO_RELEASE_API);
+  const { data, error } = useSWR<GitHubRelease[]>('/api/v1/settings/releases');
 
   if (!data && !error) {
     return <LoadingEllipsis />;
