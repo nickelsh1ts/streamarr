@@ -295,9 +295,9 @@ export const NotificationCard = ({
                   />
                 </DropDownMenu.Item>
                 <DropDownMenu.Item
-                  onClick={(e) => {
-                    onDelete?.();
+                  onClick={async (e) => {
                     e.stopPropagation();
+                    await onDelete?.();
                   }}
                 >
                   <TrashIcon className="size-5 text-error mr-1" />
