@@ -222,7 +222,6 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
     const machineId = settings.plex.machineId;
 
-
     // Build library links with proper Plex URLs
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {

@@ -194,10 +194,10 @@ Local user passwords must meet minimum complexity requirements:
 
 When configured by the administrator, additional navigation links appear for users:
 
-| Link               | Location              | Shown When                                               |
-| ------------------ | --------------------- | -------------------------------------------------------- |
-| **Watch History**  | User dropdown menu    | Tautulli is configured and has a URL base set            |
-| **Request**        | Sidebar and mobile menu | Overseerr is configured and user has **Request** permission |
+| Link              | Location                | Shown When                                                  |
+| ----------------- | ----------------------- | ----------------------------------------------------------- |
+| **Watch History** | User dropdown menu      | Tautulli is configured and has a URL base set               |
+| **Request**       | Sidebar and mobile menu | Overseerr is configured and user has **Request** permission |
 
 These links navigate to `/stats` (Tautulli) and `/request` (Overseerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
 
