@@ -13,7 +13,7 @@ import { useIntl, FormattedMessage } from 'react-intl';
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false,
 });
-import type { GitHubRelease } from '@server/api/github';
+import type { GitHubRelease } from '@server/interfaces/api/settingsInterfaces';
 
 interface ReleaseProps {
   release: GitHubRelease;
