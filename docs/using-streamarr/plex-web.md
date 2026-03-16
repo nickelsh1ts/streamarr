@@ -32,6 +32,14 @@ Users only see libraries they have been granted access to:
 - **Admin**: Full access to all enabled libraries
 - **Users**: Access based on shared library settings (configured per-user or using server defaults)
 
+### Playlists
+
+When **Enable Playlists** is turned on in [Plex Settings](settings/README.md#enable-playlists), a Playlists option appears in the library navigation. Streamarr detects which libraries have playlists available and surfaces them alongside standard library views.
+
+### Default Library View
+
+Administrators can set the default view mode for libraries via the [Default Library View](settings/README.md#default-library-view) setting. Options include Library (all items), Collections, and Categories. Users can still switch views manually within Plex Web.
+
 ### Deep Links
 
 Direct links to specific content work seamlessly:

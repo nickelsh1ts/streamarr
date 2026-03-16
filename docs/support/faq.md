@@ -185,6 +185,49 @@ Real-time notifications require WebSocket support. Ensure your reverse proxy sup
 
 See [Client Health](../using-streamarr/downloads/README.md#client-health) for details on health states, cooldown behavior, and retry options.
 
+### Download client shows as "Disconnected" in settings
+
+When you open the Downloads settings page, Streamarr automatically tests each client connection. If a client shows as Disconnected:
+
+1. Verify the client is running and its Web UI is accessible
+2. Check that hostname, port, and credentials are correct
+3. Click the retest button (↻) to try again
+4. Review the error message shown below the badge for specific details
+
+See [Connection Testing](../using-streamarr/downloads/README.md#connection-testing) for more information.
+
+---
+
+## Plex
+
+### How do I enable playlists in the library menu?
+
+Playlists are disabled by default. To enable them:
+
+1. Navigate to **Settings → Plex**
+2. Enable **Enable Playlists**
+3. Save settings
+
+Streamarr will detect which libraries have playlists and display them in the library navigation. See [Plex Settings](../using-streamarr/settings/README.md#enable-playlists) for details.
+
+### How do I change the default library view?
+
+You can set the default view (Library, Collections, or Categories) for Plex Web:
+
+1. Navigate to **Settings → Plex**
+2. Select the desired option under **Default Library View**
+3. Save settings
+
+Users can still switch views manually within Plex Web. See [Default Library View](../using-streamarr/settings/README.md#default-library-view) for details.
+
+### How do I hide library counts on the homepage?
+
+Library item counts are shown on the homepage by default. To hide them:
+
+1. Navigate to **Settings → General**
+2. Disable **Show Library Counts**
+3. Save settings
+
 ---
 
 ## Performance

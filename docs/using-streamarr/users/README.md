@@ -48,6 +48,7 @@ Click on a user to access their settings:
 
 - **Display Name** — Override the user's display name
 - **Email** — User's email address (read-only for Plex users)
+- **Users Invited** — Count of invites redeemed by other users (links to the user's redeemed invites list)
 
 #### Permissions
 
@@ -186,6 +187,19 @@ Password reset requires:
 Local user passwords must meet minimum complexity requirements:
 
 - Minimum 8 characters
+
+---
+
+## Service Navigation Links
+
+When configured by the administrator, additional navigation links appear for users:
+
+| Link               | Location              | Shown When                                               |
+| ------------------ | --------------------- | -------------------------------------------------------- |
+| **Watch History**  | User dropdown menu    | Tautulli is configured and has a URL base set            |
+| **Request**        | Sidebar and mobile menu | Overseerr is configured and user has **Request** permission |
+
+These links navigate to `/stats` (Tautulli) and `/request` (Overseerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
 
 ---
 

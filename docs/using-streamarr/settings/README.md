@@ -86,6 +86,12 @@ This setting is **disabled** by default.
 This setting controls the visibility of the schedule feature. You still need to configure Sonarr and/or Radarr in [Services](#services) for release data to appear.
 {% endhint %}
 
+### Show Library Counts
+
+When enabled, the homepage hero section displays the number of items in each of your enabled Plex libraries (e.g., "Movies 250", "TV Shows 85"). Up to four libraries are shown, with a "+ more" indicator if additional libraries exist.
+
+This setting is **enabled** by default.
+
 ### Enable Extended Homepage
 
 When enabled, the homepage displays additional sections including FAQs and feature highlights below the main hero area.
@@ -235,6 +241,24 @@ The port your Plex server listens on. Default is `32400`.
 #### Use SSL
 
 Enable this to connect to Plex via HTTPS. Note that self-signed certificates are not supported.
+
+### Enable Playlists
+
+When enabled, a **Playlists** menu item is available in the library navigation and Plex Web. Streamarr checks each library for available playlists and surfaces them alongside standard library views.
+
+This setting is **disabled** by default.
+
+### Default Library View
+
+Choose the default view mode when opening a library in Plex Web:
+
+| Option          | Description                                          |
+| --------------- | ---------------------------------------------------- |
+| **Library**     | Standard library view showing all items (default)    |
+| **Collections** | View organized by Plex collections                   |
+| **Categories**  | View organized by categories (genres, decades, etc.) |
+
+Users see this view when first opening a library. They can still switch views manually within Plex Web.
 
 ### Plex Libraries
 
