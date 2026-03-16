@@ -1,6 +1,7 @@
 'use client';
 import { useIsTouch } from '@app/hooks/useIsTouch';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type React from 'react';
 
 let activeCard: { id: string | number; close: () => void } | null = null;
 
@@ -25,6 +26,7 @@ interface UseSwipeToDismissReturn {
   handlers: SwipeTouchHandlers;
   close: () => void;
   dismiss: () => void;
+  resetDismiss: () => void;
 }
 
 const DIRECTION_LOCK_THRESHOLD = 10;
@@ -65,6 +67,10 @@ export const useSwipeToDismiss = ({
 
   const dismiss = useCallback(() => {
     setIsDismissing(true);
+  }, []);
+
+  const resetDismiss = useCallback(() => {
+    setIsDismissing(false);
   }, []);
 
   const onTouchStart = useCallback(
@@ -192,6 +198,7 @@ export const useSwipeToDismiss = ({
       handlers: NOOP_HANDLERS,
       close,
       dismiss,
+      resetDismiss,
     };
   }
 
@@ -205,5 +212,6 @@ export const useSwipeToDismiss = ({
     handlers: { onTouchStart, onTouchMove, onTouchEnd },
     close,
     dismiss,
+    resetDismiss,
   };
 };
