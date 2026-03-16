@@ -96,6 +96,7 @@ const Notifications = () => {
         icon: <TrashIcon className="size-7" />,
         message: e.response?.data?.message || e.message,
       });
+      throw e;
     } finally {
       revalidate(
         (key) => typeof key === 'string' && key.includes('/notifications')

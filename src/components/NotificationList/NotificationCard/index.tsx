@@ -22,6 +22,7 @@ import type Notification from '@server/entity/Notification';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef } from 'react';
+import type React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const REVEAL_WIDTH = 112;
@@ -63,7 +64,7 @@ const SEVERITY_CONFIG: Record<
 interface NotificationCardProps {
   notification: Notification;
   onRead?: () => void;
-  onDelete?: () => void;
+  onDelete?: () => Promise<void>;
 }
 
 export const NotificationCard = ({
@@ -75,7 +76,7 @@ export const NotificationCard = ({
   const intl = useIntl();
   const router = useRouter();
   const { setIsOpen } = useNotificationSidebar();
-  const pendingAction = useRef<(() => void) | null>(null);
+  const pendingAction = useRef<(() => void | Promise<void>) | null>(null);
 
   const {
     containerRef,
@@ -87,17 +88,23 @@ export const NotificationCard = ({
     handlers,
     close,
     dismiss,
+    resetDismiss,
   } = useSwipeToDismiss({
     id: notification.id,
     revealWidth: REVEAL_WIDTH,
   });
 
-  const handleTransitionEnd = useCallback(() => {
+  const handleTransitionEnd = useCallback(async () => {
     if (isDismissing && pendingAction.current) {
-      pendingAction.current();
+      const action = pendingAction.current;
       pendingAction.current = null;
+      try {
+        await action();
+      } catch {
+        resetDismiss();
+      }
     }
-  }, [isDismissing]);
+  }, [isDismissing, resetDismiss]);
 
   const handleActivate = useCallback(() => {
     if (isSwiping || isDismissing) return;
