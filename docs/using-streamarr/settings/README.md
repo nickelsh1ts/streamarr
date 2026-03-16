@@ -432,5 +432,3 @@ Streamarr caches requests to external APIs. You can flush individual caches if n
 {% hint style="info" %}
 Flushing the Radarr or Sonarr cache will also clear cached calendar events, triggering a fresh fetch on the next calendar view.
 {% endhint %}
-
-<!-- TODO: Add screenshot of Jobs & Cache page -->

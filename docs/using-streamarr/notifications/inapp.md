@@ -31,8 +31,6 @@ Access the full notification center to:
 - Mark notifications as read
 - Delete notifications
 
-<!-- TODO: Add screenshot of notification center -->
-
 ---
 
 ## Notification Display

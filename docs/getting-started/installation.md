@@ -149,5 +149,3 @@ After starting Streamarr for the first time:
 {% hint style="info" %}
 The admin account is always user ID 1 and has full permissions. This user cannot be deleted.
 {% endhint %}
-
-<!-- TODO: Add screenshot of initial setup page -->

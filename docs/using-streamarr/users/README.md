@@ -40,8 +40,6 @@ The user list displays all registered users with:
 
 Users can be sorted and filtered by various criteria.
 
-<!-- TODO: Add screenshot of user list -->
-
 ### Editing Users
 
 Click on a user to access their settings:

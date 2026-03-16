@@ -85,8 +85,6 @@ Toggle additional features for invited users:
 **Plex Home** creates a managed user under your Plex account, which is useful for family members. Regular invites add users as "friends" to your Plex server.
 {% endhint %}
 
-<!-- TODO: Add screenshot of create invite form -->
-
 ---
 
 ## Invite Statuses
