@@ -102,6 +102,11 @@ router.get('/settings/public', async (req, res) => {
 
 router.get('/libraries', async (req, res, next) => {
   const settings = getSettings();
+
+  if (!settings.main.libraryCounts) {
+    return res.status(200).json([]);
+  }
+
   const userRepository = getRepository(User);
   try {
     const admin = await userRepository.findOneOrFail({
