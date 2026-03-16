@@ -72,20 +72,8 @@ interface PlexMetadataResponse {
   MediaContainer: { Metadata: PlexMetadata[] };
 }
 
-export interface PlexPlaylist {
-  ratingKey: string;
-  title: string;
-  type: string;
-  playlistType: string;
-  leafCount: number;
-}
-
 interface PlexPlaylistsResponse {
-  MediaContainer: { Metadata?: PlexPlaylist[] };
-}
-
-interface PlexPlaylistItemsResponse {
-  MediaContainer: { Metadata?: { librarySectionID?: number }[] };
+  MediaContainer: { size?: number };
 }
 
 class PlexAPI {
@@ -303,52 +291,28 @@ class PlexAPI {
     }
   }
 
-  public async getPlaylistLibraryIds(): Promise<Set<string>> {
-    const cacheKey = 'plex:playlistLibraryIds';
-    const cached = this.cache.get<Set<string>>(cacheKey);
-    if (cached) {
+  public async libraryHasPlaylists(sectionId: string): Promise<boolean> {
+    const cacheKey = `plex:libraryHasPlaylists:${sectionId}`;
+    const cached = this.cache.get<boolean>(cacheKey);
+    if (cached !== undefined) {
       return cached;
     }
 
-    const libraryIds = new Set<string>();
     try {
-      const response =
-        await this.plexClient.query<PlexPlaylistsResponse>('/playlists');
-      const playlists = response.MediaContainer.Metadata ?? [];
-
-      await Promise.all(
-        playlists.map(async (playlist) => {
-          try {
-            const itemsResponse =
-              await this.plexClient.query<PlexPlaylistItemsResponse>({
-                uri: `/playlists/${playlist.ratingKey}/items`,
-                extraHeaders: {
-                  'X-Plex-Container-Start': '0',
-                  'X-Plex-Container-Size': '1',
-                },
-              });
-            const items = itemsResponse.MediaContainer.Metadata ?? [];
-            for (const item of items) {
-              if (item.librarySectionID) {
-                libraryIds.add(String(item.librarySectionID));
-              }
-            }
-          } catch {
-            // Skip playlists we can't read
-          }
-        })
+      const response = await this.plexClient.query<PlexPlaylistsResponse>(
+        `/playlists?sectionID=${sectionId}`
       );
-
-      this.cache.set(cacheKey, libraryIds, 300);
+      const hasPlaylists = (response.MediaContainer.size ?? 0) > 0;
+      this.cache.set(cacheKey, hasPlaylists, 300);
+      return hasPlaylists;
     } catch (e) {
-      logger.error('Failed to fetch Plex playlists', {
+      logger.error('Failed to check playlists for library', {
         label: 'Plex API',
+        sectionId,
         errorMessage: e instanceof Error ? e.message : String(e),
       });
-      throw new Error('Failed to fetch Plex playlists');
+      return false;
     }
-
-    return libraryIds;
   }
 }
 

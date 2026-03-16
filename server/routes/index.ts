@@ -217,17 +217,16 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
     const machineId = settings.plex.machineId;
 
-    // Fetch playlist library IDs if playlists are enabled
-    const playlistLibraryIds = settings.plex.enablePlaylists
-      ? await plexApi.getPlaylistLibraryIds()
-      : new Set<string>();
 
     // Build library links with proper Plex URLs
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {
-        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
-          size: 0,
-        });
+        const [{ totalSize }, hasPlaylists] = await Promise.all([
+          plexApi.getLibraryContents(lib.id, { size: 0 }),
+          settings.plex.enablePlaylists
+            ? plexApi.libraryHasPlaylists(lib.id)
+            : Promise.resolve(false),
+        ]);
 
         const plexUrl = `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=${lib.id}`;
         const regExp = `source=${lib.id}&`;
@@ -239,7 +238,7 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           mediaCount: totalSize,
           href: plexUrl,
           regExp: regExp,
-          hasPlaylists: playlistLibraryIds.has(lib.id),
+          hasPlaylists,
         };
       })
     );
