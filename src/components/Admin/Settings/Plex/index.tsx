@@ -240,6 +240,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           hostname: data?.ip,
           port: data?.port ?? 32400,
           useSsl: data?.useSsl,
+          enablePlaylists: data?.enablePlaylists ?? false,
+          defaultPivot: data?.defaultPivot ?? 'library',
           selectedPreset: undefined,
         }}
         enableReinitialize
@@ -265,6 +267,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               ip: values.hostname,
               port: Number(values.port),
               useSsl: values.useSsl,
+              enablePlaylists: values.enablePlaylists,
+              defaultPivot: values.defaultPivot,
             } as PlexSettings);
 
             syncLibraries();
@@ -467,6 +471,72 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     }}
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="enablePlaylists">
+                  <FormattedMessage
+                    id="plexSettings.enablePlaylists"
+                    defaultMessage="Enable Playlists"
+                  />
+                  <p className="text-sm text-neutral">
+                    <FormattedMessage
+                      id="plexSettings.enablePlaylistsTip"
+                      defaultMessage="Show a Playlists menu item and library view option"
+                    />
+                  </p>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="checkbox"
+                    id="enablePlaylists"
+                    name="enablePlaylists"
+                    onChange={() => {
+                      setFieldValue('enablePlaylists', !values.enablePlaylists);
+                    }}
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="defaultPivot">
+                  <FormattedMessage
+                    id="plexSettings.defaultPivot"
+                    defaultMessage="Default Library View"
+                  />
+                  <p className="text-sm text-neutral">
+                    <FormattedMessage
+                      id="plexSettings.defaultPivotTip"
+                      defaultMessage="The default view when a library is selected"
+                    />
+                  </p>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    as="select"
+                    id="defaultPivot"
+                    name="defaultPivot"
+                    className="select select-sm select-primary rounded-md"
+                  >
+                    <option value="library">
+                      {intl.formatMessage({
+                        id: 'plexSettings.pivot.library',
+                        defaultMessage: 'Library',
+                      })}
+                    </option>
+                    <option value="collections">
+                      {intl.formatMessage({
+                        id: 'plexSettings.pivot.collections',
+                        defaultMessage: 'Collections',
+                      })}
+                    </option>
+                    <option value="categories">
+                      {intl.formatMessage({
+                        id: 'plexSettings.pivot.categories',
+                        defaultMessage: 'Categories',
+                      })}
+                    </option>
+                  </Field>
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />

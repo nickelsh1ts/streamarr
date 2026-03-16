@@ -6,6 +6,7 @@ import {
   NewspaperIcon,
   TvIcon,
   RectangleGroupIcon,
+  QueueListIcon,
 } from '@heroicons/react/24/outline';
 import {
   MusicalNoteIcon,
@@ -14,11 +15,32 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { SetStateAction } from 'react';
+import { useCallback, type SetStateAction } from 'react';
 import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+
+const PIVOT_STORAGE_KEY = 'library-pivot-settings';
+const VALID_PIVOTS = new Set(['library', 'collections', 'categories']);
+
+const getSavedPivot = (): string | null => {
+  try {
+    const saved = window.localStorage.getItem(PIVOT_STORAGE_KEY);
+    return saved && VALID_PIVOTS.has(saved) ? saved : null;
+  } catch {
+    return null;
+  }
+};
+
+const savePivot = (pivot: string): void => {
+  if (!VALID_PIVOTS.has(pivot)) return;
+  try {
+    window.localStorage.setItem(PIVOT_STORAGE_KEY, pivot);
+  } catch {
+    // localStorage unavailable
+  }
+};
 
 interface MenuLinksProps {
   href: string;
@@ -33,6 +55,7 @@ interface LibraryLinksProps {
   title: string;
   type: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
   regExp: string;
+  hasPlaylists: boolean;
 }
 
 interface LibraryMenuProps {
@@ -51,10 +74,16 @@ const LibraryMenu = ({
   const hash = useHash();
   const url = pathname + (hash || '');
   const { hasPermission, user } = useUser();
-  const { libraryLinks, loading } = useLibraryLinks('id');
+  const { libraryLinks, machineId, enablePlaylists, defaultPivot, loading } =
+    useLibraryLinks('id');
   const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
+
+  const effectivePivot = getSavedPivot() ?? defaultPivot ?? 'library';
+  const handlePivotClick = useCallback((pivot: string) => {
+    savePivot(pivot);
+  }, []);
 
   // Group libraries by type
   const groupedLibraries = libraryLinks.reduce(
@@ -68,6 +97,7 @@ const LibraryMenu = ({
         title: lib.name,
         type: lib.type,
         regExp: lib.regExp,
+        hasPlaylists: lib.hasPlaylists,
       });
       return acc;
     },
@@ -122,6 +152,18 @@ const LibraryMenu = ({
           ],
           { type: 'or' }
         ),
+    },
+    {
+      href: machineId
+        ? `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=playlists`
+        : '#',
+      title: intl.formatMessage({
+        id: 'library.playlists',
+        defaultMessage: 'Playlists',
+      }),
+      icon: <QueueListIcon className="w-7 h-7" />,
+      regExp: 'source=playlists',
+      hidden: !enablePlaylists,
     },
   ];
 
@@ -205,7 +247,9 @@ const LibraryMenu = ({
               title={multiTitle ?? type}
               icon={icon}
               LibraryLinks={Links}
-              defaultPivot={'library'}
+              defaultPivot={effectivePivot}
+              enablePlaylists={enablePlaylists}
+              onPivotClick={handlePivotClick}
               liKey={type}
               key={type}
               url={url}
@@ -221,7 +265,10 @@ const LibraryMenu = ({
               url={url}
               regExp={Links[0].regExp}
               type={Links[0].type}
-              defaultPivot={'library'}
+              defaultPivot={effectivePivot}
+              enablePlaylists={enablePlaylists}
+              hasPlaylists={Links[0].hasPlaylists}
+              onPivotClick={handlePivotClick}
             />
           ) : null;
         })
@@ -242,6 +289,9 @@ interface SingleItemProps {
   regExp: string | RegExp;
   type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
   defaultPivot?: string;
+  enablePlaylists?: boolean;
+  hasPlaylists?: boolean;
+  onPivotClick?: (pivot: string) => void;
   'data-tutorial'?: string;
 }
 
@@ -262,6 +312,9 @@ export const SingleItem = ({
   regExp,
   type,
   defaultPivot = 'library',
+  enablePlaylists = false,
+  hasPlaylists = false,
+  onPivotClick,
   'data-tutorial': dataTutorial,
 }: SingleItemProps) => {
   const isActive =
@@ -279,8 +332,11 @@ export const SingleItem = ({
     if (!type) return null;
     switch (type) {
       case 'movie':
-      case 'show':
-        return ['library', 'collections', 'categories'];
+      case 'show': {
+        const pivots = ['library', 'collections', 'categories'];
+        if (enablePlaylists && hasPlaylists) pivots.push('playlists');
+        return pivots;
+      }
       case 'artist':
         return ['library', 'playlists'];
       default:
@@ -309,7 +365,10 @@ export const SingleItem = ({
           {pivotList.map((pivot) => (
             <li key={pivot}>
               <Link
-                onClick={onClick}
+                onClick={() => {
+                  onPivotClick?.(pivot);
+                  onClick?.();
+                }}
                 href={href && pivotList ? href + '&pivot=' + pivot : href}
                 className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
               >
@@ -333,6 +392,8 @@ interface MultiItemProps {
   LibraryLinks: LibraryLinksProps[];
   liKey: string;
   defaultPivot: string;
+  enablePlaylists?: boolean;
+  onPivotClick?: (pivot: string) => void;
   url: string;
 }
 
@@ -343,13 +404,21 @@ export const MultiItem = ({
   LibraryLinks,
   liKey,
   defaultPivot,
+  enablePlaylists = false,
+  onPivotClick,
   url,
 }: MultiItemProps) => {
-  const getPivotList = (type: string): string[] | null => {
+  const getPivotList = (
+    type: string,
+    hasPlaylists: boolean
+  ): string[] | null => {
     switch (type) {
       case 'movie':
-      case 'show':
-        return ['library', 'collections', 'categories'];
+      case 'show': {
+        const pivots = ['library', 'collections', 'categories'];
+        if (enablePlaylists && hasPlaylists) pivots.push('playlists');
+        return pivots;
+      }
       case 'artist':
         return ['library', 'playlists'];
       default:
@@ -383,7 +452,7 @@ export const MultiItem = ({
                 )
               : url.includes(item.regExp);
 
-            const pivotList = getPivotList(item.type);
+            const pivotList = getPivotList(item.type, item.hasPlaylists);
             return (
               <li key={item.title}>
                 <Link
@@ -402,7 +471,10 @@ export const MultiItem = ({
                     {pivotList.map((pivot) => (
                       <li key={pivot}>
                         <Link
-                          onClick={onClick}
+                          onClick={() => {
+                            onPivotClick?.(pivot);
+                            onClick?.();
+                          }}
                           href={
                             item.href && pivotList
                               ? item.href + '&pivot=' + pivot

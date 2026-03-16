@@ -188,7 +188,12 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           requestedLibs.includes(lib.id)
         );
       } else {
-        res.status(200).json([]);
+        res.status(200).json({
+          machineId: settings.plex.machineId ?? '',
+          enablePlaylists: settings.plex.enablePlaylists ?? false,
+          defaultPivot: settings.plex.defaultPivot ?? 'library',
+          libraries: [],
+        });
         return;
       }
     }
@@ -212,12 +217,16 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
     const machineId = settings.plex.machineId;
 
+
     // Build library links with proper Plex URLs
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {
-        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
-          size: 0,
-        });
+        const [{ totalSize }, hasPlaylists] = await Promise.all([
+          plexApi.getLibraryContents(lib.id, { size: 0 }),
+          settings.plex.enablePlaylists
+            ? plexApi.libraryHasPlaylists(lib.id)
+            : Promise.resolve(false),
+        ]);
 
         const plexUrl = `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=${lib.id}`;
         const regExp = `source=${lib.id}&`;
@@ -229,11 +238,17 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           mediaCount: totalSize,
           href: plexUrl,
           regExp: regExp,
+          hasPlaylists,
         };
       })
     );
 
-    res.status(200).json(results);
+    res.status(200).json({
+      machineId: machineId ?? '',
+      enablePlaylists: settings.plex.enablePlaylists ?? false,
+      defaultPivot: settings.plex.defaultPivot ?? 'library',
+      libraries: results,
+    });
   } catch (e) {
     logger.error('Something went wrong getting plex library links', {
       label: 'API',

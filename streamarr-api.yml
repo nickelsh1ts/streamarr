@@ -270,6 +270,10 @@ components:
           type: string
           description: Regular expression pattern for URL matching
           example: '(?=(\\/(.*)=\\1&pivot))'
+        hasPlaylists:
+          type: boolean
+          description: Whether this library has items in at least one playlist
+          example: true
       required:
         - id
         - name
@@ -277,6 +281,7 @@ components:
         - mediaCount
         - href
         - regExp
+        - hasPlaylists
     PlexSettings:
       type: object
       properties:
@@ -302,6 +307,15 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/PlexLibrary'
+        enablePlaylists:
+          type: boolean
+          description: Whether playlists menu item and pivot option are enabled
+          example: false
+        defaultPivot:
+          type: string
+          description: The default pivot view when a library is selected
+          enum: [library, collections, categories]
+          example: 'library'
       required:
         - name
         - machineId
@@ -3078,13 +3092,34 @@ paths:
             default: id
       responses:
         '200':
-          description: List of library links
+          description: Library links with metadata
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LibraryLink'
+                type: object
+                properties:
+                  machineId:
+                    type: string
+                    description: The Plex server machine identifier
+                    example: '65c8e6766fed4f8450771fbc9a6a9081c6ed698d'
+                  enablePlaylists:
+                    type: boolean
+                    description: Whether playlists are enabled
+                    example: false
+                  defaultPivot:
+                    type: string
+                    description: The admin-configured default pivot view
+                    enum: [library, collections, categories]
+                    example: 'library'
+                  libraries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LibraryLink'
+                required:
+                  - machineId
+                  - enablePlaylists
+                  - defaultPivot
+                  - libraries
         '401':
           description: Unauthorized - user not authenticated
         '500':

@@ -20,6 +20,8 @@ export interface Language {
   name: string;
 }
 
+export type PivotOption = 'library' | 'collections' | 'categories';
+
 export interface PlexSettings {
   name: string;
   machineId?: string;
@@ -27,6 +29,8 @@ export interface PlexSettings {
   port: number;
   useSsl?: boolean;
   libraries: Library[];
+  enablePlaylists?: boolean;
+  defaultPivot?: PivotOption;
 }
 
 export interface TautulliSettings {
@@ -333,6 +337,8 @@ class Settings {
         port: 32400,
         useSsl: false,
         libraries: [],
+        enablePlaylists: false,
+        defaultPivot: 'library',
       },
       tautulli: {
         enabled: false,
