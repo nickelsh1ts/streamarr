@@ -61,12 +61,15 @@ jobs:
       - name: Combine Job Status
         id: status
         run: |
-          failures=(neutral, skipped, timed_out, action_required)
-          if [[ ${array[@]} =~ $WORKFLOW_CONCLUSION ]]; then
-            echo "status=failure" >> $GITHUB_OUTPUT
-          else
-            echo "status=$WORKFLOW_CONCLUSION" >> $GITHUB_OUTPUT
-          fi
+          failures=(neutral skipped timed_out action_required)
+          status="$WORKFLOW_CONCLUSION"
+          for failure in "${failures[@]}"; do
+            if [ "$WORKFLOW_CONCLUSION" = "$failure" ]; then
+              status="failure"
+              break
+            fi
+          done
+          echo "status=$status" >> "$GITHUB_OUTPUT"
       - name: Post Status to Discord
         uses: sarisia/actions-status-discord@v1
         with:
