@@ -13,7 +13,7 @@ Hybrid **Next.js 16 + Express** app wrapping Plex/\*Arr services. Single process
 
 Express serves API routes (`/api/v1/*`) and delegates everything else to Next.js. See `server/index.ts`.
 
-**Path aliases** (enforced by ESLint — no relative imports):
+**Path aliases** (enforced by ESLint — avoid cross-folder relative imports; same-folder `./` imports are allowed):
 
 - `@server/*` → `server/*`
 - `@app/*` → `src/*`

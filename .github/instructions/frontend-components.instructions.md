@@ -7,9 +7,9 @@ applyTo: 'src/**'
 
 ## Data Fetching
 
-- Use SWR for all client-side data: `useSWR<Type>('/api/v1/...')`
-- Never use `fetch` or `axios` directly in components
-- Mutate SWR cache after writes: `mutate('/api/v1/...')`
+- Use SWR for all client-side reads: `useSWR<Type>('/api/v1/...')`
+- For writes (POST/PUT/PATCH/DELETE), use `axios` in event handlers or custom hooks; avoid `fetch` unless there is a specific need.
+- After successful writes, update related SWR keys with `mutate('/api/v1/...')`
 
 ## State Management
 
@@ -32,5 +32,5 @@ applyTo: 'src/**'
 ## Imports
 
 - Path aliases only: `@app/*` for `src/`, `@server/*` for `server/`
-- No relative imports (enforced by ESLint)
+- Avoid relative imports that traverse folders; same-folder relative imports like `./X` are allowed (enforced by ESLint)
 - Use `type` keyword for type-only imports: `import type { X } from '...'`
