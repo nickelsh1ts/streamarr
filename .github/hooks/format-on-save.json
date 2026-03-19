@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node -e \"process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const o=JSON.parse(d);const files=new Set();if(o.toolInput.filePath)files.add(o.toolInput.filePath);if(o.toolInput.replacements)o.toolInput.replacements.forEach(r=>{if(r.filePath)files.add(r.filePath)});const filesArray=[...files];if(!filesArray.length)return;const{spawnSync}=require('child_process');spawnSync('npx',['prettier','--write','--cache',...filesArray],{stdio:'inherit'});}catch(e){}})\" 2>/dev/null; exit 0",
+        "timeout": 15,
+        "matcher": {
+          "toolName": "replace_string_in_file|create_file|multi_replace_string_in_file"
+        }
+      }
+    ]
+  }
+}
