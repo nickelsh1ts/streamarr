@@ -21,9 +21,9 @@ Express serves API routes (`/api/v1/*`) and delegates everything else to Next.js
 ## Build & Test
 
 | Task               | Command                                                              |
-| ------------------ | -------------------------------------------------------------------- | --- | -------------- | --------------------------------------------- |
-| Dev (full stack)   | `yarn dev:all`                                                       |
+| ------------------ | -------------------------------------------------------------------- |
 | Dev (Node only)    | `yarn dev`                                                           |
+| Dev (Python svc)   | `yarn start:python` (separate terminal)                              |
 | Build all          | `yarn build`                                                         |
 | Pre-commit check   | `yarn prepare` (format + lint + typecheck)                           |
 | Type check         | `yarn typecheck` / `yarn typecheck:server` / `yarn typecheck:client` |
@@ -32,7 +32,8 @@ Express serves API routes (`/api/v1/*`) and delegates everything else to Next.js
 | E2E tests          | `yarn cypress:build && yarn cypress:open`                            |
 | Generate migration | `yarn migration:generate server/migration/Name`                      |
 | Run migrations     | `yarn migration:run`                                                 |
-| Extract i18n       | `yarn i18n:extract`                                                  |     | API docs (dev) | `http://localhost:3000/api-docs` (Swagger UI) |
+| Extract i18n       | `yarn i18n:extract`                                                  |
+| API docs (dev)     | `http://localhost:3000/api-docs` (Swagger UI)                        |
 
 Dev uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`.
 
@@ -44,7 +45,7 @@ Dev uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`.
 - **Routes**: Express routers registered in `server/routes/index.ts`, validated against `streamarr-api.yml` (OpenAPI). New endpoints must be defined in the spec first.
 - **Auth**: `checkUser` middleware runs globally; route-level `isAuthenticated(Permission.X)` for access control
 - **Permissions**: Bitwise flags in `server/lib/permissions.ts`, checked via `user.hasPermission([Permission.X])`
-- **Business logic**: Lives in entity static/instance methods (e.g., `User.createLocal()`, `Invite.invite()`)
+- **Business logic**: Lives in entity static/instance methods (e.g., `User.hasPermission()`, `Invite.isExpired()`)
 - **Lifecycle hooks**: TypeORM subscribers in `server/subscriber/` (notifications on entity create/update)
 - **Settings**: JSON file via `getSettings()` singleton from `server/lib/settings.ts`
 - **Logging**: Winston logger from `@server/logger` — always include `{ label: 'ComponentName' }`
