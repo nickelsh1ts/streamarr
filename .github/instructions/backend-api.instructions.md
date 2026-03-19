@@ -13,7 +13,7 @@ applyTo: 'server/routes/**'
 
 ## Auth & Permissions
 
-- `req.user` is always available (populated by global `checkUser` middleware)
+- Global `checkUser` middleware runs on all requests and populates `req.user` when a valid session/API key is present; otherwise `req.user` is `undefined`. Use `isAuthenticated(...)` on routes that require a logged-in user to guarantee `req.user` is set.
 - Use `isAuthenticated()` for logged-in users, `isAuthenticated(Permission.ADMIN)` for permission-gated routes
 - Permission flags: `server/lib/permissions.ts` — check with `user.hasPermission([Permission.X])`
 

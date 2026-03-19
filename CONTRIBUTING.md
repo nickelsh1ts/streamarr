@@ -112,7 +112,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 ### General
 
-- **Path aliases**: Use `@server/*` and `@app/*` — no relative imports (enforced by ESLint).
+- **Path aliases**: Use `@server/*` and `@app/*` for cross-folder imports. Same-folder relative imports (e.g. `./MyComponent`) are allowed and enforced by ESLint.
 - **TypeScript**: Strict mode is off by design. `experimentalDecorators` is enabled for TypeORM.
 - **Formatting**: Prettier handles code formatting. Run `yarn format` or let `yarn prepare` handle it.
 
