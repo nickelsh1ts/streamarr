@@ -293,6 +293,7 @@ interface SingleItemProps {
   hasPlaylists?: boolean;
   onPivotClick?: (pivot: string) => void;
   'data-tutorial'?: string;
+  'data-testid'?: string;
 }
 
 const matchesLibrarySource = (url: string, sourceId: string): boolean => {
@@ -316,6 +317,7 @@ export const SingleItem = ({
   hasPlaylists = false,
   onPivotClick,
   'data-tutorial': dataTutorial,
+  'data-testid': dataTestId,
 }: SingleItemProps) => {
   const isActive =
     typeof regExp === 'string'
@@ -349,6 +351,7 @@ export const SingleItem = ({
       className={`pointer-events-auto ${className ? className : ''}`}
       key={liKey}
       data-tutorial={dataTutorial}
+      data-testid={dataTestId}
     >
       <Link
         onClick={onClick}

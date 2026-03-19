@@ -8,11 +8,12 @@ interface ConfirmButtonProps {
   buttonSize?: 'sm' | 'md' | 'lg' | 'default';
   className?: string;
   children: React.ReactNode;
+  'data-testid'?: string;
 }
 
 const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
   (
-    { onClick, children, confirmText, className, buttonSize = 'default' },
+    { onClick, children, confirmText, className, buttonSize = 'default', 'data-testid': dataTestId },
     parentRef
   ) => {
     const ref = useRef(null);
@@ -32,6 +33,7 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
         buttonType="error"
         buttonSize={buttonSize}
         className={`relative overflow-hidden ${className}`}
+        data-testid={dataTestId}
         disabled={isLoading}
         onClick={async (e) => {
           e.preventDefault();

@@ -35,6 +35,7 @@ const PlexLoginButton = ({
     <span className="block w-full rounded-md shadow-sm">
       <button
         type="button"
+        data-testid="plex-login-button"
         onClick={() => {
           plexOAuth.preparePopup();
           setTimeout(() => getPlexLogin(), 1500);

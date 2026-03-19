@@ -21,6 +21,7 @@
     "typecheck:server": "tsc --project server/tsconfig.json --noEmit",
     "typecheck:client": "tsc --noEmit",
     "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "cypress:prepare": "tsx --tsconfig server/tsconfig.json server/scripts/prepareTestDb.ts",
     "cypress:build": "yarn build && yarn cypress:prepare",
     "css-build": "tailwindcss -o public/tailwind.css",

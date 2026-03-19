@@ -336,6 +336,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                 linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
                 liKey={'home'}
                 data-tutorial="nav-home"
+                data-testid="nav-home"
                 onClick={() => {
                   onClick && onClick(!isOpen);
                   handleClick(0);
@@ -372,6 +373,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                       linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
                       liKey={'request'}
                       data-tutorial="nav-request"
+                      data-testid="nav-request"
                       onClick={() => {
                         onClick && onClick(!isOpen);
                         handleClick(1);
@@ -423,6 +425,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         <SingleItem
           liKey={'invites'}
           data-tutorial="nav-invites"
+          data-testid="nav-invites"
           onClick={() => onClick && onClick(!isOpen)}
           href={'/invites'}
           title={intl.formatMessage({
@@ -446,6 +449,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
           <SingleItem
             liKey={'schedule'}
             data-tutorial="nav-schedule"
+            data-testid="nav-schedule"
             onClick={() => onClick && onClick(!isOpen)}
             href={'/schedule'}
             title={intl.formatMessage({

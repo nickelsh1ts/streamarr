@@ -468,6 +468,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 invite?.createdBy?.id === currentUser?.id) && (
                 <button
                   onClick={() => onShare()}
+                  data-testid="invite-share-button"
                   className="btn btn-sm btn-block btn-neutral rounded-md flex-1"
                 >
                   <svg
@@ -494,6 +495,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 hasPermission(Permission.MANAGE_INVITES)) && (
                 <button
                   onClick={() => onEdit()}
+                  data-testid="invite-edit-button"
                   className="btn btn-sm btn-block btn-neutral rounded-md flex-1"
                 >
                   <svg
@@ -518,6 +520,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 hasPermission(Permission.MANAGE_INVITES)) && (
                 <ConfirmButton
                   onClick={() => onDelete()}
+                  data-testid="invite-delete-button"
                   buttonSize="sm"
                   confirmText={intl.formatMessage({
                     id: 'common.areYouSure',

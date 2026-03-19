@@ -40,6 +40,7 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
       }}
       role="button"
       tabIndex={0}
+      data-testid="version-status-link"
       className={`flex items-center rounded-lg p-2 pl-5 text-xs transition duration-300 pointer-events-auto ${
         data.updateAvailable
           ? 'bg-warning bg-opacity-60 backdrop-blur text-white hover:bg-opacity-50'
