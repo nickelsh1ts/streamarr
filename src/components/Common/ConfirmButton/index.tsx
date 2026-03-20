@@ -13,7 +13,14 @@ interface ConfirmButtonProps {
 
 const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
   (
-    { onClick, children, confirmText, className, buttonSize = 'default', 'data-testid': dataTestId },
+    {
+      onClick,
+      children,
+      confirmText,
+      className,
+      buttonSize = 'default',
+      'data-testid': dataTestId,
+    },
     parentRef
   ) => {
     const ref = useRef(null);

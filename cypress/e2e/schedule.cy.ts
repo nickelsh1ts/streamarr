@@ -22,23 +22,35 @@ describe('Schedule Page', () => {
 
   it('should allow filtering by movies', () => {
     cy.get('[data-testid="schedule-filter-select"]').select('movies');
-    cy.get('[data-testid="schedule-filter-select"]').should('have.value', 'movies');
+    cy.get('[data-testid="schedule-filter-select"]').should(
+      'have.value',
+      'movies'
+    );
   });
 
   it('should allow filtering by shows', () => {
     cy.get('[data-testid="schedule-filter-select"]').select('shows');
-    cy.get('[data-testid="schedule-filter-select"]').should('have.value', 'shows');
+    cy.get('[data-testid="schedule-filter-select"]').should(
+      'have.value',
+      'shows'
+    );
   });
 
   it('should allow filtering by local events', () => {
     cy.get('[data-testid="schedule-filter-select"]').select('local');
-    cy.get('[data-testid="schedule-filter-select"]').should('have.value', 'local');
+    cy.get('[data-testid="schedule-filter-select"]').should(
+      'have.value',
+      'local'
+    );
   });
 
   it('should reset filter to all', () => {
     cy.get('[data-testid="schedule-filter-select"]').select('movies');
     cy.get('[data-testid="schedule-filter-select"]').select('all');
-    cy.get('[data-testid="schedule-filter-select"]').should('have.value', 'all');
+    cy.get('[data-testid="schedule-filter-select"]').should(
+      'have.value',
+      'all'
+    );
   });
 
   it('should persist filter selection in localStorage', () => {
