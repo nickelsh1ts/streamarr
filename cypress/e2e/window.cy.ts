@@ -1,23 +1,27 @@
-/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
-context('Window', () => {
+describe('Window', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000');
+    cy.visit('/signin');
   });
 
   it('cy.window() - get the global window object', () => {
-    // https://on.cypress.io/window
     cy.window().should('have.property', 'top');
   });
 
   it('cy.document() - get the document object', () => {
-    // https://on.cypress.io/document
     cy.document().should('have.property', 'charset').and('eq', 'UTF-8');
   });
 
   it('cy.title() - get the title', () => {
-    // https://on.cypress.io/title
     cy.title().should('include', 'Streamarr');
+  });
+
+  it('should have scroll-smooth on html element', () => {
+    cy.get('html').should('have.class', 'scroll-smooth');
+  });
+
+  it('should have the streamarr data-theme', () => {
+    cy.get('html').should('have.attr', 'data-theme', 'streamarr');
   });
 });

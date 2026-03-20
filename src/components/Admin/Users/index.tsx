@@ -486,6 +486,7 @@ const AdminUsers = () => {
               buttonSize="sm"
               className="mb-2 flex-grow sm:mb-0 sm:mr-2"
               buttonType="primary"
+              data-testid="create-user-button"
               onClick={() => setCreateModal({ isOpen: true })}
             >
               <UserPlusIcon className="size-7 mr-2" />
@@ -501,6 +502,7 @@ const AdminUsers = () => {
                 buttonSize="sm"
                 className="flex-grow lg:mr-2"
                 buttonType="primary"
+                data-testid="import-plex-button"
                 onClick={() => setShowImportModal(true)}
               >
                 <InboxArrowDownIcon className="size-7 mr-2" />
@@ -520,6 +522,7 @@ const AdminUsers = () => {
             <select
               id="sort"
               name="sort"
+              data-testid="user-sort-select"
               onChange={(e) => {
                 setCurrentSort(e.target.value as Sort);
                 router.push(pathname);
@@ -593,6 +596,7 @@ const AdminUsers = () => {
                   buttonSize="sm"
                   className="disabled:bg-warning/50"
                   buttonType="warning"
+                  data-testid="bulk-edit-button"
                   onClick={() => setShowBulkEditModal(true)}
                   disabled={selectedUsers.length === 0}
                 >
@@ -733,6 +737,7 @@ const AdminUsers = () => {
                   buttonSize="sm"
                   buttonType="warning"
                   disabled={user.id === 1 && currentUser?.id !== 1}
+                  data-testid={`edit-user-button-${user.id}`}
                   className="mr-2 disabled:bg-warning/50 max-md:btn-block"
                   onClick={() =>
                     router.push(`/admin/users/${user.id}/settings`)
@@ -743,6 +748,7 @@ const AdminUsers = () => {
                 <Button
                   buttonType="error"
                   buttonSize="sm"
+                  data-testid={`delete-user-button-${user.id}`}
                   className="disabled:bg-error/50 disabled:pointer-events-auto disabled:hover:cursor-not-allowed disabled:hover:bg-error/40 max-md:btn-block"
                   disabled={
                     user.id === 1 ||

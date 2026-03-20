@@ -19,7 +19,7 @@
   "localLogin": true,
   "newPlexLogin": true,
   "enableSignUp": false,
-  "releaseSched": false,
+  "releaseSched": true,
   "trustProxy": false,
   "locale": "en",
   "supportUrl": "",
@@ -109,5 +109,12 @@
   "invites-qrcode-cleanup": {
    "schedule": "0 0 1 * * *"
   }
+ },
+ "onboarding": {
+  "initialized": true,
+  "adminOnboardingCompleted": true,
+  "welcomeEnabled": false,
+  "tutorialEnabled": false,
+  "tutorialAutostart": false
  }
 }
