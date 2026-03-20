@@ -44,7 +44,7 @@ describe('API Health', () => {
         },
         failOnStatusCode: false,
       }).then((resp) => {
-        expect(resp.status).to.be.oneOf([401, 403, 500]);
+        expect(resp.status).to.eq(403);
       });
     });
 
