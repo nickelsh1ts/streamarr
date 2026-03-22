@@ -842,9 +842,10 @@ export async function manageTag(
 
     return true;
   } catch (e) {
-    logger.error(`Failed to ${options.action} tags`, {
+    logger.error('Failed to manage tags', {
       label: 'Downloads API',
       client: settings.name,
+      action: options.action,
       error: e.message,
     });
     return false;
