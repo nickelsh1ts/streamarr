@@ -676,6 +676,7 @@ components:
         - stalled
         - moving
         - metadata
+        - incomplete
         - unknown
       example: downloading
     TorrentAction:
@@ -4805,7 +4806,7 @@ paths:
         - in: query
           name: status
           schema:
-            type: string
+            $ref: '#/components/schemas/TorrentStatus'
           description: >
             Filter by torrent status. Accepts any TorrentStatus value, or
             'incomplete' to match all non-completed/non-seeding statuses
