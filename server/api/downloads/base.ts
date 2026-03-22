@@ -808,24 +808,34 @@ export async function manageTag(
           return false;
         }
 
-        // Transmission requires fetching current labels, modifying, and setting back
-        for (const hash of options.hashes) {
-          const torrentData = await anyClient.listTorrents([hash], ['labels']);
-          const torrent = torrentData.arguments?.torrents?.[0];
-          const currentLabels: string[] = torrent?.labels || [];
+        // Batch-fetch current labels for all hashes in a single RPC call
+        const torrentData = await anyClient.listTorrents(options.hashes, [
+          'hashString',
+          'labels',
+        ]);
+        const torrents = torrentData.arguments?.torrents || [];
+        const labelsByHash = new Map(
+          torrents.map((t: { hashString: string; labels?: string[] }) => [
+            t.hashString,
+            t.labels || [],
+          ])
+        );
 
-          let newLabels: string[];
-          if (options.action === 'add') {
-            const labelsToAdd = options.tags.filter(
-              (t) => !currentLabels.includes(t)
-            );
-            newLabels = [...currentLabels, ...labelsToAdd];
-          } else {
-            newLabels = currentLabels.filter((l) => !options.tags.includes(l));
-          }
+        // Compute and apply new labels in parallel
+        await Promise.all(
+          options.hashes.map((hash) => {
+            const current = (labelsByHash.get(hash) as string[]) || [];
+            const newLabels =
+              options.action === 'add'
+                ? [
+                    ...current,
+                    ...options.tags.filter((t) => !current.includes(t)),
+                  ]
+                : current.filter((l) => !options.tags.includes(l));
 
-          await anyClient.setTorrent([hash], { labels: newLabels });
-        }
+            return anyClient.setTorrent([hash], { labels: newLabels });
+          })
+        );
       } else {
         // Transmission doesn't have global tag management
         logger.warn('Transmission does not support global tag create/delete', {
