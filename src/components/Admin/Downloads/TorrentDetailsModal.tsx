@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
 import Modal from '@app/components/Common/Modal';
 import Alert from '@app/components/Common/Alert';
@@ -49,6 +49,15 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   const [isRemoving, setIsRemoving] = useState(false);
   const [newTagInput, setNewTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
+
+  // Reset transient state when modal closes or torrent changes
+  useEffect(() => {
+    if (!isOpen) {
+      setShouldLoadFiles(false);
+      setShowTagInput(false);
+      setNewTagInput('');
+    }
+  }, [isOpen, torrent?.hash]);
 
   const supportsGlobalTags = torrent?.clientType === 'qbittorrent';
   const supportsTags =
@@ -486,12 +495,22 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                       >
                         {tag}
                         <button
+                          type="button"
                           onClick={() => handleRemoveTag(tag)}
                           className="hover:text-error transition-colors"
                           title={intl.formatMessage({
                             id: 'downloads.removeTag',
                             defaultMessage: 'Remove tag',
                           })}
+                          aria-label={intl.formatMessage(
+                            {
+                              id: 'downloads.removeTagLabel',
+                              defaultMessage: 'Remove tag {tag}',
+                            },
+                            {
+                              tag,
+                            }
+                          )}
                         >
                           <XMarkIcon className="size-4" />
                         </button>
