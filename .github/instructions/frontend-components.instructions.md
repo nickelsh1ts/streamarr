@@ -10,6 +10,7 @@ applyTo: 'src/**'
 - Use SWR for all client-side reads: `useSWR<Type>('/api/v1/...')`
 - For writes (POST/PUT/PATCH/DELETE), use `axios` in event handlers or custom hooks; avoid `fetch` unless there is a specific need.
 - After successful writes, update related SWR keys with `mutate('/api/v1/...')`
+- Prefer domain-specific SWR hooks from `src/hooks/` over manual `useState` + `axios.get` patterns
 
 ## State Management
 

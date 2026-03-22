@@ -6,6 +6,7 @@ import type {
   NormalizedDownloadItem,
   AddTorrentRequest,
   CategoryManagementRequest,
+  TagManagementRequest,
   TorrentFile,
   UpdateTorrentRequest,
   SetFilePriorityRequest,
@@ -39,6 +40,7 @@ interface QBittorrentRawTorrent {
   seen_complete?: number; // Unix timestamp
   last_activity?: number; // Unix timestamp of last activity
   tracker_msg?: string; // Tracker message (can contain error info)
+  tags?: string; // Comma-separated tag list
   [key: string]: unknown;
 }
 
@@ -350,6 +352,31 @@ function mapTorrentState(
 }
 
 /**
+ * Extract tags from raw torrent data based on client type
+ */
+function extractTags(
+  clientType: 'qbittorrent' | 'deluge' | 'transmission',
+  rawData: QBittorrentRawTorrent | DelugeRawTorrent | TransmissionRawTorrent
+): string[] {
+  if (clientType === 'qbittorrent') {
+    const raw = rawData as QBittorrentRawTorrent;
+    if (raw.tags && typeof raw.tags === 'string' && raw.tags.trim() !== '') {
+      return raw.tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0);
+    }
+  } else if (clientType === 'transmission') {
+    const raw = rawData as TransmissionRawTorrent;
+    if (raw.labels && Array.isArray(raw.labels) && raw.labels.length > 0) {
+      return raw.labels.filter((l) => l.length > 0);
+    }
+  }
+  // Deluge doesn't have tags (only labels which map to category)
+  return [];
+}
+
+/**
  * Normalize torrent data from @ctrl libraries to our format
  */
 export function normalizeTorrent(
@@ -461,7 +488,7 @@ export function normalizeTorrent(
     downloadSpeed: torrent.downloadSpeed,
     uploadSpeed: torrent.uploadSpeed,
     eta: etaValue,
-    status: status,
+    status,
     ratio: torrent.ratio,
     addedDate: torrent.dateAdded,
     completedDate:
@@ -471,13 +498,13 @@ export function normalizeTorrent(
     lastSeenComplete: lastSeenCompleteValue,
     savePath: torrent.savePath || '',
     category: torrent.label,
-    tags: [],
+    tags: extractTags(clientSettings.client, rawData),
     seeds: torrent.connectedSeeds || 0,
     peers: torrent.connectedPeers || 0,
     totalSeeds: torrent.totalSeeds,
     totalPeers: torrent.totalPeers,
     priority: priorityValue,
-    errorMessage: errorMessage,
+    errorMessage,
   };
 }
 
@@ -728,6 +755,137 @@ export async function manageCategory(
       error: e.message,
     });
     return false;
+  }
+}
+
+/**
+ * Manage tags (qBittorrent: create/delete global tags, add/remove tags from torrents)
+ * Transmission: uses labels array (set via setTorrent)
+ * Deluge: not supported
+ */
+export async function manageTag(
+  settings: DownloadClientSettings,
+  options: TagManagementRequest
+): Promise<boolean> {
+  try {
+    const client = await getClient(settings);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyClient = client as any;
+
+    if (settings.client === 'qbittorrent') {
+      switch (options.action) {
+        case 'create':
+          await anyClient.createTags(options.tags.join(','));
+          break;
+        case 'delete':
+          await anyClient.deleteTags(options.tags.join(','));
+          break;
+        case 'add':
+          if (!options.hashes || options.hashes.length === 0) {
+            return false;
+          }
+          await anyClient.addTorrentTags(
+            options.hashes,
+            options.tags.join(',')
+          );
+          break;
+        case 'remove':
+          if (!options.hashes || options.hashes.length === 0) {
+            return false;
+          }
+          await anyClient.removeTorrentTags(
+            options.hashes,
+            options.tags.join(',')
+          );
+          break;
+        default:
+          return false;
+      }
+    } else if (settings.client === 'transmission') {
+      // Transmission uses labels array - we can set labels on torrents
+      if (options.action === 'add' || options.action === 'remove') {
+        if (!options.hashes || options.hashes.length === 0) {
+          return false;
+        }
+
+        // Batch-fetch current labels for all hashes in a single RPC call
+        const torrentData = await anyClient.listTorrents(options.hashes, [
+          'hashString',
+          'labels',
+        ]);
+        const torrents = torrentData.arguments?.torrents || [];
+        const labelsByHash = new Map(
+          torrents.map((t: { hashString: string; labels?: string[] }) => [
+            t.hashString,
+            t.labels || [],
+          ])
+        );
+
+        // Compute and apply new labels in parallel
+        await Promise.all(
+          options.hashes.map((hash) => {
+            const current = (labelsByHash.get(hash) as string[]) || [];
+            const newLabels =
+              options.action === 'add'
+                ? [
+                    ...current,
+                    ...options.tags.filter((t) => !current.includes(t)),
+                  ]
+                : current.filter((l) => !options.tags.includes(l));
+
+            return anyClient.setTorrent([hash], { labels: newLabels });
+          })
+        );
+      } else {
+        // Transmission doesn't have global tag management
+        logger.warn('Transmission does not support global tag create/delete', {
+          label: 'Downloads API',
+        });
+        return false;
+      }
+    } else if (settings.client === 'deluge') {
+      logger.warn('Deluge does not support tag management', {
+        label: 'Downloads API',
+      });
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    logger.error('Failed to manage tags', {
+      label: 'Downloads API',
+      client: settings.name,
+      action: options.action,
+      error: e.message,
+    });
+    return false;
+  }
+}
+
+/**
+ * Get all tags from a download client
+ */
+export async function getTags(
+  settings: DownloadClientSettings
+): Promise<string[]> {
+  try {
+    const client = await getClient(settings);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyClient = client as any;
+
+    if (settings.client === 'qbittorrent') {
+      return await anyClient.getTags();
+    }
+
+    // Other clients don't have global tag lists
+    return [];
+  } catch (e) {
+    logger.error('Failed to get tags', {
+      label: 'Downloads API',
+      client: settings.name,
+      error: e.message,
+    });
+    return [];
   }
 }
 

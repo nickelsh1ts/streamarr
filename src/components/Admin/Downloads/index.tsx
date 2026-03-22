@@ -39,8 +39,9 @@ import { momentWithLocale } from '@app/utils/momentLocale';
 
 enum Filter {
   ALL = 'all',
-  ACTIVE = 'downloading',
+  DOWNLOADING = 'downloading',
   SEEDING = 'seeding',
+  INCOMPLETE = 'incomplete',
   COMPLETED = 'completed',
   PAUSED = 'paused',
   ERROR = 'error',
@@ -464,6 +465,12 @@ const AdminDownloads = () => {
                   <FormattedMessage
                     id="downloads.filterSeeding"
                     defaultMessage="Seeding"
+                  />
+                </option>
+                <option value="incomplete">
+                  <FormattedMessage
+                    id="downloads.filterIncomplete"
+                    defaultMessage="Incomplete"
                   />
                 </option>
                 <option value="completed">
