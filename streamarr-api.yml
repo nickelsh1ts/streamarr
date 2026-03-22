@@ -676,6 +676,7 @@ components:
         - stalled
         - moving
         - metadata
+        - incomplete
         - unknown
       example: downloading
     TorrentAction:
@@ -905,6 +906,34 @@ components:
         - clientId
         - action
         - category
+    TagActionRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID (qBittorrent for full tag support, Transmission for per-torrent labels, Deluge not supported)
+        action:
+          type: string
+          enum: [create, delete, add, remove]
+          example: add
+          description: Action to perform on tags
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['movies', 'hd']
+          description: Tag names to create/delete/add/remove
+        hashes:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: Torrent hashes (required for add and remove actions)
+      required:
+        - clientId
+        - action
+        - tags
     TestConnectionResponse:
       type: object
       properties:
@@ -4778,7 +4807,10 @@ paths:
           name: status
           schema:
             $ref: '#/components/schemas/TorrentStatus'
-          description: Filter by torrent status
+          description: >
+            Filter by torrent status. Accepts any TorrentStatus value, or
+            'incomplete' to match all non-completed/non-seeding statuses
+            (downloading, paused, stalled, queued, checking, error, moving, metadata).
         - in: query
           name: category
           schema:
@@ -4998,6 +5030,61 @@ paths:
                   success:
                     type: boolean
                     example: true
+  /downloads/tag:
+    post:
+      summary: Manage tags
+      description: |
+        Create/delete global tags, or add/remove tags from torrents.
+        - **qBittorrent**: Full support for global tags and per-torrent tag assignment
+        - **Transmission**: Supports adding/removing labels on torrents (no global tag management)
+        - **Deluge**: Not supported
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagActionRequest'
+      responses:
+        '200':
+          description: 'Tag action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/tags/{clientId}:
+    get:
+      summary: Get all tags for a client
+      description: |
+        Retrieves the list of all available tags for a download client.
+        Only supported by qBittorrent.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Tags list'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    example: ['movies', 'tv', 'music']
   /downloads/{hash}/files:
     get:
       summary: Get torrent file list
