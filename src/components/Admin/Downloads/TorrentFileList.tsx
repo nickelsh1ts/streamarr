@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { TorrentFile } from '@server/interfaces/api/downloadsInterfaces';
+import { formatBytes } from '@app/utils/numberHelper';
 import ProgressBar from '@app/components/Common/ProgressBar';
 import { FormattedMessage } from 'react-intl';
 
@@ -17,17 +18,6 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
   isUpdating = false,
 }) => {
   const [updatingFiles, setUpdatingFiles] = useState<Set<number>>(new Set());
-
-  const formatBytes = (bytes: number): string => {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    let size = bytes;
-    let unitIndex = 0;
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
-  };
 
   const getPriorityLabel = (priority: number): string => {
     if (clientType === 'deluge') {

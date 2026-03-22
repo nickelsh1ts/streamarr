@@ -98,6 +98,13 @@ export interface CategoryManagementRequest {
   savePath?: string;
 }
 
+export interface TagManagementRequest {
+  clientId: number;
+  action: 'create' | 'delete' | 'add' | 'remove';
+  tags: string[];
+  hashes?: string[];
+}
+
 export interface TorrentFile {
   name: string;
   size: number;

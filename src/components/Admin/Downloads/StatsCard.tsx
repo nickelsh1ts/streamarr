@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatBytes, formatSpeed } from '@app/utils/numberHelper';
 
 interface StatsCardProps {
   title: string;
@@ -17,26 +18,10 @@ const StatsCard: React.FC<StatsCardProps> = ({
 }) => {
   const formatValue = (val: number): string => {
     switch (format) {
-      case 'bytes': {
-        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        let size = val;
-        let unitIndex = 0;
-        while (size >= 1024 && unitIndex < units.length - 1) {
-          size /= 1024;
-          unitIndex++;
-        }
-        return `${size.toFixed(2)} ${units[unitIndex]}`;
-      }
-      case 'speed': {
-        const units = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
-        let speed = val;
-        let unitIndex = 0;
-        while (speed >= 1024 && unitIndex < units.length - 1) {
-          speed /= 1024;
-          unitIndex++;
-        }
-        return `${speed.toFixed(2)} ${units[unitIndex]}`;
-      }
+      case 'bytes':
+        return formatBytes(val);
+      case 'speed':
+        return formatSpeed(val);
       case 'number':
       default:
         return val.toLocaleString();

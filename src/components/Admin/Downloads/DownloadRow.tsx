@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
 import type {
   NormalizedDownloadItem,
   DownloadClientStats,
@@ -69,37 +70,6 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
     bottomPriority,
   } = useDownloadActions();
   const intl = useIntl();
-
-  const formatBytes = (bytes: number): string => {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    let size = bytes;
-    let unitIndex = 0;
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
-  };
-
-  const formatSpeed = (speed: number): string => {
-    if (speed === 0) return '-';
-    return `${formatBytes(speed)}/s`;
-  };
-
-  const formatEta = (seconds: number | null): string => {
-    if (!seconds || seconds <= 0) return '-';
-    if (seconds === Infinity) return '∞';
-    // qBittorrent uses 8640000 (100 days) as magic number for "no ETA"
-    if (seconds >= 8640000) return '∞';
-
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
-  };
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
@@ -299,11 +269,21 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                 </Tooltip>
               )}
             </div>
-            {torrent.category && (
-              <span className="text-xs text-neutral mt-1">
-                {torrent.category}
-              </span>
-            )}
+            <div className="flex flex-wrap gap-1 mt-1 items-center">
+              {torrent.category && (
+                <span className="text-xs text-neutral items-center mr-1">
+                  {torrent.category}
+                </span>
+              )}
+              {torrent.tags?.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-1.5 pb-0.5 text-xs font-medium text-primary"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </td>
         <td>
@@ -683,6 +663,7 @@ export default React.memo(DownloadRow, (prevProps, nextProps) => {
     prevProps.torrent.priority === nextProps.torrent.priority &&
     prevProps.torrent.category === nextProps.torrent.category &&
     prevProps.torrent.savePath === nextProps.torrent.savePath &&
+    prevProps.torrent.tags?.join(',') === nextProps.torrent.tags?.join(',') &&
     prevProps.torrent.clientName === nextProps.torrent.clientName &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.stats === nextProps.stats // Compare stats array reference
