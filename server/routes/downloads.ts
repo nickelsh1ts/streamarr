@@ -166,6 +166,12 @@ downloadsRoutes.get('/', async (req, res, next) => {
     let filteredTorrents = allTorrents;
     if (clientId !== undefined) {
       const clientIdNum = parseInt(clientId as string, 10);
+
+      if (isNaN(clientIdNum)) {
+        next({ status: 400, message: 'Invalid clientId' });
+        return;
+      }
+
       filteredTorrents = filteredTorrents.filter(
         (t) => t.clientId === clientIdNum
       );
@@ -571,6 +577,12 @@ downloadsRoutes.post('/tag', async (req, res, next) => {
 downloadsRoutes.get('/tags/:clientId', async (req, res, next) => {
   try {
     const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
     const settings = getSettings();
     const clientSettings = settings.downloads.find((c) => c.id === clientId);
 
@@ -602,6 +614,12 @@ downloadsRoutes.get('/:hash/files', async (req, res, next) => {
     }
 
     const clientIdNum = parseInt(clientId as string, 10);
+
+    if (isNaN(clientIdNum)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
     const settings = getSettings();
     const clientSettings = settings.downloads.find((c) => c.id === clientIdNum);
 
@@ -745,6 +763,12 @@ downloadsRoutes.get('/health', (_req, res) => {
 downloadsRoutes.post('/health/retry/:clientId', async (req, res, next) => {
   try {
     const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
     const settings = getSettings();
     const clientSettings = settings.downloads.find((c) => c.id === clientId);
 
