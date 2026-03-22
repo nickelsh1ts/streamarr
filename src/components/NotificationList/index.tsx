@@ -134,7 +134,6 @@ const NotificationsList = () => {
         icon: <TrashIcon className="size-7" />,
         message: e.message,
       });
-      throw e;
     } finally {
       revalidate();
     }

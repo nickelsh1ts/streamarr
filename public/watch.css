@@ -90,7 +90,7 @@ svg {
   [class*="PrePlayReviewsPage-page-"]{
     margin-left: 14rem;
   }
-  [class=*="Page-page-"] {
+  [class*="Page-page-"] {
     margin-left: 14rem;
   }
 }

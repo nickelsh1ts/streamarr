@@ -103,8 +103,19 @@ router.get('/settings/public', async (req, res) => {
 router.get('/libraries', async (req, res, next) => {
   const settings = getSettings();
 
+  const enabledLibraries = settings.plex.libraries
+    .filter((lib) => lib.enabled)
+    .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
   if (!settings.main.libraryCounts) {
-    return res.status(200).json([]);
+    return res.status(200).json(
+      enabledLibraries.map((lib) => ({
+        id: lib.id,
+        name: lib.name,
+        enabled: lib.enabled,
+        type: lib.type,
+      }))
+    );
   }
 
   const userRepository = getRepository(User);
@@ -115,10 +126,6 @@ router.get('/libraries', async (req, res, next) => {
     });
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
 
-    const enabledLibraries = settings.plex.libraries
-      .filter((lib) => lib.enabled)
-      .sort((a, b) => parseInt(a.id) - parseInt(b.id));
-
     // Get media counts for each enabled library
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {
@@ -128,6 +135,7 @@ router.get('/libraries', async (req, res, next) => {
         return {
           id: lib.id,
           name: lib.name,
+          enabled: lib.enabled,
           type: lib.type,
           mediaCount: totalSize,
         };
