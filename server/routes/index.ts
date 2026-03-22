@@ -112,6 +112,7 @@ router.get('/libraries', async (req, res, next) => {
       enabledLibraries.map((lib) => ({
         id: lib.id,
         name: lib.name,
+        enabled: lib.enabled,
         type: lib.type,
       }))
     );
@@ -134,6 +135,7 @@ router.get('/libraries', async (req, res, next) => {
         return {
           id: lib.id,
           name: lib.name,
+          enabled: lib.enabled,
           type: lib.type,
           mediaCount: totalSize,
         };
