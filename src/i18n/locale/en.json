@@ -839,6 +839,9 @@
   "downloads.addClientInstructions": {
     "defaultMessage": "Add a download client in settings to get started. Currently supports qBittorrent, Deluge, and Transmission."
   },
+  "downloads.addTag": {
+    "defaultMessage": "Add tag"
+  },
   "downloads.addTorrent": {
     "defaultMessage": "Add Torrent"
   },
@@ -914,14 +917,17 @@
   "downloads.downloadSpeed": {
     "defaultMessage": "Download Speed"
   },
+  "downloads.failedToAddTag": {
+    "defaultMessage": "Failed to add tag"
+  },
   "downloads.failedToChangeStatus": {
     "defaultMessage": "Failed to change torrent status"
   },
   "downloads.failedToForceRecheck": {
     "defaultMessage": "Failed to force recheck"
   },
-  "downloads.failedToLoadFiles": {
-    "defaultMessage": "Failed to load torrent files"
+  "downloads.failedToRemoveTag": {
+    "defaultMessage": "Failed to remove tag"
   },
   "downloads.failedToRemoveTorrent": {
     "defaultMessage": "Failed to remove torrent"
@@ -934,6 +940,9 @@
   },
   "downloads.failedToUpdateSavePath": {
     "defaultMessage": "Failed to update save path"
+  },
+  "downloads.filterIncomplete": {
+    "defaultMessage": "Incomplete"
   },
   "downloads.filterMetadata": {
     "defaultMessage": "Fetching Metadata"
@@ -1001,6 +1010,12 @@
   "downloads.removeFile": {
     "defaultMessage": "Remove file"
   },
+  "downloads.removeTag": {
+    "defaultMessage": "Remove tag"
+  },
+  "downloads.removeTagLabel": {
+    "defaultMessage": "Remove tag {tag}"
+  },
   "downloads.removeTorrent": {
     "defaultMessage": "Remove torrent"
   },
@@ -1063,6 +1078,15 @@
   },
   "downloads.statusUnknown": {
     "defaultMessage": "Unknown"
+  },
+  "downloads.tagAdded": {
+    "defaultMessage": "Tag added successfully"
+  },
+  "downloads.tagName": {
+    "defaultMessage": "Tag name"
+  },
+  "downloads.tagRemoved": {
+    "defaultMessage": "Tag removed successfully"
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
