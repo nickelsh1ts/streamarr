@@ -2,7 +2,7 @@
 import AdminTabs from '@app/components/Common/AdminTabs';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-//TODO: Add support for Huntarr and potentially Cleanuparr - investigate support for Kometa
+//TODO: Add support for Cleanuparr
 
 const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
   const intl = useIntl();
