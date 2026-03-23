@@ -16,6 +16,8 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
+//TODO: Add an activity page with usage statistics and recent actions and historical data import
+
 const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/movies/,
   /^\/admin\/tv/,
