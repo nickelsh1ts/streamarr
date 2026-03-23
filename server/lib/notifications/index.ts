@@ -4,6 +4,8 @@ import type { NotificationAgent, NotificationPayload } from './agents/agent';
 import type { User } from '@server/entity/User';
 import { NotificationType } from '@server/constants/notification';
 
+//TODO: Update notification templates and implement new notification types as needed
+
 export const hasNotificationType = (
   types: NotificationType | NotificationType[],
   value: number

@@ -11,6 +11,8 @@ import { useParams, usePathname } from 'next/navigation';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
+//TODO: Add a Linked Accounts page for users to link their accounts with external services and manage those connections
+
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
   const intl = useIntl();
   const settings = useSettings();

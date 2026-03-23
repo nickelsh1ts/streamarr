@@ -35,6 +35,8 @@ import useSettings from '@app/hooks/useSettings';
 import Alert from '@app/components/Common/Alert';
 import { momentWithLocale } from '@app/utils/momentLocale';
 
+//TODO: Add support for invite duration (auto-access removal after a certain time period)
+
 enum Filter {
   ALL = 'all',
   ACTIVE = 'active',
