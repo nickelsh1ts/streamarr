@@ -5,9 +5,12 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
-  packages: write
 
 jobs:
   release:
@@ -33,7 +36,7 @@ jobs:
         run: yarn
       - name: Release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -42,6 +45,9 @@ jobs:
     needs: release
     if: needs.release.outputs.new_release_published == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -62,6 +68,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get commit SHA
+        id: commit
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
@@ -70,7 +79,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            COMMIT_TAG=${{ github.sha }}
+            COMMIT_TAG=${{ steps.commit.outputs.sha }}
           tags: |
             nickelsh1ts/streamarr:latest
             nickelsh1ts/streamarr:${{ needs.release.outputs.new_release_version }}
@@ -80,7 +89,7 @@ jobs:
   discord:
     name: Send Discord Notification
     needs: [release, build_and_push]
-    if: always()
+    if: always() && (needs.release.outputs.new_release_published == 'true' || needs.release.result == 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Get Build Job Status
