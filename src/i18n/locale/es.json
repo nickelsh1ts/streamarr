@@ -850,6 +850,9 @@
   "downloads.addClientInstructions": {
     "defaultMessage": "Añade un cliente de descarga en la configuración para comenzar. Actualmente soporta qBittorrent, Deluge y Transmission."
   },
+  "downloads.addTag": {
+    "defaultMessage": "Añadir etiqueta"
+  },
   "downloads.addTorrent": {
     "defaultMessage": "Añadir Torrent"
   },
@@ -925,14 +928,17 @@
   "downloads.downloadSpeed": {
     "defaultMessage": "Velocidad de Descarga"
   },
+  "downloads.failedToAddTag": {
+    "defaultMessage": "Error al añadir etiqueta"
+  },
   "downloads.failedToChangeStatus": {
     "defaultMessage": "Error al cambiar el estado del torrent"
   },
   "downloads.failedToForceRecheck": {
     "defaultMessage": "Error al forzar reverificación"
   },
-  "downloads.failedToLoadFiles": {
-    "defaultMessage": "Error al cargar archivos del torrent"
+  "downloads.failedToRemoveTag": {
+    "defaultMessage": "Error al eliminar etiqueta"
   },
   "downloads.failedToRemoveTorrent": {
     "defaultMessage": "Error al eliminar torrent"
@@ -945,6 +951,9 @@
   },
   "downloads.failedToUpdateSavePath": {
     "defaultMessage": "Error al actualizar ruta de guardado"
+  },
+  "downloads.filterIncomplete": {
+    "defaultMessage": "Incompleto"
   },
   "downloads.filterMetadata": {
     "defaultMessage": "Obteniendo Metadatos"
@@ -1012,6 +1021,12 @@
   "downloads.removeFile": {
     "defaultMessage": "Eliminar archivo"
   },
+  "downloads.removeTag": {
+    "defaultMessage": "Eliminar etiqueta"
+  },
+  "downloads.removeTagLabel": {
+    "defaultMessage": "Eliminar etiqueta {tag}"
+  },
   "downloads.removeTorrent": {
     "defaultMessage": "Eliminar torrent"
   },
@@ -1074,6 +1089,15 @@
   },
   "downloads.statusUnknown": {
     "defaultMessage": "Desconocido"
+  },
+  "downloads.tagAdded": {
+    "defaultMessage": "Etiqueta añadida exitosamente"
+  },
+  "downloads.tagName": {
+    "defaultMessage": "Nombre de etiqueta"
+  },
+  "downloads.tagRemoved": {
+    "defaultMessage": "Etiqueta eliminada exitosamente"
   },
   "downloads.tags": {
     "defaultMessage": "Etiquetas"
@@ -1279,6 +1303,12 @@
   },
   "generalSettings.extendedHome.label": {
     "defaultMessage": "Habilitar Página de Inicio Extendida"
+  },
+  "generalSettings.libraryCounts.description": {
+    "defaultMessage": "Mostrar la cantidad de elementos en cada biblioteca en la página de inicio"
+  },
+  "generalSettings.libraryCounts.label": {
+    "defaultMessage": "Mostrar Conteo de Bibliotecas"
   },
   "generalSettings.logo.uploadError": {
     "defaultMessage": "Error al subir los logos"
@@ -1651,6 +1681,9 @@
   "library.photos": {
     "defaultMessage": "Fotos"
   },
+  "library.playlists": {
+    "defaultMessage": "Listas de Reproducción"
+  },
   "library.watchlist": {
     "defaultMessage": "Lista de Reproducción"
   },
@@ -1921,8 +1954,20 @@
   "plexSettings.connectionSuccess": {
     "defaultMessage": "¡Conexión con Plex establecida exitosamente!"
   },
+  "plexSettings.defaultPivot": {
+    "defaultMessage": "Vista Predeterminada de Biblioteca"
+  },
+  "plexSettings.defaultPivotTip": {
+    "defaultMessage": "La vista predeterminada cuando se selecciona una biblioteca"
+  },
   "plexSettings.description": {
     "defaultMessage": "Configura los ajustes para tu servidor Plex. Streamarr escanea tus bibliotecas de Plex para generar menús y compartir con usuarios invitados."
+  },
+  "plexSettings.enablePlaylists": {
+    "defaultMessage": "Habilitar Listas de Reproducción"
+  },
+  "plexSettings.enablePlaylistsTip": {
+    "defaultMessage": "Mostrar un elemento de menú y opción de vista de Listas de Reproducción"
   },
   "plexSettings.libraries.description": {
     "defaultMessage": "Las bibliotecas que Streamarr usará. Configura y guarda tus ajustes de conexión de Plex, luego haz clic en el botón de abajo si no aparecen bibliotecas listadas."
@@ -1944,6 +1989,15 @@
   },
   "plexSettings.manualConfiguration": {
     "defaultMessage": "Configuración manual"
+  },
+  "plexSettings.pivot.categories": {
+    "defaultMessage": "Categorías"
+  },
+  "plexSettings.pivot.collections": {
+    "defaultMessage": "Colecciones"
+  },
+  "plexSettings.pivot.library": {
+    "defaultMessage": "Biblioteca"
   },
   "plexSettings.remote": {
     "defaultMessage": "remoto"

@@ -17,6 +17,7 @@ const defaultSettings: PublicSettingsResponse = {
   supportUrl: '',
   supportEmail: '',
   extendedHome: true,
+  libraryCounts: true,
   enableSignUp: false,
   statusUrl: '',
   statusEnabled: false,

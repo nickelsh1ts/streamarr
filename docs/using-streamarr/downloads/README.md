@@ -36,6 +36,22 @@ Configure download clients in **Settings → Downloads**.
 4. Click **Test** to verify connection
 5. Click **Save**
 
+### Connection Testing
+
+When you open the Downloads settings page, Streamarr automatically tests the connection to each configured download client. Each client displays a status badge:
+
+| Status           | Badge Color | Description                                    |
+| ---------------- | ----------- | ---------------------------------------------- |
+| **Testing...**   | Yellow      | Connection test in progress                    |
+| **Connected**    | Green       | Client is reachable and authenticated          |
+| **Disconnected** | Red         | Client is unreachable or authentication failed |
+
+After the initial test completes, a **retest button** (↻) appears next to the status badge. Click it to manually re-check the connection at any time.
+
+{% hint style="info" %}
+All configured clients are tested in parallel on page load for faster feedback. You can also test a new client before saving by clicking the **Test** button in the add/edit form.
+{% endhint %}
+
 ### Client-Specific Setup
 
 {% tabs %}
@@ -104,14 +120,18 @@ For each torrent:
 | **Speed**    | Download/upload speed                              |
 | **ETA**      | Estimated time to completion                       |
 | **Client**   | Which client this torrent belongs to               |
+| **Tags**     | Tags/labels assigned to the torrent                |
 
 ### Filtering
 
 Filter torrents by:
 
 - **Client** — Show torrents from specific clients
-- **Status** — Downloading, seeding, paused, completed
-- **Search** — Search by torrent name
+- **Status** — Downloading, seeding, paused, completed, incomplete
+
+{% hint style="info" %}
+The **Incomplete** status filter is a composite filter that matches all non-finished states: downloading, paused, stalled, queued, checking, error, moving, and metadata.
+{% endhint %}
 
 ### Sorting
 
@@ -164,6 +184,46 @@ If direct torrent adding is supported:
 3. Select destination client
 4. Configure options (category, save path)
 5. Click **Add**
+
+---
+
+## Tags
+
+Streamarr supports tag management for organizing torrents. Tag support varies by client:
+
+| Client           | Tag Support                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| **qBittorrent**  | Full support — create, delete, add, and remove tags               |
+| **Transmission** | Per-torrent labels (shown as tags; multiple labels per torrent)   |
+| **Deluge**       | Not supported                                                     |
+
+### Managing Tags
+
+1. Open a torrent's detail view
+2. Click the **+** button next to the Tags field
+3. Type a new tag name or select from existing tags (qBittorrent only)
+4. Press **Enter** or click the checkmark to add
+5. Click the **×** on a tag to remove it
+
+### Tag Actions (qBittorrent)
+
+| Action     | Description                                 |
+| ---------- | ------------------------------------------- |
+| **Create** | Create a new tag on the client              |
+| **Delete** | Delete a tag from the client entirely       |
+| **Add**    | Add an existing tag to one or more torrents |
+| **Remove** | Remove a tag from one or more torrents      |
+
+{% hint style="info" %}
+For qBittorrent, when you add a new tag that doesn't exist on the client, Streamarr automatically creates it first.
+{% endhint %}
+
+### Tag API
+
+| Endpoint                           | Method | Description                            |
+| ---------------------------------- | ------ | -------------------------------------- |
+| `/api/v1/downloads/tag`            | POST   | Manage tags (create/delete/add/remove) |
+| `/api/v1/downloads/tags/:clientId` | GET    | Get all tags for a specific client     |
 
 ---
 

@@ -1,6 +1,7 @@
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import TautulliAPI from '@server/api/tautulli';
+import GithubAPI from '@server/api/github';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import { getRepository } from '@server/datasource';
@@ -985,6 +986,23 @@ settingsRoutes.get('/about', async (req, res) => {
     tz: process.env.TZ,
     appDataPath: appDataPath(),
   } as SettingsAboutResponse);
+});
+
+settingsRoutes.get('/releases', async (_req, res, next) => {
+  try {
+    const githubApi = new GithubAPI();
+    const releases = await githubApi.getStreamarrReleases();
+    res.status(200).json(releases);
+  } catch (e) {
+    logger.error('Failed to retrieve releases from GitHub', {
+      label: 'Settings',
+      errorMessage: e.message,
+    });
+    next({
+      status: 500,
+      message: 'Unable to retrieve releases from GitHub.',
+    });
+  }
 });
 
 settingsRoutes.get(

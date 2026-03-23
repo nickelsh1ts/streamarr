@@ -315,6 +315,7 @@ const InviteList = () => {
               <select
                 id="filter"
                 name="filter"
+                data-testid="invite-filter-select"
                 value={currentFilter}
                 onChange={(e) => {
                   setCurrentFilter(e.target.value as Filter);
@@ -357,6 +358,7 @@ const InviteList = () => {
               <select
                 id="sort"
                 name="sort"
+                data-testid="invite-sort-select"
                 onChange={(e) => {
                   setCurrentSort(e.target.value as Sort);
                 }}
@@ -381,6 +383,7 @@ const InviteList = () => {
               buttonSize="sm"
               buttonType="primary"
               data-tutorial="create-invite-btn"
+              data-testid="create-invite-button"
               onClick={() => setEditInviteModal({ show: true, Invite: null })}
               disabled={
                 (quota?.invite.limit === -1

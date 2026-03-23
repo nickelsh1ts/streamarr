@@ -72,6 +72,10 @@ interface PlexMetadataResponse {
   MediaContainer: { Metadata: PlexMetadata[] };
 }
 
+interface PlexPlaylistsResponse {
+  MediaContainer: { size?: number };
+}
+
 class PlexAPI {
   private plexClient: NodePlexAPI;
   private cache: NodeCache;
@@ -284,6 +288,30 @@ class PlexAPI {
         errorMessage: e instanceof Error ? e.message : String(e),
       });
       throw new Error('Failed to fetch Plex recently added');
+    }
+  }
+
+  public async libraryHasPlaylists(sectionId: string): Promise<boolean> {
+    const cacheKey = `plex:libraryHasPlaylists:${sectionId}`;
+    const cached = this.cache.get<boolean>(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    try {
+      const response = await this.plexClient.query<PlexPlaylistsResponse>(
+        `/playlists?sectionID=${sectionId}`
+      );
+      const hasPlaylists = (response.MediaContainer.size ?? 0) > 0;
+      this.cache.set(cacheKey, hasPlaylists, 300);
+      return hasPlaylists;
+    } catch (e) {
+      logger.error('Failed to check playlists for library', {
+        label: 'Plex API',
+        sectionId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      return false;
     }
   }
 }

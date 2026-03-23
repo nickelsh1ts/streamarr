@@ -132,6 +132,7 @@ const Schedule = () => {
             <select
               id="filter"
               name="filter"
+              data-testid="schedule-filter-select"
               onChange={(e) => {
                 setCurrentFilter(e.target.value as Filter);
               }}

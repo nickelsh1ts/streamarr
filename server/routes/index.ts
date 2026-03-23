@@ -102,6 +102,22 @@ router.get('/settings/public', async (req, res) => {
 
 router.get('/libraries', async (req, res, next) => {
   const settings = getSettings();
+
+  const enabledLibraries = settings.plex.libraries
+    .filter((lib) => lib.enabled)
+    .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+  if (!settings.main.libraryCounts) {
+    return res.status(200).json(
+      enabledLibraries.map((lib) => ({
+        id: lib.id,
+        name: lib.name,
+        enabled: lib.enabled,
+        type: lib.type,
+      }))
+    );
+  }
+
   const userRepository = getRepository(User);
   try {
     const admin = await userRepository.findOneOrFail({
@@ -109,10 +125,6 @@ router.get('/libraries', async (req, res, next) => {
       where: { id: 1 },
     });
     const plexApi = new PlexAPI({ plexToken: admin.plexToken });
-
-    const enabledLibraries = settings.plex.libraries
-      .filter((lib) => lib.enabled)
-      .sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
     // Get media counts for each enabled library
     const results = await Promise.all(
@@ -123,6 +135,7 @@ router.get('/libraries', async (req, res, next) => {
         return {
           id: lib.id,
           name: lib.name,
+          enabled: lib.enabled,
           type: lib.type,
           mediaCount: totalSize,
         };
@@ -188,7 +201,12 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           requestedLibs.includes(lib.id)
         );
       } else {
-        res.status(200).json([]);
+        res.status(200).json({
+          machineId: settings.plex.machineId ?? '',
+          enablePlaylists: settings.plex.enablePlaylists ?? false,
+          defaultPivot: settings.plex.defaultPivot ?? 'library',
+          libraries: [],
+        });
         return;
       }
     }
@@ -215,9 +233,12 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
     // Build library links with proper Plex URLs
     const results = await Promise.all(
       enabledLibraries.map(async (lib) => {
-        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
-          size: 0,
-        });
+        const [{ totalSize }, hasPlaylists] = await Promise.all([
+          plexApi.getLibraryContents(lib.id, { size: 0 }),
+          settings.plex.enablePlaylists
+            ? plexApi.libraryHasPlaylists(lib.id)
+            : Promise.resolve(false),
+        ]);
 
         const plexUrl = `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=${lib.id}`;
         const regExp = `source=${lib.id}&`;
@@ -229,11 +250,17 @@ router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
           mediaCount: totalSize,
           href: plexUrl,
           regExp: regExp,
+          hasPlaylists,
         };
       })
     );
 
-    res.status(200).json(results);
+    res.status(200).json({
+      machineId: machineId ?? '',
+      enablePlaylists: settings.plex.enablePlaylists ?? false,
+      defaultPivot: settings.plex.defaultPivot ?? 'library',
+      libraries: results,
+    });
   } catch (e) {
     logger.error('Something went wrong getting plex library links', {
       label: 'API',

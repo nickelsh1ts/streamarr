@@ -17,14 +17,13 @@ import type { NotificationResultsResponse } from '@server/interfaces/api/notific
 import { useUser } from '@app/hooks/useUser';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import axios from 'axios';
-import Toast from '@app/components/Toast';
+import Toast, { type ToastType } from '@app/components/Toast';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
 import Button from '@app/components/Common/Button';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
 import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
 import { NotificationSeverity } from '@server/constants/notification';
-import type { ToastType } from '@app/components/Toast';
 
 export const getToastType = (severity: NotificationSeverity): ToastType => {
   switch (severity) {
@@ -97,6 +96,7 @@ const Notifications = () => {
         icon: <TrashIcon className="size-7" />,
         message: e.response?.data?.message || e.message,
       });
+      throw e;
     } finally {
       revalidate(
         (key) => typeof key === 'string' && key.includes('/notifications')

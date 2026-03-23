@@ -270,6 +270,10 @@ components:
           type: string
           description: Regular expression pattern for URL matching
           example: '(?=(\\/(.*)=\\1&pivot))'
+        hasPlaylists:
+          type: boolean
+          description: Whether this library has items in at least one playlist
+          example: true
       required:
         - id
         - name
@@ -277,6 +281,7 @@ components:
         - mediaCount
         - href
         - regExp
+        - hasPlaylists
     PlexSettings:
       type: object
       properties:
@@ -302,6 +307,15 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/PlexLibrary'
+        enablePlaylists:
+          type: boolean
+          description: Whether playlists menu item and pivot option are enabled
+          example: false
+        defaultPivot:
+          type: string
+          description: The default pivot view when a library is selected
+          enum: [library, collections, categories]
+          example: 'library'
       required:
         - name
         - machineId
@@ -662,6 +676,7 @@ components:
         - stalled
         - moving
         - metadata
+        - incomplete
         - unknown
       example: downloading
     TorrentAction:
@@ -891,6 +906,34 @@ components:
         - clientId
         - action
         - category
+    TagActionRequest:
+      type: object
+      properties:
+        clientId:
+          type: number
+          example: 0
+          description: Download client ID (qBittorrent for full tag support, Transmission for per-torrent labels, Deluge not supported)
+        action:
+          type: string
+          enum: [create, delete, add, remove]
+          example: add
+          description: Action to perform on tags
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['movies', 'hd']
+          description: Tag names to create/delete/add/remove
+        hashes:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: Torrent hashes (required for add and remove actions)
+      required:
+        - clientId
+        - action
+        - tags
     TestConnectionResponse:
       type: object
       properties:
@@ -3078,13 +3121,34 @@ paths:
             default: id
       responses:
         '200':
-          description: List of library links
+          description: Library links with metadata
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LibraryLink'
+                type: object
+                properties:
+                  machineId:
+                    type: string
+                    description: The Plex server machine identifier
+                    example: '65c8e6766fed4f8450771fbc9a6a9081c6ed698d'
+                  enablePlaylists:
+                    type: boolean
+                    description: Whether playlists are enabled
+                    example: false
+                  defaultPivot:
+                    type: string
+                    description: The admin-configured default pivot view
+                    enum: [library, collections, categories]
+                    example: 'library'
+                  libraries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LibraryLink'
+                required:
+                  - machineId
+                  - enablePlaylists
+                  - defaultPivot
+                  - libraries
         '401':
           description: Unauthorized - user not authenticated
         '500':
@@ -3472,6 +3536,62 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
+  /settings/releases:
+    get:
+      summary: Get GitHub releases
+      description: Returns a list of Streamarr releases from GitHub, served through the server-side cache. Requires admin authentication.
+      tags:
+        - settings
+      security:
+        - cookieAuth: []
+        - apiKey: []
+      responses:
+        '200':
+          description: List of releases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    assets_url:
+                      type: string
+                    upload_url:
+                      type: string
+                    html_url:
+                      type: string
+                    id:
+                      type: number
+                    node_id:
+                      type: string
+                    tag_name:
+                      type: string
+                    target_commitish:
+                      type: string
+                    name:
+                      type: string
+                    draft:
+                      type: boolean
+                    prerelease:
+                      type: boolean
+                    created_at:
+                      type: string
+                    published_at:
+                      type: string
+                    tarball_url:
+                      type: string
+                    zipball_url:
+                      type: string
+                    body:
+                      type: string
+                  additionalProperties: true
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - user lacks admin permission
   /settings/restart-required:
     get:
       summary: Check if server restart is required
@@ -4687,7 +4807,10 @@ paths:
           name: status
           schema:
             $ref: '#/components/schemas/TorrentStatus'
-          description: Filter by torrent status
+          description: >
+            Filter by torrent status. Accepts any TorrentStatus value, or
+            'incomplete' to match all non-completed/non-seeding statuses
+            (downloading, paused, stalled, queued, checking, error, moving, metadata).
         - in: query
           name: category
           schema:
@@ -4907,6 +5030,61 @@ paths:
                   success:
                     type: boolean
                     example: true
+  /downloads/tag:
+    post:
+      summary: Manage tags
+      description: |
+        Create/delete global tags, or add/remove tags from torrents.
+        - **qBittorrent**: Full support for global tags and per-torrent tag assignment
+        - **Transmission**: Supports adding/removing labels on torrents (no global tag management)
+        - **Deluge**: Not supported
+      tags:
+        - downloads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagActionRequest'
+      responses:
+        '200':
+          description: 'Tag action performed successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /downloads/tags/{clientId}:
+    get:
+      summary: Get all tags for a client
+      description: |
+        Retrieves the list of all available tags for a download client.
+        Only supported by qBittorrent.
+      tags:
+        - downloads
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: integer
+          description: Download client ID
+      responses:
+        '200':
+          description: 'Tags list'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    example: ['movies', 'tv', 'music']
   /downloads/{hash}/files:
     get:
       summary: Get torrent file list

@@ -1,15 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
 import Modal from '@app/components/Common/Modal';
 import Alert from '@app/components/Common/Alert';
 import type {
   NormalizedDownloadItem,
-  TorrentFile,
   DownloadClientStats,
 } from '@server/interfaces/api/downloadsInterfaces';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ProgressBar from '@app/components/Common/ProgressBar';
 import { momentWithLocale } from '@app/utils/momentLocale';
-import { useDownloadActions } from '@app/hooks/useDownloads';
+import {
+  useDownloadActions,
+  useTorrentFiles,
+  useClientTags,
+} from '@app/hooks/useDownloads';
 import EditableField from './EditableField';
 import TorrentFileList from './TorrentFileList';
 import RemoveTorrentModal from './RemoveTorrentModal';
@@ -19,6 +23,9 @@ import {
   CheckBadgeIcon,
   ChevronDownIcon,
   XCircleIcon,
+  PlusIcon,
+  XMarkIcon,
+  CheckCircleIcon,
 } from '@heroicons/react/24/solid';
 
 interface TorrentDetailsModalProps {
@@ -37,11 +44,25 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   stats = [],
 }) => {
   const intl = useIntl();
-  const [files, setFiles] = useState<TorrentFile[]>([]);
-  const [isLoadingFiles, setIsLoadingFiles] = useState(false);
-  const [filesLoaded, setFilesLoaded] = useState(false);
+  const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [newTagInput, setNewTagInput] = useState('');
+  const [showTagInput, setShowTagInput] = useState(false);
+
+  // Reset transient state when modal closes or torrent changes
+  useEffect(() => {
+    if (!isOpen) {
+      setShouldLoadFiles(false);
+      setShowTagInput(false);
+      setNewTagInput('');
+    }
+  }, [isOpen, torrent?.hash]);
+
+  const supportsGlobalTags = torrent?.clientType === 'qbittorrent';
+  const supportsTags =
+    torrent?.clientType === 'qbittorrent' ||
+    torrent?.clientType === 'transmission';
 
   const isStale = useMemo(() => {
     if (!torrent) return false;
@@ -50,73 +71,31 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   }, [stats, torrent]);
 
   const {
+    files,
+    isLoading: isLoadingFiles,
+    mutate: mutateFiles,
+  } = useTorrentFiles(
+    torrent?.hash ?? null,
+    torrent?.clientId ?? null,
+    shouldLoadFiles
+  );
+
+  const { tags: availableTags, mutate: mutateTags } = useClientTags(
+    torrent?.clientId ?? null,
+    showTagInput && !!supportsGlobalTags
+  );
+
+  const {
     pause,
     resume,
     forceRecheck,
     remove,
-    getTorrentFiles,
     updateTorrent,
     setFilePriority,
+    manageTags,
   } = useDownloadActions();
 
   if (!torrent) return null;
-
-  const formatBytes = (bytes: number): string => {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    let size = bytes;
-    let unitIndex = 0;
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
-  };
-
-  const formatSpeed = (speed: number): string => {
-    if (speed === 0) return '-';
-    return `${formatBytes(speed)}/s`;
-  };
-
-  const formatEta = (seconds: number | null): string => {
-    if (!seconds || seconds <= 0) return '-';
-    if (seconds === Infinity) return '∞';
-    // qBittorrent uses 8640000 (100 days) as magic number for "no ETA"
-    if (seconds >= 8640000) return '∞';
-
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    if (days > 0) {
-      return `${days}d ${hours}h ${minutes}m`;
-    }
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
-  };
-
-  const loadFiles = async () => {
-    if (!torrent || filesLoaded) return;
-
-    setIsLoadingFiles(true);
-    try {
-      const fileList = await getTorrentFiles(torrent.hash, torrent.clientId);
-      setFiles(fileList);
-      setFilesLoaded(true);
-    } catch {
-      Toast({
-        type: 'error',
-        message: intl.formatMessage({
-          id: 'downloads.failedToLoadFiles',
-          defaultMessage: 'Failed to load torrent files',
-        }),
-        icon: <XCircleIcon className="size-7" />,
-      });
-    } finally {
-      setIsLoadingFiles(false);
-    }
-  };
 
   const handleSaveCategory = async (newCategory: string) => {
     if (!torrent) return;
@@ -174,6 +153,85 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
     }
   };
 
+  const handleAddTag = async (tag: string) => {
+    if (!torrent || !tag.trim()) return;
+
+    try {
+      // For qBittorrent, create the tag first if it doesn't exist
+      if (supportsGlobalTags && !availableTags.includes(tag.trim())) {
+        await manageTags({
+          clientId: torrent.clientId,
+          action: 'create',
+          tags: [tag.trim()],
+        });
+      }
+
+      await manageTags({
+        clientId: torrent.clientId,
+        action: 'add',
+        tags: [tag.trim()],
+        hashes: [torrent.hash],
+      });
+
+      Toast({
+        type: 'success',
+        message: intl.formatMessage({
+          id: 'downloads.tagAdded',
+          defaultMessage: 'Tag added successfully',
+        }),
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+      setNewTagInput('');
+      setShowTagInput(false);
+      onRefresh?.();
+      // Refresh available tags list
+      if (supportsGlobalTags) {
+        mutateTags();
+      }
+    } catch {
+      Toast({
+        type: 'error',
+        message: intl.formatMessage({
+          id: 'downloads.failedToAddTag',
+          defaultMessage: 'Failed to add tag',
+        }),
+        icon: <XCircleIcon className="size-7" />,
+      });
+    }
+  };
+
+  const handleRemoveTag = async (tag: string) => {
+    if (!torrent) return;
+
+    try {
+      await manageTags({
+        clientId: torrent.clientId,
+        action: 'remove',
+        tags: [tag],
+        hashes: [torrent.hash],
+      });
+
+      Toast({
+        type: 'success',
+        message: intl.formatMessage({
+          id: 'downloads.tagRemoved',
+          defaultMessage: 'Tag removed successfully',
+        }),
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+      onRefresh?.();
+    } catch {
+      Toast({
+        type: 'error',
+        message: intl.formatMessage({
+          id: 'downloads.failedToRemoveTag',
+          defaultMessage: 'Failed to remove tag',
+        }),
+        icon: <XCircleIcon className="size-7" />,
+      });
+    }
+  };
+
   const handleSetFilePriority = async (fileIds: number[], priority: number) => {
     if (!torrent) return;
 
@@ -187,8 +245,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
       }
 
       // Reload files to get updated priorities
-      const fileList = await getTorrentFiles(torrent.hash, torrent.clientId);
-      setFiles(fileList);
+      mutateFiles();
     } catch {
       Toast({
         type: 'error',
@@ -421,16 +478,111 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   </div>
                 </div>
               )}
-              {torrent.tags && torrent.tags.length > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-neutral">
+              {supportsTags && (
+                <div className="flex items-start justify-between">
+                  <span className="text-neutral mt-0.5">
                     <FormattedMessage
                       id="downloads.tags"
                       defaultMessage="Tags"
                     />
                     :
                   </span>
-                  <span className="font-medium">{torrent.tags.join(', ')}</span>
+                  <div className="flex flex-wrap items-center gap-1.5 ml-4 justify-end">
+                    {torrent.tags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-sm font-medium text-primary"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="hover:text-error transition-colors"
+                          title={intl.formatMessage({
+                            id: 'downloads.removeTag',
+                            defaultMessage: 'Remove tag',
+                          })}
+                          aria-label={intl.formatMessage(
+                            {
+                              id: 'downloads.removeTagLabel',
+                              defaultMessage: 'Remove tag {tag}',
+                            },
+                            {
+                              tag,
+                            }
+                          )}
+                        >
+                          <XMarkIcon className="size-4" />
+                        </button>
+                      </span>
+                    ))}
+                    {showTagInput ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          id="tags-input"
+                          value={newTagInput}
+                          onChange={(e) => setNewTagInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newTagInput.trim()) {
+                              handleAddTag(newTagInput);
+                            } else if (e.key === 'Escape') {
+                              setShowTagInput(false);
+                              setNewTagInput('');
+                            }
+                          }}
+                          list="available-tags"
+                          placeholder={intl.formatMessage({
+                            id: 'downloads.tagName',
+                            defaultMessage: 'Tag name',
+                          })}
+                          className="input input-sm input-primary w-36"
+                          autoFocus
+                        />
+                        {supportsGlobalTags && availableTags.length > 0 && (
+                          <datalist id="available-tags">
+                            {availableTags
+                              .filter((t) => !torrent.tags?.includes(t))
+                              .map((t) => (
+                                <option key={t} value={t} />
+                              ))}
+                          </datalist>
+                        )}
+                        <button
+                          onClick={() => {
+                            if (newTagInput.trim()) {
+                              handleAddTag(newTagInput);
+                            }
+                          }}
+                          className="btn btn-xs btn-ghost btn-circle"
+                        >
+                          <CheckCircleIcon className="size-4 text-success" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowTagInput(false);
+                            setNewTagInput('');
+                          }}
+                          className="btn btn-xs btn-ghost btn-circle"
+                        >
+                          <XMarkIcon className="size-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setShowTagInput(true);
+                        }}
+                        className="btn btn-xs btn-ghost btn-circle"
+                        title={intl.formatMessage({
+                          id: 'downloads.addTag',
+                          defaultMessage: 'Add tag',
+                        })}
+                      >
+                        <PlusIcon className="size-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -564,8 +716,8 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   <button
                     onClick={() => {
                       handleClick(0);
-                      if (!filesLoaded && !isLoadingFiles) {
-                        loadFiles();
+                      if (!shouldLoadFiles) {
+                        setShouldLoadFiles(true);
                       }
                     }}
                     className={`flex items-center justify-between w-full text-lg font-semibold mb-1 bg-base-200 hover:text-primary hover:bg-base-300 transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} py-1 px-2`}

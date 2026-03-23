@@ -151,30 +151,32 @@ export default function Hero() {
               </div>
             </form>
           )}
-          <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
-            {mediaLibraries ? (
-              mediaLibraries.length > 0 && (
-                <>
-                  {mediaLibraries.slice(0, 4).map((lib) => (
-                    <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
-                      <span className="font-bold">{lib.name} </span>{' '}
-                      {lib.mediaCount}
-                    </p>
-                  ))}
-                  {mediaLibraries.length > 4 && (
-                    <p className="first:pl-0 pl-4 font-bold">
-                      <FormattedMessage
-                        id="hero.more"
-                        defaultMessage="+ more"
-                      />
-                    </p>
-                  )}
-                </>
-              )
-            ) : (
-              <LoadingEllipsis />
-            )}
-          </div>
+          {currentSettings.libraryCounts && (
+            <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
+              {mediaLibraries ? (
+                mediaLibraries.length > 0 && (
+                  <>
+                    {mediaLibraries.slice(0, 4).map((lib) => (
+                      <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
+                        <span className="font-bold">{lib.name} </span>{' '}
+                        {lib.mediaCount}
+                      </p>
+                    ))}
+                    {mediaLibraries.length > 4 && (
+                      <p className="first:pl-0 pl-4 font-bold">
+                        <FormattedMessage
+                          id="hero.more"
+                          defaultMessage="+ more"
+                        />
+                      </p>
+                    )}
+                  </>
+                )
+              ) : (
+                <LoadingEllipsis />
+              )}
+            </div>
+          )}
         </div>
         <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">
           {currentSettings.extendedHome && (

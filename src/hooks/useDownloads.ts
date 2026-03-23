@@ -5,6 +5,8 @@ import type {
   DownloadsResponse,
   TorrentActionRequest,
   AddTorrentRequest,
+  TagManagementRequest,
+  TorrentFile,
 } from '@server/interfaces/api/downloadsInterfaces';
 
 interface UseDownloadsOptions {
@@ -255,6 +257,22 @@ export const useDownloadActions = () => {
     return response.data;
   }, []);
 
+  const manageTags = useCallback(async (options: TagManagementRequest) => {
+    const response = await axios.post('/api/v1/downloads/tag', options);
+
+    const { mutate } = await import('swr');
+    mutate(
+      (key) => typeof key === 'string' && key.startsWith('/api/v1/downloads')
+    );
+
+    return response.data;
+  }, []);
+
+  const getClientTags = useCallback(async (clientId: number) => {
+    const response = await axios.get(`/api/v1/downloads/tags/${clientId}`);
+    return response.data.tags as string[];
+  }, []);
+
   return {
     pause,
     resume,
@@ -270,5 +288,47 @@ export const useDownloadActions = () => {
     setFilePriority,
     performBulkAction,
     retryClient,
+    manageTags,
+    getClientTags,
+  };
+};
+
+export const useTorrentFiles = (
+  hash: string | null,
+  clientId: number | null,
+  enabled = false
+) => {
+  const { data, error, isLoading, mutate } = useSWR<TorrentFile[]>(
+    enabled && hash && clientId !== null
+      ? `/api/v1/downloads/${hash}/files?clientId=${clientId}`
+      : null,
+    async (url: string) => {
+      const response = await axios.get(url);
+      return response.data.files;
+    }
+  );
+
+  return {
+    files: data ?? [],
+    isLoading,
+    error: error ?? null,
+    mutate,
+  };
+};
+
+export const useClientTags = (clientId: number | null, enabled = false) => {
+  const { data, error, isLoading, mutate } = useSWR<string[]>(
+    enabled && clientId !== null ? `/api/v1/downloads/tags/${clientId}` : null,
+    async (url: string) => {
+      const response = await axios.get(url);
+      return response.data.tags as string[];
+    }
+  );
+
+  return {
+    tags: data ?? [],
+    isLoading,
+    error: error ?? null,
+    mutate,
   };
 };

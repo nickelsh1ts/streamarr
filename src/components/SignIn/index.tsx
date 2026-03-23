@@ -86,6 +86,7 @@ const SignIn = () => {
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
+                data-testid="signin-plex-accordion-toggle"
                 onClick={() => handleClick(0)}
               >
                 <FormattedMessage
@@ -122,6 +123,7 @@ const SignIn = () => {
                         ? 'text-primary-content cursor-not-allowed'
                         : 'rounded-b-lg'
                     }`}
+                    data-testid="signin-local-accordion-toggle"
                     onClick={() => handleClick(1)}
                   >
                     <FormattedMessage

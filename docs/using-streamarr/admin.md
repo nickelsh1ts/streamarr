@@ -105,6 +105,7 @@ Configure core application settings:
 - Application title and URL
 - Proxy and CSRF settings
 - Image caching
+- Library counts display
 - Custom logos and theming
 
 ### Plex Settings
@@ -113,6 +114,7 @@ Manage your Plex server connection:
 
 - Server hostname/IP and port
 - Library selection
+- Playlist support and default library view
 - User import from Plex
 
 ### Service Settings

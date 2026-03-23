@@ -6,6 +6,8 @@ import {
   performTorrentAction,
   addTorrent,
   manageCategory,
+  manageTag,
+  getTags,
   normalizeTorrent,
   getTorrentFiles,
   updateTorrentMetadata,
@@ -24,6 +26,7 @@ import type {
   TorrentActionRequest,
   AddTorrentRequest,
   CategoryManagementRequest,
+  TagManagementRequest,
   UpdateTorrentRequest,
   SetFilePriorityRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
@@ -163,6 +166,12 @@ downloadsRoutes.get('/', async (req, res, next) => {
     let filteredTorrents = allTorrents;
     if (clientId !== undefined) {
       const clientIdNum = parseInt(clientId as string, 10);
+
+      if (isNaN(clientIdNum)) {
+        next({ status: 400, message: 'Invalid clientId' });
+        return;
+      }
+
       filteredTorrents = filteredTorrents.filter(
         (t) => t.clientId === clientIdNum
       );
@@ -170,7 +179,23 @@ downloadsRoutes.get('/', async (req, res, next) => {
 
     // Filter by status if specified
     if (status) {
-      filteredTorrents = filteredTorrents.filter((t) => t.status === status);
+      if (status === 'incomplete') {
+        const incompleteStatuses = new Set([
+          'downloading',
+          'paused',
+          'stalled',
+          'queued',
+          'checking',
+          'error',
+          'moving',
+          'metadata',
+        ]);
+        filteredTorrents = filteredTorrents.filter((t) =>
+          incompleteStatuses.has(t.status)
+        );
+      } else {
+        filteredTorrents = filteredTorrents.filter((t) => t.status === status);
+      }
     }
 
     // Filter by search term if specified
@@ -180,7 +205,8 @@ downloadsRoutes.get('/', async (req, res, next) => {
         (t) =>
           t.name.toLowerCase().includes(searchTerm) ||
           t.category?.toLowerCase().includes(searchTerm) ||
-          t.savePath.toLowerCase().includes(searchTerm)
+          t.savePath.toLowerCase().includes(searchTerm) ||
+          t.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
       );
     }
 
@@ -492,6 +518,91 @@ downloadsRoutes.post('/category', async (req, res, next) => {
   }
 });
 
+downloadsRoutes.post('/tag', async (req, res, next) => {
+  try {
+    const tagRequest = req.body as TagManagementRequest;
+
+    if (
+      tagRequest.clientId === undefined ||
+      tagRequest.clientId === null ||
+      Number.isNaN(Number(tagRequest.clientId)) ||
+      !tagRequest.action ||
+      !tagRequest.tags ||
+      !Array.isArray(tagRequest.tags) ||
+      tagRequest.tags.length === 0
+    ) {
+      next({
+        status: 400,
+        message: 'clientId, action, and tags array are required',
+      });
+      return;
+    }
+
+    // Validate hashes are provided for torrent-specific actions
+    if (
+      (tagRequest.action === 'add' || tagRequest.action === 'remove') &&
+      (!tagRequest.hashes ||
+        !Array.isArray(tagRequest.hashes) ||
+        tagRequest.hashes.length === 0)
+    ) {
+      next({
+        status: 400,
+        message: 'hashes array is required for torrent tag actions',
+      });
+      return;
+    }
+
+    const settings = getSettings();
+    const clientSettings = settings.downloads.find(
+      (c) => c.id === tagRequest.clientId
+    );
+
+    if (!clientSettings) {
+      next({ status: 404, message: 'Download client not found' });
+      return;
+    }
+
+    const success = await manageTag(clientSettings, tagRequest);
+
+    res.json({ success });
+  } catch (e) {
+    logger.error('Failed to manage tags', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to manage tags' });
+  }
+});
+
+downloadsRoutes.get('/tags/:clientId', async (req, res, next) => {
+  try {
+    const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
+    const settings = getSettings();
+    const clientSettings = settings.downloads.find((c) => c.id === clientId);
+
+    if (!clientSettings) {
+      next({ status: 404, message: 'Download client not found' });
+      return;
+    }
+
+    const tags = await getTags(clientSettings);
+
+    res.json({ tags });
+  } catch (e) {
+    logger.error('Failed to get tags', {
+      label: 'Downloads',
+      error: e.message || String(e),
+    });
+    next({ status: 500, message: 'Failed to get tags' });
+  }
+});
+
 downloadsRoutes.get('/:hash/files', async (req, res, next) => {
   try {
     const { hash } = req.params;
@@ -503,6 +614,12 @@ downloadsRoutes.get('/:hash/files', async (req, res, next) => {
     }
 
     const clientIdNum = parseInt(clientId as string, 10);
+
+    if (isNaN(clientIdNum)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
     const settings = getSettings();
     const clientSettings = settings.downloads.find((c) => c.id === clientIdNum);
 
@@ -646,6 +763,12 @@ downloadsRoutes.get('/health', (_req, res) => {
 downloadsRoutes.post('/health/retry/:clientId', async (req, res, next) => {
   try {
     const clientId = parseInt(req.params.clientId, 10);
+
+    if (isNaN(clientId)) {
+      next({ status: 400, message: 'Invalid clientId' });
+      return;
+    }
+
     const settings = getSettings();
     const clientSettings = settings.downloads.find((c) => c.id === clientId);
 

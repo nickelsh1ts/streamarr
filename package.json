@@ -21,6 +21,7 @@
     "typecheck:server": "tsc --project server/tsconfig.json --noEmit",
     "typecheck:client": "tsc --noEmit",
     "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "cypress:prepare": "tsx --tsconfig server/tsconfig.json server/scripts/prepareTestDb.ts",
     "cypress:build": "yarn build && yarn cypress:prepare",
     "css-build": "tailwindcss -o public/tailwind.css",
@@ -56,14 +57,14 @@
     "email-templates": "^13.0.1",
     "express": "^5.2.1",
     "express-openapi-validator": "^5.6.2",
-    "express-rate-limit": "^8.2.1",
+    "express-rate-limit": "^8.3.0",
     "formik": "^2.4.9",
     "http-proxy-middleware": "^3.0.5",
     "ical": "^0.8.0",
-    "isomorphic-dompurify": "2.18.0",
+    "isomorphic-dompurify": "2.36.0",
     "jose": "^6.1.3",
     "moment": "^2.30.1",
-    "multer": "^2.0.2",
+    "multer": "^2.1.0",
     "next": "^16.1.6",
     "nextjs-toploader": "^3.9.17",
     "node-cache": "^5.1.2",
@@ -114,7 +115,6 @@
     "@formatjs/cli": "^6.12.2",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",
-    "@semantic-release/exec": "7.1.0",
     "@semantic-release/git": "10.0.1",
     "@svgr/webpack": "8.1.0",
     "@tailwindcss/aspect-ratio": "0.4.2",
@@ -166,9 +166,8 @@
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.7.2",
-    "sass": "^1.97.3",
+    "sass": "^1.98.0",
     "semantic-release": "^25.0.3",
-    "semantic-release-docker-buildx": "^1.0.1",
     "stylelint": "^17.3.0",
     "tailwindcss": "3.4.19",
     "ts-node": "^10.9.2",
@@ -196,6 +195,9 @@
     ]
   },
   "release": {
+    "branches": [
+      "main"
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
@@ -205,7 +207,12 @@
           "changelogFile": "CHANGELOG.md"
         }
       ],
-      "@semantic-release/npm",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
       [
         "@semantic-release/git",
         {
@@ -216,34 +223,12 @@
           "message": "chore(release): ${nextRelease.version}"
         }
       ],
-      "semantic-release-docker-buildx",
       [
         "@semantic-release/github",
         {
           "addReleases": "bottom"
         }
       ]
-    ],
-    "branches": [
-      "main"
-    ],
-    "npmPublish": false,
-    "publish": [
-      {
-        "path": "semantic-release-docker-buildx",
-        "buildArgs": {
-          "COMMIT_TAG": "$GIT_SHA"
-        },
-        "imageNames": [
-          "nickelsh1ts/streamarr",
-          "ghcr.io/nickelsh1ts/streamarr"
-        ],
-        "platforms": [
-          "linux/amd64",
-          "linux/arm64"
-        ]
-      },
-      "@semantic-release/github"
     ]
   },
   "packageManager": "yarn@4.9.2",
@@ -251,9 +236,18 @@
     "tough-cookie": "^4.1.3",
     "form-data": "^4.0.4",
     "qs": "^6.14.1",
-    "axios": "^1.13.2",
     "xml2js": "^0.6.2",
-    "tar": "^7.5.9",
-    "cookie": "^0.7.2"
+    "tar": "^7.5.10",
+    "cookie": "^0.7.2",
+    "cheerio/undici": "^6.24.0",
+    "@actions/http-client/undici": "^6.24.0",
+    "underscore": "^1.13.8",
+    "multer": "^2.1.0",
+    "dompurify": "^3.3.2",
+    "eslint/ajv": "^6.14.0",
+    "@eslint/eslintrc/ajv": "^6.14.0",
+    "@commitlint/config-validator/ajv": "^6.14.0",
+    "har-validator/ajv": "^6.14.0",
+    "bn.js": "^4.12.3"
   }
 }

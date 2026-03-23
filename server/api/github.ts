@@ -1,25 +1,9 @@
 import cacheManager from '@server/lib/cache';
+import type { GitHubRelease } from '@server/interfaces/api/settingsInterfaces';
 import logger from '@server/logger';
 import ExternalAPI from './externalapi';
 
-interface GitHubRelease {
-  url: string;
-  assets_url: string;
-  upload_url: string;
-  html_url: string;
-  id: number;
-  node_id: string;
-  tag_name: string;
-  target_commitish: string;
-  name: string;
-  draft: boolean;
-  prerelease: boolean;
-  created_at: string;
-  published_at: string;
-  tarball_url: string;
-  zipball_url: string;
-  body: string;
-}
+const GITHUB_CACHE_TTL = 1800;
 
 interface GithubCommit {
   sha: string;
@@ -65,7 +49,8 @@ class GithubAPI extends ExternalAPI {
     try {
       const data = await this.get<GitHubRelease[]>(
         '/repos/nickelsh1ts/streamarr/releases',
-        { params: { per_page: take } }
+        { params: { per_page: take } },
+        GITHUB_CACHE_TTL
       );
 
       return data;
@@ -88,7 +73,8 @@ class GithubAPI extends ExternalAPI {
     try {
       const data = await this.get<GithubCommit[]>(
         '/repos/nickelsh1ts/streamarr/commits',
-        { params: { per_page: take, branch } }
+        { params: { per_page: take, branch } },
+        GITHUB_CACHE_TTL
       );
 
       return data;
