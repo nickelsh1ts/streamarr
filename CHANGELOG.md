@@ -1,3 +1,44 @@
+# [1.4.0](https://github.com/nickelsh1ts/streamarr/compare/v1.3.0...v1.4.0) (2026-03-23)
+
+
+### Bug Fixes
+
+* add 'incomplete' status to TorrentStatus schema and update filter query ([29f8fb0](https://github.com/nickelsh1ts/streamarr/commit/29f8fb05d33f9e7ea90ba8b24de1d8c6da9d14a2))
+* add React type imports, add resetDismiss for delete failure recovery ([e4f69b6](https://github.com/nickelsh1ts/streamarr/commit/e4f69b60a93c3d71ccbcfdb2a3b059156e7f54a2))
+* added missing enabled flag ([a01ed65](https://github.com/nickelsh1ts/streamarr/commit/a01ed654fe571873093e24bd2cc57215af9c174f))
+* adjust margin for Page class and clean up hover styles ([78d8c3b](https://github.com/nickelsh1ts/streamarr/commit/78d8c3bf814875c400072babea795eef7f9651ab))
+* adjust swipe gesture details ([8f0de08](https://github.com/nickelsh1ts/streamarr/commit/8f0de08bf53dfba9f41def84c6e78ceafd0c93df))
+* await onDelete in non-touch dropdown handler to prevent unhandled rejections ([0e49e1f](https://github.com/nickelsh1ts/streamarr/commit/0e49e1f53dcf77c071c033b212f41882396fcfcc))
+* broken array status for discord message ([be0ce70](https://github.com/nickelsh1ts/streamarr/commit/be0ce7063c844dc22fe1f718f4d6e0540454005d))
+* broken array status for release notification ([8dc657f](https://github.com/nickelsh1ts/streamarr/commit/8dc657f8c1ce17e8fb8389a9f6ef1f26e332f90f))
+* constrain resolution versions ([4707acf](https://github.com/nickelsh1ts/streamarr/commit/4707acf6ee5d5799ece366ead363a698abc9f567))
+* correct CSS selector; return libraries without count; added error handling to releases endpoint; removed incorrect error throw ([e93d19b](https://github.com/nickelsh1ts/streamarr/commit/e93d19b05ccf7deb6861b63dfca7d6d9e8dcfc07))
+* **deps:** update ajv and related dependencies for compatibility ([e496401](https://github.com/nickelsh1ts/streamarr/commit/e496401324d50ec281730275c7fb56cbedb4abd7))
+* **deps:** update undici dependency and add resolutions for compatibility ([3401184](https://github.com/nickelsh1ts/streamarr/commit/34011841890d2fcb7365313bd035664b37dafe2f))
+* formatting ([5952499](https://github.com/nickelsh1ts/streamarr/commit/5952499de6d744566e454ddb5967eb65eee11c98))
+* gate /api/v1/libraries endpoint by libraryCounts setting ([6be4c1e](https://github.com/nickelsh1ts/streamarr/commit/6be4c1e23fd84f18102afb0b1fb0c6e60c319b23))
+* incorrect ajv dep version ([2627806](https://github.com/nickelsh1ts/streamarr/commit/2627806002cd797a027b5bc55193d3e3e253d0a7))
+* minor code and bug fixes from review ([#187](https://github.com/nickelsh1ts/streamarr/issues/187)) ([47bb4a1](https://github.com/nickelsh1ts/streamarr/commit/47bb4a1dc6f466bdce22bedf81b233c1a0e6282c))
+* optimize tag management by batch-fetching labels and applying changes in parallel ([e4f7cfe](https://github.com/nickelsh1ts/streamarr/commit/e4f7cfe6ad4557908548f0eb2cbcf6fbcd013e77))
+* reset transient state in TorrentDetailsModal on close or torrent change; added aria-label ([65aeb31](https://github.com/nickelsh1ts/streamarr/commit/65aeb31786152d4ffcbec4a617a2ad56ecf464c0))
+* update yarn.lock for resolution changes ([12d4b95](https://github.com/nickelsh1ts/streamarr/commit/12d4b951d231d9f319f0cf8af59e86dd4328d6a4))
+* validate clientId in download routes to prevent errors ([9224a30](https://github.com/nickelsh1ts/streamarr/commit/9224a300a16807f1569dc2fd175cce3762a8f25b))
+
+
+### Features
+
+* add comprehensive Cypress tests for API, authentication, navigation, and UI components ([1be663b](https://github.com/nickelsh1ts/streamarr/commit/1be663b2e9b0225e404ebd64f9a07840f42b0a9e))
+* add GitHub releases endpoint and integrate with settings reducing api calls ([#170](https://github.com/nickelsh1ts/streamarr/issues/170)) ([2ace21e](https://github.com/nickelsh1ts/streamarr/commit/2ace21ef102fa4f9aa547267761fc5eeb6d7581d))
+* add library counts option to settings and UI components ([a46e8e2](https://github.com/nickelsh1ts/streamarr/commit/a46e8e2e5c6666dec1bc1db191a89add7abc0bd6))
+* add playlist support and pivot options in Plex settings ([136425b](https://github.com/nickelsh1ts/streamarr/commit/136425bcb24665f9353e9c61318cba5abdc493f3))
+* added library count toggle setting for homepage ([#172](https://github.com/nickelsh1ts/streamarr/issues/172)) ([0f483a1](https://github.com/nickelsh1ts/streamarr/commit/0f483a19afa392f189c5fc98b0e8735002ec67b4))
+* download tag management ([#185](https://github.com/nickelsh1ts/streamarr/issues/185)) ([6af66c3](https://github.com/nickelsh1ts/streamarr/commit/6af66c34b6e94398d975714cfc1cd26b3983b398))
+* implement swipe-to-dismiss functionality for notifications ([5fba853](https://github.com/nickelsh1ts/streamarr/commit/5fba853674609579764b3fea73579afba59dd5a3))
+* implement swipe-to-dismiss functionality for notifications ([#171](https://github.com/nickelsh1ts/streamarr/issues/171)) ([f16211e](https://github.com/nickelsh1ts/streamarr/commit/f16211eb274e544eabdff36089818273ce1ccf17))
+* implement tag management functionality; extend numberHelper and it's use; added inactive downloads filter ([707d3f0](https://github.com/nickelsh1ts/streamarr/commit/707d3f0b99b0b43e9fd341ad83bccc9ded0dd3d3))
+* plex playlists and pivot options ([#169](https://github.com/nickelsh1ts/streamarr/issues/169)) ([b0e25ac](https://github.com/nickelsh1ts/streamarr/commit/b0e25acb4b5dd24111f5705c54892f34f7bd28a8))
+* updated cypress test suite ([#184](https://github.com/nickelsh1ts/streamarr/issues/184)) ([24c16fc](https://github.com/nickelsh1ts/streamarr/commit/24c16fcfcd66001bb0a1b04374f01eac9653aebe))
+
 # [1.3.0](https://github.com/nickelsh1ts/streamarr/compare/v1.2.1...v1.3.0) (2026-02-20)
 
 
