@@ -8,7 +8,10 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast, { dismissToast } from '@app/components/Toast';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/outline';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -34,6 +37,12 @@ interface PresetServerDisplay {
   message?: string;
 }
 
+interface PlexHealthState {
+  status: 'healthy' | 'retrying' | 'unhealthy';
+  consecutiveFailures: number;
+  cooldownUntil?: string;
+}
+
 interface SettingsPlexProps {
   onComplete?: () => void;
 }
@@ -45,11 +54,17 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const [availableServers, setAvailableServers] = useState<PlexDevice[] | null>(
     null
   );
+  const [isRetrying, setIsRetrying] = useState(false);
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR<PlexSettings>('/api/v1/settings/plex');
+  const { data: plexHealth, mutate: revalidateHealth } =
+    useSWR<PlexHealthState>('/api/v1/plex/health', {
+      refreshInterval: 10000,
+      revalidateOnFocus: true,
+    });
 
   const PlexSettingsSchema = Yup.object().shape({
     hostname: Yup.string()
@@ -193,6 +208,63 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
     revalidate();
   };
 
+  const handleRetry = async () => {
+    setIsRetrying(true);
+    try {
+      let toastId: string | undefined;
+      Toast(
+        {
+          title: intl.formatMessage({
+            id: 'plexSettings.attemptingReconnect',
+            defaultMessage: 'Attempting to reconnect...',
+          }),
+          type: 'warning',
+          icon: <ArrowPathIcon className="size-7 animate-spin" />,
+          duration: Infinity,
+        },
+        (id) => {
+          toastId = id;
+        }
+      );
+      const response = await axios.post<{
+        success: boolean;
+        health: PlexHealthState;
+      }>('/api/v1/plex/health/retry');
+      dismissToast(toastId);
+      await revalidateHealth();
+      if (response.data.health.status !== 'healthy') {
+        Toast({
+          title: intl.formatMessage({
+            id: 'plexSettings.retryError',
+            defaultMessage: 'Failed to reconnect.',
+          }),
+          type: 'error',
+          icon: <XCircleIcon className="size-7" />,
+        });
+      } else {
+        Toast({
+          title: intl.formatMessage({
+            id: 'plexSettings.retrySuccess',
+            defaultMessage: 'Reconnected successfully!',
+          }),
+          type: 'success',
+          icon: <CheckBadgeIcon className="size-7" />,
+        });
+      }
+    } catch {
+      Toast({
+        title: intl.formatMessage({
+          id: 'plexSettings.somethingWentWrong',
+          defaultMessage: 'Something went wrong attempting to reconnect.',
+        }),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsRetrying(false);
+    }
+  };
+
   if (!data && !error) {
     return <LoadingEllipsis />;
   }
@@ -257,6 +329,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                 }),
                 type: 'warning',
                 icon: <ArrowPathIcon className="size-7 animate-spin" />,
+                duration: Infinity,
               },
               (id) => {
                 toastId = id;
@@ -284,11 +357,18 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             });
 
             mutate(RESTART_REQUIRED_SWR_KEY);
+            await revalidateHealth();
 
             if (onComplete) {
               onComplete();
             }
           } catch {
+            await axios.post<{
+              success: boolean;
+              health: PlexHealthState;
+            }>('/api/v1/plex/health/retry');
+            await revalidateHealth();
+            dismissToast(toastId);
             Toast({
               title: intl.formatMessage({
                 id: 'plexSettings.connectionError',
@@ -540,8 +620,45 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
+              <div className="flex flex-wrap gap-2 justify-end col-span-3 mt-4">
+                {plexHealth && plexHealth.status !== 'healthy' && (
+                  <div className="flex items-center text-sm gap-2">
+                    <span className="flex flex-wrap gap-1 text-warning mt-1">
+                      <ExclamationTriangleIcon className="size-6" />
+                      <FormattedMessage
+                        id="plexSettings.plexUnreachable"
+                        defaultMessage="Plex is currently unreachable..."
+                      />
+                    </span>
+                    <span className="inline-flex rounded-md shadow-sm">
+                      <Button
+                        buttonType="warning"
+                        buttonSize="sm"
+                        type="button"
+                        disabled={isRetrying}
+                        onClick={handleRetry}
+                      >
+                        <ArrowPathIcon
+                          className={`size-4 mr-2 ${isRetrying ? 'animate-spin' : ''}`}
+                        />
+                        <span>
+                          {isRetrying ? (
+                            <FormattedMessage
+                              id="plexSettings.reconnecting"
+                              defaultMessage="Reconnecting…"
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="common.retry"
+                              defaultMessage="Retry"
+                            />
+                          )}
+                        </span>
+                      </Button>
+                    </span>
+                  </div>
+                )}
+                <span className="inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
                     buttonSize="sm"

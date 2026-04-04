@@ -255,7 +255,7 @@ components:
           example: 'Movies'
         type:
           type: string
-          enum: [movie, show]
+          enum: [movie, show, artist, live TV, photo, other]
           description: The type of media in the library
           example: 'movie'
         mediaCount:
@@ -3144,6 +3144,21 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/LibraryLink'
+                  plexHealth:
+                    type: object
+                    description: Current Plex server health status
+                    properties:
+                      status:
+                        type: string
+                        enum: [healthy, retrying, unhealthy]
+                      lastSuccess:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      cooldownUntil:
+                        type: string
+                        format: date-time
+                        nullable: true
                 required:
                   - machineId
                   - enablePlaylists
@@ -3151,12 +3166,77 @@ paths:
                   - libraries
         '401':
           description: Unauthorized - user not authenticated
-        '500':
-          description: Internal server error
+  /plex/health:
+    get:
+      summary: Get Plex server health status
+      description: Returns the current health status of the Plex server connection, including cooldown information.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Plex health status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlexLibrary'
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, retrying, unhealthy]
+                    example: 'healthy'
+                  lastSuccess:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  lastFailure:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  lastError:
+                    type: string
+                    nullable: true
+                  cooldownUntil:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  consecutiveFailures:
+                    type: number
+                    example: 0
+        '401':
+          description: Unauthorized - user not authenticated
+  /plex/health/retry:
+    post:
+      summary: Retry Plex server connection
+      description: Resets the Plex health state and immediately attempts to reconnect, refreshing the library cache.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Retry result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  health:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [healthy, retrying, unhealthy]
+                      lastError:
+                        type: string
+                        nullable: true
+                      cooldownUntil:
+                        type: string
+                        format: date-time
+                        nullable: true
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - insufficient permissions
   /settings/initialize:
     post:
       summary: Initialize application

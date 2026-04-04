@@ -18,6 +18,10 @@ import cacheManager from '@server/lib/cache';
 import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import { plexFullScanner } from '@server/lib/scanners/plex';
+import {
+  markPlexHealthy,
+  revalidatePlexLibraries,
+} from '@server/lib/plexHealthCheck';
 import type {
   JobId,
   MainSettings,
@@ -138,6 +142,9 @@ settingsRoutes.post('/plex', async (req, res, next) => {
     settings.plex.name = result.MediaContainer.friendlyName;
 
     settings.save();
+
+    markPlexHealthy();
+    void revalidatePlexLibraries();
   } catch (e) {
     logger.error('Something went wrong testing Plex connection', {
       label: 'API',

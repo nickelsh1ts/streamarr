@@ -15,10 +15,17 @@ export interface ServiceProxyConfig {
   pathPrefix?: string;
   webSocket?: boolean;
   wsPath?: string;
+  suppressErrors?: () => boolean;
 }
 
 export function createServiceProxy(config: ServiceProxyConfig) {
-  const { name, getTarget, pathPrefix, webSocket = false } = config;
+  const {
+    name,
+    getTarget,
+    pathPrefix,
+    webSocket = false,
+    suppressErrors,
+  } = config;
 
   const proxy = createProxyMiddleware({
     target: getTarget(),
@@ -48,12 +55,14 @@ export function createServiceProxy(config: ServiceProxyConfig) {
         const target = getTarget();
         const errorCode = (err as NodeJS.ErrnoException).code;
 
-        logger.error(`${name} proxy error: ${err.message}`, {
-          label: 'Proxy',
-          path: req.url,
-          target,
-          errorCode,
-        });
+        if (!suppressErrors?.()) {
+          logger.error(`${name} proxy error: ${err.message}`, {
+            label: 'Proxy',
+            path: req.url,
+            target,
+            errorCode,
+          });
+        }
 
         if (
           res &&
