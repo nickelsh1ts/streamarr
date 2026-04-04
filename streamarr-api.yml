@@ -30,6 +30,31 @@ servers:
 
 components:
   schemas:
+    PlexHealthState:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, retrying, unhealthy]
+          example: 'healthy'
+        lastSuccess:
+          type: string
+          format: date-time
+          nullable: true
+        lastFailure:
+          type: string
+          format: date-time
+          nullable: true
+        lastError:
+          type: string
+          nullable: true
+        cooldownUntil:
+          type: string
+          format: date-time
+          nullable: true
+        consecutiveFailures:
+          type: number
+          example: 0
     CalendarEvent:
       type: object
       properties:
@@ -3178,30 +3203,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    enum: [healthy, retrying, unhealthy]
-                    example: 'healthy'
-                  lastSuccess:
-                    type: string
-                    format: date-time
-                    nullable: true
-                  lastFailure:
-                    type: string
-                    format: date-time
-                    nullable: true
-                  lastError:
-                    type: string
-                    nullable: true
-                  cooldownUntil:
-                    type: string
-                    format: date-time
-                    nullable: true
-                  consecutiveFailures:
-                    type: number
-                    example: 0
+                $ref: '#/components/schemas/PlexHealthState'
         '401':
           description: Unauthorized - user not authenticated
   /plex/health/retry:
@@ -3221,18 +3223,7 @@ paths:
                   success:
                     type: boolean
                   health:
-                    type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: [healthy, retrying, unhealthy]
-                      lastError:
-                        type: string
-                        nullable: true
-                      cooldownUntil:
-                        type: string
-                        format: date-time
-                        nullable: true
+                    $ref: '#/components/schemas/PlexHealthState'
         '401':
           description: Unauthorized - user not authenticated
         '403':
