@@ -72,7 +72,8 @@ const LibraryMenu = ({
   const intl = useIntl();
   const pathname = usePathname();
   const hash = useHash();
-  const url = pathname + (hash || '');
+  const url =
+    pathname === '/watch/web/index.html' ? pathname + (hash || '') : pathname;
   const { hasPermission, user } = useUser();
   const { libraryLinks, machineId, enablePlaylists, defaultPivot, loading } =
     useLibraryLinks('id');
