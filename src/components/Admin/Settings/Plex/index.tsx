@@ -210,8 +210,8 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
 
   const handleRetry = async () => {
     setIsRetrying(true);
+    let toastId: string | undefined;
     try {
-      let toastId: string | undefined;
       Toast(
         {
           title: intl.formatMessage({
@@ -252,6 +252,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         });
       }
     } catch {
+      dismissToast(toastId);
       Toast({
         title: intl.formatMessage({
           id: 'plexSettings.somethingWentWrong',
