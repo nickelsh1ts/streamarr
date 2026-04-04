@@ -199,7 +199,7 @@ router.get('/libraries/items', isAuthenticated(), async (req, res) => {
         requestedLibs.includes(lib.id)
       );
     } else {
-      res.status(200).json(emptyResponse());
+      return res.status(200).json(emptyResponse());
     }
   }
 
