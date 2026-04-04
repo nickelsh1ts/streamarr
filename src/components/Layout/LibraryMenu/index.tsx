@@ -53,7 +53,7 @@ interface MenuLinksProps {
 interface LibraryLinksProps {
   href: string;
   title: string;
-  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photo' | 'other';
   regExp: string;
   hasPlaylists: boolean;
 }
@@ -104,14 +104,14 @@ const LibraryMenu = ({
     {} as Record<string, LibraryLinksProps[]>
   );
 
-  const libraryTypes: (
-    | 'movie'
-    | 'show'
-    | 'artist'
-    | 'live TV'
-    | 'photos'
-    | 'other'
-  )[] = ['movie', 'show', 'artist', 'live TV', 'photos', 'other'];
+  const libraryTypes: LibraryLinksProps['type'][] = [
+    'movie',
+    'show',
+    'artist',
+    'live TV',
+    'photo',
+    'other',
+  ];
 
   const MenuLinks: MenuLinksProps[] = [
     {
@@ -231,7 +231,7 @@ const LibraryMenu = ({
                 />
               );
               break;
-            case 'photos':
+            case 'photo':
               icon = <PhotoIcon className="size-7" />;
               multiTitle = (
                 <FormattedMessage id="library.photos" defaultMessage="Photos" />
@@ -287,7 +287,7 @@ interface SingleItemProps {
   linkclasses?: string;
   url: string;
   regExp: string | RegExp;
-  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photo' | 'other';
   defaultPivot?: string;
   enablePlaylists?: boolean;
   hasPlaylists?: boolean;
