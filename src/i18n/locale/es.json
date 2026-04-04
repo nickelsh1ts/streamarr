@@ -1945,6 +1945,9 @@
   "plexImport.title": {
     "defaultMessage": "Importar Usuarios de Plex"
   },
+  "plexSettings.attemptingReconnect": {
+    "defaultMessage": "Intentando reconectar..."
+  },
   "plexSettings.connecting": {
     "defaultMessage": "Intentando conectar con Plex…"
   },
@@ -1999,6 +2002,12 @@
   "plexSettings.pivot.library": {
     "defaultMessage": "Biblioteca"
   },
+  "plexSettings.plexUnreachable": {
+    "defaultMessage": "Plex no está disponible actualmente..."
+  },
+  "plexSettings.reconnecting": {
+    "defaultMessage": "Reconectando…"
+  },
   "plexSettings.remote": {
     "defaultMessage": "remoto"
   },
@@ -2013,6 +2022,12 @@
   },
   "plexSettings.retrievingServersOption": {
     "defaultMessage": "Recuperando servidores…"
+  },
+  "plexSettings.retryError": {
+    "defaultMessage": "Error al reconectar."
+  },
+  "plexSettings.retrySuccess": {
+    "defaultMessage": "¡Reconexión exitosa!"
   },
   "plexSettings.secure": {
     "defaultMessage": "seguro"

@@ -277,6 +277,43 @@ Configure which libraries are shared with users by default. Options:
 
 Individual user settings can override this default.
 
+### Plex Connection Health
+
+Streamarr automatically monitors the health of your Plex server connection and handles failures gracefully.
+
+#### Health States
+
+| State         | Description                                                                        |
+| ------------- | ---------------------------------------------------------------------------------- |
+| **Healthy**   | Plex is reachable and libraries are up to date                                     |
+| **Retrying**  | First connection failure detected; a retry is scheduled automatically in 5 seconds |
+| **Unhealthy** | Two consecutive failures detected; Streamarr enters a 5-minute cooldown period     |
+
+#### State Transitions
+
+1. **Healthy → Retrying**: The first failed connection attempt marks Plex as retrying
+2. **Retrying → Unhealthy**: A second consecutive failure triggers a 5-minute cooldown
+3. **Unhealthy → Healthy**: A successful connection (or manual retry via API) restores healthy status
+4. **Retrying → Healthy**: A successful connection during the retrying state restores immediately
+
+#### Cooldown Behavior
+
+When in cooldown:
+
+- No new Plex connection attempts are made for **5 minutes**
+- Library data and homepage counts continue to be served from the last successful cache
+- Proxy errors for embedded Plex Web are suppressed to avoid log noise
+- After the cooldown period, the next request triggers a fresh connection attempt
+
+#### Recovery Options
+
+| Method                          | How                                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Automatic retry**             | Streamarr retries 5 seconds after the first failure                                          |
+| **Automatic cooldown recovery** | After 5 minutes, the next request will attempt to reconnect                                  |
+| **Manual retry**                | Click the **Retry** button (visible next to Save Changes when Plex is unhealthy or retrying) |
+| **API retry**                   | `POST /api/v1/plex/health/retry` — same as the manual button; requires **Admin** permission  |
+
 ---
 
 ## Services

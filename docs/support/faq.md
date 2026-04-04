@@ -228,6 +228,15 @@ Library item counts are shown on the homepage by default. To hide them:
 2. Disable **Show Library Counts**
 3. Save settings
 
+### Why are my library counts not updating?
+
+Library item counts on the homepage are cached using a stale-while-revalidate strategy — Streamarr serves from cache immediately and refreshes in the background. Counts may appear stale if:
+
+- Plex was recently unreachable (cached data continues to be shown during any cooldown)
+- New media was just added to Plex and the background refresh hasn't run yet
+
+Counts refresh automatically once Plex is reachable. To force an immediate refresh, go to **Settings → Plex** and click the **Retry** button (visible when Plex is unhealthy or retrying). You can also use the API endpoint `POST /api/v1/plex/health/retry` for the same effect (requires Admin permission).
+
 ---
 
 ## Performance

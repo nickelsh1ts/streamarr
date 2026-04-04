@@ -9,7 +9,7 @@ export interface Library {
   id: string;
   name: string;
   enabled: boolean;
-  type: 'show' | 'movie' | 'artist' | 'photo';
+  type: 'show' | 'movie' | 'artist' | 'photo' | 'live TV' | 'other';
   lastScan?: number;
   mediaCount?: number;
 }

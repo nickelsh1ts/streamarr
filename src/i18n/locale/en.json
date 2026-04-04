@@ -1931,6 +1931,9 @@
   "plexImport.title": {
     "defaultMessage": "Import Plex Users"
   },
+  "plexSettings.attemptingReconnect": {
+    "defaultMessage": "Attempting to reconnect..."
+  },
   "plexSettings.connecting": {
     "defaultMessage": "Attempting to connect to Plex…"
   },
@@ -1985,6 +1988,12 @@
   "plexSettings.pivot.library": {
     "defaultMessage": "Library"
   },
+  "plexSettings.plexUnreachable": {
+    "defaultMessage": "Plex is currently unreachable..."
+  },
+  "plexSettings.reconnecting": {
+    "defaultMessage": "Reconnecting…"
+  },
   "plexSettings.remote": {
     "defaultMessage": "remote"
   },
@@ -2000,6 +2009,12 @@
   "plexSettings.retrievingServersOption": {
     "defaultMessage": "Retrieving servers…"
   },
+  "plexSettings.retryError": {
+    "defaultMessage": "Failed to reconnect."
+  },
+  "plexSettings.retrySuccess": {
+    "defaultMessage": "Reconnected successfully!"
+  },
   "plexSettings.secure": {
     "defaultMessage": "secure"
   },
@@ -2011,6 +2026,9 @@
   },
   "plexSettings.setupInstructions": {
     "defaultMessage": "To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
+  },
+  "plexSettings.somethingWentWrong": {
+    "defaultMessage": "Something went wrong attempting to reconnect."
   },
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"

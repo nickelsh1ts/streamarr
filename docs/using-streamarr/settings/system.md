@@ -162,14 +162,16 @@ This helps you see what has changed between versions and what is included in ava
 
 ## API Reference
 
-| Endpoint                            | Method | Description                                |
-| ----------------------------------- | ------ | ------------------------------------------ |
-| `/api/v1/settings/restart-required` | GET    | Check if a restart is required             |
-| `/api/v1/settings/restart`          | POST   | Trigger a server restart                   |
-| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status        |
-| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service              |
-| `/api/v1/status`                    | GET    | Get version, update availability           |
-| `/api/v1/settings/about`            | GET    | Get version, user/invite counts, data path |
+| Endpoint                            | Method | Description                                                    |
+| ----------------------------------- | ------ | -------------------------------------------------------------- |
+| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                 |
+| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                       |
+| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status                            |
+| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service                                  |
+| `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users) |
+| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)  |
+| `/api/v1/status`                    | GET    | Get version, update availability                               |
+| `/api/v1/settings/about`            | GET    | Get version, user/invite counts, data path                     |
 
 ### Restart Status Response
 
@@ -190,6 +192,21 @@ This helps you see what has changed between versions and what is included in ava
   "consecutiveFailures": 0
 }
 ```
+
+### Plex Health Response
+
+```json
+{
+  "status": "unhealthy",
+  "lastSuccess": "2026-02-19T11:55:00.000Z",
+  "lastFailure": "2026-02-19T12:00:00.000Z",
+  "lastError": "Connection refused",
+  "cooldownUntil": "2026-02-19T12:05:00.000Z",
+  "consecutiveFailures": 2
+}
+```
+
+`status` is one of `"healthy"`, `"retrying"`, or `"unhealthy"`. See [Plex Connection Health](README.md#plex-connection-health) for the full state machine description.
 
 ---
 

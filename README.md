@@ -41,7 +41,7 @@ Streamarr provides a unified dashboard for managing your Plex server alongside y
 - **Jellyfin Support** — Dual-backend support for both Plex and Jellyfin users
 - **Help Center Customization** — Fully customizable help center content
 - **Email Newsletters** — Customizable email newsletters and communications
-- **Additional Services** — Huntarr, Cleanuparr, and Kometa integrations
+- **Additional Services** — Cleanuparr and Kometa integrations
 
 ## Getting Started
 

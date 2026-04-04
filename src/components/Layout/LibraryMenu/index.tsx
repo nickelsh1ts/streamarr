@@ -53,7 +53,7 @@ interface MenuLinksProps {
 interface LibraryLinksProps {
   href: string;
   title: string;
-  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  type: 'movie' | 'show' | 'artist' | 'live TV' | 'photo' | 'other';
   regExp: string;
   hasPlaylists: boolean;
 }
@@ -72,7 +72,8 @@ const LibraryMenu = ({
   const intl = useIntl();
   const pathname = usePathname();
   const hash = useHash();
-  const url = pathname + (hash || '');
+  const url =
+    pathname === '/watch/web/index.html' ? pathname + (hash || '') : pathname;
   const { hasPermission, user } = useUser();
   const { libraryLinks, machineId, enablePlaylists, defaultPivot, loading } =
     useLibraryLinks('id');
@@ -104,14 +105,14 @@ const LibraryMenu = ({
     {} as Record<string, LibraryLinksProps[]>
   );
 
-  const libraryTypes: (
-    | 'movie'
-    | 'show'
-    | 'artist'
-    | 'live TV'
-    | 'photos'
-    | 'other'
-  )[] = ['movie', 'show', 'artist', 'live TV', 'photos', 'other'];
+  const libraryTypes: LibraryLinksProps['type'][] = [
+    'movie',
+    'show',
+    'artist',
+    'live TV',
+    'photo',
+    'other',
+  ];
 
   const MenuLinks: MenuLinksProps[] = [
     {
@@ -231,7 +232,7 @@ const LibraryMenu = ({
                 />
               );
               break;
-            case 'photos':
+            case 'photo':
               icon = <PhotoIcon className="size-7" />;
               multiTitle = (
                 <FormattedMessage id="library.photos" defaultMessage="Photos" />
@@ -287,7 +288,7 @@ interface SingleItemProps {
   linkclasses?: string;
   url: string;
   regExp: string | RegExp;
-  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photos' | 'other';
+  type?: 'movie' | 'show' | 'artist' | 'live TV' | 'photo' | 'other';
   defaultPivot?: string;
   enablePlaylists?: boolean;
   hasPlaylists?: boolean;
