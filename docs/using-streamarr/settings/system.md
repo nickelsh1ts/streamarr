@@ -162,16 +162,16 @@ This helps you see what has changed between versions and what is included in ava
 
 ## API Reference
 
-| Endpoint                            | Method | Description                                |
-| ----------------------------------- | ------ | ------------------------------------------ |
-| `/api/v1/settings/restart-required` | GET    | Check if a restart is required             |
-| `/api/v1/settings/restart`          | POST   | Trigger a server restart                   |
-| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status        |
-| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service              |
+| Endpoint                            | Method | Description                                                    |
+| ----------------------------------- | ------ | -------------------------------------------------------------- |
+| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                 |
+| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                       |
+| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status                            |
+| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service                                  |
 | `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users) |
-| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only) |
-| `/api/v1/status`                    | GET    | Get version, update availability           |
-| `/api/v1/settings/about`            | GET    | Get version, user/invite counts, data path |
+| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)  |
+| `/api/v1/status`                    | GET    | Get version, update availability                               |
+| `/api/v1/settings/about`            | GET    | Get version, user/invite counts, data path                     |
 
 ### Restart Status Response
 
