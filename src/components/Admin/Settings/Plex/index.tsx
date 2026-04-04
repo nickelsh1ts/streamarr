@@ -363,12 +363,17 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
               onComplete();
             }
           } catch {
-            await axios.post<{
-              success: boolean;
-              health: PlexHealthState;
-            }>('/api/v1/plex/health/retry');
-            await revalidateHealth();
-            dismissToast(toastId);
+            try {
+              await axios.post<{
+                success: boolean;
+                health: PlexHealthState;
+              }>('/api/v1/plex/health/retry');
+              await revalidateHealth();
+            } catch {
+              // Ignore retry failures so the original connection error UI always runs.
+            } finally {
+              dismissToast(toastId);
+            }
             Toast({
               title: intl.formatMessage({
                 id: 'plexSettings.connectionError',
