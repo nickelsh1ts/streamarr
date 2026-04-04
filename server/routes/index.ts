@@ -131,7 +131,8 @@ router.get('/libraries', async (_req, res) => {
       name: lib.name,
       enabled: lib.enabled,
       type: lib.type,
-      mediaCount: cached.libraries.find((c) => c.id === lib.id)?.mediaCount,
+      mediaCount:
+        cached.libraries.find((c) => c.id === lib.id)?.mediaCount ?? null,
     }));
 
   const cached = getPlexCachedLibraries();
