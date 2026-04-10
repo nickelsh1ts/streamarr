@@ -35,7 +35,7 @@ const UserCard = ({
       .length ?? 0;
 
   return (
-    <div className="pointer-events-auto w-64 relative">
+    <div className="pointer-events-auto w-64 relative text-base-content">
       <Link
         href="/profile"
         className="flex flex-col items-center place-content-center gap-2 p-4 bg-neutral/20 hover:bg-neutral/30"
