@@ -11,20 +11,18 @@ import { useInView } from '@app/hooks/useElementInView';
 import useSettings from '@app/hooks/useSettings';
 import { useRef } from 'react';
 
-//TODO: Update extended homepage and complete translations
-
 function Index() {
   const targetRef = useRef(null);
   const isInView = useInView(targetRef, 0.17);
-  const settings = useSettings();
+  const { currentSettings } = useSettings();
 
   return (
     <main className="bg-gradient-to-b from-secondary from-20% via-primary/75 via-50% to-secondary to-80%">
       <Header isInView={isInView} />
       <Hero />
-      {settings.currentSettings.extendedHome && (
+      {currentSettings.extendedHome && (
         <div ref={targetRef}>
-          <Requesting />
+          {currentSettings.seerrEnabled && <Requesting />}
           <Watching />
           <Favourites />
           <Devices />

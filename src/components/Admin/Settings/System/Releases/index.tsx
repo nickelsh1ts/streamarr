@@ -32,11 +32,10 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
         title={intl.formatMessage(
           {
             id: 'aboutReleases.changelogTitle',
-            defaultMessage: '{version} Changelog',
+            defaultMessage: 'Release {version} Changelog',
           },
           { version: release.tag_name }
         )}
-        subtitle={release.name}
         show={isModalOpen}
         okText={intl.formatMessage({
           id: 'aboutReleases.viewOnGitHub',

@@ -21,7 +21,7 @@ function Footer() {
         <BackToTopBtn full />
       </div>
       <div className="md:grid-flow-col grid-flow-row mb-4 container md:px-20 mx-auto">
-        <div className="grid grid-flow-row me-3">
+        <div className="grid grid-flow-row me-3 gap-2">
           <div className="flex place-items-center gap-4">
             <a
               className="link-neutral"
@@ -43,7 +43,7 @@ function Footer() {
             <a
               className="link-neutral"
               target="_blank"
-              href="https://discord.gg/streamarr"
+              href="https://discord.gg/fj6w8dkK6s"
               rel="noreferrer"
             >
               <svg
@@ -74,8 +74,6 @@ function Footer() {
                 />
               </svg>
             </a>
-          </div>
-          <div className="col-span-2">
             <a
               className="hover:brightness-75"
               target="_blank"
@@ -84,10 +82,26 @@ function Footer() {
             >
               <Image
                 alt="logo"
+                className="h-auto w-8"
+                src="/nickelsh1ts-logo.png"
+                width={32}
+                height={32}
+              />
+            </a>
+          </div>
+          <div className="col-span-2">
+            <a
+              className="hover:brightness-75"
+              target="_blank"
+              href="https://streamarr.dev"
+              rel="noreferrer"
+            >
+              <Image
+                alt="Streamarr Logo"
                 className="h-auto w-64"
-                src="/nickelsh1ts-full.png"
-                width={256}
-                height={64}
+                src="/logo_full.png"
+                width={192}
+                height={32}
               />
             </a>
           </div>
@@ -164,7 +178,7 @@ function Footer() {
         className="place-self-start container md:px-20 mx-auto"
         style={{ fontSize: '0.8rem' }}
       >
-        © {currentYear} nickelsh1ts
+        © {currentYear} Streamarr
       </p>
     </footer>
   );
