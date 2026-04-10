@@ -173,7 +173,7 @@ Real-time notifications require WebSocket support. Ensure your reverse proxy sup
 
 1. Verify calendar sync is enabled for the service
 2. Check Past Days and Future Days settings
-3. Flush the calendar cache in **Settings → Jobs & Cache**
+3. Reload the page — calendar data refreshes automatically in the background on every visit
 4. Verify API connectivity
 
 ### Download client shows as unhealthy
