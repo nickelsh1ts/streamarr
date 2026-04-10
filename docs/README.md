@@ -2,7 +2,7 @@
 
 Welcome to the Streamarr Documentation.
 
-**Streamarr** is an open-source web application designed to wrap your existing \*Arr ecosystem—including [Sonarr](https://sonarr.tv/), [Radarr](https://radarr.video/), [Overseerr](https://overseerr.dev/), and [Plex](https://www.plex.tv/)—into a seamless, user-friendly experience.
+**Streamarr** is an open-source web application designed to wrap your existing \*Arr ecosystem—including [Sonarr](https://sonarr.tv/), [Radarr](https://radarr.video/), [Seerr](https://github.com/seerr/seerr), and [Plex](https://www.plex.tv/)—into a seamless, user-friendly experience.
 
 ## Features
 

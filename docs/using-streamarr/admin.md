@@ -123,7 +123,7 @@ Configure \*Arr and other integrations:
 
 - Radarr (multiple instances supported)
 - Sonarr (multiple instances supported)
-- Lidarr, Prowlarr, Bazarr, Tdarr, Overseerr
+- Lidarr, Prowlarr, Bazarr, Tdarr, Seerr
 - Tautulli
 - Download clients
 

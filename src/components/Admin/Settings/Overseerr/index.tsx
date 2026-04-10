@@ -48,7 +48,7 @@ const AdminOverseerr = () => {
           <p className="text-base-content/70 mb-6">
             <FormattedMessage
               id="settings.overseerr.localhostDescriptionSettings"
-              defaultMessage="Overseerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+              defaultMessage="Seerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
             />
           </p>
           <Button
@@ -60,7 +60,7 @@ const AdminOverseerr = () => {
           >
             <FormattedMessage
               id="settings.openOverseerrSettings"
-              defaultMessage="Open Overseerr Settings"
+              defaultMessage="Open Seerr Settings"
             />
             <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
           </Button>
@@ -78,11 +78,11 @@ const AdminOverseerr = () => {
   return (
     <div className="relative mt-2 -mx-4">
       <DynamicFrame
-        title="overseerr"
+        title="seerr"
         domainURL={hostname}
         basePath={data?.urlBase}
         newBase="/admin/settings/overseerr"
-        serviceName="Overseerr"
+        serviceName="Seerr"
         settingsPath="/admin/settings/services/overseerr"
         isConfigured={isConfigured}
       >

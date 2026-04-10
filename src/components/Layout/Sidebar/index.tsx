@@ -385,7 +385,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                       })}
                       icon={
                         <Image
-                          alt="Overseerr"
+                          alt="Seerr"
                           width={28}
                           height={28}
                           src={'/external/os-icon.svg'}

@@ -151,7 +151,7 @@ const MobileMenu = () => {
       }),
       svgIcon: (
         <Image
-          alt="Overseerr"
+          alt="Seerr"
           src={'/external/os-icon.svg'}
           width={24}
           height={24}
@@ -159,7 +159,7 @@ const MobileMenu = () => {
       ),
       svgIconSelected: (
         <Image
-          alt="Overseerr"
+          alt="Seerr"
           src={'/external/os-icon.svg'}
           width={24}
           height={24}
