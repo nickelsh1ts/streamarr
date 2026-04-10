@@ -1,4 +1,5 @@
 import GithubAPI from '@server/api/github';
+import SeerrAPI from '@server/api/seerr';
 import TheMovieDb from '@server/api/themoviedb';
 import type {
   TmdbMovieResult,
@@ -103,6 +104,50 @@ router.get('/settings/public', async (req, res) => {
       .json({ ...settings.fullPublicSettings, enablePushRegistration: false });
   } else {
     res.status(200).json(settings.fullPublicSettings);
+  }
+});
+
+router.get('/settings/public/seerr/quota', async (_req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({
+      message: 'Seerr is not configured.',
+    });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const quota = await seerrApi.getDefaultQuotas();
+
+    res.status(200).json(quota);
+  } catch {
+    next({
+      status: 500,
+      message: 'Failed to fetch Seerr quota information.',
+    });
+  }
+});
+
+router.get('/settings/public/seerr/notifications', async (_req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({
+      message: 'Seerr is not configured.',
+    });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const notifications = await seerrApi.getEnabledNotificationAgents();
+
+    res.status(200).json(notifications);
+  } catch {
+    next({
+      status: 500,
+      message: 'Failed to fetch Seerr notification information.',
+    });
   }
 });
 

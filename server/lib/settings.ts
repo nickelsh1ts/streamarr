@@ -156,6 +156,7 @@ export interface MainSettings {
   customLogoSmall?: string;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  enableHelpCentre: boolean;
   theme: Theme;
 }
 
@@ -180,6 +181,17 @@ export interface FullPublicSettings extends PublicSettings {
   customLogo?: string;
   customLogoSmall?: string;
   enableSignUp: boolean;
+  enableHelpCentre: boolean;
+  enableTrialPeriod: boolean;
+  trialPeriodDays: number;
+  defaultInviteQuotas: {
+    quotaLimit?: number;
+    quotaDays?: number;
+    quotaUsage?: number;
+    quotaExpiryLimit?: number;
+    quotaExpiryTime?: string;
+  };
+  seerrEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -293,7 +305,13 @@ class Settings {
         cacheImages: false,
         defaultPermissions: Permission.STREAMARR,
         defaultQuotas: {
-          invites: {},
+          invites: {
+            quotaLimit: 3,
+            quotaDays: 0,
+            quotaUsage: 1,
+            quotaExpiryLimit: 1,
+            quotaExpiryTime: 'days' as const,
+          },
         },
         sharedLibraries: '',
         downloads: true,
@@ -311,6 +329,7 @@ class Settings {
         libraryCounts: true,
         enableTrialPeriod: false,
         trialPeriodDays: 30,
+        enableHelpCentre: true,
         theme: {
           primary: '#974ede',
           'primary-content': '#fff',
@@ -544,6 +563,20 @@ class Settings {
       customLogo: this.data.main.customLogo,
       customLogoSmall: this.data.main.customLogoSmall,
       enableSignUp: this.data.main.enableSignUp,
+      enableHelpCentre: this.data.main.enableHelpCentre,
+      enableTrialPeriod: this.data.main.enableTrialPeriod,
+      trialPeriodDays: this.data.main.trialPeriodDays,
+      defaultInviteQuotas: {
+        quotaLimit: this.data.main.defaultQuotas.invites.quotaLimit ?? 3,
+        quotaDays: this.data.main.defaultQuotas.invites.quotaDays ?? 0,
+        quotaUsage: this.data.main.defaultQuotas.invites.quotaUsage ?? 1,
+        quotaExpiryLimit:
+          this.data.main.defaultQuotas.invites.quotaExpiryLimit ?? 1,
+        quotaExpiryTime:
+          this.data.main.defaultQuotas.invites.quotaExpiryTime ?? 'days',
+      },
+      seerrEnabled:
+        this.data.overseerr.enabled && !!this.data.overseerr.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,
