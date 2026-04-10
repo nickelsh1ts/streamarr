@@ -100,6 +100,14 @@ When disabled, the homepage shows a minimal layout.
 
 This setting is **enabled** by default.
 
+### Enable Help Centre
+
+When enabled, the [Help Centre](../help.md) is accessible from the navigation menu, footer links, and user dropdown. Help topics, legal pages (Terms, Privacy, Cookies), and support contact information are all available.
+
+When disabled, all Help Centre links are hidden and any direct navigation to `/help` is redirected to the watch page.
+
+This setting is **enabled** by default.
+
 ### Custom Logo
 
 Upload custom logos to replace the default Streamarr branding. Two variants are supported:
@@ -381,16 +389,16 @@ Connect Lidarr for music management.
 | **API Key**        | Found in Lidarr → Settings → General |
 | **URL Base**       | Default is `/lidarr`                 |
 
-#### Overseerr
+#### Seerr
 
-Connect Overseerr for request management.
+Connect Seerr for request management.
 
-| Setting            | Description                             |
-| ------------------ | --------------------------------------- |
-| **Hostname or IP** | Address of your Overseerr server        |
-| **Port**           | Default is `5055`                       |
-| **API Key**        | Found in Overseerr → Settings → General |
-| **URL Base**       | Default is `/overseerr`                 |
+| Setting            | Description                         |
+| ------------------ | ----------------------------------- |
+| **Hostname or IP** | Address of your Seerr server        |
+| **Port**           | Default is `5055`                   |
+| **API Key**        | Found in Seerr → Settings → General |
+| **URL Base**       | Default is `/seerr`                 |
 
 #### Tdarr
 
@@ -478,18 +486,18 @@ Streamarr performs maintenance tasks as scheduled jobs. You can also manually tr
 
 Streamarr caches requests to external APIs. You can flush individual caches if needed:
 
-| Cache        | Description                                   |
-| ------------ | --------------------------------------------- |
-| **TMDB**     | Movie/TV metadata from The Movie Database     |
-| **Plex TV**  | Plex.tv API data                              |
-| **PlexGUID** | Plex media GUID mappings                      |
-| **Radarr**   | Radarr API responses (includes calendar data) |
-| **Sonarr**   | Sonarr API responses (includes calendar data) |
-| **Lidarr**   | Lidarr API responses                          |
-| **Prowlarr** | Prowlarr API responses                        |
-| **IMDB**     | IMDB data from Radarr proxy                   |
-| **GitHub**   | GitHub API responses (for update checks)      |
+| Cache        | Description                               |
+| ------------ | ----------------------------------------- |
+| **TMDB**     | Movie/TV metadata from The Movie Database |
+| **Plex TV**  | Plex.tv API data                          |
+| **PlexGUID** | Plex media GUID mappings                  |
+| **Radarr**   | Radarr API responses                      |
+| **Sonarr**   | Sonarr API responses                      |
+| **Lidarr**   | Lidarr API responses                      |
+| **Prowlarr** | Prowlarr API responses                    |
+| **IMDB**     | IMDB data from Radarr proxy               |
+| **GitHub**   | GitHub API responses (for update checks)  |
 
 {% hint style="info" %}
-Flushing the Radarr or Sonarr cache will also clear cached calendar events, triggering a fresh fetch on the next calendar view.
+Calendar event data is held in a separate in-memory cache and is not affected by flushing the Radarr or Sonarr cache here. Calendar data refreshes automatically in the background on every visit.
 {% endhint %}
