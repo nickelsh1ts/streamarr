@@ -22,7 +22,7 @@ const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
               }}
               id={`${tab.id}}`}
               role="tab"
-              className={`tab h-fit w-fit py-2 font-bold${activeTab === tab.id ? ' tab-active !border-primary text-primary' : ''}`}
+              className={`tab [--tab-color:black] h-fit w-fit py-2 font-bold${activeTab === tab.id ? ' tab-active !border-primary text-primary' : ''}`}
             >
               {tab.title}
             </button>

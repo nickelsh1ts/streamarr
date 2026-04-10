@@ -1,6 +1,8 @@
 'use client';
 import useSettings from '@app/hooks/useSettings';
+import Link from 'next/link';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 const Privacy = () => {
   const { currentSettings } = useSettings();
@@ -10,137 +12,170 @@ const Privacy = () => {
 
   return (
     <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">
-      <p className="text-4xl mb-6 font-extrabold">Privacy Statement</p>
-      <p>
-        This Privacy Statement explains our practices, including your choices,
-        regarding the collection, use, and disclosure of certain information,
-        including your personal information in connection with the{' '}
-        {currentSettings.applicationTitle} service.
+      <p className="text-4xl mb-6 font-extrabold">
+        <FormattedMessage
+          id="help.privacy.title"
+          defaultMessage="Privacy Statement"
+        />
       </p>
-      <p className="font-extrabold mt-10 text-xl mb-2">Contacting Us</p>
       <p>
-        If you have general questions about your account or how to contact us
-        for assistance, please visit our online help center at{' '}
-        <a
-          className="text-decoration-none link-primary font-extrabold"
-          href="/help"
-        >
-          {currentSettings.applicationUrl
-            .toLowerCase()
-            .replace('http://', '')
-            .replace('https://', '') || hostname}
-          /help
-        </a>
-        . For questions specifically about this Privacy Statement, or our use of
-        your personal information, cookies or similar technologies, please
-        contact us by email at{' '}
-        <a
-          className="text-decoration-none link-primary font-extrabold"
-          href={`mailto:${currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}`}
-        >
-          {currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}
-        </a>
-        .
+        <FormattedMessage
+          id="help.privacy.intro"
+          defaultMessage="This Privacy Statement explains how {appTitle} handles your information. We keep things simple — we collect only what we need to make the service work, and we do not sell your data. Ever."
+          values={{
+            appTitle: (
+              <span className="text-primary font-bold">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+          }}
+        />
       </p>
-      <p className="mt-6">
-        The data controller of your personal information is nickelsh1ts, Inc.
+      <p className="font-extrabold mt-10 text-xl mb-2">
+        <FormattedMessage
+          id="help.privacy.contactTitle"
+          defaultMessage="Contacting Us"
+        />
+      </p>
+      <p>
+        <FormattedMessage
+          id="help.privacy.contactDesc"
+          defaultMessage="If you have questions about your account, visit our help center at {helpLink}. For privacy-specific questions, reach out at {emailLink}."
+          values={{
+            helpLink: (
+              <a
+                className="text-decoration-none link-primary font-extrabold"
+                href="/help"
+              >
+                {currentSettings.applicationUrl
+                  .toLowerCase()
+                  .replace('http://', '')
+                  .replace('https://', '') || hostname}
+                /help
+              </a>
+            ),
+            emailLink: (
+              <a
+                className="text-decoration-none link-primary font-extrabold"
+                href={`mailto:${currentSettings.supportEmail.toLowerCase() || 'privacy@' + hostname}`}
+              >
+                {currentSettings.supportEmail.toLowerCase() ||
+                  'privacy@' + hostname}
+              </a>
+            ),
+          }}
+        />
       </p>
       <p className="font-extrabold mt-7 text-xl mb-2">
-        Collection of Information
+        <FormattedMessage
+          id="help.privacy.collectTitle"
+          defaultMessage="What We Collect"
+        />
       </p>
-      <p>We receive and store information about you such as:</p>
+      <p>
+        <FormattedMessage
+          id="help.privacy.collectIntro"
+          defaultMessage="We receive and store information about you such as:"
+        />
+      </p>
       <ul className="list-disc mx-10 my-3">
-        <li>
-          <span className="font-extrabold">information you provide to us:</span>{' '}
-          We collect information you provide to us which includes:
-        </li>
-        <ul className="list-circle mx-5">
-          <li className="my-5">
-            your name and email address. We collect this information in a number
-            of ways, including when you enter it while using our service or
-            interact with us;
-          </li>
-          <li className="my-5">
-            information when you choose to provide ratings, taste preferences,
-            requests, or otherwise provide information to us through our service
-            or elsewhere.
-          </li>
-        </ul>
-
         <li>
           <span className="font-extrabold">
-            Information we collect automatically:
+            <FormattedMessage
+              id="help.privacy.providedLabel"
+              defaultMessage="Information you provide:"
+            />
           </span>{' '}
-          We collect information about you and your use of our service, your
-          interactions with us, as well as information regarding your network,
-          network devices, and your computer or other{' '}
-          {currentSettings.applicationTitle} capable devices you might use to
-          access our service (such as gaming systems, smart TVs, mobile devices,
-          set top boxes, and other streaming media devices). This information
-          includes:
+          <FormattedMessage
+            id="help.privacy.providedDesc"
+            defaultMessage="Your name and email address when you create an account, and any preferences or requests you submit through the service."
+          />
         </li>
-        <ul className="list-circle mx-5">
-          <li className="my-5">
-            your activity on the {currentSettings.applicationTitle} service,
-            such as title selections and shows you have watched;
-          </li>
-          <li className="my-5">
-            device IDs or other unique identifiers, including for your network
-            devices, and devices that are {currentSettings.applicationTitle}{' '}
-            capable on your Wi-Fi network;
-          </li>
-          <li className="my-5">
-            device and software characteristics (such as type and
-            configuration), connection information including type (wifi,
-            cellular), statistics on page views, referring source (for example,
-            referral URLs), IP address (which may tell us your general
-            location), browser and standard web server log information;
-          </li>
-          <li className="my-5">
-            information collected via the use of cookies, web beacons and other
-            technologies.
-          </li>
-        </ul>
+        <li className="mt-3">
+          <span className="font-extrabold">
+            <FormattedMessage
+              id="help.privacy.autoLabel"
+              defaultMessage="Information collected automatically:"
+            />
+          </span>{' '}
+          <FormattedMessage
+            id="help.privacy.autoDesc"
+            defaultMessage="Basic usage data such as what you watch, device information, IP address (for general location), and standard web server logs. This helps us keep things running and improve the experience."
+          />
+        </li>
       </ul>
-      <p className="font-extrabold mt-7 text-xl mb-2">Use of Information</p>
-      We use information to provide, analyze, administer, enhance and
-      personalize our services, to manage member referrals, to process your
-      registration, your requests, and to communicate with you on these and
-      other topics. For example, we use such information to:
+      <p className="font-extrabold mt-7 text-xl mb-2">
+        <FormattedMessage
+          id="help.privacy.useTitle"
+          defaultMessage="How We Use It"
+        />
+      </p>
+      <p>
+        <FormattedMessage
+          id="help.privacy.useIntro"
+          defaultMessage="We use your information to provide and improve the service. Specifically:"
+        />
+      </p>
       <ul className="list-disc mx-10 my-3">
-        <li className="my-5">
-          determine your general geographic location, provide localized content,
-          determine your ISP to support network troubleshooting for you (we also
-          use aggregated ISP information for operational and business purposes),
-          and help us quickly and efficiently respond to inquiries and requests;
+        <li className="my-3">
+          <FormattedMessage
+            id="help.privacy.use1"
+            defaultMessage="To keep your account working and secure"
+          />
         </li>
-        <li className="my-5">
-          secure our systems, prevent fraud and help us protect the security of{' '}
-          {currentSettings.applicationTitle} accounts;
+        <li className="my-3">
+          <FormattedMessage
+            id="help.privacy.use2"
+            defaultMessage="To personalize your experience and provide recommendations"
+          />
         </li>
-        <li className="my-5">
-          prevent, detect and investigate potentially prohibited or illegal
-          activities, including fraud, and to enforce our terms (such as
-          determining whether and for which {currentSettings.applicationTitle}{' '}
-          signup offers you are eligible and determining whether a particular
-          device is permitted to use the account consistent with our Terms of
-          Use);
+        <li className="my-3">
+          <FormattedMessage
+            id="help.privacy.use3"
+            defaultMessage="To communicate with you about your account, requests, and service updates"
+          />
         </li>
-        <li className="my-5">
-          analyze and understand our audience, improve our service (including
-          our user interface experiences and service performance) and optimize
-          content selection, and delivery;
-        </li>
-        <li className="my-5">
-          communicate with you concerning our service so that we can send you
-          news about {currentSettings.applicationTitle}, details about new
-          features and content available on {currentSettings.applicationTitle},
-          promotional announcements. These communications may be by various
-          methods, such as email, push notifications and online messaging
-          channels.
+        <li className="my-3">
+          <FormattedMessage
+            id="help.privacy.use4"
+            defaultMessage="To troubleshoot issues and improve the service"
+          />
         </li>
       </ul>
-      <span className="font-extrabold">Last Updated:</span> July 12, 2024
+      <p className="font-extrabold mt-7 text-xl mb-2" id="cookies">
+        <FormattedMessage
+          id="help.privacy.cookiesTitle"
+          defaultMessage="Cookies"
+        />
+      </p>
+      <p>
+        <FormattedMessage
+          id="help.privacy.cookiesDesc"
+          defaultMessage="We use cookies to keep you signed in and remember your preferences. For full details, see our {link}."
+          values={{
+            link: (
+              <Link
+                href="/help/legal/cookies"
+                className="link-primary font-extrabold"
+              >
+                <FormattedMessage
+                  id="help.privacy.cookiePolicyLink"
+                  defaultMessage="Cookie Policy"
+                />
+              </Link>
+            ),
+          }}
+        />
+      </p>
+      <p className="mt-6">
+        <span className="font-extrabold">
+          <FormattedMessage
+            id="help.privacy.lastUpdated"
+            defaultMessage="Last Updated:"
+          />
+        </span>{' '}
+        April 9, 2026
+      </p>
     </div>
   );
 };

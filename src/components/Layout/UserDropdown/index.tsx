@@ -118,9 +118,14 @@ const UserDropdown = ({
             />
           </DropDownMenu.Item>
         )}
-        <DropDownMenu.Item href="/help">
-          <FormattedMessage id="help.helpCentre" defaultMessage="Help Centre" />
-        </DropDownMenu.Item>
+        {currentSettings.enableHelpCentre && (
+          <DropDownMenu.Item href="/help">
+            <FormattedMessage
+              id="help.helpCentre"
+              defaultMessage="Help Centre"
+            />
+          </DropDownMenu.Item>
+        )}
         {canShowTutorialOption && (
           <DropDownMenu.Item onClick={startTutorial}>
             <FormattedMessage

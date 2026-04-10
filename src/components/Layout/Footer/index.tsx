@@ -93,40 +93,44 @@ function Footer() {
           </div>
         </div>
         <nav className="grid grid-flow-col grid-rows-4 gap-y-5 gap-x-20 mt-10 md:ms-auto">
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/termsofuse"
-          >
-            <FormattedMessage
-              id="footer.termsOfUse"
-              defaultMessage="Terms of Use"
-            />
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/privacy"
-          >
-            <FormattedMessage
-              id="footer.privacyPolicy"
-              defaultMessage="Privacy Policy"
-            />
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/privacy#cookies"
-          >
-            <FormattedMessage
-              id="footer.cookiePreferences"
-              defaultMessage="Cookie Preferences"
-            />
-          </Link>
-          <div></div>
-          <Link className="link-neutral text-decoration-none" href="/help/">
-            <FormattedMessage
-              id="help.helpCentre"
-              defaultMessage="Help Centre"
-            />
-          </Link>
+          {currentSettings.enableHelpCentre && (
+            <>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/termsofuse"
+              >
+                <FormattedMessage
+                  id="footer.termsOfUse"
+                  defaultMessage="Terms of Use"
+                />
+              </Link>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/privacy"
+              >
+                <FormattedMessage
+                  id="footer.privacyPolicy"
+                  defaultMessage="Privacy Policy"
+                />
+              </Link>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/cookies"
+              >
+                <FormattedMessage
+                  id="footer.cookiePolicy"
+                  defaultMessage="Cookie Policy"
+                />
+              </Link>
+              <div></div>
+              <Link className="link-neutral text-decoration-none" href="/help/">
+                <FormattedMessage
+                  id="help.helpCentre"
+                  defaultMessage="Help Centre"
+                />
+              </Link>
+            </>
+          )}
           {currentSettings.statusEnabled && currentSettings.statusUrl && (
             <Link
               className="link-neutral text-decoration-none"
