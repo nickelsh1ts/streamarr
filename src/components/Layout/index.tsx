@@ -133,7 +133,7 @@ const Layout = ({
       redirect('/signin');
     }
 
-    if (pathname.match(/help/) && !currentSettings.enableHelpCentre) {
+    if (pathname.match(/^\/help(\/|$)/) && !currentSettings.enableHelpCentre) {
       redirect('/');
     }
 
