@@ -1,5 +1,6 @@
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import SeerrAPI from '@server/api/seerr';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
   UserSettingsGeneralResponse,
@@ -636,6 +637,61 @@ userSettingsRoutes.post<{ id: string }>(
       return next({
         status: 500,
         message: `Failed to pin libraries: ${e?.message || 'Unknown error'}`,
+      });
+    }
+  }
+);
+
+userSettingsRoutes.get<{ id: string }>(
+  '/seerr/quota',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const seerrSettings = getSettings().overseerr;
+    const userRepository = getRepository(User);
+
+    if (!seerrSettings.enabled || !seerrSettings.hostname) {
+      return res.status(404).json({
+        message: 'Seerr is not configured.',
+      });
+    }
+
+    try {
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return next({
+          status: 400,
+          message: 'User does not have a Plex ID associated.',
+        });
+      }
+
+      if (
+        (user.id === 1 && req.user?.id !== 1) ||
+        (user.hasPermission(Permission.ADMIN) &&
+          user.id !== req.user?.id &&
+          req.user?.id !== 1)
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to view this user's Seerr quota.",
+        });
+      }
+
+      const seerrApi = new SeerrAPI(seerrSettings);
+      const quota = await seerrApi.getUserQuotaByPlexId(user.plexId);
+
+      res.status(200).json(quota);
+    } catch {
+      next({
+        status: 500,
+        message: 'Failed to fetch Seerr user quota information.',
       });
     }
   }

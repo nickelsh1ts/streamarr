@@ -25,7 +25,7 @@ const HelpHeader = () => {
           }
         />
         <div className="container max-w-screen-xl mx-auto h-44 content-center z-0">
-          <h2 className="text-center font-extrabold text-3xl my-4">
+          <h2 className="text-center font-extrabold text-3xl my-4 text-white">
             <FormattedMessage
               id="help.helpCentre"
               defaultMessage="Help Centre"

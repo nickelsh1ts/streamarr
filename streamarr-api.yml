@@ -252,6 +252,10 @@ components:
           maximum: 90
           example: 30
           description: Number of days for trial period (only applies when enableTrialPeriod is true)
+        enableHelpCentre:
+          type: boolean
+          example: true
+          description: Enable the Help Centre for users
     PlexLibrary:
       type: object
       properties:
@@ -639,6 +643,48 @@ components:
         externalUrl:
           type: string
           nullable: true
+        hostname:
+          type: string
+          nullable: true
+        port:
+          type: number
+          nullable: true
+        useSsl:
+          type: boolean
+          nullable: true
+        urlBase:
+          type: string
+          nullable: true
+        apiKey:
+          type: string
+          nullable: true
+    SeerrQuotaResponse:
+      type: object
+      properties:
+        movieQuotaLimit:
+          type: number
+          nullable: true
+          example: 5
+        movieQuotaDays:
+          type: number
+          nullable: true
+          example: 7
+        tvQuotaLimit:
+          type: number
+          nullable: true
+          example: 2
+        tvQuotaDays:
+          type: number
+          nullable: true
+          example: 7
+    SeerrNotificationsResponse:
+      type: object
+      properties:
+        enabledAgents:
+          type: array
+          items:
+            type: string
+          example: ['email', 'discord']
     DownloadClientType:
       type: string
       enum:
@@ -1048,6 +1094,49 @@ components:
           nullable: true
           description: URL path to custom uploaded small logo file
           example: '/logos/logo_sm.png'
+        enableHelpCentre:
+          type: boolean
+          example: true
+          description: Enable the Help Centre for users
+        enableTrialPeriod:
+          type: boolean
+          example: false
+          description: Whether a trial period is enabled for new users
+        trialPeriodDays:
+          type: number
+          example: 30
+          description: Number of days for the trial period
+        defaultInviteQuotas:
+          type: object
+          description: Default invite quota settings
+          properties:
+            quotaLimit:
+              type: number
+              nullable: true
+              example: 3
+            quotaDays:
+              type: number
+              nullable: true
+              example: 0
+            quotaUsage:
+              type: number
+              nullable: true
+              example: 1
+              description: Number of uses per invite code
+            quotaExpiryLimit:
+              type: number
+              nullable: true
+              example: 1
+              description: Expiry duration value
+            quotaExpiryTime:
+              type: string
+              nullable: true
+              example: days
+              description: Expiry duration unit (days, weeks, months)
+        seerrEnabled:
+          type: boolean
+          example: true
+          description: Whether Seerr (Overseerr) is configured and enabled
     Invites:
       type: object
       properties:
@@ -2680,6 +2769,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/public/seerr/quota:
+    get:
+      summary: Get Seerr request quota defaults
+      description: Retrieves default request quota limits from the configured Seerr instance.
+      security: []
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Seerr default quota information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrQuotaResponse'
+        '404':
+          description: Seerr is not configured
+  /settings/public/seerr/notifications:
+    get:
+      summary: Get Seerr enabled notification agents
+      description: Retrieves list of enabled notification agents from the configured Seerr instance.
+      security: []
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Seerr notification agent information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrNotificationsResponse'
+        '404':
+          description: Seerr is not configured
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
@@ -4850,6 +4971,21 @@ paths:
                   message:
                     type: string
                     example: Failed to pin libraries
+  /user/{userId}/settings/seerr/quota:
+    get:
+      summary: Get Seerr user-specific request quotas
+      description: Retrieves request quota limits for the specified user from the configured Seerr instance. Falls back to null values if the user is not found in Seerr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Seerr user quota information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrQuotaResponse'
+        '404':
+          description: Seerr is not configured or user has no linked Plex account
   /downloads:
     get:
       summary: Get all torrents from download clients

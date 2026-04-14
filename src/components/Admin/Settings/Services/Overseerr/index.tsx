@@ -1,6 +1,7 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
@@ -80,13 +81,13 @@ const ServicesOverseerr = () => {
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="servicesSettings.overseerr.title"
-            defaultMessage="Overseerr Settings"
+            defaultMessage="Seerr Settings"
           />
         </h3>
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.overseerr.description"
-            defaultMessage="Optionally configure the settings for your Overseerr server."
+            defaultMessage="Optionally configure the settings for your Seerr server."
           />
         </p>
       </div>
@@ -94,14 +95,14 @@ const ServicesOverseerr = () => {
         title={intl.formatMessage({
           id: 'servicesSettings.overseerr.alertTitle',
           defaultMessage:
-            'Warning: Overseerr Integration requires additional setup',
+            'Warning: Seerr Integration requires additional setup',
         })}
         type="warning"
       >
         <p>
           <FormattedMessage
             id="servicesSettings.overseerr.alertDescription"
-            defaultMessage="To complete the Overseerr integration, you must configure a reverse proxy and serve overseerr at a specified url base. Overseerr does not currently support url bases natively and must be re-written by a reverse proxy. An Nginx example is provided for reference."
+            defaultMessage="To complete the Seerr integration, you must configure a reverse proxy and serve Seerr at a specified url base. Seerr does not currently support url bases natively and must be re-written by a reverse proxy. An Nginx example is provided for reference."
           />
         </p>
       </Alert>
@@ -111,6 +112,7 @@ const ServicesOverseerr = () => {
           port: dataOverseerr?.port ?? 5055,
           enabled: dataOverseerr?.enabled ?? false,
           urlBase: dataOverseerr?.urlBase,
+          apiKey: dataOverseerr?.apiKey ?? '',
         }}
         validationSchema={SettingsSchema}
         onSubmit={async (values) => {
@@ -120,6 +122,7 @@ const ServicesOverseerr = () => {
               port: values.port,
               enabled: values.enabled,
               urlBase: values.urlBase,
+              apiKey: values.apiKey,
             } as ServiceSettings);
 
             Toast({
@@ -128,7 +131,7 @@ const ServicesOverseerr = () => {
                   id: 'common.settingsSaveSuccess',
                   defaultMessage: '{appName} settings saved successfully',
                 },
-                { appName: 'Overseerr' }
+                { appName: 'Seerr' }
               ),
               type: 'success',
               icon: <CheckBadgeIcon className="size-7" />,
@@ -141,7 +144,7 @@ const ServicesOverseerr = () => {
                   defaultMessage:
                     'Something went wrong while saving {appName} settings.',
                 },
-                { appName: 'Overseerr' }
+                { appName: 'Seerr' }
               ),
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
@@ -261,6 +264,30 @@ const ServicesOverseerr = () => {
                   {errors.urlBase && touched.urlBase && (
                     <div className="text-error">{errors.urlBase}</div>
                   )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <label htmlFor="apiKey">
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex col-span-2">
+                    <SensitiveInput
+                      as="field"
+                      id="apiKey"
+                      name="apiKey"
+                      buttonSize="sm"
+                      className="input input-sm input-primary w-full"
+                    />
+                  </div>
+                  {errors.apiKey &&
+                    touched.apiKey &&
+                    typeof errors.apiKey === 'string' && (
+                      <div className="text-error">{errors.apiKey}</div>
+                    )}
                 </div>
               </div>
               <Accordion>

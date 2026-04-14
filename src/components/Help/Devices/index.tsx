@@ -8,6 +8,7 @@ import Image from 'next/image';
 import useSWR from 'swr';
 import useSettings from '@app/hooks/useSettings';
 import PlexLogo from '@app/assets/services/plex.svg';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface imageArrayProps {
   src: string;
@@ -25,10 +26,14 @@ interface TabProps {
 const DeviceTabs = () => {
   const [activeTab, setActive] = useState('tab-0');
   const { currentSettings } = useSettings();
+  const intl = useIntl();
 
   const tabs: TabProps[] = [
     {
-      link: 'Streaming Media Players',
+      link: intl.formatMessage({
+        id: 'help.devices.streamingMediaPlayers',
+        defaultMessage: 'Streaming Media Players',
+      }),
       icon: (
         <svg
           className="w-7 h-7 text-primary group-hover:text-secondary"
@@ -43,17 +48,23 @@ const DeviceTabs = () => {
           ></path>
         </svg>
       ),
-      heading: 'PLUG AND PLAY',
+      heading: intl.formatMessage({
+        id: 'help.devices.plugAndPlay',
+        defaultMessage: 'PLUG AND PLAY',
+      }),
       paragraph: (
-        <>
-          The newest generation of media players and streaming sticks offer a
-          fast, easy, and affordable way to watch
-          <span className="text-primary">
-            {' '}
-            {currentSettings.applicationTitle}
-          </span>{' '}
-          on your TV with the <PlexLogo className="inline-block size-9" /> app.
-        </>
+        <FormattedMessage
+          id="help.devices.streamingParagraph"
+          defaultMessage="The newest generation of media players and streaming sticks offer a fast, easy, and affordable way to watch {appTitle} on your TV with the {plexLogo} app."
+          values={{
+            appTitle: (
+              <span className="text-primary">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+            plexLogo: <PlexLogo className="inline-block size-9" />,
+          }}
+        />
       ),
       imageArray: [
         { src: '/img/Apple_TV_Logo.png', alt: 'Apple TV' },
@@ -64,23 +75,30 @@ const DeviceTabs = () => {
       ],
     },
     {
-      link: 'Smart TVs',
+      link: intl.formatMessage({
+        id: 'help.devices.smartTVs',
+        defaultMessage: 'Smart TVs',
+      }),
       icon: (
         <TvIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
       ),
-      heading: 'BUILT-IN APP CONNECTION',
+      heading: intl.formatMessage({
+        id: 'help.devices.builtInApp',
+        defaultMessage: 'BUILT-IN APP CONNECTION',
+      }),
       paragraph: (
-        <>
-          Enjoy <PlexLogo className="inline-block size-9" />
-          &apos;s gorgeous interface on your big screen with the{' '}
-          <PlexLogo className="inline-block size-9" /> Smart TV app, available
-          in most smart TV app stores, and access
-          <span className="text-primary">
-            {' '}
-            {currentSettings.applicationTitle}
-          </span>{' '}
-          directly on-screen.
-        </>
+        <FormattedMessage
+          id="help.devices.smartTvParagraph"
+          defaultMessage="Enjoy {plexLogo}'s gorgeous interface on your big screen with the {plexLogo} Smart TV app, available in most smart TV app stores, and access {appTitle} directly on-screen."
+          values={{
+            plexLogo: <PlexLogo className="inline-block size-9" />,
+            appTitle: (
+              <span className="text-primary">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+          }}
+        />
       ),
       imageArray: [
         { src: '/img/LG-Logo.png', alt: 'LG' },
@@ -91,7 +109,10 @@ const DeviceTabs = () => {
       ],
     },
     {
-      link: 'Game Consoles',
+      link: intl.formatMessage({
+        id: 'help.devices.gameConsoles',
+        defaultMessage: 'Game Consoles',
+      }),
       icon: (
         <svg
           className="w-7 h-7 text-primary group-hover:text-secondary"
@@ -106,19 +127,30 @@ const DeviceTabs = () => {
       ),
       heading: (
         <>
-          Play games <br />
-          Watch Movies
+          <FormattedMessage
+            id="help.devices.playGames"
+            defaultMessage="Play games"
+          />{' '}
+          <br />
+          <FormattedMessage
+            id="help.devices.watchMovies"
+            defaultMessage="Watch Movies"
+          />
         </>
       ),
       paragraph: (
-        <>
-          You can also watch{' '}
-          <span className="text-primary">
-            {currentSettings.applicationTitle}
-          </span>{' '}
-          on a variety of game consoles with the{' '}
-          <PlexLogo className="inline-block size-9" /> app.
-        </>
+        <FormattedMessage
+          id="help.devices.gameConsoleParagraph"
+          defaultMessage="You can also watch {appTitle} on a variety of game consoles with the {plexLogo} app."
+          values={{
+            appTitle: (
+              <span className="text-primary">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+            plexLogo: <PlexLogo className="inline-block size-9" />,
+          }}
+        />
       ),
       imageArray: [
         { src: '/img/xbox-one_logo.png', alt: 'Xbox One' },
@@ -130,38 +162,41 @@ const DeviceTabs = () => {
       ],
     },
     {
-      link: 'Smart Phones & Tablets',
+      link: intl.formatMessage({
+        id: 'help.devices.smartPhones',
+        defaultMessage: 'Smart Phones & Tablets',
+      }),
       icon: (
         <DevicePhoneMobileIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
       ),
       heading: (
         <>
-          Take{' '}
-          <span className="text-primary">
-            {currentSettings.applicationTitle}
-          </span>{' '}
-          with you
+          <FormattedMessage
+            id="help.devices.takeWithYou"
+            defaultMessage="Take {appTitle} with you"
+            values={{
+              appTitle: (
+                <span className="text-primary">
+                  {currentSettings.applicationTitle}
+                </span>
+              ),
+            }}
+          />
         </>
       ),
       paragraph: (
-        <>
-          It’s easy to watch <span className="text-purple">Nickflix</span>TV
-          from anywhere. If <PlexLogo className="inline-block size-9" /> isn’t
-          already on your phone or tablet, you can download the free app from
-          the Apple App Store, Google Play, or the Windows Phone Store.
-          <br />
-          <br />
-          <span className="text-xs text-neutral">
-            *The <PlexLogo className="inline-block size-9" /> app currently only
-            offers free playback via the casting feature. To watch on the app
-            directly on your phone a small one-time fee is required. If you wish
-            not to pay the fee, you may use the newly mobile optimized{' '}
-            <span className="text-primary">
-              {process.env.NEXT_PUBLIC_APP_NAME?.toLowerCase() || 'streamarr'}
-            </span>
-            .com app.
-          </span>
-        </>
+        <FormattedMessage
+          id="help.devices.smartPhoneParagraph"
+          defaultMessage="It's easy to watch {appTitle} from anywhere. If {plexLogo} isn't already on your phone or tablet, you can download the free app from the Apple App Store, Google Play, or the Windows Phone Store."
+          values={{
+            appTitle: (
+              <span className="text-primary">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+            plexLogo: <PlexLogo className="inline-block size-9" />,
+          }}
+        />
       ),
       imageArray: [
         { src: '/img/Android_logo.png', alt: 'Android' },
@@ -169,19 +204,29 @@ const DeviceTabs = () => {
       ],
     },
     {
-      link: 'PCs & Laptops',
+      link: intl.formatMessage({
+        id: 'help.devices.pcsLaptops',
+        defaultMessage: 'PCs & Laptops',
+      }),
       icon: (
         <ComputerDesktopIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
       ),
-      heading: 'Watch on what you have',
+      heading: intl.formatMessage({
+        id: 'help.devices.watchOnWhatYouHave',
+        defaultMessage: 'Watch on what you have',
+      }),
       paragraph: (
-        <>
-          <span className="text-primary">
-            {currentSettings.applicationTitle}
-          </span>{' '}
-          is optimized for today&apos;s most popular browsers so you can watch
-          on your PC or laptop.
-        </>
+        <FormattedMessage
+          id="help.devices.pcParagraph"
+          defaultMessage="{appTitle} is optimized for today's most popular browsers so you can watch on your PC or laptop."
+          values={{
+            appTitle: (
+              <span className="text-primary">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+          }}
+        />
       ),
     },
   ];
@@ -260,10 +305,17 @@ const DeviceTabs = () => {
         })}
       </div>
       <div className="container mx-auto text-center py-10 px-5 text-black">
-        <span className="text-primary font-extrabold">
-          {currentSettings.applicationTitle}
-        </span>{' '}
-        membership and internet connection required.
+        <FormattedMessage
+          id="help.devices.membershipRequired"
+          defaultMessage="{appTitle} membership and internet connection required."
+          values={{
+            appTitle: (
+              <span className="text-primary font-extrabold">
+                {currentSettings.applicationTitle}
+              </span>
+            ),
+          }}
+        />
       </div>
     </div>
   );
