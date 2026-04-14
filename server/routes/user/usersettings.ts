@@ -644,6 +644,7 @@ userSettingsRoutes.post<{ id: string }>(
 
 userSettingsRoutes.get<{ id: string }>(
   '/seerr/quota',
+  isOwnProfileOrAdmin(),
   async (req, res, next) => {
     const seerrSettings = getSettings().overseerr;
     const userRepository = getRepository(User);
@@ -661,6 +662,13 @@ userSettingsRoutes.get<{ id: string }>(
 
       if (!user) {
         return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return next({
+          status: 400,
+          message: 'User does not have a Plex ID associated.',
+        });
       }
 
       if (

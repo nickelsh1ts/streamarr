@@ -64,7 +64,10 @@ async function fetchCalendar(
     } catch (e) {
       logger.error(
         `Failed to fetch ${type} calendar for instance: ${instanceSettings.hostname}`,
-        { label: 'Calendar', errorMessage: e.message }
+        {
+          label: 'Calendar',
+          errorMessage: e instanceof Error ? e.message : String(e),
+        }
       );
     }
   }

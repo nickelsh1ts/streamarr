@@ -111,7 +111,7 @@ class SeerrAPI {
           tvQuotaLimit?: number | null;
           tvQuotaDays?: number | null;
         }[];
-      }>('/user', { params: { take: 100 } });
+      }>('/user');
 
       const seerrUser = response.data.results?.find((u) => u.plexId === plexId);
 

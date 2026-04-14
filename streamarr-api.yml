@@ -4974,7 +4974,7 @@ paths:
   /user/{userId}/settings/seerr/quota:
     get:
       summary: Get Seerr user-specific request quotas
-      description: Retrieves request quota limits for the current user from the configured Seerr instance. Falls back to null values if the user is not found in Seerr.
+      description: Retrieves request quota limits for the specified user from the configured Seerr instance. Falls back to null values if the user is not found in Seerr.
       tags:
         - settings
       responses:
