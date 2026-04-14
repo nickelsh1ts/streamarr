@@ -6,24 +6,25 @@ import type { SeerrNotificationsResponse } from '@server/interfaces/api/seerrInt
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-const useSeerrNotifications = () => {
-  const { data, error, isLoading } = useSWR<SeerrNotificationsResponse>(
-    '/api/v1/settings/public/seerr/notifications',
-    {
-      revalidateOnFocus: false,
-      shouldRetryOnError: false,
-    }
-  );
-
-  return {
-    notifications: data,
-    error,
-    isLoading,
-  };
-};
-
 const HelpContent = () => {
   const { currentSettings } = useSettings();
+  const useSeerrNotifications = () => {
+    const { data, error, isLoading } = useSWR<SeerrNotificationsResponse>(
+      currentSettings.seerrEnabled
+        ? '/api/v1/settings/public/seerr/notifications'
+        : null,
+      {
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+      }
+    );
+
+    return {
+      notifications: data,
+      error,
+      isLoading,
+    };
+  };
   const { notifications } = useSeerrNotifications();
 
   const enabledAgents = notifications?.enabledAgents ?? [];

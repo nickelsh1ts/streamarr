@@ -312,33 +312,32 @@ const WatchOnTV = () => {
         )}`}
       />
       <HelpCard
-        heading={intl.formatMessage(
-          {
-            id: 'help.watchOnTv.heading',
-            defaultMessage: 'How can I watch {appTitle} on my TV?',
-          },
-          {
-            appTitle: (
-              <span className="text-primary font-bold">
-                {currentSettings.applicationTitle}
-              </span>
-            ),
-          }
-        )}
-        subheading={intl.formatMessage(
-          {
-            id: 'help.watchOnTv.subheading',
-            defaultMessage:
-              'You can use Chromecast or Apple AirPlay to wirelessly stream {appTitle} content from your Android or iOS mobile device to your TV or play directly on some supported devices such as Apple or Google TV with the Plex app',
-          },
-          {
-            appTitle: (
-              <span className="text-primary font-bold">
-                {currentSettings.applicationTitle}
-              </span>
-            ),
-          }
-        )}
+        heading={
+          <FormattedMessage
+            id="help.watchOnTv.heading"
+            defaultMessage="How can I watch {appTitle} on my TV?"
+            values={{
+              appTitle: (
+                <span className="text-primary font-bold">
+                  {currentSettings.applicationTitle}
+                </span>
+              ),
+            }}
+          />
+        }
+        subheading={
+          <FormattedMessage
+            id="help.watchOnTv.subheading"
+            defaultMessage="You can use Chromecast or Apple AirPlay to wirelessly stream {appTitle} content from your Android or iOS mobile device to your TV or play directly on some supported devices such as Apple or Google TV with the Plex app"
+            values={{
+              appTitle: (
+                <span className="text-primary font-bold">
+                  {currentSettings.applicationTitle}
+                </span>
+              ),
+            }}
+          />
+        }
         anchors={anchors}
         content={<HelpContent />}
       />

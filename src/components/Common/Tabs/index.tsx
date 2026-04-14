@@ -18,9 +18,9 @@ const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
               key={tab.id}
               onClick={(e) => {
                 e.preventDefault();
-                setActive(`${tab.id}`);
+                setActive(tab.id);
               }}
-              id={`${tab.id}}`}
+              id={tab.id}
               role="tab"
               className={`tab [--tab-color:black] h-fit w-fit py-2 font-bold${activeTab === tab.id ? ' tab-active !border-primary text-primary' : ''}`}
             >

@@ -262,49 +262,45 @@ const BecomeMember = () => {
             <SignUpDisabledContent />
           )
         }
-        heading={intl.formatMessage(
-          {
-            id: 'help.becomeMember.heading',
-            defaultMessage: 'How to become a member of {appTitle}',
-          },
-          {
-            appTitle: (
-              <span className="text-primary font-bold">
-                {currentSettings.applicationTitle}
-              </span>
-            ),
-          }
-        )}
+        heading={
+          <FormattedMessage
+            id="help.becomeMember.heading"
+            defaultMessage="How to become a member of {appTitle}"
+            values={{
+              appTitle: (
+                <span className="text-primary font-bold">
+                  {currentSettings.applicationTitle}
+                </span>
+              ),
+            }}
+          />
+        }
         subheading={
-          currentSettings.enableSignUp
-            ? intl.formatMessage(
-                {
-                  id: 'help.becomeMember.subheading',
-                  defaultMessage:
-                    '{appTitle} is a private, invite-only streaming service. To become a member, you will need an invite code from an existing member.',
-                },
-                {
-                  appTitle: (
-                    <span className="text-primary font-bold">
-                      {currentSettings.applicationTitle}
-                    </span>
-                  ),
-                }
-              )
-            : intl.formatMessage(
-                {
-                  id: 'help.becomeMember.subheadingClosed',
-                  defaultMessage:
-                    '{appTitle} is a private streaming service that is not currently accepting new sign-ups.',
-                },
-                {
-                  appTitle: (
-                    <span className="text-primary font-bold">
-                      {currentSettings.applicationTitle}
-                    </span>
-                  ),
-                }
-              )
+          currentSettings.enableSignUp ? (
+            <FormattedMessage
+              id="help.becomeMember.subheading"
+              defaultMessage="{appTitle} is a private, invite-only streaming service. To become a member, you will need an invite code from an existing member."
+              values={{
+                appTitle: (
+                  <span className="text-primary font-bold">
+                    {currentSettings.applicationTitle}
+                  </span>
+                ),
+              }}
+            />
+          ) : (
+            <FormattedMessage
+              id="help.becomeMember.subheadingClosed"
+              defaultMessage="{appTitle} is a private streaming service that is not currently accepting new sign-ups."
+              values={{
+                appTitle: (
+                  <span className="text-primary font-bold">
+                    {currentSettings.applicationTitle}
+                  </span>
+                ),
+              }}
+            />
+          )
         }
       />
     </section>
