@@ -1,10 +1,7 @@
-'use client'
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import Privacy from '@app/components/Help/Legal/Privacy';
-import { generatePageMetadata } from '@app/utils/serverFetchHelpers';
 import { useIntl } from 'react-intl';
-
-export const generateMetadata = () => generatePageMetadata('Privacy Statement');
 
 const PrivacyPage = () => {
   const intl = useIntl();

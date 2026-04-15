@@ -1,10 +1,7 @@
-'use client'
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import Cookies from '@app/components/Help/Legal/Cookies';
-import { generatePageMetadata } from '@app/utils/serverFetchHelpers';
 import { useIntl } from 'react-intl';
-
-export const generateMetadata = () => generatePageMetadata('Cookie Policy');
 
 const CookiesPage = () => {
   const intl = useIntl();

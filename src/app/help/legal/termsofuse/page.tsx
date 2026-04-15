@@ -1,10 +1,7 @@
-'use client'
+'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import TermsOfUse from '@app/components/Help/Legal/TermsOfUse';
-import { generatePageMetadata } from '@app/utils/serverFetchHelpers';
 import { useIntl } from 'react-intl';
-
-export const generateMetadata = () => generatePageMetadata('Terms of Use');
 
 const TermsPage = () => {
   const intl = useIntl();
