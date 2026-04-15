@@ -1,38 +1,67 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Cypress Tests
 
 on:
   pull_request:
     branches:
       - '*'
+    paths:
+      - '{src,server,config,cypress}/**'
+      - 'cypress.config.js'
+      - 'package.json'
+      - 'next.config.mjs'
+      - 'tsconfig.json'
+      - '.github/workflows/cypress.yml'
   push:
     branches:
       - develop
+    paths:
+      - '{src,server,config,cypress}/**'
+      - 'cypress.config.js'
+      - 'package.json'
+      - 'next.config.mjs'
+      - 'tsconfig.json'
+      - '.github/workflows/cypress.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   cypress-run:
+    name: Cypress Run
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
-      matrix:
-        containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
-      - name: set node
-        uses: actions/setup-node@v6
+      - name: Setup Node
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
-          node-version: 'lts/*'
+          node-version: 25
           cache: 'yarn'
+      - name: Setup cypress cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-store-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-store-
+
       - name: Cypress run
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@783cb3f07983868532cabaedaa1e6c00ff4786a8 # v7.1.9
         with:
           build: yarn cypress:build
           start: yarn start
           wait-on: 'http://localhost:3000'
           record: true
-          parallel: true # Runs test in parallel using settings above
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

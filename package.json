@@ -145,6 +145,7 @@
     "@typescript-eslint/parser": "8.56.0",
     "autoprefixer": "^10.4.24",
     "commitizen": "4.3.1",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.10.0",
@@ -199,8 +200,67 @@
       "main"
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "✨ Features"
+              },
+              {
+                "type": "fix",
+                "section": "🐛 Bug Fixes"
+              },
+              {
+                "type": "perf",
+                "section": "⚡ Performance"
+              },
+              {
+                "type": "revert",
+                "section": "⏪ Reverts"
+              },
+              {
+                "type": "docs",
+                "section": "📚 Documentation"
+              },
+              {
+                "type": "style",
+                "section": "💎 Styles"
+              },
+              {
+                "type": "refactor",
+                "section": "♻️ Refactoring"
+              },
+              {
+                "type": "test",
+                "section": "🧪 Tests"
+              },
+              {
+                "type": "build",
+                "section": "📦 Build System"
+              },
+              {
+                "type": "ci",
+                "section": "🤖 CI/CD"
+              },
+              {
+                "type": "chore",
+                "section": "🔧 Chores",
+                "hidden": true
+              }
+            ]
+          }
+        }
+      ],
       [
         "@semantic-release/changelog",
         {

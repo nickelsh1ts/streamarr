@@ -1,22 +1,25 @@
-FROM node:25-alpine AS base
+FROM node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS base
 
-ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production YARN_VERSION=4.9.2
+ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production
 
-RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini python3 py3-pip && rm -rf /tmp/*
-
-RUN npm install -g corepack --force && corepack enable && corepack prepare yarn@${YARN_VERSION}
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini python3 && rm -rf /tmp/* \
+  && addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
 
 FROM base AS builder
+
+ENV YARN_VERSION=4.9.2
+
+RUN apk add --no-cache py3-pip \
+  && npm install -g corepack --force && corepack enable && corepack prepare yarn@${YARN_VERSION}
 
 WORKDIR /app
 
 COPY package.json yarn.lock* ./
 
 RUN echo 'nodeLinker: "node-modules"' > ./.yarnrc.yml
-RUN yarn --immutable --network-timeout 1000000
+RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
+  yarn --immutable --network-timeout 1000000
 
 COPY src ./src
 COPY public ./public
@@ -30,44 +33,49 @@ RUN if [ -f server/python/requirements.txt ]; then \
   pip install --no-cache-dir gunicorn; \
   fi
 
-RUN yarn build
-
-RUN yarn cache clean && rm -rf /root/.cache /app/.yarn /app/src /app/server/**/*.ts /app/server/**/*.tsx /app/server/**/*.map
+RUN yarn build \
+  && rm -rf /app/.next/cache /app/src
 
 ARG COMMIT_TAG
 RUN echo "{\"commitTag\": \"${COMMIT_TAG}\"}" > committag.json
 
+FROM builder AS prod-deps
+
+RUN npm prune --omit=dev 2>/dev/null; \
+  yarn cache clean && rm -rf /root/.cache /app/.yarn
+
 FROM base AS runner
+
+LABEL org.opencontainers.image.source="https://github.com/nickelsh1ts/streamarr" \
+  org.opencontainers.image.title="Streamarr" \
+  org.opencontainers.image.description="Plex/Arr service dashboard" \
+  org.opencontainers.image.licenses="MIT"
 
 WORKDIR /app
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /app/yarn.lock* ./
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/next.config.mjs ./next.config.mjs
-COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
-COPY --from=builder --chown=nextjs:nodejs /app/tailwind.config.ts ./tailwind.config.ts
-COPY --from=builder --chown=nextjs:nodejs /app/postcss.config.js ./postcss.config.js
-COPY --from=builder --chown=nextjs:nodejs /app/streamarr-api.yml ./streamarr-api.yml
+COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nextjs:nodejs /app/venv ./venv
-COPY --from=builder --chown=nextjs:nodejs /app/committag.json ./committag.json
-COPY --from=builder --chown=nextjs:nodejs /app/.yarnrc.yml ./
 COPY --from=builder --chown=nextjs:nodejs /app/server/python ./python
+COPY --from=builder --chown=nextjs:nodejs \
+  /app/package.json \
+  /app/committag.json \
+  /app/next.config.mjs \
+  /app/streamarr-api.yml \
+  ./
 
 RUN mkdir -p /app/config && chown -R nextjs:nodejs /app/config
-RUN mkdir -p /app/.yarn && chown -R nextjs:nodejs /app/.yarn
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
 USER nextjs
 
 EXPOSE 3000 5005
 ENV PORT=3000
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget -qO /dev/null http://localhost:3000/api/v1/status || exit 1
+
 ENTRYPOINT [ "/sbin/tini", "--" ]
 
-CMD ["yarn", "start"]
+CMD ["node", "dist/index.js"]
