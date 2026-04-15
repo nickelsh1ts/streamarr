@@ -7,21 +7,29 @@ on:
     branches:
       - '*'
     paths:
-      - '{src,server,config,cypress}/**'
+      - 'src/**'
+      - 'server/**'
+      - 'config/**'
+      - 'cypress/**'
       - 'cypress.config.js'
       - 'package.json'
       - 'next.config.mjs'
       - 'tsconfig.json'
+      - 'streamarr-api.yml'
       - '.github/workflows/cypress.yml'
   push:
     branches:
       - develop
     paths:
-      - '{src,server,config,cypress}/**'
+      - 'src/**'
+      - 'server/**'
+      - 'config/**'
+      - 'cypress/**'
       - 'cypress.config.js'
       - 'package.json'
       - 'next.config.mjs'
       - 'tsconfig.json'
+      - 'streamarr-api.yml'
       - '.github/workflows/cypress.yml'
 
 permissions:
