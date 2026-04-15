@@ -140,6 +140,7 @@ const GeneralSettings = () => {
           csrfProtection: data?.csrfProtection,
           locale: data?.locale ?? 'en',
           enableSignUp: data?.enableSignUp,
+          enableHelpCentre: data?.enableHelpCentre,
           releaseSched: data?.releaseSched,
           trustProxy: data?.trustProxy,
           cacheImages: data?.cacheImages,
@@ -161,6 +162,7 @@ const GeneralSettings = () => {
               csrfProtection: values.csrfProtection,
               locale: values.locale,
               enableSignUp: values.enableSignUp,
+              enableHelpCentre: values.enableHelpCentre,
               releaseSched: values.releaseSched,
               trustProxy: values.trustProxy,
               cacheImages: values.cacheImages,
@@ -631,6 +633,36 @@ const GeneralSettings = () => {
                         setFieldValue('customLogoSmall', file);
                       }}
                       className="file-input file-input-primary file-input-sm w-full"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <label htmlFor="enableHelpCentre" className="col-span-1">
+                    <span className="mr-2">
+                      <FormattedMessage
+                        id="generalSettings.enableHelpCentre.label"
+                        defaultMessage="Enable Help Centre"
+                      />
+                    </span>
+                    <p className="text-sm text-neutral">
+                      <FormattedMessage
+                        id="generalSettings.enableHelpCentre.description"
+                        defaultMessage="Show the Help Centre and related links to users."
+                      />
+                    </p>
+                  </label>
+                  <div className="col-span-2">
+                    <Field
+                      type="checkbox"
+                      id="enableHelpCentre"
+                      name="enableHelpCentre"
+                      onChange={() => {
+                        setFieldValue(
+                          'enableHelpCentre',
+                          !values.enableHelpCentre
+                        );
+                      }}
+                      className="checkbox-primary checkbox"
                     />
                   </div>
                 </div>

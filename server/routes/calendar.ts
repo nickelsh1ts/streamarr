@@ -1,6 +1,6 @@
 import { getRepository } from '@server/datasource';
 import Event from '@server/entity/Event';
-import { getOrFetchCalendar } from '@server/lib/calendarCache';
+import { getCalendarData } from '@server/lib/calendarCache';
 import { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -15,7 +15,7 @@ calendarRoutes.get(
     type: 'or',
   }),
   async (req, res) => {
-    const events = await getOrFetchCalendar('sonarr');
+    const events = await getCalendarData('sonarr');
     res.json(events);
   }
 );
@@ -26,7 +26,7 @@ calendarRoutes.get(
     type: 'or',
   }),
   async (req, res) => {
-    const events = await getOrFetchCalendar('radarr');
+    const events = await getCalendarData('radarr');
     res.json(events);
   }
 );
@@ -94,7 +94,7 @@ calendarRoutes.post<
 
       const newEvent = await eventRepository.save(event);
 
-      res.status(200).json(newEvent);
+      res.status(201).json(newEvent);
     } catch (e) {
       logger.error('Something went wrong creating an event.', {
         label: 'Calendar',

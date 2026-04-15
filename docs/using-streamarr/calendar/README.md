@@ -141,15 +141,16 @@ When **Send Notification** is enabled for an event:
 
 ### How Caching Works
 
-Sonarr and Radarr calendar data is cached for performance:
+Sonarr and Radarr calendar data is cached in memory using a stale-while-revalidate strategy:
 
-- Data is fetched from Sonarr/Radarr iCal feeds
-- Cache expires after 1 hour
-- Fresh data is automatically fetched when the cache expires
-- No manual refresh is required
+- Data is fetched from Sonarr/Radarr iCal feeds on the first request
+- Subsequent requests return the cached data immediately (no delay)
+- The cache is refreshed automatically in the background on every visit
+- The cache is only updated when the data has actually changed
+- No manual refresh is required and there is no expiry time
 
 {% hint style="info" %}
-If events appear stale, wait up to 1 hour for the cache to refresh automatically. For an immediate refresh, flush the Sonarr or Radarr cache in **Settings > Jobs & Cache**.
+Calendar data refreshes silently in the background on each visit. Any changes in Sonarr or Radarr will appear on your next page load without any action required.
 {% endhint %}
 
 ---
@@ -173,7 +174,7 @@ Users without **View Schedule** permission cannot access the calendar.
 1. Verify Sonarr/Radarr is configured in Settings
 2. Check that calendar sync is enabled for the service
 3. Verify Past Days and Future Days settings
-4. Flush the Sonarr/Radarr cache in **Settings > Jobs & Cache** to force a refresh
+4. Reload the page — the calendar refreshes in the background on every visit
 
 ### Wrong timezone
 

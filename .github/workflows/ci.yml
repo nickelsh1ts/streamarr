@@ -1,3 +1,5 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Streamarr CI
 
 on:
@@ -7,8 +9,66 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOCKER_HUB: nickelsh1ts/streamarr
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  i18n:
+    name: i18n Check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - name: Install and Enable Corepack
+        run: npm install -g corepack --force && corepack enable
+      - name: Install dependencies
+        run: yarn
+      - name: i18n Check
+        shell: bash
+        env:
+          I18N_LABEL: i18n-out-of-sync
+          BODY: |
+            The i18n check failed because translation messages are out of sync.
+
+            This usually happens when you've added or modified translation strings in your code but haven't updated the translation file.
+
+            Please run `yarn i18n:extract` and commit the changes.
+        run: |
+          retry() { n=0; until "$@"; do n=$((n+1)); [ $n -ge 3 ] && break; echo "retry $n: $*" >&2; sleep 2; done; }
+          check_failed=0; yarn i18n:extract || check_failed=$?
+          if [ "$check_failed" -eq 0 ]; then
+            git diff --exit-code src/i18n/locale/en.json || check_failed=1
+          fi
+          pr_labels=$(gh pr view "$NUMBER" -R "$GH_REPO" --json labels -q '.labels[].name' 2>/dev/null) || true
+          has_label=0
+          while IFS= read -r name; do [ -n "$name" ] && [ "$name" = "$I18N_LABEL" ] && has_label=1 && break; done <<< "$pr_labels"
+          if [ "$check_failed" -ne 0 ]; then
+            [ "$has_label" -eq 0 ] && { retry gh pr edit "$NUMBER" -R "$GH_REPO" --add-label "$I18N_LABEL" || true; retry gh pr comment "$NUMBER" -R "$GH_REPO" -b "$BODY" || true; }
+          else
+            [ "$has_label" -eq 1 ] && retry gh pr edit "$NUMBER" -R "$GH_REPO" --remove-label "$I18N_LABEL" || true
+          fi
+          exit $check_failed
+
   test:
     name: Prepare & Test Build
     if: github.event_name == 'pull_request'
@@ -16,7 +76,9 @@ jobs:
     container: node:25-alpine
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
@@ -26,33 +88,85 @@ jobs:
       - name: Build
         run: yarn build
 
-  build_and_push:
-    name: Build & Publish Docker Images
-    if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]')
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
+  build:
+    name: Build (${{ matrix.arch }})
+    if: github.event_name != 'pull_request'
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux/amd64
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - name: Commit timestamp
+        id: ts
+        run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+      - name: Warm cache (no push) — ${{ matrix.platform }}
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          build-args: |
+            COMMIT_TAG=${{ github.sha }}
+            SOURCE_DATE_EPOCH=${{ steps.ts.outputs.TIMESTAMP }}
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          provenance: false
+
+  publish:
+    name: Publish multi-arch image
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - name: Commit timestamp
+        id: ts
+        run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
       - name: Log in to Docker Hub
-        uses: docker/login-action@v4
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: |
+            ${{ env.DOCKER_HUB }}
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=develop
+            type=sha
+          labels: |
+            org.opencontainers.image.created=${{ steps.ts.outputs.TIMESTAMP }}
       - name: Build and push
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
         with:
           context: .
           file: ./Dockerfile
@@ -60,31 +174,37 @@ jobs:
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
-          tags: |
-            nickelsh1ts/streamarr:develop
-            nickelsh1ts/streamarr:${{ github.sha }}
-            ghcr.io/nickelsh1ts/streamarr:develop
-            ghcr.io/nickelsh1ts/streamarr:${{ github.sha }}
+            SOURCE_DATE_EPOCH=${{ steps.ts.outputs.TIMESTAMP }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: |
+            type=gha,scope=linux/amd64
+            type=gha,scope=linux/arm64
+          cache-to: type=gha,mode=max
+          provenance: false
 
   discord:
     name: Send Discord Notification
-    needs: build_and_push
-    if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
+    needs: publish
+    if: always() && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Get Build Job Status
-        uses: technote-space/workflow-conclusion-action@v3
+        uses: technote-space/workflow-conclusion-action@45ce8e0eb155657ab8ccf346ade734257fd196a5 # v3
       - name: Combine Job Status
         id: status
         run: |
-          failures=(neutral, skipped, timed_out, action_required)
-          if [[ ${array[@]} =~ $WORKFLOW_CONCLUSION ]]; then
-            echo "status=failure" >> $GITHUB_OUTPUT
-          else
-            echo "status=$WORKFLOW_CONCLUSION" >> $GITHUB_OUTPUT
-          fi
+          failures=(neutral skipped timed_out action_required)
+          status="$WORKFLOW_CONCLUSION"
+          for failure in "${failures[@]}"; do
+            if [ "$WORKFLOW_CONCLUSION" = "$failure" ]; then
+              status="failure"
+              break
+            fi
+          done
+          echo "status=$status" >> "$GITHUB_OUTPUT"
       - name: Post Status to Discord
-        uses: sarisia/actions-status-discord@v1
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ steps.status.outputs.status }}

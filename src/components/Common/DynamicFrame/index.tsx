@@ -13,30 +13,6 @@ import { createPortal } from 'react-dom';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 
-// Type for Navigation API (not yet in standard TypeScript lib)
-interface NavigationDestination {
-  url: string;
-}
-
-interface NavigateEvent extends Event {
-  destination: NavigationDestination;
-}
-
-interface Navigation extends EventTarget {
-  addEventListener(
-    type: 'navigate',
-    callback: (event: NavigateEvent) => void
-  ): void;
-  removeEventListener(
-    type: 'navigate',
-    callback: (event: NavigateEvent) => void
-  ): void;
-}
-
-interface WindowWithNavigation extends Window {
-  navigation?: Navigation;
-}
-
 interface DynamicFrameProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children?: any;
@@ -65,9 +41,7 @@ const DynamicFrame = ({
   const { hasPermission } = useUser();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
-  const [innerFrame, setInnerFrame] = useState<WindowWithNavigation | null>(
-    null
-  );
+  const [innerFrame, setInnerFrame] = useState<Window | null>(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
   const isAdminRoute = pathname?.startsWith('/admin');
   const isAdmin = hasPermission(Permission.ADMIN);
@@ -119,7 +93,7 @@ const DynamicFrame = ({
     const iframe = iframeRef.current;
     if (iframe?.contentWindow?.document?.body) {
       setMountNode(iframe.contentWindow.document.body);
-      setInnerFrame(iframe.contentWindow as WindowWithNavigation);
+      setInnerFrame(iframe.contentWindow as Window);
 
       // Update browser URL based on current iframe location after load
       // This catches navigations that cause full page loads within the iframe

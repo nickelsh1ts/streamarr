@@ -7,12 +7,14 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
+import PlexLogoWhite from '@app/assets/services/plex.svg';
 
 const MoreHelp = () => {
   const { currentSettings } = useSettings();
 
   return (
-    <div className="bg-zinc-200 py-20 print:hidden">
+    <div className="bg-zinc-200 text-black py-20 print:hidden">
       <div className="container max-w-screen-xl mx-auto px-4">
         <h1 className="text-neutral font-extrabold text-center text-4xl">
           <FormattedMessage
@@ -23,13 +25,16 @@ const MoreHelp = () => {
         <p className="text-center text-neutral text-lg my-4">
           <FormattedMessage
             id="moreHelp.checkHelpSection"
-            defaultMessage="Check out the help section on Plex or reach out below!"
+            defaultMessage="Check out the help section on {plexLogo} or reach out below!"
+            values={{
+              plexLogo: <PlexLogo className="inline-flex size-8 mt-0.5" />,
+            }}
           />
         </p>
       </div>
       <div className="container max-w-screen-xl mx-auto py-4 place-content-center flex flex-wrap gap-5 px-5">
         {(currentSettings.supportEmail || currentSettings.supportUrl) && (
-          <div className="card bg-white text-black rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
+          <div className="card bg-white rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
             <div className="card-body py-4 px-4 md:px-7">
               <div className="flex place-items-center">
                 <ChatBubbleLeftRightIcon className="w-20 h-20 flex-none" />
@@ -92,7 +97,7 @@ const MoreHelp = () => {
             </div>
           </div>
         )}
-        <div className="card bg-white text-black rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
+        <div className="card bg-white rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
           <div className="card-body py-4 px-4 md:px-7">
             <div className="flex place-items-center">
               <BookOpenIcon className="w-20 h-20 flex-none" />
@@ -100,13 +105,21 @@ const MoreHelp = () => {
                 <h5 className="card-title">
                   <FormattedMessage
                     id="moreHelp.visitPlex"
-                    defaultMessage="Visit Plex"
+                    defaultMessage="Visit {plexLogo}"
+                    values={{
+                      plexLogo: (
+                        <PlexLogo className="inline-flex size-10 mt-0.5" />
+                      ),
+                    }}
                   />
                 </h5>
                 <p className="mb-4">
                   <FormattedMessage
                     id="moreHelp.plexHelpDescription"
-                    defaultMessage="Take a look at the Plex Help section or browse their forums for even more assistance."
+                    defaultMessage="Take a look at the {plexLogo} Help section or browse their forums for even more assistance."
+                    values={{
+                      plexLogo: <PlexLogo className="inline-flex size-9" />,
+                    }}
                   />
                 </p>
                 <Link
@@ -118,7 +131,12 @@ const MoreHelp = () => {
                 >
                   <FormattedMessage
                     id="moreHelp.plexSupport"
-                    defaultMessage="Plex Support"
+                    defaultMessage="{plexLogo} Support"
+                    values={{
+                      plexLogo: (
+                        <PlexLogoWhite className="inline-flex size-8 mt-0.5" />
+                      ),
+                    }}
                   />
                 </Link>
               </div>

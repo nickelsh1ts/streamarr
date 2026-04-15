@@ -21,7 +21,7 @@ function Footer() {
         <BackToTopBtn full />
       </div>
       <div className="md:grid-flow-col grid-flow-row mb-4 container md:px-20 mx-auto">
-        <div className="grid grid-flow-row me-3">
+        <div className="grid grid-flow-row me-3 gap-2">
           <div className="flex place-items-center gap-4">
             <a
               className="link-neutral"
@@ -43,7 +43,7 @@ function Footer() {
             <a
               className="link-neutral"
               target="_blank"
-              href="https://discord.gg/streamarr"
+              href="https://discord.gg/fj6w8dkK6s"
               rel="noreferrer"
             >
               <svg
@@ -74,8 +74,6 @@ function Footer() {
                 />
               </svg>
             </a>
-          </div>
-          <div className="col-span-2">
             <a
               className="hover:brightness-75"
               target="_blank"
@@ -84,49 +82,69 @@ function Footer() {
             >
               <Image
                 alt="logo"
+                className="h-auto w-8"
+                src="/nickelsh1ts-logo.png"
+                width={32}
+                height={32}
+              />
+            </a>
+          </div>
+          <div className="col-span-2">
+            <a
+              className="hover:brightness-75"
+              target="_blank"
+              href="https://streamarr.dev"
+              rel="noreferrer"
+            >
+              <Image
+                alt="Streamarr Logo"
                 className="h-auto w-64"
-                src="/nickelsh1ts-full.png"
-                width={256}
-                height={64}
+                src="/logo_full.png"
+                width={192}
+                height={32}
               />
             </a>
           </div>
         </div>
         <nav className="grid grid-flow-col grid-rows-4 gap-y-5 gap-x-20 mt-10 md:ms-auto">
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/termsofuse"
-          >
-            <FormattedMessage
-              id="footer.termsOfUse"
-              defaultMessage="Terms of Use"
-            />
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/privacy"
-          >
-            <FormattedMessage
-              id="footer.privacyPolicy"
-              defaultMessage="Privacy Policy"
-            />
-          </Link>
-          <Link
-            className="link-neutral text-decoration-none"
-            href="/help/legal/privacy#cookies"
-          >
-            <FormattedMessage
-              id="footer.cookiePreferences"
-              defaultMessage="Cookie Preferences"
-            />
-          </Link>
-          <div></div>
-          <Link className="link-neutral text-decoration-none" href="/help/">
-            <FormattedMessage
-              id="help.helpCentre"
-              defaultMessage="Help Centre"
-            />
-          </Link>
+          {currentSettings.enableHelpCentre && (
+            <>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/termsofuse"
+              >
+                <FormattedMessage
+                  id="footer.termsOfUse"
+                  defaultMessage="Terms of Use"
+                />
+              </Link>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/privacy"
+              >
+                <FormattedMessage
+                  id="footer.privacyPolicy"
+                  defaultMessage="Privacy Policy"
+                />
+              </Link>
+              <Link
+                className="link-neutral text-decoration-none"
+                href="/help/legal/cookies"
+              >
+                <FormattedMessage
+                  id="footer.cookiePolicy"
+                  defaultMessage="Cookie Policy"
+                />
+              </Link>
+              <div></div>
+              <Link className="link-neutral text-decoration-none" href="/help/">
+                <FormattedMessage
+                  id="help.helpCentre"
+                  defaultMessage="Help Centre"
+                />
+              </Link>
+            </>
+          )}
           {currentSettings.statusEnabled && currentSettings.statusUrl && (
             <Link
               className="link-neutral text-decoration-none"
@@ -160,7 +178,7 @@ function Footer() {
         className="place-self-start container md:px-20 mx-auto"
         style={{ fontSize: '0.8rem' }}
       >
-        © {currentYear} nickelsh1ts
+        © {currentYear} Streamarr
       </p>
     </footer>
   );

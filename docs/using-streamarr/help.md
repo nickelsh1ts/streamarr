@@ -101,7 +101,13 @@ This email is displayed when users need to contact support.
 
 ## Access
 
-The Help Centre is accessible to all unauthenticated users.
+The Help Centre is accessible to all users, including unauthenticated visitors.
+
+Administrators can disable the Help Centre entirely via **Settings → General → [Enable Help Centre](settings/README.md#enable-help-centre)**. When disabled:
+
+- All Help Centre links are hidden from the navigation, footer, and user dropdown
+- Direct navigation to `/help` redirects to the watch page
+- Legal pages (Terms, Privacy, Cookies) are also hidden
 
 ---
 

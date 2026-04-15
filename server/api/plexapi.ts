@@ -25,7 +25,7 @@ interface PlexLibraryResponse {
 }
 
 export interface PlexLibrary {
-  type: 'show' | 'movie';
+  type: 'show' | 'movie' | 'artist' | 'photo' | 'other';
   key: string;
   title: string;
   agent: string;
@@ -133,11 +133,7 @@ class PlexAPI {
           : typeof e === 'string'
             ? e || 'unknown status'
             : 'unknown status';
-      logger.error('Failed to get Plex status', {
-        label: 'Plex API',
-        errorMessage: errMsg,
-      });
-      throw new Error('Failed to get Plex status');
+      throw new Error(errMsg);
     }
   }
 

@@ -1,15 +1,28 @@
 'use client';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
+import Cookies from '@app/components/Help/Legal/Cookies';
 import Privacy from '@app/components/Help/Legal/Privacy';
 import TermsOfUse from '@app/components/Help/Legal/TermsOfUse';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const LegalPage = () => {
+  const intl = useIntl();
   return (
     <>
       <div className="py-5 bg-zinc-100 text-neutral" style={null}>
-        <Breadcrumbs paths="/legal" homeElement={'Help Centre'} names="Legal" />
+        <Breadcrumbs
+          paths="/legal"
+          homeElement={intl.formatMessage({
+            id: 'help.common.helpCentre',
+            defaultMessage: 'Help Centre',
+          })}
+          names={intl.formatMessage({
+            id: 'help.legal.breadcrumb',
+            defaultMessage: 'Legal',
+          })}
+        />
       </div>
       <section className="py-5 my-auto bg-zinc-100">
         <main className=" container max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto place-content-center p-4 space-y-5">
@@ -20,7 +33,10 @@ const LegalPage = () => {
               name="my_tabs_2"
               role="tab"
               className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-32 !border-none"
-              aria-label="Terms of Use"
+              aria-label={intl.formatMessage({
+                id: 'help.legal.termsTab',
+                defaultMessage: 'Terms of Use',
+              })}
             />
             <div
               role="tabpanel"
@@ -31,7 +47,10 @@ const LegalPage = () => {
                   className="link-neutral font-semibold flex place-items-center max-md:m-2"
                   href="/help/legal/termsofuse"
                 >
-                  Hyperlink{' '}
+                  <FormattedMessage
+                    id="help.legal.hyperlink"
+                    defaultMessage="Hyperlink"
+                  />{' '}
                   <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
                 </Link>
               </div>
@@ -42,7 +61,10 @@ const LegalPage = () => {
               name="my_tabs_2"
               role="tab"
               className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-44 !border-none"
-              aria-label="Privacy Statement"
+              aria-label={intl.formatMessage({
+                id: 'help.legal.privacyTab',
+                defaultMessage: 'Privacy Statement',
+              })}
             />
             <div
               role="tabpanel"
@@ -53,11 +75,42 @@ const LegalPage = () => {
                   className="link-neutral font-semibold flex place-items-center max-md:m-2"
                   href="/help/legal/privacy"
                 >
-                  Hyperlink{' '}
+                  <FormattedMessage
+                    id="help.legal.hyperlink"
+                    defaultMessage="Hyperlink"
+                  />{' '}
                   <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
                 </Link>
               </div>
               <Privacy />
+            </div>
+            <input
+              type="radio"
+              name="my_tabs_2"
+              role="tab"
+              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-36 !border-none"
+              aria-label={intl.formatMessage({
+                id: 'help.legal.cookiesTab',
+                defaultMessage: 'Cookie Policy',
+              })}
+            />
+            <div
+              role="tabpanel"
+              className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
+            >
+              <div className="print:hidden">
+                <Link
+                  className="link-neutral font-semibold flex place-items-center max-md:m-2"
+                  href="/help/legal/cookies"
+                >
+                  <FormattedMessage
+                    id="help.legal.hyperlink"
+                    defaultMessage="Hyperlink"
+                  />{' '}
+                  <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
+                </Link>
+              </div>
+              <Cookies />
             </div>
           </div>
         </main>

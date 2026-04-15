@@ -112,7 +112,10 @@ class ImageProxy {
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
     this.key = key;
-    this.axios = axios.create({ baseURL: baseUrl });
+    this.axios = axios.create({
+      baseURL: baseUrl,
+      withCredentials: false,
+    });
 
     if (options.rateLimitOptions) {
       this.axios = rateLimit(this.axios, options.rateLimitOptions);

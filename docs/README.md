@@ -2,7 +2,7 @@
 
 Welcome to the Streamarr Documentation.
 
-**Streamarr** is an open-source web application designed to wrap your existing \*Arr ecosystem—including [Sonarr](https://sonarr.tv/), [Radarr](https://radarr.video/), [Overseerr](https://overseerr.dev/), and [Plex](https://www.plex.tv/)—into a seamless, user-friendly experience.
+**Streamarr** is an open-source web application designed to wrap your existing \*Arr ecosystem—including [Sonarr](https://sonarr.tv/), [Radarr](https://radarr.video/), [Seerr](https://github.com/seerr/seerr), and [Plex](https://www.plex.tv/)—into a seamless, user-friendly experience.
 
 ## Features
 
@@ -20,9 +20,10 @@ Welcome to the Streamarr Documentation.
 - **Guided Setup Wizard** — Tabbed setup flow for configuring all services on first launch with restart handling
 - **Custom Theming** — Fully customize 20 color tokens with a visual picker (OKLCH, RGB, HSL, Hex)
 - **Custom Branding** — Upload custom logos to replace default Streamarr branding
-- **Library Counts** — Display Plex library item counts on the homepage
+- **Library Counts** — Display Plex library item counts on the homepage with stale-while-revalidate caching
 - **Playlist Support** — Optional Plex playlists integration with configurable default library views
 - **System Health Monitoring** — Real-time health status for server and Plex Sync service with restart controls
+- **Plex Connection Resilience** — Automatic health detection with 5-second retry, 5-minute cooldown, and stale-while-revalidate library caching to serve data seamlessly when Plex is temporarily unreachable
 - **Status Page Integration** — Link to Uptime Kuma or any external status page
 - **Multi-language Support** — Localized interface with per-user language settings
 - **PWA Support** — Install Streamarr as a Progressive Web App on mobile devices

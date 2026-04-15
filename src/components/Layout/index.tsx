@@ -133,6 +133,10 @@ const Layout = ({
       redirect('/signin');
     }
 
+    if (pathname.match(/^\/help(\/|$)/) && !currentSettings.enableHelpCentre) {
+      redirect('/');
+    }
+
     // Feature-disabled redirects
     if (
       user &&

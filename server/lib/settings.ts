@@ -9,7 +9,7 @@ export interface Library {
   id: string;
   name: string;
   enabled: boolean;
-  type: 'show' | 'movie' | 'artist' | 'photo';
+  type: 'show' | 'movie' | 'artist' | 'photo' | 'live TV' | 'other';
   lastScan?: number;
   mediaCount?: number;
 }
@@ -156,6 +156,7 @@ export interface MainSettings {
   customLogoSmall?: string;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  enableHelpCentre: boolean;
   theme: Theme;
 }
 
@@ -180,6 +181,17 @@ export interface FullPublicSettings extends PublicSettings {
   customLogo?: string;
   customLogoSmall?: string;
   enableSignUp: boolean;
+  enableHelpCentre: boolean;
+  enableTrialPeriod: boolean;
+  trialPeriodDays: number;
+  defaultInviteQuotas: {
+    quotaLimit?: number;
+    quotaDays?: number;
+    quotaUsage?: number;
+    quotaExpiryLimit?: number;
+    quotaExpiryTime?: string;
+  };
+  seerrEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -273,9 +285,11 @@ interface AllSettings {
   jobs: Record<JobId, JobSettings>;
 }
 
-const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
-  ? `${process.env.CONFIG_DIRECTORY}/settings.json`
-  : path.join(__dirname, '../../config/settings.json');
+const SETTINGS_PATH = path.resolve(
+  process.env.CONFIG_DIRECTORY
+    ? `${process.env.CONFIG_DIRECTORY}/settings.json`
+    : path.join(__dirname, '../../config/settings.json')
+);
 
 class Settings {
   private data: AllSettings;
@@ -293,7 +307,13 @@ class Settings {
         cacheImages: false,
         defaultPermissions: Permission.STREAMARR,
         defaultQuotas: {
-          invites: {},
+          invites: {
+            quotaLimit: 3,
+            quotaDays: 0,
+            quotaUsage: 1,
+            quotaExpiryLimit: 1,
+            quotaExpiryTime: 'days' as const,
+          },
         },
         sharedLibraries: '',
         downloads: true,
@@ -311,6 +331,7 @@ class Settings {
         libraryCounts: true,
         enableTrialPeriod: false,
         trialPeriodDays: 30,
+        enableHelpCentre: true,
         theme: {
           primary: '#974ede',
           'primary-content': '#fff',
@@ -544,6 +565,20 @@ class Settings {
       customLogo: this.data.main.customLogo,
       customLogoSmall: this.data.main.customLogoSmall,
       enableSignUp: this.data.main.enableSignUp,
+      enableHelpCentre: this.data.main.enableHelpCentre,
+      enableTrialPeriod: this.data.main.enableTrialPeriod,
+      trialPeriodDays: this.data.main.trialPeriodDays,
+      defaultInviteQuotas: {
+        quotaLimit: this.data.main.defaultQuotas.invites.quotaLimit ?? 3,
+        quotaDays: this.data.main.defaultQuotas.invites.quotaDays ?? 0,
+        quotaUsage: this.data.main.defaultQuotas.invites.quotaUsage ?? 1,
+        quotaExpiryLimit:
+          this.data.main.defaultQuotas.invites.quotaExpiryLimit ?? 1,
+        quotaExpiryTime:
+          this.data.main.defaultQuotas.invites.quotaExpiryTime ?? 'days',
+      },
+      seerrEnabled:
+        this.data.overseerr.enabled && !!this.data.overseerr.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,
@@ -641,7 +676,9 @@ class Settings {
   }
 
   public save(): void {
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(this.data, undefined, ' '));
+    const tempPath = SETTINGS_PATH + '.tmp';
+    fs.writeFileSync(tempPath, JSON.stringify(this.data, undefined, ' '));
+    fs.renameSync(tempPath, SETTINGS_PATH);
   }
 }
 

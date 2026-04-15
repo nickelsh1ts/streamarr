@@ -2,6 +2,7 @@
 import Button from '@app/components/Common/Button';
 import PlexLogo from '@app/assets/services/plex.svg';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
@@ -11,6 +12,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 const ResetPassword = () => {
   const intl = useIntl();
+  const { currentSettings } = useSettings();
   const [hasSubmitted, setSubmitted] = useState(false);
 
   const ResetSchema = Yup.object().shape({
@@ -96,14 +98,16 @@ const ResetPassword = () => {
                   </Button>
                 </span>
                 <p className="mt-2 text-center">
-                  <Link href="/help" className="text-warning text-sm">
-                    <span>
-                      <FormattedMessage
-                        id="resetPassword.help"
-                        defaultMessage="Wait, I need more help"
-                      />
-                    </span>
-                  </Link>
+                  {currentSettings.enableHelpCentre && (
+                    <Link href="/help" className="text-warning text-sm">
+                      <span>
+                        <FormattedMessage
+                          id="resetPassword.help"
+                          defaultMessage="Wait, I need more help"
+                        />
+                      </span>
+                    </Link>
+                  )}
                 </p>
               </>
             ) : (

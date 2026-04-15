@@ -22,6 +22,19 @@ tags:
     description: Endpoints related to calendar events.
   - name: downloads
     description: Endpoints related to torrent download client management and operations.
+  - name: invite
+    description: Endpoints related to invite code management.
+  - name: notification
+    description: Endpoints related to notification management.
+  - name: tmdb
+    description: Endpoints related to TMDB metadata.
+  - name: service
+    description: Endpoints related to external service (Radarr/Sonarr) integration.
+  - name: libraries
+    description: Endpoints related to Plex library information.
+security:
+  - cookieAuth: []
+  - apiKey: []
 servers:
   - url: '{server}/api/v1'
     variables:
@@ -30,6 +43,31 @@ servers:
 
 components:
   schemas:
+    PlexHealthState:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, retrying, unhealthy]
+          example: 'healthy'
+        lastSuccess:
+          type: string
+          format: date-time
+          nullable: true
+        lastFailure:
+          type: string
+          format: date-time
+          nullable: true
+        lastError:
+          type: string
+          nullable: true
+        cooldownUntil:
+          type: string
+          format: date-time
+          nullable: true
+        consecutiveFailures:
+          type: number
+          example: 0
     CalendarEvent:
       type: object
       properties:
@@ -155,6 +193,9 @@ components:
         avatar:
           type: string
           readOnly: true
+        displayName:
+          type: string
+          description: Display name shown in the UI (computed from username or plexUsername)
         createdAt:
           type: string
           example: '2020-09-02T05:02:23.000Z'
@@ -183,7 +224,7 @@ components:
         apiKey:
           type: string
           readOnly: true
-        appLanguage:
+        locale:
           type: string
           example: en
         applicationTitle:
@@ -198,15 +239,64 @@ components:
         csrfProtection:
           type: boolean
           example: false
+        cacheImages:
+          type: boolean
+          example: true
         localLogin:
           type: boolean
           example: true
         newPlexLogin:
           type: boolean
           example: true
+        enableSignUp:
+          type: boolean
+          example: true
+          description: Enable self-service signup via invite codes
         defaultPermissions:
           type: number
           example: 32
+        defaultQuotas:
+          type: object
+          properties:
+            invites:
+              type: object
+              properties:
+                quotaLimit:
+                  type: number
+                  nullable: true
+                quotaDays:
+                  type: number
+                  nullable: true
+                quotaUsage:
+                  type: number
+                  nullable: true
+                quotaExpiryLimit:
+                  type: number
+                  nullable: true
+                quotaExpiryTime:
+                  type: string
+                  nullable: true
+                  enum: [days, weeks, months]
+        sharedLibraries:
+          type: string
+          description: Default shared library IDs (pipe-separated), 'all', or empty string
+          example: '1|2|3'
+        downloads:
+          type: boolean
+          example: true
+          description: Enable downloads feature globally
+        liveTv:
+          type: boolean
+          example: false
+          description: Enable live TV feature globally
+        plexHome:
+          type: boolean
+          example: false
+          description: Enable Plex Home feature globally
+        releaseSched:
+          type: boolean
+          example: true
+          description: Enable release schedule feature
         customLogo:
           type: string
           nullable: true
@@ -227,6 +317,70 @@ components:
           maximum: 90
           example: 30
           description: Number of days for trial period (only applies when enableTrialPeriod is true)
+        enableHelpCentre:
+          type: boolean
+          example: true
+          description: Enable the Help Centre for users
+        supportUrl:
+          type: string
+          example: 'https://support.example.com'
+          description: URL for user support page
+        supportEmail:
+          type: string
+          example: 'support@example.com'
+          description: Email address for user support
+        extendedHome:
+          type: boolean
+          example: false
+          description: Enable extended home page layout
+        libraryCounts:
+          type: boolean
+          example: true
+          description: Show library media counts on public pages
+        theme:
+          type: object
+          description: Custom color theme configuration
+          properties:
+            primary:
+              type: string
+            primary-content:
+              type: string
+            secondary:
+              type: string
+            secondary-content:
+              type: string
+            accent:
+              type: string
+            accent-content:
+              type: string
+            neutral:
+              type: string
+            neutral-content:
+              type: string
+            base-100:
+              type: string
+            base-200:
+              type: string
+            base-300:
+              type: string
+            base-content:
+              type: string
+            info:
+              type: string
+            info-content:
+              type: string
+            success:
+              type: string
+            success-content:
+              type: string
+            warning:
+              type: string
+            warning-content:
+              type: string
+            error:
+              type: string
+            error-content:
+              type: string
     PlexLibrary:
       type: object
       properties:
@@ -255,7 +409,7 @@ components:
           example: 'Movies'
         type:
           type: string
-          enum: [movie, show]
+          enum: [movie, show, artist, live TV, photo, other]
           description: The type of media in the library
           example: 'movie'
         mediaCount:
@@ -614,6 +768,48 @@ components:
         externalUrl:
           type: string
           nullable: true
+        hostname:
+          type: string
+          nullable: true
+        port:
+          type: number
+          nullable: true
+        useSsl:
+          type: boolean
+          nullable: true
+        urlBase:
+          type: string
+          nullable: true
+        apiKey:
+          type: string
+          nullable: true
+    SeerrQuotaResponse:
+      type: object
+      properties:
+        movieQuotaLimit:
+          type: number
+          nullable: true
+          example: 5
+        movieQuotaDays:
+          type: number
+          nullable: true
+          example: 7
+        tvQuotaLimit:
+          type: number
+          nullable: true
+          example: 2
+        tvQuotaDays:
+          type: number
+          nullable: true
+          example: 7
+    SeerrNotificationsResponse:
+      type: object
+      properties:
+        enabledAgents:
+          type: array
+          items:
+            type: string
+          example: ['email', 'discord']
     DownloadClientType:
       type: string
       enum:
@@ -654,7 +850,6 @@ components:
         password:
           type: string
           nullable: true
-          writeOnly: true
         isDefault:
           type: boolean
           example: true
@@ -1013,6 +1208,46 @@ components:
         initialized:
           type: boolean
           example: false
+        applicationTitle:
+          type: string
+          example: Streamarr
+        applicationUrl:
+          type: string
+          example: https://example.com
+        localLogin:
+          type: boolean
+          example: true
+        cacheImages:
+          type: boolean
+          example: true
+        vapidPublic:
+          type: string
+          description: VAPID public key for web push notifications
+        enablePushRegistration:
+          type: boolean
+          example: true
+          description: Whether web push registration is enabled
+        locale:
+          type: string
+          example: en
+        emailEnabled:
+          type: boolean
+          example: false
+        newPlexLogin:
+          type: boolean
+          example: true
+        supportUrl:
+          type: string
+          example: 'https://support.example.com'
+        supportEmail:
+          type: string
+          example: 'support@example.com'
+        extendedHome:
+          type: boolean
+          example: false
+        libraryCounts:
+          type: boolean
+          example: true
         customLogo:
           type: string
           nullable: true
@@ -1023,6 +1258,62 @@ components:
           nullable: true
           description: URL path to custom uploaded small logo file
           example: '/logos/logo_sm.png'
+        enableSignUp:
+          type: boolean
+          example: true
+          description: Whether self-service signup is enabled
+        enableHelpCentre:
+          type: boolean
+          example: true
+          description: Enable the Help Centre for users
+        enableTrialPeriod:
+          type: boolean
+          example: false
+          description: Whether a trial period is enabled for new users
+        trialPeriodDays:
+          type: number
+          example: 30
+          description: Number of days for the trial period
+        defaultInviteQuotas:
+          type: object
+          description: Default invite quota settings
+          properties:
+            quotaLimit:
+              type: number
+              nullable: true
+              example: 3
+            quotaDays:
+              type: number
+              nullable: true
+              example: 0
+            quotaUsage:
+              type: number
+              nullable: true
+              example: 1
+              description: Number of uses per invite code
+            quotaExpiryLimit:
+              type: number
+              nullable: true
+              example: 1
+              description: Expiry duration value
+            quotaExpiryTime:
+              type: string
+              nullable: true
+              example: days
+              description: Expiry duration unit (days, weeks, months)
+        seerrEnabled:
+          type: boolean
+          example: true
+          description: Whether Seerr (Overseerr) is configured and enabled
+        statusUrl:
+          type: string
+          description: External URL for the status/uptime page
+        statusEnabled:
+          type: boolean
+          description: Whether the status/uptime page is enabled
+        theme:
+          type: object
+          description: Custom color theme configuration
     Invites:
       type: object
       properties:
@@ -1033,8 +1324,60 @@ components:
         status:
           type: number
           example: 0
-          description: Status of the invite.
+          description: 'Status of the invite (0=ACTIVE, 1=REDEEMED, 2=EXPIRED, 3=REVOKED).'
           readOnly: true
+        icode:
+          type: string
+          description: The unique invite code string.
+          readOnly: true
+        uses:
+          type: integer
+          description: Number of times this invite has been used.
+          default: 0
+        usageLimit:
+          type: integer
+          description: Maximum number of times this invite can be used.
+          default: 1
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Expiration date of the invite.
+        downloads:
+          type: boolean
+          description: Whether invited users can download content.
+          default: true
+        liveTv:
+          type: boolean
+          description: Whether invited users can access live TV.
+          default: false
+        plexHome:
+          type: boolean
+          description: Whether to add invited users as Plex Home members.
+          default: false
+        expiryLimit:
+          type: integer
+          description: Numeric value for expiry duration.
+          default: 1
+        expiryTime:
+          type: string
+          enum: ['', 'days', 'weeks', 'months']
+          description: Unit for expiry duration.
+          default: ''
+        sharedLibraries:
+          type: string
+          description: Comma-separated library IDs, or special values (all, server).
+        createdBy:
+          $ref: '#/components/schemas/User'
+        redeemedBy:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        updatedBy:
+          anyOf:
+            - $ref: '#/components/schemas/User'
+            - type: string
+              nullable: true
         createdAt:
           type: string
           example: '2020-09-12T10:00:27.000Z'
@@ -1043,18 +1386,10 @@ components:
           type: string
           example: '2020-09-12T10:00:27.000Z'
           readOnly: true
-        invitedBy:
-          $ref: '#/components/schemas/User'
-        updatedBy:
-          anyOf:
-            - $ref: '#/components/schemas/User'
-            - type: string
-              nullable: true
-        profileId:
-          type: number
       required:
         - id
         - status
+        - icode
     Notification:
       type: object
       properties:
@@ -1063,17 +1398,14 @@ components:
           example: 1
           readOnly: true
         type:
-          type: string
-          example: 'local_message'
+          type: number
+          example: 512
+          description: Notification type enum value (e.g., LOCAL_MESSAGE = 512)
         severity:
           type: string
           example: 'info'
         notifyUser:
-          oneOf:
-            - $ref: '#/components/schemas/User'
-            - type: array
-              items:
-                $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/User'
         subject:
           type: string
           example: 'You have a new friend!'
@@ -1514,17 +1846,106 @@ components:
           type: boolean
         message:
           type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            plexUsername:
+              type: string
+              nullable: true
+            plexId:
+              type: integer
+              nullable: true
+            avatar:
+              type: string
+            displayName:
+              type: string
+            userType:
+              type: integer
+            permissions:
+              type: number
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
       required:
         - success
         - message
     SignupPlexAuthResponse:
       type: object
       properties:
+        success:
+          type: boolean
+        alreadyHasAccess:
+          type: boolean
         user:
-          $ref: '#/components/schemas/User'
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            plexUsername:
+              type: string
+              nullable: true
+            plexId:
+              type: integer
+              nullable: true
+            avatar:
+              type: string
+            displayName:
+              type: string
+            userType:
+              type: integer
+            permissions:
+              type: number
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
         message:
           type: string
       required:
+        - success
+        - user
+        - message
+    SignupLocalAuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            avatar:
+              type: string
+            displayName:
+              type: string
+            userType:
+              type: integer
+            permissions:
+              type: number
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+        message:
+          type: string
+      required:
+        - success
         - user
         - message
     InviteValidationResponse:
@@ -1806,8 +2227,6 @@ paths:
                     type: boolean
                   commitsBehind:
                     type: number
-                  restartRequired:
-                    type: boolean
   /status/appdata:
     get:
       summary: Get application data volume status
@@ -1855,7 +2274,7 @@ paths:
               $ref: '#/components/schemas/MainSettings'
       responses:
         '200':
-          description: 'Values were sucessfully updated'
+          description: 'Values were successfully updated'
           content:
             application/json:
               schema:
@@ -2123,7 +2542,7 @@ paths:
   /settings/services:
     get:
       summary: Get services settings
-      description: Retrieves current services settings.
+      description: Retrieves current services settings. Returns an array of service configurations with their ID and enabled status.
       tags:
         - settings
       responses:
@@ -2132,7 +2551,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceSettings'
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/ServiceSettings'
+                    - type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Service identifier
+                          example: 'bazarr'
   /settings/uptime:
     get:
       summary: Get Uptime settings
@@ -2289,7 +2717,7 @@ paths:
       summary: Test existing download client connection
       description: Tests connection to an existing saved download client by ID.
       tags:
-        - downloads
+        - settings
       parameters:
         - in: path
           name: clientId
@@ -2655,6 +3083,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceSettings'
+  /settings/public/seerr/quota:
+    get:
+      summary: Get Seerr request quota defaults
+      description: Retrieves default request quota limits from the configured Seerr instance.
+      security: []
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Seerr default quota information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrQuotaResponse'
+        '404':
+          description: Seerr is not configured
+  /settings/public/seerr/notifications:
+    get:
+      summary: Get Seerr enabled notification agents
+      description: Retrieves list of enabled notification agents from the configured Seerr instance.
+      security: []
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Seerr notification agent information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrNotificationsResponse'
+        '404':
+          description: Seerr is not configured
   /settings/tautulli:
     get:
       summary: Get Tautulli settings
@@ -2703,7 +3163,7 @@ paths:
                   $ref: '#/components/schemas/RadarrSettings'
     post:
       summary: Create Radarr instance
-      description: Creates a new Radarr instance from the invite body.
+      description: Creates a new Radarr instance from the request body.
       tags:
         - settings
       requestBody:
@@ -2753,7 +3213,7 @@ paths:
                 - useSsl
       responses:
         '200':
-          description: Succesfully connected to Radarr instance
+          description: Successfully connected to Radarr instance
           content:
             application/json:
               schema:
@@ -2763,6 +3223,21 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        path:
+                          type: string
+                  tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServarrTag'
+                  urlBase:
+                    type: string
   /settings/radarr/{radarrId}:
     put:
       summary: Update Radarr instance
@@ -2803,7 +3278,7 @@ paths:
           description: Radarr instance ID
       responses:
         '200':
-          description: 'Radarr instance updated'
+          description: 'Radarr instance deleted'
           content:
             application/json:
               schema:
@@ -2869,28 +3344,6 @@ paths:
           description: Radarr instance not found
         '500':
           description: Failed to disable authentication on Radarr
-  /settings/radarr/{radarrId}/profiles:
-    get:
-      summary: Get available Radarr profiles
-      description: Returns a list of profiles available on the Radarr server instance in a JSON array.
-      tags:
-        - settings
-      parameters:
-        - in: path
-          name: radarrId
-          required: true
-          schema:
-            type: integer
-          description: Radarr instance ID
-      responses:
-        '200':
-          description: Returned list of profiles
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ServiceProfile'
   /settings/sonarr:
     get:
       summary: Get Sonarr settings
@@ -2908,7 +3361,7 @@ paths:
                   $ref: '#/components/schemas/SonarrSettings'
     post:
       summary: Create Sonarr instance
-      description: Creates a new Sonarr instance from the invite body.
+      description: Creates a new Sonarr instance from the request body.
       tags:
         - settings
       requestBody:
@@ -2958,7 +3411,7 @@ paths:
                 - useSsl
       responses:
         '200':
-          description: Succesfully connected to Sonarr instance
+          description: Successfully connected to Sonarr instance
           content:
             application/json:
               schema:
@@ -2968,6 +3421,25 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        path:
+                          type: string
+                  tags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServarrTag'
+                  languageProfiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+                  urlBase:
+                    type: string
   /settings/sonarr/{sonarrId}:
     put:
       summary: Update Sonarr instance
@@ -3008,7 +3480,7 @@ paths:
           description: Sonarr instance ID
       responses:
         '200':
-          description: 'Sonarr instance updated'
+          description: 'Sonarr instance deleted'
           content:
             application/json:
               schema:
@@ -3094,7 +3566,7 @@ paths:
       security: []
       description: Returns enabled libraries and their total media counts. Mainly used for library stats on the index.
       tags:
-        - settings
+        - libraries
       responses:
         '200':
           description: List of enabled libraries with media counts
@@ -3109,7 +3581,7 @@ paths:
       summary: Get library links for authenticated user
       description: Returns library links with Plex URLs for libraries the authenticated user has access to. Only accessible to authenticated users.
       tags:
-        - settings
+        - libraries
       parameters:
         - name: sort
           in: query
@@ -3144,6 +3616,21 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/LibraryLink'
+                  plexHealth:
+                    type: object
+                    description: Current Plex server health status
+                    properties:
+                      status:
+                        type: string
+                        enum: [healthy, retrying, unhealthy]
+                      lastSuccess:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      cooldownUntil:
+                        type: string
+                        format: date-time
+                        nullable: true
                 required:
                   - machineId
                   - enablePlaylists
@@ -3151,12 +3638,43 @@ paths:
                   - libraries
         '401':
           description: Unauthorized - user not authenticated
-        '500':
-          description: Internal server error
+  /plex/health:
+    get:
+      summary: Get Plex server health status
+      description: Returns the current health status of the Plex server connection, including cooldown information.
+      tags:
+        - service
+      responses:
+        '200':
+          description: Plex health status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlexLibrary'
+                $ref: '#/components/schemas/PlexHealthState'
+        '401':
+          description: Unauthorized - user not authenticated
+  /plex/health/retry:
+    post:
+      summary: Retry Plex server connection
+      description: Resets the Plex health state and immediately attempts to reconnect, refreshing the library cache.
+      tags:
+        - service
+      responses:
+        '200':
+          description: Retry result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  health:
+                    $ref: '#/components/schemas/PlexHealthState'
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - insufficient permissions
   /settings/initialize:
     post:
       summary: Initialize application
@@ -3397,7 +3915,7 @@ paths:
               $ref: '#/components/schemas/NotificationEmailSettings'
       responses:
         '200':
-          description: 'Values were sucessfully updated'
+          description: 'Values were successfully updated'
           content:
             application/json:
               schema:
@@ -3443,7 +3961,7 @@ paths:
               $ref: '#/components/schemas/WebPushSettings'
       responses:
         '200':
-          description: 'Values were sucessfully updated'
+          description: 'Values were successfully updated'
           content:
             application/json:
               schema:
@@ -3489,7 +4007,7 @@ paths:
               $ref: '#/components/schemas/InAppNotificationSettings'
       responses:
         '200':
-          description: 'Values were sucessfully updated'
+          description: 'Values were successfully updated'
           content:
             application/json:
               schema:
@@ -3798,6 +4316,8 @@ paths:
                   status:
                     type: string
                     example: 'ok'
+        '400':
+          description: Bad request - missing email address
       requestBody:
         required: true
         content:
@@ -3834,6 +4354,10 @@ paths:
                   status:
                     type: string
                     example: 'ok'
+        '400':
+          description: Bad request - invalid password or expired reset link
+        '404':
+          description: Invalid or unknown reset link
       requestBody:
         required: true
         content:
@@ -3914,7 +4438,7 @@ paths:
     put:
       summary: Update batch of users
       description: |
-        Update users with given IDs with provided values in invite `body.settings`. You cannot update users' Plex tokens through this invite.
+        Update users with given IDs with the provided values. You cannot update users' Plex tokens through this request.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -3945,7 +4469,7 @@ paths:
     post:
       summary: Import all users from Plex
       description: |
-        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the invite body, only the specified users will be imported. Otherwise, all users will be imported.
+        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the request body, only the specified users will be imported. Otherwise, all users will be imported.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -4565,7 +5089,7 @@ paths:
                     nullable: true
   /user/{userId}/settings/password:
     get:
-      summary: Get password page informatiom
+      summary: Get password page information
       description: Returns important data for the password page to function correctly. Requires `MANAGE_USERS` permission if viewing other users.
       tags:
         - users
@@ -4779,6 +5303,21 @@ paths:
                   message:
                     type: string
                     example: Failed to pin libraries
+  /user/{userId}/settings/seerr/quota:
+    get:
+      summary: Get Seerr user-specific request quotas
+      description: Retrieves request quota limits for the specified user from the configured Seerr instance. Falls back to null values if the user is not found in Seerr.
+      tags:
+        - users
+      responses:
+        '200':
+          description: Seerr user quota information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrQuotaResponse'
+        '404':
+          description: Seerr is not configured or user has no linked Plex account
   /downloads:
     get:
       summary: Get all torrents from download clients
@@ -5405,7 +5944,7 @@ paths:
                   nullable: true
       responses:
         '201':
-          description: Succesfully created the invite
+          description: Successfully created the invite
           content:
             application/json:
               schema:
@@ -5466,7 +6005,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Succesfully returns invite
+          description: Successfully returns invite
           content:
             application/json:
               schema:
@@ -5496,7 +6035,7 @@ paths:
                   nullable: true
       responses:
         '200':
-          description: Succesfully updated invite
+          description: Successfully updated invite
           content:
             application/json:
               schema:
@@ -5516,31 +6055,7 @@ paths:
             type: string
       responses:
         '204':
-          description: Succesfully removed invite
-  /invite/{inviteId}/retry:
-    post:
-      summary: Retry failed invite
-      description: |
-        Retries a invite by resending invites to Sonarr or Radarr.
-
-        Requires the `MANAGE_INVITES` permission or `ADMIN`.
-      tags:
-        - invite
-      parameters:
-        - in: path
-          name: inviteId
-          description: invite ID
-          required: true
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: Retry triggered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Invites'
+          description: Successfully removed invite
   /invite/{inviteId}/{status}:
     post:
       summary: Update an invite's status
@@ -5649,7 +6164,14 @@ paths:
           description: Forbidden - insufficient permissions
         '500':
           description: Server error
-  /notification/{notificationId}:
+  /notification/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The notification ID.
     put:
       summary: Update a notification
       description: Updates an existing notification for the user.
@@ -5731,7 +6253,7 @@ paths:
         - service
       responses:
         '200':
-          description: invite successful
+          description: Radarr server list returned successfully
           content:
             application/json:
               schema:
@@ -5753,7 +6275,7 @@ paths:
             example: 0
       responses:
         '200':
-          description: invite successful
+          description: Radarr server details returned successfully
           content:
             application/json:
               schema:
@@ -5772,7 +6294,7 @@ paths:
         - service
       responses:
         '200':
-          description: invite successful
+          description: Sonarr server list returned successfully
           content:
             application/json:
               schema:
@@ -5794,7 +6316,7 @@ paths:
             example: 0
       responses:
         '200':
-          description: invite successful
+          description: Sonarr server details returned successfully
           content:
             application/json:
               schema:
@@ -5819,7 +6341,7 @@ paths:
             example: 0
       responses:
         '200':
-          description: invite successful
+          description: Sonarr series lookup results
           content:
             application/json:
               schema:
@@ -5999,7 +6521,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CalendarEventRequest'
       responses:
-        '200':
+        '201':
           description: Event created successfully
           content:
             application/json:
@@ -6076,6 +6598,7 @@ paths:
       tags:
         - public
       summary: Validate an invite code for signup
+      security: []
       parameters:
         - name: icode
           in: path
@@ -6101,6 +6624,7 @@ paths:
       tags:
         - public
       summary: Authenticate user with Plex and create account
+      security: []
       requestBody:
         required: true
         content:
@@ -6130,6 +6654,7 @@ paths:
       tags:
         - public
       summary: Create local user account with email and password
+      security: []
       requestBody:
         required: true
         content:
@@ -6169,7 +6694,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignupPlexAuthResponse'
+                $ref: '#/components/schemas/SignupLocalAuthResponse'
         '400':
           description: Invalid input or user already exists
           content:
@@ -6188,11 +6713,10 @@ paths:
       tags:
         - public
       summary: Finalize signup and update invite
+      security: []
       description: |
-        Completes the user signup process by updating profile information and optionally auto-pinning libraries.
-
-        If `autoPinLibraries` is true and the user is a Plex user, their shared libraries will be automatically
-        pinned to their Plex home screen in the background (non-blocking).
+        Completes the user signup process by updating profile information.
+        The userId in the request body must match the session userId for security.
       requestBody:
         required: true
         content:
@@ -6205,17 +6729,13 @@ paths:
                   description: Invite code used for signup
                 userId:
                   type: integer
-                  description: User ID to finalize
+                  description: User ID to finalize (must match session)
                 displayName:
                   type: string
                   description: Display name for the user
                 password:
                   type: string
                   description: Optional password for local authentication
-                autoPinLibraries:
-                  type: boolean
-                  description: Whether to automatically pin libraries to Plex home screen (Plex users only)
-                  default: true
               required:
                 - userId
       responses:

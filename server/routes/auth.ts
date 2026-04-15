@@ -7,6 +7,7 @@ import type { UserSummary } from '@server/interfaces/api/userInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { resetPasswordLimiter } from '@server/lib/rateLimiters';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 
@@ -229,47 +230,6 @@ authRoutes.post('/local', async (req, res, next) => {
     });
     const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
 
-    if (!user.plexId) {
-      try {
-        const plexUsersResponse = await mainPlexTv.getUsers();
-        const account = plexUsersResponse.MediaContainer.User.find(
-          (account) =>
-            account.$.email &&
-            account.$.email.toLowerCase() === user.email.toLowerCase()
-        )?.$;
-
-        if (
-          account &&
-          (await mainPlexTv.checkUserAccess(parseInt(account.id)))
-        ) {
-          logger.info(
-            'Found matching Plex user; updating user with Plex data',
-            {
-              label: 'API',
-              ip: req.ip,
-              email: body.email,
-              userId: user.id,
-              plexId: account.id,
-              plexUsername: account.username,
-            }
-          );
-
-          user.plexId = parseInt(account.id);
-          user.avatar = account.thumb;
-          user.email = account.email;
-          user.plexUsername = account.username;
-          user.userType = UserType.PLEX;
-
-          await userRepository.save(user);
-        }
-      } catch (e) {
-        logger.error('Something went wrong fetching Plex users', {
-          label: 'API',
-          errorMessage: e.message,
-        });
-      }
-    }
-
     if (
       user.plexId &&
       user.plexId !== mainUser.plexId &&
@@ -353,90 +313,125 @@ authRoutes.get('/plex/token', isAuthenticated(), async (req, res, next) => {
   }
 });
 
-authRoutes.post('/reset-password', async (req, res, next) => {
-  const userRepository = getRepository(User);
-  const body = req.body as { email?: string };
+authRoutes.post(
+  '/reset-password',
+  resetPasswordLimiter,
+  async (req, res, next) => {
+    try {
+      const userRepository = getRepository(User);
+      const body = req.body as { email?: string };
 
-  if (!body.email) {
-    return next({ status: 500, message: 'Email address required.' });
+      if (!body.email) {
+        return next({ status: 400, message: 'Email address required.' });
+      }
+
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .where('user.email = :email', { email: body.email.toLowerCase() })
+        .getOne();
+
+      if (user) {
+        await user.resetPassword();
+        await userRepository.save(user);
+        logger.info('Successfully sent password reset link', {
+          label: 'API',
+          ip: req.ip,
+          email: body.email,
+        });
+      } else {
+        logger.error('Something went wrong sending password reset link', {
+          label: 'API',
+          ip: req.ip,
+          email: body.email,
+        });
+      }
+
+      res.status(200).json({ status: 'ok' });
+    } catch (e) {
+      logger.error('Failed to process password reset request', {
+        label: 'API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+        ip: req.ip,
+      });
+      return next({ status: 500, message: 'Something went wrong.' });
+    }
   }
+);
 
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where('user.email = :email', { email: body.email.toLowerCase() })
-    .getOne();
+authRoutes.post<{ guid: string }>(
+  '/reset-password/:guid',
+  resetPasswordLimiter,
+  async (req, res, next) => {
+    try {
+      const userRepository = getRepository(User);
 
-  if (user) {
-    await user.resetPassword();
-    userRepository.save(user);
-    logger.info('Successfully sent password reset link', {
-      label: 'API',
-      ip: req.ip,
-      email: body.email,
-    });
-  } else {
-    logger.error('Something went wrong sending password reset link', {
-      label: 'API',
-      ip: req.ip,
-      email: body.email,
-    });
+      if (!req.body.password || req.body.password?.length < 8) {
+        logger.warn(
+          'Failed password reset attempt using invalid new password',
+          {
+            label: 'API',
+            ip: req.ip,
+            guid: req.params.guid,
+          }
+        );
+        return next({
+          status: 400,
+          message: 'Password must be at least 8 characters long.',
+        });
+      }
+
+      const user = await userRepository.findOne({
+        where: { resetPasswordGuid: req.params.guid },
+      });
+
+      if (!user) {
+        logger.warn(
+          'Failed password reset attempt using invalid recovery link',
+          {
+            label: 'API',
+            ip: req.ip,
+            guid: req.params.guid,
+          }
+        );
+        return next({ status: 404, message: 'Invalid password reset link.' });
+      }
+
+      if (
+        !user.recoveryLinkExpirationDate ||
+        user.recoveryLinkExpirationDate <= new Date()
+      ) {
+        logger.warn(
+          'Failed password reset attempt using expired recovery link',
+          {
+            label: 'API',
+            ip: req.ip,
+            guid: req.params.guid,
+            email: user.email,
+          }
+        );
+        return next({ status: 400, message: 'Invalid password reset link.' });
+      }
+
+      await user.setPassword(req.body.password);
+      user.recoveryLinkExpirationDate = null;
+      await userRepository.save(user);
+      logger.info('Successfully reset password', {
+        label: 'API',
+        ip: req.ip,
+        guid: req.params.guid,
+        email: user.email,
+      });
+
+      res.status(200).json({ status: 'ok' });
+    } catch (e) {
+      logger.error('Failed to process password reset', {
+        label: 'API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+        ip: req.ip,
+      });
+      return next({ status: 500, message: 'Something went wrong.' });
+    }
   }
-
-  res.status(200).json({ status: 'ok' });
-});
-
-authRoutes.post('/reset-password/:guid', async (req, res, next) => {
-  const userRepository = getRepository(User);
-
-  if (!req.body.password || req.body.password?.length < 8) {
-    logger.warn('Failed password reset attempt using invalid new password', {
-      label: 'API',
-      ip: req.ip,
-      guid: req.params.guid,
-    });
-    return next({
-      status: 500,
-      message: 'Password must be at least 8 characters long.',
-    });
-  }
-
-  const user = await userRepository.findOne({
-    where: { resetPasswordGuid: req.params.guid },
-  });
-
-  if (!user) {
-    logger.warn('Failed password reset attempt using invalid recovery link', {
-      label: 'API',
-      ip: req.ip,
-      guid: req.params.guid,
-    });
-    return next({ status: 500, message: 'Invalid password reset link.' });
-  }
-
-  if (
-    !user.recoveryLinkExpirationDate ||
-    user.recoveryLinkExpirationDate <= new Date()
-  ) {
-    logger.warn('Failed password reset attempt using expired recovery link', {
-      label: 'API',
-      ip: req.ip,
-      guid: req.params.guid,
-      email: user.email,
-    });
-    return next({ status: 500, message: 'Invalid password reset link.' });
-  }
-
-  await user.setPassword(req.body.password);
-  user.recoveryLinkExpirationDate = null;
-  userRepository.save(user);
-  logger.info('Successfully reset password', {
-    label: 'API',
-    ip: req.ip,
-    guid: req.params.guid,
-    email: user.email,
-  });
-
-  res.status(200).json({ status: 'ok' });
-});
+);
 
 export default authRoutes;

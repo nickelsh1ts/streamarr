@@ -9,7 +9,7 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
 
   const ServicesTabs = [
     {
-      text: 'Overseerr',
+      text: 'Seerr',
       route: '/admin/settings/services/overseerr',
       regex: /^\/admin\/settings\/services\/?(overseerr\/?(.*)?)?$/,
     },

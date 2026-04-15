@@ -38,6 +38,17 @@ export interface PublicSettingsResponse {
   extendedHome: boolean;
   libraryCounts?: boolean;
   enableSignUp: boolean;
+  enableHelpCentre: boolean;
+  enableTrialPeriod: boolean;
+  trialPeriodDays: number;
+  defaultInviteQuotas: {
+    quotaLimit?: number;
+    quotaDays?: number;
+    quotaUsage?: number;
+    quotaExpiryLimit?: number;
+    quotaExpiryTime?: string;
+  };
+  seerrEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;

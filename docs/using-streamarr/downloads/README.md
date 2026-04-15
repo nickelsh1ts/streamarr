@@ -191,11 +191,11 @@ If direct torrent adding is supported:
 
 Streamarr supports tag management for organizing torrents. Tag support varies by client:
 
-| Client           | Tag Support                                                       |
-| ---------------- | ----------------------------------------------------------------- |
-| **qBittorrent**  | Full support — create, delete, add, and remove tags               |
-| **Transmission** | Per-torrent labels (shown as tags; multiple labels per torrent)   |
-| **Deluge**       | Not supported                                                     |
+| Client           | Tag Support                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| **qBittorrent**  | Full support — create, delete, add, and remove tags             |
+| **Transmission** | Per-torrent labels (shown as tags; multiple labels per torrent) |
+| **Deluge**       | Not supported                                                   |
 
 ### Managing Tags
 

@@ -1,13 +1,22 @@
-#### Description
+## Description
 
-#### Screenshot (if UI-related)
+<!--- Describe your changes in detail -->
+<!--- Why is this change required? What problem does it solve? -->
+<!--- If it fixes an open issue, please link to the issue here. -->
 
-#### To-Dos
+- Fixes #xxx
 
-- [ ] Successful build `yarn prepare && yarn build`
+## Has This Been Tested?
+
+<!--- Please describe in detail how you tested your changes. -->
+
+## Screenshots (if applicable)
+
+## Checklist:
+
+- [ ] I have read and followed the contribution [guidelines](https://github.com/nickelsh1ts/streamarr/blob/develop/CONTRIBUTING.md).
+- [ ] I have updated the documentation accordingly.
+- [ ] All new and existing tests passed.
+- [ ] Successful build `yarn build`
 - [ ] Translation keys `yarn i18n:extract`
-- [ ] Database migration (if applicable)
-
-#### Issues Fixed or Closed
-
-- Fixes #XXXX
+- [ ] Database migration (if required)

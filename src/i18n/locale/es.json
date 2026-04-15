@@ -1,24 +1,6 @@
 {
-  "ServiceErrorGeneric.description": {
-    "defaultMessage": "Ocurrió un error al intentar conectar con {serviceName}."
-  },
-  "ServiceNotConfigured.descriptionAdmin": {
-    "defaultMessage": "{serviceName} aún no ha sido configurado o habilitado."
-  },
-  "ServiceNotConfigured.descriptionUser": {
-    "defaultMessage": "{serviceName} no está disponible. Por favor contacta a tu administrador."
-  },
-  "ServiceNotConfigured.setUp": {
-    "defaultMessage": "Configurar {serviceName}"
-  },
-  "ServiceNotConfigured.title": {
-    "defaultMessage": "{serviceName} No Habilitado"
-  },
-  "ServiceNotFound.description": {
-    "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
-  },
   "aboutReleases.changelogTitle": {
-    "defaultMessage": "Registro de Cambios de {version}"
+    "defaultMessage": "Registro de Cambios de la Versión {version}"
   },
   "aboutReleases.currentVersion": {
     "defaultMessage": "Versión Actual"
@@ -143,11 +125,11 @@
   "calendar.agenda": {
     "defaultMessage": "Agenda"
   },
-  "calendar.createEvent": {
-    "defaultMessage": "Crear un Evento"
-  },
   "calendar.createdBy": {
     "defaultMessage": "Creado Por:"
+  },
+  "calendar.createEvent": {
+    "defaultMessage": "Crear un Evento"
   },
   "calendar.date": {
     "defaultMessage": "Fecha"
@@ -229,7 +211,7 @@
     "defaultMessage": "Añade tu primer torrent para comenzar."
   },
   "common.addserver": {
-    "defaultMessage": "Agregar servidor"
+    "defaultMessage": "Agregar servidor {arrApp}"
   },
   "common.admin": {
     "defaultMessage": "Administrador"
@@ -403,12 +385,12 @@
   "common.image": {
     "defaultMessage": "Imagen"
   },
-  "common.inApp": {
-    "defaultMessage": "En la Aplicación"
-  },
   "common.inactive": {
     "defaultMessage": "Inactivo",
     "description": "Spanish translation"
+  },
+  "common.inApp": {
+    "defaultMessage": "En la Aplicación"
   },
   "common.indexers": {
     "defaultMessage": "Indexadores"
@@ -483,17 +465,17 @@
   "common.noErrorDetails": {
     "defaultMessage": "No se pudieron obtener los detalles del error."
   },
-  "common.noResults": {
-    "defaultMessage": "Sin Resultados"
-  },
   "common.none": {
     "defaultMessage": "Ninguno"
   },
-  "common.notificationTypes": {
-    "defaultMessage": "Tipos de Notificación"
+  "common.noResults": {
+    "defaultMessage": "Sin Resultados"
   },
   "common.notifications": {
     "defaultMessage": "Notificaciones"
+  },
+  "common.notificationTypes": {
+    "defaultMessage": "Tipos de Notificación"
   },
   "common.onboarding": {
     "defaultMessage": "Incorporación"
@@ -735,20 +717,20 @@
   "common.urlBase": {
     "defaultMessage": "Base URL"
   },
-  "common.useSsl": {
-    "defaultMessage": "Usar SSL"
-  },
   "common.user": {
     "defaultMessage": "Usuario"
-  },
-  "common.userRole": {
-    "defaultMessage": "Rol de Usuario"
   },
   "common.username": {
     "defaultMessage": "Nombre de Usuario"
   },
+  "common.userRole": {
+    "defaultMessage": "Rol de Usuario"
+  },
   "common.users": {
     "defaultMessage": "Usuarios"
+  },
+  "common.useSsl": {
+    "defaultMessage": "Usar SSL"
   },
   "common.validation.descriptionRequired": {
     "defaultMessage": "Debes proporcionar una descripción válida"
@@ -793,17 +775,17 @@
   "confirmAccount.subscriptionFailed": {
     "defaultMessage": "Error al suscribirse a las notificaciones web push"
   },
-  "confirmAccount.webPushDisableError": {
-    "defaultMessage": "Error al deshabilitar las notificaciones web push"
-  },
   "confirmAccount.webPushDisabled": {
     "defaultMessage": "Web push ha sido deshabilitado"
   },
-  "confirmAccount.webPushEnableError": {
-    "defaultMessage": "Error al habilitar las notificaciones web push"
+  "confirmAccount.webPushDisableError": {
+    "defaultMessage": "Error al deshabilitar las notificaciones web push"
   },
   "confirmAccount.webPushEnabled": {
     "defaultMessage": "Notificaciones Web Push Habilitadas"
+  },
+  "confirmAccount.webPushEnableError": {
+    "defaultMessage": "Error al habilitar las notificaciones web push"
   },
   "copyButton.tooltip": {
     "defaultMessage": "Copiar al portapapeles"
@@ -850,17 +832,17 @@
   "downloads.addClientInstructions": {
     "defaultMessage": "Añade un cliente de descarga en la configuración para comenzar. Actualmente soporta qBittorrent, Deluge y Transmission."
   },
-  "downloads.addTag": {
-    "defaultMessage": "Añadir etiqueta"
-  },
-  "downloads.addTorrent": {
-    "defaultMessage": "Añadir Torrent"
-  },
   "downloads.addedDate": {
     "defaultMessage": "Añadido"
   },
   "downloads.adding": {
     "defaultMessage": "Añadiendo..."
+  },
+  "downloads.addTag": {
+    "defaultMessage": "Añadir etiqueta"
+  },
+  "downloads.addTorrent": {
+    "defaultMessage": "Añadir Torrent"
   },
   "downloads.alsoDeleteFiles": {
     "defaultMessage": "También eliminar permanentemente los archivos"
@@ -892,11 +874,11 @@
   "downloads.clientAll": {
     "defaultMessage": "Todos los Clientes"
   },
-  "downloads.clientUnreachable": {
-    "defaultMessage": "Cliente No Disponible."
-  },
   "downloads.clientsUnhealthy": {
     "defaultMessage": "{count} {count, plural, one {cliente} other {clientes}} no disponible(s)"
+  },
+  "downloads.clientUnreachable": {
+    "defaultMessage": "Cliente No Disponible."
   },
   "downloads.configureClients": {
     "defaultMessage": "Configurar Clientes"
@@ -1211,8 +1193,8 @@
   "footer.contactUs": {
     "defaultMessage": "Contáctanos"
   },
-  "footer.cookiePreferences": {
-    "defaultMessage": "Preferencias de Cookies"
+  "footer.cookiePolicy": {
+    "defaultMessage": "Política de Cookies"
   },
   "footer.privacyPolicy": {
     "defaultMessage": "Política de Privacidad"
@@ -1292,6 +1274,12 @@
   "generalSettings.description": {
     "defaultMessage": "Configura los ajustes generales de la aplicación"
   },
+  "generalSettings.enableHelpCentre.description": {
+    "defaultMessage": "Mostrar el Centro de Ayuda y enlaces relacionados a los usuarios."
+  },
+  "generalSettings.enableHelpCentre.label": {
+    "defaultMessage": "Habilitar Centro de Ayuda"
+  },
   "generalSettings.enableSignUp.description": {
     "defaultMessage": "Permite que nuevos usuarios se registren sin invitación"
   },
@@ -1347,32 +1335,1799 @@
   "generalSettings.validation.supportUrl": {
     "defaultMessage": "Debe proporcionar una URL válida"
   },
+  "help.accountSettings.breadcrumb": {
+    "defaultMessage": "Configuración de Cuenta y Preferencias"
+  },
+  "help.accountSettings.discoveryTip": {
+    "defaultMessage": "También puedes ajustar las preferencias de Descubrimiento desde la misma área de configuración. Recomendamos mantener los valores predeterminados a menos que tengas una preferencia específica."
+  },
+  "help.accountSettings.displayDesc": {
+    "defaultMessage": "Puedes personalizar cómo se ve y se comporta {appTitle} desde la configuración de tu perfil."
+  },
+  "help.accountSettings.displayTitle": {
+    "defaultMessage": "Configuración de Pantalla"
+  },
+  "help.accountSettings.emailTip": {
+    "defaultMessage": "Mantén tu dirección de correo electrónico actualizada para asegurarte de recibir notificaciones importantes de tu cuenta."
+  },
+  "help.accountSettings.heading": {
+    "defaultMessage": "Configuración de Cuenta y Preferencias"
+  },
+  "help.accountSettings.language": {
+    "defaultMessage": "Idioma"
+  },
+  "help.accountSettings.languageDesc": {
+    "defaultMessage": "Cambiar el idioma de visualización de la interfaz de {appTitle}"
+  },
+  "help.accountSettings.notifDesc": {
+    "defaultMessage": "Controla qué notificaciones recibes y cómo se entregan. Puedes habilitar o deshabilitar canales de notificación individuales desde la configuración de tu perfil."
+  },
+  "help.accountSettings.notifPrefs": {
+    "defaultMessage": "Acceder a tus preferencias de notificaciones"
+  },
+  "help.accountSettings.notifTitle": {
+    "defaultMessage": "Preferencias de Notificaciones"
+  },
+  "help.accountSettings.onlineMediaDesc": {
+    "defaultMessage": "Por defecto, {plexLogo} incluye contenido gratuito de su propio servicio de streaming (TV en Vivo, Películas y Series, Música). Si prefieres ver solo contenido de {appTitle}, puedes desactivar estas fuentes."
+  },
+  "help.accountSettings.onlineMediaLink": {
+    "defaultMessage": "Fuentes de Medios en Línea"
+  },
+  "help.accountSettings.onlineMediaStep1": {
+    "defaultMessage": "Navega a {link}"
+  },
+  "help.accountSettings.onlineMediaStep2": {
+    "defaultMessage": "Desactiva TV en Vivo, Películas y TV, y Música según desees"
+  },
+  "help.accountSettings.onlineMediaStep3": {
+    "defaultMessage": "Tu pantalla de inicio de {plexLogo} ahora solo mostrará contenido de {appTitle}"
+  },
+  "help.accountSettings.onlineMediaTitle": {
+    "defaultMessage": "Fuentes de Medios en Línea"
+  },
+  "help.accountSettings.plexAccountDesc": {
+    "defaultMessage": "Algunas configuraciones se gestionan directamente a través de tu cuenta de {plexLogo}. Puedes acceder a ellas a través del portal Watch de {appTitle} sin salir de la aplicación."
+  },
+  "help.accountSettings.plexAccountPrefs": {
+    "defaultMessage": "Preferencias de cuenta"
+  },
+  "help.accountSettings.plexAccountPrefsDesc": {
+    "defaultMessage": "Gestiona tu nombre de usuario, correo electrónico, contraseña y detalles de cuenta de {plexLogo}"
+  },
+  "help.accountSettings.plexAccountTitle": {
+    "defaultMessage": "Preferencias de Cuenta de {plexLogo}"
+  },
+  "help.accountSettings.plexWebPrefs": {
+    "defaultMessage": "Preferencias web"
+  },
+  "help.accountSettings.plexWebPrefsDesc": {
+    "defaultMessage": "Configura la calidad de reproducción, subtítulos y otras opciones del reproductor web"
+  },
+  "help.accountSettings.profileDesc": {
+    "defaultMessage": "Tu página de perfil en {appTitle} muestra la información de tu cuenta y actividad. Puedes acceder haciendo clic en tu avatar o nombre de usuario en la barra de navegación."
+  },
+  "help.accountSettings.profileTitle": {
+    "defaultMessage": "Tu Perfil"
+  },
+  "help.accountSettings.recentActivity": {
+    "defaultMessage": "Ver tu actividad reciente e historial de visualización"
+  },
+  "help.accountSettings.seerrNotifs": {
+    "defaultMessage": "Las notificaciones de solicitudes de Seerr se gestionan por separado dentro de la aplicación Seerr"
+  },
+  "help.accountSettings.subheading": {
+    "defaultMessage": "Gestiona tu perfil de {appTitle}, preferencias de visualización, configuración de notificaciones y opciones de cuenta de {plexLogo}."
+  },
+  "help.accountSettings.toggleNotifs": {
+    "defaultMessage": "Activa o desactiva las notificaciones en la aplicación, por correo electrónico y push de forma independiente"
+  },
+  "help.accountSettings.viewDetails": {
+    "defaultMessage": "Ver los detalles de tu cuenta y estado de membresía"
+  },
+  "help.becomeMember.breadcrumb": {
+    "defaultMessage": "Cómo Convertirse en Miembro"
+  },
+  "help.becomeMember.closedDesc": {
+    "defaultMessage": "{appTitle} no está aceptando nuevos registros actualmente. Si deseas unirte, contacta a un miembro existente o al equipo de administración para consultar sobre disponibilidad."
+  },
+  "help.becomeMember.closedTitle": {
+    "defaultMessage": "La membresía está actualmente cerrada"
+  },
+  "help.becomeMember.contactAdmin": {
+    "defaultMessage": "Puedes contactar al equipo de administración en {email} para consultar sobre membresía."
+  },
+  "help.becomeMember.gettingInviteAnchor": {
+    "defaultMessage": "Obtener una Invitación"
+  },
+  "help.becomeMember.gettingInviteDesc": {
+    "defaultMessage": "{appTitle} es un servicio de streaming privado, solo por invitación. Para unirte, necesitarás un código de invitación de un miembro existente. Contacta a un amigo que ya sea miembro y pídele que te envíe una invitación."
+  },
+  "help.becomeMember.gettingInviteTitle": {
+    "defaultMessage": "Obtener una invitación"
+  },
+  "help.becomeMember.heading": {
+    "defaultMessage": "Cómo convertirse en miembro de {appTitle}"
+  },
+  "help.becomeMember.inviteAFriendLink": {
+    "defaultMessage": "Invitar a un amigo"
+  },
+  "help.becomeMember.inviteHelpLink": {
+    "defaultMessage": "Los miembros existentes pueden aprender cómo enviar invitaciones en el artículo de ayuda {link}."
+  },
+  "help.becomeMember.joiningAnchor": {
+    "defaultMessage": "Unirse a {appTitle}"
+  },
+  "help.becomeMember.joinStep1": {
+    "defaultMessage": "Navega a la página de registro de {appTitle}"
+  },
+  "help.becomeMember.joinStep2": {
+    "defaultMessage": "Ingresa el código de invitación que recibiste y selecciona el botón {button}"
+  },
+  "help.becomeMember.joinStep3": {
+    "defaultMessage": "Inicia sesión con tu cuenta de {plexLogo} — si no tienes una, puedes crear una durante este paso"
+  },
+  "help.becomeMember.joinStep4": {
+    "defaultMessage": "Personaliza tu cuenta — elige un nombre para mostrar, idioma y configura tus preferencias de notificaciones"
+  },
+  "help.becomeMember.joinStep5": {
+    "defaultMessage": "Completa el registro — tus bibliotecas y acceso de {plexLogo} se configurarán automáticamente"
+  },
+  "help.becomeMember.joinTitle": {
+    "defaultMessage": "Cómo unirse a {appTitle}:"
+  },
+  "help.becomeMember.letsGetStarted": {
+    "defaultMessage": "¡Empecemos!"
+  },
+  "help.becomeMember.localLoginNote": {
+    "defaultMessage": "También puedes establecer una contraseña local durante el registro como forma alternativa de iniciar sesión"
+  },
+  "help.becomeMember.plexRequired": {
+    "defaultMessage": "Se requiere una cuenta de {plexLogo} para acceder a los servicios de {appTitle}"
+  },
+  "help.becomeMember.subheading": {
+    "defaultMessage": "{appTitle} es un servicio de streaming privado, solo por invitación. Para convertirte en miembro, necesitarás un código de invitación de un miembro existente."
+  },
+  "help.becomeMember.subheadingClosed": {
+    "defaultMessage": "{appTitle} es un servicio de streaming privado que actualmente no acepta nuevos registros."
+  },
+  "help.becomeMember.trialNote": {
+    "defaultMessage": "Una vez que te hayas unido exitosamente a {appTitle}, no podrás invitar a tus propios amigos hasta que el período de prueba de {days} días haya terminado"
+  },
+  "help.calendar.autoUpdate": {
+    "defaultMessage": "El calendario se actualiza automáticamente cuando se rastrea nuevo contenido"
+  },
+  "help.calendar.breadcrumb": {
+    "defaultMessage": "Calendario y Programación de Estrenos"
+  },
+  "help.calendar.heading": {
+    "defaultMessage": "Calendario y programación de estrenos"
+  },
+  "help.calendar.navigateMonths": {
+    "defaultMessage": "Navega entre meses para ver estrenos próximos y pasados"
+  },
+  "help.calendar.overviewDesc": {
+    "defaultMessage": "El calendario de {appTitle} te muestra los próximos estrenos de películas y series de TV que están siendo rastreadas por el servicio. Esto incluye contenido que ha sido solicitado y aprobado, así como contenido ya en la biblioteca que tiene nuevas temporadas o episodios próximos."
+  },
+  "help.calendar.overviewTitle": {
+    "defaultMessage": "Descripción General de la Programación de Estrenos"
+  },
+  "help.calendar.planViewing": {
+    "defaultMessage": "Planifica tu visualización en torno a los próximos estrenos"
+  },
+  "help.calendar.seeAvailable": {
+    "defaultMessage": "Ver cuándo estará disponible nuevo contenido para ver en {appTitle}"
+  },
+  "help.calendar.selectTitle": {
+    "defaultMessage": "Selecciona un título para ver más detalles sobre el estreno"
+  },
+  "help.calendar.subheading": {
+    "defaultMessage": "Mantente al tanto de los próximos estrenos de películas y series de TV en {appTitle} con el calendario de estrenos integrado."
+  },
+  "help.calendar.tmdbTip": {
+    "defaultMessage": "Las fechas de estreno provienen de TMDB y pueden cambiar ocasionalmente. El calendario se actualiza automáticamente cuando las fechas se ajustan."
+  },
+  "help.calendar.usingDesc": {
+    "defaultMessage": "Accede al calendario desde el menú de navegación. Puedes navegar por diferentes fechas para ver qué contenido se aproxima."
+  },
+  "help.calendar.usingTitle": {
+    "defaultMessage": "Usando el Calendario"
+  },
+  "help.calendar.viewUpcoming": {
+    "defaultMessage": "Ver las próximas fechas de estreno de películas y episodios de TV de un vistazo"
+  },
+  "help.common.helpCentre": {
+    "defaultMessage": "Centro de Ayuda"
+  },
+  "help.common.importantInfo": {
+    "defaultMessage": "Información Importante"
+  },
+  "help.common.note": {
+    "defaultMessage": "Nota"
+  },
+  "help.common.remember": {
+    "defaultMessage": "Recuerda"
+  },
+  "help.common.tip": {
+    "defaultMessage": "Consejo"
+  },
+  "help.cookies.essentialDesc": {
+    "defaultMessage": "Estas son necesarias para que el servicio funcione. Incluyen cookies de sesión que te mantienen conectado y tokens CSRF que protegen contra la falsificación de solicitudes entre sitios."
+  },
+  "help.cookies.essentialLabel": {
+    "defaultMessage": "Cookies Esenciales:"
+  },
+  "help.cookies.howDesc": {
+    "defaultMessage": "{appTitle} utiliza cookies para los siguientes propósitos:"
+  },
+  "help.cookies.howTitle": {
+    "defaultMessage": "Cómo Usamos las Cookies"
+  },
+  "help.cookies.intro": {
+    "defaultMessage": "Esta Política de Cookies explica cómo {appTitle} utiliza cookies y tecnologías similares cuando usas nuestro servicio."
+  },
+  "help.cookies.lastUpdated": {
+    "defaultMessage": "Última Actualización:"
+  },
+  "help.cookies.managingDesc": {
+    "defaultMessage": "La mayoría de los navegadores web te permiten controlar las cookies a través de su configuración. Generalmente puedes encontrar estas opciones en el menú \"Configuración\", \"Preferencias\" o \"Privacidad\" de tu navegador. Ten en cuenta que deshabilitar las cookies esenciales puede impedirte usar {appTitle} correctamente, ya que son necesarias para la autenticación y seguridad."
+  },
+  "help.cookies.managingTitle": {
+    "defaultMessage": "Gestión de Cookies"
+  },
+  "help.cookies.preferenceDesc": {
+    "defaultMessage": "Estas recuerdan tu configuración y preferencias, como tu selección de idioma y opciones de visualización."
+  },
+  "help.cookies.preferenceLabel": {
+    "defaultMessage": "Cookies de Preferencias:"
+  },
+  "help.cookies.thirdPartyDesc": {
+    "defaultMessage": "{appTitle} se integra con {plexLogo} para la reproducción de medios y autenticación de cuenta. Al usar el reproductor web de {plexLogo} dentro de {appTitle}, {plexLogo} puede establecer sus propias cookies sujetas a su política de privacidad."
+  },
+  "help.cookies.thirdPartyTitle": {
+    "defaultMessage": "Cookies de Terceros"
+  },
+  "help.cookies.title": {
+    "defaultMessage": "Política de Cookies"
+  },
+  "help.cookies.whatDesc": {
+    "defaultMessage": "Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Se utilizan ampliamente para que los sitios web funcionen de manera más eficiente y para proporcionar información a los operadores del sitio."
+  },
+  "help.cookies.whatTitle": {
+    "defaultMessage": "¿Qué Son las Cookies?"
+  },
+  "help.devices.breadcrumb": {
+    "defaultMessage": "Conéctate a {appTitle} usando tus dispositivos favoritos"
+  },
+  "help.devices.builtInApp": {
+    "defaultMessage": "CONEXIÓN DE APP INTEGRADA"
+  },
+  "help.devices.gameConsoleParagraph": {
+    "defaultMessage": "También puedes ver {appTitle} en una variedad de consolas de juegos con la aplicación {plexLogo}."
+  },
+  "help.devices.gameConsoles": {
+    "defaultMessage": "Consolas de Juegos"
+  },
+  "help.devices.headerTitle": {
+    "defaultMessage": "Conéctate a {appTitle} usando tus dispositivos favoritos."
+  },
+  "help.devices.membershipRequired": {
+    "defaultMessage": "Se requiere membresía de {appTitle} y conexión a internet."
+  },
+  "help.devices.pcParagraph": {
+    "defaultMessage": "{appTitle} está optimizado para los navegadores más populares de hoy para que puedas ver en tu PC o portátil."
+  },
+  "help.devices.pcsLaptops": {
+    "defaultMessage": "PCs y Portátiles"
+  },
+  "help.devices.playGames": {
+    "defaultMessage": "Jugar juegos"
+  },
+  "help.devices.plugAndPlay": {
+    "defaultMessage": "CONECTAR Y REPRODUCIR"
+  },
+  "help.devices.smartPhoneParagraph": {
+    "defaultMessage": "Es fácil ver {appTitle} desde cualquier lugar. Si {plexLogo} aún no está en tu teléfono o tableta, puedes descargar la aplicación gratuita desde la Apple App Store, Google Play o la Windows Phone Store."
+  },
+  "help.devices.smartPhones": {
+    "defaultMessage": "Teléfonos Inteligentes y Tabletas"
+  },
+  "help.devices.smartTvParagraph": {
+    "defaultMessage": "Disfruta de la elegante interfaz de {plexLogo} en tu pantalla grande con la aplicación {plexLogo} Smart TV, disponible en la mayoría de las tiendas de aplicaciones de Smart TV, y accede a {appTitle} directamente en pantalla."
+  },
+  "help.devices.smartTVs": {
+    "defaultMessage": "Smart TVs"
+  },
+  "help.devices.streamingMediaPlayers": {
+    "defaultMessage": "Reproductores de Medios por Streaming"
+  },
+  "help.devices.streamingParagraph": {
+    "defaultMessage": "La nueva generación de reproductores multimedia y dispositivos de streaming ofrecen una forma rápida, fácil y económica de ver {appTitle} en tu TV con la aplicación {plexLogo}."
+  },
+  "help.devices.takeWithYou": {
+    "defaultMessage": "Lleva {appTitle} contigo"
+  },
+  "help.devices.watchMovies": {
+    "defaultMessage": "Ver Películas"
+  },
+  "help.devices.watchOnWhatYouHave": {
+    "defaultMessage": "Mira con lo que ya tienes"
+  },
+  "help.downloadOffline.breadcrumb": {
+    "defaultMessage": "¿Cómo puedo ver {appTitle} sin conexión?"
+  },
+  "help.downloadOffline.downloadMediaNote": {
+    "defaultMessage": "Se requiere una conexión de red activa para acceder y descargar contenido. La velocidad de descarga depende del dispositivo, versión y estado de conectividad de la red."
+  },
+  "help.downloadOffline.downloadMediaStep1": {
+    "defaultMessage": "Abre e inicia sesión en la aplicación {plexLogo} en tu dispositivo compatible"
+  },
+  "help.downloadOffline.downloadMediaStep2": {
+    "defaultMessage": "Navega al elemento multimedia individual que deseas descargar"
+  },
+  "help.downloadOffline.downloadMediaStep3": {
+    "defaultMessage": "Según el dispositivo, localiza el ícono de descarga o la opción del menú"
+  },
+  "help.downloadOffline.downloadMediaStep4": {
+    "defaultMessage": "En la mayoría de los dispositivos verás un ícono {icon}"
+  },
+  "help.downloadOffline.downloadMediaStep5": {
+    "defaultMessage": "Espera a que el contenido se ponga en cola y se descargue"
+  },
+  "help.downloadOffline.downloadMediaTip1": {
+    "defaultMessage": "Actualmente no puedes descargar contenido en {appDomain} ni en la aplicación {appTitle}."
+  },
+  "help.downloadOffline.downloadMediaTip2": {
+    "defaultMessage": "Para descargar en PC o MAC, asegúrate de estar usando {plexLogo} para Windows/MAC y no Plex HTPC."
+  },
+  "help.downloadOffline.downloadMediaTip3": {
+    "defaultMessage": "El contenido de {appTitle} solo se puede descargar mientras estás en línea y conectado a internet"
+  },
+  "help.downloadOffline.downloadMediaTitle": {
+    "defaultMessage": "Cómo descargar contenido:"
+  },
+  "help.downloadOffline.downloadPlexBest": {
+    "defaultMessage": "Para mejores resultados y reproducción, recomendamos descargar la última versión de la aplicación {plexLogo}."
+  },
+  "help.downloadOffline.downloadPlexStep1": {
+    "defaultMessage": "Abre la tienda de aplicaciones en tu dispositivo compatible"
+  },
+  "help.downloadOffline.downloadPlexStep2": {
+    "defaultMessage": "Busca {plexLogo} en entretenimiento"
+  },
+  "help.downloadOffline.downloadPlexStep3": {
+    "defaultMessage": "Instala la aplicación"
+  },
+  "help.downloadOffline.downloadPlexStep4": {
+    "defaultMessage": "Inicia sesión en la aplicación {plexLogo} con tu cuenta registrada en {appTitle}"
+  },
+  "help.downloadOffline.downloadPlexTip1": {
+    "defaultMessage": "Puedes ver la lista de dispositivos compatibles y sus aplicaciones visitando {link}"
+  },
+  "help.downloadOffline.downloadPlexTip2": {
+    "defaultMessage": "Debes conectar tu dispositivo y {plexLogo} a la misma cuenta registrada en {appTitle}"
+  },
+  "help.downloadOffline.downloadPlexTip3": {
+    "defaultMessage": "{appTitle} no es responsable de la aplicación {plexLogo} ni de los problemas que puedan surgir de su uso"
+  },
+  "help.downloadOffline.downloadPlexTitle": {
+    "defaultMessage": "Cómo descargar {plexLogo}:"
+  },
+  "help.downloadOffline.heading": {
+    "defaultMessage": "¿Cómo puedo ver {appTitle} sin conexión?"
+  },
+  "help.downloadOffline.plexAppsDevices": {
+    "defaultMessage": "Aplicaciones y Dispositivos Plex"
+  },
+  "help.downloadOffline.subheading": {
+    "defaultMessage": "Puedes usar la aplicación {plexLogo} para descargar contenido de {appTitle} y verlo sin conexión en algunos dispositivos compatibles como portátiles, tabletas y móviles."
+  },
+  "help.downloadOffline.watchOfflineNote": {
+    "defaultMessage": "{plexLogo} puede requerir ocasionalmente una verificación de red para la reproducción continua sin conexión."
+  },
+  "help.downloadOffline.watchOfflineStep1": {
+    "defaultMessage": "Cuando ya no estés conectado a internet, abre la aplicación {plexLogo} en tu dispositivo compatible"
+  },
+  "help.downloadOffline.watchOfflineStep2": {
+    "defaultMessage": "Navega a la sección de Descargas a través del menú"
+  },
+  "help.downloadOffline.watchOfflineStep3": {
+    "defaultMessage": "Localiza el contenido previamente descargado"
+  },
+  "help.downloadOffline.watchOfflineStep4": {
+    "defaultMessage": "Selecciona reproducir y disfruta de tu contenido"
+  },
+  "help.downloadOffline.watchOfflineTip1": {
+    "defaultMessage": "Algunos contenidos pueden tardar más en completar la descarga, asegúrate de que se haya completado antes de desconectarte"
+  },
+  "help.downloadOffline.watchOfflineTip2": {
+    "defaultMessage": "Si tu contenido no aparece en la sección de descargas, tu contenido ya no está disponible para reproducción"
+  },
+  "help.downloadOffline.watchOfflineTip3": {
+    "defaultMessage": "El contenido se puede descargar más de una vez pero no en más de un dispositivo a la vez."
+  },
+  "help.downloadOffline.watchOfflineTitle": {
+    "defaultMessage": "Cómo ver contenido sin conexión:"
+  },
+  "help.downloadPlex.breadcrumb": {
+    "defaultMessage": "Cómo descargar la aplicación Plex"
+  },
+  "help.downloadPlex.downloadStreamarr": {
+    "defaultMessage": "Si deseas descargar la aplicación {appTitle}, consulta {link}."
+  },
+  "help.downloadPlex.downloadTitle": {
+    "defaultMessage": "Descargando la aplicación {plexLogo}"
+  },
+  "help.downloadPlex.heading": {
+    "defaultMessage": "Cómo descargar la aplicación {plexLogo}"
+  },
+  "help.downloadPlex.linkText": {
+    "defaultMessage": "esta página aquí"
+  },
+  "help.downloadPlex.notRequired": {
+    "defaultMessage": "Descargar la aplicación {plexLogo} no es necesario para transmitir contenido directamente desde {appTitle}."
+  },
+  "help.downloadPlex.offlineRequired": {
+    "defaultMessage": "Para descargar contenido y verlo sin conexión, como cuando estás en un avión, se requiere la aplicación {plexLogo}."
+  },
+  "help.downloadPlex.step1": {
+    "defaultMessage": "Dirígete a {link} y elige tu dispositivo preferido"
+  },
+  "help.downloadPlex.step2": {
+    "defaultMessage": "Si hay un enlace de descarga disponible, selecciónalo y sigue las indicaciones"
+  },
+  "help.downloadPlex.step3": {
+    "defaultMessage": "Instala la aplicación"
+  },
+  "help.downloadPlex.subheading": {
+    "defaultMessage": "Aunque la aplicación {plexLogo} no es necesaria para usar {appTitle}, en ciertos dispositivos como smart TVs o consolas de juegos puede ofrecer una mejor experiencia. Algunos smart TVs y dispositivos multimedia ya vienen con la aplicación {plexLogo2} instalada, o se puede instalar fácilmente a través de sus tiendas de aplicaciones integradas."
+  },
+  "help.downloadPlex.thisPage": {
+    "defaultMessage": "esta página"
+  },
+  "help.downloadStreamarr.addToHomeScreen": {
+    "defaultMessage": "Añadir a la Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.addWebAppEdge": {
+    "defaultMessage": "Cómo Añadir una Aplicación Web a tu Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.addWebAppSafari": {
+    "defaultMessage": "Cómo Añadir una Aplicación Web a tu Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.androidEdge": {
+    "defaultMessage": "Android"
+  },
+  "help.downloadStreamarr.appShortcutsTip": {
+    "defaultMessage": "Nuestra aplicación incluye accesos directos a diferentes funciones. Para encontrar una lista de accesos directos, haz clic derecho en la aplicación web en la barra de tareas."
+  },
+  "help.downloadStreamarr.appShortcutsTipAndroid": {
+    "defaultMessage": "Nuestra aplicación incluye accesos directos a diferentes funciones. Para encontrar una lista de accesos directos, haz clic derecho en la aplicación web en la barra de tareas."
+  },
+  "help.downloadStreamarr.appShortcutsTipIos": {
+    "defaultMessage": "Nuestra aplicación incluye accesos directos a diferentes funciones. Para encontrar una lista de accesos directos, haz clic derecho en la aplicación web en la barra de tareas."
+  },
+  "help.downloadStreamarr.breadcrumb": {
+    "defaultMessage": "Cómo descargar la aplicación {appTitle}"
+  },
+  "help.downloadStreamarr.browseToWebsiteAndroid": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.browseToWebsiteIos": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.browseToWebsiteUninstall": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.chrome.add": {
+    "defaultMessage": "Añadir."
+  },
+  "help.downloadStreamarr.chrome.addToHomeIos": {
+    "defaultMessage": "Busca y toca {addToHome}."
+  },
+  "help.downloadStreamarr.chrome.addToHomeScreen": {
+    "defaultMessage": "Añadir a la pantalla de inicio"
+  },
+  "help.downloadStreamarr.chrome.addToHomeScreenLabel": {
+    "defaultMessage": "Añadir a la Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.chrome.alsoInstall": {
+    "defaultMessage": "También puedes en la parte superior derecha de la barra de direcciones, seleccionar Instalar {installIcon}"
+  },
+  "help.downloadStreamarr.chrome.androidSettings": {
+    "defaultMessage": "En tu dispositivo Android, toca {settings} {chevron} {apps} {chevron} {seeAll}"
+  },
+  "help.downloadStreamarr.chrome.apps": {
+    "defaultMessage": "Aplicaciones"
+  },
+  "help.downloadStreamarr.chrome.browseToWebsite": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.chrome.confirmDetails": {
+    "defaultMessage": "Confirma o edita los detalles del sitio web y toca {add}"
+  },
+  "help.downloadStreamarr.chrome.deleteBookmark": {
+    "defaultMessage": "Eliminar Marcador."
+  },
+  "help.downloadStreamarr.chrome.deleteData": {
+    "defaultMessage": "Para eliminar los datos de la aplicación de Chrome, selecciona \"También eliminar datos de Chrome.\""
+  },
+  "help.downloadStreamarr.chrome.followInstructions": {
+    "defaultMessage": "Para instalar la aplicación web, sigue las instrucciones en pantalla."
+  },
+  "help.downloadStreamarr.chrome.followInstructionsAndroid": {
+    "defaultMessage": "Sigue las instrucciones en pantalla."
+  },
+  "help.downloadStreamarr.chrome.goToHomeScreen": {
+    "defaultMessage": "En tu iPhone o iPad, ve a la pantalla de inicio."
+  },
+  "help.downloadStreamarr.chrome.install": {
+    "defaultMessage": "Instalar."
+  },
+  "help.downloadStreamarr.chrome.installAndroid": {
+    "defaultMessage": "Instalar una aplicación web"
+  },
+  "help.downloadStreamarr.chrome.installPageAsApp": {
+    "defaultMessage": "Instalar página como aplicación."
+  },
+  "help.downloadStreamarr.chrome.locateShortcut": {
+    "defaultMessage": "Localiza el acceso directo que deseas eliminar."
+  },
+  "help.downloadStreamarr.chrome.openAndroid": {
+    "defaultMessage": "En tu dispositivo Android, abre Chrome {chromeIcon}"
+  },
+  "help.downloadStreamarr.chrome.openComputer": {
+    "defaultMessage": "En tu computadora, abre Chrome {chromeIcon}"
+  },
+  "help.downloadStreamarr.chrome.openComputerUninstall": {
+    "defaultMessage": "En tu computadora, abre Chrome {chromeIcon}"
+  },
+  "help.downloadStreamarr.chrome.openIos": {
+    "defaultMessage": "En tu iPhone o iPad, abre Chrome {chromeIcon}"
+  },
+  "help.downloadStreamarr.chrome.remove": {
+    "defaultMessage": "Eliminar."
+  },
+  "help.downloadStreamarr.chrome.removeWebApp": {
+    "defaultMessage": "Para eliminar una aplicación web, toca el ícono de la aplicación web."
+  },
+  "help.downloadStreamarr.chrome.saveAndShare": {
+    "defaultMessage": "Guardar y compartir"
+  },
+  "help.downloadStreamarr.chrome.seeAllApps": {
+    "defaultMessage": "Ver todas las aplicaciones."
+  },
+  "help.downloadStreamarr.chrome.selectMore": {
+    "defaultMessage": "En la parte superior derecha, selecciona Más {moreIcon} {chevron} {saveAndShare} {chevron} {installPageAsApp}"
+  },
+  "help.downloadStreamarr.chrome.selectMoreUninstall": {
+    "defaultMessage": "En la parte superior derecha, selecciona Más {moreIcon} {chevron} {uninstallApp} {chevron} {remove}"
+  },
+  "help.downloadStreamarr.chrome.settings": {
+    "defaultMessage": "Configuración"
+  },
+  "help.downloadStreamarr.chrome.tapDeleteBookmark": {
+    "defaultMessage": "Toca {deleteBookmark}"
+  },
+  "help.downloadStreamarr.chrome.tapMoreAndroid": {
+    "defaultMessage": "A la derecha de la barra de direcciones, toca Más {moreIcon} {chevron} {addToHome} {chevron2} {install}"
+  },
+  "help.downloadStreamarr.chrome.tapShareIos": {
+    "defaultMessage": "A la derecha de la barra de direcciones, toca Compartir {shareIcon}."
+  },
+  "help.downloadStreamarr.chrome.tapUninstall": {
+    "defaultMessage": "Toca Desinstalar."
+  },
+  "help.downloadStreamarr.chrome.touchAndHold": {
+    "defaultMessage": "Mantén presionado el acceso directo."
+  },
+  "help.downloadStreamarr.chrome.uninstallAppName": {
+    "defaultMessage": "Desinstalar {appTitle}"
+  },
+  "help.downloadStreamarr.chromeApps": {
+    "defaultMessage": "También puedes gestionar aplicaciones web a través de {code}"
+  },
+  "help.downloadStreamarr.computer": {
+    "defaultMessage": "Computadora"
+  },
+  "help.downloadStreamarr.computerEdge": {
+    "defaultMessage": "Computadora"
+  },
+  "help.downloadStreamarr.createWebApp": {
+    "defaultMessage": "Cómo crear una aplicación web"
+  },
+  "help.downloadStreamarr.deleteFromHomeScreen": {
+    "defaultMessage": "Eliminar de la pantalla de inicio"
+  },
+  "help.downloadStreamarr.deleteWebApp": {
+    "defaultMessage": "Cómo eliminar una aplicación web"
+  },
+  "help.downloadStreamarr.edge.addToHomeAndroid": {
+    "defaultMessage": "Del menú emergente que aparece, selecciona {addToHome}."
+  },
+  "help.downloadStreamarr.edge.addToHomeScreen": {
+    "defaultMessage": "Añadir a la pantalla de inicio"
+  },
+  "help.downloadStreamarr.edge.addToHomeScreenIos": {
+    "defaultMessage": "Añadir a la Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.edge.alternativeInstall": {
+    "defaultMessage": "Alternativamente, puedes instalar yendo a la esquina superior del navegador y seleccionando {settingsMore}"
+  },
+  "help.downloadStreamarr.edge.confirmRemove": {
+    "defaultMessage": "Confirma si también deseas borrar datos del origen asociado y selecciona {remove}."
+  },
+  "help.downloadStreamarr.edge.defaultBrowserNote": {
+    "defaultMessage": "Si configuras Microsoft Edge como tu navegador predeterminado en tu dispositivo Android, se abrirá en Edge; de lo contrario, se abrirá en el otro navegador configurado como predeterminado, que probablemente sea Google Chrome en un dispositivo Android."
+  },
+  "help.downloadStreamarr.edge.details": {
+    "defaultMessage": "Detalles"
+  },
+  "help.downloadStreamarr.edge.installedApps": {
+    "defaultMessage": "Una vez instalada la aplicación, aparecerá en {edgeApps}"
+  },
+  "help.downloadStreamarr.edge.openEdge": {
+    "defaultMessage": "Abre Microsoft Edge."
+  },
+  "help.downloadStreamarr.edge.openEdgeApps": {
+    "defaultMessage": "Abre Microsoft Edge y ve a {edgeApps}"
+  },
+  "help.downloadStreamarr.edge.openEdgeIos": {
+    "defaultMessage": "Abre Edge en tu iPhone o iPad."
+  },
+  "help.downloadStreamarr.edge.promptInstall": {
+    "defaultMessage": "Microsoft Edge te mostrará la posibilidad de instalar la aplicación en el lado derecho de la barra de direcciones."
+  },
+  "help.downloadStreamarr.edge.remove": {
+    "defaultMessage": "Eliminar"
+  },
+  "help.downloadStreamarr.edge.removeOrDeleteIos": {
+    "defaultMessage": "Toca Eliminar de la Pantalla de Inicio para mantenerla en la Biblioteca de Apps, o toca Eliminar App para borrarla del iPhone"
+  },
+  "help.downloadStreamarr.edge.scrollUninstall": {
+    "defaultMessage": "Desplázate hacia abajo y elige {uninstall}."
+  },
+  "help.downloadStreamarr.edge.selectAddToHome": {
+    "defaultMessage": "Selecciona {addToHome}"
+  },
+  "help.downloadStreamarr.edge.selectDetails": {
+    "defaultMessage": "Selecciona {details} en la tarjeta de la aplicación que deseas desinstalar."
+  },
+  "help.downloadStreamarr.edge.settingsPath": {
+    "defaultMessage": "Configuración y más ... {chevron} Aplicaciones {chevron2} Instalar este sitio como aplicación."
+  },
+  "help.downloadStreamarr.edge.tapHamburger": {
+    "defaultMessage": "Toca el menú hamburguesa {menuIcon}."
+  },
+  "help.downloadStreamarr.edge.tapMenuAndroid": {
+    "defaultMessage": "En la esquina inferior derecha, toca el botón de menú representado por tres puntos horizontales."
+  },
+  "help.downloadStreamarr.edge.tapRemoveAppIos": {
+    "defaultMessage": "Toca Eliminar App"
+  },
+  "help.downloadStreamarr.edge.tapShareButton": {
+    "defaultMessage": "Toca el botón de compartir."
+  },
+  "help.downloadStreamarr.edge.touchAndHoldIos": {
+    "defaultMessage": "Mantén presionada la app en la Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.edge.uninstall": {
+    "defaultMessage": "Desinstalar"
+  },
+  "help.downloadStreamarr.heading": {
+    "defaultMessage": "Cómo descargar la aplicación {appTitle}"
+  },
+  "help.downloadStreamarr.installEdge": {
+    "defaultMessage": "Instalar una aplicación en Microsoft Edge"
+  },
+  "help.downloadStreamarr.installEdgeAndroid": {
+    "defaultMessage": "Instalar una aplicación en Microsoft Edge en Android"
+  },
+  "help.downloadStreamarr.installWebApp": {
+    "defaultMessage": "Instalar una aplicación web"
+  },
+  "help.downloadStreamarr.iphoneIpad": {
+    "defaultMessage": "iPhone y iPad"
+  },
+  "help.downloadStreamarr.iphoneIpadEdge": {
+    "defaultMessage": "iPhone y iPad"
+  },
+  "help.downloadStreamarr.iphoneIpadSafari": {
+    "defaultMessage": "iPhone y iPad"
+  },
+  "help.downloadStreamarr.macos": {
+    "defaultMessage": "macOS"
+  },
+  "help.downloadStreamarr.navigateToWebsiteEdge": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.navigateToWebsiteEdgeIos": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.navigateToWebsiteSafari": {
+    "defaultMessage": "Navega al sitio web de {appTitle}."
+  },
+  "help.downloadStreamarr.removeWebAppEdge": {
+    "defaultMessage": "Cómo Eliminar una Aplicación Web de tu Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.removeWebAppSafari": {
+    "defaultMessage": "Cómo Eliminar una Aplicación Web de tu Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.safari.chooseFile": {
+    "defaultMessage": "En la barra de menú, elige Archivo {chevron} Añadir al Dock. O haz clic en el botón Compartir {shareIcon} en la barra de herramientas de Safari, luego elige Añadir al Dock."
+  },
+  "help.downloadStreamarr.safari.deleteInstructions": {
+    "defaultMessage": "Las aplicaciones web se guardan en la carpeta Aplicaciones de tu carpeta personal. Para eliminar una aplicación web, abre tu carpeta personal, por ejemplo eligiendo Ir {chevron} Inicio en la barra de menú del Finder. Luego abre la carpeta Aplicaciones y arrastra la aplicación web a la Papelera."
+  },
+  "help.downloadStreamarr.safari.giveNameTapAdd": {
+    "defaultMessage": "Dale un nombre a la aplicación web, luego toca Añadir."
+  },
+  "help.downloadStreamarr.safari.openSafariIos": {
+    "defaultMessage": "Abre Safari en tu iPhone o iPad."
+  },
+  "help.downloadStreamarr.safari.openWebpage": {
+    "defaultMessage": "En Safari, abre la página web que deseas usar como aplicación web."
+  },
+  "help.downloadStreamarr.safari.removeOrDeleteIos": {
+    "defaultMessage": "Toca Eliminar de la Pantalla de Inicio para mantenerla en la Biblioteca de Apps, o toca Eliminar App para borrarla del iPhone"
+  },
+  "help.downloadStreamarr.safari.requiresSonoma": {
+    "defaultMessage": "Requiere macOS Sonoma o posterior"
+  },
+  "help.downloadStreamarr.safari.scrollAddToHome": {
+    "defaultMessage": "Desplázate hacia abajo en la hoja de compartir más allá de las filas de contactos y aplicaciones, luego selecciona Añadir a la Pantalla de Inicio."
+  },
+  "help.downloadStreamarr.safari.tapActionButton": {
+    "defaultMessage": "Toca el botón de Acción (a menudo llamado botón Compartir)."
+  },
+  "help.downloadStreamarr.safari.tapRemoveAppIos": {
+    "defaultMessage": "Toca Eliminar App"
+  },
+  "help.downloadStreamarr.safari.touchAndHoldIos": {
+    "defaultMessage": "Mantén presionada la app en la Pantalla de Inicio"
+  },
+  "help.downloadStreamarr.safari.typeNameAndAdd": {
+    "defaultMessage": "Escribe el nombre que deseas usar para la aplicación web, luego haz clic en Añadir. La aplicación web se guardará en la carpeta Aplicaciones de tu carpeta personal, y podrás abrirla desde el Dock, Launchpad o Spotlight."
+  },
+  "help.downloadStreamarr.safari.webAppTip": {
+    "defaultMessage": "Tu nueva aplicación web aparecerá en el próximo espacio disponible en la pantalla de inicio de tu dispositivo. Si la tocas y te redirige al sitio web estándar, fuerza el cierre de Safari y luego vuelve a abrir la aplicación web."
+  },
+  "help.downloadStreamarr.subheading": {
+    "defaultMessage": "Instala {appTitle} como una aplicación web en tu dispositivo para acceso rápido."
+  },
+  "help.downloadStreamarr.uninstallEdge": {
+    "defaultMessage": "Desinstalar una aplicación en Microsoft Edge"
+  },
+  "help.downloadStreamarr.uninstallWebApp": {
+    "defaultMessage": "Desinstalar una aplicación web"
+  },
+  "help.downloadStreamarr.uninstallWebAppAndroid": {
+    "defaultMessage": "Desinstalar una aplicación web"
+  },
+  "help.downloadStreamarr.usingChrome": {
+    "defaultMessage": "Usando Google Chrome"
+  },
+  "help.downloadStreamarr.usingEdge": {
+    "defaultMessage": "Usando Microsoft Edge"
+  },
+  "help.downloadStreamarr.usingSafari": {
+    "defaultMessage": "Usando Apple Safari"
+  },
+  "help.gettingStarted.becomeMember": {
+    "defaultMessage": "Cómo convertirse en miembro de {appTitle}"
+  },
+  "help.gettingStarted.breadcrumb": {
+    "defaultMessage": "Empezar"
+  },
+  "help.gettingStarted.downloadPlex": {
+    "defaultMessage": "Cómo descargar la aplicación Plex"
+  },
+  "help.gettingStarted.downloadStreamarr": {
+    "defaultMessage": "Cómo descargar la aplicación {appTitle}"
+  },
+  "help.gettingStarted.heading": {
+    "defaultMessage": "Empezar con {appTitle}"
+  },
+  "help.gettingStarted.quickStart": {
+    "defaultMessage": "Guía de inicio rápido para comenzar con {appTitle}"
+  },
+  "help.gettingStarted.subheading": {
+    "defaultMessage": "Todo lo que necesitas saber para comenzar a usar {appTitle}."
+  },
+  "help.gettingStarted.whatIsPlex": {
+    "defaultMessage": "¿Qué es Plex?"
+  },
+  "help.gettingStarted.whatIsStreamarr": {
+    "defaultMessage": "¿Qué es {appTitle}?"
+  },
   "help.helpCentre": {
     "defaultMessage": "Centro de Ayuda"
   },
   "help.howToBecomeMember": {
     "defaultMessage": "Cómo hacerse miembro"
   },
+  "help.invites.adminUnlimited": {
+    "defaultMessage": "Como administrador, tienes invitaciones ilimitadas."
+  },
+  "help.invites.becomeMemberLink": {
+    "defaultMessage": "Cómo convertirse en miembro"
+  },
+  "help.invites.breadcrumb": {
+    "defaultMessage": "Cómo invitar a tus amigos a {appTitle}"
+  },
+  "help.invites.expiryLimit": {
+    "defaultMessage": "Los códigos de invitación {expiry}"
+  },
+  "help.invites.generated": {
+    "defaultMessage": "Los códigos de invitación se generan desde tu panel de {appTitle}"
+  },
+  "help.invites.heading": {
+    "defaultMessage": "Cómo invitar a tus amigos a {appTitle}"
+  },
+  "help.invites.howDesc": {
+    "defaultMessage": "{appTitle} utiliza un sistema de invitaciones para gestionar nuevos miembros. Los miembros existentes pueden generar códigos de invitación que permiten a amigos y familiares unirse al servicio."
+  },
+  "help.invites.howTitle": {
+    "defaultMessage": "Cómo Funcionan las Invitaciones"
+  },
+  "help.invites.limitsQuotaDesc": {
+    "defaultMessage": "{prefix} limitado a {limit} {limit, plural, one {invitación} other {invitaciones}}{period}."
+  },
+  "help.invites.limitsTitle": {
+    "defaultMessage": "Límites de Invitación"
+  },
+  "help.invites.linked": {
+    "defaultMessage": "Cuando alguien usa tu código de invitación, estará vinculado a tu cuenta como miembro invitante"
+  },
+  "help.invites.noLimitsDesc": {
+    "defaultMessage": "Actualmente no hay límites de invitación configurados en {appTitle}."
+  },
+  "help.invites.redeemDesc": {
+    "defaultMessage": "Si has recibido un código o enlace de invitación de un miembro existente, dirígete a la página de registro de {appTitle} para crear tu cuenta. Para un recorrido completo del proceso de registro, consulta {link}."
+  },
+  "help.invites.redeemTitle": {
+    "defaultMessage": "Canjear una Invitación"
+  },
+  "help.invites.sendingTitle": {
+    "defaultMessage": "Enviar una Invitación"
+  },
+  "help.invites.signUpDisabled": {
+    "defaultMessage": "El registro está actualmente cerrado en {appTitle}. Las invitaciones no están disponibles en este momento. Si crees que esto es un error, contacta al administrador del servidor."
+  },
+  "help.invites.singleUse": {
+    "defaultMessage": "Cada código de invitación solo se puede usar una vez y puede tener una fecha de expiración"
+  },
+  "help.invites.step1": {
+    "defaultMessage": "Inicia sesión en {appTitle} y navega a la sección de Invitaciones"
+  },
+  "help.invites.step2": {
+    "defaultMessage": "Haz clic en el botón para generar un nuevo código de invitación"
+  },
+  "help.invites.step3": {
+    "defaultMessage": "Comparte el código o enlace de invitación con la persona que deseas invitar"
+  },
+  "help.invites.subheading": {
+    "defaultMessage": "Aprende cómo invitar a amigos y familiares a {appTitle}, y cómo canjear un código de invitación que hayas recibido."
+  },
+  "help.invites.subheadingClosed": {
+    "defaultMessage": "El registro está actualmente cerrado en {appTitle}."
+  },
+  "help.invites.trialNote": {
+    "defaultMessage": "Los miembros en período de prueba pueden no poder enviar invitaciones hasta que el período de prueba haya terminado."
+  },
+  "help.invites.usageLimit": {
+    "defaultMessage": "Cada código de invitación puede ser usado por {usage, plural, =0 {miembros ilimitados} one {1 miembro} other {{usage} miembros}}"
+  },
+  "help.invites.userQuotaDesc": {
+    "defaultMessage": "Estás limitado a {limit} {limit, plural, one {invitación} other {invitaciones}}{period}."
+  },
+  "help.invites.yourUsage": {
+    "defaultMessage": "Has enviado {sent} {sent, plural, one {invitación} other {invitaciones}} hasta ahora ({redeemed} canjeadas)."
+  },
+  "help.legal.breadcrumb": {
+    "defaultMessage": "Legal"
+  },
+  "help.legal.cookiesTab": {
+    "defaultMessage": "Política de Cookies"
+  },
+  "help.legal.hyperlink": {
+    "defaultMessage": "Hipervínculo"
+  },
+  "help.legal.privacyTab": {
+    "defaultMessage": "Declaración de Privacidad"
+  },
+  "help.legal.termsTab": {
+    "defaultMessage": "Términos de Uso"
+  },
   "help.manageAccount": {
     "defaultMessage": "Administrar Cuenta"
+  },
+  "help.manageAccount.accountSettings": {
+    "defaultMessage": "Configuración de cuenta y preferencias"
+  },
+  "help.manageAccount.breadcrumb": {
+    "defaultMessage": "Gestionar Cuenta"
+  },
+  "help.manageAccount.heading": {
+    "defaultMessage": "Temas relacionados con la gestión de tu cuenta de {appTitle}"
+  },
+  "help.manageAccount.notifications": {
+    "defaultMessage": "Gestionando tus notificaciones"
+  },
+  "help.manageAccount.onlineMedia": {
+    "defaultMessage": "Fuentes de medios en línea"
+  },
+  "help.manageAccount.passwordReset": {
+    "defaultMessage": "Contraseña y seguridad"
+  },
+  "help.manageAccount.plexAccountPrefs": {
+    "defaultMessage": "Gestionar preferencias de cuenta de Plex"
+  },
+  "help.manageAccount.plexWebPrefs": {
+    "defaultMessage": "Gestionar preferencias web de Plex"
+  },
+  "help.manageAccount.subheading": {
+    "defaultMessage": "Aprende cómo gestionar la configuración de tu cuenta, preferencias y personalizar tu experiencia en {appTitle}."
+  },
+  "help.notifications.breadcrumb": {
+    "defaultMessage": "Gestionando Tus Notificaciones"
+  },
+  "help.notifications.email": {
+    "defaultMessage": "Correo Electrónico"
+  },
+  "help.notifications.emailDesc": {
+    "defaultMessage": "Las actualizaciones importantes pueden enviarse a la dirección de correo electrónico asociada con tu cuenta."
+  },
+  "help.notifications.heading": {
+    "defaultMessage": "Gestionando Tus Notificaciones"
+  },
+  "help.notifications.inApp": {
+    "defaultMessage": "En la Aplicación"
+  },
+  "help.notifications.inAppDesc": {
+    "defaultMessage": "Las notificaciones aparecen directamente dentro de {appTitle} a través del ícono de campana en la barra de navegación."
+  },
+  "help.notifications.managingDesc": {
+    "defaultMessage": "Puedes gestionar las preferencias de notificaciones de {appTitle} desde la configuración de tu perfil. Las preferencias de notificaciones de Seerr se pueden gestionar desde dentro de la aplicación Seerr en la configuración de tu usuario."
+  },
+  "help.notifications.managingTitle": {
+    "defaultMessage": "Gestionar Preferencias"
+  },
+  "help.notifications.push": {
+    "defaultMessage": "Notificaciones Push"
+  },
+  "help.notifications.pushDesc": {
+    "defaultMessage": "Si has instalado la aplicación {appTitle} (PWA), puedes recibir notificaciones push del navegador incluso cuando la aplicación no está abierta."
+  },
+  "help.notifications.pushTip": {
+    "defaultMessage": "Para que las notificaciones push funcionen, necesitas otorgar permisos de notificación en tu navegador cuando se te solicite."
+  },
+  "help.notifications.seerrDesc": {
+    "defaultMessage": "Si Seerr está habilitado, las notificaciones de solicitudes se gestionan por separado dentro de la aplicación Seerr."
+  },
+  "help.notifications.seerrDiscord": {
+    "defaultMessage": "Discord"
+  },
+  "help.notifications.seerrDiscordDesc": {
+    "defaultMessage": "Notificaciones enviadas a un canal de Discord mediante webhook."
+  },
+  "help.notifications.seerrEmail": {
+    "defaultMessage": "Correo Electrónico"
+  },
+  "help.notifications.seerrEmailDesc": {
+    "defaultMessage": "Notificaciones por correo electrónico para cambios de estado de solicitudes."
+  },
+  "help.notifications.seerrPush": {
+    "defaultMessage": "Notificaciones Push"
+  },
+  "help.notifications.seerrPushDesc": {
+    "defaultMessage": "Notificaciones push del navegador para actualizaciones de solicitudes."
+  },
+  "help.notifications.seerrPushover": {
+    "defaultMessage": "Pushover"
+  },
+  "help.notifications.seerrPushoverDesc": {
+    "defaultMessage": "Notificaciones enviadas a través del servicio Pushover."
+  },
+  "help.notifications.seerrSlack": {
+    "defaultMessage": "Slack"
+  },
+  "help.notifications.seerrSlackDesc": {
+    "defaultMessage": "Notificaciones enviadas a un canal de Slack mediante webhook."
+  },
+  "help.notifications.seerrTelegram": {
+    "defaultMessage": "Telegram"
+  },
+  "help.notifications.seerrTelegramDesc": {
+    "defaultMessage": "Notificaciones enviadas mediante bot de Telegram."
+  },
+  "help.notifications.seerrTitle": {
+    "defaultMessage": "Notificaciones de Solicitudes de Seerr"
+  },
+  "help.notifications.streamarrDesc": {
+    "defaultMessage": "{appTitle} puede enviarte notificaciones para mantenerte informado sobre la actividad de tu cuenta, actualizaciones de invitaciones y anuncios importantes. Estas son gestionadas por el administrador de {appTitle}."
+  },
+  "help.notifications.streamarrTitle": {
+    "defaultMessage": "Notificaciones de {appTitle}"
+  },
+  "help.notifications.subheading": {
+    "defaultMessage": "Controla cómo y cuándo recibes notificaciones de {appTitle}."
+  },
+  "help.passwordReset.breadcrumb": {
+    "defaultMessage": "Contraseña y Seguridad"
+  },
+  "help.passwordReset.heading": {
+    "defaultMessage": "Contraseña y Seguridad"
+  },
+  "help.passwordReset.localDesc": {
+    "defaultMessage": "Si configuraste una contraseña local durante el registro, puedes actualizarla desde tu {link}. Tu contraseña local es independiente de tu contraseña de {plexLogo} y se usa solo para iniciar sesión en {appTitle} directamente."
+  },
+  "help.passwordReset.localTitle": {
+    "defaultMessage": "Contraseña de Cuenta Local"
+  },
+  "help.passwordReset.plexResetLink": {
+    "defaultMessage": "restablecimiento de contraseña"
+  },
+  "help.passwordReset.profileLink": {
+    "defaultMessage": "configuración de perfil"
+  },
+  "help.passwordReset.resetDesc": {
+    "defaultMessage": "Tu cuenta de {appTitle} usa tus credenciales de {plexLogo} para la autenticación. Para restablecer tu contraseña, necesitarás hacerlo a través de {plexLogo}."
+  },
+  "help.passwordReset.resetTitle": {
+    "defaultMessage": "Restableciendo Tu Contraseña"
+  },
+  "help.passwordReset.securityTip1": {
+    "defaultMessage": "Usa una contraseña fuerte y única que no uses en otros servicios"
+  },
+  "help.passwordReset.securityTip2": {
+    "defaultMessage": "Habilita la autenticación de dos factores (2FA) en tu cuenta de {plexLogo} para mayor seguridad"
+  },
+  "help.passwordReset.securityTip3": {
+    "defaultMessage": "Nunca compartas tu contraseña o códigos de invitación públicamente"
+  },
+  "help.passwordReset.securityTitle": {
+    "defaultMessage": "Consejos de Seguridad"
+  },
+  "help.passwordReset.step1": {
+    "defaultMessage": "Visita la página de {link}"
+  },
+  "help.passwordReset.step2": {
+    "defaultMessage": "Ingresa la dirección de correo electrónico asociada a tu cuenta"
+  },
+  "help.passwordReset.step3": {
+    "defaultMessage": "Sigue las instrucciones en el correo de restablecimiento de contraseña"
+  },
+  "help.passwordReset.step4": {
+    "defaultMessage": "Una vez que tu contraseña de {plexLogo} haya sido actualizada, puedes iniciar sesión en {appTitle} con tus nuevas credenciales"
+  },
+  "help.passwordReset.subheading": {
+    "defaultMessage": "Aprende cómo restablecer tu contraseña y mantener tu cuenta de {appTitle} segura."
+  },
+  "help.plexWeb.autoQuality": {
+    "defaultMessage": "La calidad de reproducción se ajusta automáticamente a tu conexión de internet"
+  },
+  "help.plexWeb.breadcrumb": {
+    "defaultMessage": "Viendo en la Web"
+  },
+  "help.plexWeb.browseGenre": {
+    "defaultMessage": "Navega por género, colección o contenido añadido recientemente"
+  },
+  "help.plexWeb.browseLibrary": {
+    "defaultMessage": "Navega por tu biblioteca completa de películas, series de TV y música"
+  },
+  "help.plexWeb.browserTip": {
+    "defaultMessage": "Para la mejor experiencia de reproducción, usa un navegador moderno como Chrome, Firefox, Edge o Safari. Se recomienda una conexión estable de internet de al menos 3 Mbps para contenido HD."
+  },
+  "help.plexWeb.browsingDesc": {
+    "defaultMessage": "Puedes navegar por todo el contenido disponible directamente desde {appTitle} usando el reproductor web integrado de {plex}. Es la misma experiencia que visitar {plex} directamente, pero integrado en {appTitle} para mayor comodidad."
+  },
+  "help.plexWeb.browsingTitle": {
+    "defaultMessage": "Navegando el Contenido"
+  },
+  "help.plexWeb.heading": {
+    "defaultMessage": "Viendo {appTitle} en la web"
+  },
+  "help.plexWeb.manualQuality": {
+    "defaultMessage": "Puedes ajustar manualmente la configuración de calidad desde los controles del reproductor"
+  },
+  "help.plexWeb.playbackDesc": {
+    "defaultMessage": "Selecciona cualquier título para ver sus detalles, luego haz clic en reproducir para comenzar a transmitir. El reproductor web de {plex} soporta reproducción directamente en tu navegador sin necesidad de aplicaciones adicionales."
+  },
+  "help.plexWeb.playbackTitle": {
+    "defaultMessage": "Reproduciendo Contenido"
+  },
+  "help.plexWeb.searchTitles": {
+    "defaultMessage": "Usa la barra de búsqueda para encontrar títulos específicos"
+  },
+  "help.plexWeb.subheading": {
+    "defaultMessage": "Accede y ve tu biblioteca multimedia directamente a través del reproductor web de {appTitle}."
+  },
+  "help.plexWeb.subtitles": {
+    "defaultMessage": "Los subtítulos y pistas de audio se pueden cambiar durante la reproducción"
+  },
+  "help.plexWeb.watchlist": {
+    "defaultMessage": "Accede a tu lista de seguimiento y continúa viendo"
   },
   "help.popularTopics": {
     "defaultMessage": "Temas populares"
   },
   "help.preReleaseWarning": {
-    "defaultMessage": "Esta es una vista previa de pre-lanzamiento y actualmente está en desarrollo activo. Si encuentras problemas, por favor inténtalo de nuevo o comunícate con {support} para obtener más ayuda. Por favor revisa GitHub para actualizaciones de estado."
+    "defaultMessage": "Este es un software beta y está actualmente en desarrollo activo. Si encuentras problemas, por favor intenta de nuevo o contacta en GitHub para más asistencia o revisa GitHub para actualizaciones de estado."
+  },
+  "help.privacy.autoDesc": {
+    "defaultMessage": "Datos de uso básicos como lo que ves, información del dispositivo, dirección IP (para ubicación general) y registros estándar del servidor web. Esto nos ayuda a mantener todo funcionando y mejorar la experiencia."
+  },
+  "help.privacy.autoLabel": {
+    "defaultMessage": "Información recopilada automáticamente:"
+  },
+  "help.privacy.collectIntro": {
+    "defaultMessage": "Recibimos y almacenamos información sobre ti como:"
+  },
+  "help.privacy.collectTitle": {
+    "defaultMessage": "Lo Que Recopilamos"
+  },
+  "help.privacy.contactDesc": {
+    "defaultMessage": "Si tienes preguntas sobre tu cuenta, visita nuestro centro de ayuda en {helpLink}. Para preguntas específicas sobre privacidad, contáctanos en {emailLink}."
+  },
+  "help.privacy.contactTitle": {
+    "defaultMessage": "Contáctanos"
+  },
+  "help.privacy.cookiePolicyLink": {
+    "defaultMessage": "Política de Cookies"
+  },
+  "help.privacy.cookiesDesc": {
+    "defaultMessage": "Usamos cookies para mantenerte conectado y recordar tus preferencias. Para más detalles, consulta nuestra {link}."
+  },
+  "help.privacy.cookiesTitle": {
+    "defaultMessage": "Cookies"
+  },
+  "help.privacy.intro": {
+    "defaultMessage": "Esta Declaración de Privacidad explica cómo {appTitle} maneja tu información. Mantenemos las cosas simples — solo recopilamos lo que necesitamos para que el servicio funcione, y no vendemos tus datos. Nunca."
+  },
+  "help.privacy.lastUpdated": {
+    "defaultMessage": "Última Actualización:"
+  },
+  "help.privacy.providedDesc": {
+    "defaultMessage": "Tu nombre y dirección de correo electrónico cuando creas una cuenta, y cualquier preferencia o solicitud que envíes a través del servicio."
+  },
+  "help.privacy.providedLabel": {
+    "defaultMessage": "Información que proporcionas:"
+  },
+  "help.privacy.title": {
+    "defaultMessage": "Declaración de Privacidad"
+  },
+  "help.privacy.use1": {
+    "defaultMessage": "Para mantener tu cuenta funcionando y segura"
+  },
+  "help.privacy.use2": {
+    "defaultMessage": "Para personalizar tu experiencia y proporcionar recomendaciones"
+  },
+  "help.privacy.use3": {
+    "defaultMessage": "Para comunicarnos contigo sobre tu cuenta, solicitudes y actualizaciones del servicio"
+  },
+  "help.privacy.use4": {
+    "defaultMessage": "Para solucionar problemas y mejorar el servicio"
+  },
+  "help.privacy.useIntro": {
+    "defaultMessage": "Usamos tu información para proporcionar y mejorar el servicio. Específicamente:"
+  },
+  "help.privacy.useTitle": {
+    "defaultMessage": "Cómo la Usamos"
   },
   "help.quickLinks": {
     "defaultMessage": "Enlaces Rápidos"
   },
+  "help.quickLinks.calendar": {
+    "defaultMessage": "Programación de estrenos"
+  },
+  "help.quickLinks.inviteAFriend": {
+    "defaultMessage": "Invitar a un amigo"
+  },
+  "help.quickLinks.request": {
+    "defaultMessage": "Solicitar nuevos contenidos"
+  },
+  "help.quickLinks.resetLocalPassword": {
+    "defaultMessage": "Restablecer Contraseña Local"
+  },
+  "help.quickLinks.resetPlexPassword": {
+    "defaultMessage": "Restablecer Contraseña de Plex"
+  },
+  "help.quickLinks.stats": {
+    "defaultMessage": "Historial de visualización"
+  },
+  "help.quickLinks.visitPlex": {
+    "defaultMessage": "Visitar {plex}.tv"
+  },
+  "help.quickStart.accountSettingsLink": {
+    "defaultMessage": "Configuración de Cuenta"
+  },
+  "help.quickStart.becomeMemberLink": {
+    "defaultMessage": "Cómo convertirse en miembro"
+  },
+  "help.quickStart.breadcrumb": {
+    "defaultMessage": "Guía de Inicio Rápido"
+  },
+  "help.quickStart.disableOnlineMedia": {
+    "defaultMessage": "Navega a Configuración de Cuenta → Fuentes de Medios en Línea y desactiva TV en Vivo, Películas y TV, y Música"
+  },
+  "help.quickStart.discoveryNote": {
+    "defaultMessage": "También puedes ajustar tus preferencias de Descubrimiento, aunque recomendamos dejarlas en sus valores predeterminados"
+  },
+  "help.quickStart.firstDesc": {
+    "defaultMessage": "Una vez que tengas un código de invitación, dirígete a la página de registro de {appTitle} e introdúcelo. Se te pedirá que inicies sesión con tu cuenta de {plexLogo} (o crees una si aún no tienes). Después de autenticarte, puedes personalizar la configuración de tu cuenta — elige un nombre para mostrar, idioma y configura tus preferencias de notificaciones. Una vez completado, tu acceso a la biblioteca de {plexLogo} se configura automáticamente."
+  },
+  "help.quickStart.firstTitle": {
+    "defaultMessage": "Regístrate"
+  },
+  "help.quickStart.heading": {
+    "defaultMessage": "Guía de Inicio Rápido"
+  },
+  "help.quickStart.lastDesc": {
+    "defaultMessage": "¡Todo listo! Navega por la biblioteca, descarga la aplicación {plexLogo} en tus dispositivos y comienza a ver. {seerrNote}"
+  },
+  "help.quickStart.lastTitle": {
+    "defaultMessage": "¡Comienza a ver!"
+  },
+  "help.quickStart.reorderTip": {
+    "defaultMessage": "Puedes reordenar las bibliotecas en tu aplicación {plexLogo} para que aparezcan en la página de inicio en tu orden preferido."
+  },
+  "help.quickStart.secondDesc": {
+    "defaultMessage": "Después de registrarte, las bibliotecas de {appTitle} se agregan automáticamente a tu cuenta de {plexLogo} — no necesitas aceptar invitaciones ni anclar bibliotecas manualmente. Inicia sesión en {appTitle} o en la aplicación {plexLogo2} para comenzar a explorar el contenido disponible."
+  },
+  "help.quickStart.secondTitle": {
+    "defaultMessage": "Comienza a ver"
+  },
+  "help.quickStart.seerrNote": {
+    "defaultMessage": "Si falta algo, usa Seerr para solicitarlo."
+  },
+  "help.quickStart.settingsLink": {
+    "defaultMessage": "Para más detalles sobre la configuración de la cuenta, consulta el artículo de ayuda {link}."
+  },
+  "help.quickStart.signupTip": {
+    "defaultMessage": "Para un recorrido detallado del proceso de registro, consulta el artículo de ayuda {link}."
+  },
+  "help.quickStart.subheading": {
+    "defaultMessage": "Una guía sencilla para configurarte y empezar a ver en minutos."
+  },
+  "help.quickStart.thirdDesc": {
+    "defaultMessage": "Por defecto, {plexLogo} puede mostrar contenido adicional de su propio servicio de streaming gratuito junto con el contenido de {appTitle}. Si prefieres ver solo contenido de {appTitle2}, puedes desactivar estos en la configuración de tu cuenta."
+  },
+  "help.quickStart.thirdTitle": {
+    "defaultMessage": "Personaliza tu experiencia"
+  },
+  "help.quickStart.trialNote": {
+    "defaultMessage": "No podrás invitar amigos durante tu período de prueba de {days} días."
+  },
   "help.relatedArticles": {
     "defaultMessage": "Artículos Relacionados"
   },
+  "help.reportingIssues.breadcrumb": {
+    "defaultMessage": "¿Cómo puedo reportar un problema con el contenido de {appTitle}?"
+  },
+  "help.reportingIssues.detailNote": {
+    "defaultMessage": "Para la resolución más rápida, asegúrate de que todos los campos sean precisos y estén completos. Proporciona la mayor cantidad de detalles posible."
+  },
+  "help.reportingIssues.heading": {
+    "defaultMessage": "¿Cómo puedo reportar un problema con el contenido de {appTitle}?"
+  },
+  "help.reportingIssues.privacyNote": {
+    "defaultMessage": "Los problemas reportados no son visibles para otros; solo tú y el equipo de administración de {appTitle} tienen acceso."
+  },
+  "help.reportingIssues.reportingTitle": {
+    "defaultMessage": "Reportar un problema:"
+  },
+  "help.reportingIssues.step1": {
+    "defaultMessage": "Abre tu cuenta de {appTitle} y navega a Seerr"
+  },
+  "help.reportingIssues.step2": {
+    "defaultMessage": "Busca o navega al contenido que deseas reportar"
+  },
+  "help.reportingIssues.step3": {
+    "defaultMessage": "En la página de descubrimiento de la película o serie de TV, localiza el ícono {icon}"
+  },
+  "help.reportingIssues.step4": {
+    "defaultMessage": "Completa el formulario con la mayor cantidad de detalles posible"
+  },
+  "help.reportingIssues.step5": {
+    "defaultMessage": "Haz clic en enviar problema y cierra el formulario"
+  },
+  "help.reportingIssues.subheading": {
+    "defaultMessage": "Puedes usar la aplicación Seerr para reportar problemas con contenido faltante o incompleto, así como problemas o dificultades que experimentes con la reproducción en ciertos dispositivos."
+  },
+  "help.reportingIssues.tip1": {
+    "defaultMessage": "Para problemas de reproducción, asegúrate de seleccionar vídeo, audio o subtítulo"
+  },
+  "help.reportingIssues.tip2": {
+    "defaultMessage": "Si falta contenido, selecciona otro y describe qué o cuánto falta"
+  },
+  "help.reportingIssues.tip3": {
+    "defaultMessage": "No olvides seleccionar los números de Temporada y Episodio para las series"
+  },
+  "help.reportingIssues.trackingTitle": {
+    "defaultMessage": "Seguimiento de Problemas:"
+  },
+  "help.reportingIssues.trackStep1": {
+    "defaultMessage": "Abre tu cuenta de {appTitle} y navega a Seerr"
+  },
+  "help.reportingIssues.trackStep2": {
+    "defaultMessage": "en las opciones del menú selecciona Problemas"
+  },
+  "help.reportingIssues.trackStep3": {
+    "defaultMessage": "Puedes filtrar todos, abiertos o problemas resueltos"
+  },
+  "help.reportingIssues.trackStep4": {
+    "defaultMessage": "Selecciona Ver Problema para revisar la información enviada"
+  },
+  "help.reportingIssues.trackTip1": {
+    "defaultMessage": "A veces se pueden ingresar comentarios pidiendo más información o para proporcionar actualizaciones"
+  },
+  "help.reportingIssues.trackTip2": {
+    "defaultMessage": "Todos los problemas tienen un número de reporte asociado para claridad y seguimiento"
+  },
+  "help.reportingIssues.trackTip3": {
+    "defaultMessage": "Se pueden enviar preguntas adicionales dentro de cada problema"
+  },
+  "help.requesting.breadcrumb": {
+    "defaultMessage": "Solicitar nuevos contenidos con Seerr"
+  },
+  "help.requesting.discoverDesc": {
+    "defaultMessage": "Seerr te ayuda a encontrar el contenido que quieres ver. Con recomendaciones y sugerencias integradas, te encontrarás cada vez más inmerso en un mundo de contenido que no sabías que necesitabas."
+  },
+  "help.requesting.discoverTitle": {
+    "defaultMessage": "La mejor manera de descubrir contenido"
+  },
+  "help.requesting.easyDesc": {
+    "defaultMessage": "Seerr te presenta una interfaz de solicitud increíblemente fácil de entender y usar. Puedes seleccionar las temporadas exactas que quieres ver."
+  },
+  "help.requesting.easyTitle": {
+    "defaultMessage": "Solicitar nunca ha sido tan fácil"
+  },
+  "help.requesting.headingText": {
+    "defaultMessage": "Solicitar nuevos contenidos con"
+  },
+  "help.requesting.info1": {
+    "defaultMessage": "Cada solicitud individual se procesa en el momento en que es aprobada, o en caso de ser auto-aprobada, inmediatamente."
+  },
+  "help.requesting.info2": {
+    "defaultMessage": "El tiempo que tarda en estar disponible en {appTitle} puede depender de muchos factores como la fecha de estreno (los contenidos más antiguos pueden ser más difíciles de encontrar), la popularidad y la calidad."
+  },
+  "help.requesting.info3": {
+    "defaultMessage": "Mantente atento a {seerr}, o espera la notificación de Contenido Disponible."
+  },
+  "help.requesting.info4": {
+    "defaultMessage": "{appTitle} soporta múltiples tipos de notificaciones, todas las cuales se pueden gestionar a través de tu configuración de notificaciones. {channels}"
+  },
+  "help.requesting.mobileDesc": {
+    "defaultMessage": "Usa Seerr como una aplicación móvil casi nativa añadiéndola a tu pantalla de inicio. Seerr está diseñado para su uso en cualquier tamaño de pantalla."
+  },
+  "help.requesting.mobileTitle": {
+    "defaultMessage": "Experiencia Adaptada a Móviles"
+  },
+  "help.requesting.noQuota": {
+    "defaultMessage": "actualmente no tiene límites de solicitud configurados."
+  },
+  "help.requesting.notificationsDesc": {
+    "defaultMessage": "Se soportan directamente varios agentes de notificación, incluyendo correo electrónico, Discord y notificaciones push web."
+  },
+  "help.requesting.notificationsTitle": {
+    "defaultMessage": "Notificaciones"
+  },
+  "help.requesting.quotaDetails": {
+    "defaultMessage": "actualmente permite un máximo de {movieLimit} solicitudes de Películas{moviePeriod} y un máximo de {tvLimit} solicitudes de Temporadas{tvPeriod}, por miembro."
+  },
+  "help.requesting.quotaGeneric": {
+    "defaultMessage": "puede tener límites de solicitud que aplican por miembro."
+  },
+  "help.requesting.step1": {
+    "defaultMessage": "Inicia sesión en {appTitle} y selecciona {seerrLogo}"
+  },
+  "help.requesting.step2": {
+    "defaultMessage": "Busca cualquier película o serie o localízala a través del descubrimiento"
+  },
+  "help.requesting.step3": {
+    "defaultMessage": "Abre la página de descubrimiento del contenido seleccionándolo"
+  },
+  "help.requesting.step4": {
+    "defaultMessage": "Selecciona la opción \"Solicitar\" y si corresponde selecciona qué temporada(s)"
+  },
+  "help.requesting.step5": {
+    "defaultMessage": "Una vez que tu solicitud haya sido aprobada por un moderador, comenzará a descargarse"
+  },
+  "help.requesting.title": {
+    "defaultMessage": "Solicitando nuevos contenidos"
+  },
+  "help.requesting.unavailableDesc": {
+    "defaultMessage": "Las solicitudes de contenido no están actualmente disponibles en {appTitle}. El servicio de solicitudes Seerr no ha sido configurado. Por favor contacta al administrador del servidor para más información."
+  },
+  "help.requesting.unavailableHeading": {
+    "defaultMessage": "Solicitando Nuevos Contenidos"
+  },
   "help.requestingNewMedia": {
-    "defaultMessage": "Solicitar nuevos medios"
+    "defaultMessage": "Solicitando nuevos contenidos"
+  },
+  "help.statusPage": {
+    "defaultMessage": "Página de Estado"
+  },
+  "help.statusPageMessage": {
+    "defaultMessage": "¿Tienes problemas para conectarte? Consulta nuestra {statusLink}"
   },
   "help.supportedDevices": {
     "defaultMessage": "Dispositivos compatibles"
+  },
+  "help.terms.cancellation1": {
+    "defaultMessage": "2.1. Puedes dejar {appTitle} en cualquier momento — sin rencores. Tu acceso terminará y tu cuenta será cerrada."
+  },
+  "help.terms.cancellation2": {
+    "defaultMessage": "2.2. Las cuentas de {plexLogo} se gestionan por separado y están sujetas a sus propios términos y condiciones."
+  },
+  "help.terms.cancellationLabel": {
+    "defaultMessage": "Cancelación"
+  },
+  "help.terms.changesDesc": {
+    "defaultMessage": "Podemos actualizar estos términos de vez en cuando. El uso continuado del servicio después de los cambios significa que aceptas los términos actualizados. Haremos lo mejor para mantener las cosas razonables."
+  },
+  "help.terms.changesLabel": {
+    "defaultMessage": "Cambios a Estos Términos."
+  },
+  "help.terms.definition": {
+    "defaultMessage": "Como se usa en estos Términos de Uso, \"servicio de {appTitle}\", \"nuestro servicio\" o \"el servicio\" significa el servicio personalizado proporcionado por {appTitle} para descubrir y ver contenido, incluyendo todas las características y funcionalidades, recomendaciones, el sitio web e interfaces de usuario, así como todo el contenido y software asociado con nuestro servicio."
+  },
+  "help.terms.lastUpdated": {
+    "defaultMessage": "Última Actualización:"
+  },
+  "help.terms.membership1": {
+    "defaultMessage": "1.1 Tu membresía de {appTitle} continuará hasta que sea terminada. Para usar el servicio de {appTitle} necesitas acceso a Internet y un dispositivo compatible."
+  },
+  "help.terms.membership2": {
+    "defaultMessage": "1.2 {appTitle} es un servicio personal y no comercial. Piénsalo como ser invitado a una gran noche de cine — solo que, ya sabes, todas las noches."
+  },
+  "help.terms.membershipLabel": {
+    "defaultMessage": "Membresía"
+  },
+  "help.terms.passwordsDesc": {
+    "defaultMessage": "Mantén tus credenciales de cuenta seguras. Eres responsable de toda la actividad en tu cuenta. Si sospechas de acceso no autorizado, haznos saber y te ayudaremos a solucionarlo."
+  },
+  "help.terms.passwordsLabel": {
+    "defaultMessage": "Contraseñas y Acceso a la Cuenta."
+  },
+  "help.terms.service1": {
+    "defaultMessage": "3.1. El servicio es solo para tu uso personal y no comercial y no puede ser compartido con personas fuera de tu hogar. Por favor no lo uses para presentaciones públicas — esto no es un cine (aunque entendemos la tentación)."
+  },
+  "help.terms.service2": {
+    "defaultMessage": "3.2. La disponibilidad del contenido puede variar según la ubicación. El número de transmisiones simultáneas puede estar limitado por el administrador."
+  },
+  "help.terms.service3": {
+    "defaultMessage": "3.3. La biblioteca de contenido se actualiza regularmente. Siempre estamos trabajando para mejorar las cosas y mantener las estanterías llenas."
+  },
+  "help.terms.service4": {
+    "defaultMessage": "3.4. Algunos contenidos pueden estar disponibles para descarga temporal sin conexión en dispositivos compatibles. Se aplican limitaciones."
+  },
+  "help.terms.service5": {
+    "defaultMessage": "3.5. Por favor usa {appTitle} de manera responsable. No intentes eludir, realizar ingeniería inversa o manipular el servicio de ninguna manera. No uses herramientas automatizadas para acceder o extraer contenido. Nos reservamos el derecho de terminar cuentas que violen estos términos."
+  },
+  "help.terms.service6": {
+    "defaultMessage": "3.6. La calidad del streaming depende de tu conexión a internet y dispositivo. Recomendamos al menos 3 Mbps para contenido HD. Eres responsable de tus propios costos de internet — lamentablemente no podemos ayudar con tu factura del proveedor."
+  },
+  "help.terms.service7": {
+    "defaultMessage": "3.7. El software de {plexLogo} está sujeto a sus propias licencias. Las actualizaciones pueden aplicarse automáticamente."
+  },
+  "help.terms.serviceLabel": {
+    "defaultMessage": "Servicio de {appTitle}"
+  },
+  "help.terms.title": {
+    "defaultMessage": "Términos de Uso de {appTitle}"
+  },
+  "help.terms.warrantiesDesc": {
+    "defaultMessage": "El servicio de {appTitle} se proporciona \"tal cual\" y sin garantía. Hacemos lo mejor para mantener las cosas funcionando sin problemas, pero los contratiempos ocasionales son inevitables. Renuncias a todos los daños especiales, indirectos y consecuentes contra nosotros."
+  },
+  "help.terms.warrantiesLabel": {
+    "defaultMessage": "Garantías y Limitaciones de Responsabilidad."
+  },
+  "help.terms.welcome": {
+    "defaultMessage": "¡Bienvenido a {appTitle}! Estos Términos de Uso rigen tu uso de nuestro servicio. Al usar {appTitle}, aceptas estos términos. No pretenden ser intimidantes — solo algunas reglas básicas para que todos puedan disfrutar del servicio."
+  },
+  "help.topics.accountSettings": {
+    "defaultMessage": "Configuración de cuenta y preferencias"
+  },
+  "help.topics.becomeMember": {
+    "defaultMessage": "Cómo convertirse en miembro"
+  },
+  "help.topics.calendar": {
+    "defaultMessage": "Calendario y programación de estrenos"
+  },
+  "help.topics.devices": {
+    "defaultMessage": "Dispositivos compatibles"
+  },
+  "help.topics.downloadOffline": {
+    "defaultMessage": "Descargar contenido para ver sin conexión"
+  },
+  "help.topics.downloadPlex": {
+    "defaultMessage": "Cómo descargar la aplicación {plex}"
+  },
+  "help.topics.downloadStreamarr": {
+    "defaultMessage": "Cómo descargar la aplicación {appTitle}"
+  },
+  "help.topics.gettingStarted": {
+    "defaultMessage": "Empezar"
+  },
+  "help.topics.inviteAFriend": {
+    "defaultMessage": "Invitar a tus amigos a {appTitle}"
+  },
+  "help.topics.notifications": {
+    "defaultMessage": "Gestionando tus notificaciones"
+  },
+  "help.topics.onlineMedia": {
+    "defaultMessage": "Fuentes de medios en línea"
+  },
+  "help.topics.passwordReset": {
+    "defaultMessage": "Contraseña y seguridad"
+  },
+  "help.topics.plexAccountPrefs": {
+    "defaultMessage": "Gestionar preferencias de cuenta de {plexLogo}"
+  },
+  "help.topics.plexWeb": {
+    "defaultMessage": "Viendo {appTitle} en la web"
+  },
+  "help.topics.plexWebPrefs": {
+    "defaultMessage": "Gestionar preferencias web de {plexLogo}"
+  },
+  "help.topics.quickStart": {
+    "defaultMessage": "Guía de inicio rápido"
+  },
+  "help.topics.reportingIssues": {
+    "defaultMessage": "Reportar un problema"
+  },
+  "help.topics.requesting": {
+    "defaultMessage": "Solicitando nuevos contenidos"
+  },
+  "help.topics.watchingStreamarr": {
+    "defaultMessage": "Viendo {appTitle}"
+  },
+  "help.topics.watchOnTv": {
+    "defaultMessage": "Viendo {appTitle} en tu TV"
+  },
+  "help.topics.whatIsPlex": {
+    "defaultMessage": "¿Qué es {plex}?"
+  },
+  "help.topics.whatIsStreamarr": {
+    "defaultMessage": "¿Qué es {appTitle}?"
+  },
+  "help.watching.breadcrumb": {
+    "defaultMessage": "Viendo {appTitle}"
+  },
+  "help.watching.calendar": {
+    "defaultMessage": "Calendario y programación de estrenos"
+  },
+  "help.watching.devices": {
+    "defaultMessage": "Dispositivos compatibles para ver {appTitle}"
+  },
+  "help.watching.downloadOffline": {
+    "defaultMessage": "Descargar contenido para ver sin conexión"
+  },
+  "help.watching.heading": {
+    "defaultMessage": "Temas relacionados con el uso y visualización de {appTitle}"
+  },
+  "help.watching.inviteAFriend": {
+    "defaultMessage": "Invitar a tus amigos a {appTitle}"
+  },
+  "help.watching.plexWeb": {
+    "defaultMessage": "Viendo {appTitle} en la web"
+  },
+  "help.watching.reportingIssues": {
+    "defaultMessage": "Reportar un problema con el contenido de {appTitle}"
+  },
+  "help.watching.requesting": {
+    "defaultMessage": "Solicitando nuevos contenidos con Seerr"
+  },
+  "help.watching.subheading": {
+    "defaultMessage": "Si tienes preguntas o no estás seguro de cómo usar {appTitle} o hacer nuevas solicitudes, puedes leer estos temas."
+  },
+  "help.watching.watchOnTv": {
+    "defaultMessage": "Viendo {appTitle} en tu TV"
+  },
+  "help.watchOnTv.airplayBest": {
+    "defaultMessage": "Para la mejor experiencia, incluyendo contenido 4K, recomendamos el último modelo de AppleTV"
+  },
+  "help.watchOnTv.airplayStep1": {
+    "defaultMessage": "Abre la aplicación {plexLogo} o {appTitle}"
+  },
+  "help.watchOnTv.airplayStep2": {
+    "defaultMessage": "Toca el ícono de Airplay en la parte superior de la pantalla"
+  },
+  "help.watchOnTv.airplayStep3": {
+    "defaultMessage": "Selecciona el contenido que deseas ver y toca Reproducir"
+  },
+  "help.watchOnTv.airplayStep4": {
+    "defaultMessage": "Elige el Apple TV al que deseas transmitir"
+  },
+  "help.watchOnTv.airplayStep5": {
+    "defaultMessage": "La aplicación ahora se transmitirá a través de Airplay a tu TV. El ícono de Airplay cambiará de color, indicándote que estás conectado."
+  },
+  "help.watchOnTv.airplayStep6": {
+    "defaultMessage": "El contenido que se reproduce en tu dispositivo ahora se mostrará en tu TV"
+  },
+  "help.watchOnTv.airplayTip1": {
+    "defaultMessage": "Asegúrate de que el Apple TV esté conectado a tu TV"
+  },
+  "help.watchOnTv.airplayTip2": {
+    "defaultMessage": "Asegúrate de que el dispositivo iOS con {appTitle} y el Apple TV estén conectados a la misma red Wi-Fi"
+  },
+  "help.watchOnTv.airplayTitle": {
+    "defaultMessage": "Cómo usar Apple AirPlay"
+  },
+  "help.watchOnTv.airplayTroubleshooting": {
+    "defaultMessage": "Solución de problemas de Apple AirPlay:"
+  },
+  "help.watchOnTv.breadcrumb": {
+    "defaultMessage": "¿Cómo puedo ver {appTitle} en mi TV?"
+  },
+  "help.watchOnTv.chromecastBest": {
+    "defaultMessage": "Para la mejor experiencia, incluyendo contenido 4K, recomendamos el modelo de última generación"
+  },
+  "help.watchOnTv.chromecastStep1": {
+    "defaultMessage": "Abre la aplicación {plexLogo} o {appTitle}"
+  },
+  "help.watchOnTv.chromecastStep2": {
+    "defaultMessage": "Toca el ícono de Cast en la parte superior de la pantalla"
+  },
+  "help.watchOnTv.chromecastStep3": {
+    "defaultMessage": "Selecciona el contenido que deseas ver y toca Reproducir"
+  },
+  "help.watchOnTv.chromecastStep4": {
+    "defaultMessage": "Elige el dispositivo al que deseas transmitir"
+  },
+  "help.watchOnTv.chromecastStep5": {
+    "defaultMessage": "La aplicación ahora se transmitirá a tu TV. El ícono de Cast cambiará de color, indicándote que estás conectado."
+  },
+  "help.watchOnTv.chromecastStep6": {
+    "defaultMessage": "El contenido que se reproduce en tu dispositivo ahora se mostrará en tu TV"
+  },
+  "help.watchOnTv.chromecastTip1": {
+    "defaultMessage": "Asegúrate de que la aplicación Google Home esté instalada en tu dispositivo móvil. Está disponible tanto en iTunes Store como en Google Play Store"
+  },
+  "help.watchOnTv.chromecastTip2": {
+    "defaultMessage": "Asegúrate de que el dispositivo Chromecast esté conectado a tu TV"
+  },
+  "help.watchOnTv.chromecastTip3": {
+    "defaultMessage": "Asegúrate de que el dispositivo móvil con {appTitle} y el dispositivo Chromecast estén conectados a la misma red Wi-Fi"
+  },
+  "help.watchOnTv.chromecastTitle": {
+    "defaultMessage": "Cómo usar Chromecast:"
+  },
+  "help.watchOnTv.chromecastTroubleshooting": {
+    "defaultMessage": "Solución de problemas de Chromecast:"
+  },
+  "help.watchOnTv.heading": {
+    "defaultMessage": "¿Cómo puedo ver {appTitle} en mi TV?"
+  },
+  "help.watchOnTv.plexAppTitle": {
+    "defaultMessage": "Cómo usar la aplicación {plexLogo}:"
+  },
+  "help.watchOnTv.plexBest": {
+    "defaultMessage": "Para la mejor experiencia, incluyendo contenido 4K, recomendamos la última versión de {plexLogo}"
+  },
+  "help.watchOnTv.plexStep1": {
+    "defaultMessage": "Abre la aplicación {plexLogo} en tu dispositivo"
+  },
+  "help.watchOnTv.plexStep2": {
+    "defaultMessage": "Inicia sesión si no lo has hecho"
+  },
+  "help.watchOnTv.plexStep3": {
+    "defaultMessage": "Navega a la biblioteca deseada"
+  },
+  "help.watchOnTv.plexStep4": {
+    "defaultMessage": "Selecciona el contenido que deseas ver y toca Reproducir"
+  },
+  "help.watchOnTv.plexTip1": {
+    "defaultMessage": "Asegúrate de que el dispositivo con {plexLogo} esté encendido y conectado a Wi-Fi"
+  },
+  "help.watchOnTv.plexTip2": {
+    "defaultMessage": "Reinicia el dispositivo con {plexLogo}"
+  },
+  "help.watchOnTv.plexTip3": {
+    "defaultMessage": "Restablece y limpia la caché de la aplicación {plexLogo}"
+  },
+  "help.watchOnTv.plexTroubleshooting": {
+    "defaultMessage": "Solución de problemas de {plexLogo}:"
+  },
+  "help.watchOnTv.subheading": {
+    "defaultMessage": "Puedes usar Chromecast o Apple AirPlay para transmitir inalámbricamente contenido de {appTitle} desde tu dispositivo móvil Android o iOS a tu TV o reproducir directamente en algunos dispositivos compatibles como Apple o Google TV con la aplicación Plex"
+  },
+  "help.whatIsPlex.breadcrumb": {
+    "defaultMessage": "¿Qué es Plex?"
+  },
+  "help.whatIsPlex.description1": {
+    "defaultMessage": "Un destino único para transmitir películas, series de TV y música, {plexLogo} es la plataforma de entretenimiento más completa disponible hoy. Disponible en casi cualquier dispositivo, {plexLogo2} es la primera y única plataforma de streaming que ofrece películas gratuitas con publicidad, series y TV en vivo junto con la capacidad de buscar fácilmente — y añadir a tu Lista de Seguimiento — cualquier título jamás realizado, sin importar en qué servicio de streaming se encuentre. Usando la plataforma como su conserje de entretenimiento, 17 millones (¡y creciendo!) de usuarios activos mensuales confían en {plexLogo3} para nuevos descubrimientos y recomendaciones de todas sus aplicaciones de streaming favoritas, bibliotecas de medios personales y más."
+  },
+  "help.whatIsPlex.description2": {
+    "defaultMessage": "Si solo estás transmitiendo contenido de terceros ({appTitle}, TV en vivo, programas web), estás listo para empezar tan pronto como tengas una cuenta, ¡solo instala una aplicación en tu teléfono, Smart TV, computadora, o simplemente abre nuestra aplicación web en tu navegador!"
+  },
+  "help.whatIsPlex.description3": {
+    "defaultMessage": "Ve miles de Películas y Series gratuitas bajo demanda o más de 100 canales de TV en vivo. Escucha tus podcasts favoritos en casa o en tu trayecto. Ve tus programas web favoritos de creadores talentosos de todo el mundo. ¡Incluso puedes acceder a más de 60 millones de pistas de música y vídeos en streaming, proporcionados por TIDAL!"
+  },
+  "help.whatIsPlex.heading": {
+    "defaultMessage": "¿Qué es {plexLogo}?"
+  },
+  "help.whatIsPlex.moreInfo": {
+    "defaultMessage": "Encuentra más información sobre funciones {link}"
+  },
+  "help.whatIsPlex.onOurWebsite": {
+    "defaultMessage": "en nuestro sitio web."
+  },
+  "help.whatIsPlex.subheading": {
+    "defaultMessage": "{plexLogo} te da un lugar para encontrar y acceder a todos los medios que te importan. Desde medios personales en tu propio servidor, hasta Películas y Series gratuitas y bajo demanda, TV en vivo, podcasts y programas web, hasta música en streaming, puedes disfrutar de todo en una aplicación, en cualquier dispositivo."
+  },
+  "help.whatIsStreamarr.aboutDesc": {
+    "defaultMessage": "{appTitle} está construido usando {streamarr}, una plataforma de gestión de servidores multimedia de código abierto. Streamarr proporciona las herramientas para gestionar miembros, invitaciones, solicitudes de contenido y más — todo envuelto en una interfaz moderna y fácil de usar."
+  },
+  "help.whatIsStreamarr.aboutTitle": {
+    "defaultMessage": "Acerca de Streamarr"
+  },
+  "help.whatIsStreamarr.breadcrumb": {
+    "defaultMessage": "¿Qué es {appTitle}?"
+  },
+  "help.whatIsStreamarr.description1": {
+    "defaultMessage": "{appTitle} es un servicio de streaming gratuito, privado y solo para miembros, impulsado por {plexLogo}. Reúne una biblioteca curada de películas, series de TV y música — todo disponible para transmitir desde cualquier lugar, en casi cualquier dispositivo."
+  },
+  "help.whatIsStreamarr.description2": {
+    "defaultMessage": "Si algo no está ya en la biblioteca, los miembros pueden solicitar nuevo contenido directamente a través del sistema de solicitudes integrado. {appTitle} está diseñado para ser fluido y fácil de usar — no se requieren habilidades técnicas."
+  },
+  "help.whatIsStreamarr.featureCalendar": {
+    "defaultMessage": "Navega por los próximos estrenos y sigue cuándo llegan nuevos episodios o películas"
+  },
+  "help.whatIsStreamarr.featureDevices": {
+    "defaultMessage": "Mira en Smart TVs, teléfonos, tabletas, computadoras, dispositivos de streaming y más"
+  },
+  "help.whatIsStreamarr.featureDownload": {
+    "defaultMessage": "Descarga contenido para ver sin conexión a través de la aplicación {plexLogo}"
+  },
+  "help.whatIsStreamarr.featureNotifications": {
+    "defaultMessage": "Recibe notificaciones cuando nuevo contenido esté disponible o cuando tus solicitudes sean cumplidas"
+  },
+  "help.whatIsStreamarr.featurePWA": {
+    "defaultMessage": "Instala {appTitle} como una aplicación web en tu dispositivo para acceso rápido"
+  },
+  "help.whatIsStreamarr.featureRequests": {
+    "defaultMessage": "Solicita nuevo contenido a través de Seerr — si no está en la biblioteca, solo pídelo"
+  },
+  "help.whatIsStreamarr.featuresTitle": {
+    "defaultMessage": "Características Principales"
+  },
+  "help.whatIsStreamarr.featureStreaming": {
+    "defaultMessage": "Transmite películas, series de TV y música bajo demanda desde cualquier dispositivo compatible"
+  },
+  "help.whatIsStreamarr.getStartedDesc": {
+    "defaultMessage": "¿Listo para empezar? Aquí tienes algunos recursos útiles para comenzar:"
+  },
+  "help.whatIsStreamarr.getStartedTitle": {
+    "defaultMessage": "Empezar"
+  },
+  "help.whatIsStreamarr.githubDesc": {
+    "defaultMessage": "Código fuente y seguimiento de problemas"
+  },
+  "help.whatIsStreamarr.heading": {
+    "defaultMessage": "¿Qué es {appTitle}?"
+  },
+  "help.whatIsStreamarr.linkBecomeMember": {
+    "defaultMessage": "Cómo convertirse en miembro"
+  },
+  "help.whatIsStreamarr.linkDownload": {
+    "defaultMessage": "Descargar la aplicación {appTitle}"
+  },
+  "help.whatIsStreamarr.linkQuickStart": {
+    "defaultMessage": "Guía de Inicio Rápido"
+  },
+  "help.whatIsStreamarr.linkWhatIsPlex": {
+    "defaultMessage": "¿Qué es Plex?"
+  },
+  "help.whatIsStreamarr.overviewTitle": {
+    "defaultMessage": "Descripción General"
+  },
+  "help.whatIsStreamarr.subheading": {
+    "defaultMessage": "¿Te has estado preguntando, \"¿qué diablos es {appTitle}\"? No busques más..."
+  },
+  "help.whatIsStreamarr.websiteDesc": {
+    "defaultMessage": "Sitio web oficial y documentación"
   },
   "hero.error.emptyCode": {
     "defaultMessage": "Por favor, introduce un código de invitación válido."
@@ -1405,7 +3160,7 @@
     "defaultMessage": "Validando Código de Invitación..."
   },
   "imageCache.description": {
-    "defaultMessage": "Gestiona el caché de imágenes del sistema"
+    "defaultMessage": "Streamarr hará proxy y almacenará en caché imágenes de fuentes externas preconfiguradas. Las imágenes en caché se guardan en tu carpeta de configuración. Puedes encontrar los archivos en <code>{cachePath}</code>"
   },
   "imageCache.qrcode": {
     "defaultMessage": "Código QR"
@@ -1446,6 +3201,135 @@
   "inAppNotifications.testSending": {
     "defaultMessage": "Enviando notificación de prueba en la aplicación…"
   },
+  "index.faqs.howToInstall.answer": {
+    "defaultMessage": "{appTitle} es una Aplicación Web Progresiva (PWA) que se puede instalar directamente desde tu navegador en cualquier dispositivo. Simplemente visita {appUrl} y usa la opción de instalación de tu navegador para añadirla a tu pantalla de inicio. {downloadLink}"
+  },
+  "index.faqs.howToInstall.downloadLink": {
+    "defaultMessage": "Para instrucciones paso a paso, visita {link}"
+  },
+  "index.faqs.howToInstall.helpLink": {
+    "defaultMessage": "nuestra guía de descarga."
+  },
+  "index.faqs.howToInstall.question": {
+    "defaultMessage": "¿Cómo instalo la aplicación?"
+  },
+  "index.faqs.howToJoin.answer1": {
+    "defaultMessage": "Unirse a {appTitle} es solo por invitación. Los miembros activos actuales pueden invitar amigos desde su perfil."
+  },
+  "index.faqs.howToJoin.answer1.withQuota": {
+    "defaultMessage": "Unirse a {appTitle} es solo por invitación. Los miembros activos actuales pueden invitar hasta {limit} amigos{days}."
+  },
+  "index.faqs.howToJoin.answer2": {
+    "defaultMessage": "Para invitar a un amigo, inicia sesión en tu cuenta, ve a tu perfil y selecciona la pestaña Invitaciones. Comparte el código o enlace de invitación generado con tu amigo y podrá registrarse en {appUrl}/signup."
+  },
+  "index.faqs.howToJoin.question": {
+    "defaultMessage": "¿Cómo puedo unirme a {appTitle}?"
+  },
+  "index.faqs.title": {
+    "defaultMessage": "Preguntas Frecuentes"
+  },
+  "index.faqs.whatIsPlex.answer1": {
+    "defaultMessage": "Plex te da un lugar para encontrar y acceder a todos los medios que te importan. Desde medios personales en tu propio servidor, hasta Películas y Series gratuitas y bajo demanda, TV en vivo, podcasts y programas web, puedes disfrutar de todo en una aplicación, en cualquier dispositivo."
+  },
+  "index.faqs.whatIsPlex.answer2": {
+    "defaultMessage": "Si solo estás transmitiendo contenido de terceros ({appTitle}, TV en vivo, programas web), estás listo para empezar tan pronto como tengas una cuenta, ¡solo instala una aplicación en tu teléfono, Smart TV, computadora, o simplemente abre nuestra aplicación web en tu navegador!"
+  },
+  "index.faqs.whatIsPlex.answer3": {
+    "defaultMessage": "Ve miles de Películas y Series gratuitas bajo demanda o canales de TV en vivo. Escucha tus podcasts favoritos en casa o durante tu trayecto, y ve programas web populares de creadores de todo el mundo."
+  },
+  "index.faqs.whatIsPlex.answer4": {
+    "defaultMessage": "Encuentra más información sobre funciones {plexLink}"
+  },
+  "index.faqs.whatIsPlex.plexLink": {
+    "defaultMessage": "en su sitio web."
+  },
+  "index.faqs.whatIsPlex.question": {
+    "defaultMessage": "¿Qué es {plex}?"
+  },
+  "index.faqs.whatIsStreamarr.answer1": {
+    "defaultMessage": "{appTitle} es un servicio de streaming gratuito impulsado por Plex que reúne todos tus favoritos en un solo lugar. Con contenido de Netflix, Disney+, Prime Video, HBO Max y más — siempre hay algo emocionante para ver."
+  },
+  "index.faqs.whatIsStreamarr.answer2": {
+    "defaultMessage": "Mira los últimos estrenos, clásicos atemporales y joyas ocultas en todos tus dispositivos. {seerr}{helpLink}"
+  },
+  "index.faqs.whatIsStreamarr.helpCentre": {
+    "defaultMessage": "Centro de Ayuda"
+  },
+  "index.faqs.whatIsStreamarr.helpLink": {
+    "defaultMessage": "Aprende más en nuestro {link}."
+  },
+  "index.faqs.whatIsStreamarr.question": {
+    "defaultMessage": "¿Qué es {appTitle}?"
+  },
+  "index.faqs.whatToWatch.answer1": {
+    "defaultMessage": "{appTitle} ofrece una colección en constante evolución de películas, series de TV y más. Desde los últimos éxitos de taquilla y series maratoneables hasta clásicos atemporales y recuerdos nostálgicos."
+  },
+  "index.faqs.whatToWatch.answer2": {
+    "defaultMessage": "Se agrega nuevo contenido regularmente, así que siempre hay algo nuevo por descubrir."
+  },
+  "index.faqs.whatToWatch.question": {
+    "defaultMessage": "¿Qué puedo ver en {appTitle}?"
+  },
+  "index.faqs.whatToWatch.seerr": {
+    "defaultMessage": "¿No encuentras algo? Usa Seerr para solicitar casi cualquier cosa y estará disponible para ver en minutos."
+  },
+  "index.faqs.whereToWatch.answer1": {
+    "defaultMessage": "{appTitle} está disponible en cualquier lugar donde puedas usar Plex — en dispositivos móviles, navegadores web, smart TVs, consolas de juegos, dispositivos de streaming y más. También puedes visitar {appUrl} directamente."
+  },
+  "index.faqs.whereToWatch.answer2": {
+    "defaultMessage": "También puedes instalar {appTitle} como aplicación en tu dispositivo para acceso rápido. {devicesLink}"
+  },
+  "index.faqs.whereToWatch.devicesLink": {
+    "defaultMessage": "Para una lista completa de dispositivos compatibles, haz clic {link}"
+  },
+  "index.faqs.whereToWatch.here": {
+    "defaultMessage": "aquí."
+  },
+  "index.faqs.whereToWatch.question": {
+    "defaultMessage": "¿Dónde puedo ver {appTitle}?"
+  },
+  "index.favourites.subtitle": {
+    "defaultMessage": "Una colección en constante evolución de las películas y series de TV más queridas del mundo."
+  },
+  "index.favourites.title": {
+    "defaultMessage": "{appTitle} tiene todos tus favoritos en un solo lugar"
+  },
+  "index.requesting.description": {
+    "defaultMessage": "Solicita casi cualquier Película o Serie de TV y mírala directamente en {appTitle} en poco tiempo con Seerr. Disfruta de Seerr como parte de tu membresía de {appTitle}."
+  },
+  "index.requesting.helpCentre": {
+    "defaultMessage": "Por favor consulta el {helpLink} para más información."
+  },
+  "index.requesting.helpCentreLink": {
+    "defaultMessage": "centro de ayuda"
+  },
+  "index.requesting.introducing": {
+    "defaultMessage": "Presentando"
+  },
+  "index.requesting.limitsApply": {
+    "defaultMessage": "Se aplican límites."
+  },
+  "index.watching.download": {
+    "defaultMessage": "Descarga cualquier película o serie y mírala en cualquier lugar. *"
+  },
+  "index.watching.inviteFriends": {
+    "defaultMessage": "Invita a algunos de tus amigos más cercanos a unirse a la diversión."
+  },
+  "index.watching.limitExperience": {
+    "defaultMessage": "Limita tu experiencia a {appTitle} o aprovecha todo lo que Plex tiene para ofrecer."
+  },
+  "index.watching.quality": {
+    "defaultMessage": "Una gama cada vez mayor de títulos en 720p/1080p/4K y sonido Dolby Atmos en dispositivos compatibles."
+  },
+  "index.watching.requestSeerr": {
+    "defaultMessage": "Solicita cualquier cosa nueva, en cualquier lugar y momento con la aplicación Seerr."
+  },
+  "index.watching.title": {
+    "defaultMessage": "Mira a tu manera"
+  },
+  "index.watching.watchTogether": {
+    "defaultMessage": "Organiza noches de cine virtuales con Watch Together. Pausa, rebobina y reacciona con tus amigos. Ambos usuarios deben ser miembros activos."
+  },
   "invite.advancedSettings": {
     "defaultMessage": "Configuración avanzada"
   },
@@ -1473,14 +3357,14 @@
   "invite.create": {
     "defaultMessage": "Crear invitación"
   },
-  "invite.createTitle": {
-    "defaultMessage": "Crear una invitación"
-  },
   "invite.created": {
     "defaultMessage": "Creada"
   },
   "invite.createdSuccessfully": {
     "defaultMessage": "¡Invitación creada exitosamente!"
+  },
+  "invite.createTitle": {
+    "defaultMessage": "Crear una invitación"
   },
   "invite.defaultLibraries": {
     "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
@@ -1524,23 +3408,23 @@
   "invite.plexHome": {
     "defaultMessage": "Plex Home"
   },
-  "invite.shareInvite": {
-    "defaultMessage": "Compartir Invitación"
-  },
   "invite.sharedLibraries": {
     "defaultMessage": "Bibliotecas Compartidas:"
   },
+  "invite.shareInvite": {
+    "defaultMessage": "Compartir Invitación"
+  },
   "invite.statusChanged": {
-    "defaultMessage": "Estado Cambiado"
+    "defaultMessage": "Invitación {status} exitosamente"
   },
   "invite.timeUnit.day": {
-    "defaultMessage": "día"
+    "defaultMessage": "{count, plural, one {Día} other {Días}}"
   },
   "invite.timeUnit.month": {
-    "defaultMessage": "mes"
+    "defaultMessage": "{count, plural, one {Mes} other {Meses}}"
   },
   "invite.timeUnit.week": {
-    "defaultMessage": "semana"
+    "defaultMessage": "{count, plural, one {Semana} other {Semanas}}"
   },
   "invite.updatedSuccessfully": {
     "defaultMessage": "Invitación actualizada exitosamente"
@@ -1549,16 +3433,16 @@
     "defaultMessage": "Límite de Uso"
   },
   "invite.usageUnit": {
-    "defaultMessage": "Unidad de Uso"
+    "defaultMessage": "{count, plural, one {uso} other {usos}}"
   },
   "inviteList.inviteAFriend": {
     "defaultMessage": "Invitar a un Amigo"
   },
-  "inviteList.inviteDeleteError": {
-    "defaultMessage": "Error al eliminar la invitación"
-  },
   "inviteList.inviteDeletedSuccess": {
     "defaultMessage": "Invitación eliminada exitosamente"
+  },
+  "inviteList.inviteDeleteError": {
+    "defaultMessage": "Error al eliminar la invitación"
   },
   "inviteList.signUpDisabled": {
     "defaultMessage": "Registro Deshabilitado"
@@ -1611,11 +3495,11 @@
   "inviteShare.successMessage": {
     "defaultMessage": "¡Invitación compartida exitosamente!"
   },
-  "jobs.cancelJob": {
-    "defaultMessage": "Cancelar Trabajo"
-  },
   "jobs.canceled": {
     "defaultMessage": "{jobName} Cancelado"
+  },
+  "jobs.cancelJob": {
+    "defaultMessage": "Cancelar Trabajo"
   },
   "jobs.currentFrequency": {
     "defaultMessage": "Frecuencia Actual"
@@ -1769,7 +3653,7 @@
     "defaultMessage": "Bibliotecas"
   },
   "moreHelp.checkHelpSection": {
-    "defaultMessage": "Revisa la Sección de Ayuda"
+    "defaultMessage": "¡Consulta la sección de ayuda en {plexLogo} o contáctanos a continuación!"
   },
   "moreHelp.needMoreHelp": {
     "defaultMessage": "¿Necesitas Más Ayuda?"
@@ -1778,16 +3662,16 @@
     "defaultMessage": "¿Necesitas Conversar?"
   },
   "moreHelp.plexHelpDescription": {
-    "defaultMessage": "Encuentra ayuda oficial y documentación de Plex"
+    "defaultMessage": "Echa un vistazo a la sección de Ayuda de {plexLogo} o navega por sus foros para obtener más asistencia."
   },
   "moreHelp.plexSupport": {
-    "defaultMessage": "Soporte de Plex"
+    "defaultMessage": "Soporte de {plexLogo}"
   },
   "moreHelp.support": {
     "defaultMessage": "Soporte"
   },
   "moreHelp.visitPlex": {
-    "defaultMessage": "Visitar Plex"
+    "defaultMessage": "Visitar {plexLogo}"
   },
   "notFound.notFound": {
     "defaultMessage": "No encontrado"
@@ -1798,11 +3682,11 @@
   "notFound.quote": {
     "defaultMessage": "Hay lugares allá afuera que no puedes encontrar en ningún mapa. No se han ido, solo están perdidos."
   },
-  "notification.deleteThis": {
-    "defaultMessage": "Eliminar esta notificación"
-  },
   "notification.deletedError": {
     "defaultMessage": "Error al eliminar la notificación"
+  },
+  "notification.deleteThis": {
+    "defaultMessage": "Eliminar esta notificación"
   },
   "notification.earlier": {
     "defaultMessage": "Anteriores"
@@ -1940,10 +3824,13 @@
     "defaultMessage": "No hay usuarios para importar de Plex"
   },
   "plexImport.success": {
-    "defaultMessage": "Usuarios de Plex importados exitosamente"
+    "defaultMessage": "{count, plural, one {# usuario de Plex} other {# usuarios de Plex}} importado(s) exitosamente"
   },
   "plexImport.title": {
     "defaultMessage": "Importar Usuarios de Plex"
+  },
+  "plexSettings.attemptingReconnect": {
+    "defaultMessage": "Intentando reconectar..."
   },
   "plexSettings.connecting": {
     "defaultMessage": "Intentando conectar con Plex…"
@@ -1972,11 +3859,11 @@
   "plexSettings.libraries.description": {
     "defaultMessage": "Las bibliotecas que Streamarr usará. Configura y guarda tus ajustes de conexión de Plex, luego haz clic en el botón de abajo si no aparecen bibliotecas listadas."
   },
-  "plexSettings.libraries.syncLibraries": {
-    "defaultMessage": "Sincronizar Bibliotecas"
-  },
   "plexSettings.libraries.syncing": {
     "defaultMessage": "Sincronizando…"
+  },
+  "plexSettings.libraries.syncLibraries": {
+    "defaultMessage": "Sincronizar Bibliotecas"
   },
   "plexSettings.libraries.title": {
     "defaultMessage": "Bibliotecas de Plex"
@@ -1999,6 +3886,12 @@
   "plexSettings.pivot.library": {
     "defaultMessage": "Biblioteca"
   },
+  "plexSettings.plexUnreachable": {
+    "defaultMessage": "Plex no está disponible actualmente..."
+  },
+  "plexSettings.reconnecting": {
+    "defaultMessage": "Reconectando…"
+  },
   "plexSettings.remote": {
     "defaultMessage": "remoto"
   },
@@ -2014,6 +3907,12 @@
   "plexSettings.retrievingServersOption": {
     "defaultMessage": "Recuperando servidores…"
   },
+  "plexSettings.retryError": {
+    "defaultMessage": "Error al reconectar."
+  },
+  "plexSettings.retrySuccess": {
+    "defaultMessage": "¡Reconexión exitosa!"
+  },
   "plexSettings.secure": {
     "defaultMessage": "seguro"
   },
@@ -2025,6 +3924,9 @@
   },
   "plexSettings.setupInstructions": {
     "defaultMessage": "Para configurar Plex, puedes ingresar los detalles manualmente o seleccionar un servidor recuperado desde {plexLink}. Presiona el botón a la derecha del menú desplegable para obtener la lista de servidores disponibles."
+  },
+  "plexSettings.somethingWentWrong": {
+    "defaultMessage": "Algo salió mal al intentar reconectar."
   },
   "plexSettings.title": {
     "defaultMessage": "Configuración de Plex"
@@ -2077,11 +3979,11 @@
   "radarrSettings.addserver": {
     "defaultMessage": "Agregar Servidor Radarr"
   },
-  "radarrSettings.deleteTitle": {
-    "defaultMessage": "Eliminar Servidor Radarr"
-  },
   "radarrSettings.deleteconfirm": {
     "defaultMessage": "¿Estás seguro de que quieres eliminar este servidor?"
+  },
+  "radarrSettings.deleteTitle": {
+    "defaultMessage": "Eliminar Servidor Radarr"
   },
   "radarrSettings.description": {
     "defaultMessage": "Configura tu(s) servidor(es) Radarr a continuación. Puedes conectar múltiples servidores Radarr, pero solo dos de ellos pueden marcarse como predeterminados (uno no-4K y uno 4K). Los administradores pueden anular el/los servidor(es) usado(s) para procesar nuevos eventos."
@@ -2143,20 +4045,26 @@
   "selectUsers": {
     "defaultMessage": "Seleccionar Usuarios"
   },
+  "ServiceErrorGeneric.description": {
+    "defaultMessage": "Ocurrió un error al intentar conectar con {serviceName}."
+  },
+  "ServiceNotConfigured.descriptionAdmin": {
+    "defaultMessage": "{serviceName} aún no ha sido configurado o habilitado."
+  },
+  "ServiceNotConfigured.descriptionUser": {
+    "defaultMessage": "{serviceName} no está disponible. Por favor contacta a tu administrador."
+  },
+  "ServiceNotConfigured.setUp": {
+    "defaultMessage": "Configurar {serviceName}"
+  },
+  "ServiceNotConfigured.title": {
+    "defaultMessage": "{serviceName} No Habilitado"
+  },
+  "ServiceNotFound.description": {
+    "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
+  },
   "serviceNotFound.notFound": {
     "defaultMessage": "No encontrado"
-  },
-  "serviceUnavailable.timeoutMessage": {
-    "defaultMessage": "Algo salió mal. {serviceName} no respondió a tiempo."
-  },
-  "serviceUnavailable.title": {
-    "defaultMessage": "{serviceName} No Disponible"
-  },
-  "serviceUnavailable.unreachableMessage": {
-    "defaultMessage": "No se puede conectar con {serviceName}. El servicio no está accesible."
-  },
-  "servicesSettings.authDisableFailed": {
-    "defaultMessage": "Error al deshabilitar la autenticación en {service}"
   },
   "servicesSettings.authDisabled": {
     "defaultMessage": "Autenticación Deshabilitada"
@@ -2166,6 +4074,9 @@
   },
   "servicesSettings.authDisabledService": {
     "defaultMessage": "Autenticación deshabilitada en {service}"
+  },
+  "servicesSettings.authDisableFailed": {
+    "defaultMessage": "Error al deshabilitar la autenticación en {service}"
   },
   "servicesSettings.bazarr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Bazarr."
@@ -2216,19 +4127,19 @@
     "defaultMessage": "Configuración de Lidarr"
   },
   "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Para completar la integración de Overseerr, debes configurar un proxy inverso y servir overseerr en una URL base especificada. Overseerr actualmente no soporta URL bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
+    "defaultMessage": "Para completar la integración de Seerr, debes configurar un proxy inverso y servir Seerr en una URL base especificada. Seerr actualmente no soporta URL bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
   },
   "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Advertencia: La integración de Overseerr requiere configuración adicional"
+    "defaultMessage": "Advertencia: La integración de Seerr requiere configuración adicional"
   },
   "servicesSettings.overseerr.description": {
-    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Overseerr."
+    "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
   },
   "servicesSettings.overseerr.reverseProxyExample": {
     "defaultMessage": "Ejemplo de Proxy Inverso Nginx"
   },
   "servicesSettings.overseerr.title": {
-    "defaultMessage": "Configuración de Overseerr"
+    "defaultMessage": "Configuración de Seerr"
   },
   "servicesSettings.prowlarr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Prowlarr."
@@ -2272,11 +4183,11 @@
   "servicesSettings.urlBase.required": {
     "defaultMessage": "La URL Base es requerida"
   },
-  "servicesSettings.validation.apiKeyRequired": {
-    "defaultMessage": "Debes proporcionar una clave API"
-  },
   "servicesSettings.validation.apikey": {
     "defaultMessage": "Debes proporcionar una clave API válida"
+  },
+  "servicesSettings.validation.apiKeyRequired": {
+    "defaultMessage": "Debes proporcionar una clave API"
   },
   "servicesSettings.validation.clientType": {
     "defaultMessage": "Debes seleccionar un tipo de cliente"
@@ -2292,6 +4203,15 @@
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "La URL no debe tener una barra diagonal al final"
+  },
+  "serviceUnavailable.timeoutMessage": {
+    "defaultMessage": "Algo salió mal. {serviceName} no respondió a tiempo."
+  },
+  "serviceUnavailable.title": {
+    "defaultMessage": "{serviceName} No Disponible"
+  },
+  "serviceUnavailable.unreachableMessage": {
+    "defaultMessage": "No se puede conectar con {serviceName}. El servicio no está accesible."
   },
   "settings.accountType": {
     "defaultMessage": "Tipo de Cuenta"
@@ -2535,19 +4455,19 @@
     "defaultMessage": "Mostrar un carrusel de bienvenida a nuevos usuarios en su primer inicio de sesión."
   },
   "settings.openOverseerr": {
-    "defaultMessage": "Abrir Overseerr"
+    "defaultMessage": "Abrir Seerr"
   },
   "settings.openOverseerrSettings": {
-    "defaultMessage": "Abrir Configuración de Overseerr"
+    "defaultMessage": "Abrir Configuración de Seerr"
   },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Anular Límite Global"
   },
   "settings.overseerr.localhostDescription": {
-    "defaultMessage": "Overseerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
+    "defaultMessage": "Seerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.overseerr.localhostDescriptionSettings": {
-    "defaultMessage": "La configuración de Overseerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
+    "defaultMessage": "La configuración de Seerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.permissions": {
     "defaultMessage": "Permisos",
@@ -2662,11 +4582,11 @@
   "setup.errorDuringSetup": {
     "defaultMessage": "Error completando la configuración"
   },
-  "setup.finishSetup": {
-    "defaultMessage": "Finalizar Configuración"
-  },
   "setup.finishing": {
     "defaultMessage": "Finalizando configuración..."
+  },
+  "setup.finishSetup": {
+    "defaultMessage": "Finalizar Configuración"
   },
   "setup.getStartedPlex": {
     "defaultMessage": "Comienza iniciando sesión con tu cuenta de Plex"
@@ -2754,12 +4674,12 @@
   "signIn.rememberMe": {
     "defaultMessage": "Recordarme"
   },
+  "signIn.signingIn": {
+    "defaultMessage": "Iniciando Sesión…"
+  },
   "signIn.signUp": {
     "defaultMessage": "Regístrate",
     "description": "Professional Spanish translation"
-  },
-  "signIn.signingIn": {
-    "defaultMessage": "Iniciando Sesión…"
   },
   "signIn.title": {
     "defaultMessage": "Inicia sesión para continuar",
@@ -2873,14 +4793,14 @@
   "system.reconnecting": {
     "defaultMessage": "Reconectando..."
   },
+  "system.restarting": {
+    "defaultMessage": "Reiniciando..."
+  },
   "system.restartNow": {
     "defaultMessage": "Reiniciar Ahora"
   },
   "system.restartRequiredDescription": {
     "defaultMessage": "Se requiere un reinicio para aplicar los cambios recientes. Por favor, reinicie el servidor lo antes posible."
-  },
-  "system.restarting": {
-    "defaultMessage": "Reiniciando..."
   },
   "system.server.restartFailed": {
     "defaultMessage": "El reinicio falló. Por favor, reinicie el servidor manualmente."
@@ -3033,7 +4953,7 @@
     "defaultMessage": "Conceder permiso para gestionar usuarios. Los usuarios con este permiso no pueden modificar usuarios con o conceder el privilegio de Administrador."
   },
   "userPermissions.request.description": {
-    "defaultMessage": "Conceder permiso para acceder a solicitudes (nota: el acceso en overseerr también debe ser concedido)"
+    "defaultMessage": "Conceder permiso para acceder a solicitudes (nota: el acceso en Seerr también debe ser concedido)"
   },
   "userPermissions.streamarr.description": {
     "defaultMessage": "Conceder permiso para ver, solicitar, invitar y ver el horario."
@@ -3064,152 +4984,6 @@
   },
   "userPermissions.viewSchedule.name": {
     "defaultMessage": "Ver Cronograma"
-  },
-  "userSettings.InviteSettings": {
-    "defaultMessage": "Configuración de invitaciones predeterminada"
-  },
-  "userSettings.InviteSettingsDescription": {
-    "defaultMessage": "Configuración inicial asociada a nuevas invitaciones"
-  },
-  "userSettings.browser": {
-    "defaultMessage": "Navegador"
-  },
-  "userSettings.cannotModifyOwnPermissions": {
-    "defaultMessage": "No puedes modificar tus propios permisos",
-    "description": "Professional Spanish translation"
-  },
-  "userSettings.defaultPermissions": {
-    "defaultMessage": "Permisos predeterminados"
-  },
-  "userSettings.defaultPermissionsDescription": {
-    "defaultMessage": "Permisos iniciales asignados a nuevos usuarios"
-  },
-  "userSettings.defaultSharedLibraries": {
-    "defaultMessage": "Bibliotecas compartidas predeterminadas"
-  },
-  "userSettings.defaultSharedLibrariesDescription": {
-    "defaultMessage": "Bibliotecas iniciales compartidas con nuevos usuarios"
-  },
-  "userSettings.description": {
-    "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
-  },
-  "userSettings.enableTrialPeriodDescription": {
-    "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"
-  },
-  "userSettings.engine": {
-    "defaultMessage": "Motor"
-  },
-  "userSettings.inviteLimit": {
-    "defaultMessage": "Límite de invitaciones predeterminado"
-  },
-  "userSettings.inviteLimitDescription": {
-    "defaultMessage": "Establecer el límite de invitaciones predeterminado para nuevos usuarios."
-  },
-  "userSettings.inviteUsageLimit": {
-    "defaultMessage": "{count, plural, one {uso por invitación} other {usos por invitación}}"
-  },
-  "userSettings.localLogin": {
-    "defaultMessage": "Habilitar inicio de sesión local"
-  },
-  "userSettings.localLoginDescription": {
-    "defaultMessage": "Permitir a los usuarios iniciar sesión usando su dirección de correo electrónico y contraseña, en lugar de Plex OAuth"
-  },
-  "userSettings.manageDevices": {
-    "defaultMessage": "Administrar dispositivos"
-  },
-  "userSettings.noWebPushSubscriptions": {
-    "defaultMessage": "No tienes suscripciones de notificaciones web para mostrar."
-  },
-  "userSettings.notifications.deleteSubscription": {
-    "defaultMessage": "Eliminar suscripción"
-  },
-  "userSettings.notifications.disableWebPush": {
-    "defaultMessage": "Deshabilitar notificaciones web"
-  },
-  "userSettings.notifications.emailTitle": {
-    "defaultMessage": "Notificaciones por correo electrónico"
-  },
-  "userSettings.notifications.enableWebPush": {
-    "defaultMessage": "Habilitar notificaciones web"
-  },
-  "userSettings.notifications.inAppTitle": {
-    "defaultMessage": "Notificaciones en la Aplicación"
-  },
-  "userSettings.notifications.subscriptionActive": {
-    "defaultMessage": "Suscripción activa"
-  },
-  "userSettings.notifications.subscriptionDeleteError": {
-    "defaultMessage": "Error al eliminar la suscripción"
-  },
-  "userSettings.notifications.subscriptionDeleted": {
-    "defaultMessage": "Suscripción eliminada"
-  },
-  "userSettings.notifications.webpushDisableError": {
-    "defaultMessage": "Error al deshabilitar las notificaciones web push"
-  },
-  "userSettings.notifications.webpushDisabled": {
-    "defaultMessage": "Notificaciones web push deshabilitadas"
-  },
-  "userSettings.notifications.webpushEnableError": {
-    "defaultMessage": "Error al habilitar las notificaciones web push"
-  },
-  "userSettings.notifications.webpushEnabled": {
-    "defaultMessage": "Notificaciones web push habilitadas"
-  },
-  "userSettings.notifications.webpushTitle": {
-    "defaultMessage": "Configuración de Notificaciones Web Push"
-  },
-  "userSettings.operatingSystem": {
-    "defaultMessage": "Sistema operativo"
-  },
-  "userSettings.password.confirmRequired": {
-    "defaultMessage": "Debe confirmar la nueva contraseña"
-  },
-  "userSettings.password.currentRequired": {
-    "defaultMessage": "Debe proporcionar su contraseña actual"
-  },
-  "userSettings.password.newRequired": {
-    "defaultMessage": "Debe proporcionar una nueva contraseña"
-  },
-  "userSettings.password.noPasswordCurrentUser": {
-    "defaultMessage": "Su cuenta actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para habilitar el inicio de sesión como \"usuario local\" usando su dirección de correo electrónico."
-  },
-  "userSettings.password.noPasswordOtherUser": {
-    "defaultMessage": "Esta cuenta de usuario actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para permitir que esta cuenta inicie sesión como \"usuario local\"."
-  },
-  "userSettings.password.noPermission": {
-    "defaultMessage": "No tiene permisos para modificar la contraseña de este usuario."
-  },
-  "userSettings.password.saveError": {
-    "defaultMessage": "Algo salió mal al guardar la contraseña. ¿Se ingresó correctamente su contraseña actual?"
-  },
-  "userSettings.password.saveErrorGeneric": {
-    "defaultMessage": "Algo salió mal al guardar la contraseña."
-  },
-  "userSettings.password.saveSuccess": {
-    "defaultMessage": "¡Contraseña guardada exitosamente!"
-  },
-  "userSettings.permissionsSaved": {
-    "defaultMessage": "Permisos de usuario guardados exitosamente",
-    "description": "Spanish translation"
-  },
-  "userSettings.pgpPublicKey": {
-    "defaultMessage": "Clave Pública PGP"
-  },
-  "userSettings.pgpPublicKeyDescription": {
-    "defaultMessage": "Clave pública PGP para encriptar notificaciones por correo electrónico"
-  },
-  "userSettings.plexLogin": {
-    "defaultMessage": "Inicio de Sesión de Plex"
-  },
-  "userSettings.plexLoginDescription": {
-    "defaultMessage": "Permitir que este usuario inicie sesión con su cuenta de Plex"
-  },
-  "userSettings.saveSuccess": {
-    "defaultMessage": "Configuración de usuario guardada exitosamente"
-  },
-  "userSettings.title": {
-    "defaultMessage": "Configuración de Usuario"
   },
   "users.automaticallyGeneratePassword": {
     "defaultMessage": "Generar Contraseña Automáticamente"
@@ -3270,6 +5044,152 @@
   },
   "users.title": {
     "defaultMessage": "Lista de Usuarios"
+  },
+  "userSettings.browser": {
+    "defaultMessage": "Navegador"
+  },
+  "userSettings.cannotModifyOwnPermissions": {
+    "defaultMessage": "No puedes modificar tus propios permisos",
+    "description": "Professional Spanish translation"
+  },
+  "userSettings.defaultPermissions": {
+    "defaultMessage": "Permisos predeterminados"
+  },
+  "userSettings.defaultPermissionsDescription": {
+    "defaultMessage": "Permisos iniciales asignados a nuevos usuarios"
+  },
+  "userSettings.defaultSharedLibraries": {
+    "defaultMessage": "Bibliotecas compartidas predeterminadas"
+  },
+  "userSettings.defaultSharedLibrariesDescription": {
+    "defaultMessage": "Bibliotecas iniciales compartidas con nuevos usuarios"
+  },
+  "userSettings.description": {
+    "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
+  },
+  "userSettings.enableTrialPeriodDescription": {
+    "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"
+  },
+  "userSettings.engine": {
+    "defaultMessage": "Motor"
+  },
+  "userSettings.inviteLimit": {
+    "defaultMessage": "Límite de invitaciones predeterminado"
+  },
+  "userSettings.inviteLimitDescription": {
+    "defaultMessage": "Establecer el límite de invitaciones predeterminado para nuevos usuarios."
+  },
+  "userSettings.InviteSettings": {
+    "defaultMessage": "Configuración de invitaciones predeterminada"
+  },
+  "userSettings.InviteSettingsDescription": {
+    "defaultMessage": "Configuración inicial asociada a nuevas invitaciones"
+  },
+  "userSettings.inviteUsageLimit": {
+    "defaultMessage": "{count, plural, one {uso por invitación} other {usos por invitación}}"
+  },
+  "userSettings.localLogin": {
+    "defaultMessage": "Habilitar inicio de sesión local"
+  },
+  "userSettings.localLoginDescription": {
+    "defaultMessage": "Permitir a los usuarios iniciar sesión usando su dirección de correo electrónico y contraseña, en lugar de Plex OAuth"
+  },
+  "userSettings.manageDevices": {
+    "defaultMessage": "Administrar dispositivos"
+  },
+  "userSettings.notifications.deleteSubscription": {
+    "defaultMessage": "Eliminar suscripción"
+  },
+  "userSettings.notifications.disableWebPush": {
+    "defaultMessage": "Deshabilitar notificaciones web"
+  },
+  "userSettings.notifications.emailTitle": {
+    "defaultMessage": "Notificaciones por correo electrónico"
+  },
+  "userSettings.notifications.enableWebPush": {
+    "defaultMessage": "Habilitar notificaciones web"
+  },
+  "userSettings.notifications.inAppTitle": {
+    "defaultMessage": "Notificaciones en la Aplicación"
+  },
+  "userSettings.notifications.subscriptionActive": {
+    "defaultMessage": "Suscripción activa"
+  },
+  "userSettings.notifications.subscriptionDeleted": {
+    "defaultMessage": "Suscripción eliminada"
+  },
+  "userSettings.notifications.subscriptionDeleteError": {
+    "defaultMessage": "Error al eliminar la suscripción"
+  },
+  "userSettings.notifications.webpushDisabled": {
+    "defaultMessage": "Notificaciones web push deshabilitadas"
+  },
+  "userSettings.notifications.webpushDisableError": {
+    "defaultMessage": "Error al deshabilitar las notificaciones web push"
+  },
+  "userSettings.notifications.webpushEnabled": {
+    "defaultMessage": "Notificaciones web push habilitadas"
+  },
+  "userSettings.notifications.webpushEnableError": {
+    "defaultMessage": "Error al habilitar las notificaciones web push"
+  },
+  "userSettings.notifications.webpushTitle": {
+    "defaultMessage": "Configuración de Notificaciones Web Push"
+  },
+  "userSettings.noWebPushSubscriptions": {
+    "defaultMessage": "No tienes suscripciones de notificaciones web para mostrar."
+  },
+  "userSettings.operatingSystem": {
+    "defaultMessage": "Sistema operativo"
+  },
+  "userSettings.password.confirmRequired": {
+    "defaultMessage": "Debe confirmar la nueva contraseña"
+  },
+  "userSettings.password.currentRequired": {
+    "defaultMessage": "Debe proporcionar su contraseña actual"
+  },
+  "userSettings.password.newRequired": {
+    "defaultMessage": "Debe proporcionar una nueva contraseña"
+  },
+  "userSettings.password.noPasswordCurrentUser": {
+    "defaultMessage": "Su cuenta actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para habilitar el inicio de sesión como \"usuario local\" usando su dirección de correo electrónico."
+  },
+  "userSettings.password.noPasswordOtherUser": {
+    "defaultMessage": "Esta cuenta de usuario actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para permitir que esta cuenta inicie sesión como \"usuario local\"."
+  },
+  "userSettings.password.noPermission": {
+    "defaultMessage": "No tiene permisos para modificar la contraseña de este usuario."
+  },
+  "userSettings.password.saveError": {
+    "defaultMessage": "Algo salió mal al guardar la contraseña. ¿Se ingresó correctamente su contraseña actual?"
+  },
+  "userSettings.password.saveErrorGeneric": {
+    "defaultMessage": "Algo salió mal al guardar la contraseña."
+  },
+  "userSettings.password.saveSuccess": {
+    "defaultMessage": "¡Contraseña guardada exitosamente!"
+  },
+  "userSettings.permissionsSaved": {
+    "defaultMessage": "Permisos de usuario guardados exitosamente",
+    "description": "Spanish translation"
+  },
+  "userSettings.pgpPublicKey": {
+    "defaultMessage": "Clave Pública PGP"
+  },
+  "userSettings.pgpPublicKeyDescription": {
+    "defaultMessage": "Encriptar mensajes de correo electrónico usando {openPGP}."
+  },
+  "userSettings.plexLogin": {
+    "defaultMessage": "Inicio de Sesión de Plex"
+  },
+  "userSettings.plexLoginDescription": {
+    "defaultMessage": "Permitir que este usuario inicie sesión con su cuenta de Plex"
+  },
+  "userSettings.saveSuccess": {
+    "defaultMessage": "Configuración de usuario guardada exitosamente"
+  },
+  "userSettings.title": {
+    "defaultMessage": "Configuración de Usuario"
   },
   "webpushNotifications.httpsRequired": {
     "defaultMessage": "Para recibir notificaciones web push, Streamarr debe servirse sobre HTTPS."

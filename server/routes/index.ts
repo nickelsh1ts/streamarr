@@ -1,4 +1,5 @@
 import GithubAPI from '@server/api/github';
+import SeerrAPI from '@server/api/seerr';
 import TheMovieDb from '@server/api/themoviedb';
 import type {
   TmdbMovieResult,
@@ -19,12 +20,18 @@ import { isPerson } from '@server/utils/typeHelpers';
 import inviteRoutes from './invite';
 import serviceRoutes from './service';
 import calendarRoutes from './calendar';
-import PlexAPI from '@server/api/plexapi';
-import { getRepository } from '@server/datasource';
-import { User } from '@server/entity/User';
 import signupRoutes from './signup';
 import notificationRoutes from '@server/routes/notification';
 import downloadsRoutes from './downloads';
+import {
+  getPlexHealth,
+  isPlexInCooldown,
+  getPlexCachedLibraries,
+  resetPlexHealth,
+  revalidatePlexLibraries,
+  type LibraryItemsResponse,
+  type LibraryLink,
+} from '@server/lib/plexHealthCheck';
 
 export const createTmdbWithRegionLanguage = (): TheMovieDb => {
   return new TheMovieDb();
@@ -100,178 +107,212 @@ router.get('/settings/public', async (req, res) => {
   }
 });
 
-router.get('/libraries', async (req, res, next) => {
+router.get('/settings/public/seerr/quota', async (_req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({
+      message: 'Seerr is not configured.',
+    });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const quota = await seerrApi.getDefaultQuotas();
+
+    res.status(200).json(quota);
+  } catch {
+    next({
+      status: 500,
+      message: 'Failed to fetch Seerr quota information.',
+    });
+  }
+});
+
+router.get('/settings/public/seerr/notifications', async (_req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({
+      message: 'Seerr is not configured.',
+    });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const notifications = await seerrApi.getEnabledNotificationAgents();
+
+    res.status(200).json(notifications);
+  } catch {
+    next({
+      status: 500,
+      message: 'Failed to fetch Seerr notification information.',
+    });
+  }
+});
+
+router.get('/libraries', async (_req, res) => {
   const settings = getSettings();
 
   const enabledLibraries = settings.plex.libraries
     .filter((lib) => lib.enabled)
     .sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
+  const baseResponse = () =>
+    enabledLibraries.map((lib) => ({
+      id: lib.id,
+      name: lib.name,
+      enabled: lib.enabled,
+      type: lib.type,
+    }));
+
   if (!settings.main.libraryCounts) {
-    return res.status(200).json(
-      enabledLibraries.map((lib) => ({
-        id: lib.id,
-        name: lib.name,
-        enabled: lib.enabled,
-        type: lib.type,
-      }))
-    );
+    return res.status(200).json(baseResponse());
   }
 
-  const userRepository = getRepository(User);
-  try {
-    const admin = await userRepository.findOneOrFail({
-      select: { id: true, plexToken: true },
-      where: { id: 1 },
-    });
-    const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+  const buildResponse = (cached: LibraryItemsResponse) =>
+    enabledLibraries.map((lib) => ({
+      id: lib.id,
+      name: lib.name,
+      enabled: lib.enabled,
+      type: lib.type,
+      mediaCount:
+        cached.libraries.find((c) => c.id === lib.id)?.mediaCount ?? null,
+    }));
 
-    // Get media counts for each enabled library
-    const results = await Promise.all(
-      enabledLibraries.map(async (lib) => {
-        const { totalSize } = await plexApi.getLibraryContents(lib.id, {
-          size: 0,
-        });
-        return {
-          id: lib.id,
-          name: lib.name,
-          enabled: lib.enabled,
-          type: lib.type,
-          mediaCount: totalSize,
-        };
-      })
-    );
-
-    res.status(200).json(results);
-  } catch (e) {
-    logger.error('Something went wrong getting plex libraries', {
-      label: 'API',
-      errorMessage: e.message,
-    });
-    next({
-      status: 500,
-      message: 'Unable to retrieve Plex libraries.',
-    });
+  const cached = getPlexCachedLibraries();
+  if (cached) {
+    res.status(200).json(buildResponse(cached));
+    if (!isPlexInCooldown()) {
+      void revalidatePlexLibraries();
+    }
+    return;
   }
+
+  if (isPlexInCooldown()) {
+    return res.status(200).json(baseResponse());
+  }
+
+  await revalidatePlexLibraries();
+  const fresh = getPlexCachedLibraries();
+  return res.status(200).json(fresh ? buildResponse(fresh) : baseResponse());
 });
 
-router.get('/libraries/items', isAuthenticated(), async (req, res, next) => {
+router.get('/libraries/items', isAuthenticated(), async (req, res) => {
   const settings = getSettings();
-  const userRepository = getRepository(User);
-  try {
-    const admin = await userRepository.findOneOrFail({
-      select: { id: true, plexToken: true },
-      where: { id: 1 },
-    });
+  const isOwner = req.user?.id === 1;
+  let enabledLibraries = settings.plex.libraries.filter((lib) => lib.enabled);
 
-    const isOwner = req.user?.id === 1;
-    let enabledLibraries = settings.plex.libraries.filter((lib) => lib.enabled);
+  const emptyResponse = () => ({
+    machineId: settings.plex.machineId ?? '',
+    enablePlaylists: settings.plex.enablePlaylists ?? false,
+    defaultPivot: settings.plex.defaultPivot ?? 'library',
+    libraries: [] as LibraryLink[],
+    plexHealth: getPlexHealth(),
+  });
 
-    if (!isOwner) {
-      const userSharedLibraries = req.user?.settings?.sharedLibraries;
+  if (!isOwner) {
+    const userSharedLibraries = req.user?.settings?.sharedLibraries;
 
-      if (userSharedLibraries === 'all') {
-        // User has access to all enabled libraries (no filtering needed)
-      } else if (
-        !userSharedLibraries ||
-        userSharedLibraries === 'server' ||
-        userSharedLibraries === ''
-      ) {
-        const defaultLibs = settings.main.sharedLibraries;
+    if (userSharedLibraries === 'all') {
+      // User has access to all enabled libraries (no filtering needed)
+    } else if (
+      !userSharedLibraries ||
+      userSharedLibraries === 'server' ||
+      userSharedLibraries === ''
+    ) {
+      const defaultLibs = settings.main.sharedLibraries;
 
-        if (defaultLibs === 'all' || !defaultLibs) {
-          // Server default is "All Libraries" (no filtering needed)
-        } else {
-          const adminConfiguredLibs = defaultLibs
-            .split(/[,|]/)
-            .map((id) => id.trim())
-            .filter((id) => id !== '');
-
-          enabledLibraries = enabledLibraries.filter((lib) =>
-            adminConfiguredLibs.includes(lib.id)
-          );
-        }
-      } else if (typeof userSharedLibraries === 'string') {
-        const requestedLibs = userSharedLibraries
+      if (defaultLibs === 'all' || !defaultLibs) {
+        // Server default is "All Libraries" (no filtering needed)
+      } else {
+        const adminConfiguredLibs = defaultLibs
           .split(/[,|]/)
           .map((id) => id.trim())
           .filter((id) => id !== '');
 
         enabledLibraries = enabledLibraries.filter((lib) =>
-          requestedLibs.includes(lib.id)
+          adminConfiguredLibs.includes(lib.id)
         );
-      } else {
-        res.status(200).json({
-          machineId: settings.plex.machineId ?? '',
-          enablePlaylists: settings.plex.enablePlaylists ?? false,
-          defaultPivot: settings.plex.defaultPivot ?? 'library',
-          libraries: [],
-        });
-        return;
       }
+    } else if (typeof userSharedLibraries === 'string') {
+      const requestedLibs = userSharedLibraries
+        .split(/[,|]/)
+        .map((id) => id.trim())
+        .filter((id) => id !== '');
+
+      enabledLibraries = enabledLibraries.filter((lib) =>
+        requestedLibs.includes(lib.id)
+      );
+    } else {
+      return res.status(200).json(emptyResponse());
     }
+  }
 
-    // Handle sorting
-    const sortBy = req.query.sort as string;
-    if (sortBy === 'id') {
-      enabledLibraries = enabledLibraries.sort(
-        (a, b) => parseInt(a.id) - parseInt(b.id)
-      );
-    } else if (sortBy === 'name') {
-      enabledLibraries = enabledLibraries.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-    } else if (sortBy === 'type') {
-      enabledLibraries = enabledLibraries.sort((a, b) =>
-        a.type.localeCompare(b.type)
-      );
-    }
-
-    const plexApi = new PlexAPI({ plexToken: admin.plexToken });
-    const machineId = settings.plex.machineId;
-
-    // Build library links with proper Plex URLs
-    const results = await Promise.all(
-      enabledLibraries.map(async (lib) => {
-        const [{ totalSize }, hasPlaylists] = await Promise.all([
-          plexApi.getLibraryContents(lib.id, { size: 0 }),
-          settings.plex.enablePlaylists
-            ? plexApi.libraryHasPlaylists(lib.id)
-            : Promise.resolve(false),
-        ]);
-
-        const plexUrl = `/watch/web/index.html#!/media/${machineId}/com.plexapp.plugins.library?source=${lib.id}`;
-        const regExp = `source=${lib.id}&`;
-
-        return {
-          id: lib.id,
-          name: lib.name,
-          type: lib.type,
-          mediaCount: totalSize,
-          href: plexUrl,
-          regExp: regExp,
-          hasPlaylists,
-        };
-      })
+  const sortBy = req.query.sort as string;
+  if (sortBy === 'id') {
+    enabledLibraries = enabledLibraries.sort(
+      (a, b) => parseInt(a.id) - parseInt(b.id)
     );
+  } else if (sortBy === 'name') {
+    enabledLibraries = enabledLibraries.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  } else if (sortBy === 'type') {
+    enabledLibraries = enabledLibraries.sort((a, b) =>
+      a.type.localeCompare(b.type)
+    );
+  }
 
-    res.status(200).json({
-      machineId: machineId ?? '',
-      enablePlaylists: settings.plex.enablePlaylists ?? false,
-      defaultPivot: settings.plex.defaultPivot ?? 'library',
-      libraries: results,
-    });
-  } catch (e) {
-    logger.error('Something went wrong getting plex library links', {
-      label: 'API',
-      errorMessage: e.message,
-    });
-    next({
-      status: 500,
-      message: 'Unable to retrieve Plex library links.',
+  const buildResponse = (cached: LibraryItemsResponse) => {
+    const orderedIds = enabledLibraries.map((lib) => lib.id);
+    const libraries = orderedIds
+      .map((id) => cached.libraries.find((lib) => lib.id === id))
+      .filter((lib): lib is LibraryLink => lib !== undefined);
+    return {
+      machineId: cached.machineId,
+      enablePlaylists: cached.enablePlaylists,
+      defaultPivot: cached.defaultPivot,
+      libraries,
+      plexHealth: getPlexHealth(),
+    };
+  };
+
+  const cached = getPlexCachedLibraries();
+
+  if (cached) {
+    res.json(buildResponse(cached));
+    if (!isPlexInCooldown()) {
+      void revalidatePlexLibraries();
+    }
+    return;
+  }
+
+  if (isPlexInCooldown()) {
+    return res.json(emptyResponse());
+  }
+
+  await revalidatePlexLibraries();
+  const fresh = getPlexCachedLibraries();
+  return res.json(fresh ? buildResponse(fresh) : emptyResponse());
+});
+
+router.get('/plex/health', isAuthenticated(), (_req, res) => {
+  res.json(getPlexHealth());
+});
+
+router.post(
+  '/plex/health/retry',
+  isAuthenticated(Permission.ADMIN),
+  async (_req, res) => {
+    resetPlexHealth();
+    await revalidatePlexLibraries();
+    res.json({
+      success: !!getPlexCachedLibraries(),
+      health: getPlexHealth(),
     });
   }
-});
+);
 
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
 router.use('/invite', isAuthenticated(), inviteRoutes);

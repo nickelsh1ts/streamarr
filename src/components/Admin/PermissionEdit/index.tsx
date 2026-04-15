@@ -103,7 +103,7 @@ const PermissionEdit = ({
           description: intl.formatMessage({
             id: 'userPermissions.request.description',
             defaultMessage:
-              'Grant permission to access requests (note: access in overseerr must be granted as well)',
+              'Grant permission to access requests (note: access in Seerr must be granted as well)',
           }),
           permission: Permission.REQUEST,
         },

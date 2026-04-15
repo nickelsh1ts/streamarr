@@ -223,7 +223,7 @@ const Request = ({ children, ...props }) => {
           <p className="text-base-content/70 mb-6">
             <FormattedMessage
               id="settings.overseerr.localhostDescription"
-              defaultMessage="Overseerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
+              defaultMessage="Seerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
             />
           </p>
           <Button
@@ -235,7 +235,7 @@ const Request = ({ children, ...props }) => {
           >
             <FormattedMessage
               id="settings.openOverseerr"
-              defaultMessage="Open Overseerr"
+              defaultMessage="Open Seerr"
             />
             <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
           </Button>
@@ -247,7 +247,7 @@ const Request = ({ children, ...props }) => {
   if (!isConfigured) {
     return (
       <ServiceNotConfigured
-        serviceName="Overseerr"
+        serviceName="Seerr"
         settingsPath={
           isAdmin ? '/admin/settings/services/overseerr' : undefined
         }
@@ -268,7 +268,7 @@ const Request = ({ children, ...props }) => {
   if (proxyStatus === 'error') {
     return (
       <ServiceError
-        serviceName="Overseerr"
+        serviceName="Seerr"
         error={proxyError}
         isAdmin={isAdmin}
         onRetry={retry}
@@ -292,7 +292,7 @@ const Request = ({ children, ...props }) => {
         className={`w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-4rem)] relative ${loadingIframe && 'invisible'}`}
         src={`${hostname}${url && url.replace('null', '')}`}
         allowFullScreen
-        title="Overseerr"
+        title="Seerr"
       >
         {mountNode && createPortal(children, mountNode)}
       </iframe>

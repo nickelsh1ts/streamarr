@@ -100,6 +100,14 @@ When disabled, the homepage shows a minimal layout.
 
 This setting is **enabled** by default.
 
+### Enable Help Centre
+
+When enabled, the [Help Centre](../help.md) is accessible from the navigation menu, footer links, and user dropdown. Help topics, legal pages (Terms, Privacy, Cookies), and support contact information are all available.
+
+When disabled, all Help Centre links are hidden and any direct navigation to `/help` is redirected home.
+
+This setting is **enabled** by default.
+
 ### Custom Logo
 
 Upload custom logos to replace the default Streamarr branding. Two variants are supported:
@@ -277,6 +285,43 @@ Configure which libraries are shared with users by default. Options:
 
 Individual user settings can override this default.
 
+### Plex Connection Health
+
+Streamarr automatically monitors the health of your Plex server connection and handles failures gracefully.
+
+#### Health States
+
+| State         | Description                                                                        |
+| ------------- | ---------------------------------------------------------------------------------- |
+| **Healthy**   | Plex is reachable and libraries are up to date                                     |
+| **Retrying**  | First connection failure detected; a retry is scheduled automatically in 5 seconds |
+| **Unhealthy** | Two consecutive failures detected; Streamarr enters a 5-minute cooldown period     |
+
+#### State Transitions
+
+1. **Healthy → Retrying**: The first failed connection attempt marks Plex as retrying
+2. **Retrying → Unhealthy**: A second consecutive failure triggers a 5-minute cooldown
+3. **Unhealthy → Healthy**: A successful connection (or manual retry via API) restores healthy status
+4. **Retrying → Healthy**: A successful connection during the retrying state restores immediately
+
+#### Cooldown Behavior
+
+When in cooldown:
+
+- No new Plex connection attempts are made for **5 minutes**
+- Library data and homepage counts continue to be served from the last successful cache
+- Proxy errors for embedded Plex Web are suppressed to avoid log noise
+- After the cooldown period, the next request triggers a fresh connection attempt
+
+#### Recovery Options
+
+| Method                          | How                                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Automatic retry**             | Streamarr retries 5 seconds after the first failure                                          |
+| **Automatic cooldown recovery** | After 5 minutes, the next request will attempt to reconnect                                  |
+| **Manual retry**                | Click the **Retry** button (visible next to Save Changes when Plex is unhealthy or retrying) |
+| **API retry**                   | `POST /api/v1/plex/health/retry` — same as the manual button; requires **Admin** permission  |
+
 ---
 
 ## Services
@@ -344,16 +389,16 @@ Connect Lidarr for music management.
 | **API Key**        | Found in Lidarr → Settings → General |
 | **URL Base**       | Default is `/lidarr`                 |
 
-#### Overseerr
+#### Seerr
 
-Connect Overseerr for request management.
+Connect Seerr for request management.
 
-| Setting            | Description                             |
-| ------------------ | --------------------------------------- |
-| **Hostname or IP** | Address of your Overseerr server        |
-| **Port**           | Default is `5055`                       |
-| **API Key**        | Found in Overseerr → Settings → General |
-| **URL Base**       | Default is `/overseerr`                 |
+| Setting            | Description                         |
+| ------------------ | ----------------------------------- |
+| **Hostname or IP** | Address of your Seerr server        |
+| **Port**           | Default is `5055`                   |
+| **API Key**        | Found in Seerr → Settings → General |
+| **URL Base**       | Default is `/seerr`                 |
 
 #### Tdarr
 
@@ -441,18 +486,18 @@ Streamarr performs maintenance tasks as scheduled jobs. You can also manually tr
 
 Streamarr caches requests to external APIs. You can flush individual caches if needed:
 
-| Cache        | Description                                   |
-| ------------ | --------------------------------------------- |
-| **TMDB**     | Movie/TV metadata from The Movie Database     |
-| **Plex TV**  | Plex.tv API data                              |
-| **PlexGUID** | Plex media GUID mappings                      |
-| **Radarr**   | Radarr API responses (includes calendar data) |
-| **Sonarr**   | Sonarr API responses (includes calendar data) |
-| **Lidarr**   | Lidarr API responses                          |
-| **Prowlarr** | Prowlarr API responses                        |
-| **IMDB**     | IMDB data from Radarr proxy                   |
-| **GitHub**   | GitHub API responses (for update checks)      |
+| Cache        | Description                               |
+| ------------ | ----------------------------------------- |
+| **TMDB**     | Movie/TV metadata from The Movie Database |
+| **Plex TV**  | Plex.tv API data                          |
+| **PlexGUID** | Plex media GUID mappings                  |
+| **Radarr**   | Radarr API responses                      |
+| **Sonarr**   | Sonarr API responses                      |
+| **Lidarr**   | Lidarr API responses                      |
+| **Prowlarr** | Prowlarr API responses                    |
+| **IMDB**     | IMDB data from Radarr proxy               |
+| **GitHub**   | GitHub API responses (for update checks)  |
 
 {% hint style="info" %}
-Flushing the Radarr or Sonarr cache will also clear cached calendar events, triggering a fresh fetch on the next calendar view.
+Calendar event data is held in a separate in-memory cache and is not affected by flushing the Radarr or Sonarr cache here. Calendar data refreshes automatically in the background on every visit.
 {% endhint %}

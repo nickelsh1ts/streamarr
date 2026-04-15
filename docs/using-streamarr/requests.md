@@ -1,17 +1,17 @@
 # Requests
 
-The Requests page embeds Overseerr to enable users to request new content for your Plex server.
+The Requests page embeds Seerr to enable users to request new content for your Plex server.
 
 ## Overview
 
-Overseerr integration provides:
+Seerr integration provides:
 
 - Content discovery and search
 - Request submission for movies and TV shows
 - Request status tracking
 - Integration with Radarr and Sonarr for automated fulfillment
 
-Access Requests by clicking **Request** in the navigation menu (requires Overseerr configuration).
+Access Requests by clicking **Request** in the navigation menu (requires Seerr configuration).
 
 ---
 
@@ -46,20 +46,20 @@ Monitor the status of your requests:
 
 ## Configuration
 
-Overseerr must be configured in Settings before the Requests page becomes available.
+Seerr must be configured in Settings before the Requests page becomes available.
 
 ### Setup
 
-1. Navigate to **Settings → Services → Overseerr**
+1. Navigate to **Settings → Services → Seerr**
 2. Configure connection settings:
 
-| Setting            | Description                                     |
-| ------------------ | ----------------------------------------------- |
-| **Hostname or IP** | Address of your Overseerr server                |
-| **Port**           | Default is `5055`                               |
-| **Use SSL**        | Enable for HTTPS connections                    |
-| **API Key**        | Found in Overseerr → Settings → General         |
-| **URL Base**       | Base path for the proxy (default: `/overseerr`) |
+| Setting            | Description                                 |
+| ------------------ | ------------------------------------------- |
+| **Hostname or IP** | Address of your Seerr server                |
+| **Port**           | Default is `5055`                           |
+| **Use SSL**        | Enable for HTTPS connections                |
+| **API Key**        | Found in Seerr → Settings → General         |
+| **URL Base**       | Base path for the proxy (default: `/seerr`) |
 
 3. Click **Test** to verify connection
 4. Click **Save**
@@ -76,7 +76,7 @@ Configure default permissions in **Settings → Users → Default Permissions**.
 
 ## Internal Proxy
 
-Overseerr is accessed through Streamarr's internal proxy:
+Seerr is accessed through Streamarr's internal proxy:
 
 - URL path: Configured via `URL Base` setting
 - Authentication can be handled through Streamarr
@@ -110,7 +110,7 @@ Overseerr is accessed through Streamarr's internal proxy:
 
 ### Checking Request Status
 
-1. View your requests in Overseerr's interface
+1. View your requests in Seerr's interface
 2. Filter by status (pending, available, etc.)
 3. Admins can approve or decline requests
 
@@ -120,25 +120,25 @@ Overseerr is accessed through Streamarr's internal proxy:
 
 ### "Request not appearing in navigation"
 
-1. Verify Overseerr is configured in Settings → Services → Overseerr
+1. Verify Seerr is configured in Settings → Services → Seerr
 2. Check that the service is enabled
 3. Ensure you have the **Request** permission
 
-### "Unable to connect to Overseerr"
+### "Unable to connect to Seerr"
 
-1. Verify Overseerr is running
+1. Verify Seerr is running
 2. Check hostname and port are correct
 3. Verify API key is valid
 4. Test network connectivity
 
 ### "Login issues"
 
-1. Overseerr may require its own authentication
-2. Configure Overseerr to trust Streamarr's proxy headers
-3. Alternatively, sign in with Plex in Overseerr
+1. Seerr may require its own authentication
+2. Configure Seerr to trust Streamarr's proxy headers
+3. Alternatively, sign in with Plex in Seerr
 
 ### "Requests not being fulfilled"
 
-1. Check Overseerr's connection to Radarr/Sonarr
-2. Verify download clients are configured in Overseerr
+1. Check Seerr's connection to Radarr/Sonarr
+2. Verify download clients are configured in Seerr
 3. Check available disk space

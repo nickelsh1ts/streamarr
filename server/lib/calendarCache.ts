@@ -1,7 +1,6 @@
 import ical from 'ical';
 import axios from 'axios';
 import { getSettings } from '@server/lib/settings';
-import cacheManager from '@server/lib/cache';
 import type { SonarrSettings, RadarrSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -12,6 +11,17 @@ export interface CalendarEvent {
   summary?: string;
   [key: string]: unknown;
 }
+
+const calendarCache: Record<'sonarr' | 'radarr', CalendarEvent[] | undefined> =
+  {
+    sonarr: undefined,
+    radarr: undefined,
+  };
+
+const revalidating: Record<'sonarr' | 'radarr', boolean> = {
+  sonarr: false,
+  radarr: false,
+};
 
 function buildCalendarUrl(
   settings: SonarrSettings | RadarrSettings,
@@ -28,54 +38,71 @@ function buildCalendarUrl(
   return `${protocol}://${host}:${port}${basePath}/feed/v3/calendar/${calendarFile}?apikey=${apiKey}&pastDays=${pastDays}&futureDays=${futureDays}`;
 }
 
-export async function getOrFetchCalendar(
-  type: 'sonarr' | 'radarr',
-  maxAgeMs = 60 * 60 * 1000 // 1 hour
+async function fetchCalendar(
+  type: 'sonarr' | 'radarr'
 ): Promise<CalendarEvent[]> {
-  const cache = cacheManager.getCache(type).data;
-  const cacheKey = 'calendarEvents';
-  const cached = cache.get<CalendarEvent[]>(cacheKey);
-  if (cached) return cached;
-  try {
-    const settings = getSettings();
-    const instances = type === 'sonarr' ? settings.sonarr : settings.radarr;
-    if (!instances || !Array.isArray(instances)) return [];
-    // Filter for sync-enabled instances
-    const enabledInstances = instances.filter((inst) => inst.syncEnabled);
-    if (enabledInstances.length === 0) return [];
-    // Fetch and combine events from all enabled instances
-    const allEvents: CalendarEvent[] = [];
-    for (const instanceSettings of enabledInstances) {
-      try {
-        const url = buildCalendarUrl(instanceSettings, type);
-        const response = await axios.get(url, { responseType: 'text' });
-        const data = response.data;
-        const parsed = ical.parseICS(data);
-        const events = Object.values(parsed).filter(
-          (event) =>
-            typeof event === 'object' &&
-            event !== null &&
-            (event as { type?: unknown }).type === 'VEVENT' &&
-            (event as { start?: unknown }).start instanceof Date
-        ) as CalendarEvent[];
-        allEvents.push(...events);
-      } catch (e) {
-        logger.error(
-          `Failed to fetch ${type} calendar for instance: ${instanceSettings.hostname}`,
-          {
-            label: 'Calendar',
-            errorMessage: e.message,
-          }
-        );
-      }
+  const settings = getSettings();
+  const instances = type === 'sonarr' ? settings.sonarr : settings.radarr;
+  if (!instances || !Array.isArray(instances)) return [];
+  const enabledInstances = instances.filter((inst) => inst.syncEnabled);
+  if (enabledInstances.length === 0) return [];
+
+  const allEvents: CalendarEvent[] = [];
+  for (const instanceSettings of enabledInstances) {
+    try {
+      const url = buildCalendarUrl(instanceSettings, type);
+      const response = await axios.get(url, { responseType: 'text' });
+      const parsed = ical.parseICS(response.data);
+      const events = Object.values(parsed).filter(
+        (event) =>
+          typeof event === 'object' &&
+          event !== null &&
+          (event as { type?: unknown }).type === 'VEVENT' &&
+          (event as { start?: unknown }).start instanceof Date
+      ) as CalendarEvent[];
+      allEvents.push(...events);
+    } catch (e) {
+      logger.error(
+        `Failed to fetch ${type} calendar for instance: ${instanceSettings.hostname}`,
+        {
+          label: 'Calendar',
+          errorMessage: e instanceof Error ? e.message : String(e),
+        }
+      );
     }
-    cache.set(cacheKey, allEvents, maxAgeMs / 1000);
-    return allEvents;
-  } catch (e) {
-    logger.error(`Failed to fetch ${type} calendar.`, {
-      label: 'Calendar',
-      errorMessage: e.message,
-    });
-    return [];
   }
+  return allEvents;
+}
+
+export async function revalidateCalendar(
+  type: 'sonarr' | 'radarr'
+): Promise<void> {
+  if (revalidating[type]) return;
+  revalidating[type] = true;
+  try {
+    const fresh = await fetchCalendar(type);
+    // Only replace the cache when the content has actually changed
+    if (JSON.stringify(fresh) !== JSON.stringify(calendarCache[type])) {
+      calendarCache[type] = fresh;
+    }
+  } catch (e) {
+    logger.error(`Failed to revalidate ${type} calendar.`, {
+      label: 'Calendar',
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+  } finally {
+    revalidating[type] = false;
+  }
+}
+
+export async function getCalendarData(
+  type: 'sonarr' | 'radarr'
+): Promise<CalendarEvent[]> {
+  if (calendarCache[type] !== undefined) {
+    void revalidateCalendar(type);
+    return calendarCache[type]!;
+  }
+  // Cold cache — wait for first fetch
+  await revalidateCalendar(type);
+  return calendarCache[type] ?? [];
 }
