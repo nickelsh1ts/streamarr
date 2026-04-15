@@ -674,7 +674,9 @@ class Settings {
   }
 
   public save(): void {
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(this.data, undefined, ' '));
+    const tempPath = SETTINGS_PATH + '.tmp';
+    fs.writeFileSync(tempPath, JSON.stringify(this.data, undefined, ' '));
+    fs.renameSync(tempPath, SETTINGS_PATH);
   }
 }
 

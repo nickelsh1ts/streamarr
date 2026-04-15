@@ -239,6 +239,17 @@ router.get<{ userId: number }>(
   '/:userId/pushSubscriptions',
   async (req, res, next) => {
     try {
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        req.user?.id !== Number(req.params.userId)
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to view this user's subscriptions.",
+        });
+      }
+
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSubs = await userPushSubRepository.find({
@@ -258,6 +269,17 @@ router.get<{ userId: number; key: string }>(
   '/:userId/pushSubscription/:key',
   async (req, res, next) => {
     try {
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        req.user?.id !== Number(req.params.userId)
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to view this user's subscription.",
+        });
+      }
+
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSub = await userPushSubRepository.findOneOrFail({
@@ -277,6 +299,17 @@ router.delete<{ userId: number; endpoint: string }>(
   '/:userId/pushSubscription/:endpoint',
   async (req, res, next) => {
     try {
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        req.user?.id !== Number(req.params.userId)
+      ) {
+        return next({
+          status: 403,
+          message:
+            "You do not have permission to delete this user's subscription.",
+        });
+      }
+
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSub = await userPushSubRepository.findOneOrFail({

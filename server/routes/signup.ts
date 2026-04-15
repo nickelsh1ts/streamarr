@@ -707,6 +707,15 @@ signupRoutes.post('/complete', async (req, res) => {
       return;
     }
 
+    // Security: Verify the session user matches the requested userId
+    if (!req.session?.userId || req.session.userId !== Number(userId)) {
+      res.status(403).json({
+        success: false,
+        message: 'You can only complete signup for your own account.',
+      });
+      return;
+    }
+
     const userRepository = getRepository(User);
     const user = await userRepository.findOne({
       where: { id: userId },

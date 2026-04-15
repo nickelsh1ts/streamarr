@@ -194,8 +194,9 @@ class ServarrBase<QueueItemAppendT> extends ExternalAPI {
 
   public createTag = async ({ label }: { label: string }): Promise<Tag> => {
     try {
+      const sanitizedLabel = label.trim().replace(/\s+/g, '-').toLowerCase();
       const response = await this.axios.post<Tag>(`/tag`, {
-        label,
+        label: sanitizedLabel,
       });
 
       return response.data;
