@@ -285,9 +285,11 @@ interface AllSettings {
   jobs: Record<JobId, JobSettings>;
 }
 
-const SETTINGS_PATH = process.env.CONFIG_DIRECTORY
-  ? `${process.env.CONFIG_DIRECTORY}/settings.json`
-  : path.join(__dirname, '../../config/settings.json');
+const SETTINGS_PATH = path.resolve(
+  process.env.CONFIG_DIRECTORY
+    ? `${process.env.CONFIG_DIRECTORY}/settings.json`
+    : path.join(__dirname, '../../config/settings.json')
+);
 
 class Settings {
   private data: AllSettings;
@@ -674,7 +676,9 @@ class Settings {
   }
 
   public save(): void {
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(this.data, undefined, ' '));
+    const tempPath = SETTINGS_PATH + '.tmp';
+    fs.writeFileSync(tempPath, JSON.stringify(this.data, undefined, ' '));
+    fs.renameSync(tempPath, SETTINGS_PATH);
   }
 }
 

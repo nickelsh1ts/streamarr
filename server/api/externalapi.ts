@@ -12,6 +12,7 @@ const DEFAULT_ROLLING_BUFFER = 10000;
 interface ExternalAPIOptions {
   nodeCache?: NodeCache;
   headers?: Record<string, unknown>;
+  timeout?: number;
   rateLimit?: {
     maxRPS: number;
     maxRequests: number;
@@ -28,12 +29,34 @@ class ExternalAPI {
     params: Record<string, unknown>,
     options: ExternalAPIOptions = {}
   ) {
+    // Extract basic auth credentials from the URL if present
+    let cleanedUrl = baseUrl;
+    const authHeaders: Record<string, string> = {};
+
+    try {
+      const url = new URL(baseUrl);
+
+      if (url.username || url.password) {
+        authHeaders.Authorization = `Basic ${Buffer.from(
+          `${decodeURIComponent(url.username)}:${decodeURIComponent(url.password)}`
+        ).toString('base64')}`;
+        url.username = '';
+        url.password = '';
+      }
+
+      cleanedUrl = url.toString();
+    } catch {
+      // URL is malformed; use baseUrl as-is
+    }
+
     this.axios = axios.create({
-      baseURL: baseUrl,
+      baseURL: cleanedUrl,
       params,
+      timeout: options.timeout ?? 10000,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        ...authHeaders,
         ...options.headers,
       },
     });
@@ -69,20 +92,11 @@ class ExternalAPI {
   protected async post<T>(
     endpoint: string,
     data: Record<string, unknown>,
-    config?: AxiosRequestConfig,
-    ttl?: number
+    config?: AxiosRequestConfig
   ): Promise<T> {
-    const cacheKey = this.serializeCacheKey(endpoint, {
-      config: config?.params,
-      data,
-    });
-    const cachedItem = this.cache?.get<T>(cacheKey);
-    if (cachedItem) {
-      return cachedItem;
-    }
     const response = await this.axios.post<T>(endpoint, data, config);
     if (this.cache) {
-      this.cache.set(cacheKey, response.data, ttl ?? DEFAULT_TTL);
+      this.cache.flushAll();
     }
     return response.data;
   }

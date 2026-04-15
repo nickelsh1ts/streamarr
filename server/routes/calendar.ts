@@ -94,7 +94,7 @@ calendarRoutes.post<
 
       const newEvent = await eventRepository.save(event);
 
-      res.status(200).json(newEvent);
+      res.status(201).json(newEvent);
     } catch (e) {
       logger.error('Something went wrong creating an event.', {
         label: 'Calendar',
