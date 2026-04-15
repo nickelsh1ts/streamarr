@@ -1,7 +1,7 @@
 name: 🧰 Maintenance / Chore
 description: CI, GitHub Actions, build, dependencies, refactors (non-feature work)
-title: "[Chore]: "
-labels: ["maintenance", "awaiting triage"]
+title: '[Chore]: '
+labels: ['maintenance', 'awaiting triage']
 type: task
 body:
   - type: markdown

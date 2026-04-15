@@ -1,7 +1,7 @@
 name: 📚 Documentation
 description: Report a docs problem or suggest a docs improvement
-title: "[Docs]: "
-labels: ["documentation", "awaiting triage"]
+title: '[Docs]: '
+labels: ['documentation', 'awaiting triage']
 type: task
 body:
   - type: markdown
@@ -16,7 +16,7 @@ body:
     attributes:
       label: Page / Location
       description: Link to the docs page or the file/path (e.g. https://docs.seerr.dev/... or README.md)
-      placeholder: "https://docs.seerr.dev/..."
+      placeholder: 'https://docs.seerr.dev/...'
     validations:
       required: true
   - type: dropdown
