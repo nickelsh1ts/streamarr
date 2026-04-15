@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - streamarr-api.yml
 
 permissions:
   contents: read
@@ -16,14 +18,15 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy API Docs to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pages: write
       id-token: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           persist-credentials: false
       - name: Generate Swagger UI
