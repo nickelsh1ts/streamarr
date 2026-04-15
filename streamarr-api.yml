@@ -4316,6 +4316,8 @@ paths:
                   status:
                     type: string
                     example: 'ok'
+        '400':
+          description: Bad request - missing email address
       requestBody:
         required: true
         content:
@@ -4352,6 +4354,10 @@ paths:
                   status:
                     type: string
                     example: 'ok'
+        '400':
+          description: Bad request - invalid password or expired reset link
+        '404':
+          description: Invalid or unknown reset link
       requestBody:
         required: true
         content:

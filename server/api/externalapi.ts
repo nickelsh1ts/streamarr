@@ -68,7 +68,7 @@ class ExternalAPI {
       });
     }
 
-    this.baseUrl = cleanedUrl;
+    this.baseUrl = baseUrl;
     this.cache = options.nodeCache;
   }
 
