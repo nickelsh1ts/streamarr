@@ -124,7 +124,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: |
             ${{ env.DOCKER_HUB }}
@@ -175,7 +175,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install Cosign
-        uses: sigstore/cosign-installer@f713795cb21599bc4e5c4b58cbad1da852d7eeb9 # v3
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514 # v0.2.6
       - name: Log in to Docker Hub
@@ -212,7 +212,7 @@ jobs:
             --predicate streamarr-dockerhub-image-${{ env.VERSION }}.sbom \
             "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
       - name: Upload SBOMs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sboms-${{ env.VERSION }}
           path: '*.sbom'
@@ -229,7 +229,7 @@ jobs:
       IMAGE_DIGEST: ${{ needs.publish.outputs.image_digest }}
     steps:
       - name: Install Cosign
-        uses: sigstore/cosign-installer@f713795cb21599bc4e5c4b58cbad1da852d7eeb9 # v3
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
       - name: Verify signatures
         run: |
           cosign verify "ghcr.io/${{ github.repository }}@${{ env.IMAGE_DIGEST }}" \
