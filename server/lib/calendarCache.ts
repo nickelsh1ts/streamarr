@@ -88,7 +88,7 @@ export async function revalidateCalendar(
   } catch (e) {
     logger.error(`Failed to revalidate ${type} calendar.`, {
       label: 'Calendar',
-      errorMessage: e.message,
+      errorMessage: e instanceof Error ? e.message : String(e),
     });
   } finally {
     revalidating[type] = false;

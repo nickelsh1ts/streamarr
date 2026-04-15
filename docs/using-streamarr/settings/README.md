@@ -104,7 +104,7 @@ This setting is **enabled** by default.
 
 When enabled, the [Help Centre](../help.md) is accessible from the navigation menu, footer links, and user dropdown. Help topics, legal pages (Terms, Privacy, Cookies), and support contact information are all available.
 
-When disabled, all Help Centre links are hidden and any direct navigation to `/help` is redirected to the watch page.
+When disabled, all Help Centre links are hidden and any direct navigation to `/help` is redirected home.
 
 This setting is **enabled** by default.
 
