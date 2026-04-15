@@ -23,6 +23,16 @@ updates:
       day: 'sunday'
       time: '08:00'
       timezone: 'America/New_York'
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: 'ci'
+      include: scope
+    groups:
+      github-actions:
+        patterns:
+          - '*'
   - package-ecosystem: 'docker'
     directory: '/'
     schedule:

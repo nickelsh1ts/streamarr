@@ -1,6 +1,7 @@
 name: 🐛 Bug Report
 description: Report a problem
-labels: ['type:bug', 'awaiting-triage']
+labels: ['awaiting triage']
+type: bug
 body:
   - type: markdown
     attributes:
@@ -19,7 +20,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of Streamarr are you running? (You can find this in Settings → About → Version.)
+      description: What version of Streamarr are you running? (You can find this in Admin Centre → Settings → System → About.)
     validations:
       required: true
   - type: textarea
@@ -55,6 +56,15 @@ body:
         - tablet
     validations:
       required: true
+  - type: dropdown
+    id: database
+    attributes:
+      options:
+        - SQLite (default)
+      label: Database
+      description: Which database backend are you using?
+    validations:
+      required: true
   - type: input
     id: device
     attributes:
@@ -81,6 +91,14 @@ body:
     attributes:
       label: Additional Context
       description: Please provide any additional information that may be relevant or helpful.
+  - type: checkboxes
+    id: search-existing
+    attributes:
+      label: Search Existing Issues
+      description: Have you searched existing issues to see if this bug has already been reported?
+      options:
+        - label: Yes, I have searched existing issues.
+          required: true
   - type: checkboxes
     id: terms
     attributes:

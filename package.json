@@ -34,55 +34,55 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ctrl/deluge": "^7.5.2",
+    "@ctrl/deluge": "^8.0.0",
     "@ctrl/qbittorrent": "^9.11.2",
     "@ctrl/shared-torrent": "^6.5.1",
     "@ctrl/transmission": "^7.4.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@headlessui/react": "^2.2.9",
+    "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
-    "axios": "^1.13.5",
-    "axios-rate-limit": "^1.6.1",
+    "axios": "^1.15.0",
+    "axios-rate-limit": "^1.9.0",
     "bcrypt": "^6.0.0",
     "bowser": "^2.14.1",
     "colord": "^2.9.3",
     "connect-typeorm": "^2.0.0",
     "cookie-parser": "^1.4.7",
-    "cronstrue": "^3.12.0",
+    "cronstrue": "^3.14.0",
     "csurf": "^1.11.0",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "email-templates": "^13.0.1",
     "express": "^5.2.1",
     "express-openapi-validator": "^5.6.2",
-    "express-rate-limit": "^8.3.0",
+    "express-rate-limit": "^8.3.2",
     "formik": "^2.4.9",
     "http-proxy-middleware": "^3.0.5",
     "ical": "^0.8.0",
-    "isomorphic-dompurify": "2.36.0",
-    "jose": "^6.1.3",
+    "isomorphic-dompurify": "^3.8.0",
+    "jose": "^6.2.2",
     "moment": "^2.30.1",
-    "multer": "^2.1.0",
-    "next": "^16.1.6",
+    "multer": "^2.1.1",
+    "next": "^16.2.3",
     "nextjs-toploader": "^3.9.17",
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.1",
-    "nodemailer": "^8.0.1",
+    "nodemailer": "^8.0.5",
     "ofetch": "^1.5.1",
     "openpgp": "^6.3.0",
     "plex-api": "^5.3.2",
     "qrcode": "^1.5.4",
-    "react": "^19.2.4",
+    "react": "^19.2.5",
     "react-animate-height": "^3.2.3",
-    "react-aria": "^3.46.0",
+    "react-aria": "^3.48.0",
     "react-big-calendar": "^1.19.4",
     "react-colorful": "^5.6.1",
     "react-datepicker": "^9.1.0",
-    "react-dom": "^19.2.4",
+    "react-dom": "^19.2.5",
     "react-hot-toast": "^2.6.0",
-    "react-intl": "^8.1.3",
+    "react-intl": "^10.1.2",
     "react-markdown": "^10.1.0",
     "react-popper-tooltip": "^4.4.2",
     "react-select": "^5.10.2",
@@ -94,9 +94,9 @@
     "sharp": "^0.34.5",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "^6.0.1",
     "swagger-ui-express": "^5.0.1",
-    "swr": "^2.4.0",
+    "swr": "^2.4.1",
     "theme-change": "^2.5.0",
     "typeorm": "^0.3.28",
     "ua-parser-js": "^2.0.9",
@@ -108,11 +108,11 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.4.1",
-    "@commitlint/config-conventional": "^20.4.1",
-    "@eslint/compat": "^2.0.2",
-    "@eslint/js": "^9.39.2",
-    "@formatjs/cli": "^6.12.2",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@eslint/compat": "^2.0.5",
+    "@eslint/js": "^10.0.1",
+    "@formatjs/cli": "^6.14.2",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/git": "10.0.1",
@@ -128,8 +128,8 @@
     "@types/email-templates": "^10.0.4",
     "@types/express": "^5.0.6",
     "@types/ical": "^0.8.3",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^25.2.3",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
     "@types/node-schedule": "^2.1.8",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",
@@ -141,39 +141,40 @@
     "@types/web-push": "^3.6.4",
     "@types/xml2js": "^0.4.14",
     "@types/yamljs": "^0.2.34",
-    "@typescript-eslint/eslint-plugin": "8.56.0",
-    "@typescript-eslint/parser": "8.56.0",
-    "autoprefixer": "^10.4.24",
+    "@typescript-eslint/eslint-plugin": "8.58.2",
+    "@typescript-eslint/parser": "8.58.2",
+    "autoprefixer": "^10.5.0",
     "commitizen": "4.3.1",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
-    "cypress": "^15.10.0",
+    "cypress": "^15.13.1",
     "cz-conventional-changelog": "3.3.0",
     "daisyui": "4.12.24",
-    "eslint": "^9.39.2",
-    "eslint-config-next": "^16.1.6",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.3",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-formatjs": "^6.1.3",
+    "eslint-plugin-formatjs": "^6.4.5",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-no-relative-import-paths": "1.6.1",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "globals": "^17.3.0",
-    "lint-staged": "^16.2.7",
-    "nodemon": "^3.1.11",
-    "postcss": "8.5.6",
-    "prettier": "^3.8.1",
+    "globals": "^17.5.0",
+    "lint-staged": "^16.4.0",
+    "nodemon": "^3.1.14",
+    "postcss": "8.5.9",
+    "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.7.2",
-    "sass": "^1.98.0",
+    "sass": "^1.99.0",
     "semantic-release": "^25.0.3",
-    "stylelint": "^17.3.0",
+    "stylelint": "^17.7.0",
     "tailwindcss": "3.4.19",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "config": {
     "commitizen": {
@@ -199,8 +200,67 @@
       "main"
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "✨ Features"
+              },
+              {
+                "type": "fix",
+                "section": "🐛 Bug Fixes"
+              },
+              {
+                "type": "perf",
+                "section": "⚡ Performance"
+              },
+              {
+                "type": "revert",
+                "section": "⏪ Reverts"
+              },
+              {
+                "type": "docs",
+                "section": "📚 Documentation"
+              },
+              {
+                "type": "style",
+                "section": "💎 Styles"
+              },
+              {
+                "type": "refactor",
+                "section": "♻️ Refactoring"
+              },
+              {
+                "type": "test",
+                "section": "🧪 Tests"
+              },
+              {
+                "type": "build",
+                "section": "📦 Build System"
+              },
+              {
+                "type": "ci",
+                "section": "🤖 CI/CD"
+              },
+              {
+                "type": "chore",
+                "section": "🔧 Chores",
+                "hidden": true
+              }
+            ]
+          }
+        }
+      ],
       [
         "@semantic-release/changelog",
         {
@@ -233,21 +293,16 @@
   },
   "packageManager": "yarn@4.9.2",
   "resolutions": {
-    "tough-cookie": "^4.1.3",
-    "form-data": "^4.0.4",
-    "qs": "^6.14.1",
-    "xml2js": "^0.6.2",
-    "tar": "^7.5.10",
-    "cookie": "^0.7.2",
+    "request/tough-cookie": "^4.1.3",
+    "request/form-data": "^4.0.4",
+    "request/qs": "^6.14.1",
+    "plex-api/xml2js": "^0.6.2",
     "cheerio/undici": "^6.24.0",
     "@actions/http-client/undici": "^6.24.0",
-    "underscore": "^1.13.8",
-    "multer": "^2.1.0",
-    "dompurify": "^3.3.2",
     "eslint/ajv": "^6.14.0",
     "@eslint/eslintrc/ajv": "^6.14.0",
     "@commitlint/config-validator/ajv": "^6.14.0",
     "har-validator/ajv": "^6.14.0",
-    "bn.js": "^4.12.3"
+    "eslint-config-next/typescript-eslint": "^8.58.2"
   }
 }
