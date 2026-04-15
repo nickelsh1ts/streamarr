@@ -15,8 +15,8 @@ body:
     id: doc-location
     attributes:
       label: Page / Location
-      description: Link to the docs page or the file/path (e.g. https://docs.seerr.dev/... or README.md)
-      placeholder: 'https://docs.seerr.dev/...'
+      description: Link to the docs page or the file/path (e.g. https://docs.streamarr.dev/... or README.md)
+      placeholder: 'https://docs.streamarr.dev/...'
     validations:
       required: true
   - type: dropdown
@@ -34,7 +34,7 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: What’s wrong / missing?
+      label: What's wrong / missing?
       description: Describe the issue in the docs.
     validations:
       required: true
@@ -59,5 +59,5 @@ body:
       label: Code of Conduct
       description: By submitting this issue, you agree to follow our Code of Conduct.
       options:
-        - label: I agree to follow Seerr's [Code of Conduct](https://github.com/seerr-team/seerr/blob/develop/CODE_OF_CONDUCT.md).
+        - label: I agree to follow Streamarr's [Code of Conduct](https://github.com/nickelsh1ts/streamarr/blob/develop/CODE_OF_CONDUCT.md).
           required: true
