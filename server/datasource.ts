@@ -19,7 +19,13 @@ const createDataSourceOptions = (): DataSourceOptions => {
   };
 
   if (dbType === 'postgres') {
-    const envVars = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'];
+    const envVars = [
+      'DB_HOST',
+      'DB_PORT',
+      'DB_USERNAME',
+      'DB_PASSWORD',
+      'DB_NAME',
+    ];
 
     for (const v of envVars) {
       if (!process.env[v]) {
