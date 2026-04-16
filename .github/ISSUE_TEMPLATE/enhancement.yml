@@ -1,7 +1,6 @@
 name: ✨ Feature Request
 description: Suggest an idea
 labels: ['awaiting triage']
-type: feature
 body:
   - type: markdown
     attributes:
