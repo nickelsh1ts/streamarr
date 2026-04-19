@@ -176,7 +176,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install Cosign
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514 # v0.2.6
       - name: Log in to Docker Hub
@@ -230,7 +230,7 @@ jobs:
       IMAGE_DIGEST: ${{ needs.publish.outputs.image_digest }}
     steps:
       - name: Install Cosign
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
       - name: Verify signatures
         run: |
           cosign verify "ghcr.io/${{ github.repository }}@${{ env.IMAGE_DIGEST }}" \
