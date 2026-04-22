@@ -42,7 +42,7 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: yarn
+        run: pnpm install --frozen-lockfile
       - name: i18n Check
         shell: bash
         env:
@@ -52,10 +52,10 @@ jobs:
 
             This usually happens when you've added or modified translation strings in your code but haven't updated the translation file.
 
-            Please run `yarn i18n:extract` and commit the changes.
+            Please run `pnpm i18n:extract` and commit the changes.
         run: |
           retry() { n=0; until "$@"; do n=$((n+1)); [ $n -ge 3 ] && break; echo "retry $n: $*" >&2; sleep 2; done; }
-          check_failed=0; yarn i18n:extract || check_failed=$?
+          check_failed=0; pnpm i18n:extract || check_failed=$?
           if [ "$check_failed" -eq 0 ]; then
             git diff --exit-code src/i18n/locale/en.json || check_failed=1
           fi
@@ -82,11 +82,11 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: yarn
+        run: pnpm install --frozen-lockfile
       - name: Prepare
-        run: yarn format && yarn lint && yarn typecheck
+        run: pnpm format && pnpm lint && pnpm typecheck
       - name: Build
-        run: yarn build
+        run: pnpm build
 
   build:
     name: Build (${{ matrix.arch }})

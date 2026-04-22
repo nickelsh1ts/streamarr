@@ -20,7 +20,7 @@ Create a new API endpoint following the Streamarr conventions. Work through thes
 
 4. **Add TypeScript types**: Define request/response interfaces in `server/interfaces/api/` if they don't already exist.
 
-5. **Validate**: Run `yarn typecheck:server` to confirm no type errors.
+5. **Validate**: Run `pnpm typecheck:server` to confirm no type errors.
 
 ## Reference
 

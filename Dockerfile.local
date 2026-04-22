@@ -19,12 +19,10 @@ RUN if [ -f server/python/requirements.txt ]; then \
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN npm install -g corepack --force && corepack enable
-RUN yarn set version stable
-
-RUN yarn
+RUN corepack pnpm install
 
 FROM deps AS runner
 
 WORKDIR /app
 
-CMD ["yarn", "dev"]
+CMD ["pnpm", "dev"]

@@ -22,7 +22,7 @@ applyTo: 'src/**'
 
 - All user-visible strings must use `react-intl`: `intl.formatMessage({ id: 'key' })`
 - Use `useLocale()` hook for the `intl` instance
-- Extract new keys with `yarn i18n:extract` after adding strings
+- Extract new keys with `pnpm i18n:extract` after adding strings
 
 ## Styling
 
