@@ -76,7 +76,6 @@
     "nodemailer": "^8.0.5",
     "ofetch": "^1.5.1",
     "openpgp": "^6.3.0",
-    "plex-api": "5.3.2",
     "prop-types": "^15.8.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",

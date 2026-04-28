@@ -1,9 +1,15 @@
+import ExternalAPI from '@server/api/externalapi';
 import cacheManager from '@server/lib/cache';
 import type { Library, PlexSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import type NodeCache from 'node-cache';
-import NodePlexAPI from 'plex-api';
+
+interface PlexStatusResponse {
+  MediaContainer: {
+    machineIdentifier: string;
+    friendlyName: string;
+  };
+}
 
 export interface PlexLibraryItem {
   ratingKey: string;
@@ -76,10 +82,7 @@ interface PlexPlaylistsResponse {
   MediaContainer: { size?: number };
 }
 
-class PlexAPI {
-  private plexClient: NodePlexAPI;
-  private cache: NodeCache;
-
+class PlexAPI extends ExternalAPI {
   constructor({
     plexToken,
     plexSettings,
@@ -90,42 +93,31 @@ class PlexAPI {
     timeout?: number;
   }) {
     const settings = getSettings();
-    let settingsPlex: PlexSettings | undefined;
-    plexSettings
-      ? (settingsPlex = plexSettings)
-      : (settingsPlex = getSettings().plex);
+    const settingsPlex = plexSettings ?? settings.plex;
 
-    this.plexClient = new NodePlexAPI({
-      hostname: settingsPlex.ip,
-      port: settingsPlex.port,
-      https: settingsPlex.useSsl,
-      timeout: timeout,
-      token: plexToken,
-      authenticator: {
-        authenticate: (
-          _plexApi,
-          cb: (err?: string, token?: string) => void
-        ) => {
-          if (!plexToken) {
-            return cb('Plex Token not found!');
-          }
-          cb(undefined, plexToken);
+    const protocol = settingsPlex.useSsl ? 'https' : 'http';
+    const baseUrl = `${protocol}://${settingsPlex.ip}:${settingsPlex.port}`;
+
+    super(
+      baseUrl,
+      {},
+      {
+        timeout,
+        nodeCache: cacheManager.getCache('plexguid').data,
+        headers: {
+          'X-Plex-Token': plexToken ?? '',
+          'X-Plex-Client-Identifier': settings.clientId,
+          'X-Plex-Product': 'Streamarr',
+          'X-Plex-Device-Name': 'Streamarr',
+          'X-Plex-Platform': 'Streamarr',
         },
-      },
-      options: {
-        identifier: settings.clientId,
-        product: 'Streamarr',
-        deviceName: 'Streamarr',
-        platform: 'Streamarr',
-      },
-    });
-
-    this.cache = cacheManager.getCache('plexguid').data;
+      }
+    );
   }
 
-  public async getStatus() {
+  public async getStatus(): Promise<PlexStatusResponse> {
     try {
-      return await this.plexClient.query('/');
+      return await this.get<PlexStatusResponse>('/');
     } catch (e) {
       const errMsg =
         e instanceof Error
@@ -140,7 +132,7 @@ class PlexAPI {
   public async getLibraries(): Promise<PlexLibrary[]> {
     try {
       const response =
-        await this.plexClient.query<PlexLibrariesResponse>('/library/sections');
+        await this.get<PlexLibrariesResponse>('/library/sections');
       return response.MediaContainer.Directory;
     } catch (e) {
       logger.error('Failed to fetch Plex libraries', {
@@ -185,13 +177,15 @@ class PlexAPI {
     { offset = 0, size = 50 }: { offset?: number; size?: number } = {}
   ): Promise<{ totalSize: number; items: PlexLibraryItem[] }> {
     try {
-      const response = await this.plexClient.query<PlexLibraryResponse>({
-        uri: `/library/sections/${id}/all?includeGuids=1`,
-        extraHeaders: {
-          'X-Plex-Container-Start': `${offset}`,
-          'X-Plex-Container-Size': `${size}`,
-        },
-      });
+      const response = await this.get<PlexLibraryResponse>(
+        `/library/sections/${id}/all?includeGuids=1`,
+        {
+          headers: {
+            'X-Plex-Container-Start': `${offset}`,
+            'X-Plex-Container-Size': `${size}`,
+          },
+        }
+      );
       return {
         totalSize: response.MediaContainer.totalSize,
         items: response.MediaContainer.Metadata ?? [],
@@ -209,24 +203,11 @@ class PlexAPI {
     key: string,
     options: { includeChildren?: boolean } = {}
   ): Promise<PlexMetadata> {
-    const cacheKey = `plex:metadata:${key}:${options.includeChildren ? '1' : '0'}`;
-
-    const cached = this.cache.get<PlexMetadata>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
     try {
-      const response = await this.plexClient.query<PlexMetadataResponse>(
-        `/library/metadata/${key}${
-          options.includeChildren ? '?includeChildren=1' : ''
-        }`
+      const response = await this.get<PlexMetadataResponse>(
+        `/library/metadata/${key}${options.includeChildren ? '?includeChildren=1' : ''}`
       );
-      const metadata = response.MediaContainer.Metadata[0];
-
-      this.cache.set(cacheKey, metadata);
-
-      return metadata;
+      return response.MediaContainer.Metadata[0];
     } catch (e) {
       logger.error('Failed to fetch Plex metadata', {
         label: 'Plex API',
@@ -237,22 +218,11 @@ class PlexAPI {
   }
 
   public async getChildrenMetadata(key: string): Promise<PlexMetadata[]> {
-    const cacheKey = `plex:children:${key}`;
-
-    const cached = this.cache.get<PlexMetadata[]>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
     try {
-      const response = await this.plexClient.query<PlexMetadataResponse>(
+      const response = await this.get<PlexMetadataResponse>(
         `/library/metadata/${key}/children`
       );
-      const metadata = response.MediaContainer.Metadata;
-
-      this.cache.set(cacheKey, metadata);
-
-      return metadata;
+      return response.MediaContainer.Metadata;
     } catch (e) {
       logger.error('Failed to fetch Plex children metadata', {
         label: 'Plex API',
@@ -268,15 +238,17 @@ class PlexAPI {
     mediaType: 'movie' | 'show'
   ): Promise<PlexLibraryItem[]> {
     try {
-      const response = await this.plexClient.query<PlexLibraryResponse>({
-        uri: `/library/sections/${id}/all?type=${
+      const response = await this.get<PlexLibraryResponse>(
+        `/library/sections/${id}/all?type=${
           mediaType === 'show' ? '4' : '1'
         }&sort=addedAt%3Adesc&addedAt>>=${Math.floor(options.addedAt / 1000)}`,
-        extraHeaders: {
-          'X-Plex-Container-Start': `0`,
-          'X-Plex-Container-Size': `500`,
-        },
-      });
+        {
+          headers: {
+            'X-Plex-Container-Start': '0',
+            'X-Plex-Container-Size': '500',
+          },
+        }
+      );
       return response.MediaContainer.Metadata;
     } catch (e) {
       logger.error('Failed to fetch Plex recently added', {
@@ -288,19 +260,13 @@ class PlexAPI {
   }
 
   public async libraryHasPlaylists(sectionId: string): Promise<boolean> {
-    const cacheKey = `plex:libraryHasPlaylists:${sectionId}`;
-    const cached = this.cache.get<boolean>(cacheKey);
-    if (cached !== undefined) {
-      return cached;
-    }
-
     try {
-      const response = await this.plexClient.query<PlexPlaylistsResponse>(
-        `/playlists?sectionID=${sectionId}`
+      const response = await this.get<PlexPlaylistsResponse>(
+        `/playlists?sectionID=${sectionId}`,
+        undefined,
+        300
       );
-      const hasPlaylists = (response.MediaContainer.size ?? 0) > 0;
-      this.cache.set(cacheKey, hasPlaylists, 300);
-      return hasPlaylists;
+      return (response.MediaContainer.size ?? 0) > 0;
     } catch (e) {
       logger.error('Failed to check playlists for library', {
         label: 'Plex API',
