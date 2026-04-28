@@ -37,10 +37,8 @@ jobs:
           node-version: 25
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
-      - name: Ensure Yarn is correct version
-        run: corepack prepare yarn@4.9.2 --activate
       - name: Install dependencies
-        run: yarn
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Release
         id: semantic
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0

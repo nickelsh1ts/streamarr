@@ -22,17 +22,17 @@ Express serves API routes (`/api/v1/*`) and delegates everything else to Next.js
 
 | Task               | Command                                                              |
 | ------------------ | -------------------------------------------------------------------- |
-| Dev (Node only)    | `yarn dev`                                                           |
-| Dev (Python svc)   | `yarn start:python` (separate terminal)                              |
-| Build all          | `yarn build`                                                         |
-| Pre-commit check   | `yarn prepare` (format + lint + typecheck)                           |
-| Type check         | `yarn typecheck` / `yarn typecheck:server` / `yarn typecheck:client` |
-| Lint               | `yarn lint` / `yarn css-lint`                                        |
-| Format             | `yarn format`                                                        |
-| E2E tests          | `yarn cypress:build && yarn cypress:open`                            |
-| Generate migration | `yarn migration:generate server/migration/Name`                      |
-| Run migrations     | `yarn migration:run`                                                 |
-| Extract i18n       | `yarn i18n:extract`                                                  |
+| Dev (Node only)    | `pnpm dev`                                                           |
+| Dev (Python svc)   | `pnpm start:python` (separate terminal)                              |
+| Build all          | `pnpm build`                                                         |
+| Pre-commit check   | `pnpm prepare` (format + lint + typecheck)                           |
+| Type check         | `pnpm typecheck` / `pnpm typecheck:server` / `pnpm typecheck:client` |
+| Lint               | `pnpm lint` / `pnpm css-lint`                                        |
+| Format             | `pnpm format`                                                        |
+| E2E tests          | `pnpm cypress:build && pnpm cypress:open`                            |
+| Generate migration | `pnpm migration:generate server/migration/Name`                      |
+| Run migrations     | `pnpm migration:run`                                                 |
+| Extract i18n       | `pnpm i18n:extract`                                                  |
 | API docs (dev)     | `http://localhost:3000/api-docs` (Swagger UI)                        |
 
 Dev uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`.
@@ -57,13 +57,13 @@ Dev uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`.
 - **Data fetching**: SWR for all client-side data (`useSWR<Type>('/api/v1/...')`)
 - **Server data**: Root layout (`src/app/layout.tsx`) fetches settings + user server-side, passes to context providers
 - **State**: React contexts in `src/context/` — no Redux. Hooks in `src/hooks/` wrap contexts and SWR calls
-- **i18n**: `react-intl` with `useLocale` hook. Extract keys with `yarn i18n:extract`
+- **i18n**: `react-intl` with `useLocale` hook. Extract keys with `pnpm i18n:extract`
 - **Styling**: Tailwind CSS with `tailwindcss/nesting`. Classes auto-sorted by Prettier plugin
 
 ### Database Migrations
 
 - **Dev**: `synchronize: true` — entity changes apply automatically
-- **Prod**: Migrations run automatically on startup. Generate from entity changes with `yarn migration:generate`
+- **Prod**: Migrations run automatically on startup. Generate from entity changes with `pnpm migration:generate`
 
 ## Key Files
 

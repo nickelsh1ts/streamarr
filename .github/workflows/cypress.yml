@@ -54,20 +54,23 @@ jobs:
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 25
-          cache: 'yarn'
+          cache: 'pnpm'
       - name: Setup cypress cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-store-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-cypress-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-cypress-store-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Cypress run
         uses: cypress-io/github-action@783cb3f07983868532cabaedaa1e6c00ff4786a8 # v7.1.9
         with:
-          build: yarn cypress:build
-          start: yarn start
+          install: false
+          build: pnpm cypress:build
+          start: pnpm start
           wait-on: 'http://localhost:3000'
           record: true
         env:

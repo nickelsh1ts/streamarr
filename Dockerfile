@@ -8,18 +8,15 @@ RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini pyt
 
 FROM base AS builder
 
-ENV YARN_VERSION=4.9.2
-
 RUN apk add --no-cache py3-pip \
-  && npm install -g corepack --force && corepack enable && corepack prepare yarn@${YARN_VERSION}
+  && npm install -g corepack --force && corepack enable
 
 WORKDIR /app
 
-COPY package.json yarn.lock* ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN echo 'nodeLinker: "node-modules"' > ./.yarnrc.yml
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-  yarn --immutable --network-timeout 1000000
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  corepack pnpm install --frozen-lockfile
 
 COPY src ./src
 COPY public ./public
@@ -33,7 +30,7 @@ RUN if [ -f server/python/requirements.txt ]; then \
   pip install --no-cache-dir gunicorn; \
   fi
 
-RUN yarn build \
+RUN pnpm build \
   && rm -rf /app/.next/cache /app/src
 
 ARG COMMIT_TAG
@@ -42,7 +39,7 @@ RUN echo "{\"commitTag\": \"${COMMIT_TAG}\"}" > committag.json
 FROM builder AS prod-deps
 
 RUN npm prune --omit=dev 2>/dev/null; \
-  yarn cache clean && rm -rf /root/.cache /app/.yarn
+  pnpm store prune && rm -rf /root/.cache
 
 FROM base AS runner
 
