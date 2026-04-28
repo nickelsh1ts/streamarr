@@ -42,7 +42,7 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: i18n Check
         shell: bash
         env:
@@ -82,7 +82,7 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Prepare
         run: pnpm format && pnpm lint && pnpm typecheck
       - name: Build
