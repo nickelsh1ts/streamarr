@@ -16,7 +16,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-  corepack pnpm install --frozen-lockfile
+  corepack pnpm install --frozen-lockfile --ignore-scripts
+
+RUN pnpm rebuild bcrypt sharp sqlite3
 
 COPY src ./src
 COPY public ./public
