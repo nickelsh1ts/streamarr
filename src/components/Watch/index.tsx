@@ -61,12 +61,12 @@ const Watch = ({ children, ...props }) => {
         window.location.search +
         window.location.hash;
 
-      const firstHash = parentUrl.indexOf('#');
-      const secondHash =
-        firstHash !== -1 ? parentUrl.indexOf('#', firstHash + 1) : -1;
-      if (secondHash !== -1) {
-        // Collapse double-hashbang: keep only the last #! segment
-        parentUrl = parentUrl.slice(0, firstHash) + parentUrl.slice(secondHash);
+      const firstHashbang = parentUrl.indexOf('#!');
+      const lastHashbang = parentUrl.lastIndexOf('#!');
+      if (firstHashbang !== lastHashbang) {
+        // Collapse duplicate hashbang segments: keep only the last #! segment
+        parentUrl =
+          parentUrl.slice(0, firstHashbang) + parentUrl.slice(lastHashbang);
         window.history.replaceState(
           { ...window.history.state, as: parentUrl, url: parentUrl },
           '',
