@@ -1297,7 +1297,6 @@ router.get<{ id: string }>(
                   if (recovery === 'same-key') {
                   } else if (recovery) {
                     meta = recovery.meta;
-                    activeKey = recovery.newKey;
                     rekeyedMap.set(key, recovery.newKey);
                   } else {
                     deletedKeys.add(key);
