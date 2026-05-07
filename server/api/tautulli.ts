@@ -218,16 +218,20 @@ class TautulliAPI {
   }
 
   public async getUserWatchHistory(
-    user: User
+    user: User,
+    { take = 20, skip = 0 }: { take?: number; skip?: number } = {}
   ): Promise<TautulliHistoryRecord[]> {
     let results: TautulliHistoryRecord[] = [];
     try {
       if (!user.plexId) {
         throw new Error('User does not have an associated Plex ID');
       }
-      const take = 100;
+      const batchSize = 100;
+      const needed = skip + take;
+      const maxBatches = 20;
       let start = 0;
-      while (results.length < 20) {
+      let batches = 0;
+      while (results.length < needed && batches < maxBatches) {
         const tautulliData = (
           await this.axios.get<TautulliHistoryResponse>('/api/v2', {
             params: {
@@ -237,7 +241,7 @@ class TautulliAPI {
               order_dir: 'desc',
               user_id: user.plexId,
               media_type: 'movie,episode',
-              length: take,
+              length: batchSize,
               start,
             },
           })
@@ -245,16 +249,14 @@ class TautulliAPI {
         if (!tautulliData.length) {
           return results;
         }
-        results = uniqWith(results.concat(tautulliData), (recordA, recordB) =>
-          recordA.grandparent_rating_key && recordB.grandparent_rating_key
-            ? recordA.grandparent_rating_key === recordB.grandparent_rating_key
-            : recordA.parent_rating_key && recordB.parent_rating_key
-              ? recordA.parent_rating_key === recordB.parent_rating_key
-              : recordA.rating_key === recordB.rating_key
+        results = uniqWith(
+          results.concat(tautulliData),
+          (recordA, recordB) => recordA.rating_key === recordB.rating_key
         );
-        start += take;
+        start += batchSize;
+        batches++;
       }
-      return results.slice(0, 20);
+      return results.slice(skip, skip + take);
     } catch (e) {
       logger.error(
         'Something went wrong fetching user watch history from Tautulli',
