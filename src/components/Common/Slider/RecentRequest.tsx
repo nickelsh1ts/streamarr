@@ -2,6 +2,7 @@ import Badge from '@app/components/Common/Badge';
 import CachedImage from '@app/components/Common/CachedImage';
 import { withProperties } from '@app/utils/typeHelpers';
 import { MediaRequestStatus, MediaStatus } from '@server/constants/seerr';
+import { FilmIcon, TvIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -121,15 +122,17 @@ const RequestCardError = ({
                     }
                     className="group flex items-center"
                   >
-                    <span className="mr-2 rounded-full">
-                      <CachedImage
-                        src={requestData.requestedBy.avatar}
-                        alt=""
-                        className="rounded-full object-cover"
-                        width={20}
-                        height={20}
-                      />
-                    </span>
+                    {requestData.requestedBy.avatar && (
+                      <span className="mr-2 rounded-full">
+                        <CachedImage
+                          src={requestData.requestedBy.avatar}
+                          alt=""
+                          className="rounded-full object-cover"
+                          width={20}
+                          height={20}
+                        />
+                      </span>
+                    )}
                     <span className="truncate group-hover:underline">
                       {requestData.requestedBy.displayName}
                     </span>
@@ -229,15 +232,17 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             }
             className="group flex items-center gap-2"
           >
-            <span className="rounded-full">
-              <CachedImage
-                src={requestData.requestedBy.avatar}
-                alt=""
-                className="rounded-full object-cover"
-                width={20}
-                height={20}
-              />
-            </span>
+            {requestData.requestedBy.avatar && (
+              <span className="rounded-full">
+                <CachedImage
+                  src={requestData.requestedBy.avatar}
+                  alt=""
+                  className="rounded-full object-cover"
+                  width={20}
+                  height={20}
+                />
+              </span>
+            )}
             <span className="truncate font-semibold group-hover:text-white group-hover:underline">
               {requestData.requestedBy.displayName}
             </span>
@@ -289,18 +294,24 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
         }
         className="w-20 flex-shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28"
       >
-        <CachedImage
-          src={
-            title.posterPath
-              ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`
-              : '/images/seerr_poster_not_found.png'
-          }
-          alt=""
-          sizes="100vw"
-          style={{ width: '100%', height: 'auto' }}
-          width={600}
-          height={900}
-        />
+        {title.posterPath ? (
+          <CachedImage
+            src={`https://image.tmdb.org/t/p/w600_and_h900_bestv2${title.posterPath}`}
+            alt=""
+            sizes="100vw"
+            style={{ width: '100%', height: 'auto' }}
+            width={600}
+            height={900}
+          />
+        ) : (
+          <div className="flex aspect-[2/3] w-full items-center justify-center bg-base-300">
+            {request.type === 'tv' ? (
+              <TvIcon className="size-10 text-base-content/20" />
+            ) : (
+              <FilmIcon className="size-10 text-base-content/20" />
+            )}
+          </div>
+        )}
       </Link>
     </div>
   );

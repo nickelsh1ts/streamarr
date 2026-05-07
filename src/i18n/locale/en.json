@@ -218,9 +218,6 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
-  "common.Requests": {
-    "defaultMessage": "Requests"
-  },
   "common.actions": {
     "defaultMessage": "Actions"
   },

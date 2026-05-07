@@ -20,7 +20,7 @@ export interface SeerrRequestItem {
   mediaStatus: number;
   media: { tmdbId: number };
   seasons: { id: number; seasonNumber: number }[];
-  requestedBy: { id: number; displayName: string; avatar: string };
+  requestedBy: { id: number; displayName: string; avatar: string | null };
   createdAt: string;
 }
 

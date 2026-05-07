@@ -1160,12 +1160,12 @@ router.get<{ id: string }>(
       const machineId = settings.plex.machineId;
 
       const showKey = (r: {
-        grandparent_rating_key?: number | null;
-        rating_key: number;
+        grandparentRatingKey?: number | null;
+        ratingKey: number;
       }) =>
-        r.grandparent_rating_key
-          ? String(r.grandparent_rating_key)
-          : String(r.rating_key);
+        r.grandparentRatingKey
+          ? String(r.grandparentRatingKey)
+          : String(r.ratingKey);
 
       const showKeyToRecord = new Map<string, TautulliHistoryRecord>();
       const results = history.map((record) => {
@@ -1174,22 +1174,22 @@ router.get<{ id: string }>(
           : String(record.rating_key);
         if (!showKeyToRecord.has(sKey)) showKeyToRecord.set(sKey, record);
         return {
-          rating_key: record.rating_key,
-          grandparent_rating_key: record.grandparent_rating_key || null,
+          ratingKey: record.rating_key,
+          grandparentRatingKey: record.grandparent_rating_key || null,
           title: record.title,
-          grandparent_title: record.grandparent_title || null,
-          media_type: record.media_type as 'movie' | 'episode',
+          grandparentTitle: record.grandparent_title || null,
+          mediaType: record.media_type as 'movie' | 'episode',
           thumb: record.grandparent_rating_key
             ? `/library/metadata/${record.grandparent_rating_key}/thumb`
             : record.thumb || null,
           summary: null as string | null,
-          poster_path: null as string | null,
-          backdrop_path: null as string | null,
-          percent_complete: record.percent_complete,
-          plex_url: machineId
+          posterPath: null as string | null,
+          backdropPath: null as string | null,
+          percentComplete: record.percent_complete,
+          plexUrl: machineId
             ? `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${record.rating_key}`
             : null,
-          deleted_from_plex: false,
+          deletedFromPlex: false,
         };
       });
 
@@ -1286,12 +1286,12 @@ router.get<{ id: string }>(
           for (const result of results) {
             const key = showKey(result);
             result.summary = summaryMap.get(key) ?? null;
-            result.poster_path = posterMap.get(key) ?? null;
-            result.backdrop_path = backdropMap.get(key) ?? null;
-            result.deleted_from_plex = deletedKeys.has(key);
+            result.posterPath = posterMap.get(key) ?? null;
+            result.backdropPath = backdropMap.get(key) ?? null;
+            result.deletedFromPlex = deletedKeys.has(key);
 
-            if (result.deleted_from_plex) {
-              result.plex_url = null;
+            if (result.deletedFromPlex) {
+              result.plexUrl = null;
             }
           }
         }

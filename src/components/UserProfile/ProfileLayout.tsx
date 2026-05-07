@@ -31,8 +31,8 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
     const watchBackdrops = [
       ...new Set(
         watchData?.results
-          .filter((r) => r.backdrop_path)
-          .map((r) => `https://image.tmdb.org/t/p/original${r.backdrop_path}`)
+          .filter((r) => r.backdropPath)
+          .map((r) => `https://image.tmdb.org/t/p/original${r.backdropPath}`)
       ),
     ];
     if (watchBackdrops.length) return watchBackdrops;

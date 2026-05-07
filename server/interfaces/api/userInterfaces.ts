@@ -22,18 +22,18 @@ export interface UserNotificationsResponse extends PaginatedResponse {
 }
 
 export interface WatchHistoryItem {
-  rating_key: number;
-  grandparent_rating_key: number | null;
+  ratingKey: number;
+  grandparentRatingKey: number | null;
   title: string;
-  grandparent_title: string | null;
-  media_type: 'movie' | 'episode';
+  grandparentTitle: string | null;
+  mediaType: 'movie' | 'episode';
   thumb: string | null;
   summary: string | null;
-  poster_path: string | null;
-  backdrop_path: string | null;
-  percent_complete: number;
-  plex_url: string | null;
-  deleted_from_plex: boolean;
+  posterPath: string | null;
+  backdropPath: string | null;
+  percentComplete: number;
+  plexUrl: string | null;
+  deletedFromPlex: boolean;
 }
 
 export interface UserWatchDataResponse {

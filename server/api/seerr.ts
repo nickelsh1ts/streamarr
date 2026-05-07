@@ -89,7 +89,7 @@ class SeerrAPI {
           r.requestedBy.plexUsername ||
           r.requestedBy.email ||
           'Unknown User',
-        avatar: r.requestedBy.avatar ?? '',
+        avatar: r.requestedBy.avatar ?? null,
       },
       createdAt: r.createdAt,
     };

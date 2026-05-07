@@ -168,8 +168,9 @@ class ImageProxy {
       return newImage;
     }
 
-    // If the image is stale, we will revalidate it in the background.
-    if (imageResponse.meta.isStale) {
+    // If the image is stale, revalidate in the background only when caching is enabled.
+    const settings = getSettings();
+    if (imageResponse.meta.isStale && settings.main.cacheImages) {
       this.set(path, cacheKey);
     }
 

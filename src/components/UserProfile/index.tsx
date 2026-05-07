@@ -136,12 +136,11 @@ const UserProfile = () => {
     <div className="mb-8">
       <div className="relative">
         <dl className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-          {user ? (
-            (user.id === currentUser?.id ||
-              currentHasPermission(
-                [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
-                { type: 'and' }
-              )) &&
+          {(user.id === currentUser?.id ||
+            currentHasPermission(
+              [Permission.MANAGE_USERS, Permission.MANAGE_INVITES],
+              { type: 'and' }
+            )) &&
             (user.inviteCountRedeemed > 0 ||
               currentSettings.enableSignUp ||
               user.redeemedInvite?.createdBy) && (
@@ -201,10 +200,7 @@ const UserProfile = () => {
                   </div>
                 )}
               </div>
-            )
-          ) : (
-            <Placeholder />
-          )}
+            )}
           {currentSettings.enableSignUp ? (
             quota ? (
               <>
@@ -334,7 +330,7 @@ const UserProfile = () => {
               >
                 <div className="text-sm font-bold col-span-2">
                   <FormattedMessage
-                    id="common.Requests"
+                    id="common.requests"
                     defaultMessage="Requests"
                   />
                 </div>
@@ -581,7 +577,7 @@ const UserProfile = () => {
               isLoading={!watchData && !watchError}
               items={(watchData?.results ?? []).map((item) => (
                 <RecentlyWatched
-                  key={`watch-slider-item-${item.rating_key}`}
+                  key={`watch-slider-item-${item.ratingKey}`}
                   item={item}
                 />
               ))}

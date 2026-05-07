@@ -19,13 +19,13 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
   const isTouch = useIsTouch();
   const [showDetail, setShowDetail] = useState(false);
 
-  const isEpisode = item?.media_type === 'episode';
+  const isEpisode = item?.mediaType === 'episode';
   const thumbUrl =
-    item?.thumb && !item?.deleted_from_plex
+    item?.thumb && !item?.deletedFromPlex
       ? `/imageproxy/plex?path=${encodeURIComponent(item.thumb)}`
       : null;
-  const tmdbPosterUrl = item?.poster_path
-    ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
+  const tmdbPosterUrl = item?.posterPath
+    ? `https://image.tmdb.org/t/p/w342${item.posterPath}`
     : null;
   const [posterSrc, setPosterSrc] = useState<string | null>(
     thumbUrl ?? tmdbPosterUrl ?? null
@@ -37,8 +37,8 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
 
   useClickOutside(ref, handleClickOutside);
   const displayTitle =
-    isEpisode && item?.grandparent_title
-      ? item.grandparent_title
+    isEpisode && item?.grandparentTitle
+      ? item.grandparentTitle
       : (item?.title ?? '');
   const subtitle = isEpisode ? (item?.title ?? null) : null;
 
@@ -72,7 +72,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${showDetail ? 'opacity-100' : 'opacity-0'}`}
       />
-      {item?.deleted_from_plex && (
+      {item?.deletedFromPlex && (
         <div className="absolute top-1 right-1 z-10">
           <Badge badgeType="error">
             <FormattedMessage id="common.deleted" defaultMessage="Deleted" />
@@ -112,14 +112,14 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
             </p>
           </div>
         )}
-        {Number(item?.percent_complete) &&
-          item.percent_complete > 0 &&
-          item.percent_complete < 85 && (
+        {Number(item?.percentComplete) &&
+          item.percentComplete > 0 &&
+          item.percentComplete < 85 && (
             <div className="mt-1.5">
               <div className="h-0.5 w-full rounded-full bg-white/20 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-primary"
-                  style={{ width: `${item.percent_complete}%` }}
+                  style={{ width: `${item.percentComplete}%` }}
                 />
               </div>
             </div>
@@ -145,15 +145,15 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           onClick={() => {
             if (!showDetail) {
               setShowDetail(true);
-            } else if (item?.plex_url && !item?.deleted_from_plex) {
-              window.location.href = item.plex_url;
+            } else if (item?.plexUrl && !item?.deletedFromPlex) {
+              window.location.href = item.plexUrl;
             }
           }}
         >
           {innerCard}
         </div>
-      ) : item?.plex_url && !item?.deleted_from_plex ? (
-        <a href={item.plex_url} className={containerClass}>
+      ) : item?.plexUrl && !item?.deletedFromPlex ? (
+        <a href={item.plexUrl} className={containerClass}>
           {innerCard}
         </a>
       ) : (
