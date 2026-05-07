@@ -16,6 +16,7 @@ export interface PlexLibraryItem {
   parentRatingKey?: string;
   grandparentRatingKey?: string;
   title: string;
+  grandparentTitle?: string;
   guid: string;
   parentGuid?: string;
   grandparentGuid?: string;
@@ -24,6 +25,15 @@ export interface PlexLibraryItem {
   Guid?: { id: string }[];
   type: 'movie' | 'show' | 'season' | 'episode';
   Media: Media[];
+}
+
+export class PlexNotFoundError extends Error {
+  public readonly key: string;
+  constructor(key: string) {
+    super(`Plex item not found: ${key}`);
+    this.name = 'PlexNotFoundError';
+    this.key = key;
+  }
 }
 
 interface PlexLibraryResponse {
@@ -212,13 +222,27 @@ class PlexAPI extends ExternalAPI {
     } catch (e) {
       const status = (e as { response?: { status?: number } })?.response
         ?.status;
-      if (status !== 404) {
-        logger.error('Failed to fetch Plex metadata', {
-          label: 'Plex API',
-          errorMessage: e instanceof Error ? e.message : String(e),
-        });
+      if (status === 404) {
+        throw new PlexNotFoundError(key);
       }
+      logger.error('Failed to fetch Plex metadata', {
+        label: 'Plex API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
       throw new Error('Failed to fetch Plex metadata');
+    }
+  }
+
+  public async searchByGuid(guid: string): Promise<PlexLibraryItem | null> {
+    if (!guid) return null;
+    try {
+      const response = await this.get<PlexLibraryResponse>('/library/all', {
+        params: { guid, includeGuids: 1 },
+      });
+      const items = response.MediaContainer?.Metadata;
+      return items && items.length > 0 ? items[0] : null;
+    } catch {
+      return null;
     }
   }
 

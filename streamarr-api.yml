@@ -865,6 +865,9 @@ components:
         deletedFromPlex:
           type: boolean
           example: false
+        plexThumbReliable:
+          type: boolean
+          example: true
     SeerrRequestItem:
       type: object
       properties:

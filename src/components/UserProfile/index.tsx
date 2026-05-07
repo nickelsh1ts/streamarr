@@ -102,14 +102,15 @@ const UserProfile = () => {
       : null
   );
 
-  const { data: seerrUserQuota } = useSWR<SeerrQuotaResponse>(
-    user &&
-      currentSettings.seerrEnabled &&
-      (user.id === currentUser?.id ||
-        currentHasPermission(Permission.MANAGE_USERS))
-      ? `/api/v1/user/${user.id}/settings/seerr/quota`
-      : null
-  );
+  const { data: seerrUserQuota, error: seerrUserQuotaError } =
+    useSWR<SeerrQuotaResponse>(
+      user &&
+        currentSettings.seerrEnabled &&
+        (user.id === currentUser?.id ||
+          currentHasPermission(Permission.MANAGE_USERS))
+        ? `/api/v1/user/${user.id}/settings/seerr/quota`
+        : null
+    );
 
   if (!user && !error) {
     return <LoadingEllipsis />;
@@ -320,7 +321,7 @@ const UserProfile = () => {
               <Placeholder />
             )
           ) : null}
-          {currentSettings.seerrEnabled ? (
+          {currentSettings.seerrEnabled && !seerrUserQuotaError ? (
             seerrUserQuota ? (
               <div
                 className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
