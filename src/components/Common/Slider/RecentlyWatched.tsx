@@ -27,9 +27,13 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
   const tmdbPosterUrl = item?.posterPath
     ? `https://image.tmdb.org/t/p/w342${item.posterPath}`
     : null;
+  const plexThumbReliable = item?.plexThumbReliable ?? true;
   const [posterSrc, setPosterSrc] = useState<string | null>(
-    thumbUrl ?? tmdbPosterUrl ?? null
+    plexThumbReliable
+      ? (thumbUrl ?? tmdbPosterUrl ?? null)
+      : (tmdbPosterUrl ?? thumbUrl ?? null)
   );
+  const triedSrcs = useRef(new Set<string>());
 
   const handleClickOutside = useCallback(() => {
     if (isTouch) setShowDetail(false);
@@ -55,9 +59,14 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           sizes="(min-width: 640px) 176px, 144px"
           className="object-cover"
           onError={() => {
-            if (tmdbPosterUrl && posterSrc !== tmdbPosterUrl) {
-              setPosterSrc(tmdbPosterUrl);
-            }
+            if (posterSrc) triedSrcs.current.add(posterSrc);
+            const candidates = plexThumbReliable
+              ? [thumbUrl, tmdbPosterUrl]
+              : [tmdbPosterUrl, thumbUrl];
+            const next = candidates.find(
+              (url) => url && !triedSrcs.current.has(url)
+            );
+            setPosterSrc(next ?? null);
           }}
         />
       ) : (

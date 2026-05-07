@@ -34,6 +34,7 @@ export interface WatchHistoryItem {
   percentComplete: number;
   plexUrl: string | null;
   deletedFromPlex: boolean;
+  plexThumbReliable: boolean;
 }
 
 export interface UserWatchDataResponse {

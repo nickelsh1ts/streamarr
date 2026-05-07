@@ -1,4 +1,7 @@
-import PlexAPI, { type PlexMetadata } from '@server/api/plexapi';
+import PlexAPI, {
+  PlexNotFoundError,
+  type PlexMetadata,
+} from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import SeerrAPI from '@server/api/seerr';
 import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
@@ -1190,6 +1193,7 @@ router.get<{ id: string }>(
             ? `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${record.rating_key}`
             : null,
           deletedFromPlex: false,
+          plexThumbReliable: true,
         };
       });
 
@@ -1209,32 +1213,98 @@ router.get<{ id: string }>(
           const posterMap = new Map<string, string>();
           const backdropMap = new Map<string, string>();
           const deletedKeys = new Set<string>();
+          const rekeyedMap = new Map<string, string>();
+
+          const normalizeTitle = (t: string) =>
+            t
+              .normalize('NFC')
+              .replace(/\s*\(\d{4}\)\s*/g, ' ')
+              .replace(/[:\-–—]/g, ' ')
+              .replace(/[^\w\s]/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+          const recoverByGuid = async (
+            record: TautulliHistoryRecord,
+            currentKey: string
+          ): Promise<
+            { meta: PlexMetadata; newKey: string } | 'same-key' | null
+          > => {
+            if (!record.guid) return null;
+            const guidItem = await plexApi.searchByGuid(record.guid);
+            if (!guidItem) return null;
+            const newKey =
+              record.media_type === 'episode'
+                ? guidItem.grandparentRatingKey
+                : guidItem.ratingKey;
+            if (!newKey) return null;
+            if (newKey === currentKey) return 'same-key';
+            try {
+              const recoveredMeta = await plexApi.getMetadata(newKey);
+              return { meta: recoveredMeta, newKey };
+            } catch {
+              return null;
+            }
+          };
 
           await Promise.allSettled(
             uniqueKeys.map(async (key) => {
               let meta: PlexMetadata | null = null;
+              let activeKey = key;
               const record = showKeyToRecord.get(key);
 
               try {
                 meta = await plexApi.getMetadata(key);
-              } catch {
-                deletedKeys.add(key);
-              }
-
-              if (meta) {
-                const expected =
-                  record?.media_type === 'movie'
-                    ? record.title?.toLowerCase().trim()
-                    : record?.grandparent_title?.toLowerCase().trim();
-                const actual = meta.title?.toLowerCase().trim();
-                if (expected && actual && expected !== actual) {
-                  deletedKeys.add(key);
-                  meta = null;
+              } catch (e) {
+                if (e instanceof PlexNotFoundError) {
+                  if (record) {
+                    const recovery = await recoverByGuid(record, key);
+                    if (recovery && recovery !== 'same-key') {
+                      meta = recovery.meta;
+                      activeKey = recovery.newKey;
+                      rekeyedMap.set(key, recovery.newKey);
+                    } else {
+                      deletedKeys.add(key);
+                    }
+                  } else {
+                    deletedKeys.add(key);
+                  }
+                } else {
+                  logger.warn(
+                    'Plex metadata lookup failed for watch history item; skipping deletion check',
+                    {
+                      label: 'API',
+                      key,
+                      errorMessage: e instanceof Error ? e.message : String(e),
+                    }
+                  );
                 }
               }
-              const tmdbGuid = meta?.Guid?.find((g) =>
-                g.id.startsWith('tmdb://')
-              );
+
+              if (meta && record) {
+                const expected =
+                  record.media_type === 'movie'
+                    ? record.title?.toLowerCase().trim()
+                    : record.grandparent_title?.toLowerCase().trim();
+                const actual = meta.title?.toLowerCase().trim();
+
+                if (
+                  expected &&
+                  actual &&
+                  normalizeTitle(expected) !== normalizeTitle(actual)
+                ) {
+                  const recovery = await recoverByGuid(record, activeKey);
+                  if (recovery === 'same-key') {
+                  } else if (recovery) {
+                    meta = recovery.meta;
+                    activeKey = recovery.newKey;
+                    rekeyedMap.set(key, recovery.newKey);
+                  } else {
+                    deletedKeys.add(key);
+                    meta = null;
+                  }
+                }
+              }
 
               let tmdbDetails: {
                 poster_path?: string | null;
@@ -1242,21 +1312,7 @@ router.get<{ id: string }>(
                 overview?: string | null;
               } | null = null;
 
-              if (tmdbGuid) {
-                const tmdbId = parseInt(tmdbGuid.id.replace('tmdb://', ''), 10);
-                if (!isNaN(tmdbId)) {
-                  try {
-                    const isMovie = meta?.type === 'movie';
-                    tmdbDetails = isMovie
-                      ? await tmdb.getMovie({ movieId: tmdbId })
-                      : await tmdb.getTvShow({ tvId: tmdbId });
-                  } catch {
-                    // TMDB lookup is best-effort
-                  }
-                }
-              }
-
-              if (!tmdbDetails && record) {
+              if (record) {
                 try {
                   const isEpisode = record.media_type === 'episode';
                   const searchTitle = isEpisode
@@ -1265,8 +1321,19 @@ router.get<{ id: string }>(
                   const searchResult = isEpisode
                     ? await tmdb.searchTvShows({ query: searchTitle })
                     : await tmdb.searchMovies({ query: searchTitle });
-                  if (searchResult.results.length)
-                    tmdbDetails = searchResult.results[0];
+                  if (searchResult.results.length) {
+                    const normalizedSearch = searchTitle.trim().toLowerCase();
+                    const exactMatch = searchResult.results.find(
+                      (r) =>
+                        (r as { title?: string; name?: string }).title
+                          ?.trim()
+                          .toLowerCase() === normalizedSearch ||
+                        (r as { title?: string; name?: string }).name
+                          ?.trim()
+                          .toLowerCase() === normalizedSearch
+                    );
+                    tmdbDetails = exactMatch ?? searchResult.results[0];
+                  }
                 } catch {
                   // Title search is best-effort
                 }
@@ -1289,9 +1356,15 @@ router.get<{ id: string }>(
             result.posterPath = posterMap.get(key) ?? null;
             result.backdropPath = backdropMap.get(key) ?? null;
             result.deletedFromPlex = deletedKeys.has(key);
+            result.plexThumbReliable =
+              !result.deletedFromPlex && !rekeyedMap.has(key);
 
             if (result.deletedFromPlex) {
               result.plexUrl = null;
+            } else if (rekeyedMap.has(key) && machineId) {
+              const newKey = rekeyedMap.get(key)!;
+              result.plexUrl = `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${newKey}`;
+              result.thumb = `/library/metadata/${newKey}/thumb`;
             }
           }
         }
