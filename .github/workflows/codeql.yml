@@ -15,6 +15,7 @@ on:
       - 'docs/**'
   schedule:
     - cron: '50 7 * * 5'
+  workflow_dispatch:
 
 permissions:
   contents: read

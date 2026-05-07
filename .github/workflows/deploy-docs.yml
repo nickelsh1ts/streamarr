@@ -8,6 +8,7 @@ on:
       - develop
     paths:
       - streamarr-api.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
