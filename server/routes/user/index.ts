@@ -1294,11 +1294,10 @@ router.get<{ id: string }>(
                   normalizeTitle(expected) !== normalizeTitle(actual)
                 ) {
                   const recovery = await recoverByGuid(record, activeKey);
-                  if (recovery === 'same-key') {
-                  } else if (recovery) {
+                  if (recovery && recovery !== 'same-key') {
                     meta = recovery.meta;
                     rekeyedMap.set(key, recovery.newKey);
-                  } else {
+                  } else if (!recovery) {
                     deletedKeys.add(key);
                     meta = null;
                   }

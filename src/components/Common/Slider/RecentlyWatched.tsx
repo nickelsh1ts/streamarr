@@ -1,7 +1,7 @@
 import { withProperties } from '@app/utils/typeHelpers';
 import type { WatchHistoryItem } from '@server/interfaces/api/userInterfaces';
 import { FilmIcon, TvIcon } from '@heroicons/react/24/solid';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from '@app/hooks/useElementInView';
 import { useIsTouch } from '@app/hooks/useIsTouch';
 import useClickOutside from '@app/hooks/useClickOutside';
@@ -28,12 +28,16 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
     ? `https://image.tmdb.org/t/p/w342${item.posterPath}`
     : null;
   const plexThumbReliable = item?.plexThumbReliable ?? true;
-  const [posterSrc, setPosterSrc] = useState<string | null>(
-    plexThumbReliable
-      ? (thumbUrl ?? tmdbPosterUrl ?? null)
-      : (tmdbPosterUrl ?? thumbUrl ?? null)
+  const candidates = useMemo(
+    () =>
+      (plexThumbReliable
+        ? [thumbUrl, tmdbPosterUrl]
+        : [tmdbPosterUrl, thumbUrl]
+      ).filter((u): u is string => !!u),
+    [thumbUrl, tmdbPosterUrl, plexThumbReliable]
   );
-  const triedSrcs = useRef(new Set<string>());
+  const [posterIdx, setPosterIdx] = useState(0);
+  const posterSrc = candidates[posterIdx] ?? null;
 
   const handleClickOutside = useCallback(() => {
     if (isTouch) setShowDetail(false);
@@ -58,16 +62,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           fill
           sizes="(min-width: 640px) 176px, 144px"
           className="object-cover"
-          onError={() => {
-            if (posterSrc) triedSrcs.current.add(posterSrc);
-            const candidates = plexThumbReliable
-              ? [thumbUrl, tmdbPosterUrl]
-              : [tmdbPosterUrl, thumbUrl];
-            const next = candidates.find(
-              (url) => url && !triedSrcs.current.has(url)
-            );
-            setPosterSrc(next ?? null);
-          }}
+          onError={() => setPosterIdx((i) => i + 1)}
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-base-300">
