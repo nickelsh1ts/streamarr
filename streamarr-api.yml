@@ -794,6 +794,10 @@ components:
           type: number
           nullable: true
           example: 7
+        movieQuotaRemaining:
+          type: number
+          nullable: true
+          example: 3
         tvQuotaLimit:
           type: number
           nullable: true
@@ -802,6 +806,10 @@ components:
           type: number
           nullable: true
           example: 7
+        tvQuotaRemaining:
+          type: number
+          nullable: true
+          example: 1
     SeerrNotificationsResponse:
       type: object
       properties:
@@ -810,6 +818,102 @@ components:
           items:
             type: string
           example: ['email', 'discord']
+    WatchHistoryItem:
+      type: object
+      properties:
+        ratingKey:
+          type: number
+          example: 12345
+        grandparentRatingKey:
+          type: number
+          nullable: true
+          example: 500
+        title:
+          type: string
+          example: 'Inception'
+        grandparentTitle:
+          type: string
+          nullable: true
+          example: 'Breaking Bad'
+        mediaType:
+          type: string
+          enum: [movie, episode]
+          example: movie
+        thumb:
+          type: string
+          nullable: true
+          example: '/library/metadata/12345/thumb'
+        summary:
+          type: string
+          nullable: true
+          example: 'A thief who steals corporate secrets through dream-sharing technology.'
+        percentComplete:
+          type: number
+          example: 85
+        posterPath:
+          type: string
+          nullable: true
+          example: '/or06FN3Dka5tukK1e9sl16pB3iy.jpg'
+        backdropPath:
+          type: string
+          nullable: true
+          example: '/nHf61UzkfFno5X1ofIhugCPus2R.jpg'
+        plexUrl:
+          type: string
+          nullable: true
+          example: '/watch/web/index.html#!/server/abc123/details?key=/library/metadata/12345'
+        deletedFromPlex:
+          type: boolean
+          example: false
+    SeerrRequestItem:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 42
+        type:
+          type: string
+          enum: [movie, tv]
+          example: movie
+        requestStatus:
+          type: integer
+          description: 'Seerr request status (1=PENDING, 2=APPROVED, 3=DECLINED, 4=FAILED)'
+          example: 2
+        mediaStatus:
+          type: integer
+          description: 'Seerr media status (1=UNKNOWN, 2=PENDING, 3=PROCESSING, 4=PARTIALLY_AVAILABLE, 5=AVAILABLE, 6=DELETED, 7=BLOCKLISTED)'
+          example: 5
+        media:
+          type: object
+          properties:
+            tmdbId:
+              type: number
+              example: 550
+        seasons:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              seasonNumber:
+                type: number
+        requestedBy:
+          type: object
+          properties:
+            id:
+              type: number
+              example: 1
+            displayName:
+              type: string
+              example: 'John Doe'
+            avatar:
+              type: string
+              nullable: true
+              example: 'https://plex.tv/users/abc/avatar'
+        createdAt:
+          type: string
+          format: date-time
     DownloadClientType:
       type: string
       enum:
@@ -3796,6 +3900,15 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                      plex:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 123
                   apiCaches:
                     type: array
                     items:
@@ -5318,6 +5431,154 @@ paths:
                 $ref: '#/components/schemas/SeerrQuotaResponse'
         '404':
           description: Seerr is not configured or user has no linked Plex account
+  /user/{userId}/requests:
+    get:
+      summary: Get recent requests for a user from Seerr
+      description: Retrieves paginated media requests made by the specified user from the configured Seerr instance. Requires the user to have a linked Plex account.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 10
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+      responses:
+        '200':
+          description: Paginated list of the user's Seerr requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SeerrRequestItem'
+        '403':
+          description: Forbidden
+        '404':
+          description: Seerr is not configured or user not found
+  /user/{userId}/watched:
+    get:
+      summary: Get recently watched items for a user
+      description: |
+        Retrieves recently watched media for a user via Tautulli.
+        Returns an empty results array if Tautulli is not configured or
+        the user has no linked Plex account.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: take
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items to return
+        - in: query
+          name: skip
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Number of items to skip (for pagination)
+      responses:
+        '200':
+          description: Recently watched items returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WatchHistoryItem'
+        '403':
+          description: Forbidden
+  /movie/{tmdbId}:
+    get:
+      summary: Get movie details from Seerr
+      description: Proxies movie detail requests to the configured Seerr instance.
+      tags:
+        - media
+      parameters:
+        - in: path
+          name: tmdbId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Movie details
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Seerr is not configured
+  /tv/{tmdbId}:
+    get:
+      summary: Get TV show details from Seerr
+      description: Proxies TV show detail requests to the configured Seerr instance.
+      tags:
+        - media
+      parameters:
+        - in: path
+          name: tmdbId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: TV show details
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Seerr is not configured
+  /request/{requestId}:
+    get:
+      summary: Get a single request from Seerr
+      description: Proxies a request detail lookup to the configured Seerr instance for live status polling.
+      tags:
+        - media
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeerrRequestItem'
+        '404':
+          description: Seerr is not configured or request not found
   /downloads:
     get:
       summary: Get all torrents from download clients

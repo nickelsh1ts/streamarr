@@ -21,6 +21,25 @@ export interface UserNotificationsResponse extends PaginatedResponse {
   results: Notification[];
 }
 
+export interface WatchHistoryItem {
+  ratingKey: number;
+  grandparentRatingKey: number | null;
+  title: string;
+  grandparentTitle: string | null;
+  mediaType: 'movie' | 'episode';
+  thumb: string | null;
+  summary: string | null;
+  posterPath: string | null;
+  backdropPath: string | null;
+  percentComplete: number;
+  plexUrl: string | null;
+  deletedFromPlex: boolean;
+}
+
+export interface UserWatchDataResponse {
+  results: WatchHistoryItem[];
+}
+
 export interface QuotaStatus {
   days?: number;
   limit?: number;

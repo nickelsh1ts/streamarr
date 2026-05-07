@@ -1,5 +1,4 @@
 import { withProperties } from '@app/utils/typeHelpers';
-// import { NotificationSeverity } from '@server/constants/notification';
 import type Notification from '@server/entity/Notification';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
@@ -9,11 +8,12 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import { NotificationSeverity } from '@server/constants/notification';
-// import { useIntl } from 'react-intl';
+import { useRef } from 'react';
+import { useInView } from '@app/hooks/useElementInView';
 
 const NotificationCardPlaceholder = () => {
   return (
-    <div className="relative w-80 animate-pulse rounded-xl bg-primary/50 backdrop-blur-md p-4 border border-primary">
+    <div className="relative w-72 sm:w-96 animate-pulse rounded-xl bg-base-200 p-4">
       <div className="w-24 sm:w-24">
         <div className="w-full" style={{ paddingBottom: '100%' }} />
       </div>
@@ -26,6 +26,17 @@ interface RecentNotificationProps {
 }
 
 const RecentNotification = ({ notification }: RecentNotificationProps) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, 0.17);
+
+  if (!notification || !isInView) {
+    return (
+      <div ref={ref}>
+        <NotificationCardPlaceholder />
+      </div>
+    );
+  }
+
   let icon;
   switch (notification.severity) {
     case NotificationSeverity.ERROR:
@@ -52,7 +63,7 @@ const RecentNotification = ({ notification }: RecentNotificationProps) => {
 
   return (
     <div
-      className={`w-80 h-32 border border-primary bg-base-100 p-4 rounded-xl content-center relative`}
+      className={`w-72 sm:w-96 h-32 border border-primary bg-base-100 p-4 rounded-xl content-center relative`}
     >
       <div className="absolute top-0 right-0 m-2 size-7">{icon}</div>
       <div>

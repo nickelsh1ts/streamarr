@@ -685,7 +685,7 @@ userSettingsRoutes.get<{ id: string }>(
       }
 
       const seerrApi = new SeerrAPI(seerrSettings);
-      const quota = await seerrApi.getUserQuotaByPlexId(user.plexId);
+      const quota = await seerrApi.getUserQuotaWithUsageByPlexId(user.plexId);
 
       res.status(200).json(quota);
     } catch {

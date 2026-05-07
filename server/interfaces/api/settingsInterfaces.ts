@@ -72,6 +72,7 @@ export interface CacheResponse {
   apiCaches: CacheItem[];
   imageCache: {
     tmdb: { size: number; imageCount: number };
+    plex: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
 }

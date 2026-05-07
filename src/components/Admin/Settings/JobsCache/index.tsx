@@ -609,6 +609,15 @@ const JobsCacheSettings = () => {
                   </Table.TD>
                 </tr>
                 <tr>
+                  <Table.TD>Plex</Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.plex?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.plex?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
                   <Table.TD>
                     <FormattedMessage
                       id="imageCache.qrcode"

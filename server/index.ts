@@ -198,7 +198,17 @@ app
         return;
       }
     });
-    server.use('/imageproxy', clearCookies, imageproxy);
+    server.use(
+      '/imageproxy',
+      clearCookies,
+      (req, res, next) => {
+        if (req.path.startsWith('/plex')) {
+          return sessionMiddleware(req, res, () => checkUser(req, res, next));
+        }
+        next();
+      },
+      imageproxy
+    );
     server.use('/logo', clearCookies, logoRoutes);
     server.use(
       '/onboarding/images',

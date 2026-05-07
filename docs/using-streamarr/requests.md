@@ -142,3 +142,13 @@ Seerr is accessed through Streamarr's internal proxy:
 1. Check Seerr's connection to Radarr/Sonarr
 2. Verify download clients are configured in Seerr
 3. Check available disk space
+
+---
+
+## Profile Integration
+
+When Seerr is configured, the user profile page displays a **Recent Requests** slider showing the user's most recent requests alongside live status badges. Admins can view any user's request history from their profile.
+
+A **Seerr Request Quota** card on the profile shows the user's remaining movie and TV request quota with progress indicators, so users can see at a glance how many requests they have left.
+
+See [User Profile](users/README.md#user-profile) for full details.

@@ -8,15 +8,16 @@ import { InviteStatus } from '@server/constants/invite';
 import type Invite from '@server/entity/Invite';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import useClipboard from 'react-use-clipboard';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useInView } from '@app/hooks/useElementInView';
 
 const InviteCardPlaceholder = () => {
   return (
-    <div className="relative w-[17rem] animate-pulse rounded-xl bg-primary/50 backdrop-blur-md p-4 border border-primary">
+    <div className="relative w-72 sm:w-96 animate-pulse rounded-xl bg-base-200 p-4">
       <div className="w-20 sm:w-28">
-        <div className="w-full" style={{ paddingBottom: '100%' }} />
+        <div className="w-full" style={{ paddingBottom: '150%' }} />
       </div>
     </div>
   );
@@ -27,6 +28,8 @@ interface RecentInviteProps {
 }
 
 const RecentInvite = ({ invite }: RecentInviteProps) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, 0.17);
   const { hasPermission } = useUser();
   const intl = useIntl();
   const [isCopied, setCopied] = useClipboard(invite?.icode ?? '', {
@@ -50,98 +53,101 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
     }
   }, [invite?.icode, isCopied, intl]);
 
+  if (!isInView) {
+    return (
+      <div ref={ref}>
+        <InviteCardPlaceholder />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex w-full justify-between flex-col border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
-      <div className="flex justify-between items-center space-x-12 flex-row w-full">
+    <div className="flex w-72 sm:w-96 justify-between flex-col border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
+      <div className="flex justify-around items-center flex-row w-full">
         <div className="flex w-full items-start overflow-hidden">
-          <div className="flex flex-row justify-center overflow-hidden">
-            <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate">
-              <p className="text-xs truncate w-full text-warning">
-                {invite?.expiresAt != null
-                  ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
-                  : intl.formatMessage({
-                      id: 'invite.neverExpires',
-                      defaultMessage: 'Never expires',
-                    })}
-              </p>
-              <button
-                type="button"
-                className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 mb-2 align-top"
-                title={intl.formatMessage({
-                  id: 'invite.clickToCopy',
-                  defaultMessage: 'Click to copy invite code',
-                })}
-                tabIndex={0}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCopied();
-                }}
-                onKeyDown={(e) => {
-                  e.preventDefault();
-                  setCopied();
-                }}
-              >
-                {invite?.icode}{' '}
-                {invite?.usageLimit === 0
-                  ? ' (∞)'
-                  : invite?.usageLimit
-                    ? ` (${invite?.usageLimit})`
-                    : ''}
-              </button>
-              <span className="font-extrabold flex items-center truncate">
-                <CachedImage
-                  src={invite?.createdBy?.avatar}
-                  alt=""
-                  className="size-5 mr-1 object-cover rounded-full"
-                  width={20}
-                  height={20}
-                />
-                <span className="truncate text-sm font-semibold">
-                  {invite?.createdBy?.displayName ||
-                    invite?.createdBy?.email ||
-                    intl.formatMessage({
-                      id: 'common.unknown',
-                      defaultMessage: 'Unknown',
-                    })}
-                </span>
+          <div className="flex flex-col items-start w-full overflow-hidden truncate gap-1">
+            <p className="text-xs truncate w-full text-warning">
+              {invite?.expiresAt != null
+                ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
+                : intl.formatMessage({
+                    id: 'invite.neverExpires',
+                    defaultMessage: 'Never expires',
+                  })}
+            </p>
+            <button
+              type="button"
+              className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 align-top"
+              title={intl.formatMessage({
+                id: 'invite.clickToCopy',
+                defaultMessage: 'Click to copy invite code',
+              })}
+              tabIndex={0}
+              onClick={(e) => {
+                e.preventDefault();
+                setCopied();
+              }}
+              onKeyDown={(e) => {
+                e.preventDefault();
+                setCopied();
+              }}
+            >
+              {invite?.icode}{' '}
+              {invite?.usageLimit === 0
+                ? ' (∞)'
+                : invite?.usageLimit
+                  ? ` (${invite?.usageLimit})`
+                  : ''}
+            </button>
+            <span className="font-extrabold flex items-center truncate gap-2">
+              <CachedImage
+                src={invite?.createdBy?.avatar}
+                alt=""
+                className="object-cover rounded-full"
+                width={20}
+                height={20}
+              />
+              <span className="truncate font-semibold">
+                {invite?.createdBy?.displayName ||
+                  invite?.createdBy?.email ||
+                  intl.formatMessage({
+                    id: 'common.unknown',
+                    defaultMessage: 'Unknown',
+                  })}
               </span>
-              <div className="py-1 flex items-center truncate leading-5">
-                <span className="font-extrabold mr-2">
+            </span>
+            <div className="py-1 flex items-center truncate leading-5">
+              <span className="font-bold mr-2 hidden sm:block">
+                <FormattedMessage id="common.status" defaultMessage="Status" />
+              </span>
+              {invite?.status === InviteStatus.ACTIVE ? (
+                <Badge badgeType="success" className="capitalize">
                   <FormattedMessage
-                    id="common.status"
-                    defaultMessage="Status"
+                    id="common.active"
+                    defaultMessage="Active"
                   />
-                </span>
-                {invite?.status === InviteStatus.ACTIVE ? (
-                  <Badge badgeType="success" className="capitalize">
-                    <FormattedMessage
-                      id="common.active"
-                      defaultMessage="Active"
-                    />
-                  </Badge>
-                ) : invite?.status === InviteStatus.EXPIRED ? (
-                  <Badge badgeType="error" className="capitalize">
-                    <FormattedMessage
-                      id="common.expired"
-                      defaultMessage="Expired"
-                    />
-                  </Badge>
-                ) : invite?.status === InviteStatus.REDEEMED ? (
-                  <Badge badgeType="primary" className="capitalize">
-                    <FormattedMessage
-                      id="common.redeemed"
-                      defaultMessage="Redeemed"
-                    />
-                  </Badge>
-                ) : (
-                  <Badge badgeType="warning" className="capitalize">
-                    <FormattedMessage
-                      id="common.inactive"
-                      defaultMessage="Inactive"
-                    />
-                  </Badge>
-                )}
-              </div>
+                </Badge>
+              ) : invite?.status === InviteStatus.EXPIRED ? (
+                <Badge badgeType="error" className="capitalize">
+                  <FormattedMessage
+                    id="common.expired"
+                    defaultMessage="Expired"
+                  />
+                </Badge>
+              ) : invite?.status === InviteStatus.REDEEMED ? (
+                <Badge badgeType="primary" className="capitalize">
+                  <FormattedMessage
+                    id="common.redeemed"
+                    defaultMessage="Redeemed"
+                  />
+                </Badge>
+              ) : (
+                <Badge badgeType="warning" className="capitalize">
+                  <FormattedMessage
+                    id="common.inactive"
+                    defaultMessage="Inactive"
+                  />
+                </Badge>
+              )}
             </div>
           </div>
         </div>
@@ -173,65 +179,68 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5 min-h-8">
-        {Array.isArray(invite?.redeemedBy) && invite.redeemedBy.length > 0 ? (
-          <div className="inline-flex items-center">
-            <span className="font-extrabold mr-2">
-              <FormattedMessage
-                id="common.redeemed"
-                defaultMessage="Redeemed"
-              />
-            </span>
-            <FormattedMessage id="common.by" defaultMessage="by" />
-            <span className="ml-1 flex -space-x-2">
-              {invite.redeemedBy.map((user, idx) =>
-                hasPermission(Permission.MANAGE_USERS) ? (
-                  <Link
-                    key={user?.id || idx}
-                    href={`/admin/users/${user?.id}`}
-                    className="group"
-                    title={
-                      user?.displayName ||
-                      user?.email ||
-                      intl.formatMessage({
-                        id: 'common.unknown',
-                        defaultMessage: 'Unknown',
-                      })
-                    }
-                  >
-                    <CachedImage
-                      src={user?.avatar}
-                      alt=""
-                      className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
-                      width={24}
-                      height={24}
-                    />
-                  </Link>
-                ) : (
-                  <span
-                    key={user?.id || idx}
-                    title={
-                      user?.displayName ||
-                      user?.email ||
-                      intl.formatMessage({
-                        id: 'common.unknown',
-                        defaultMessage: 'Unknown',
-                      })
-                    }
-                  >
-                    <CachedImage
-                      src={user?.avatar}
-                      alt=""
-                      className="size-6 rounded-full border-2 border-base-100"
-                      width={24}
-                      height={24}
-                    />
-                  </span>
-                )
-              )}
-            </span>
-          </div>
-        ) : null}
+      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
+        <div className="hidden sm:flex items-center min-h-10">
+          {Array.isArray(invite?.redeemedBy) &&
+            invite.redeemedBy.length > 0 && (
+              <>
+                <span className="font-extrabold mr-2">
+                  <FormattedMessage
+                    id="common.redeemed"
+                    defaultMessage="Redeemed"
+                  />
+                </span>
+                <FormattedMessage id="common.by" defaultMessage="by" />
+                <span className="ml-1 flex -space-x-2">
+                  {invite.redeemedBy.map((user, idx) =>
+                    hasPermission(Permission.MANAGE_USERS) ? (
+                      <Link
+                        key={user?.id || idx}
+                        href={`/admin/users/${user?.id}`}
+                        className="group"
+                        title={
+                          user?.displayName ||
+                          user?.email ||
+                          intl.formatMessage({
+                            id: 'common.unknown',
+                            defaultMessage: 'Unknown',
+                          })
+                        }
+                      >
+                        <CachedImage
+                          src={user?.avatar}
+                          alt=""
+                          className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
+                          width={24}
+                          height={24}
+                        />
+                      </Link>
+                    ) : (
+                      <span
+                        key={user?.id || idx}
+                        title={
+                          user?.displayName ||
+                          user?.email ||
+                          intl.formatMessage({
+                            id: 'common.unknown',
+                            defaultMessage: 'Unknown',
+                          })
+                        }
+                      >
+                        <CachedImage
+                          src={user?.avatar}
+                          alt=""
+                          className="size-6 rounded-full border-2 border-base-100"
+                          width={24}
+                          height={24}
+                        />
+                      </span>
+                    )
+                  )}
+                </span>
+              </>
+            )}
+        </div>
       </div>
     </div>
   );

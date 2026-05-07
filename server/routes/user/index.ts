@@ -1,4 +1,8 @@
+import PlexAPI, { type PlexMetadata } from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import SeerrAPI from '@server/api/seerr';
+import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
+import TheMovieDb from '@server/api/themoviedb';
 import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
@@ -323,12 +327,12 @@ router.delete<{ userId: number; endpoint: string }>(
       await userPushSubRepository.remove(userPushSub);
       res.status(204).send();
     } catch (e) {
-      logger.error('Something went wrong deleting the user push subcription', {
+      logger.error('Something went wrong deleting the user push subscription', {
         label: 'API',
         endpoint: req.params.endpoint,
         errorMessage: e.message,
       });
-      return next({ status: 500, message: 'User push subcription not found' });
+      return next({ status: 500, message: 'User push subscription not found' });
     }
   }
 );
@@ -1017,6 +1021,7 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
       logger.warn(
         `Could not fetch current Plex libraries for user ${user.email}`,
         {
+          label: 'Plex Sync',
           userId: user.id,
           error: error.message,
         }
@@ -1031,5 +1036,285 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
     next({ status: 500, message: e.message });
   }
 });
+
+router.get<{ id: string }>(
+  '/:id/requests',
+  isAuthenticated(),
+  async (req, res, next) => {
+    const seerrSettings = getSettings().overseerr;
+
+    if (!seerrSettings.enabled || !seerrSettings.hostname) {
+      return res.status(404).json({ message: 'Seerr is not configured.' });
+    }
+
+    if (
+      Number(req.params.id) !== req.user?.id &&
+      !req.user?.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message: "You do not have permission to view this user's requests.",
+      });
+    }
+
+    const parsedTake = Number(String(req.query.take ?? ''));
+    const take =
+      Number.isFinite(parsedTake) && parsedTake > 0
+        ? Math.min(Math.floor(parsedTake), 100)
+        : 10;
+    const parsedSkip = Number(String(req.query.skip ?? ''));
+    const skip =
+      Number.isFinite(parsedSkip) && parsedSkip >= 0
+        ? Math.floor(parsedSkip)
+        : 0;
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return res.status(200).json({
+          pageInfo: { pages: 0, pageSize: take, results: 0, page: 1 },
+          results: [],
+        });
+      }
+
+      const seerrApi = new SeerrAPI(seerrSettings);
+      const requests = await seerrApi.getRequestsByPlexId(
+        user.plexId,
+        take,
+        skip
+      );
+
+      res.status(200).json(requests);
+    } catch (e) {
+      logger.error('Something went wrong fetching user requests from Seerr', {
+        label: 'API',
+        userId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to fetch user requests.' });
+    }
+  }
+);
+
+router.get<{ id: string }>(
+  '/:id/watched',
+  isAuthenticated(),
+  async (req, res, next) => {
+    const settings = getSettings();
+
+    if (
+      Number(req.params.id) !== req.user?.id &&
+      !req.user?.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message:
+          "You do not have permission to view this user's watch history.",
+      });
+    }
+
+    if (!settings.tautulli.hostname || !settings.tautulli.apiKey) {
+      return res.status(200).json({ results: [] });
+    }
+
+    const parsedTake = Number(String(req.query.take ?? ''));
+    const take =
+      Number.isFinite(parsedTake) && parsedTake > 0
+        ? Math.min(Math.floor(parsedTake), 100)
+        : 20;
+    const parsedSkip = Number(String(req.query.skip ?? ''));
+    const skip =
+      Number.isFinite(parsedSkip) && parsedSkip >= 0
+        ? Math.floor(parsedSkip)
+        : 0;
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return res.status(200).json({ results: [] });
+      }
+
+      const tautulli = new TautulliAPI(settings.tautulli);
+      let history: TautulliHistoryRecord[];
+      try {
+        history = await tautulli.getUserWatchHistory(user, { take, skip });
+      } catch {
+        return res.status(200).json({ results: [] });
+      }
+      const machineId = settings.plex.machineId;
+
+      const showKey = (r: {
+        grandparentRatingKey?: number | null;
+        ratingKey: number;
+      }) =>
+        r.grandparentRatingKey
+          ? String(r.grandparentRatingKey)
+          : String(r.ratingKey);
+
+      const showKeyToRecord = new Map<string, TautulliHistoryRecord>();
+      const results = history.map((record) => {
+        const sKey = record.grandparent_rating_key
+          ? String(record.grandparent_rating_key)
+          : String(record.rating_key);
+        if (!showKeyToRecord.has(sKey)) showKeyToRecord.set(sKey, record);
+        return {
+          ratingKey: record.rating_key,
+          grandparentRatingKey: record.grandparent_rating_key || null,
+          title: record.title,
+          grandparentTitle: record.grandparent_title || null,
+          mediaType: record.media_type as 'movie' | 'episode',
+          thumb: record.grandparent_rating_key
+            ? `/library/metadata/${record.grandparent_rating_key}/thumb`
+            : record.thumb || null,
+          summary: null as string | null,
+          posterPath: null as string | null,
+          backdropPath: null as string | null,
+          percentComplete: record.percent_complete,
+          plexUrl: machineId
+            ? `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${record.rating_key}`
+            : null,
+          deletedFromPlex: false,
+        };
+      });
+
+      try {
+        const admin = await getRepository(User)
+          .createQueryBuilder('user')
+          .addSelect('user.plexToken')
+          .where('user.id = :id', { id: 1 })
+          .getOne();
+
+        if (admin?.plexToken) {
+          const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+          const tmdb = new TheMovieDb();
+          const uniqueKeys = Array.from(new Set(results.map(showKey)));
+
+          const summaryMap = new Map<string, string>();
+          const posterMap = new Map<string, string>();
+          const backdropMap = new Map<string, string>();
+          const deletedKeys = new Set<string>();
+
+          await Promise.allSettled(
+            uniqueKeys.map(async (key) => {
+              let meta: PlexMetadata | null = null;
+              const record = showKeyToRecord.get(key);
+
+              try {
+                meta = await plexApi.getMetadata(key);
+              } catch {
+                deletedKeys.add(key);
+              }
+
+              if (meta) {
+                const expected =
+                  record?.media_type === 'movie'
+                    ? record.title?.toLowerCase().trim()
+                    : record?.grandparent_title?.toLowerCase().trim();
+                const actual = meta.title?.toLowerCase().trim();
+                if (expected && actual && expected !== actual) {
+                  deletedKeys.add(key);
+                  meta = null;
+                }
+              }
+              const tmdbGuid = meta?.Guid?.find((g) =>
+                g.id.startsWith('tmdb://')
+              );
+
+              let tmdbDetails: {
+                poster_path?: string | null;
+                backdrop_path?: string | null;
+                overview?: string | null;
+              } | null = null;
+
+              if (tmdbGuid) {
+                const tmdbId = parseInt(tmdbGuid.id.replace('tmdb://', ''), 10);
+                if (!isNaN(tmdbId)) {
+                  try {
+                    const isMovie = meta?.type === 'movie';
+                    tmdbDetails = isMovie
+                      ? await tmdb.getMovie({ movieId: tmdbId })
+                      : await tmdb.getTvShow({ tvId: tmdbId });
+                  } catch {
+                    // TMDB lookup is best-effort
+                  }
+                }
+              }
+
+              if (!tmdbDetails && record) {
+                try {
+                  const isEpisode = record.media_type === 'episode';
+                  const searchTitle = isEpisode
+                    ? record.grandparent_title || record.title
+                    : record.title;
+                  const searchResult = isEpisode
+                    ? await tmdb.searchTvShows({ query: searchTitle })
+                    : await tmdb.searchMovies({ query: searchTitle });
+                  if (searchResult.results.length)
+                    tmdbDetails = searchResult.results[0];
+                } catch {
+                  // Title search is best-effort
+                }
+              }
+
+              if (tmdbDetails?.overview)
+                summaryMap.set(key, tmdbDetails.overview);
+              else if (meta?.summary) summaryMap.set(key, meta.summary);
+
+              if (tmdbDetails?.poster_path)
+                posterMap.set(key, tmdbDetails.poster_path);
+              if (tmdbDetails?.backdrop_path)
+                backdropMap.set(key, tmdbDetails.backdrop_path);
+            })
+          );
+
+          for (const result of results) {
+            const key = showKey(result);
+            result.summary = summaryMap.get(key) ?? null;
+            result.posterPath = posterMap.get(key) ?? null;
+            result.backdropPath = backdropMap.get(key) ?? null;
+            result.deletedFromPlex = deletedKeys.has(key);
+
+            if (result.deletedFromPlex) {
+              result.plexUrl = null;
+            }
+          }
+        }
+      } catch (e) {
+        logger.debug(
+          'Something went wrong fetching plex metadata for watch history',
+          {
+            label: 'API',
+            errorMessage: e instanceof Error ? e.message : String(e),
+          }
+        );
+      }
+
+      return res.status(200).json({ results });
+    } catch (e) {
+      logger.error('Something went wrong fetching user watch history', {
+        label: 'API',
+        userId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to fetch watch history.' });
+    }
+  }
+);
 
 export default router;

@@ -199,6 +199,90 @@ When configured by the administrator, additional navigation links appear for use
 | **Watch History** | User dropdown menu      | Tautulli is configured and has a URL base set           |
 | **Request**       | Sidebar and mobile menu | Seerr is configured and user has **Request** permission |
 
+---
+
+## User Profile
+
+The profile page (`/profile` for the current user, `/admin/users/:id` for admins) displays a summary of activity and quotas alongside interactive content sliders. Admins can view any user's profile; regular users can only view their own.
+
+### Stats Cards
+
+Up to three stat cards are shown at the top of the profile depending on configuration:
+
+#### Invite Stats
+
+Shown when sign-up is enabled **or** the user has sent or received invites:
+
+- **Users Invited** — Number of other users who redeemed this user's invite codes (links to the redeemed invites list)
+- **Invited By** — Who sent this user their invite. Users with **Manage Users** permission see a clickable link to the inviter's profile; other users see the name as plain text.
+
+#### Trial Period
+
+When a trial period is active for the user, a dedicated card replaces the invite quota card showing the trial end date.
+
+#### Seerr Request Quota
+
+Shown when Seerr is configured. Displays the user's remaining request quota for movies and TV shows, with a colour-coded progress circle for each:
+
+| Quota State        | Appearance                                                           |
+| ------------------ | -------------------------------------------------------------------- |
+| Requests remaining | Progress circle fills from green → yellow → red as quota is consumed |
+| Quota reached      | Card border and text turn red                                        |
+| No quota set       | Displays "Unlimited"                                                 |
+
+The quota labels reflect the configured time window — e.g., "Movies (past 7 days)" or "Movies (Lifetime)".
+
+### Recent Requests
+
+Shown when Seerr is configured and the user has made at least one request. Displays a horizontal scrollable slider of the user's most recent 20 requests.
+
+Each card shows:
+
+- Movie/TV show poster (from TMDB)
+- Title and release year
+- Seasons requested (TV only)
+- The requester's avatar and name
+- A live status badge that refreshes every 15 seconds
+
+**Status badges:**
+
+| Badge               | Meaning                                                              |
+| ------------------- | -------------------------------------------------------------------- |
+| Available           | Media is in Plex and ready to watch (links to the Seerr detail page) |
+| Partially Available | Some episodes/seasons are available                                  |
+| Requested           | Approved and downloading                                             |
+| Pending             | Awaiting approval                                                    |
+| Declined            | Request was declined                                                 |
+| Failed              | Processing failed                                                    |
+| Deleted             | Media was removed                                                    |
+
+Admins are linked to the Seerr management page for each item; users are linked to the standard request detail page.
+
+{% hint style="info" %}
+The "Recent Requests" link at the top of the slider navigates to the full request list in the embedded Seerr interface (`/request/requests`). Admins viewing another user's profile are taken to that user's request list in the Seerr admin area.
+{% endhint %}
+
+### Recently Watched
+
+Shown for **Plex users only** when Tautulli is configured and the user has watch history.
+
+Each card shows the poster for the movie or TV show (using the Plex image proxy with TMDB fallback) and:
+
+- Title and episode name (for TV episodes)
+- A watch-progress bar (hidden once the item is ≥ 85% complete)
+- A summary that appears on hover/tap
+- A **Deleted** badge if the item has since been removed from Plex
+
+Clicking/tapping a card opens the item directly in Plex Web. On touch devices, the first tap shows the detail overlay and the second tap navigates.
+
+{% hint style="info" %}
+The "Recently Watched" link at the top of the slider navigates to `/stats/history` — the watch history page within the embedded Tautulli interface.
+{% endhint %}
+
+### Profile Background
+
+The profile layout background dynamically uses TMDB backdrop images sourced from the user's recent watch history. If no watch history is available (or Tautulli is not configured), it falls back to Plex library backdrops or the default cinema image.
+
 These links navigate to `/stats` (Tautulli) and `/request` (Seerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
 
 ---

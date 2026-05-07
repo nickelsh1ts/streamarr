@@ -2,7 +2,8 @@
 import ImageFader from '@app/components/Common/ImageFader';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
-import { useUser } from '@app/hooks/useUser';
+import { UserType, useUser } from '@app/hooks/useUser';
+import type { UserWatchDataResponse } from '@server/interfaces/api/userInterfaces';
 import { useParams, usePathname } from 'next/navigation';
 import Error from '@app/app/error';
 import useSWR from 'swr';
@@ -19,6 +20,28 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
     refreshWhenHidden: false,
     revalidateOnFocus: false,
   });
+  const { data: watchData } = useSWR<UserWatchDataResponse>(
+    user?.userType === UserType.PLEX && !isSettingsPage
+      ? `/api/v1/user/${user.id}/watched?take=40&skip=0`
+      : null,
+    { refreshInterval: 0, refreshWhenHidden: false, revalidateOnFocus: false }
+  );
+
+  const faderImages = (() => {
+    const watchBackdrops = [
+      ...new Set(
+        watchData?.results
+          .filter((r) => r.backdropPath)
+          .map((r) => `https://image.tmdb.org/t/p/original${r.backdropPath}`)
+      ),
+    ];
+    if (watchBackdrops.length) return watchBackdrops;
+    return (
+      backdrops?.map((b) => `https://image.tmdb.org/t/p/original${b}`) ?? [
+        '/img/people-cinema-watching.jpg',
+      ]
+    );
+  })();
 
   if (!user && !error) {
     return <LoadingEllipsis />;
@@ -41,11 +64,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
           <ImageFader
             rotationSpeed={6000}
             gradient="bg-gradient-to-t from-base-300 from-0% to-secondary/85 to-75%"
-            backgroundImages={
-              backdrops?.map(
-                (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
-              ) ?? ['/img/people-cinema-watching.jpg']
-            }
+            backgroundImages={faderImages}
           />
         </div>
       )}

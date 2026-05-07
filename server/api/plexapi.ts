@@ -47,6 +47,7 @@ export interface PlexMetadata {
   guid: string;
   type: 'movie' | 'show' | 'season';
   title: string;
+  summary?: string;
   Guid: { id: string }[];
   Children?: { size: 12; Metadata: PlexMetadata[] };
   index: number;
@@ -209,10 +210,14 @@ class PlexAPI extends ExternalAPI {
       );
       return response.MediaContainer.Metadata[0];
     } catch (e) {
-      logger.error('Failed to fetch Plex metadata', {
-        label: 'Plex API',
-        errorMessage: e instanceof Error ? e.message : String(e),
-      });
+      const status = (e as { response?: { status?: number } })?.response
+        ?.status;
+      if (status !== 404) {
+        logger.error('Failed to fetch Plex metadata', {
+          label: 'Plex API',
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+      }
       throw new Error('Failed to fetch Plex metadata');
     }
   }

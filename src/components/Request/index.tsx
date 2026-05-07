@@ -8,7 +8,7 @@ import useRouteGuard from '@app/hooks/useRouteGuard';
 import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
 import { useUser, Permission } from '@app/hooks/useUser';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { setIframeTheme } from '@app/utils/themeUtils';
@@ -27,7 +27,9 @@ const Request = ({ children, ...props }) => {
     type: 'or',
   });
   const pathname = usePathname();
-  const url = pathname.replace('/request', '');
+  const searchParams = useSearchParams();
+  const query = searchParams.toString();
+  const url = pathname.replace('/request', '') + (query ? `?${query}` : '');
   const router = useRouter();
   const { currentSettings } = useSettings();
   const { hasPermission, user } = useUser();
@@ -75,19 +77,21 @@ const Request = ({ children, ...props }) => {
     const handleNavigate = () => {
       setLoadingIframe(true);
       setTimeout(() => {
+        const urlPath = pathname.replace('/request', '');
+        const iframePath = innerFrame?.location?.pathname.replace(
+          userSettings?.requestUrl,
+          ''
+        );
         if (
-          url !==
-            innerFrame?.location?.pathname.replace(
-              userSettings?.requestUrl,
-              ''
-            ) &&
+          urlPath !== iframePath &&
           !innerFrame?.location?.pathname.includes('/search')
         ) {
+          const iframeSearch = innerFrame?.location?.search ?? '';
           router.push(
             innerFrame?.location?.pathname.replace(
               userSettings?.requestUrl,
               '/request'
-            )
+            ) + iframeSearch
           );
         } else {
           setTimeout(() => setLoadingIframe(false), 600);
@@ -106,6 +110,7 @@ const Request = ({ children, ...props }) => {
     innerFrame?.navigation,
     innerFrame,
     router,
+    pathname,
     url,
   ]);
 
