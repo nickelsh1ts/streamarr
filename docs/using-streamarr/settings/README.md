@@ -56,11 +56,20 @@ This setting is **disabled** by default.
 
 ### Enable Image Caching
 
-When enabled, Streamarr will proxy and cache images from external sources (such as TMDB). This can use a significant amount of disk space.
+When enabled, Streamarr will proxy and cache images from external sources. Two image proxies are active when this setting is on:
 
-Images are saved in `config/cache/images/` and stale images are cleared every 24 hours.
+| Proxy    | Path                           | Source                                            |
+| -------- | ------------------------------ | ------------------------------------------------- |
+| **TMDB** | `/imageproxy/<path>`           | `image.tmdb.org` — movie/TV posters and backdrops |
+| **Plex** | `/imageproxy/plex?path=<path>` | Your Plex server — library metadata thumbnails    |
 
-Enable this if you are having issues loading images directly from TMDB in your browser.
+Images are saved in `config/cache/images/` under `tmdb/` and `plex/` subdirectories respectively. Stale images are cleared every 24 hours.
+
+The Plex image proxy is authenticated — requests are signed with the admin Plex token, restricted to `/library/metadata/<id>/thumb`, and rejected unless Plex responds with an `image/*` content type. Only signed-in users can access proxied Plex images.
+
+Cache statistics for both proxies (image count and total size) are visible on the **Jobs & Cache** page under **Settings → Jobs & Cache**.
+
+Enable this if you are having issues loading images directly from TMDB in your browser, or if you want Plex artwork to load reliably on the profile page.
 
 This setting is **disabled** by default.
 
@@ -211,6 +220,22 @@ Configure the default invite quota settings for new users:
 
 - **Quota Limit** — Maximum number of invites a user can create
 - **Quota Days** — Time period (in days) for the quota to reset
+
+### Default Invite Settings
+
+Configure the default feature access granted when creating new invites:
+
+| Setting                    | Description                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| **Allow Downloads**        | Grant download management access to invited users by default                               |
+| **Allow Live TV Access**   | Show the Live TV navigation item for invited users by default                              |
+| **Allow Plex Home Access** | Add invited users to Plex Home by default (creates a managed user under your Plex account) |
+
+These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
+
+{% hint style="info" %}
+**Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
+{% endhint %}
 
 ---
 

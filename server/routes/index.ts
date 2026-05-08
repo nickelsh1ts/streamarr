@@ -151,6 +151,74 @@ router.get('/settings/public/seerr/notifications', async (_req, res, next) => {
   }
 });
 
+router.get('/movie/:tmdbId', isAuthenticated(), async (req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({ message: 'Seerr is not configured.' });
+  }
+
+  const tmdbId = Number(req.params.tmdbId);
+  if (!Number.isInteger(tmdbId) || tmdbId <= 0) {
+    return next({ status: 400, message: 'Invalid TMDB ID.' });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const details = await seerrApi.getMovieDetails(tmdbId);
+    res.status(200).json(details);
+  } catch {
+    next({ status: 500, message: 'Failed to fetch movie details.' });
+  }
+});
+
+router.get('/tv/:tmdbId', isAuthenticated(), async (req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({ message: 'Seerr is not configured.' });
+  }
+
+  const tmdbId = Number(req.params.tmdbId);
+  if (!Number.isInteger(tmdbId) || tmdbId <= 0) {
+    return next({ status: 400, message: 'Invalid TMDB ID.' });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const details = await seerrApi.getTvDetails(tmdbId);
+    res.status(200).json(details);
+  } catch {
+    next({ status: 500, message: 'Failed to fetch TV details.' });
+  }
+});
+
+router.get('/request/:requestId', isAuthenticated(), async (req, res, next) => {
+  const seerrSettings = getSettings().overseerr;
+
+  if (!seerrSettings.enabled || !seerrSettings.hostname) {
+    return res.status(404).json({ message: 'Seerr is not configured.' });
+  }
+
+  const requestId = Number(req.params.requestId);
+  if (!Number.isInteger(requestId) || requestId <= 0) {
+    return next({ status: 400, message: 'Invalid request ID.' });
+  }
+
+  try {
+    const seerrApi = new SeerrAPI(seerrSettings);
+    const request = await seerrApi.getRequestById(requestId);
+
+    if (!request) {
+      return next({ status: 404, message: 'Request not found.' });
+    }
+
+    res.status(200).json(request);
+  } catch {
+    next({ status: 500, message: 'Failed to fetch request details.' });
+  }
+});
+
 router.get('/libraries', async (_req, res) => {
   const settings = getSettings();
 

@@ -12,8 +12,6 @@ import { colord } from 'colord';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-//TODO: Add support for jellyfin - local users should access jellyfin and plex users access plex
-
 const Watch = ({ children, ...props }) => {
   const { hasPermission } = useUser();
   const isAdmin = hasPermission(Permission.ADMIN);
@@ -53,16 +51,36 @@ const Watch = ({ children, ...props }) => {
 
   // Track the parent window's location for the iframe src
   useEffect(() => {
-    let lastParentUrl = window.location.pathname + window.location.hash;
+    let lastParentUrl =
+      window.location.pathname + window.location.search + window.location.hash;
     let lastIframeUrl = '';
     setIframeUrl(lastParentUrl.replace('/watch', ''));
     const interval = setInterval(() => {
-      const parentUrl = window.location.pathname + window.location.hash;
+      let parentUrl =
+        window.location.pathname +
+        window.location.search +
+        window.location.hash;
+
+      const firstHashbang = parentUrl.indexOf('#!');
+      const lastHashbang = parentUrl.lastIndexOf('#!');
+      if (firstHashbang !== lastHashbang) {
+        // Collapse duplicate hashbang segments: keep only the last #! segment
+        parentUrl =
+          parentUrl.slice(0, firstHashbang) + parentUrl.slice(lastHashbang);
+        window.history.replaceState(
+          { ...window.history.state, as: parentUrl, url: parentUrl },
+          '',
+          parentUrl
+        );
+      }
+
       const iframeUrlNow = innerFrame
-        ? innerFrame.location.pathname + innerFrame.location.hash
+        ? innerFrame.location.pathname +
+          innerFrame.location.search +
+          innerFrame.location.hash
         : '';
 
-      // If parent location changed (sidebar/menu navigation)
+      // If parent location changed (sidebar/menu navigation or Plex parent navigation)
       if (parentUrl !== lastParentUrl) {
         lastParentUrl = parentUrl;
         setIframeUrl(parentUrl.replace('/watch', ''));
@@ -72,7 +90,15 @@ const Watch = ({ children, ...props }) => {
       else if (iframeUrlNow && iframeUrlNow !== lastIframeUrl) {
         lastIframeUrl = iframeUrlNow;
         if ('/watch' + iframeUrlNow !== parentUrl) {
-          window.history.replaceState(null, '', '/watch' + iframeUrlNow);
+          window.history.replaceState(
+            {
+              ...window.history.state,
+              as: '/watch' + iframeUrlNow,
+              url: '/watch' + iframeUrlNow,
+            },
+            '',
+            '/watch' + iframeUrlNow
+          );
           setIframeUrl(iframeUrlNow.replace('/watch', ''));
           lastParentUrl = '/watch' + iframeUrlNow;
         }
@@ -132,7 +158,6 @@ const Watch = ({ children, ...props }) => {
             }, 700);
           }
           e.preventDefault();
-          // console.log('Double click detected!');
         });
       });
     }, 600);

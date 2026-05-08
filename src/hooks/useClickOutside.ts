@@ -9,8 +9,8 @@ import { useEffect } from 'react';
  * @param ref Any HTML Element ref
  * @param callback Callback triggered when clicking outside of ref element
  */
-const useClickOutside = (
-  ref: React.RefObject<HTMLElement>,
+const useClickOutside = <T extends HTMLElement>(
+  ref: React.RefObject<T>,
   callback: (e: MouseEvent) => void
 ): void => {
   useEffect(() => {
@@ -33,9 +33,11 @@ const useClickOutside = (
     });
 
     return () => {
-      document.body.removeEventListener('click', handleBodyClick);
+      document.body.removeEventListener('click', handleBodyClick, {
+        capture: true,
+      });
       attachedDocs.forEach((doc) => {
-        doc.removeEventListener('click', handleBodyClick);
+        doc.removeEventListener('click', handleBodyClick, { capture: true });
       });
     };
   }, [ref, callback]);

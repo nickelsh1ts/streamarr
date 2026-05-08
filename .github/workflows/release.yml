@@ -32,15 +32,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 25
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
-      - name: Ensure Yarn is correct version
-        run: corepack prepare yarn@4.9.2 --activate
       - name: Install dependencies
-        run: yarn
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Release
         id: semantic
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
@@ -176,7 +174,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install Cosign
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514 # v0.2.6
       - name: Log in to Docker Hub
@@ -230,7 +228,7 @@ jobs:
       IMAGE_DIGEST: ${{ needs.publish.outputs.image_digest }}
     steps:
       - name: Install Cosign
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Verify signatures
         run: |
           cosign verify "ghcr.io/${{ github.repository }}@${{ env.IMAGE_DIGEST }}" \

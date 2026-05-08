@@ -46,8 +46,7 @@ const UserSettingsGeneral = () => {
   const [plexLibrariesDiffer, setPlexLibrariesDiffer] = useState(false);
   const [plexPermissionsDiffer, setPlexPermissionsDiffer] = useState<{
     allowDownloads: boolean;
-    allowLiveTv: boolean;
-  }>({ allowDownloads: false, allowLiveTv: false });
+  }>({ allowDownloads: false });
   const searchParams = useParams<{ userid: string }>();
   const {
     user,
@@ -102,7 +101,7 @@ const UserSettingsGeneral = () => {
   useEffect(() => {
     if (!data || !plexLibrariesData?.canFetchFromPlex) {
       setPlexLibrariesDiffer(false);
-      setPlexPermissionsDiffer({ allowDownloads: false, allowLiveTv: false });
+      setPlexPermissionsDiffer({ allowDownloads: false });
       return;
     }
 
@@ -144,11 +143,10 @@ const UserSettingsGeneral = () => {
     // === Permission comparison ===
     const plexPerms = plexLibrariesData.permissions;
     if (!plexPerms) {
-      setPlexPermissionsDiffer({ allowDownloads: false, allowLiveTv: false });
+      setPlexPermissionsDiffer({ allowDownloads: false });
     } else {
       setPlexPermissionsDiffer({
         allowDownloads: (data.allowDownloads ?? false) !== plexPerms.allowSync,
-        allowLiveTv: (data.allowLiveTv ?? false) !== plexPerms.allowChannels,
       });
     }
   }, [data, plexLibrariesData, allLibrariesData]);
@@ -218,9 +216,7 @@ const UserSettingsGeneral = () => {
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
 
           const shouldForceSync =
-            (plexLibrariesDiffer ||
-              plexPermissionsDiffer.allowDownloads ||
-              plexPermissionsDiffer.allowLiveTv) &&
+            (plexLibrariesDiffer || plexPermissionsDiffer.allowDownloads) &&
             isPlexUser &&
             canManageUsers;
 
@@ -646,8 +642,7 @@ const UserSettingsGeneral = () => {
                         </div>
                         <div className="col-span-1"></div>
                         <div className="col-span-2">
-                          {(plexPermissionsDiffer.allowDownloads ||
-                            plexPermissionsDiffer.allowLiveTv) && (
+                          {plexPermissionsDiffer.allowDownloads && (
                             <>
                               <div className="text-sm text-warning">
                                 <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
@@ -669,20 +664,6 @@ const UserSettingsGeneral = () => {
                                     )}
                                   </span>
                                 )}
-                                {plexPermissionsDiffer.allowLiveTv && (
-                                  <span className="font-bold ml-1">
-                                    <FormattedMessage
-                                      id="settings.allowLiveTv"
-                                      defaultMessage=" Allow Live TV Access"
-                                    />
-                                    {plexLibrariesData?.permissions
-                                      ?.allowChannels ? (
-                                      <CheckCircleIcon className="inline h-5 w-5 ml-1 text-success mb-0.5" />
-                                    ) : (
-                                      <XCircleIcon className="inline h-5 w-5 ml-1 text-error mb-0.5" />
-                                    )}
-                                  </span>
-                                )}
                                 <FormattedMessage
                                   id="settings.saveChangesToSync"
                                   defaultMessage=" Save changes to sync."
@@ -691,11 +672,8 @@ const UserSettingsGeneral = () => {
                             </>
                           )}
                           {plexLibrariesData?.permissions &&
-                            (values.allowDownloads !==
-                              plexLibrariesData.permissions.allowSync ||
-                              values.allowLiveTv !==
-                                plexLibrariesData.permissions
-                                  .allowChannels) && (
+                            values.allowDownloads !==
+                              plexLibrariesData.permissions.allowSync && (
                               <div className="text-sm text-error">
                                 <ExclamationCircleIcon className="inline h-5 w-5 mr-1" />
                                 <FormattedMessage

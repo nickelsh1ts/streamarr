@@ -34,6 +34,12 @@ class ImageProxy {
     let deletedImages = 0;
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
+    try {
+      await promises.access(cacheDirectory);
+    } catch {
+      return;
+    }
+
     const files = await promises.readdir(cacheDirectory);
 
     for (const file of files) {
@@ -101,20 +107,48 @@ class ImageProxy {
     }
   }
 
+  private static readonly instanceCache = new Map<string, ImageProxy>();
+
+  public static getOrCreate(
+    key: string,
+    baseUrl: string,
+    options: ConstructorParameters<typeof ImageProxy>[2] = {},
+    forceNew = false
+  ): ImageProxy {
+    const cacheKey = `${key}::${baseUrl}`;
+    if (!forceNew && ImageProxy.instanceCache.has(cacheKey)) {
+      return ImageProxy.instanceCache.get(cacheKey)!;
+    }
+    const instance = new ImageProxy(key, baseUrl, options);
+    ImageProxy.instanceCache.set(cacheKey, instance);
+    return instance;
+  }
+
   private axios;
   private cacheVersion;
   private key;
+  private defaultMaxAge;
+  private validateResponse;
 
   constructor(
     key: string,
     baseUrl: string,
-    options: { cacheVersion?: number; rateLimitOptions?: rateLimitOptions } = {}
+    options: {
+      cacheVersion?: number;
+      rateLimitOptions?: rateLimitOptions;
+      headers?: Record<string, string>;
+      defaultMaxAge?: number;
+      validateResponse?: (headers: Record<string, unknown>) => void;
+    } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
     this.key = key;
+    this.defaultMaxAge = options.defaultMaxAge ?? 0;
+    this.validateResponse = options.validateResponse;
     this.axios = axios.create({
       baseURL: baseUrl,
       withCredentials: false,
+      headers: options.headers,
     });
 
     if (options.rateLimitOptions) {
@@ -137,8 +171,9 @@ class ImageProxy {
       return newImage;
     }
 
-    // If the image is stale, we will revalidate it in the background.
-    if (imageResponse.meta.isStale) {
+    // If the image is stale, revalidate in the background only when caching is enabled.
+    const settings = getSettings();
+    if (imageResponse.meta.isStale && settings.main.cacheImages) {
       this.set(path, cacheKey);
     }
 
@@ -160,7 +195,7 @@ class ImageProxy {
         return {
           meta: {
             curRevalidate: maxAge,
-            revalidateAfter: maxAge * 1000 + now,
+            revalidateAfter: expireAt,
             isStale: now > expireAt,
             etag,
             extension,
@@ -170,8 +205,7 @@ class ImageProxy {
           imageBuffer: buffer,
         };
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
+    } catch {
       // No files. Treat as empty cache.
     }
 
@@ -188,22 +222,36 @@ class ImageProxy {
         responseType: 'arraybuffer',
       });
 
+      this.validateResponse?.(response.headers as Record<string, unknown>);
+
       const buffer = Buffer.from(response.data, 'binary');
-      const extension = path.split('.').pop() ?? '';
-      const maxAge = Number(
-        (response.headers['cache-control'] ?? '0').split('=')[1]
-      );
+      const pathExt = (path.split('.').pop() ?? '').toLowerCase();
+      const knownExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+      const contentType = response.headers['content-type'] as
+        | string
+        | undefined;
+      const extension = knownExts.includes(pathExt)
+        ? pathExt
+        : (contentType?.split('/')[1]?.split(';')[0]?.trim() ?? 'jpg');
+      const maxAgeMatch = (
+        (response.headers['cache-control'] as string | undefined) ?? ''
+      ).match(/max-age=(\d+)/);
+      const parsedMaxAge = Number(maxAgeMatch?.[1]);
+      const maxAge = parsedMaxAge > 0 ? parsedMaxAge : this.defaultMaxAge;
       const expireAt = Date.now() + maxAge * 1000;
       const etag = (response.headers.etag ?? '').replace(/"/g, '');
 
-      await this.writeToCacheDir(
-        directory,
-        extension,
-        maxAge,
-        expireAt,
-        buffer,
-        etag
-      );
+      const settings = getSettings();
+      if (settings.main.cacheImages) {
+        await this.writeToCacheDir(
+          directory,
+          extension,
+          maxAge,
+          expireAt,
+          buffer,
+          etag
+        );
+      }
 
       return {
         meta: {

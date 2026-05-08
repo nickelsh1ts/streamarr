@@ -39,7 +39,7 @@ describe('Responsive Design', () => {
       it(`should render profile on ${device} (${width}x${height})`, () => {
         cy.viewport(width, height);
         cy.visit('/profile');
-        cy.contains('Total Invites').should('exist');
+        cy.get('[data-testid="profile-header"]').should('be.visible');
       });
     });
   });

@@ -510,8 +510,8 @@ inviteRoutes.get<{ inviteId: string }>(
           'Content-Type': `image/${imageData.meta.extension}`,
           'Content-Length': imageData.imageBuffer.length,
           'Cache-Control': `public, max-age=${imageData.meta.curRevalidate}`,
-          'OS-Cache-Key': imageData.meta.cacheKey,
-          'OS-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
+          'Streamarr-Cache-Key': imageData.meta.cacheKey,
+          'Streamarr-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
         });
         res.end(imageData.imageBuffer);
       } else {

@@ -169,13 +169,13 @@ signupRoutes.post('/plexauth', async (req, res) => {
     });
 
     // Set up user settings with invite libraries
-    if (invite.sharedLibraries) {
-      user.settings = new UserSettings({
-        sharedLibraries: invite.sharedLibraries,
-      });
-    } else {
-      user.settings = new UserSettings();
-    }
+    user.settings = new UserSettings({
+      ...(invite.sharedLibraries
+        ? { sharedLibraries: invite.sharedLibraries }
+        : {}),
+      allowDownloads: invite.downloads ?? false,
+      allowLiveTv: invite.liveTv ?? false,
+    });
 
     if (
       settings.main.enableTrialPeriod &&
@@ -366,7 +366,6 @@ signupRoutes.post('/plexauth', async (req, res) => {
             libraries: librarySectionIds,
             allow_sync: invite.downloads ?? false,
             allow_camera_upload: false,
-            allow_channels: invite.liveTv ?? false,
             plex_home: invite.plexHome ?? false,
             plex_base_url,
             user_token: user.plexToken,
@@ -614,13 +613,13 @@ signupRoutes.post('/localauth', async (req, res) => {
     await user.setPassword(password);
 
     // Set up user settings with invite libraries
-    if (invite.sharedLibraries) {
-      user.settings = new UserSettings({
-        sharedLibraries: invite.sharedLibraries,
-      });
-    } else {
-      user.settings = new UserSettings();
-    }
+    user.settings = new UserSettings({
+      ...(invite.sharedLibraries
+        ? { sharedLibraries: invite.sharedLibraries }
+        : {}),
+      allowDownloads: invite.downloads ?? false,
+      allowLiveTv: invite.liveTv ?? false,
+    });
 
     if (
       settings.main.enableTrialPeriod &&

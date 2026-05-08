@@ -10,11 +10,11 @@ export const srgbToLinear = (c: number) => {
 export const getAllTailwindColors = (): string[] => {
   const allColors: string[] = [];
   const excludeColors = [
-    'lightBlue',
-    'warmGray',
-    'trueGray',
-    'coolGray',
-    'blueGray',
+    'sky',
+    'stone',
+    'neutral',
+    'gray',
+    'slate',
     'inherit',
     'current',
     'transparent',

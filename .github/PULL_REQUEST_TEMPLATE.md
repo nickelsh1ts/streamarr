@@ -17,6 +17,6 @@
 - [ ] I have read and followed the contribution [guidelines](https://github.com/nickelsh1ts/streamarr/blob/develop/CONTRIBUTING.md).
 - [ ] I have updated the documentation accordingly.
 - [ ] All new and existing tests passed.
-- [ ] Successful build `yarn build`
-- [ ] Translation keys `yarn i18n:extract`
+- [ ] Successful build `pnpm build`
+- [ ] Translation keys `pnpm i18n:extract`
 - [ ] Database migration (if required)

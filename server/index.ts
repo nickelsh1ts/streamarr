@@ -25,7 +25,7 @@ import { onboardingImageService } from '@server/lib/onboarding';
 import { getAppVersion } from '@server/utils/appVersion';
 import { TypeormStore } from 'connect-typeorm/out';
 import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
+import csurf from '@dr.pogodin/csurf';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import {
@@ -136,7 +136,15 @@ app
     });
     if (settings.main.csrfProtection) {
       server.use(
-        csurf({ cookie: { httpOnly: true, sameSite: true, secure: !dev } })
+        csurf({
+          cookie: {
+            key: '_csrf',
+            path: '/',
+            httpOnly: true,
+            sameSite: true,
+            secure: !dev,
+          },
+        })
       );
       server.use((req, res, next) => {
         res.cookie('XSRF-TOKEN', req.csrfToken(), {
@@ -190,7 +198,17 @@ app
         return;
       }
     });
-    server.use('/imageproxy', clearCookies, imageproxy);
+    server.use(
+      '/imageproxy',
+      clearCookies,
+      (req, res, next) => {
+        if (req.path.startsWith('/plex')) {
+          return sessionMiddleware(req, res, () => checkUser(req, res, next));
+        }
+        next();
+      },
+      imageproxy
+    );
     server.use('/logo', clearCookies, logoRoutes);
     server.use(
       '/onboarding/images',

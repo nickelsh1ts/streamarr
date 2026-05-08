@@ -1,4 +1,11 @@
+import PlexAPI, {
+  PlexNotFoundError,
+  type PlexMetadata,
+} from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import SeerrAPI from '@server/api/seerr';
+import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
+import TheMovieDb from '@server/api/themoviedb';
 import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
@@ -10,6 +17,7 @@ import type {
   UserResultsResponse,
   UserSummary,
 } from '@server/interfaces/api/userInterfaces';
+import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -323,12 +331,12 @@ router.delete<{ userId: number; endpoint: string }>(
       await userPushSubRepository.remove(userPushSub);
       res.status(204).send();
     } catch (e) {
-      logger.error('Something went wrong deleting the user push subcription', {
+      logger.error('Something went wrong deleting the user push subscription', {
         label: 'API',
         endpoint: req.params.endpoint,
         errorMessage: e.message,
       });
-      return next({ status: 500, message: 'User push subcription not found' });
+      return next({ status: 500, message: 'User push subscription not found' });
     }
   }
 );
@@ -1017,6 +1025,7 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
       logger.warn(
         `Could not fetch current Plex libraries for user ${user.email}`,
         {
+          label: 'Plex Sync',
           userId: user.id,
           error: error.message,
         }
@@ -1031,5 +1040,349 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
     next({ status: 500, message: e.message });
   }
 });
+
+router.get<{ id: string }>(
+  '/:id/requests',
+  isAuthenticated(),
+  async (req, res, next) => {
+    const seerrSettings = getSettings().overseerr;
+
+    if (!seerrSettings.enabled || !seerrSettings.hostname) {
+      return res.status(404).json({ message: 'Seerr is not configured.' });
+    }
+
+    if (
+      Number(req.params.id) !== req.user?.id &&
+      !req.user?.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message: "You do not have permission to view this user's requests.",
+      });
+    }
+
+    const parsedTake = Number(String(req.query.take ?? ''));
+    const take =
+      Number.isFinite(parsedTake) && parsedTake > 0
+        ? Math.min(Math.floor(parsedTake), 100)
+        : 10;
+    const parsedSkip = Number(String(req.query.skip ?? ''));
+    const skip =
+      Number.isFinite(parsedSkip) && parsedSkip >= 0
+        ? Math.floor(parsedSkip)
+        : 0;
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return res.status(200).json({
+          pageInfo: { pages: 0, pageSize: take, results: 0, page: 1 },
+          results: [],
+        });
+      }
+
+      const seerrApi = new SeerrAPI(seerrSettings);
+      const requests = await seerrApi.getRequestsByPlexId(
+        user.plexId,
+        take,
+        skip
+      );
+
+      res.status(200).json(requests);
+    } catch (e) {
+      logger.error('Something went wrong fetching user requests from Seerr', {
+        label: 'API',
+        userId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to fetch user requests.' });
+    }
+  }
+);
+
+router.get<{ id: string }>(
+  '/:id/watched',
+  isAuthenticated(),
+  async (req, res, next) => {
+    const settings = getSettings();
+
+    if (
+      Number(req.params.id) !== req.user?.id &&
+      !req.user?.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message:
+          "You do not have permission to view this user's watch history.",
+      });
+    }
+
+    if (!settings.tautulli.hostname || !settings.tautulli.apiKey) {
+      return res.status(200).json({ results: [] });
+    }
+
+    const parsedTake = Number(String(req.query.take ?? ''));
+    const take =
+      Number.isFinite(parsedTake) && parsedTake > 0
+        ? Math.min(Math.floor(parsedTake), 100)
+        : 20;
+    const parsedSkip = Number(String(req.query.skip ?? ''));
+    const skip =
+      Number.isFinite(parsedSkip) && parsedSkip >= 0
+        ? Math.floor(parsedSkip)
+        : 0;
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return res.status(200).json({ results: [] });
+      }
+
+      const tautulli = new TautulliAPI(settings.tautulli);
+      let history: TautulliHistoryRecord[];
+      try {
+        history = await tautulli.getUserWatchHistory(user, { take, skip });
+      } catch {
+        return res.status(200).json({ results: [] });
+      }
+      const machineId = settings.plex.machineId;
+
+      const showKey = (r: {
+        grandparentRatingKey?: number | null;
+        ratingKey: number;
+      }) =>
+        r.grandparentRatingKey
+          ? String(r.grandparentRatingKey)
+          : String(r.ratingKey);
+
+      const showKeyToRecord = new Map<string, TautulliHistoryRecord>();
+      const results = history.map((record) => {
+        const sKey = record.grandparent_rating_key
+          ? String(record.grandparent_rating_key)
+          : String(record.rating_key);
+        if (!showKeyToRecord.has(sKey)) showKeyToRecord.set(sKey, record);
+        return {
+          ratingKey: record.rating_key,
+          grandparentRatingKey: record.grandparent_rating_key || null,
+          title: record.title,
+          grandparentTitle: record.grandparent_title || null,
+          mediaType: record.media_type as 'movie' | 'episode',
+          thumb: record.grandparent_rating_key
+            ? `/library/metadata/${record.grandparent_rating_key}/thumb`
+            : record.thumb || null,
+          summary: null as string | null,
+          posterPath: null as string | null,
+          backdropPath: null as string | null,
+          percentComplete: record.percent_complete,
+          plexUrl: machineId
+            ? `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${record.rating_key}`
+            : null,
+          deletedFromPlex: false,
+          plexThumbReliable: true,
+        };
+      });
+
+      try {
+        const adminPlexToken = await getAdminPlexToken();
+
+        if (adminPlexToken) {
+          const plexApi = new PlexAPI({ plexToken: adminPlexToken });
+          const tmdb = new TheMovieDb();
+          const uniqueKeys = Array.from(new Set(results.map(showKey)));
+
+          const summaryMap = new Map<string, string>();
+          const posterMap = new Map<string, string>();
+          const backdropMap = new Map<string, string>();
+          const deletedKeys = new Set<string>();
+          const rekeyedMap = new Map<string, string>();
+
+          const normalizeTitle = (t: string) =>
+            t
+              .normalize('NFC')
+              .replace(/\s*\(\d{4}\)\s*/g, ' ')
+              .replace(/[:\-–—]/g, ' ')
+              .replace(/[^\w\s]/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+          const recoverByGuid = async (
+            record: TautulliHistoryRecord,
+            currentKey: string
+          ): Promise<
+            { meta: PlexMetadata; newKey: string } | 'same-key' | null
+          > => {
+            if (!record.guid) return null;
+            const guidItem = await plexApi.searchByGuid(record.guid);
+            if (!guidItem) return null;
+            const newKey =
+              record.media_type === 'episode'
+                ? guidItem.grandparentRatingKey
+                : guidItem.ratingKey;
+            if (!newKey) return null;
+            if (newKey === currentKey) return 'same-key';
+            try {
+              const recoveredMeta = await plexApi.getMetadata(newKey);
+              return { meta: recoveredMeta, newKey };
+            } catch {
+              return null;
+            }
+          };
+
+          await Promise.allSettled(
+            uniqueKeys.map(async (key) => {
+              let meta: PlexMetadata | null = null;
+              let activeKey = key;
+              const record = showKeyToRecord.get(key);
+
+              try {
+                meta = await plexApi.getMetadata(key);
+              } catch (e) {
+                if (e instanceof PlexNotFoundError) {
+                  if (record) {
+                    const recovery = await recoverByGuid(record, key);
+                    if (recovery && recovery !== 'same-key') {
+                      meta = recovery.meta;
+                      activeKey = recovery.newKey;
+                      rekeyedMap.set(key, recovery.newKey);
+                    } else {
+                      deletedKeys.add(key);
+                    }
+                  } else {
+                    deletedKeys.add(key);
+                  }
+                } else {
+                  logger.warn(
+                    'Plex metadata lookup failed for watch history item; skipping deletion check',
+                    {
+                      label: 'API',
+                      key,
+                      errorMessage: e instanceof Error ? e.message : String(e),
+                    }
+                  );
+                }
+              }
+
+              if (meta && record) {
+                const expected =
+                  record.media_type === 'movie'
+                    ? record.title?.toLowerCase().trim()
+                    : record.grandparent_title?.toLowerCase().trim();
+                const actual = meta.title?.toLowerCase().trim();
+
+                if (
+                  expected &&
+                  actual &&
+                  normalizeTitle(expected) !== normalizeTitle(actual)
+                ) {
+                  const recovery = await recoverByGuid(record, activeKey);
+                  if (recovery && recovery !== 'same-key') {
+                    meta = recovery.meta;
+                    rekeyedMap.set(key, recovery.newKey);
+                  } else if (!recovery) {
+                    deletedKeys.add(key);
+                    meta = null;
+                  }
+                }
+              }
+
+              let tmdbDetails: {
+                poster_path?: string | null;
+                backdrop_path?: string | null;
+                overview?: string | null;
+              } | null = null;
+
+              if (record) {
+                try {
+                  const isEpisode = record.media_type === 'episode';
+                  const searchTitle = isEpisode
+                    ? record.grandparent_title || record.title
+                    : record.title;
+                  const searchResult = isEpisode
+                    ? await tmdb.searchTvShows({ query: searchTitle })
+                    : await tmdb.searchMovies({ query: searchTitle });
+                  if (searchResult.results.length) {
+                    const normalizedSearch = searchTitle.trim().toLowerCase();
+                    const exactMatch = searchResult.results.find(
+                      (r) =>
+                        (r as { title?: string; name?: string }).title
+                          ?.trim()
+                          .toLowerCase() === normalizedSearch ||
+                        (r as { title?: string; name?: string }).name
+                          ?.trim()
+                          .toLowerCase() === normalizedSearch
+                    );
+                    tmdbDetails = exactMatch ?? searchResult.results[0];
+                  }
+                } catch {
+                  // Title search is best-effort
+                }
+              }
+
+              if (tmdbDetails?.overview)
+                summaryMap.set(key, tmdbDetails.overview);
+              else if (meta?.summary) summaryMap.set(key, meta.summary);
+
+              if (tmdbDetails?.poster_path)
+                posterMap.set(key, tmdbDetails.poster_path);
+              if (tmdbDetails?.backdrop_path)
+                backdropMap.set(key, tmdbDetails.backdrop_path);
+            })
+          );
+
+          for (const result of results) {
+            const key = showKey(result);
+            result.summary = summaryMap.get(key) ?? null;
+            result.posterPath = posterMap.get(key) ?? null;
+            result.backdropPath = backdropMap.get(key) ?? null;
+            result.deletedFromPlex = deletedKeys.has(key);
+            result.plexThumbReliable =
+              !result.deletedFromPlex && !rekeyedMap.has(key);
+
+            if (result.deletedFromPlex) {
+              result.plexUrl = null;
+            } else if (rekeyedMap.has(key) && machineId) {
+              const newKey = rekeyedMap.get(key)!;
+              result.plexUrl = `/watch/web/index.html#!/server/${machineId}/details?key=/library/metadata/${newKey}`;
+              result.thumb = `/library/metadata/${newKey}/thumb`;
+            }
+          }
+        }
+      } catch (e) {
+        logger.debug(
+          'Something went wrong fetching plex metadata for watch history',
+          {
+            label: 'API',
+            errorMessage: e instanceof Error ? e.message : String(e),
+          }
+        );
+      }
+
+      return res.status(200).json({ results });
+    } catch (e) {
+      logger.error('Something went wrong fetching user watch history', {
+        label: 'API',
+        userId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to fetch watch history.' });
+    }
+  }
+);
 
 export default router;

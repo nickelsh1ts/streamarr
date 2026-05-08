@@ -260,8 +260,14 @@
   "common.arrEdit4k": {
     "defaultMessage": "Edit 4K {arrApp} Server"
   },
+  "common.available": {
+    "defaultMessage": "Available"
+  },
   "common.back": {
     "defaultMessage": "Back"
+  },
+  "common.blocklisted": {
+    "defaultMessage": "Blocklisted"
   },
   "common.by": {
     "defaultMessage": "by"
@@ -308,6 +314,9 @@
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
   },
+  "common.declined": {
+    "defaultMessage": "Declined"
+  },
   "common.default": {
     "defaultMessage": "Default"
   },
@@ -319,6 +328,9 @@
   },
   "common.delete": {
     "defaultMessage": "Delete"
+  },
+  "common.deleted": {
+    "defaultMessage": "Deleted"
   },
   "common.description": {
     "defaultMessage": "Description"
@@ -373,6 +385,9 @@
   },
   "common.externalUrl": {
     "defaultMessage": "External URL"
+  },
+  "common.failed": {
+    "defaultMessage": "Failed"
   },
   "common.finish": {
     "defaultMessage": "Finish"
@@ -500,6 +515,9 @@
   "common.owner": {
     "defaultMessage": "Owner"
   },
+  "common.partiallyAvailable": {
+    "defaultMessage": "Partially Available"
+  },
   "common.password": {
     "defaultMessage": "Password"
   },
@@ -514,6 +532,9 @@
   },
   "common.paused": {
     "defaultMessage": "Paused"
+  },
+  "common.pending": {
+    "defaultMessage": "Pending"
   },
   "common.plex": {
     "defaultMessage": "Plex"
@@ -568,6 +589,9 @@
   },
   "common.request": {
     "defaultMessage": "Request"
+  },
+  "common.requested": {
+    "defaultMessage": "Requested"
   },
   "common.requests": {
     "defaultMessage": "Requests"
@@ -3953,11 +3977,26 @@
   "profile.joined": {
     "defaultMessage": "Joined {date}"
   },
+  "profile.moviesLifetime": {
+    "defaultMessage": "Movies (Lifetime)"
+  },
+  "profile.moviesPastDays": {
+    "defaultMessage": "Movies (past {days} {days, plural, one {day} other {days}})"
+  },
+  "profile.quotaRemaining": {
+    "defaultMessage": "{remaining} of {limit}"
+  },
   "profile.recentInvites": {
     "defaultMessage": "Recent Invites"
   },
   "profile.recentNotifications": {
     "defaultMessage": "Recent Notifications"
+  },
+  "profile.recentRequests": {
+    "defaultMessage": "Recent Requests"
+  },
+  "profile.recentlyWatched": {
+    "defaultMessage": "Recently Watched"
   },
   "profile.totalInvites": {
     "defaultMessage": "Total Invites"
@@ -3965,8 +4004,11 @@
   "profile.trialPeriodEnds": {
     "defaultMessage": "Ends {date}"
   },
-  "profile.trialPeriodRestriction": {
-    "defaultMessage": "New invites can be generated after this date"
+  "profile.tvLifetime": {
+    "defaultMessage": "TV Shows (Lifetime)"
+  },
+  "profile.tvPastDays": {
+    "defaultMessage": "TV Shows (past {days} {days, plural, one {day} other {days}})"
   },
   "profile.userId": {
     "defaultMessage": "User ID: {userId}"
@@ -4039,6 +4081,9 @@
   },
   "schedule.untitled": {
     "defaultMessage": "Untitled"
+  },
+  "season.specials": {
+    "defaultMessage": "Specials"
   },
   "selectUsers": {
     "defaultMessage": "Select Users"
@@ -4954,6 +4999,15 @@
   },
   "userPermissions.viewSchedule.name": {
     "defaultMessage": "View Schedule"
+  },
+  "userProfile.mediaError": {
+    "defaultMessage": "{mediaType, select, movie {Movie} tv {TV show} other {Media}} not found"
+  },
+  "userProfile.seasons": {
+    "defaultMessage": "{seasonCount, plural, one {Season} other {Seasons}}"
+  },
+  "userProfile.status": {
+    "defaultMessage": "Status"
   },
   "userSettings.InviteSettings": {
     "defaultMessage": "Default Invite Settings"

@@ -11,7 +11,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (LTS recommended)
-- [Yarn](https://yarnpkg.com/) (v4, Berry)
+- [pnpm](https://pnpm.io/) (v10)
 - [Python 3](https://www.python.org/) (for the Plex invite service)
 - [Git](https://git-scm.com/)
 
@@ -27,7 +27,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 2. **Install dependencies:**
 
    ```bash
-   yarn install
+   pnpm install
    ```
 
 3. **Set up the config directory:**
@@ -37,7 +37,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 4. **Start the development server:**
 
    ```bash
-   yarn dev
+   pnpm dev
    ```
 
    This starts the Node.js server with hot reloading via `nodemon`. The app will be available at `http://localhost:3000`.
@@ -45,15 +45,15 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
    To also start the Python Plex invite service (in a separate terminal):
 
    ```bash
-   yarn start:python
+   pnpm start:python
    ```
 
 5. **Verify everything works:**
 
    ```bash
-   yarn typecheck   # TypeScript type checking
-   yarn lint         # ESLint
-   yarn css-lint     # Stylelint
+   pnpm typecheck   # TypeScript type checking
+   pnpm lint         # ESLint
+   pnpm css-lint     # Stylelint
    ```
 
 ## Development Workflow
@@ -81,7 +81,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 3. Run the pre-commit checks before committing:
 
    ```bash
-   yarn prepare
+   pnpm prepare
    ```
 
    This runs formatting, linting, and type checking.
@@ -114,7 +114,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 - **Path aliases**: Use `@server/*` and `@app/*` for cross-folder imports. Same-folder relative imports (e.g. `./MyComponent`) are allowed and enforced by ESLint.
 - **TypeScript**: Strict mode is off by design. `experimentalDecorators` is enabled for TypeORM.
-- **Formatting**: Prettier handles code formatting. Run `yarn format` or let `yarn prepare` handle it.
+- **Formatting**: Prettier handles code formatting. Run `pnpm format` or let `pnpm prepare` handle it.
 
 ### Backend (`server/`)
 
@@ -128,7 +128,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 - **Data fetching**: Use SWR for all client-side data (`useSWR<Type>('/api/v1/...')`).
 - **State management**: React contexts in `src/context/` — no Redux.
-- **i18n**: Use `react-intl` with the `useLocale` hook. Extract keys with `yarn i18n:extract`.
+- **i18n**: Use `react-intl` with the `useLocale` hook. Extract keys with `pnpm i18n:extract`.
 - **Styling**: Tailwind CSS. Classes are auto-sorted by the Prettier plugin.
 
 ### Database Migrations
@@ -137,7 +137,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 - **Production**: Migrations run on startup. Generate from entity changes:
 
   ```bash
-  yarn migration:generate server/migration/MigrationName
+  pnpm migration:generate server/migration/MigrationName
   ```
 
 ## Reporting Bugs
@@ -160,7 +160,7 @@ Streamarr uses `react-intl` for internationalization. To contribute translations
 1. Extract the latest English strings:
 
    ```bash
-   yarn i18n:extract
+   pnpm i18n:extract
    ```
 
 2. Translation files are located in `src/i18n/locale/`.

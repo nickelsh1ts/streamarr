@@ -25,7 +25,7 @@ updates:
       timezone: 'America/New_York'
     labels:
       - dependencies
-      - github-actions
+      - github_actions
     commit-message:
       prefix: 'ci'
       include: scope
