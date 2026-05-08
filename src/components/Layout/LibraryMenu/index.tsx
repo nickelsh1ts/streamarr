@@ -114,6 +114,9 @@ const LibraryMenu = ({
     'other',
   ];
 
+  const liveTvDisabled =
+    !userSettings?.allowLiveTv && !hasPermission(Permission.ADMIN);
+
   const MenuLinks: MenuLinksProps[] = [
     {
       href: '/watch/web/index.html#!/media/tv.plex.provider.discover?source=home&pivot=discover.recommended',
@@ -165,6 +168,16 @@ const LibraryMenu = ({
       icon: <QueueListIcon className="w-7 h-7" />,
       regExp: 'source=playlists',
       hidden: !enablePlaylists,
+    },
+    {
+      href: '/watch/web/index.html#!/live-tv',
+      title: intl.formatMessage({
+        id: 'library.liveTV',
+        defaultMessage: 'Live TV',
+      }),
+      icon: <TvIcon className="h-7 w-7" />,
+      regExp: 'live-tv',
+      hidden: liveTvDisabled,
     },
   ];
 

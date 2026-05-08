@@ -288,7 +288,7 @@ components:
         liveTv:
           type: boolean
           example: false
-          description: Enable live TV feature globally
+          description: Default Live TV access for new invites
         plexHome:
           type: boolean
           example: false

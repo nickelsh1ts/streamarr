@@ -44,8 +44,8 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         defaultQuotas,
         sharedLibraries: defaultSharedLibraries,
         downloads,
-        liveTv,
         plexHome,
+        liveTv: globalLiveTv,
         enableTrialPeriod,
         trialPeriodDays,
         releaseSched,
@@ -80,7 +80,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         globalInvitesExpiryLimit: defaultQuotas.invites.quotaExpiryLimit,
         globalInvitesExpiryTime: defaultQuotas.invites.quotaExpiryTime,
         globalAllowDownloads: downloads,
-        globalLiveTv: liveTv,
+        globalLiveTv: globalLiveTv,
         globalPlexHome: plexHome,
         sharedLibraries: user.settings?.sharedLibraries ?? null,
         allowDownloads: user.settings?.allowDownloads ?? false,
@@ -129,13 +129,11 @@ userSettingsRoutes.post<
     // Store previous sharedLibraries value to detect changes
     const previousSharedLibraries = user.settings?.sharedLibraries;
     const previousAllowDownloads = user.settings?.allowDownloads;
-    const previousAllowLiveTv = user.settings?.allowLiveTv;
     const newSharedLibraries =
       req.body.sharedLibraries === '' || req.body.sharedLibraries === 'server'
         ? null
         : req.body.sharedLibraries;
     const newAllowDownloads = req.body.allowDownloads;
-    const newAllowLiveTv = req.body.allowLiveTv;
     const forcePlexSync = req.body.forcePlexSync === true;
 
     user.username = req.body.username;
@@ -193,7 +191,6 @@ userSettingsRoutes.post<
     const shouldSync =
       previousSharedLibraries !== newSharedLibraries ||
       previousAllowDownloads !== newAllowDownloads ||
-      previousAllowLiveTv !== newAllowLiveTv ||
       forcePlexSync;
 
     if (
@@ -207,7 +204,6 @@ userSettingsRoutes.post<
         await plexSync.syncUserLibraries(user, syncValue, {
           allowSync: req.body.allowDownloads,
           allowCameraUpload: false,
-          allowChannels: req.body.allowLiveTv,
           plexHome: false,
         });
       } catch (syncError) {
