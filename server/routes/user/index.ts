@@ -17,6 +17,7 @@ import type {
   UserResultsResponse,
   UserSummary,
 } from '@server/interfaces/api/userInterfaces';
+import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -1198,14 +1199,10 @@ router.get<{ id: string }>(
       });
 
       try {
-        const admin = await getRepository(User)
-          .createQueryBuilder('user')
-          .addSelect('user.plexToken')
-          .where('user.id = :id', { id: 1 })
-          .getOne();
+        const adminPlexToken = await getAdminPlexToken();
 
-        if (admin?.plexToken) {
-          const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+        if (adminPlexToken) {
+          const plexApi = new PlexAPI({ plexToken: adminPlexToken });
           const tmdb = new TheMovieDb();
           const uniqueKeys = Array.from(new Set(results.map(showKey)));
 

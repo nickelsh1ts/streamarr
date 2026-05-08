@@ -128,6 +128,7 @@ class ImageProxy {
   private cacheVersion;
   private key;
   private defaultMaxAge;
+  private validateResponse;
 
   constructor(
     key: string,
@@ -137,11 +138,13 @@ class ImageProxy {
       rateLimitOptions?: rateLimitOptions;
       headers?: Record<string, string>;
       defaultMaxAge?: number;
+      validateResponse?: (headers: Record<string, unknown>) => void;
     } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
     this.key = key;
     this.defaultMaxAge = options.defaultMaxAge ?? 0;
+    this.validateResponse = options.validateResponse;
     this.axios = axios.create({
       baseURL: baseUrl,
       withCredentials: false,
@@ -219,6 +222,8 @@ class ImageProxy {
         responseType: 'arraybuffer',
       });
 
+      this.validateResponse?.(response.headers as Record<string, unknown>);
+
       const buffer = Buffer.from(response.data, 'binary');
       const pathExt = (path.split('.').pop() ?? '').toLowerCase();
       const knownExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
@@ -228,11 +233,10 @@ class ImageProxy {
       const extension = knownExts.includes(pathExt)
         ? pathExt
         : (contentType?.split('/')[1]?.split(';')[0]?.trim() ?? 'jpg');
-      const parsedMaxAge = Number(
-        ((response.headers['cache-control'] as string | undefined) ?? '').split(
-          'max-age='
-        )[1]
-      );
+      const maxAgeMatch = (
+        (response.headers['cache-control'] as string | undefined) ?? ''
+      ).match(/max-age=(\d+)/);
+      const parsedMaxAge = Number(maxAgeMatch?.[1]);
       const maxAge = parsedMaxAge > 0 ? parsedMaxAge : this.defaultMaxAge;
       const expireAt = Date.now() + maxAge * 1000;
       const etag = (response.headers.etag ?? '').replace(/"/g, '');

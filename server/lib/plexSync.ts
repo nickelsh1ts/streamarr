@@ -1,5 +1,5 @@
-import { getRepository } from '@server/datasource';
-import { User } from '@server/entity/User';
+import { getAdminPlexToken } from '@server/lib/adminPlexToken';
+import type { User } from '@server/entity/User';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import axios from 'axios';
@@ -16,25 +16,6 @@ export interface PlexSyncOptions {
  */
 class PlexSync {
   private settings = getSettings();
-
-  /**
-   * Get admin user's Plex token from the database
-   * @returns Promise resolving to the admin user with Plex token
-   */
-  private async getAdminPlexToken(): Promise<{ plexToken: string }> {
-    const userRepository = getRepository(User);
-    const mainUser = await userRepository
-      .createQueryBuilder('user')
-      .addSelect('user.plexToken')
-      .where('user.id = :id', { id: 1 })
-      .getOne();
-
-    if (!mainUser || !mainUser.plexToken) {
-      throw new Error('Admin Plex token is missing');
-    }
-
-    return { plexToken: mainUser.plexToken };
-  }
 
   /**
    * Determine library section IDs based on shared libraries configuration
@@ -112,7 +93,8 @@ class PlexSync {
         return { libraries: [] };
       }
 
-      const { plexToken } = await this.getAdminPlexToken();
+      const plexToken = await getAdminPlexToken();
+      if (!plexToken) throw new Error('Admin Plex token is missing');
       const response = await axios.get('http://localhost:5005/libraries', {
         params: {
           token: plexToken,
@@ -149,7 +131,8 @@ class PlexSync {
       plexHome = false,
     } = options;
 
-    const { plexToken } = await this.getAdminPlexToken();
+    const plexToken = await getAdminPlexToken();
+    if (!plexToken) throw new Error('Admin Plex token is missing');
     const librarySectionIds = this.getLibrarySectionIds(sharedLibraries);
 
     try {

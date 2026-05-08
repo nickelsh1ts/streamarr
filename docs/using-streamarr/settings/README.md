@@ -61,11 +61,11 @@ When enabled, Streamarr will proxy and cache images from external sources. Two i
 | Proxy    | Path                           | Source                                            |
 | -------- | ------------------------------ | ------------------------------------------------- |
 | **TMDB** | `/imageproxy/<path>`           | `image.tmdb.org` — movie/TV posters and backdrops |
-| **Plex** | `/imageproxy/plex?path=<path>` | Your Plex server — library thumbnails and artwork |
+| **Plex** | `/imageproxy/plex?path=<path>` | Your Plex server — library metadata thumbnails    |
 
 Images are saved in `config/cache/images/` under `tmdb/` and `plex/` subdirectories respectively. Stale images are cleared every 24 hours.
 
-The Plex image proxy is authenticated — requests are signed with the admin Plex token and restricted to paths under `/library/`. Only signed-in users can access proxied Plex images.
+The Plex image proxy is authenticated — requests are signed with the admin Plex token, restricted to `/library/metadata/<id>/thumb`, and rejected unless Plex responds with an `image/*` content type. Only signed-in users can access proxied Plex images.
 
 Cache statistics for both proxies (image count and total size) are visible on the **Jobs & Cache** page under **Settings → Jobs & Cache**.
 
