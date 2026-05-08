@@ -1,19 +1,53 @@
 import ImageProxy from '@server/lib/imageproxy';
+import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import logger from '@server/logger';
 import { getSettings } from '@server/lib/settings';
-import { getRepository } from '@server/datasource';
-import { User } from '@server/entity/User';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 
 const router = Router();
 
-let plexImageProxyToken: string | null = null;
+const PLEX_IMAGE_PATH_REGEX = /^\/library\/metadata\/\d+\/thumb(\/\d+)?$/;
+const PLEX_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+let plexTokenCache: {
+  token: string | null;
+  expiresAt: number;
+} = {
+  token: null,
+  expiresAt: 0,
+};
+
+const validatePlexImageResponse = (headers: Record<string, unknown>) => {
+  const contentType = headers['content-type'];
+  if (typeof contentType !== 'string' || !contentType.startsWith('image/')) {
+    throw new Error(`Invalid Plex image content type: ${String(contentType)}`);
+  }
+};
+
+const getPlexAdminToken = async (): Promise<{
+  token: string | null;
+  tokenChanged: boolean;
+}> => {
+  const now = Date.now();
+  if (plexTokenCache.token && now < plexTokenCache.expiresAt) {
+    return { token: plexTokenCache.token, tokenChanged: false };
+  }
+
+  const previousToken = plexTokenCache.token;
+  const token = await getAdminPlexToken();
+
+  plexTokenCache = token
+    ? { token, expiresAt: now + PLEX_TOKEN_TTL_MS }
+    : { token: null, expiresAt: 0 };
+
+  return { token, tokenChanged: previousToken !== token };
+};
 
 router.get('/plex', isAuthenticated(), async (req, res) => {
   const plexPath = req.query.path as string;
 
-  if (!plexPath || !plexPath.startsWith('/library/')) {
+  if (!plexPath || !PLEX_IMAGE_PATH_REGEX.test(plexPath)) {
     return res.status(400).send('Invalid path');
   }
 
@@ -25,32 +59,25 @@ router.get('/plex', isAuthenticated(), async (req, res) => {
   }
 
   try {
-    const admin = await getRepository(User)
-      .createQueryBuilder('user')
-      .addSelect('user.plexToken')
-      .where('user.id = :id', { id: 1 })
-      .getOne();
+    const { token: plexToken, tokenChanged } = await getPlexAdminToken();
 
-    if (!admin?.plexToken) {
+    if (!plexToken) {
       return res.status(503).send('Plex token not available');
     }
 
     const protocol = useSsl ? 'https' : 'http';
     const plexBaseUrl = `${protocol}://${ip}:${port}`;
-    const tokenChanged = plexImageProxyToken !== admin.plexToken;
     const plexImageProxy = ImageProxy.getOrCreate(
       'plex',
       plexBaseUrl,
       {
-        headers: { 'X-Plex-Token': admin.plexToken },
+        headers: { 'X-Plex-Token': plexToken },
         defaultMaxAge: 2419200,
         rateLimitOptions: { maxRequests: 20, maxRPS: 50 },
+        validateResponse: validatePlexImageResponse,
       },
       tokenChanged
     );
-    if (tokenChanged) {
-      plexImageProxyToken = admin.plexToken;
-    }
 
     const imageData = await plexImageProxy.getImage(plexPath);
 

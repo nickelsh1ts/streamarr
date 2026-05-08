@@ -884,7 +884,7 @@ components:
           example: 2
         mediaStatus:
           type: integer
-          description: 'Seerr media status (1=UNKNOWN, 2=PENDING, 3=PROCESSING, 4=PARTIALLY_AVAILABLE, 5=AVAILABLE, 6=DELETED, 7=BLOCKLISTED)'
+          description: 'Seerr media status (1=UNKNOWN, 2=PENDING, 3=PROCESSING, 4=PARTIALLY_AVAILABLE, 5=AVAILABLE, 6=BLOCKLISTED, 7=DELETED)'
           example: 5
         media:
           type: object
