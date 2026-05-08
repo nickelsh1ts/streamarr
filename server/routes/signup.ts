@@ -366,7 +366,6 @@ signupRoutes.post('/plexauth', async (req, res) => {
             libraries: librarySectionIds,
             allow_sync: invite.downloads ?? false,
             allow_camera_upload: false,
-            allow_channels: invite.liveTv ?? false,
             plex_home: invite.plexHome ?? false,
             plex_base_url,
             user_token: user.plexToken,
@@ -621,6 +620,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     } else {
       user.settings = new UserSettings();
     }
+    user.settings.allowLiveTv = invite.liveTv ?? false;
 
     if (
       settings.main.enableTrialPeriod &&

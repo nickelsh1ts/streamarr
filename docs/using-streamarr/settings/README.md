@@ -221,6 +221,22 @@ Configure the default invite quota settings for new users:
 - **Quota Limit** — Maximum number of invites a user can create
 - **Quota Days** — Time period (in days) for the quota to reset
 
+### Default Invite Settings
+
+Configure the default feature access granted when creating new invites:
+
+| Setting                    | Description                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| **Allow Downloads**        | Grant download management access to invited users by default                               |
+| **Allow Live TV Access**   | Show the Live TV navigation item for invited users by default                              |
+| **Allow Plex Home Access** | Add invited users to Plex Home by default (creates a managed user under your Plex account) |
+
+These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
+
+{% hint style="info" %}
+**Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
+{% endhint %}
+
 ---
 
 ## Trial Period
