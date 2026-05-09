@@ -8,6 +8,7 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useState } from 'react';
 import * as Yup from 'yup';
+import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const ResetPassword = () => {
@@ -17,11 +18,13 @@ const ResetPassword = () => {
 
   const ResetSchema = Yup.object().shape({
     email: Yup.string()
-      .email(
+      .test(
+        'email',
         intl.formatMessage({
           id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
-        })
+        }),
+        (value) => !value || validator.isEmail(value, { require_tld: false })
       )
       .required(
         intl.formatMessage({

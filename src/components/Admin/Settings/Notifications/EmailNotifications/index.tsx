@@ -14,6 +14,7 @@ import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
+import validator from 'validator';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 
@@ -38,11 +39,13 @@ const EmailNotifications = () => {
             )
           : schema.nullable()
       )
-      .email(
+      .test(
+        'email',
         intl.formatMessage({
           id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
-        })
+        }),
+        (value) => !value || validator.isEmail(value, { require_tld: false })
       ),
     smtpHost: Yup.string()
       .when('enabled', (enabled, schema) =>
@@ -90,7 +93,7 @@ const EmailNotifications = () => {
         }
       )
       .matches(
-        /^$|-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/,
+        /^$|-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/s,
         intl.formatMessage({
           id: 'emailNotifications.validation.pgpPrivateKey.format',
           defaultMessage: 'You must provide a valid PGP private key',
@@ -478,8 +481,9 @@ const EmailNotifications = () => {
                     as="field"
                     id="pgpPrivateKey"
                     name="pgpPrivateKey"
+                    type="textarea"
                     buttonSize="sm"
-                    className="input input-sm input-primary rounded-md w-full"
+                    className="textarea textarea-sm textarea-primary rounded-md w-full"
                   />
                 </div>
                 {errors.pgpPrivateKey &&
