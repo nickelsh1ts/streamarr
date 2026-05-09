@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -14,10 +16,12 @@ export class UserPushSubscription {
   @PrimaryGeneratedColumn()
   public id: number;
 
+  @Index('IDX_user_push_subscription_userId')
   @ManyToOne(() => User, (user) => user.pushSubscriptions, {
     eager: true,
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'userId' })
   public user: User;
 
   @Column('text')

@@ -3,6 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -48,11 +50,13 @@ export class Invite {
   @Column({ type: 'text', default: '' })
   public sharedLibraries: string;
 
+  @Index('IDX_invite_createdById')
   @ManyToOne(() => User, (user) => user.createdInvites, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'createdById' })
   public createdBy: User;
 
   @OneToMany(() => User, (user) => user.redeemedInvite, {
@@ -60,11 +64,13 @@ export class Invite {
   })
   public redeemedBy: User[];
 
+  @Index('IDX_invite_updatedById')
   @ManyToOne(() => User, (user) => user.modifiedInvites, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'updatedById' })
   public updatedBy: User;
 
   @CreateDateColumn()
