@@ -28,6 +28,7 @@ const defaultSettings: PublicSettingsResponse = {
   statusEnabled: false,
   customLogo: undefined,
   customLogoSmall: undefined,
+  plexClientIdentifier: '',
   theme: {
     primary: '#974ede',
     'primary-content': '#fff',

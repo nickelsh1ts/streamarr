@@ -157,7 +157,7 @@ app
     // Set up sessions
     const sessionRepository = getRepository(Session);
     const sessionMiddleware = session({
-      secret: settings.clientId,
+      secret: settings.sessionSecret,
       resave: false,
       saveUninitialized: false,
       name: 'streamarr.sid',

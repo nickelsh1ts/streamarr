@@ -21,37 +21,26 @@ export interface PlexPin {
   code: string;
 }
 
-const uuidv4 = (): string => {
-  return ((1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11).replace(
-    /[018]/g,
-    function (c) {
-      return (
-        parseInt(c) ^
-        (window.crypto.getRandomValues(new Uint8Array(1))[0] &
-          (15 >> (parseInt(c) / 4)))
-      ).toString(16);
-    }
-  );
-};
-
 class PlexOAuth {
   private plexHeaders?: PlexHeaders;
   private pin?: PlexPin;
   private popup?: Window;
   private authToken?: string;
 
-  public initializeHeaders(applicationTitle: string): void {
-    if (!window) {
+  public initializeHeaders(
+    applicationTitle: string,
+    plexClientIdentifier: string
+  ): void {
+    if (typeof window === 'undefined') {
       throw new Error(
         'Window is not defined. Are you calling this in the browser?'
       );
     }
 
-    let clientId = localStorage.getItem('plex-client-id');
-    if (!clientId) {
-      const uuid = uuidv4();
-      localStorage.setItem('plex-client-id', uuid);
-      clientId = uuid;
+    if (!plexClientIdentifier) {
+      throw new Error(
+        'Plex client identifier missing. Reload the page and try again.'
+      );
     }
 
     const browser = Bowser.getParser(window.navigator.userAgent);
@@ -59,7 +48,7 @@ class PlexOAuth {
       Accept: 'application/json',
       'X-Plex-Product': applicationTitle,
       'X-Plex-Version': '0.00.1',
-      'X-Plex-Client-Identifier': clientId,
+      'X-Plex-Client-Identifier': plexClientIdentifier,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
@@ -95,7 +84,10 @@ class PlexOAuth {
   public async login(): Promise<string> {
     const res = await fetch(`/api/v1/settings/public`, { cache: 'no-store' });
     const currentSettings: PublicSettingsResponse = await res.json();
-    this.initializeHeaders(currentSettings.applicationTitle);
+    this.initializeHeaders(
+      currentSettings.applicationTitle,
+      currentSettings.plexClientIdentifier
+    );
     await this.getPin();
 
     if (!this.plexHeaders || !this.pin) {
