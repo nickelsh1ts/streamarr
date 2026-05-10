@@ -151,15 +151,17 @@ export const unsubscribeToPushNotifications = async (
     const { subscription } = await getPushSubscription();
 
     if (!subscription) {
-      return false;
+      return null;
     }
 
     const { endpoint: currentEndpoint } = subscription.toJSON();
 
     if (!endpoint || endpoint === currentEndpoint) {
       await subscription.unsubscribe();
-      return true;
+      return currentEndpoint ?? null;
     }
+
+    return null;
   } catch (error) {
     throw new Error(
       `Issue unsubscribing to push notifications: ${error.message}`
