@@ -20,6 +20,7 @@ import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
 import routes from '@server/routes';
+import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import logoRoutes from '@server/routes/logo';
 import { onboardingImageService } from '@server/lib/onboarding';
@@ -211,6 +212,7 @@ app
       },
       imageproxy
     );
+    server.use('/avatarproxy', clearCookies, avatarproxy);
     server.use('/logo', clearCookies, logoRoutes);
     server.use(
       '/onboarding/images',

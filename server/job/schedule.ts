@@ -52,9 +52,10 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Image Cache Cleanup', {
         label: 'Jobs',
       });
-      // Clean TMDB and Plex image caches
+      // Clean TMDB, Plex, and avatar image caches
       ImageProxy.clearCache('tmdb');
       ImageProxy.clearCache('plex');
+      ImageProxy.clearCache('avatar');
     }),
   });
 

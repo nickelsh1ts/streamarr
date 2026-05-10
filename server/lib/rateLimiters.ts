@@ -13,3 +13,10 @@ export const resetPasswordLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const avatarLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 120, // 2 req/sec per IP — covers page loads, blocks bulk enumeration
+  standardHeaders: true,
+  legacyHeaders: false,
+});

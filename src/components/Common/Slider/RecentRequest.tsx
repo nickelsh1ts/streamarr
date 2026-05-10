@@ -122,10 +122,10 @@ const RequestCardError = ({
                     }
                     className="group flex items-center"
                   >
-                    {requestData.requestedBy.avatar && (
+                    {requestData.requestedBy.id && (
                       <span className="mr-2 rounded-full">
                         <CachedImage
-                          src={requestData.requestedBy.avatar}
+                          src={`/avatarproxy/${requestData.requestedBy.id}`}
                           alt=""
                           className="rounded-full object-cover"
                           width={20}
@@ -232,10 +232,10 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             }
             className="group flex items-center gap-2"
           >
-            {requestData.requestedBy.avatar && (
+            {requestData.requestedBy.id && (
               <span className="rounded-full">
                 <CachedImage
-                  src={requestData.requestedBy.avatar}
+                  src={`/avatarproxy/${requestData.requestedBy.id}`}
                   alt=""
                   className="rounded-full object-cover"
                   width={20}

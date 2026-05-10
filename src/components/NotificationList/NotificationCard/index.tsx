@@ -215,7 +215,11 @@ export const NotificationCard = ({
         <div className="relative inline-flex size-16 flex-shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
           <div>
             <CachedImage
-              src={notification?.createdBy?.avatar || logoSmallSrc}
+              src={
+                notification?.createdBy?.id
+                  ? `/avatarproxy/${notification.createdBy.id}`
+                  : logoSmallSrc
+              }
               alt=""
               className="rounded-full"
               width={64}

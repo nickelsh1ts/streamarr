@@ -62,7 +62,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
           <div className="relative">
             <CachedImage
               className="h-24 w-24 rounded-full bg-primary-content object-cover ring-1 ring-primary-content"
-              src={user.avatar}
+              src={`/avatarproxy/${user.id}`}
               alt=""
               width={96}
               height={96}

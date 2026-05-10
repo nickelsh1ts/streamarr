@@ -957,6 +957,7 @@ settingsRoutes.get('/cache', async (_req, res) => {
 
   const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
   const plexImageCache = await ImageProxy.getImageStats('plex');
+  const avatarImageCache = await ImageProxy.getImageStats('avatar');
 
   // QR code cache stats
   const qrProxy = new QRCodeProxy();
@@ -981,6 +982,7 @@ settingsRoutes.get('/cache', async (_req, res) => {
     imageCache: {
       tmdb: tmdbImageCache,
       plex: plexImageCache,
+      avatar: avatarImageCache,
       qrcode: { imageCount: qrImageCount, size: qrCacheSize },
     },
   });
