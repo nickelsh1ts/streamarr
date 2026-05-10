@@ -54,6 +54,7 @@ export interface PublicSettingsResponse {
   customLogo?: string;
   customLogoSmall?: string;
   theme: Theme;
+  plexClientIdentifier: string;
 }
 
 export interface CacheItem {

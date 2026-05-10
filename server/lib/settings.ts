@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import fs from 'fs';
 import { merge } from 'lodash';
 import path from 'path';
@@ -195,6 +195,7 @@ export interface FullPublicSettings extends PublicSettings {
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
+  plexClientIdentifier: string;
 }
 
 export interface NotificationAgentConfig {
@@ -265,6 +266,7 @@ export type JobId =
 
 interface AllSettings {
   clientId: string;
+  sessionSecret?: string;
   vapidPublic: string;
   vapidPrivate: string;
   main: MainSettings;
@@ -297,6 +299,7 @@ class Settings {
   constructor(initialSettings?: AllSettings) {
     this.data = {
       clientId: randomUUID(),
+      sessionSecret: '',
       vapidPrivate: '',
       vapidPublic: '',
       main: {
@@ -582,6 +585,7 @@ class Settings {
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,
+      plexClientIdentifier: this.clientId,
     };
   }
 
@@ -616,6 +620,15 @@ class Settings {
     }
 
     return this.data.clientId;
+  }
+
+  get sessionSecret(): string {
+    if (!this.data.sessionSecret) {
+      this.data.sessionSecret = randomBytes(32).toString('hex');
+      this.save();
+    }
+
+    return this.data.sessionSecret;
   }
 
   get vapidPublic(): string {

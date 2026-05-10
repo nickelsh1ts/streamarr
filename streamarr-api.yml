@@ -1343,6 +1343,11 @@ components:
         newPlexLogin:
           type: boolean
           example: true
+        plexClientIdentifier:
+          type: string
+          format: uuid
+          description: Instance Plex OAuth client identifier
+          example: 6919275e-142a-48d8-be6b-93594cbd4626
         supportUrl:
           type: string
           example: 'https://support.example.com'
