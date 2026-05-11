@@ -9,6 +9,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { resetPasswordLimiter } from '@server/lib/rateLimiters';
 import { isAuthenticated } from '@server/middleware/auth';
+import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
 const authRoutes = Router();
@@ -121,6 +122,7 @@ authRoutes.post('/plex', async (req, res, next) => {
             );
           }
 
+          const previousAvatar = user.avatar;
           user.plexToken = body.authToken;
           user.plexId = account.id;
           user.avatar = account.thumb;
@@ -129,6 +131,9 @@ authRoutes.post('/plex', async (req, res, next) => {
           user.userType = UserType.PLEX;
 
           await userRepository.save(user);
+          if (previousAvatar && previousAvatar !== user.avatar) {
+            void ImageProxy.clearCachedImage('avatar', previousAvatar);
+          }
         } else if (!settings.main.newPlexLogin) {
           logger.warn(
             'Failed sign-in attempt by unimported Plex user with access to the media app',

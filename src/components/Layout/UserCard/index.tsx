@@ -42,7 +42,7 @@ const UserCard = ({
       >
         <CachedImage
           className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
-          src={user?.avatar}
+          src={user?.id ? `/avatarproxy/${user.id}` : undefined}
           alt="user"
           width={64}
           height={64}

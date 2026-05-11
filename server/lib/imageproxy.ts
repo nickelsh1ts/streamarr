@@ -156,6 +156,20 @@ class ImageProxy {
     }
   }
 
+  public static async clearCachedImage(
+    key: string,
+    imageUrl: string
+  ): Promise<void> {
+    const mapKey = `${key}::`;
+    const proxy =
+      ImageProxy.instanceCache.get(mapKey) ?? new ImageProxy(key, '');
+    const cacheKey = proxy.getCacheKey(imageUrl);
+    const directory = join(proxy.getCacheDirectory(), cacheKey);
+    await promises.rm(directory, { force: true, recursive: true }).catch(() => {
+      // Directory may not exist — ignore
+    });
+  }
+
   public async getImage(path: string): Promise<ImageResponse> {
     const cacheKey = this.getCacheKey(path);
 

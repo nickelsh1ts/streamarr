@@ -164,7 +164,7 @@ const UserSelector = ({
                 {!multiple && !Array.isArray(selectedUser) && selectedUser ? (
                   <span className="flex items-center">
                     <CachedImage
-                      src={selectedUser.avatar}
+                      src={`/avatarproxy/${selectedUser.id}`}
                       alt=""
                       className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
                       width={24}
@@ -187,7 +187,7 @@ const UserSelector = ({
                     {selectedUser.map((user, idx) => (
                       <CachedImage
                         key={user?.id || idx}
-                        src={user?.avatar}
+                        src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                         alt=""
                         className="size-6 flex-shrink-0 rounded-full object-cover"
                         width={24}
@@ -236,7 +236,7 @@ const UserSelector = ({
                             } flex items-center`}
                           >
                             <CachedImage
-                              src={user.avatar}
+                              src={`/avatarproxy/${user.id}`}
                               alt=""
                               className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
                               width={24}

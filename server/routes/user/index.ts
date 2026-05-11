@@ -22,6 +22,7 @@ import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 import type { EntityManager } from 'typeorm';
 import { In, Not } from 'typeorm';
@@ -693,6 +694,7 @@ router.post(
 
           if (user) {
             // Update the user's avatar with their Plex thumbnail, in case it changed
+            const previousAvatar = user.avatar;
             user.avatar = account.thumb;
             user.email = account.email;
             user.plexUsername = account.username;
@@ -703,6 +705,9 @@ router.post(
               user.plexId = parseInt(account.id);
             }
             await userRepository.save(user);
+            if (previousAvatar && previousAvatar !== user.avatar) {
+              void ImageProxy.clearCachedImage('avatar', previousAvatar);
+            }
           } else if (!body || body.plexIds.includes(account.id)) {
             if (await mainPlexTv.checkUserAccess(parseInt(account.id))) {
               const newUser = new User({

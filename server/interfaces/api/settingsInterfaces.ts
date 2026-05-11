@@ -74,6 +74,7 @@ export interface CacheResponse {
   imageCache: {
     tmdb: { size: number; imageCount: number };
     plex: { size: number; imageCount: number };
+    avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
 }

@@ -292,7 +292,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     href={`/admin/users/${invite?.createdBy?.id}`}
                   >
                     <CachedImage
-                      src={invite?.createdBy?.avatar}
+                      src={
+                        invite?.createdBy?.id
+                          ? `/avatarproxy/${invite.createdBy.id}`
+                          : undefined
+                      }
                       alt=""
                       className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                       width={20}
@@ -312,7 +316,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     href={`/profile`}
                   >
                     <CachedImage
-                      src={invite?.createdBy?.avatar}
+                      src={
+                        invite?.createdBy?.id
+                          ? `/avatarproxy/${invite.createdBy.id}`
+                          : undefined
+                      }
                       alt=""
                       className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                       width={20}
@@ -330,7 +338,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                     <span className="font-extrabold flex items-center truncate">
                       <CachedImage
-                        src={invite?.createdBy?.avatar}
+                        src={
+                          invite?.createdBy?.id
+                            ? `/avatarproxy/${invite.createdBy.id}`
+                            : undefined
+                        }
                         alt=""
                         className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                         width={20}
@@ -361,7 +373,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     href={`/admin/users/${invite?.updatedBy?.id}`}
                   >
                     <CachedImage
-                      src={invite?.updatedBy?.avatar}
+                      src={
+                        invite?.updatedBy?.id
+                          ? `/avatarproxy/${invite.updatedBy.id}`
+                          : undefined
+                      }
                       alt=""
                       className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                       width={20}
@@ -380,7 +396,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     href={`/profile`}
                   >
                     <CachedImage
-                      src={invite?.updatedBy?.avatar}
+                      src={
+                        invite?.updatedBy?.id
+                          ? `/avatarproxy/${invite.updatedBy.id}`
+                          : undefined
+                      }
                       alt=""
                       className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                       width={20}
@@ -398,7 +418,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                     <span className="font-extrabold flex items-center truncate">
                       <CachedImage
-                        src={invite?.updatedBy?.avatar}
+                        src={
+                          invite?.updatedBy?.id
+                            ? `/avatarproxy/${invite.updatedBy.id}`
+                            : undefined
+                        }
                         alt=""
                         className="size-5 mr-1 ml-1.5 object-cover rounded-full"
                         width={20}
@@ -433,7 +457,9 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           title={user?.displayName}
                         >
                           <CachedImage
-                            src={user?.avatar}
+                            src={
+                              user?.id ? `/avatarproxy/${user.id}` : undefined
+                            }
                             alt=""
                             className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
                             width={24}
@@ -443,7 +469,9 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       ) : (
                         <span key={user?.id || idx} title={user?.displayName}>
                           <CachedImage
-                            src={user?.avatar}
+                            src={
+                              user?.id ? `/avatarproxy/${user.id}` : undefined
+                            }
                             alt=""
                             className="size-6 rounded-full border-2 border-base-100"
                             width={24}

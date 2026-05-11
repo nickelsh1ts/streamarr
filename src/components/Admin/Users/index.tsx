@@ -640,7 +640,7 @@ const AdminUsers = () => {
                   >
                     <CachedImage
                       className="h-10 w-10 rounded-full object-cover"
-                      src={user.avatar}
+                      src={`/avatarproxy/${user.id}`}
                       alt=""
                       width={40}
                       height={40}

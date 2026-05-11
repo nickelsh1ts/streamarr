@@ -82,7 +82,7 @@ const UserDropdown = ({
         dropdownIcon={
           <CachedImage
             className="h-9 w-9 rounded-full mr-1"
-            src={user?.avatar}
+            src={user?.id ? `/avatarproxy/${user.id}` : undefined}
             alt=""
             width={36}
             height={36}
