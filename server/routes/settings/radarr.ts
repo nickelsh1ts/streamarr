@@ -51,6 +51,7 @@ radarrRoutes.post<undefined, Record<string, unknown>, RadarrSettings>(
       const radarr = new RadarrAPI({
         apiKey: req.body.apiKey,
         url: RadarrAPI.buildUrl(req.body, '/api/v3'),
+        timeout: getSettings().network.requestTimeout,
       });
 
       const urlBase = await radarr
@@ -156,6 +157,7 @@ radarrRoutes.get<{ id: string }>('/:id/auth', async (req, res, next) => {
     const radarr = new RadarrAPI({
       apiKey: radarrSettings.apiKey,
       url: RadarrAPI.buildUrl(radarrSettings, '/api/v3'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const hostConfig = await radarr.getHostConfig();
@@ -192,6 +194,7 @@ radarrRoutes.post<{ id: string }>(
       const radarr = new RadarrAPI({
         apiKey: radarrSettings.apiKey,
         url: RadarrAPI.buildUrl(radarrSettings, '/api/v3'),
+        timeout: getSettings().network.requestTimeout,
       });
 
       const hostConfig = await radarr.disableAuthentication();

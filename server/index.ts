@@ -70,7 +70,7 @@ app
     }
 
     // Load Settings
-    const settings = getSettings().load();
+    const settings = await getSettings().load();
     await initializeOnboardingDefaults();
 
     // Migrate library types
@@ -104,7 +104,7 @@ app
     startJobs();
     const pythonReady = pythonService.start();
     const server = express();
-    if (settings.main.trustProxy) {
+    if (settings.network.trustProxy) {
       server.set('trust proxy', 1);
     }
     server.use(cookieParser());
@@ -134,7 +134,7 @@ app
       }
       express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
     });
-    if (settings.main.csrfProtection) {
+    if (settings.network.csrfProtection) {
       server.use(
         csurf({
           cookie: {
@@ -164,7 +164,7 @@ app
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,
-        sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+        sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
         secure: 'auto',
       },
       store: new TypeormStore({

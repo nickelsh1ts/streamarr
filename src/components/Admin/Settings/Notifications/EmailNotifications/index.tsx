@@ -17,6 +17,7 @@ import useSWR, { mutate } from 'swr';
 import validator from 'validator';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 
 const EmailNotifications = () => {
   const intl = useIntl();
@@ -59,12 +60,13 @@ const EmailNotifications = () => {
             )
           : schema.nullable()
       )
-      .matches(
-        /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
+      .test(
+        'hostname-or-ip',
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
           defaultMessage: 'You must provide a valid hostname or IP address',
-        })
+        }),
+        (value) => !value || isValidHostnameOrIpAddress(value)
       ),
     smtpPort: Yup.number().when('enabled', (enabled, schema) =>
       enabled

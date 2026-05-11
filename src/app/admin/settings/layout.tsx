@@ -7,8 +7,6 @@ import type { ServiceSettings } from '@server/lib/settings';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-//TODO: Add new newsletter management settings and feature
-
 type SettingsLayoutProps = { children: React.ReactNode };
 
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
@@ -61,6 +59,14 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       route: '/admin/settings/services',
       regex: /^\/admin\/settings\/services/,
       dataTutorial: 'services-settings-tab',
+    },
+    {
+      text: intl.formatMessage({
+        id: 'common.network',
+        defaultMessage: 'Network',
+      }),
+      route: '/admin/settings/network',
+      regex: /^\/admin\/settings\/network/,
     },
     {
       text: intl.formatMessage({
