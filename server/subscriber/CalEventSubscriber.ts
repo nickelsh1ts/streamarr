@@ -14,8 +14,9 @@ import { EventSubscriber } from 'typeorm';
 import Event from '@server/entity/Event';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import { getIntl } from '@server/i18n';
 import logger from '@server/logger';
-import moment from 'moment';
+import moment from '@server/utils/momentWithLocale';
 import { Permission } from '@server/lib/permissions';
 
 @EventSubscriber()
@@ -56,11 +57,31 @@ export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
 
     await Promise.all(
       eligibleUsers.map(async (user) => {
+        const intl = getIntl(user.settings?.locale);
         try {
           const payload = {
             event: entity,
-            subject: `Event: ${entity.summary} (${entity.status})`,
-            message: `${moment(entity.start).format('MMM D, h:mm A')} to ${moment(entity.end).format('MMM D, h:mm A')}`,
+            subject: intl.formatMessage(
+              {
+                id: 'notifications.calendar.subject',
+                defaultMessage: 'Event: {summary} ({status})',
+              },
+              { summary: entity.summary, status: entity.status }
+            ),
+            message: intl.formatMessage(
+              {
+                id: 'notifications.calendar.message',
+                defaultMessage: '{start} to {end}',
+              },
+              {
+                start: moment(entity.start)
+                  .locale(intl.locale)
+                  .format('MMM D, h:mm A'),
+                end: moment(entity.end)
+                  .locale(intl.locale)
+                  .format('MMM D, h:mm A'),
+              }
+            ),
             notifySystem: false,
             notifyAdmin: false,
             notifyUser: user,

@@ -13,6 +13,7 @@ import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
+import { initI18n } from '@server/i18n';
 import restartManager from '@server/lib/restartManager';
 import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
@@ -71,6 +72,7 @@ app
 
     // Load Settings
     const settings = await getSettings().load();
+    initI18n();
     await initializeOnboardingDefaults();
 
     // Migrate library types

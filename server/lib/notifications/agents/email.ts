@@ -158,6 +158,7 @@ class EmailAgent
         locals: {
           subject: payload.subject,
           message: payload.message,
+          description: payload.event?.description,
           applicationUrl,
           applicationTitle,
           recipientName,
