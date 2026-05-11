@@ -1,5 +1,5 @@
 import type { Library } from '@server/lib/settings';
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 import { useMemo } from 'react';
 import type { CSSObjectWithLabel } from 'react-select';
 import Select from 'react-select';

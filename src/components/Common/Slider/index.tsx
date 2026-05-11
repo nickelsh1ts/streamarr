@@ -1,6 +1,6 @@
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSpring } from 'react-spring';

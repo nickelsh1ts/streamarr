@@ -21,7 +21,7 @@ import type { PlexDevice } from '@server/interfaces/api/plexInterfaces';
 import type { PlexSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import { orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
 import { useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
