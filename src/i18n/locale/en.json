@@ -476,6 +476,9 @@
   "common.name": {
     "defaultMessage": "Name"
   },
+  "common.network": {
+    "defaultMessage": "Network"
+  },
   "common.never": {
     "defaultMessage": "Never"
   },
@@ -3700,6 +3703,36 @@
   },
   "moreHelp.visitPlex": {
     "defaultMessage": "Visit {plexLogo}"
+  },
+  "networkSettings.description": {
+    "defaultMessage": "Configure global network settings for your Streamarr instance."
+  },
+  "networkSettings.requestTimeout": {
+    "defaultMessage": "API Request Timeout"
+  },
+  "networkSettings.requestTimeout.description": {
+    "defaultMessage": "Maximum time (in seconds) to wait for responses from external services."
+  },
+  "networkSettings.saveError": {
+    "defaultMessage": "Something went wrong while saving network settings."
+  },
+  "networkSettings.saveSuccess": {
+    "defaultMessage": "Network settings saved successfully"
+  },
+  "networkSettings.title": {
+    "defaultMessage": "Network Settings"
+  },
+  "networkSettings.validation.requestTimeout": {
+    "defaultMessage": "You must provide a valid request timeout"
+  },
+  "networkSettings.validation.requestTimeoutInteger": {
+    "defaultMessage": "Request timeout must be a whole number of seconds"
+  },
+  "networkSettings.validation.requestTimeoutMax": {
+    "defaultMessage": "Request timeout must not exceed 300 seconds"
+  },
+  "networkSettings.validation.requestTimeoutMin": {
+    "defaultMessage": "Request timeout must be at least 1 second"
   },
   "notFound.notFound": {
     "defaultMessage": "Not found"
