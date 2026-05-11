@@ -25,6 +25,7 @@ import {
 import type {
   JobId,
   MainSettings,
+  NetworkSettings,
   ServiceSettings,
 } from '@server/lib/settings';
 import restartManager from '@server/lib/restartManager';
@@ -112,6 +113,41 @@ settingsRoutes.post('/main/regenerate', (req, res, next) => {
 
   res.status(200).json(filteredMainSettings(req.user, main));
 });
+
+settingsRoutes.get('/network', (_req, res) => {
+  const settings = getSettings();
+  res.status(200).json(settings.network);
+});
+
+settingsRoutes.post<undefined, NetworkSettings, NetworkSettings>(
+  '/network',
+  (req, res, next) => {
+    try {
+      const settings = getSettings();
+
+      if (req.body.requestTimeout) {
+        const timeout = Number(req.body.requestTimeout);
+        if (!Number.isFinite(timeout) || timeout < 1000 || timeout > 300000) {
+          return next({
+            status: 400,
+            message: 'requestTimeout must be between 1000 and 300000 ms',
+          });
+        }
+      }
+
+      Object.assign(settings.network, req.body);
+
+      settings.save();
+      res.status(200).json(settings.network);
+    } catch (e) {
+      logger.error('Error saving network settings:', {
+        label: 'Settings',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to save network settings' });
+    }
+  }
+);
 
 settingsRoutes.get('/plex', (_req, res) => {
   const settings = getSettings();
@@ -372,6 +408,7 @@ settingsRoutes.post('/prowlarr/test', async (req, res, next) => {
     const prowlarr = new ProwlarrAPI({
       apiKey: req.body.apiKey,
       url: ProwlarrAPI.buildServiceUrl(req.body, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const urlBase = await prowlarr
@@ -406,6 +443,7 @@ settingsRoutes.get('/prowlarr/auth', async (req, res, next) => {
     const prowlarr = new ProwlarrAPI({
       apiKey: prowlarrSettings.apiKey,
       url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const hostConfig = await prowlarr.getHostConfig();
@@ -440,6 +478,7 @@ settingsRoutes.post(
       const prowlarr = new ProwlarrAPI({
         apiKey: prowlarrSettings.apiKey,
         url: ProwlarrAPI.buildServiceUrl(prowlarrSettings, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
       });
 
       const hostConfig = await prowlarr.disableAuthentication();
@@ -493,6 +532,7 @@ settingsRoutes.post<undefined, Record<string, unknown>, ServiceSettings>(
       const lidarr = new LidarrAPI({
         apiKey: req.body.apiKey,
         url: LidarrAPI.buildServiceUrl(req.body, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
       });
 
       const urlBase = await lidarr
@@ -535,6 +575,7 @@ settingsRoutes.get('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
     const lidarr = new LidarrAPI({
       apiKey: lidarrSettings.apiKey,
       url: LidarrAPI.buildServiceUrl(lidarrSettings, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const hostConfig = await lidarr.getHostConfig();
@@ -566,6 +607,7 @@ settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
     const lidarr = new LidarrAPI({
       apiKey: lidarrSettings.apiKey,
       url: LidarrAPI.buildServiceUrl(lidarrSettings, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const hostConfig = await lidarr.disableAuthentication();

@@ -1,8 +1,5 @@
 'use client';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
-import RestartRequiredAlert, {
-  RESTART_REQUIRED_SWR_KEY,
-} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Button from '@app/components/Common/Button';
 import CopyButton from '@app/components/Common/CopyButton';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -32,6 +29,7 @@ import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
 import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
 import { SettingsContext } from '@app/context/SettingsContext';
+import { isValidHttpUrl } from '@app/utils/networkValidation';
 
 const GeneralSettings = () => {
   const intl = useIntl();
@@ -61,11 +59,13 @@ const GeneralSettings = () => {
       })
     ),
     applicationUrl: Yup.string()
-      .url(
+      .test(
+        'valid-http-url',
         intl.formatMessage({
           id: 'generalSettings.validation.supportUrl',
           defaultMessage: 'You must provide a valid URL',
-        })
+        }),
+        (value) => isValidHttpUrl(value)
       )
       .test(
         'no-trailing-slash',
@@ -75,11 +75,13 @@ const GeneralSettings = () => {
         }),
         (value) => !value || !value.endsWith('/')
       ),
-    supportUrl: Yup.string().url(
+    supportUrl: Yup.string().test(
+      'valid-http-url',
       intl.formatMessage({
         id: 'generalSettings.validation.supportUrl',
         defaultMessage: 'You must provide a valid URL',
-      })
+      }),
+      (value) => isValidHttpUrl(value)
     ),
   });
 
@@ -130,19 +132,14 @@ const GeneralSettings = () => {
           defaultMessage="Configure global and default Streamarr settings"
         />
       </p>
-      <RestartRequiredAlert
-        filterServices={['Proxy Support', 'CSRF Protection']}
-      />
       <Formik
         initialValues={{
           applicationTitle: data?.applicationTitle,
           applicationUrl: data?.applicationUrl,
-          csrfProtection: data?.csrfProtection,
           locale: data?.locale ?? 'en',
           enableSignUp: data?.enableSignUp,
           enableHelpCentre: data?.enableHelpCentre,
           releaseSched: data?.releaseSched,
-          trustProxy: data?.trustProxy,
           cacheImages: data?.cacheImages,
           supportUrl: data?.supportUrl,
           supportEmail: data?.supportEmail,
@@ -159,12 +156,10 @@ const GeneralSettings = () => {
             await axios.post('/api/v1/settings/main', {
               applicationTitle: values.applicationTitle,
               applicationUrl: values.applicationUrl,
-              csrfProtection: values.csrfProtection,
               locale: values.locale,
               enableSignUp: values.enableSignUp,
               enableHelpCentre: values.enableHelpCentre,
               releaseSched: values.releaseSched,
-              trustProxy: values.trustProxy,
               cacheImages: values.cacheImages,
               supportUrl: values.supportUrl,
               supportEmail: values.supportEmail,
@@ -713,69 +708,6 @@ const GeneralSettings = () => {
                       className="checkbox-primary checkbox"
                     />
                   </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <label htmlFor="trustProxy" className="col-span-1">
-                    <span className="mr-2">
-                      <FormattedMessage
-                        id="generalSettings.trustProxy.label"
-                        defaultMessage="Enable Proxy Support"
-                      />
-                    </span>
-                    <SettingsBadge badgeType="restartRequired" />
-                    <p className="text-sm text-neutral">
-                      <FormattedMessage
-                        id="generalSettings.trustProxy.description"
-                        defaultMessage="Allow Streamarr to correctly register client IP addresses behind a proxy"
-                      />
-                    </p>
-                  </label>
-                  <div className="col-span-2">
-                    <Field
-                      type="checkbox"
-                      id="trustProxy"
-                      name="trustProxy"
-                      onChange={() => {
-                        setFieldValue('trustProxy', !values.trustProxy);
-                      }}
-                      className="checkbox-primary checkbox"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
-                  <label htmlFor="csrfProtection" className="col-span-1">
-                    <span className="mr-2">
-                      <FormattedMessage
-                        id="generalSettings.csrfProtection.label"
-                        defaultMessage="Enable CSRF Protection"
-                      />
-                    </span>
-                    <SettingsBadge badgeType="advanced" className="mr-2" />
-                    <SettingsBadge badgeType="restartRequired" />
-                    <p className="text-sm text-neutral">
-                      <FormattedMessage
-                        id="generalSettings.csrfProtection.description"
-                        defaultMessage="Set external API access to read-only (requires HTTPS)"
-                      />
-                    </p>
-                  </label>
-                  <Tooltip
-                    content={intl.formatMessage({
-                      id: 'generalSettings.csrfProtection.tooltip',
-                      defaultMessage:
-                        'Do NOT enable this setting unless you understand what you are doing!',
-                    })}
-                  >
-                    <Field
-                      type="checkbox"
-                      id="csrfProtection"
-                      name="csrfProtection"
-                      onChange={() => {
-                        setFieldValue('csrfProtection', !values.csrfProtection);
-                      }}
-                      className="checkbox-primary checkbox"
-                    />
-                  </Tooltip>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="cacheImages" className="col-span-1">

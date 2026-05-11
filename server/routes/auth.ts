@@ -276,7 +276,7 @@ authRoutes.post('/logout', (req, res, next) => {
     const settings = getSettings();
     res.clearCookie('streamarr.sid', {
       httpOnly: true,
-      sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+      sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
     res.status(200).json({ status: 'ok' });

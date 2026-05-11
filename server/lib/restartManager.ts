@@ -19,7 +19,7 @@ interface ProxyAffectingSettings {
   bazarr: ServiceEntry;
   tdarr: { hostname?: string; enabled?: boolean };
   tautulli: ServiceEntry;
-  main: { trustProxy: boolean; csrfProtection: boolean };
+  network: { trustProxy: boolean; csrfProtection: boolean };
 }
 
 interface ServiceEntry {
@@ -75,9 +75,9 @@ class RestartManager {
         hostname: settings.tautulli.hostname,
         urlBase: settings.tautulli.urlBase,
       },
-      main: {
-        trustProxy: settings.main.trustProxy,
-        csrfProtection: settings.main.csrfProtection,
+      network: {
+        trustProxy: settings.network.trustProxy,
+        csrfProtection: settings.network.csrfProtection,
       },
     };
   }
@@ -140,11 +140,13 @@ class RestartManager {
       changed.push('Tautulli');
     }
 
-    if (settings.main.trustProxy !== this.snapshot.main.trustProxy) {
+    if (settings.network.trustProxy !== this.snapshot.network.trustProxy) {
       changed.push('Proxy Support');
     }
 
-    if (settings.main.csrfProtection !== this.snapshot.main.csrfProtection) {
+    if (
+      settings.network.csrfProtection !== this.snapshot.network.csrfProtection
+    ) {
       changed.push('CSRF Protection');
     }
 

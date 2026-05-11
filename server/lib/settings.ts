@@ -3,6 +3,7 @@ import fs from 'fs';
 import { mergeWith } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
+import { runMigrations } from '@server/lib/migrator';
 import { Permission } from './permissions';
 
 const mergeSettings = <T>(current: T, incoming: Partial<T>): T =>
@@ -56,6 +57,12 @@ export interface ServiceSettings {
   urlBase?: string;
   id?: string;
   apiKey?: string;
+}
+
+export interface NetworkSettings {
+  requestTimeout: number;
+  trustProxy: boolean;
+  csrfProtection: boolean;
 }
 
 export interface DVRSettings {
@@ -137,7 +144,6 @@ export interface MainSettings {
   apiKey: string;
   applicationTitle: string;
   applicationUrl: string;
-  csrfProtection: boolean;
   cacheImages: boolean;
   defaultPermissions: number;
   defaultQuotas: {
@@ -151,7 +157,6 @@ export interface MainSettings {
   newPlexLogin: boolean;
   enableSignUp: boolean;
   releaseSched: boolean;
-  trustProxy: boolean;
   locale: string;
   supportUrl: string;
   supportEmail: string;
@@ -269,12 +274,13 @@ export type JobId =
   | 'image-cache-cleanup'
   | 'notification-cleanup';
 
-interface AllSettings {
+export interface AllSettings {
   clientId: string;
   sessionSecret?: string;
   vapidPublic: string;
   vapidPrivate: string;
   main: MainSettings;
+  network: NetworkSettings;
   plex: PlexSettings;
   tautulli: TautulliSettings;
   radarr: RadarrSettings[];
@@ -311,7 +317,6 @@ class Settings {
         apiKey: '',
         applicationTitle: 'Streamarr',
         applicationUrl: '',
-        csrfProtection: false,
         cacheImages: false,
         defaultPermissions: Permission.STREAMARR,
         defaultQuotas: {
@@ -331,7 +336,6 @@ class Settings {
         newPlexLogin: true,
         enableSignUp: false,
         releaseSched: false,
-        trustProxy: false,
         locale: 'en',
         supportUrl: '',
         supportEmail: '',
@@ -371,6 +375,11 @@ class Settings {
         libraries: [],
         enablePlaylists: false,
         defaultPivot: 'library',
+      },
+      network: {
+        requestTimeout: 10000,
+        trustProxy: false,
+        csrfProtection: false,
       },
       tautulli: {
         enabled: false,
@@ -456,6 +465,14 @@ class Settings {
 
   set main(data: MainSettings) {
     this.data.main = mergeSettings(this.data.main, data);
+  }
+
+  get network(): NetworkSettings {
+    return this.data.network;
+  }
+
+  set network(data: NetworkSettings) {
+    this.data.network = mergeSettings(this.data.network, data);
   }
 
   get plex(): PlexSettings {
@@ -675,7 +692,10 @@ class Settings {
    * @param overrideSettings If passed in, will override all existing settings with these
    * values
    */
-  public load(overrideSettings?: AllSettings): Settings {
+  public async load(
+    overrideSettings?: AllSettings,
+    raw = false
+  ): Promise<Settings> {
     if (overrideSettings) {
       this.data = overrideSettings;
       return this;
@@ -686,10 +706,18 @@ class Settings {
     }
     const data = fs.readFileSync(SETTINGS_PATH, 'utf-8');
 
-    if (data) {
-      this.data = mergeSettings(this.data, JSON.parse(data));
+    if (data && !raw) {
+      const parsedSettings = JSON.parse(data);
+      const migratedSettings = await runMigrations(
+        parsedSettings,
+        SETTINGS_PATH
+      );
+      this.data = mergeSettings(this.data, migratedSettings);
       this.save();
+    } else if (data) {
+      this.data = JSON.parse(data);
     }
+
     return this;
   }
 
