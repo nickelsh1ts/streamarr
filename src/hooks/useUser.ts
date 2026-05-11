@@ -2,6 +2,7 @@ import { UserType } from '@server/constants/user';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import type { NotificationAgentKey } from '@server/lib/settings';
+import { usePathname } from 'next/navigation';
 import type { MutatorCallback } from 'swr';
 import useSWR from 'swr';
 
@@ -63,13 +64,21 @@ export const useUser = ({
   id,
   initialData,
 }: { id?: number; initialData?: User } = {}): UserHookResponse => {
+  const pathname = usePathname();
+  const isAuthPage = /^\/(signin|signup|setup|resetpassword(?:\/|$))/.test(
+    pathname || ''
+  );
+
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR<User>(id ? `/api/v1/user/${id}` : `/api/v1/auth/me`, {
     fallbackData: initialData,
-    refreshInterval: 30000,
+    refreshInterval: !isAuthPage ? 30000 : 0,
+    revalidateOnFocus: !isAuthPage,
+    revalidateOnMount: !isAuthPage,
+    revalidateOnReconnect: !isAuthPage,
     errorRetryInterval: 30000,
     shouldRetryOnError: false,
   });
