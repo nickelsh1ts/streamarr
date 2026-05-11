@@ -34,6 +34,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
+import validator from 'validator';
 import * as Yup from 'yup';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
@@ -185,11 +186,13 @@ const AdminUsers = () => {
           defaultMessage: 'You must provide a valid email address',
         })
       )
-      .email(
+      .test(
+        'email',
         intl.formatMessage({
           id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
-        })
+        }),
+        (value) => !value || validator.isEmail(value, { require_tld: false })
       ),
     password: Yup.lazy((value) =>
       !value

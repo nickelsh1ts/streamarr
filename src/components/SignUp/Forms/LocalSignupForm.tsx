@@ -3,6 +3,7 @@ import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface LocalSignupFormProps {
@@ -25,11 +26,13 @@ const LocalSignupForm = ({
 
   const SignupSchema = Yup.object().shape({
     email: Yup.string()
-      .email(
+      .test(
+        'email',
         intl.formatMessage({
           id: 'localSignup.emailInvalid',
           defaultMessage: 'Please enter a valid email address',
-        })
+        }),
+        (value) => !value || validator.isEmail(value, { require_tld: false })
       )
       .required(
         intl.formatMessage({
