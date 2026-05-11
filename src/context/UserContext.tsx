@@ -16,8 +16,14 @@ interface UserContextProps {
  * the login page if their session ever becomes invalid.
  */
 export const UserContext = ({ initialUser, children }: UserContextProps) => {
-  const { user, error, revalidate } = useUser({ initialData: initialUser });
   const pathname = usePathname();
+  const isAuthPage = /^\/(signin|signup|setup|resetpassword(?:\/|$))/.test(
+    pathname || ''
+  );
+  const { user, error, revalidate } = useUser({
+    initialData: initialUser,
+    disableAutoRevalidation: isAuthPage,
+  });
   const routing = useRef(false);
 
   useEffect(() => {

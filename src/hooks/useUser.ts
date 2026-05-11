@@ -62,14 +62,22 @@ interface UserHookResponse {
 export const useUser = ({
   id,
   initialData,
-}: { id?: number; initialData?: User } = {}): UserHookResponse => {
+  disableAutoRevalidation,
+}: {
+  id?: number;
+  initialData?: User;
+  disableAutoRevalidation?: boolean;
+} = {}): UserHookResponse => {
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR<User>(id ? `/api/v1/user/${id}` : `/api/v1/auth/me`, {
     fallbackData: initialData,
-    refreshInterval: 30000,
+    refreshInterval: !disableAutoRevalidation ? 30000 : 0,
+    revalidateOnFocus: !disableAutoRevalidation,
+    revalidateOnMount: !disableAutoRevalidation,
+    revalidateOnReconnect: !disableAutoRevalidation,
     errorRetryInterval: 30000,
     shouldRetryOnError: false,
   });
