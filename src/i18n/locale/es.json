@@ -99,7 +99,7 @@
         "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
     },
     "arrSettings.urlBase.description": {
-        "defaultMessage": "La URL Base es requerida para que streamarr registre una ruta proxy. Se requiere un reinicio para que surta efecto."
+        "defaultMessage": "La Url Base es requerida para que streamarr registre una ruta proxy. Se requiere un reinicio para que surta efecto."
     },
     "auth.signin": {
         "defaultMessage": "Iniciar sesión"
@@ -186,10 +186,10 @@
         "defaultMessage": "Mes"
     },
     "calendar.noEventSelected": {
-        "defaultMessage": "Ningún evento seleccionado"
+        "defaultMessage": "Ningún evento seleccionado."
     },
     "calendar.status": {
-        "defaultMessage": "Estado"
+        "defaultMessage": "Estado:"
     },
     "calendar.statusCancelled": {
         "defaultMessage": "Cancelado"
@@ -207,7 +207,7 @@
         "defaultMessage": "Hoy"
     },
     "calendar.uid": {
-        "defaultMessage": "UID"
+        "defaultMessage": "UID:"
     },
     "calendar.week": {
         "defaultMessage": "Semana"
@@ -627,7 +627,7 @@
         "defaultMessage": "Guardar Cambios"
     },
     "common.saveSuccess": {
-        "defaultMessage": "Configuración guardada exitosamente"
+        "defaultMessage": "¡Configuración guardada exitosamente!"
     },
     "common.saving": {
         "defaultMessage": "Guardando…"
@@ -660,7 +660,7 @@
         "defaultMessage": "Habilitar"
     },
     "common.settingsSaveError": {
-        "defaultMessage": "Error al guardar la configuración por {appName}"
+        "defaultMessage": "Error al guardar la configuración por {appName}."
     },
     "common.settingsSaveSuccess": {
         "defaultMessage": "Configuración guardada exitosamente por {appName}"
@@ -1269,10 +1269,10 @@
         "defaultMessage": "Logo actual"
     },
     "generalSettings.customLogo.deleteError": {
-        "defaultMessage": "Error al eliminar el logo personalizado"
+        "defaultMessage": "Error al eliminar el logo personalizado."
     },
     "generalSettings.customLogo.deleteSuccess": {
-        "defaultMessage": "Logo personalizado eliminado exitosamente"
+        "defaultMessage": "¡Logo personalizado eliminado exitosamente!"
     },
     "generalSettings.customLogo.description": {
         "defaultMessage": "Sube un logo personalizado para reemplazar el logo por defecto"
@@ -1293,10 +1293,10 @@
         "defaultMessage": "Logo pequeño actual"
     },
     "generalSettings.customLogoSmall.deleteError": {
-        "defaultMessage": "Error al eliminar el logo pequeño personalizado"
+        "defaultMessage": "Error al eliminar el logo pequeño personalizado."
     },
     "generalSettings.customLogoSmall.deleteSuccess": {
-        "defaultMessage": "Logo pequeño personalizado eliminado exitosamente"
+        "defaultMessage": "¡Logo pequeño personalizado eliminado exitosamente!"
     },
     "generalSettings.customLogoSmall.description": {
         "defaultMessage": "Sube un logo pequeño personalizado para usar en espacios reducidos"
@@ -1314,7 +1314,7 @@
         "defaultMessage": "Habilitar Centro de Ayuda"
     },
     "generalSettings.enableSignUp.description": {
-        "defaultMessage": "Permite que nuevos usuarios se registren sin invitación"
+        "defaultMessage": "Permite que nuevos usuarios se registren sin invitación."
     },
     "generalSettings.enableSignUp.label": {
         "defaultMessage": "Habilitar Registro"
@@ -1509,7 +1509,7 @@
         "defaultMessage": "Unirse a {appTitle}"
     },
     "help.becomeMember.letsGetStarted": {
-        "defaultMessage": "¡Empecemos!"
+        "defaultMessage": "Empecemos"
     },
     "help.becomeMember.localLoginNote": {
         "defaultMessage": "También puedes establecer una contraseña local durante el registro como forma alternativa de iniciar sesión"
@@ -3447,7 +3447,7 @@
         "defaultMessage": "Bibliotecas Compartidas:"
     },
     "invite.statusChanged": {
-        "defaultMessage": "Invitación {status} exitosamente"
+        "defaultMessage": "¡Invitación {status} exitosamente!"
     },
     "invite.timeUnit.day": {
         "defaultMessage": "{count, plural, one {Día} other {Días}}"
@@ -3459,7 +3459,7 @@
         "defaultMessage": "{count, plural, one {Semana} other {Semanas}}"
     },
     "invite.updatedSuccessfully": {
-        "defaultMessage": "Invitación actualizada exitosamente"
+        "defaultMessage": "¡Invitación actualizada exitosamente!"
     },
     "invite.usageLimit": {
         "defaultMessage": "Límite de Uso"
@@ -3471,7 +3471,7 @@
         "defaultMessage": "Invitar a un Amigo"
     },
     "inviteList.inviteDeleteError": {
-        "defaultMessage": "Error al eliminar la invitación"
+        "defaultMessage": "Error al eliminar la invitación."
     },
     "inviteList.inviteDeletedSuccess": {
         "defaultMessage": "Invitación eliminada exitosamente"
@@ -3480,7 +3480,7 @@
         "defaultMessage": "Registro Deshabilitado"
     },
     "inviteList.signUpDisabledMessage": {
-        "defaultMessage": "El registro está actualmente deshabilitado"
+        "defaultMessage": "El registro está actualmente deshabilitado."
     },
     "inviteList.sortLastModified": {
         "defaultMessage": "Última Modificación"
@@ -3513,10 +3513,10 @@
         "defaultMessage": "Error al compartir el código QR"
     },
     "inviteShare.shareDescription": {
-        "defaultMessage": "Comparte esta invitación con tus amigos"
+        "defaultMessage": "¡Comparte esta invitación con tus amigos!"
     },
     "inviteShare.shareWithFriends": {
-        "defaultMessage": "Compartir con Amigos"
+        "defaultMessage": "¡Compartir con Amigos!"
     },
     "inviteShare.shareYourInvite": {
         "defaultMessage": "Comparte tu Invitación"
@@ -3867,7 +3867,7 @@
         "defaultMessage": "Iniciar sesión con"
     },
     "plexImport.error": {
-        "defaultMessage": "Error al importar usuarios de Plex"
+        "defaultMessage": "Error al importar usuarios de Plex."
     },
     "plexImport.import": {
         "defaultMessage": "Importar"
@@ -3879,13 +3879,13 @@
         "defaultMessage": "Advertencia: El nuevo inicio de sesión deshabilitará el acceso para usuarios existentes"
     },
     "plexImport.noUsers": {
-        "defaultMessage": "No hay usuarios disponibles para importar"
+        "defaultMessage": "No hay usuarios disponibles para importar."
     },
     "plexImport.noUsersToImport": {
-        "defaultMessage": "No hay usuarios para importar de Plex"
+        "defaultMessage": "No hay usuarios para importar de Plex."
     },
     "plexImport.success": {
-        "defaultMessage": "{count, plural, one {# usuario de Plex} other {# usuarios de Plex}} importado(s) exitosamente"
+        "defaultMessage": "¡{count, plural, one {# usuario de Plex} other {# usuarios de Plex}} importado(s) exitosamente!"
     },
     "plexImport.title": {
         "defaultMessage": "Importar Usuarios de Plex"
@@ -4194,7 +4194,7 @@
         "defaultMessage": "Configuración de Lidarr"
     },
     "servicesSettings.overseerr.alertDescription": {
-        "defaultMessage": "Para completar la integración de Seerr, debes configurar un proxy inverso y servir Seerr en una URL base especificada. Seerr actualmente no soporta URL bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
+        "defaultMessage": "Para completar la integración de Seerr, debes configurar un proxy inverso y servir Seerr en una url base especificada. Seerr actualmente no soporta url bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
     },
     "servicesSettings.overseerr.alertTitle": {
         "defaultMessage": "Advertencia: La integración de Seerr requiere configuración adicional"
@@ -4239,7 +4239,7 @@
         "defaultMessage": "Configuración de Uptime"
     },
     "servicesSettings.urlBase.description": {
-        "defaultMessage": "La URL Base es requerida para que streamarr registre una ruta proxy."
+        "defaultMessage": "La Url Base es requerida para que streamarr registre una ruta proxy."
     },
     "servicesSettings.urlBase.leadingSlash": {
         "defaultMessage": "La URL base no debe tener una barra diagonal al inicio"
@@ -4761,7 +4761,7 @@
         "defaultMessage": "Comienza introduciendo tu código de invitación a continuación."
     },
     "signUp.loginWithPlex": {
-        "defaultMessage": "Regístrate con tu cuenta de {plexLogo}."
+        "defaultMessage": "Regístrate con tu cuenta de {plexLogo}"
     },
     "signUp.orEnterLocalAccount": {
         "defaultMessage": "o introduce los detalles de la cuenta local"
@@ -4806,7 +4806,7 @@
         "defaultMessage": "Un servidor Sonarr 4K debe estar marcado como predeterminado para habilitar nuevos eventos Sonarr 4K."
     },
     "sonarrSettings.noDefaultServer": {
-        "defaultMessage": "Al menos un servidor Sonarr debe estar marcado como predeterminado para que los eventos de series de TV sean procesados."
+        "defaultMessage": "Al menos un servidor Sonarr debe estar marcado como predeterminado para que los eventos de series de tv sean procesados."
     },
     "sonarrSettings.single4kWarning": {
         "defaultMessage": "Si solo tienes un servidor Sonarr para contenido no-4K y 4K (o si solo descargas contenido 4K), tu servidor Sonarr NO debe ser designado como servidor 4K."
@@ -4962,7 +4962,7 @@
         "defaultMessage": "Invitación Avanzada"
     },
     "userPermissions.createEvents.description": {
-        "defaultMessage": "Conceder permiso para crear eventos personalizados"
+        "defaultMessage": "Conceder permiso para crear eventos personalizados."
     },
     "userPermissions.createEvents.name": {
         "defaultMessage": "Crear Eventos"
@@ -5115,22 +5115,22 @@
         "defaultMessage": "Suscripción activa"
     },
     "userSettings.notifications.subscriptionDeleteError": {
-        "defaultMessage": "Error al eliminar la suscripción"
+        "defaultMessage": "Error al eliminar la suscripción."
     },
     "userSettings.notifications.subscriptionDeleted": {
-        "defaultMessage": "Suscripción eliminada"
+        "defaultMessage": "Suscripción eliminada."
     },
     "userSettings.notifications.webpushDisableError": {
-        "defaultMessage": "Error al deshabilitar las notificaciones web push"
+        "defaultMessage": "Error al deshabilitar las notificaciones web push."
     },
     "userSettings.notifications.webpushDisabled": {
-        "defaultMessage": "Notificaciones web push deshabilitadas"
+        "defaultMessage": "Notificaciones web push deshabilitadas."
     },
     "userSettings.notifications.webpushEnableError": {
-        "defaultMessage": "Error al habilitar las notificaciones web push"
+        "defaultMessage": "Error al habilitar las notificaciones web push."
     },
     "userSettings.notifications.webpushEnabled": {
-        "defaultMessage": "Notificaciones web push habilitadas"
+        "defaultMessage": "Notificaciones web push habilitadas."
     },
     "userSettings.notifications.webpushTitle": {
         "defaultMessage": "Configuración de Notificaciones Web Push"
@@ -5151,7 +5151,7 @@
         "defaultMessage": "Su cuenta actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para habilitar el inicio de sesión como \"usuario local\" usando su dirección de correo electrónico."
     },
     "userSettings.password.noPasswordOtherUser": {
-        "defaultMessage": "Esta cuenta de usuario actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para permitir que esta cuenta inicie sesión como \"usuario local\"."
+        "defaultMessage": "Esta cuenta de usuario actualmente no tiene una contraseña establecida. Configure una contraseña a continuación para permitir que esta cuenta inicie sesión como \"usuario local.\""
     },
     "userSettings.password.noPermission": {
         "defaultMessage": "No tiene permisos para modificar la contraseña de este usuario."
@@ -5166,7 +5166,7 @@
         "defaultMessage": "¡Contraseña guardada exitosamente!"
     },
     "userSettings.permissionsSaved": {
-        "defaultMessage": "Permisos de usuario guardados exitosamente"
+        "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
     },
     "userSettings.pgpPublicKey": {
         "defaultMessage": "Clave Pública PGP"
@@ -5181,7 +5181,7 @@
         "defaultMessage": "Permitir que este usuario inicie sesión con su cuenta de Plex"
     },
     "userSettings.saveSuccess": {
-        "defaultMessage": "Configuración de usuario guardada exitosamente"
+        "defaultMessage": "¡Configuración de usuario guardada exitosamente!"
     },
     "userSettings.title": {
         "defaultMessage": "Configuración de Usuario"
