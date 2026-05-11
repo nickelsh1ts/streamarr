@@ -1,4 +1,5 @@
 import { User } from '@server/entity/User';
+import { getIntl } from '@server/i18n';
 import { Permission } from '@server/lib/permissions';
 import type { EntitySubscriberInterface, InsertEvent } from 'typeorm';
 import { EventSubscriber, In } from 'typeorm';
@@ -57,11 +58,24 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
     await Promise.all(
       usersToNotify.map(async (user) => {
+        const intl = getIntl(user.settings?.locale);
         try {
           const payload: NotificationPayload = {
-            subject: `New User Created: ${entity.displayName}`,
+            subject: intl.formatMessage(
+              {
+                id: 'notifications.user.created.subject',
+                defaultMessage: 'New User Created: {displayName}',
+              },
+              { displayName: entity.displayName }
+            ),
             message: entity.redeemedInvite
-              ? `Invited by ${entity.redeemedInvite?.createdBy.displayName}.`
+              ? intl.formatMessage(
+                  {
+                    id: 'notifications.user.created.message',
+                    defaultMessage: 'Invited by {displayName}.',
+                  },
+                  { displayName: entity.redeemedInvite?.createdBy?.displayName }
+                )
               : '',
             notifySystem: false,
             notifyAdmin: false,
