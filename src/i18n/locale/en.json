@@ -4733,6 +4733,9 @@
   "signIn.title": {
     "defaultMessage": "Sign in to continue"
   },
+  "signIn.whitespaceWarning": {
+    "defaultMessage": "Leading or trailing spaces in your email or password can cause issues signing in."
+  },
   "signUp.autoPinLibrariesFailed": {
     "defaultMessage": "Pinning libraries failed"
   },

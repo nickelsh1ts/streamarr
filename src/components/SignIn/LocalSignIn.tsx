@@ -20,6 +20,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
+      .transform((value) => value?.trim() ?? value)
       .test(
         'email',
         intl.formatMessage({
@@ -54,9 +55,10 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
       }}
       validationSchema={LoginSchema}
       onSubmit={async (values) => {
+        setLoginError(null);
         try {
           await axios.post('/api/v1/auth/local', {
-            email: values.email,
+            email: values.email.trim(),
             password: values.password,
           });
         } catch {
@@ -71,7 +73,11 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
         }
       }}
     >
-      {({ errors, touched, isSubmitting, isValid }) => {
+      {({ errors, touched, isSubmitting, isValid, values }) => {
+        const hasBoundaryWhitespace =
+          values.email !== values.email.trim() ||
+          values.password !== values.password.trim();
+
         return (
           <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
             <Form className="mt-4">
@@ -137,6 +143,14 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       {errors.password}
                     </div>
                   )}
+                {hasBoundaryWhitespace && (
+                  <div className="text-center text-warning text-sm my-2">
+                    <FormattedMessage
+                      id="signIn.whitespaceWarning"
+                      defaultMessage="Leading or trailing spaces in your email or password can cause issues signing in."
+                    />
+                  </div>
+                )}
                 <div className="form-control my-4">
                   <label className="flex cursor-pointer place-items-center">
                     <input
