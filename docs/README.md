@@ -50,3 +50,4 @@ Streamarr is under active development. We welcome contributions of all kinds:
 - [GitHub Repository](https://github.com/nickelsh1ts/streamarr)
 - [Issue Tracker](https://github.com/nickelsh1ts/streamarr/issues)
 - [Discussions](https://github.com/nickelsh1ts/streamarr/discussions)
+- [Translations](support/translations.md)

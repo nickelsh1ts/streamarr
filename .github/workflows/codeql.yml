@@ -10,6 +10,9 @@ on:
       - 'docs/**'
   pull_request:
     branches: ['develop']
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
   schedule:
     - cron: '50 7 * * 5'
   workflow_dispatch:
@@ -22,44 +25,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: Detect CodeQL-relevant changes
-    runs-on: ubuntu-latest
-    outputs:
-      run_codeql: ${{ steps.decide.outputs.run_codeql }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          persist-credentials: false
-      - name: Decide whether to run CodeQL
-        id: decide
-        shell: bash
-        run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-            echo "run_codeql=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
-          CHANGED_FILES=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
-
-          if [[ -z "$CHANGED_FILES" ]]; then
-            echo "run_codeql=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          NON_DOCS=$(echo "$CHANGED_FILES" | grep -Ev '(^docs/|\.md$)' || true)
-          if [[ -n "$NON_DOCS" ]]; then
-            echo "run_codeql=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run_codeql=false" >> "$GITHUB_OUTPUT"
-          fi
-
   analyze:
     name: Analyze
-    needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.run_codeql == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
