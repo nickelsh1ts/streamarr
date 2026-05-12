@@ -8,10 +8,11 @@
 
 Streamarr provides a unified dashboard for managing your Plex server alongside your \*Arr ecosystem. It simplifies common tasks like inviting users to Plex, tracking upcoming releases, monitoring downloads, and proxying access to your backend services—all from a single, polished interface designed for both administrators and end users.
 
-[![GitHub last release](https://img.shields.io/github/v/release/nickelsh1ts/streamarr?style=for-the-badge&logo=github&label=Streamarr%20Release)](https://github.com/nickelsh1ts/streamarr)
-[![Docker pulls](https://img.shields.io/docker/pulls/nickelsh1ts/streamarr?style=for-the-badge)](https://hub.docker.com/r/nickelsh1ts/streamarr)
-[![GitHub Repo stars](https://img.shields.io/github/stars/nickelsh1ts/streamarr?style=for-the-badge&logo=github)](https://github.com/nickelsh1ts/streamarr)
+[![GitHub last release](https://img.shields.io/github/v/release/nickelsh1ts/streamarr?style=for-the-badge&logo=github&label=Streamarr%20Release&color=974ede)](https://github.com/nickelsh1ts/streamarr)
+[![Docker pulls](https://img.shields.io/docker/pulls/nickelsh1ts/streamarr?style=for-the-badge&logo=docker&logoColor=white&color=2496ed)](https://hub.docker.com/r/nickelsh1ts/streamarr)
+[![GitHub Repo stars](https://img.shields.io/github/stars/nickelsh1ts/streamarr?style=for-the-badge&logo=github&logoColor=white&color=b8860b)](https://github.com/nickelsh1ts/streamarr)
 [![GitHub Repo License](https://img.shields.io/github/license/nickelsh1ts/streamarr?style=for-the-badge&logo=github)](https://github.com/nickelsh1ts/streamarr/blob/develop/LICENSE)
+[![Translation status](https://img.shields.io/weblate/progress/streamarr?server=https%3A%2F%2Fweblate.streamarr.dev&style=for-the-badge&logo=weblate&logoColor=white&label=Translations)](https://weblate.streamarr.dev/projects/streamarr/)
 
 ---
 
@@ -54,6 +55,7 @@ https://docs.streamarr.dev
 - Check out our [documentation](https://docs.streamarr.dev) before asking for help. The answer might also be in our [issue tracker](https://github.com/nickelsh1ts/streamarr/issues).
 - You can reach out to us on the [GitHub Discussions](https://github.com/nickelsh1ts/streamarr/discussions).
 - Bug reports and feature requests can be submitted with [GitHub Issues](https://github.com/nickelsh1ts/streamarr/issues).
+- Translations are coordinated through our self-hosted Weblate instance at [weblate.streamarr.dev](https://weblate.streamarr.dev/)
 
 ## API Documentation
 

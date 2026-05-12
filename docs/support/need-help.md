@@ -199,3 +199,5 @@ We welcome:
 - New features
 - Documentation improvements
 - Translations
+
+For translations, use our self-hosted Weblate instance: https://weblate.streamarr.dev/

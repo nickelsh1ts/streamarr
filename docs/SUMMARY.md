@@ -30,6 +30,7 @@
 
 - [Frequently Asked Questions (FAQ)](support/faq.md)
 - [Need Help?](support/need-help.md)
+- [Translations](support/translations.md)
 
 ## Extending Streamarr
 
