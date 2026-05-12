@@ -34,4 +34,5 @@
 ## Extending Streamarr
 
 - [Reverse Proxy](extending-streamarr/reverse-proxy.md)
+- [Fail2ban](extending-streamarr/fail2ban.md)
 - [API Documentation](https://api-docs.streamarr.dev)
