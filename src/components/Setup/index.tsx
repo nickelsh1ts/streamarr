@@ -258,7 +258,7 @@ const Setup = () => {
                       {isUpdating ? (
                         <FormattedMessage
                           id="setup.finishing"
-                          defaultMessage="Finishing setup..."
+                          defaultMessage="Finishing setup…"
                         />
                       ) : (
                         <FormattedMessage

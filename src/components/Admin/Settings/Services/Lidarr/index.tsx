@@ -516,7 +516,7 @@ const ServicesLidarr = () => {
                     {isTesting ? (
                       <FormattedMessage
                         id="common.testing"
-                        defaultMessage="Testing..."
+                        defaultMessage="Testing…"
                       />
                     ) : (
                       <FormattedMessage
@@ -536,7 +536,7 @@ const ServicesLidarr = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

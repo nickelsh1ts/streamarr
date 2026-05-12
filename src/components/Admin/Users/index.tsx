@@ -227,7 +227,7 @@ const AdminUsers = () => {
           isDeleting
             ? intl.formatMessage({
                 id: 'users.deleting',
-                defaultMessage: 'Deleting...',
+                defaultMessage: 'Deleting…',
               })
             : intl.formatMessage({
                 id: 'common.delete',
@@ -315,7 +315,7 @@ const AdminUsers = () => {
                 isSubmitting
                   ? intl.formatMessage({
                       id: 'users.creating',
-                      defaultMessage: 'Creating...',
+                      defaultMessage: 'Creating…',
                     })
                   : intl.formatMessage({
                       id: 'users.create',

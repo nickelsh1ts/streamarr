@@ -458,7 +458,7 @@ const TutorialStepManager = () => {
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : editingStep
                   ? intl.formatMessage({
@@ -623,7 +623,7 @@ const TutorialStepManager = () => {
                       <option value="" disabled>
                         {intl.formatMessage({
                           id: 'settings.onboarding.selectPreset',
-                          defaultMessage: 'Select a preset...',
+                          defaultMessage: 'Select a preset…',
                         })}
                       </option>
                       {TUTORIAL_PRESETS.map((preset) => (

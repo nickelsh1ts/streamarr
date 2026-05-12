@@ -439,7 +439,7 @@ const WelcomeContentManager = () => {
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : editingItem
                   ? intl.formatMessage({

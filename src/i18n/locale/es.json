@@ -1914,7 +1914,7 @@
         "defaultMessage": "Toca {deleteBookmark}"
     },
     "help.downloadStreamarr.chrome.tapMoreAndroid": {
-        "defaultMessage": "A la derecha de la barra de direcciones, toca Más {moreIcon} {chevron} {addToHome} {chevron2} {install}"
+        "defaultMessage": "A la derecha de la barra de direcciones, toca Más {moreIcon} {chevron} {addToHome} {chevron} {install}"
     },
     "help.downloadStreamarr.chrome.tapShareIos": {
         "defaultMessage": "A la derecha de la barra de direcciones, toca Compartir {shareIcon}."
@@ -1998,7 +1998,7 @@
         "defaultMessage": "Selecciona {details} en la tarjeta de la aplicación que deseas desinstalar."
     },
     "help.downloadStreamarr.edge.settingsPath": {
-        "defaultMessage": "Configuración y más ... {chevron} Aplicaciones {chevron2} Instalar este sitio como aplicación."
+        "defaultMessage": "Configuración y más ... {chevron} Aplicaciones {chevron} Instalar este sitio como aplicación."
     },
     "help.downloadStreamarr.edge.tapHamburger": {
         "defaultMessage": "Toca el menú hamburguesa {menuIcon}."

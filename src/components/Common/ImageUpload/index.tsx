@@ -192,7 +192,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               <span className="text-sm text-neutral">
                 <FormattedMessage
                   id="imageUpload.uploading"
-                  defaultMessage="Uploading..."
+                  defaultMessage="Uploading…"
                 />
               </span>
             </div>

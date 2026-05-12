@@ -248,7 +248,7 @@ const LocalSignupForm = ({
                   {isSubmitting ? (
                     <FormattedMessage
                       id="localSignup.creatingAccount"
-                      defaultMessage="Creating Account..."
+                      defaultMessage="Creating Account…"
                     />
                   ) : (
                     <FormattedMessage

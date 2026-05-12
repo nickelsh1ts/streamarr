@@ -157,7 +157,7 @@ const InviteShareModal = ({
         loadingShare
           ? intl.formatMessage({
               id: 'inviteShare.sharing',
-              defaultMessage: 'Sharing...',
+              defaultMessage: 'Sharing…',
             })
           : intl.formatMessage({
               id: 'invite.shareInvite',

@@ -511,7 +511,7 @@ const ServicesProwlarr = () => {
                     {isTesting ? (
                       <FormattedMessage
                         id="common.testing"
-                        defaultMessage="Testing..."
+                        defaultMessage="Testing…"
                       />
                     ) : (
                       <FormattedMessage
@@ -531,7 +531,7 @@ const ServicesProwlarr = () => {
                       {isSubmitting
                         ? intl.formatMessage({
                             id: 'common.saving',
-                            defaultMessage: 'Saving...',
+                            defaultMessage: 'Saving…',
                           })
                         : intl.formatMessage({
                             id: 'common.saveChanges',

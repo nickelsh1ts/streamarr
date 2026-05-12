@@ -373,7 +373,7 @@ const ServicesTautulli = () => {
                       {isSubmitting
                         ? intl.formatMessage({
                             id: 'common.saving',
-                            defaultMessage: 'Saving...',
+                            defaultMessage: 'Saving…',
                           })
                         : intl.formatMessage({
                             id: 'common.saveChanges',

@@ -450,7 +450,7 @@
     "defaultMessage": "Local User"
   },
   "common.loggingOut": {
-    "defaultMessage": "Logging out…"
+    "defaultMessage": "Logging out"
   },
   "common.logs": {
     "defaultMessage": "Logs"
@@ -1941,7 +1941,7 @@
     "defaultMessage": "Tap {deleteBookmark}"
   },
   "help.downloadStreamarr.chrome.tapMoreAndroid": {
-    "defaultMessage": "On the right of the address bar, tap More {moreIcon} {chevron} {addToHome} {chevron2} {install}"
+    "defaultMessage": "On the right of the address bar, tap More {moreIcon} {chevron} {addToHome} {chevron} {install}"
   },
   "help.downloadStreamarr.chrome.tapShareIos": {
     "defaultMessage": "On the right of the address bar, tap Share {shareIcon}."

@@ -237,7 +237,7 @@ const JobsCacheSettings = () => {
           isSaving
             ? intl.formatMessage({
                 id: 'common.saving',
-                defaultMessage: 'Saving...',
+                defaultMessage: 'Saving…',
               })
             : intl.formatMessage({
                 id: 'common.saveChanges',

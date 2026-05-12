@@ -64,12 +64,12 @@ const RestartRequiredAlert = ({
                 {isReconnecting ? (
                   <FormattedMessage
                     id="system.reconnecting"
-                    defaultMessage="Reconnecting..."
+                    defaultMessage="Reconnecting…"
                   />
                 ) : (
                   <FormattedMessage
                     id="system.restarting"
-                    defaultMessage="Restarting..."
+                    defaultMessage="Restarting…"
                   />
                 )}
               </span>

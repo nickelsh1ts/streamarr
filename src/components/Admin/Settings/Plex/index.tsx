@@ -218,7 +218,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         {
           title: intl.formatMessage({
             id: 'plexSettings.attemptingReconnect',
-            defaultMessage: 'Attempting to reconnect...',
+            defaultMessage: 'Attempting to reconnect…',
           }),
           type: 'warning',
           icon: <ArrowPathIcon className="size-7 animate-spin" />,
@@ -640,7 +640,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                       <ExclamationTriangleIcon className="size-6" />
                       <FormattedMessage
                         id="plexSettings.plexUnreachable"
-                        defaultMessage="Plex is currently unreachable..."
+                        defaultMessage="Plex is currently unreachable…"
                       />
                     </span>
                     <span className="inline-flex rounded-md shadow-sm">
@@ -683,7 +683,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

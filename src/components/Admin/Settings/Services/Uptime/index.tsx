@@ -180,7 +180,7 @@ const ServicesUptime = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

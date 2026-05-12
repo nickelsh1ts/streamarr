@@ -315,7 +315,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : radarr
                   ? intl.formatMessage({
@@ -335,7 +335,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
-                    defaultMessage: 'Testing...',
+                    defaultMessage: 'Testing…',
                   })
                 : intl.formatMessage({
                     id: 'common.test',
@@ -726,7 +726,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
                           {isDisablingAuth ? (
                             <FormattedMessage
                               id="common.processing"
-                              defaultMessage="Processing..."
+                              defaultMessage="Processing…"
                             />
                           ) : (
                             <FormattedMessage

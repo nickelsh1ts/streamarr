@@ -304,7 +304,7 @@ const HelpContent = () => {
             <li className="place-items-center">
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.tapMoreAndroid"
-                defaultMessage="On the right of the address bar, tap More {moreIcon} {chevron} {addToHome} {chevron2} {install}"
+                defaultMessage="On the right of the address bar, tap More {moreIcon} {chevron} {addToHome} {chevron} {install}"
                 values={{
                   moreIcon: (
                     <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />
@@ -317,9 +317,6 @@ const HelpContent = () => {
                         defaultMessage="Add to home screen"
                       />
                     </span>
-                  ),
-                  chevron2: (
-                    <ChevronRightIcon className="w-3 h-3 inline-flex" />
                   ),
                   install: (
                     <span className="font-bold">
@@ -594,12 +591,9 @@ const HelpContent = () => {
                       <span className="font-bold">
                         <FormattedMessage
                           id="help.downloadStreamarr.edge.settingsPath"
-                          defaultMessage="Settings and more ... {chevron} Apps {chevron2} Install this site as an app."
+                          defaultMessage="Settings and more … {chevron} Apps {chevron} Install this site as an app."
                           values={{
                             chevron: (
-                              <ChevronRightIcon className="w-3 h-3 inline-flex" />
-                            ),
-                            chevron2: (
                               <ChevronRightIcon className="w-3 h-3 inline-flex" />
                             ),
                           }}

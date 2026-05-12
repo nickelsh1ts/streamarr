@@ -715,7 +715,7 @@ const UserSettingsGeneral = () => {
                             const processingToastId = Toast({
                               title: intl.formatMessage({
                                 id: 'settings.pinLibrariesProcessing',
-                                defaultMessage: 'Pinning Libraries...',
+                                defaultMessage: 'Pinning Libraries…',
                               }),
                               message: intl.formatMessage({
                                 id: 'settings.pinLibrariesProcessingMessage',
@@ -1026,7 +1026,7 @@ const UserSettingsGeneral = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

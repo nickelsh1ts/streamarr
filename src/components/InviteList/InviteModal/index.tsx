@@ -271,7 +271,7 @@ const InviteModal = ({
                 ? isSubmitting
                   ? intl.formatMessage({
                       id: 'common.saving',
-                      defaultMessage: 'Saving...',
+                      defaultMessage: 'Saving…',
                     })
                   : invite
                     ? intl.formatMessage({

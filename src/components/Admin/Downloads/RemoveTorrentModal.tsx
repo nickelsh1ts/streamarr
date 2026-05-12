@@ -46,7 +46,7 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
         isProcessing
           ? intl.formatMessage({
               id: 'common.removing',
-              defaultMessage: 'Removing...',
+              defaultMessage: 'Removing…',
             })
           : intl.formatMessage({
               id: 'common.remove',

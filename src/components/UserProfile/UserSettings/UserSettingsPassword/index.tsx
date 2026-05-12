@@ -279,7 +279,7 @@ const UserPasswordChange = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

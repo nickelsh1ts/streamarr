@@ -126,7 +126,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
               {isSubmitting ? (
                 <FormattedMessage
                   id="iCodeForm.validatingInviteCode"
-                  defaultMessage="Validating Invite Code..."
+                  defaultMessage="Validating Invite Code…"
                 />
               ) : (
                 <FormattedMessage
