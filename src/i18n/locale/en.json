@@ -450,7 +450,7 @@
     "defaultMessage": "Local User"
   },
   "common.loggingOut": {
-    "defaultMessage": "Logging out..."
+    "defaultMessage": "Logging out…"
   },
   "common.logs": {
     "defaultMessage": "Logs"
@@ -561,7 +561,7 @@
     "defaultMessage": "Priority"
   },
   "common.processing": {
-    "defaultMessage": "Processing..."
+    "defaultMessage": "Processing…"
   },
   "common.progress": {
     "defaultMessage": "Progress"
@@ -588,7 +588,7 @@
     "defaultMessage": "Remove"
   },
   "common.removing": {
-    "defaultMessage": "Removing..."
+    "defaultMessage": "Removing…"
   },
   "common.request": {
     "defaultMessage": "Request"
@@ -630,7 +630,7 @@
     "defaultMessage": "Settings saved successfully!"
   },
   "common.saving": {
-    "defaultMessage": "Saving..."
+    "defaultMessage": "Saving…"
   },
   "common.schedule": {
     "defaultMessage": "Schedule"
@@ -681,7 +681,7 @@
     "defaultMessage": "Sign In"
   },
   "common.signingIn": {
-    "defaultMessage": "Signing In..."
+    "defaultMessage": "Signing In…"
   },
   "common.size": {
     "defaultMessage": "Size"
@@ -717,7 +717,7 @@
     "defaultMessage": "Test Connection"
   },
   "common.testing": {
-    "defaultMessage": "Testing..."
+    "defaultMessage": "Testing…"
   },
   "common.title": {
     "defaultMessage": "Title"
@@ -798,7 +798,7 @@
     "defaultMessage": "Failed to confirm account."
   },
   "confirmAccount.finalizingAccount": {
-    "defaultMessage": "Finalizing Account..."
+    "defaultMessage": "Finalizing Account…"
   },
   "confirmAccount.plexOAuthWarning": {
     "defaultMessage": "Your account currently uses Plex OAuth to authenticate. Optionally configure a password below to enable sign-in as a \"local user\" using your email address."
@@ -876,7 +876,7 @@
     "defaultMessage": "Added"
   },
   "downloads.adding": {
-    "defaultMessage": "Adding..."
+    "defaultMessage": "Adding…"
   },
   "downloads.alsoDeleteFiles": {
     "defaultMessage": "Also permanently delete the files"
@@ -2025,7 +2025,7 @@
     "defaultMessage": "Select {details} on the card of the application you want to uninstall."
   },
   "help.downloadStreamarr.edge.settingsPath": {
-    "defaultMessage": "Settings and more ... {chevron} Apps {chevron2} Install this site as an app."
+    "defaultMessage": "Settings and more … {chevron} Apps {chevron} Install this site as an app."
   },
   "help.downloadStreamarr.edge.tapHamburger": {
     "defaultMessage": "Tap the Hamburger menu {menuIcon}."
@@ -3156,7 +3156,7 @@
     "defaultMessage": "Overview"
   },
   "help.whatIsStreamarr.subheading": {
-    "defaultMessage": "Been wondering to yourself, \"what the heck is {appTitle}\"? Look no further..."
+    "defaultMessage": "Been wondering to yourself, \"what the heck is {appTitle}\"? Look no further…"
   },
   "help.whatIsStreamarr.websiteDesc": {
     "defaultMessage": "Official website and documentation"
@@ -3189,7 +3189,7 @@
     "defaultMessage": "Let's Get Started"
   },
   "iCodeForm.validatingInviteCode": {
-    "defaultMessage": "Validating Invite Code..."
+    "defaultMessage": "Validating Invite Code…"
   },
   "imageCache.description": {
     "defaultMessage": "Streamarr will proxy and cache images from pre-configured external sources. Cached images are saved into your config folder. You can find the files in <code>{cachePath}</code>"
@@ -3219,7 +3219,7 @@
     "defaultMessage": "Failed to upload image."
   },
   "imageUpload.uploading": {
-    "defaultMessage": "Uploading..."
+    "defaultMessage": "Uploading…"
   },
   "inAppNotifications.saveError": {
     "defaultMessage": "In App notification settings failed to save."
@@ -3522,7 +3522,7 @@
     "defaultMessage": "Share Your Invite"
   },
   "inviteShare.sharing": {
-    "defaultMessage": "Sharing..."
+    "defaultMessage": "Sharing…"
   },
   "inviteShare.successMessage": {
     "defaultMessage": "Successfully generated a new invite!"
@@ -3591,7 +3591,7 @@
     "defaultMessage": "Live TV"
   },
   "library.loading": {
-    "defaultMessage": "Loading libraries..."
+    "defaultMessage": "Loading libraries…"
   },
   "library.photos": {
     "defaultMessage": "Photos"
@@ -3612,7 +3612,7 @@
     "defaultMessage": "Please confirm your password"
   },
   "localSignup.creatingAccount": {
-    "defaultMessage": "Creating Account..."
+    "defaultMessage": "Creating Account…"
   },
   "localSignup.emailInvalid": {
     "defaultMessage": "Please enter a valid email address"
@@ -3873,7 +3873,7 @@
     "defaultMessage": "Import"
   },
   "plexImport.importing": {
-    "defaultMessage": "Importing..."
+    "defaultMessage": "Importing…"
   },
   "plexImport.newSignIn.warning": {
     "defaultMessage": "The <strong>Enable New Plex Sign-In</strong> setting is currently enabled. Plex users with library access do not need to be imported in order to sign in."
@@ -3891,7 +3891,7 @@
     "defaultMessage": "Import Plex Users"
   },
   "plexSettings.attemptingReconnect": {
-    "defaultMessage": "Attempting to reconnect..."
+    "defaultMessage": "Attempting to reconnect…"
   },
   "plexSettings.connecting": {
     "defaultMessage": "Attempting to connect to Plex…"
@@ -3948,7 +3948,7 @@
     "defaultMessage": "Library"
   },
   "plexSettings.plexUnreachable": {
-    "defaultMessage": "Plex is currently unreachable..."
+    "defaultMessage": "Plex is currently unreachable…"
   },
   "plexSettings.reconnecting": {
     "defaultMessage": "Reconnecting…"
@@ -4443,7 +4443,7 @@
     "defaultMessage": "Navigate to this route when this step is active."
   },
   "settings.onboarding.selectPreset": {
-    "defaultMessage": "Select a preset..."
+    "defaultMessage": "Select a preset…"
   },
   "settings.onboarding.stepMode": {
     "defaultMessage": "Step Rendering Style"
@@ -4551,7 +4551,7 @@
     "defaultMessage": "Pin all your shared libraries to the Plex home screen"
   },
   "settings.pinLibrariesProcessing": {
-    "defaultMessage": "Pinning Libraries..."
+    "defaultMessage": "Pinning Libraries…"
   },
   "settings.pinLibrariesProcessingMessage": {
     "defaultMessage": "Please wait while we pin your libraries to Plex"
@@ -4641,7 +4641,7 @@
     "defaultMessage": "Finish Setup"
   },
   "setup.finishing": {
-    "defaultMessage": "Finishing setup..."
+    "defaultMessage": "Finishing setup…"
   },
   "setup.getStartedPlex": {
     "defaultMessage": "Get started by signing in with your Plex account"
@@ -4842,7 +4842,7 @@
     "defaultMessage": "Plex Sync Service"
   },
   "system.reconnecting": {
-    "defaultMessage": "Reconnecting..."
+    "defaultMessage": "Reconnecting…"
   },
   "system.restartNow": {
     "defaultMessage": "Restart Now"
@@ -4851,7 +4851,7 @@
     "defaultMessage": "A restart is required to apply recent changes. Please restart the server as soon as possible."
   },
   "system.restarting": {
-    "defaultMessage": "Restarting..."
+    "defaultMessage": "Restarting…"
   },
   "system.server.restartFailed": {
     "defaultMessage": "Restart failed. Please restart the server manually."
@@ -5211,7 +5211,7 @@
     "defaultMessage": "User created successfully!"
   },
   "users.creating": {
-    "defaultMessage": "Creating..."
+    "defaultMessage": "Creating…"
   },
   "users.deleteUser": {
     "defaultMessage": "Delete User"
@@ -5226,7 +5226,7 @@
     "defaultMessage": "User deleted successfully!"
   },
   "users.deleting": {
-    "defaultMessage": "Deleting..."
+    "defaultMessage": "Deleting…"
   },
   "users.emailAlreadyInUse": {
     "defaultMessage": "The provided emaail address is already in use by another user."
