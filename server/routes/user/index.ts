@@ -7,7 +7,7 @@ import SeerrAPI from '@server/api/seerr';
 import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
 import TheMovieDb from '@server/api/themoviedb';
 import { UserType } from '@server/constants/user';
-import dataSource, { getRepository } from '@server/datasource';
+import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type {
@@ -24,7 +24,7 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
-import type { EntityManager } from 'typeorm';
+
 import { In, Not } from 'typeorm';
 import userSettingsRoutes, { isOwnProfileOrAdmin } from './usersettings';
 import userOnboardingRoutes from './onboarding';
@@ -212,8 +212,8 @@ router.post<
   { endpoint: string; p256dh: string; auth: string; userAgent: string }
 >('/registerPushSubscription', async (req, res, next) => {
   try {
-    await dataSource.transaction(
-      async (transactionalEntityManager: EntityManager) => {
+    await getRepository(UserPushSubscription).manager.transaction(
+      async (transactionalEntityManager) => {
         const transactionalRepo =
           transactionalEntityManager.getRepository(UserPushSubscription);
 
