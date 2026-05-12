@@ -11,14 +11,25 @@ const DEFAULT_AVATAR =
   'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&s=200';
 const AVATAR_MAX_AGE = 60 * 60 * 24; // 24 hours
 
-// Block loopback and RFC-1918 private address ranges to prevent SSRF
-const PRIVATE_HOST_RE =
-  /^(localhost|127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.|::1$|fc00:|fe80:)/i;
+// Only allow avatars from these known, trusted hosts
+const ALLOWED_AVATAR_HOSTS = new Set([
+  'plex.tv',
+  'metadata.provider.plex.tv',
+  'secure.gravatar.com',
+  'www.gravatar.com',
+  'gravatar.com',
+  'i.imgur.com',
+  'cdn.discordapp.com',
+]);
 
 function isValidAvatarUrl(url: string): boolean {
   try {
     const { protocol, hostname } = new URL(url);
-    return protocol === 'https:' && !PRIVATE_HOST_RE.test(hostname);
+    if (protocol !== 'https:') return false;
+    // Check exact match or subdomain match for allowed hosts
+    return [...ALLOWED_AVATAR_HOSTS].some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
   } catch {
     return false;
   }
@@ -52,10 +63,17 @@ router.get('/:userId', async (req, res) => {
       where: { id: userId },
     });
     const dbAvatar = user?.avatar;
-    if (dbAvatar && !isValidAvatarUrl(dbAvatar)) {
-      return res.status(400).send('Invalid avatar URL');
+    const avatarAllowed = !!dbAvatar && isValidAvatarUrl(dbAvatar);
+    if (dbAvatar && !avatarAllowed) {
+      logger.warn('Avatar URL not in allowlist, falling back to default', {
+        label: 'Avatar Proxy',
+        userId,
+        avatarHost: URL.canParse(dbAvatar)
+          ? new URL(dbAvatar).hostname
+          : 'unknown',
+      });
     }
-    const avatarUrl = dbAvatar || DEFAULT_AVATAR;
+    const avatarUrl = avatarAllowed ? dbAvatar : DEFAULT_AVATAR;
 
     const proxy = getAvatarProxy();
     const imageData = await proxy.getImage(avatarUrl);
