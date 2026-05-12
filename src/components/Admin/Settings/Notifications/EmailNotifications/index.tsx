@@ -554,7 +554,7 @@ const EmailNotifications = () => {
                       {isTesting ? (
                         <FormattedMessage
                           id="common.testing"
-                          defaultMessage="Testing..."
+                          defaultMessage="Testing…"
                         />
                       ) : (
                         <FormattedMessage
@@ -577,7 +577,7 @@ const EmailNotifications = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

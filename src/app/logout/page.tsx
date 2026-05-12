@@ -38,7 +38,7 @@ const LogOutPage = () => {
     <LoadingEllipsis
       text={intl.formatMessage({
         id: 'common.loggingOut',
-        defaultMessage: 'Logging out...',
+        defaultMessage: 'Logging out',
       })}
       fixed
     />

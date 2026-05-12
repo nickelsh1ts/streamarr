@@ -49,7 +49,7 @@ const PlexLoginButton = ({
           ) : isProcessing ? (
             <FormattedMessage
               id="common.signingIn"
-              defaultMessage="Signing In..."
+              defaultMessage="Signing In…"
             />
           ) : (
             <>

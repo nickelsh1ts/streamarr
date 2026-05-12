@@ -647,7 +647,7 @@ const ConfirmAccountForm = ({
             {isSubmitting
               ? intl.formatMessage({
                   id: 'confirmAccount.finalizingAccount',
-                  defaultMessage: 'Finalizing Account...',
+                  defaultMessage: 'Finalizing Account…',
                 })
               : intl.formatMessage({
                   id: 'signUp.confirmAccount',

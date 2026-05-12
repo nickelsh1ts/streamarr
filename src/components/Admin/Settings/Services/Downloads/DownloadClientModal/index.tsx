@@ -241,7 +241,7 @@ const DownloadClientModal = ({
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : downloadClient
                   ? intl.formatMessage({
@@ -258,7 +258,7 @@ const DownloadClientModal = ({
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
-                    defaultMessage: 'Testing...',
+                    defaultMessage: 'Testing…',
                   })
                 : intl.formatMessage({
                     id: 'common.test',

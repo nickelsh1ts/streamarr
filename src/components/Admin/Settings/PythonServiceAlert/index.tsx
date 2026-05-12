@@ -44,7 +44,7 @@ const PythonServiceAlert = () => {
               <span>
                 <FormattedMessage
                   id="system.restarting"
-                  defaultMessage="Restarting..."
+                  defaultMessage="Restarting…"
                 />
               </span>
             </div>

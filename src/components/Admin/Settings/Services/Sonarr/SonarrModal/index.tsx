@@ -316,7 +316,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : sonarr
                   ? intl.formatMessage({
@@ -336,7 +336,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
-                    defaultMessage: 'Testing...',
+                    defaultMessage: 'Testing…',
                   })
                 : intl.formatMessage({
                     id: 'common.test',
@@ -731,7 +731,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                           {isDisablingAuth ? (
                             <FormattedMessage
                               id="common.processing"
-                              defaultMessage="Processing..."
+                              defaultMessage="Processing…"
                             />
                           ) : (
                             <FormattedMessage

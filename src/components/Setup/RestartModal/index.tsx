@@ -56,12 +56,12 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
         isRestarting
           ? intl.formatMessage({
               id: 'system.restarting',
-              defaultMessage: 'Restarting...',
+              defaultMessage: 'Restarting…',
             })
           : isReconnecting
             ? intl.formatMessage({
                 id: 'system.reconnecting',
-                defaultMessage: 'Reconnecting...',
+                defaultMessage: 'Reconnecting…',
               })
             : intl.formatMessage({
                 id: 'system.restartNow',
@@ -85,12 +85,12 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
               {isReconnecting ? (
                 <FormattedMessage
                   id="system.reconnecting"
-                  defaultMessage="Reconnecting..."
+                  defaultMessage="Reconnecting…"
                 />
               ) : (
                 <FormattedMessage
                   id="system.restarting"
-                  defaultMessage="Restarting..."
+                  defaultMessage="Restarting…"
                 />
               )}
             </p>

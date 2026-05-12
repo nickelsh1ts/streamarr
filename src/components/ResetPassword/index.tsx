@@ -196,7 +196,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             {isSubmitting ? (
                               <FormattedMessage
                                 id="common.saving"
-                                defaultMessage="Saving..."
+                                defaultMessage="Saving…"
                               />
                             ) : (
                               <FormattedMessage

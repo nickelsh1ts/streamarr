@@ -128,7 +128,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
         isImporting
           ? intl.formatMessage({
               id: 'plexImport.importing',
-              defaultMessage: 'Importing...',
+              defaultMessage: 'Importing…',
             })
           : intl.formatMessage({
               id: 'plexImport.import',

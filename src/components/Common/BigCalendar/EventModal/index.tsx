@@ -438,7 +438,7 @@ const EventModal = ({
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : isNewEvent
                   ? intl.formatMessage({

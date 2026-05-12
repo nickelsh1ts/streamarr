@@ -283,7 +283,7 @@ const WhatIsStreamarr = () => {
           {
             id: 'help.whatIsStreamarr.subheading',
             defaultMessage:
-              'Been wondering to yourself, "what the heck is {appTitle}"? Look no further...',
+              'Been wondering to yourself, "what the heck is {appTitle}"? Look no further…',
           },
           {
             appTitle: (
