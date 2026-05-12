@@ -1,3 +1,38 @@
+## [1.7.0](https://github.com/nickelsh1ts/streamarr/compare/v1.6.0...v1.7.0) (2026-05-12)
+
+### ✨ Features
+
+* **avatarproxy:** add server-side avatar caching and proxy ([#255](https://github.com/nickelsh1ts/streamarr/issues/255)) ([0cbf34e](https://github.com/nickelsh1ts/streamarr/commit/0cbf34e752ef927abb764ff943d2c0f2ab6a73de))
+* **i18n:** add server-side i18n infrastructure and localise notifications ([#250](https://github.com/nickelsh1ts/streamarr/issues/250)) ([0accca3](https://github.com/nickelsh1ts/streamarr/commit/0accca36f950384fd0db9242d477287d22d839e7))
+* **network:** add network settings with request timeout and robust URL/host validation ([#248](https://github.com/nickelsh1ts/streamarr/issues/248)) ([baa95cf](https://github.com/nickelsh1ts/streamarr/commit/baa95cf4e9dc5b19c3e42f3454192bbd5acc424a))
+
+### 🐛 Bug Fixes
+
+* **auth:** disable user revalidation on auth pages ([#246](https://github.com/nickelsh1ts/streamarr/issues/246)) ([8a27c85](https://github.com/nickelsh1ts/streamarr/commit/8a27c8560d2bc47a0d282b5ba950f29c9c53d207))
+* **auth:** handle login boundary whitespace safely ([#262](https://github.com/nickelsh1ts/streamarr/issues/262)) ([d65735e](https://github.com/nickelsh1ts/streamarr/commit/d65735ea9434003b6c8136bd954c463df52394a4))
+* **auth:** resolve Plex OAuth client ID mismatch ([#240](https://github.com/nickelsh1ts/streamarr/issues/240)) ([b694317](https://github.com/nickelsh1ts/streamarr/commit/b694317065777e48aa9d5b3d0c48a7ae2df096eb))
+* **email:** preserve multiline PGP keys and allow non-TLD validation ([#244](https://github.com/nickelsh1ts/streamarr/issues/244)) ([cdd8c4e](https://github.com/nickelsh1ts/streamarr/commit/cdd8c4e9d6bd88bc50fb4c4a3249155d78df4702))
+* **i18n:** align client messages with updated locale punctuation ([c733304](https://github.com/nickelsh1ts/streamarr/commit/c7333047bf12780d6165528f2fae8d4d58fd5b92))
+* **plex:** harden OAuth polling and add image proxy path validation ([#243](https://github.com/nickelsh1ts/streamarr/issues/243)) ([2360075](https://github.com/nickelsh1ts/streamarr/commit/2360075b4db562c433713c065dcf8d257981bcac))
+* **security:** harden avatar proxy and fix push subscription transaction ([#272](https://github.com/nickelsh1ts/streamarr/issues/272)) ([ef2b575](https://github.com/nickelsh1ts/streamarr/commit/ef2b57537e6cb5495361becc85f274b0bf0a6159))
+* **settings:** prevent partial overwrite when merging & await notifications ([#241](https://github.com/nickelsh1ts/streamarr/issues/241)) ([268d8de](https://github.com/nickelsh1ts/streamarr/commit/268d8decd12b274ea5e02784ac278798b844ec09))
+* **webpush:** add dataDevices to verifyWebPush useEffect deps ([#254](https://github.com/nickelsh1ts/streamarr/issues/254)) ([45c50d0](https://github.com/nickelsh1ts/streamarr/commit/45c50d0c72352b15db0f2af3e41ddbf2f84e9125))
+* **webpush:** improve subscription endpoint cleanup and disable flow ([#242](https://github.com/nickelsh1ts/streamarr/issues/242)) ([1132bee](https://github.com/nickelsh1ts/streamarr/commit/1132beec414a8ae0f4699e0332a6b8fb44056041))
+
+### ⚡ Performance
+
+* **db:** add indexes on foreign key columns ([#251](https://github.com/nickelsh1ts/streamarr/issues/251)) ([3366939](https://github.com/nickelsh1ts/streamarr/commit/3366939ca84d47a42ca4ebdae8519d345e751272))
+* **frontend:** use lodash sub-path imports for tree-shaking ([#252](https://github.com/nickelsh1ts/streamarr/issues/252)) ([7917227](https://github.com/nickelsh1ts/streamarr/commit/7917227e04021009967425b57cc5da86c292e501))
+
+### 📚 Documentation
+
+* **i18n:** add weblate translation docs ([#264](https://github.com/nickelsh1ts/streamarr/issues/264)) ([79face2](https://github.com/nickelsh1ts/streamarr/commit/79face2877b7602b0117a728c2247bd522b70b10))
+* **security:** add fail2ban guide for auth hardening ([#263](https://github.com/nickelsh1ts/streamarr/issues/263)) ([8f923d6](https://github.com/nickelsh1ts/streamarr/commit/8f923d68f0acf238712ba1900f644250689e6c51))
+
+### 🤖 CI/CD
+
+* **deps:** bump fast-uri in the npm_and_yarn group across 1 directory ([#237](https://github.com/nickelsh1ts/streamarr/issues/237)) ([791bfe8](https://github.com/nickelsh1ts/streamarr/commit/791bfe8ef0d301687b7edc4caa0c5d717779f37c))
+
 ## [1.6.0](https://github.com/nickelsh1ts/streamarr/compare/v1.5.0...v1.6.0) (2026-05-08)
 
 ### ✨ Features
