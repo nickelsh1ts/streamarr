@@ -10,9 +10,6 @@ on:
       - 'docs/**'
   pull_request:
     branches: ['develop']
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
   schedule:
     - cron: '50 7 * * 5'
   workflow_dispatch:
