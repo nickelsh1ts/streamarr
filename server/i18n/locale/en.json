@@ -1,14 +1,14 @@
 {
-  "notifications.calendar.message": "{start} to {end}",
-  "notifications.calendar.subject": "Event: {summary} ({status})",
-  "notifications.invite.expired.subject": "Invite Expired: {icode}",
-  "notifications.invite.new.message": "A new invite has been created by {displayName}.",
-  "notifications.invite.new.subject": "New Invite: {icode}",
-  "notifications.invite.redeemed.message": "Your invite has been redeemed by {displayName}.",
-  "notifications.invite.redeemed.subject": "Invite Redeemed: {icode}",
-  "notifications.test.failed": "Failed to send {type} notification.",
-  "notifications.test.message": "Check check, 1, 2, 3. Are we coming in clear?",
-  "notifications.test.subject": "Test Notification",
-  "notifications.user.created.message": "Invited by {displayName}.",
-  "notifications.user.created.subject": "New User Created: {displayName}"
+    "notifications.calendar.message": "{start} to {end}",
+    "notifications.calendar.subject": "Event: {summary} ({status})",
+    "notifications.invite.expired.subject": "Invite Expired: {icode}",
+    "notifications.invite.new.message": "A new invite has been created by {displayName}.",
+    "notifications.invite.new.subject": "New Invite: {icode}",
+    "notifications.invite.redeemed.message": "Your invite has been redeemed by {displayName}.",
+    "notifications.invite.redeemed.subject": "Invite Redeemed: {icode}",
+    "notifications.test.failed": "Failed to send {type} notification.",
+    "notifications.test.message": "Check check, 1, 2, 3. Are we coming in clear?",
+    "notifications.test.subject": "Test Notification",
+    "notifications.user.created.message": "Invited by {displayName}.",
+    "notifications.user.created.subject": "New User Created: {displayName}"
 }
