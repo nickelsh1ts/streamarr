@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Decide whether to run CodeQL
         id: decide
         shell: bash
@@ -41,8 +42,7 @@ jobs:
             exit 0
           fi
 
-          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
-          CHANGED_FILES=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
+          CHANGED_FILES=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
 
           if [[ -z "$CHANGED_FILES" ]]; then
             echo "run_codeql=false" >> "$GITHUB_OUTPUT"
@@ -59,7 +59,6 @@ jobs:
   analyze:
     name: Analyze
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.run_codeql == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -73,21 +72,29 @@ jobs:
         language: [actions, javascript]
 
     steps:
+      - name: Skip CodeQL on docs-only PR
+        if: github.event_name == 'pull_request' && needs.changes.outputs.run_codeql != 'true'
+        run: echo "Docs-only pull request detected; skipping CodeQL analysis for required check context."
+
       - name: Checkout
+        if: needs.changes.outputs.run_codeql == 'true'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           persist-credentials: false
 
       - name: Initialize CodeQL
+        if: needs.changes.outputs.run_codeql == 'true'
         uses: github/codeql-action/init@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
 
       - name: Autobuild
+        if: needs.changes.outputs.run_codeql == 'true'
         uses: github/codeql-action/autobuild@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
 
       - name: Perform CodeQL Analysis
+        if: needs.changes.outputs.run_codeql == 'true'
         uses: github/codeql-action/analyze@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
         with:
           category: '/language:${{ matrix.language }}'
