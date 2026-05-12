@@ -14,8 +14,10 @@ import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
+import validator from 'validator';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 
 const EmailNotifications = () => {
   const intl = useIntl();
@@ -38,11 +40,13 @@ const EmailNotifications = () => {
             )
           : schema.nullable()
       )
-      .email(
+      .test(
+        'email',
         intl.formatMessage({
           id: 'email.required',
           defaultMessage: 'You must provide a valid email address',
-        })
+        }),
+        (value) => !value || validator.isEmail(value, { require_tld: false })
       ),
     smtpHost: Yup.string()
       .when('enabled', (enabled, schema) =>
@@ -56,12 +60,13 @@ const EmailNotifications = () => {
             )
           : schema.nullable()
       )
-      .matches(
-        /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
+      .test(
+        'hostname-or-ip',
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
           defaultMessage: 'You must provide a valid hostname or IP address',
-        })
+        }),
+        (value) => !value || isValidHostnameOrIpAddress(value)
       ),
     smtpPort: Yup.number().when('enabled', (enabled, schema) =>
       enabled
@@ -90,7 +95,7 @@ const EmailNotifications = () => {
         }
       )
       .matches(
-        /^$|-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/,
+        /^$|-----BEGIN PGP PRIVATE KEY BLOCK-----.+-----END PGP PRIVATE KEY BLOCK-----/s,
         intl.formatMessage({
           id: 'emailNotifications.validation.pgpPrivateKey.format',
           defaultMessage: 'You must provide a valid PGP private key',
@@ -478,8 +483,9 @@ const EmailNotifications = () => {
                     as="field"
                     id="pgpPrivateKey"
                     name="pgpPrivateKey"
+                    type="textarea"
                     buttonSize="sm"
-                    className="input input-sm input-primary rounded-md w-full"
+                    className="textarea textarea-sm textarea-primary rounded-md w-full"
                   />
                 </div>
                 {errors.pgpPrivateKey &&
@@ -548,7 +554,7 @@ const EmailNotifications = () => {
                       {isTesting ? (
                         <FormattedMessage
                           id="common.testing"
-                          defaultMessage="Testing..."
+                          defaultMessage="Testing…"
                         />
                       ) : (
                         <FormattedMessage
@@ -571,7 +577,7 @@ const EmailNotifications = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

@@ -15,12 +15,16 @@ interface SensitiveInputBaseProps {
 interface CustomInputProps
   extends React.ComponentProps<'input'>, SensitiveInputBaseProps {
   as?: 'input';
+  type?: React.HTMLInputTypeAttribute | 'textarea';
 }
 
 interface CustomFieldProps
   extends React.ComponentProps<typeof Field>, SensitiveInputBaseProps {
   as: 'field';
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: React.HTMLInputTypeAttribute | 'textarea';
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 type SensitiveInputProps = CustomInputProps | CustomFieldProps;
@@ -31,16 +35,14 @@ const SensitiveInput = ({
   ...props
 }: SensitiveInputProps) => {
   const [isHidden, setHidden] = useState(true);
+  const isTextarea = 'type' in props && props.type === 'textarea';
   const Component = as === 'input' ? 'input' : Field;
   const componentProps =
     as === 'input'
       ? props
       : {
           ...props,
-          as:
-            'type' in props && props.type === 'textarea' && !isHidden
-              ? 'textarea'
-              : undefined,
+          as: isTextarea ? 'textarea' : undefined,
         };
   return (
     <>
@@ -53,11 +55,18 @@ const SensitiveInput = ({
         className={`rounded-r-none ${componentProps.className ?? ''}`}
         placeholder={componentProps.placeholder}
         type={
-          isHidden
-            ? 'password'
-            : 'type' in props && props.type !== 'password'
-              ? (props.type ?? 'text')
-              : 'text'
+          isTextarea
+            ? undefined
+            : isHidden
+              ? 'password'
+              : 'type' in props && props.type !== 'password'
+                ? (props.type ?? 'text')
+                : 'text'
+        }
+        style={
+          isTextarea && isHidden
+            ? { WebkitTextSecurity: 'disc', ...props.style }
+            : props.style
         }
       />
       <button
@@ -66,7 +75,9 @@ const SensitiveInput = ({
           setHidden(!isHidden);
         }}
         type="button"
-        className={`btn btn-primary btn-${buttonSize} rounded-none last:rounded-r-md`}
+        className={`btn btn-primary btn-${buttonSize} rounded-none last:rounded-r-md ${
+          isTextarea ? 'h-auto self-stretch' : ''
+        }`}
       >
         {isHidden ? (
           <EyeSlashIcon className="size-5" />

@@ -121,7 +121,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
         isSubmitting
           ? intl.formatMessage({
               id: 'downloads.adding',
-              defaultMessage: 'Adding...',
+              defaultMessage: 'Adding…',
             })
           : intl.formatMessage({
               id: 'downloads.addTorrent',

@@ -22,8 +22,10 @@ import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
-import { In } from 'typeorm';
+
+import { In, Not } from 'typeorm';
 import userSettingsRoutes, { isOwnProfileOrAdmin } from './usersettings';
 import userOnboardingRoutes from './onboarding';
 import PreparedEmail from '@server/lib/email';
@@ -210,32 +212,101 @@ router.post<
   { endpoint: string; p256dh: string; auth: string; userAgent: string }
 >('/registerPushSubscription', async (req, res, next) => {
   try {
-    const userPushSubRepository = getRepository(UserPushSubscription);
+    await getRepository(UserPushSubscription).manager.transaction(
+      async (transactionalEntityManager) => {
+        const transactionalRepo =
+          transactionalEntityManager.getRepository(UserPushSubscription);
 
-    const existingSubs = await userPushSubRepository.find({
-      relations: { user: true },
-      where: { auth: req.body.auth, user: { id: req.user?.id } },
-    });
+        const existingSubscription = await transactionalRepo.findOne({
+          relations: { user: true },
+          where: [
+            { auth: req.body.auth, user: { id: req.user?.id } },
+            { endpoint: req.body.endpoint, user: { id: req.user?.id } },
+          ],
+        });
 
-    if (existingSubs.length > 0) {
-      logger.debug(
-        'User push subscription already exists. Skipping registration.',
-        { label: 'API' }
-      );
-      res.status(204).send();
-    }
+        if (existingSubscription) {
+          const updateSubscription = async (
+            scenario: 'auth-rotated' | 'endpoint-rotated'
+          ) => {
+            if (scenario === 'auth-rotated') {
+              existingSubscription.auth = req.body.auth;
+            } else {
+              existingSubscription.endpoint = req.body.endpoint;
+            }
 
-    const userPushSubscription = new UserPushSubscription({
-      auth: req.body.auth,
-      endpoint: req.body.endpoint,
-      p256dh: req.body.p256dh,
-      userAgent: req.body.userAgent,
-      user: req.user,
-    });
+            existingSubscription.p256dh = req.body.p256dh;
+            existingSubscription.userAgent = req.body.userAgent;
 
-    userPushSubRepository.save(userPushSubscription);
+            await transactionalRepo.save(existingSubscription);
 
-    res.status(204).send();
+            const message =
+              scenario === 'auth-rotated'
+                ? 'Updated push subscription with new keys for same endpoint.'
+                : 'Updated push subscription with new endpoint for same auth key.';
+
+            logger.debug(message, { label: 'API' });
+          };
+
+          if (
+            existingSubscription.endpoint === req.body.endpoint &&
+            existingSubscription.auth !== req.body.auth
+          ) {
+            // Same endpoint, keys rotated — update auth/p256dh
+            await updateSubscription('auth-rotated');
+            return;
+          }
+
+          if (
+            existingSubscription.auth === req.body.auth &&
+            existingSubscription.endpoint !== req.body.endpoint
+          ) {
+            // Same auth key, endpoint URL rotated — update endpoint/p256dh
+            await updateSubscription('endpoint-rotated');
+            return;
+          }
+
+          logger.debug(
+            'Duplicate subscription detected. Skipping registration.',
+            {
+              label: 'API',
+            }
+          );
+          return;
+        }
+
+        if (req.body.userAgent) {
+          const staleSubscriptions = await transactionalRepo.find({
+            relations: { user: true },
+            where: {
+              userAgent: req.body.userAgent,
+              user: { id: req.user?.id },
+              endpoint: Not(req.body.endpoint),
+            },
+          });
+
+          if (staleSubscriptions.length > 0) {
+            await transactionalRepo.remove(staleSubscriptions);
+            logger.debug(
+              `Removed ${staleSubscriptions.length} stale push subscription(s) from same device.`,
+              { label: 'API' }
+            );
+          }
+        }
+
+        const userPushSubscription = new UserPushSubscription({
+          auth: req.body.auth,
+          endpoint: req.body.endpoint,
+          p256dh: req.body.p256dh,
+          userAgent: req.body.userAgent,
+          user: req.user,
+        });
+
+        await transactionalRepo.save(userPushSubscription);
+      }
+    );
+
+    return res.status(204).send();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     logger.error('Failed to register user push subscription', { label: 'API' });
@@ -292,7 +363,7 @@ router.get<{ userId: number; key: string }>(
 
       const userPushSub = await userPushSubRepository.findOneOrFail({
         relations: { user: true },
-        where: { user: { id: req.params.userId }, p256dh: req.params.key },
+        where: { user: { id: req.params.userId }, endpoint: req.params.key },
       });
 
       res.status(200).json(userPushSub);
@@ -320,7 +391,7 @@ router.delete<{ userId: number; endpoint: string }>(
 
       const userPushSubRepository = getRepository(UserPushSubscription);
 
-      const userPushSub = await userPushSubRepository.findOneOrFail({
+      const userPushSub = await userPushSubRepository.findOne({
         relations: { user: true },
         where: {
           user: { id: req.params.userId },
@@ -328,8 +399,12 @@ router.delete<{ userId: number; endpoint: string }>(
         },
       });
 
+      if (!userPushSub) {
+        return res.status(204).send();
+      }
+
       await userPushSubRepository.remove(userPushSub);
-      res.status(204).send();
+      return res.status(204).send();
     } catch (e) {
       logger.error('Something went wrong deleting the user push subscription', {
         label: 'API',
@@ -619,6 +694,7 @@ router.post(
 
           if (user) {
             // Update the user's avatar with their Plex thumbnail, in case it changed
+            const previousAvatar = user.avatar;
             user.avatar = account.thumb;
             user.email = account.email;
             user.plexUsername = account.username;
@@ -629,6 +705,9 @@ router.post(
               user.plexId = parseInt(account.id);
             }
             await userRepository.save(user);
+            if (previousAvatar && previousAvatar !== user.avatar) {
+              void ImageProxy.clearCachedImage('avatar', previousAvatar);
+            }
           } else if (!body || body.plexIds.includes(account.id)) {
             if (await mainPlexTv.checkUserAccess(parseInt(account.id))) {
               const newUser = new User({

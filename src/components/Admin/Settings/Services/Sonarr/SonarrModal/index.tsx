@@ -15,6 +15,7 @@ import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { SmallLoadingEllipsis } from '@app/components/Common/LoadingEllipsis';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 
 interface TestResponse {
   urlBase?: string;
@@ -53,12 +54,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
           defaultMessage: 'You must provide a valid hostname or IP address',
         })
       )
-      .matches(
-        /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
+      .test(
+        'hostname-or-ip',
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
           defaultMessage: 'You must provide a valid hostname or IP address',
-        })
+        }),
+        (value) => isValidHostnameOrIpAddress(value)
       ),
     port: Yup.number()
       .nullable()
@@ -314,7 +316,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : sonarr
                   ? intl.formatMessage({
@@ -334,7 +336,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
               isTesting
                 ? intl.formatMessage({
                     id: 'common.testing',
-                    defaultMessage: 'Testing...',
+                    defaultMessage: 'Testing…',
                   })
                 : intl.formatMessage({
                     id: 'common.test',
@@ -729,7 +731,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                           {isDisablingAuth ? (
                             <FormattedMessage
                               id="common.processing"
-                              defaultMessage="Processing..."
+                              defaultMessage="Processing…"
                             />
                           ) : (
                             <FormattedMessage

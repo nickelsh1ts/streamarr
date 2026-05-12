@@ -2,7 +2,7 @@ import NotificationType from '@app/components/Common/NotificationTypeSelector/No
 import { NotificationType as Notification } from '@server/constants/notification';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
-import { sortBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -219,7 +219,7 @@ const NotificationTypeSelector = ({
     );
 
     return user
-      ? sortBy(filteredTypes, 'hasNotifyUser', 'DESC')
+      ? orderBy(filteredTypes, ['hasNotifyUser'], ['desc'])
       : filteredTypes;
   }, [intl, user, hasPermission, enabledTypes]);
 

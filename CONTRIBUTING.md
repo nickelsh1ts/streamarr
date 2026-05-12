@@ -155,7 +155,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 ## Translation / Localization
 
-Streamarr uses `react-intl` for internationalization. To contribute translations:
+Streamarr uses `react-intl` for internationalization. Source strings are extracted from the codebase, and human translations are managed in Weblate.
 
 1. Extract the latest English strings:
 
@@ -163,9 +163,11 @@ Streamarr uses `react-intl` for internationalization. To contribute translations
    pnpm i18n:extract
    ```
 
-2. Translation files are located in `src/i18n/locale/`.
+2. Update source strings in code when needed and commit the refreshed English catalog.
 
-3. Add or update the appropriate locale file and submit a PR.
+3. Use the self-hosted Weblate instance at https://weblate.streamarr.dev/ to translate existing strings.
+
+4. If you are changing translation keys or strings in code, make sure the extracted locale files are up to date before opening a PR.
 
 ## Need Help?
 

@@ -49,6 +49,7 @@ sonarrRoutes.post('/test', async (req, res, next) => {
     const sonarr = new SonarrAPI({
       apiKey: req.body.apiKey,
       url: SonarrAPI.buildUrl(req.body, '/api/v3'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const urlBase = await sonarr
@@ -154,6 +155,7 @@ sonarrRoutes.get<{ id: string }>('/:id/auth', async (req, res, next) => {
     const sonarr = new SonarrAPI({
       apiKey: sonarrSettings.apiKey,
       url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     const hostConfig = await sonarr.getHostConfig();
@@ -190,6 +192,7 @@ sonarrRoutes.post<{ id: string }>(
       const sonarr = new SonarrAPI({
         apiKey: sonarrSettings.apiKey,
         url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
+        timeout: getSettings().network.requestTimeout,
       });
 
       const hostConfig = await sonarr.disableAuthentication();

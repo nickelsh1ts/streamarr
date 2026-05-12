@@ -13,6 +13,7 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import useSWR from 'swr';
 import * as Yup from 'yup';
+import { isValidHttpUrl } from '@app/utils/networkValidation';
 
 const ServicesUptime = () => {
   const intl = useIntl();
@@ -21,11 +22,13 @@ const ServicesUptime = () => {
 
   const SettingsSchema = Yup.object().shape({
     externalUrl: Yup.string()
-      .url(
+      .test(
+        'valid-http-url',
         intl.formatMessage({
           id: 'generalSettings.validation.supportUrl',
           defaultMessage: 'You must provide a valid URL',
-        })
+        }),
+        (value) => isValidHttpUrl(value)
       )
       .test(
         'no-trailing-slash',
@@ -177,7 +180,7 @@ const ServicesUptime = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

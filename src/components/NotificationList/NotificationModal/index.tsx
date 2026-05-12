@@ -256,7 +256,7 @@ const NotificationModal = ({
               isSubmitting
                 ? intl.formatMessage({
                     id: 'common.saving',
-                    defaultMessage: 'Saving...',
+                    defaultMessage: 'Saving…',
                   })
                 : notification
                   ? intl.formatMessage({

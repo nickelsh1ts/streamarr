@@ -30,8 +30,10 @@
 
 - [Frequently Asked Questions (FAQ)](support/faq.md)
 - [Need Help?](support/need-help.md)
+- [Translations](support/translations.md)
 
 ## Extending Streamarr
 
 - [Reverse Proxy](extending-streamarr/reverse-proxy.md)
+- [Fail2ban](extending-streamarr/fail2ban.md)
 - [API Documentation](https://api-docs.streamarr.dev)

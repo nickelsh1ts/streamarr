@@ -13,12 +13,14 @@ import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
+import { initI18n } from '@server/i18n';
 import restartManager from '@server/lib/restartManager';
 import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
 import routes from '@server/routes';
+import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import logoRoutes from '@server/routes/logo';
 import { onboardingImageService } from '@server/lib/onboarding';
@@ -70,7 +72,8 @@ app
     }
 
     // Load Settings
-    const settings = getSettings().load();
+    const settings = await getSettings().load();
+    initI18n();
     await initializeOnboardingDefaults();
 
     // Migrate library types
@@ -104,7 +107,7 @@ app
     startJobs();
     const pythonReady = pythonService.start();
     const server = express();
-    if (settings.main.trustProxy) {
+    if (settings.network.trustProxy) {
       server.set('trust proxy', 1);
     }
     server.use(cookieParser());
@@ -134,7 +137,7 @@ app
       }
       express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
     });
-    if (settings.main.csrfProtection) {
+    if (settings.network.csrfProtection) {
       server.use(
         csurf({
           cookie: {
@@ -157,14 +160,14 @@ app
     // Set up sessions
     const sessionRepository = getRepository(Session);
     const sessionMiddleware = session({
-      secret: settings.clientId,
+      secret: settings.sessionSecret,
       resave: false,
       saveUninitialized: false,
       name: 'streamarr.sid',
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,
-        sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+        sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
         secure: 'auto',
       },
       store: new TypeormStore({
@@ -209,6 +212,7 @@ app
       },
       imageproxy
     );
+    server.use('/avatarproxy', clearCookies, avatarproxy);
     server.use('/logo', clearCookies, logoRoutes);
     server.use(
       '/onboarding/images',

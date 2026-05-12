@@ -20,6 +20,11 @@ interface PushNotificationPayload {
   isAdmin?: boolean;
 }
 
+interface WebPushError extends Error {
+  statusCode?: number;
+  status?: number;
+}
+
 class WebPushAgent
   extends BaseAgent<NotificationAgentConfig>
   implements NotificationAgent
@@ -89,19 +94,27 @@ class WebPushAgent
           notificationPayload
         );
       } catch (e) {
+        const webPushError = e as WebPushError;
+        const statusCode = webPushError.statusCode || webPushError.status;
+        const isPermanentFailure = statusCode === 404 || statusCode === 410;
+
         logger.error(
-          'Error sending web push notification; removing subscription',
+          isPermanentFailure
+            ? 'Error sending web push notification; removing invalid subscription'
+            : 'Error sending web push notification (transient error, keeping subscription)',
           {
             label: 'Notifications',
             recipient: pushSub.user.displayName,
             type: NotificationType[type],
             subject: payload.subject,
-            errorMessage: e.message,
+            errorMessage: webPushError.message || String(e),
+            statusCode: statusCode || 'unknown',
           }
         );
 
-        // Failed to send notification so we need to remove the subscription
-        userPushSubRepository.remove(pushSub);
+        if (isPermanentFailure) {
+          await userPushSubRepository.remove(pushSub);
+        }
       }
     };
 
@@ -137,13 +150,16 @@ class WebPushAgent
           shouldSendAdminNotification(type, user, payload)
       );
 
-      const allSubs = await userPushSubRepository
-        .createQueryBuilder('pushSub')
-        .leftJoinAndSelect('pushSub.user', 'user')
-        .where('pushSub.userId IN (:...users)', {
-          users: manageUsers.map((user) => user.id),
-        })
-        .getMany();
+      const allSubs =
+        manageUsers.length > 0
+          ? await userPushSubRepository
+              .createQueryBuilder('pushSub')
+              .leftJoinAndSelect('pushSub.user', 'user')
+              .where('pushSub.userId IN (:...users)', {
+                users: manageUsers.map((user) => user.id),
+              })
+              .getMany()
+          : [];
 
       pushSubs.push(...allSubs);
     }

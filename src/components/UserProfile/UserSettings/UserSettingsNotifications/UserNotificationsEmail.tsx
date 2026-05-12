@@ -37,7 +37,7 @@ const UserEmailSettings = () => {
     pgpKey: Yup.string()
       .nullable()
       .matches(
-        /-----BEGIN PGP PUBLIC KEY BLOCK-----.+-----END PGP PUBLIC KEY BLOCK-----/,
+        /^$|-----BEGIN PGP PUBLIC KEY BLOCK-----.+-----END PGP PUBLIC KEY BLOCK-----/s,
         'You must provide a valid PGP public key'
       ),
   });
@@ -131,7 +131,8 @@ const UserEmailSettings = () => {
                       id="pgpKey"
                       buttonSize="sm"
                       name="pgpKey"
-                      className="font-mono text-xs input input-sm input-primary w-full"
+                      type="textarea"
+                      className="font-mono text-xs textarea textarea-sm textarea-primary w-full"
                     />
                   </div>
                   {errors.pgpKey &&
@@ -169,7 +170,7 @@ const UserEmailSettings = () => {
                     {isSubmitting ? (
                       <FormattedMessage
                         id="common.saving"
-                        defaultMessage="Saving..."
+                        defaultMessage="Saving…"
                       />
                     ) : (
                       <FormattedMessage

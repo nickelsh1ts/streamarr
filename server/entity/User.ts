@@ -15,6 +15,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   Not,
   OneToMany,
@@ -98,10 +100,12 @@ export class User {
   @OneToMany(() => Invite, (invite) => invite.createdBy)
   public createdInvites: Invite[];
 
+  @Index('IDX_user_redeemedInviteId')
   @ManyToOne(() => Invite, (invite) => invite.redeemedBy, {
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'redeemedInviteId' })
   public redeemedInvite: Invite;
 
   @OneToMany(() => Invite, (invite) => invite.updatedBy)

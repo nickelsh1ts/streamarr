@@ -100,7 +100,11 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
             </button>
             <span className="font-extrabold flex items-center truncate gap-2">
               <CachedImage
-                src={invite?.createdBy?.avatar}
+                src={
+                  invite?.createdBy?.id
+                    ? `/avatarproxy/${invite.createdBy.id}`
+                    : undefined
+                }
                 alt=""
                 className="object-cover rounded-full"
                 width={20}
@@ -208,7 +212,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                         }
                       >
                         <CachedImage
-                          src={user?.avatar}
+                          src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                           alt=""
                           className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
                           width={24}
@@ -228,7 +232,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                         }
                       >
                         <CachedImage
-                          src={user?.avatar}
+                          src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                           alt=""
                           className="size-6 rounded-full border-2 border-base-100"
                           width={24}

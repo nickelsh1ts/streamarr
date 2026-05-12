@@ -8,6 +8,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -84,24 +86,30 @@ export class Notification {
   @Column({ type: 'text', nullable: true })
   public actionUrlTitle?: string;
 
+  @Index('IDX_notification_notifyUserId')
   @ManyToOne(() => User, (user) => user.notifications, {
     eager: true,
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'notifyUserId' })
   public notifyUser: User;
 
+  @Index('IDX_notification_createdById')
   @ManyToOne(() => User, (user) => user.createdNotifications, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'createdById' })
   public createdBy: User;
 
+  @Index('IDX_notification_updatedById')
   @ManyToOne(() => User, (user) => user.modifiedNotifications, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'updatedById' })
   public updatedBy: User;
 
   @CreateDateColumn()

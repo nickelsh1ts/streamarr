@@ -1,9 +1,15 @@
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import fs from 'fs';
-import { merge } from 'lodash';
+import { mergeWith } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
+import { runMigrations } from '@server/lib/migrator';
 import { Permission } from './permissions';
+
+const mergeSettings = <T>(current: T, incoming: Partial<T>): T =>
+  mergeWith({}, current, incoming, (_objValue, srcValue) =>
+    Array.isArray(srcValue) ? srcValue : undefined
+  ) as T;
 
 export interface Library {
   id: string;
@@ -51,6 +57,12 @@ export interface ServiceSettings {
   urlBase?: string;
   id?: string;
   apiKey?: string;
+}
+
+export interface NetworkSettings {
+  requestTimeout: number;
+  trustProxy: boolean;
+  csrfProtection: boolean;
 }
 
 export interface DVRSettings {
@@ -132,7 +144,6 @@ export interface MainSettings {
   apiKey: string;
   applicationTitle: string;
   applicationUrl: string;
-  csrfProtection: boolean;
   cacheImages: boolean;
   defaultPermissions: number;
   defaultQuotas: {
@@ -146,7 +157,6 @@ export interface MainSettings {
   newPlexLogin: boolean;
   enableSignUp: boolean;
   releaseSched: boolean;
-  trustProxy: boolean;
   locale: string;
   supportUrl: string;
   supportEmail: string;
@@ -195,6 +205,7 @@ export interface FullPublicSettings extends PublicSettings {
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
+  plexClientIdentifier: string;
 }
 
 export interface NotificationAgentConfig {
@@ -263,11 +274,13 @@ export type JobId =
   | 'image-cache-cleanup'
   | 'notification-cleanup';
 
-interface AllSettings {
+export interface AllSettings {
   clientId: string;
+  sessionSecret?: string;
   vapidPublic: string;
   vapidPrivate: string;
   main: MainSettings;
+  network: NetworkSettings;
   plex: PlexSettings;
   tautulli: TautulliSettings;
   radarr: RadarrSettings[];
@@ -297,13 +310,13 @@ class Settings {
   constructor(initialSettings?: AllSettings) {
     this.data = {
       clientId: randomUUID(),
+      sessionSecret: '',
       vapidPrivate: '',
       vapidPublic: '',
       main: {
         apiKey: '',
         applicationTitle: 'Streamarr',
         applicationUrl: '',
-        csrfProtection: false,
         cacheImages: false,
         defaultPermissions: Permission.STREAMARR,
         defaultQuotas: {
@@ -323,7 +336,6 @@ class Settings {
         newPlexLogin: true,
         enableSignUp: false,
         releaseSched: false,
-        trustProxy: false,
         locale: 'en',
         supportUrl: '',
         supportEmail: '',
@@ -363,6 +375,11 @@ class Settings {
         libraries: [],
         enablePlaylists: false,
         defaultPivot: 'library',
+      },
+      network: {
+        requestTimeout: 10000,
+        trustProxy: false,
+        csrfProtection: false,
       },
       tautulli: {
         enabled: false,
@@ -434,7 +451,7 @@ class Settings {
       },
     };
     if (initialSettings) {
-      this.data = merge(this.data, initialSettings);
+      this.data = mergeSettings(this.data, initialSettings);
     }
   }
 
@@ -447,7 +464,15 @@ class Settings {
   }
 
   set main(data: MainSettings) {
-    this.data.main = data;
+    this.data.main = mergeSettings(this.data.main, data);
+  }
+
+  get network(): NetworkSettings {
+    return this.data.network;
+  }
+
+  set network(data: NetworkSettings) {
+    this.data.network = mergeSettings(this.data.network, data);
   }
 
   get plex(): PlexSettings {
@@ -455,7 +480,7 @@ class Settings {
   }
 
   set plex(data: PlexSettings) {
-    this.data.plex = data;
+    this.data.plex = mergeSettings(this.data.plex, data);
   }
 
   get tautulli(): TautulliSettings {
@@ -463,7 +488,7 @@ class Settings {
   }
 
   set tautulli(data: TautulliSettings) {
-    this.data.tautulli = data;
+    this.data.tautulli = mergeSettings(this.data.tautulli, data);
   }
 
   get uptime(): ServiceSettings {
@@ -471,7 +496,7 @@ class Settings {
   }
 
   set uptime(data: ServiceSettings) {
-    this.data.uptime = data;
+    this.data.uptime = mergeSettings(this.data.uptime, data);
   }
 
   get downloads(): DownloadClientSettings[] {
@@ -487,7 +512,7 @@ class Settings {
   }
 
   set tdarr(data: ServiceSettings) {
-    this.data.tdarr = data;
+    this.data.tdarr = mergeSettings(this.data.tdarr, data);
   }
 
   get bazarr(): ServiceSettings {
@@ -495,7 +520,7 @@ class Settings {
   }
 
   set bazarr(data: ServiceSettings) {
-    this.data.bazarr = data;
+    this.data.bazarr = mergeSettings(this.data.bazarr, data);
   }
 
   get radarr(): RadarrSettings[] {
@@ -507,7 +532,7 @@ class Settings {
   }
 
   set prowlarr(data: ServiceSettings) {
-    this.data.prowlarr = data;
+    this.data.prowlarr = mergeSettings(this.data.prowlarr, data);
   }
 
   get lidarr(): ServiceSettings {
@@ -515,7 +540,7 @@ class Settings {
   }
 
   set lidarr(data: ServiceSettings) {
-    this.data.lidarr = data;
+    this.data.lidarr = mergeSettings(this.data.lidarr, data);
   }
 
   get overseerr(): ServiceSettings {
@@ -523,7 +548,7 @@ class Settings {
   }
 
   set overseerr(data: ServiceSettings) {
-    this.data.overseerr = data;
+    this.data.overseerr = mergeSettings(this.data.overseerr, data);
   }
 
   set radarr(data: RadarrSettings[]) {
@@ -543,7 +568,7 @@ class Settings {
   }
 
   set public(data: PublicSettings) {
-    this.data.public = data;
+    this.data.public = mergeSettings(this.data.public, data);
   }
 
   get fullPublicSettings(): FullPublicSettings {
@@ -582,6 +607,7 @@ class Settings {
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,
+      plexClientIdentifier: this.clientId,
     };
   }
 
@@ -590,7 +616,7 @@ class Settings {
   }
 
   set notifications(data: NotificationSettings) {
-    this.data.notifications = data;
+    this.data.notifications = mergeSettings(this.data.notifications, data);
   }
 
   get jobs(): Record<JobId, JobSettings> {
@@ -598,7 +624,7 @@ class Settings {
   }
 
   set jobs(data: Record<JobId, JobSettings>) {
-    this.data.jobs = data;
+    this.data.jobs = mergeSettings(this.data.jobs, data);
   }
 
   get onboarding(): OnboardingSettings {
@@ -606,7 +632,7 @@ class Settings {
   }
 
   set onboarding(data: OnboardingSettings) {
-    this.data.onboarding = data;
+    this.data.onboarding = mergeSettings(this.data.onboarding, data);
   }
 
   get clientId(): string {
@@ -616,6 +642,15 @@ class Settings {
     }
 
     return this.data.clientId;
+  }
+
+  get sessionSecret(): string {
+    if (!this.data.sessionSecret) {
+      this.data.sessionSecret = randomBytes(32).toString('hex');
+      this.save();
+    }
+
+    return this.data.sessionSecret;
   }
 
   get vapidPublic(): string {
@@ -657,7 +692,7 @@ class Settings {
    * @param overrideSettings If passed in, will override all existing settings with these
    * values
    */
-  public load(overrideSettings?: AllSettings): Settings {
+  public async load(overrideSettings?: AllSettings): Promise<Settings> {
     if (overrideSettings) {
       this.data = overrideSettings;
       return this;
@@ -669,9 +704,15 @@ class Settings {
     const data = fs.readFileSync(SETTINGS_PATH, 'utf-8');
 
     if (data) {
-      this.data = merge(this.data, JSON.parse(data));
+      const parsedSettings = JSON.parse(data);
+      const migratedSettings = await runMigrations(
+        parsedSettings,
+        SETTINGS_PATH
+      );
+      this.data = mergeSettings(this.data, migratedSettings);
       this.save();
     }
+
     return this;
   }
 

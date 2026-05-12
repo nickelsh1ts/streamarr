@@ -155,7 +155,7 @@ const DownloadClientInstance = ({
               <Badge badgeType="warning">
                 <FormattedMessage
                   id="common.testing"
-                  defaultMessage="Testing..."
+                  defaultMessage="Testing…"
                 />
               </Badge>
             ) : connectionStatus === null ? (

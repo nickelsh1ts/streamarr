@@ -6,6 +6,7 @@ import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { EmailOptions } from 'email-templates';
 import path from 'path';
+import validator from 'validator';
 import { shouldSendAdminNotification } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
@@ -157,6 +158,7 @@ class EmailAgent
         locals: {
           subject: payload.subject,
           message: payload.message,
+          description: payload.event?.description,
           applicationUrl,
           applicationTitle,
           recipientName,
@@ -184,6 +186,19 @@ class EmailAgent
         ) ??
           true)
       ) {
+        if (
+          !validator.isEmail(payload.notifyUser.email, { require_tld: false })
+        ) {
+          logger.warn('Skipping email notification due to invalid address', {
+            label: 'Notifications',
+            recipient: payload.notifyUser.displayName,
+            address: payload.notifyUser.email,
+            type: NotificationType[type],
+          });
+
+          return false;
+        }
+
         logger.debug('Sending email notification', {
           label: 'Notifications',
           recipient: payload.notifyUser.displayName,
@@ -234,6 +249,7 @@ class EmailAgent
                   type
                 ) ??
                   true)) &&
+              validator.isEmail(user.email, { require_tld: false }) &&
               shouldSendAdminNotification(type, user, payload)
           )
           .map(async (user) => {

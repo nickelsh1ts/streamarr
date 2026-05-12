@@ -380,7 +380,7 @@ const HealthCard = ({
               <ArrowPathIcon className="size-4 mr-1 animate-spin" />
               <FormattedMessage
                 id="system.restarting"
-                defaultMessage="Restarting..."
+                defaultMessage="Restarting…"
               />
             </Button>
           ) : (

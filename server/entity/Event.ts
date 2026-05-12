@@ -6,6 +6,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -78,18 +80,22 @@ export class Event {
   @Column({ type: 'boolean', default: false })
   public sendNotification: boolean;
 
+  @Index('IDX_event_createdById')
   @ManyToOne(() => User, (user) => user.createdEvents, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'createdById' })
   public createdBy: User;
 
+  @Index('IDX_event_updatedById')
   @ManyToOne(() => User, (user) => user.modifiedEvents, {
     eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn({ name: 'updatedById' })
   public updatedBy: User;
 
   @CreateDateColumn()

@@ -9,6 +9,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { resetPasswordLimiter } from '@server/lib/rateLimiters';
 import { isAuthenticated } from '@server/middleware/auth';
+import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
 const authRoutes = Router();
@@ -121,6 +122,7 @@ authRoutes.post('/plex', async (req, res, next) => {
             );
           }
 
+          const previousAvatar = user.avatar;
           user.plexToken = body.authToken;
           user.plexId = account.id;
           user.avatar = account.thumb;
@@ -129,6 +131,9 @@ authRoutes.post('/plex', async (req, res, next) => {
           user.userType = UserType.PLEX;
 
           await userRepository.save(user);
+          if (previousAvatar && previousAvatar !== user.avatar) {
+            void ImageProxy.clearCachedImage('avatar', previousAvatar);
+          }
         } else if (!settings.main.newPlexLogin) {
           logger.warn(
             'Failed sign-in attempt by unimported Plex user with access to the media app',
@@ -199,26 +204,28 @@ authRoutes.post('/local', async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
   const body = req.body as { email?: string; password?: string };
+  const normalizedEmail = body.email?.trim().toLowerCase();
 
   if (!settings.main.localLogin) {
-    res.status(500).json({ error: 'Password sign-in is disabled.' });
-  } else if (!body.email || !body.password) {
-    res.status(500).json({
-      error: 'You must provide both an email address and a password.',
+    return next({ status: 403, message: 'Password sign-in is disabled.' });
+  } else if (!normalizedEmail || !body.password) {
+    return next({
+      status: 400,
+      message: 'You must provide both an email address and a password.',
     });
   }
   try {
     const user = await userRepository
       .createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.password', 'user.plexId'])
-      .where('user.email = :email', { email: body.email.toLowerCase() })
+      .where('user.email = :email', { email: normalizedEmail })
       .getOne();
 
     if (!user || !(await user.passwordMatch(body.password))) {
       logger.warn('Failed sign-in attempt using invalid Streamarr password', {
         label: 'API',
         ip: req.ip,
-        email: body.email,
+        email: normalizedEmail,
         userId: user?.id,
       });
       return next({ status: 403, message: 'Access denied.' });
@@ -241,7 +248,7 @@ authRoutes.post('/local', async (req, res, next) => {
           label: 'API',
           account: {
             ip: req.ip,
-            email: body.email,
+            email: normalizedEmail,
             userId: user.id,
             plexId: user.plexId,
           },
@@ -259,7 +266,12 @@ authRoutes.post('/local', async (req, res, next) => {
   } catch (e) {
     logger.error(
       'Something went wrong authenticating with Streamarr password',
-      { label: 'API', errorMessage: e.message, ip: req.ip, email: body.email }
+      {
+        label: 'API',
+        errorMessage: e.message,
+        ip: req.ip,
+        email: normalizedEmail,
+      }
     );
     return next({ status: 500, message: 'Unable to authenticate.' });
   }
@@ -276,7 +288,7 @@ authRoutes.post('/logout', (req, res, next) => {
     const settings = getSettings();
     res.clearCookie('streamarr.sid', {
       httpOnly: true,
-      sameSite: settings.main.csrfProtection ? 'strict' : 'lax',
+      sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
     res.status(200).json({ status: 'ok' });

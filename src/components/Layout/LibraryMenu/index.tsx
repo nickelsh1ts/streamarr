@@ -206,7 +206,7 @@ const LibraryMenu = ({
           href="#"
           title={intl.formatMessage({
             id: 'library.loading',
-            defaultMessage: 'Loading libraries...',
+            defaultMessage: 'Loading libraries…',
           })}
           icon={<RectangleGroupIcon className="size-7" />}
           url={url}

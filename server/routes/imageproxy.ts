@@ -105,6 +105,15 @@ const tmdbImageProxy = new ImageProxy('tmdb', 'https://image.tmdb.org', {
 
 router.get('/*splat', async (req, res) => {
   const imagePath = req.path.replace('/image', '');
+
+  if (imagePath.startsWith('//') || imagePath.includes('://')) {
+    logger.error('Invalid URL for image proxy', {
+      label: 'Image Proxy',
+      imagePath,
+    });
+    return res.status(403).send('Invalid URL for image proxy');
+  }
+
   try {
     const imageData = await tmdbImageProxy.getImage(imagePath);
 

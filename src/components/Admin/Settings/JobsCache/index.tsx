@@ -237,7 +237,7 @@ const JobsCacheSettings = () => {
           isSaving
             ? intl.formatMessage({
                 id: 'common.saving',
-                defaultMessage: 'Saving...',
+                defaultMessage: 'Saving…',
               })
             : intl.formatMessage({
                 id: 'common.saveChanges',
@@ -615,6 +615,15 @@ const JobsCacheSettings = () => {
                   </Table.TD>
                   <Table.TD>
                     {formatBytes(cacheData?.imageCache.plex?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
+                  <Table.TD>User Avatars</Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.avatar?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.avatar?.size ?? 0)}
                   </Table.TD>
                 </tr>
                 <tr>

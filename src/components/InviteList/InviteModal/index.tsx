@@ -271,7 +271,7 @@ const InviteModal = ({
                 ? isSubmitting
                   ? intl.formatMessage({
                       id: 'common.saving',
-                      defaultMessage: 'Saving...',
+                      defaultMessage: 'Saving…',
                     })
                   : invite
                     ? intl.formatMessage({
@@ -791,7 +791,7 @@ const InviteModal = ({
                                   >
                                     <span className="flex items-center">
                                       <CachedImage
-                                        src={selectedUser.avatar}
+                                        src={`/avatarproxy/${selectedUser.id}`}
                                         alt=""
                                         className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
                                         width={24}
@@ -858,7 +858,7 @@ const InviteModal = ({
                                                 } flex items-center`}
                                               >
                                                 <CachedImage
-                                                  src={user.avatar}
+                                                  src={`/avatarproxy/${user.id}`}
                                                   alt=""
                                                   className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
                                                   width={24}

@@ -21,11 +21,12 @@ import type { PlexDevice } from '@server/interfaces/api/plexInterfaces';
 import type { PlexSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import { orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
 import { useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
 import { useIntl, FormattedMessage } from 'react-intl';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 interface PresetServerDisplay {
   name: string;
   ssl: boolean;
@@ -75,12 +76,13 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           defaultMessage: 'You must provide a valid hostname or IP address',
         })
       )
-      .matches(
-        /^(((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])):((([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))@)?(([a-z]|\d|_|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*)?([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])$/i,
+      .test(
+        'hostname-or-ip',
         intl.formatMessage({
           id: 'servicesSettings.validation.hostname',
           defaultMessage: 'You must provide a valid hostname or IP address',
-        })
+        }),
+        (value) => isValidHostnameOrIpAddress(value)
       ),
     port: Yup.number()
       .nullable()
@@ -216,7 +218,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         {
           title: intl.formatMessage({
             id: 'plexSettings.attemptingReconnect',
-            defaultMessage: 'Attempting to reconnect...',
+            defaultMessage: 'Attempting to reconnect…',
           }),
           type: 'warning',
           icon: <ArrowPathIcon className="size-7 animate-spin" />,
@@ -318,6 +320,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           selectedPreset: undefined,
         }}
         enableReinitialize
+        validateOnMount
         validationSchema={PlexSettingsSchema}
         onSubmit={async (values) => {
           let toastId: string | undefined;
@@ -392,6 +395,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           values,
           handleSubmit,
           setFieldValue,
+          setValues,
           isSubmitting,
           isValid,
         }) => {
@@ -418,9 +422,12 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                         availablePresets[Number(e.target.value)];
 
                       if (targPreset) {
-                        setFieldValue('hostname', targPreset.address);
-                        setFieldValue('port', targPreset.port);
-                        setFieldValue('useSsl', targPreset.ssl);
+                        setValues({
+                          ...values,
+                          hostname: targPreset.address,
+                          port: targPreset.port,
+                          useSsl: targPreset.ssl,
+                        });
                       }
                     }}
                   >
@@ -633,7 +640,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                       <ExclamationTriangleIcon className="size-6" />
                       <FormattedMessage
                         id="plexSettings.plexUnreachable"
-                        defaultMessage="Plex is currently unreachable..."
+                        defaultMessage="Plex is currently unreachable…"
                       />
                     </span>
                     <span className="inline-flex rounded-md shadow-sm">
@@ -676,7 +683,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

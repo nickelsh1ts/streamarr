@@ -54,6 +54,7 @@ export interface PublicSettingsResponse {
   customLogo?: string;
   customLogoSmall?: string;
   theme: Theme;
+  plexClientIdentifier: string;
 }
 
 export interface CacheItem {
@@ -73,6 +74,7 @@ export interface CacheResponse {
   imageCache: {
     tmdb: { size: number; imageCount: number };
     plex: { size: number; imageCount: number };
+    avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
 }

@@ -34,6 +34,9 @@ importers:
       '@dr.pogodin/csurf':
         specifier: ^1.16.9
         version: 1.16.9
+      '@formatjs/intl':
+        specifier: ^4.1.9
+        version: 4.1.9
       '@headlessui/react':
         specifier: ^2.2.10
         version: 2.2.10(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -125,8 +128,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       nodemailer:
-        specifier: ^8.0.5
-        version: 8.0.5
+        specifier: ^8.0.6
+        version: 8.0.6
       ofetch:
         specifier: ^1.5.1
         version: 1.5.1
@@ -220,6 +223,9 @@ importers:
       ua-parser-js:
         specifier: ^2.0.9
         version: 2.0.9
+      validator:
+        specifier: ^13.15.35
+        version: 13.15.35
       web-push:
         specifier: ^3.6.7
         version: 3.6.7
@@ -349,7 +355,7 @@ importers:
         version: 8.58.2(eslint@9.39.4(jiti@1.21.7))(typescript@6.0.2)
       autoprefixer:
         specifier: ^10.5.0
-        version: 10.5.0(postcss@8.5.10)
+        version: 10.5.0(postcss@8.5.11)
       commitizen:
         specifier: 4.3.1
         version: 4.3.1(@types/node@25.6.0)(typescript@6.0.2)
@@ -370,7 +376,7 @@ importers:
         version: 3.3.0(@types/node@25.6.0)(typescript@6.0.2)
       daisyui:
         specifier: 4.12.24
-        version: 4.12.24(postcss@8.5.10)
+        version: 4.12.24(postcss@8.5.11)
       eslint:
         specifier: ^9.39.4
         version: 9.39.4(jiti@1.21.7)
@@ -408,8 +414,8 @@ importers:
         specifier: ^3.1.14
         version: 3.1.14
       postcss:
-        specifier: 8.5.10
-        version: 8.5.10
+        specifier: 8.5.11
+        version: 8.5.11
       prettier:
         specifier: ^3.8.3
         version: 3.8.3
@@ -2252,10 +2258,22 @@ packages:
         integrity: sha512-vPnriihkfK0lzoQGaXq+qXH23VsYyansRTkTgo2aTG0k1NjLFyZimFVdfj4C9JkSE5dm7CEngcQ5TTc1yAyBfQ==,
       }
 
+  '@formatjs/fast-memoize@3.1.4':
+    resolution:
+      {
+        integrity: sha512-Lbke1aOrsygKKR09Ux0NrZgbTqpDmiwXOgzyDOJ8Owr1zd5qOKTauf62hH+Seeku3ju77rHWH9I5SfX2CN0vuA==,
+      }
+
   '@formatjs/icu-messageformat-parser@3.5.4':
     resolution:
       {
         integrity: sha512-JVY39ROgLt+pIYngo6piyj4OVfZmXs/2FkC4wLS+ql1Eig/sGJKB7YwDO/5bkJFkfwaFAeIpgEiJc8hiYxNalw==,
+      }
+
+  '@formatjs/icu-messageformat-parser@3.5.7':
+    resolution:
+      {
+        integrity: sha512-wJxRZ+SiUCIMTL86bQlZU9bEKDQqqvgk2ezQ1BySUdWRfHqOzj4IKUVFeUZKS9w58M4e7wMSG0Sl86LAPb7Qww==,
       }
 
   '@formatjs/icu-skeleton-parser@2.1.4':
@@ -2264,10 +2282,22 @@ packages:
         integrity: sha512-8bSFZbrlvGX11ywMZxtgkPBt5Q8/etyts7j7j+GWpOVK1g43zwMIH3LZxk43HAtEP7L/jtZ+OZaMiFTOiBj9CA==,
       }
 
+  '@formatjs/icu-skeleton-parser@2.1.7':
+    resolution:
+      {
+        integrity: sha512-cIw1SFP0bi0CUBiJ2jzp99ws3OJNQDfStcHq9Z0iHWzItmiIikihFO+npR8C80yDlp7ZuBCLXCcKjgWjHicksA==,
+      }
+
   '@formatjs/intl@4.1.6':
     resolution:
       {
         integrity: sha512-eQuZCkG7kVBIjMhLhvsRZmYnVbTHBiiM+fNxIbDg7LZ9WXcpWUISuv58baq2dov7vz3qXYtDEgJ9AODZK6idaQ==,
+      }
+
+  '@formatjs/intl@4.1.9':
+    resolution:
+      {
+        integrity: sha512-Pulbo0Z14FLESaMWsCFNyITMAGmuC+JZN5/IRnDDH+tcEr8YJJMzW2+PnLfr+FYiwlC7883W7xrhM89gTz/q8A==,
       }
 
   '@formatjs/ts-transformer@4.4.4':
@@ -7428,10 +7458,10 @@ packages:
       }
     engines: { node: '>=10.0' }
 
-  fast-uri@3.1.0:
+  fast-uri@3.1.2:
     resolution:
       {
-        integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==,
+        integrity: sha512-rVjf7ArG3LTk+FS6Yw81V1DLuZl1bRbNrev6Tmd/9RaroeeRRJhAt7jg/6YFxbvAQXUCavSoZhPPj6oOx+5KjQ==,
       }
 
   fastest-levenshtein@1.0.16:
@@ -8617,6 +8647,12 @@ packages:
     resolution:
       {
         integrity: sha512-1gAVEUt3wEPvTqML4Fsw9klZV5j0vszQxayP/fi6gUroAc8AUHiNaisBKLWxybL1AdWq1mP07YV1q8v4N92ilQ==,
+      }
+
+  intl-messageformat@11.2.4:
+    resolution:
+      {
+        integrity: sha512-iKP6+uJXn+XcfRgYfGPE3+mqCoODV2vATrXDLo/YkYgIdelJHJPBEbc0GZThipAYPuk+8QJFiPgOfblU085ABg==,
       }
 
   into-stream@7.0.0:
@@ -10741,10 +10777,10 @@ packages:
       }
     engines: { node: '>=6.0.0' }
 
-  nodemailer@8.0.5:
+  nodemailer@8.0.6:
     resolution:
       {
-        integrity: sha512-0PF8Yb1yZuQfQbq+5/pZJrtF6WQcjTd5/S4JOHs9PGFxuTqoB/icwuB44pOdURHJbRKX1PPoJZtY7R4VUoCC8w==,
+        integrity: sha512-Nm2XeuDwwy2wi5A+8jPWwQwNzcjNjhWdE3pVLoXEusxJqCnAPAgnBGkSmiLknbnWuOF9qraRpYZjfxqtKZ4tPw==,
       }
     engines: { node: '>=6.0.0' }
 
@@ -11619,10 +11655,10 @@ packages:
       }
     engines: { node: ^10 || ^12 || >=14 }
 
-  postcss@8.5.10:
+  postcss@8.5.11:
     resolution:
       {
-        integrity: sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==,
+        integrity: sha512-5dDj8+lmvA8XB78SmzGI8NlQoksv7IfutGWeVZxiixHbO+p4LDPT3wuG/D9sM/wrjZZ9I+Siy/e117vbFPxSZg==,
       }
     engines: { node: ^10 || ^12 || >=14 }
 
@@ -12755,6 +12791,14 @@ packages:
     resolution:
       {
         integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==,
+      }
+    engines: { node: '>=10' }
+    hasBin: true
+
+  semver@7.8.0:
+    resolution:
+      {
+        integrity: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==,
       }
     engines: { node: '>=10' }
     hasBin: true
@@ -14518,6 +14562,13 @@ packages:
       {
         integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==,
       }
+
+  validator@13.15.35:
+    resolution:
+      {
+        integrity: sha512-TQ5pAGhd5whStmqWvYF4OjQROlmv9SMFVt37qoCBdqRffuuklWYQlCNnEs2ZaIBD1kZRNnikiZOS1eqgkar0iw==,
+      }
+    engines: { node: '>= 0.10' }
 
   vary@1.1.2:
     resolution:
@@ -16408,17 +16459,31 @@ snapshots:
 
   '@formatjs/fast-memoize@3.1.2': {}
 
+  '@formatjs/fast-memoize@3.1.4': {}
+
   '@formatjs/icu-messageformat-parser@3.5.4':
     dependencies:
       '@formatjs/icu-skeleton-parser': 2.1.4
 
+  '@formatjs/icu-messageformat-parser@3.5.7':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.7
+
   '@formatjs/icu-skeleton-parser@2.1.4': {}
+
+  '@formatjs/icu-skeleton-parser@2.1.7': {}
 
   '@formatjs/intl@4.1.6':
     dependencies:
       '@formatjs/fast-memoize': 3.1.2
       '@formatjs/icu-messageformat-parser': 3.5.4
       intl-messageformat: 11.2.1
+
+  '@formatjs/intl@4.1.9':
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.4
+      '@formatjs/icu-messageformat-parser': 3.5.7
+      intl-messageformat: 11.2.4
 
   '@formatjs/ts-transformer@4.4.4':
     dependencies:
@@ -16944,7 +17009,7 @@ snapshots:
       metro: 0.84.4
       metro-config: 0.84.4
       metro-core: 0.84.4
-      semver: 7.7.4
+      semver: 7.8.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -17818,7 +17883,7 @@ snapshots:
   ajv@8.18.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.0
+      fast-uri: 3.1.2
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -17996,13 +18061,13 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
-  autoprefixer@10.5.0(postcss@8.5.10):
+  autoprefixer@10.5.0(postcss@8.5.11):
     dependencies:
       browserslist: 4.28.2
       caniuse-lite: 1.0.30001788
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.10
+      postcss: 8.5.11
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -18819,12 +18884,12 @@ snapshots:
       - '@types/node'
       - typescript
 
-  daisyui@4.12.24(postcss@8.5.10):
+  daisyui@4.12.24(postcss@8.5.11):
     dependencies:
       css-selector-tokenizer: 0.8.0
       culori: 3.3.0
       picocolors: 1.1.1
-      postcss-js: 4.1.0(postcss@8.5.10)
+      postcss-js: 4.1.0(postcss@8.5.11)
     transitivePeerDependencies:
       - postcss
 
@@ -19814,7 +19879,7 @@ snapshots:
 
   fast-printf@1.6.10: {}
 
-  fast-uri@3.1.0: {}
+  fast-uri@3.1.2: {}
 
   fastest-levenshtein@1.0.16: {}
 
@@ -20586,6 +20651,11 @@ snapshots:
     dependencies:
       '@formatjs/fast-memoize': 3.1.2
       '@formatjs/icu-messageformat-parser': 3.5.4
+
+  intl-messageformat@11.2.4:
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.4
+      '@formatjs/icu-messageformat-parser': 3.5.7
 
   into-stream@7.0.0:
     dependencies:
@@ -22088,7 +22158,7 @@ snapshots:
 
   nodemailer@7.0.13: {}
 
-  nodemailer@8.0.5: {}
+  nodemailer@8.0.6: {}
 
   nodemon@3.1.14:
     dependencies:
@@ -22486,35 +22556,35 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-import@15.1.0(postcss@8.5.10):
+  postcss-import@15.1.0(postcss@8.5.11):
     dependencies:
-      postcss: 8.5.10
+      postcss: 8.5.11
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.11
 
-  postcss-js@4.1.0(postcss@8.5.10):
+  postcss-js@4.1.0(postcss@8.5.11):
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.5.10
+      postcss: 8.5.11
 
-  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.10)(tsx@4.21.0)(yaml@2.8.4):
+  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.11)(tsx@4.21.0)(yaml@2.8.4):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 1.21.7
-      postcss: 8.5.10
+      postcss: 8.5.11
       tsx: 4.21.0
       yaml: 2.8.4
 
-  postcss-nested@6.2.0(postcss@8.5.10):
+  postcss-nested@6.2.0(postcss@8.5.11):
     dependencies:
-      postcss: 8.5.10
+      postcss: 8.5.11
       postcss-selector-parser: 6.1.2
 
-  postcss-safe-parser@7.0.1(postcss@8.5.10):
+  postcss-safe-parser@7.0.1(postcss@8.5.11):
     dependencies:
-      postcss: 8.5.10
+      postcss: 8.5.11
 
   postcss-selector-parser@6.0.10:
     dependencies:
@@ -22539,7 +22609,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.10:
+  postcss@8.5.11:
     dependencies:
       nanoid: 3.3.12
       picocolors: 1.1.1
@@ -22942,7 +23012,7 @@ snapshots:
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
       scheduler: 0.27.0
-      semver: 7.7.4
+      semver: 7.8.0
       stacktrace-parser: 0.1.11
       tinyglobby: 0.2.16
       whatwg-fetch: 3.6.20
@@ -23411,6 +23481,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.4: {}
+
+  semver@7.8.0: {}
 
   send@0.19.2:
     dependencies:
@@ -23939,8 +24011,8 @@ snapshots:
       micromatch: 4.0.8
       normalize-path: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.5.10
-      postcss-safe-parser: 7.0.1(postcss@8.5.10)
+      postcss: 8.5.11
+      postcss-safe-parser: 7.0.1(postcss@8.5.11)
       postcss-selector-parser: 7.1.1
       postcss-value-parser: 4.2.0
       string-width: 8.2.0
@@ -24065,11 +24137,11 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.5.10
-      postcss-import: 15.1.0(postcss@8.5.10)
-      postcss-js: 4.1.0(postcss@8.5.10)
-      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.10)(tsx@4.21.0)(yaml@2.8.4)
-      postcss-nested: 6.2.0(postcss@8.5.10)
+      postcss: 8.5.11
+      postcss-import: 15.1.0(postcss@8.5.11)
+      postcss-js: 4.1.0(postcss@8.5.11)
+      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.11)(tsx@4.21.0)(yaml@2.8.4)
+      postcss-nested: 6.2.0(postcss@8.5.11)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.11
       sucrase: 3.35.1
@@ -24587,6 +24659,8 @@ snapshots:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+
+  validator@13.15.35: {}
 
   vary@1.1.2: {}
 

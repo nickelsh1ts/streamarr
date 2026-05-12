@@ -21,37 +21,26 @@ export interface PlexPin {
   code: string;
 }
 
-const uuidv4 = (): string => {
-  return ((1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11).replace(
-    /[018]/g,
-    function (c) {
-      return (
-        parseInt(c) ^
-        (window.crypto.getRandomValues(new Uint8Array(1))[0] &
-          (15 >> (parseInt(c) / 4)))
-      ).toString(16);
-    }
-  );
-};
-
 class PlexOAuth {
   private plexHeaders?: PlexHeaders;
   private pin?: PlexPin;
   private popup?: Window;
   private authToken?: string;
 
-  public initializeHeaders(applicationTitle: string): void {
-    if (!window) {
+  public initializeHeaders(
+    applicationTitle: string,
+    plexClientIdentifier: string
+  ): void {
+    if (typeof window === 'undefined') {
       throw new Error(
         'Window is not defined. Are you calling this in the browser?'
       );
     }
 
-    let clientId = localStorage.getItem('plex-client-id');
-    if (!clientId) {
-      const uuid = uuidv4();
-      localStorage.setItem('plex-client-id', uuid);
-      clientId = uuid;
+    if (!plexClientIdentifier) {
+      throw new Error(
+        'Plex client identifier missing. Reload the page and try again.'
+      );
     }
 
     const browser = Bowser.getParser(window.navigator.userAgent);
@@ -59,7 +48,7 @@ class PlexOAuth {
       Accept: 'application/json',
       'X-Plex-Product': applicationTitle,
       'X-Plex-Version': '0.00.1',
-      'X-Plex-Client-Identifier': clientId,
+      'X-Plex-Client-Identifier': plexClientIdentifier,
       'X-Plex-Model': 'Plex OAuth',
       'X-Plex-Platform': browser.getBrowserName(),
       'X-Plex-Platform-Version': browser.getBrowserVersion(),
@@ -95,7 +84,10 @@ class PlexOAuth {
   public async login(): Promise<string> {
     const res = await fetch(`/api/v1/settings/public`, { cache: 'no-store' });
     const currentSettings: PublicSettingsResponse = await res.json();
-    this.initializeHeaders(currentSettings.applicationTitle);
+    this.initializeHeaders(
+      currentSettings.applicationTitle,
+      currentSettings.plexClientIdentifier
+    );
     await this.getPin();
 
     if (!this.plexHeaders || !this.pin) {
@@ -118,16 +110,24 @@ class PlexOAuth {
       code: this.pin.code,
     };
 
-    if (this.popup) {
-      this.popup.location.href = `https://app.plex.tv/auth/#!?${this.encodeData(
-        params
-      )}`;
+    if (!this.popup || this.popup.closed) {
+      throw new Error(
+        'Unable to open the Plex login window. Please allow popups for this site and try again.'
+      );
     }
+
+    this.popup.location.href = `https://app.plex.tv/auth/#!?${this.encodeData(
+      params
+    )}`;
 
     return this.pinPoll();
   }
 
   private async pinPoll(): Promise<string> {
+    // popup.closed can be unreliable after cross-origin navigations, so poll until Plex PIN expires.
+    // However, we still check popup.closed to catch manual popup closures before navigation.
+    const deadline = Date.now() + 15 * 60 * 1000;
+
     const executePoll = async (
       resolve: (authToken: string) => void,
       reject: (e: Error) => void
@@ -135,6 +135,12 @@ class PlexOAuth {
       try {
         if (!this.pin) {
           throw new Error('Unable to poll when pin is not initialized.');
+        }
+
+        // Check if popup was manually closed by user (before any cross-origin navigation)
+        if (this.popup?.closed) {
+          reject(new Error('Popup closed without completing login'));
+          return;
         }
 
         const response = await axios.get(
@@ -146,10 +152,16 @@ class PlexOAuth {
           this.authToken = response.data.authToken as string;
           this.closePopup();
           resolve(this.authToken);
-        } else if (!response.data?.authToken && !this.popup?.closed) {
-          setTimeout(executePoll, 1000, resolve, reject);
         } else {
-          reject(new Error('Popup closed without completing login'));
+          const expiresAt = response.data?.expiresAt
+            ? Date.parse(response.data.expiresAt as string)
+            : deadline;
+          if (Date.now() >= Math.min(expiresAt, deadline)) {
+            this.closePopup();
+            reject(new Error('Plex PIN expired before login completed.'));
+            return;
+          }
+          setTimeout(executePoll, 1000, resolve, reject);
         }
       } catch (e) {
         this.closePopup();
@@ -174,7 +186,7 @@ class PlexOAuth {
     w: number;
     h: number;
   }): Window | void {
-    if (!window) {
+    if (typeof window === 'undefined') {
       throw new Error(
         'Window is undefined. Are you running this in the browser?'
       );

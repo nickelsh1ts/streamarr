@@ -118,6 +118,7 @@ serviceRoutes.get<{ tmdbId: string }>(
     const sonarr = new SonarrAPI({
       apiKey: sonarrSettings.apiKey,
       url: SonarrAPI.buildUrl(sonarrSettings, '/api/v3'),
+      timeout: getSettings().network.requestTimeout,
     });
 
     try {

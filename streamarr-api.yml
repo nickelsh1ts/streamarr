@@ -233,12 +233,6 @@ components:
         applicationUrl:
           type: string
           example: https://example.com
-        trustProxy:
-          type: boolean
-          example: true
-        csrfProtection:
-          type: boolean
-          example: false
         cacheImages:
           type: boolean
           example: true
@@ -783,6 +777,23 @@ components:
         apiKey:
           type: string
           nullable: true
+    NetworkSettings:
+      type: object
+      required:
+        - requestTimeout
+      properties:
+        requestTimeout:
+          type: integer
+          minimum: 1000
+          maximum: 300000
+          description: Global API request timeout in milliseconds
+          example: 10000
+        trustProxy:
+          type: boolean
+          example: true
+        csrfProtection:
+          type: boolean
+          example: false
     SeerrQuotaResponse:
       type: object
       properties:
@@ -1343,6 +1354,11 @@ components:
         newPlexLogin:
           type: boolean
           example: true
+        plexClientIdentifier:
+          type: string
+          format: uuid
+          description: Instance Plex OAuth client identifier
+          example: 6919275e-142a-48d8-be6b-93594cbd4626
         supportUrl:
           type: string
           example: 'https://support.example.com'
@@ -2471,6 +2487,37 @@ paths:
           description: Logo file not found
         '500':
           description: Internal server error
+  /settings/network:
+    get:
+      summary: Get network settings
+      description: Retrieves current global network settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkSettings'
+    post:
+      summary: Update network settings
+      description: Updates global network settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetworkSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkSettings'
   /settings/plex:
     get:
       summary: Get Plex settings
@@ -3904,6 +3951,15 @@ paths:
                             type: number
                             example: 123
                       plex:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 123
+                      avatar:
                         type: object
                         properties:
                           size:

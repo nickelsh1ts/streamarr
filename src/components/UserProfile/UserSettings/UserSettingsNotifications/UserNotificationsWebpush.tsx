@@ -97,7 +97,15 @@ const UserWebPushSettings = () => {
   // Deletes/disables corresponding push subscription from database
   const disablePushNotifications = async (endpoint?: string) => {
     try {
-      await unsubscribeToPushNotifications(user?.id, endpoint);
+      const unsubscribedEndpoint = await unsubscribeToPushNotifications(
+        user?.id,
+        endpoint
+      );
+
+      const endpointToDelete = unsubscribedEndpoint || subEndpoint || endpoint;
+      if (endpointToDelete) {
+        await deletePushSubscriptionFromBackend(endpointToDelete);
+      }
 
       localStorage.setItem('pushNotificationsEnabled', 'false');
       setWebPushEnabled(false);
@@ -165,7 +173,7 @@ const UserWebPushSettings = () => {
     if (user?.id) {
       verifyWebPush();
     }
-  }, [user?.id, currentSettings]);
+  }, [user?.id, currentSettings, dataDevices]);
 
   useEffect(() => {
     const getSubscriptionEndpoint = async () => {
@@ -329,7 +337,7 @@ const UserWebPushSettings = () => {
                       {isSubmitting ? (
                         <FormattedMessage
                           id="common.saving"
-                          defaultMessage="Saving..."
+                          defaultMessage="Saving…"
                         />
                       ) : (
                         <FormattedMessage

@@ -1,0 +1,14 @@
+{
+  "notifications.calendar.message": "{start} a {end}",
+  "notifications.calendar.subject": "Evento: {summary} ({status})",
+  "notifications.invite.expired.subject": "Invitación expirada: {icode}",
+  "notifications.invite.new.message": "{displayName} ha creado una nueva invitación.",
+  "notifications.invite.new.subject": "Nueva invitación: {icode}",
+  "notifications.invite.redeemed.message": "Tu invitación ha sido canjeada por {displayName}.",
+  "notifications.invite.redeemed.subject": "Invitación canjeada: {icode}",
+  "notifications.test.failed": "No se pudo enviar la notificación de {type}.",
+  "notifications.test.message": "Prueba, prueba, 1, 2, 3. ¿Se recibe correctamente?",
+  "notifications.test.subject": "Notificación de prueba",
+  "notifications.user.created.message": "Invitado por {displayName}.",
+  "notifications.user.created.subject": "Nuevo usuario creado: {displayName}"
+}

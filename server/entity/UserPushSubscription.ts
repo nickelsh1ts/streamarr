@@ -2,20 +2,26 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { User } from './User';
 
 @Entity()
+@Unique(['endpoint', 'user'])
 export class UserPushSubscription {
   @PrimaryGeneratedColumn()
   public id: number;
 
+  @Index('IDX_user_push_subscription_userId')
   @ManyToOne(() => User, (user) => user.pushSubscriptions, {
     eager: true,
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'userId' })
   public user: User;
 
   @Column('text')

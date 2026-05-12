@@ -30,7 +30,11 @@ const SignIn = () => {
         const response = await axios.post('/api/v1/auth/plex', { authToken });
 
         if (response.data?.id) {
-          revalidate().then(() => router.push('/watch'));
+          const { data: authenticatedUser } =
+            await axios.get('/api/v1/auth/me');
+          revalidate(authenticatedUser, false).then(() =>
+            router.push('/watch')
+          );
         }
       } catch (e) {
         setError(e.response.data.message);
