@@ -59,14 +59,15 @@ const SystemSettings = () => {
 
   return (
     <div>
-      <Alert type="primary">
-        <p className="text-sm leading-5 flex-1">
-          <FormattedMessage
-            id="systemSettings.betaWarning"
-            defaultMessage="This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
-          />
-        </p>
-        <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
+      <Alert
+        type="primary"
+        title={intl.formatMessage({
+          id: 'systemSettings.betaWarning',
+          defaultMessage:
+            'This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates.',
+        })}
+      >
+        <span className="ml-7">
           <a
             href="https://github.com/nickelsh1ts/streamarr"
             className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
@@ -75,7 +76,7 @@ const SystemSettings = () => {
           >
             GitHub <ArrowRightIcon className="size-4 inline-flex" />
           </a>
-        </p>
+        </span>
       </Alert>
       <div className="mt-6 flex justify-between items-center">
         <h3 className="text-2xl font-extrabold gap-2 flex items-center">
