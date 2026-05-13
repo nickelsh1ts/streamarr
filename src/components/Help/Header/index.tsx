@@ -1,6 +1,8 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
 import Header from '@app/components/Layout/Header';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import { useUser } from '@app/hooks/useUser';
 import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
 
@@ -10,6 +12,7 @@ const HelpHeader = () => {
     refreshWhenHidden: false,
     revalidateOnFocus: false,
   });
+  const { user, loading } = useUser({ disableAutoRevalidation: true });
 
   return (
     <>
@@ -24,6 +27,11 @@ const HelpHeader = () => {
             ) ?? ['/img/people-cinema-watching.jpg']
           }
         />
+        {!user && !loading && (
+          <div className="absolute top-4 right-4 text-white">
+            <LanguagePicker />
+          </div>
+        )}
         <div className="container max-w-screen-xl mx-auto h-44 content-center z-0">
           <h2 className="text-center font-extrabold text-3xl my-4 text-white">
             <FormattedMessage
