@@ -116,7 +116,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
             </p>
           </div>
         )}
-        {Number(item?.percentComplete) &&
+        {!!item?.percentComplete &&
           item.percentComplete > 0 &&
           item.percentComplete < 85 && (
             <div className="mt-1.5">
