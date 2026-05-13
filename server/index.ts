@@ -1,9 +1,7 @@
 import type { IncomingMessage } from 'http';
 import type { Session as ExpressSession } from 'express-session';
-import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
-import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
 import notificationManager from '@server/lib/notifications';
 import LocalAgent, {
@@ -75,27 +73,6 @@ app
     const settings = await getSettings().load();
     initI18n();
     await initializeOnboardingDefaults();
-
-    // Migrate library types
-    if (
-      settings.plex.libraries.length > 1 &&
-      !settings.plex.libraries[0].type
-    ) {
-      const userRepository = getRepository(User);
-      const admin = await userRepository.findOne({
-        select: { id: true, plexToken: true },
-        where: { id: 1 },
-      });
-
-      if (admin) {
-        logger.info('Migrating Plex libraries to include media type', {
-          label: 'Settings',
-        });
-
-        const plexapi = new PlexAPI({ plexToken: admin.plexToken });
-        await plexapi.syncLibraries();
-      }
-    }
 
     // Register Notification Agents
     notificationManager.registerAgents([
