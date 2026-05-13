@@ -47,18 +47,14 @@ const Alert = ({ title, children, type }: AlertProps) => {
 
   return (
     <div className={`mb-4 rounded-md p-4 ${design.bgColor}`}>
-      <div className={`flex flex-wrap gap-2 ${design.titleColor}`}>
-        <div className={`flex-shrink-0 content-start ${design.titleColor}`}>
-          {design.svg}
+      <div className={`text-sm flex flex-wrap gap-2 ${design.textColor}`}>
+        <div className="flex flex-wrap gap-2">
+          <span className={`inline-flex gap-2 ${design.titleColor}`}>
+            {design.svg}
+            {title && <span className="font-medium flex-1">{title}</span>}
+          </span>
+          {children}
         </div>
-        {title && (
-          <div
-            className={`text-sm font-medium content-center ${design.titleColor}`}
-          >
-            {title}
-          </div>
-        )}
-        {children && children}
       </div>
     </div>
   );
