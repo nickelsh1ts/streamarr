@@ -73,6 +73,7 @@ export function createServiceProxyRouter(
 ): Router {
   const router = Router();
   const settings = getSettings();
+  const registeredRoutes: { name: string; path: string }[] = [];
 
   const authMiddleware = [sessionMiddleware, checkUser, isAuthenticated()];
   const adminMiddleware = [
@@ -92,7 +93,7 @@ export function createServiceProxyRouter(
       ...(requireAdmin ? adminMiddleware : authMiddleware),
       proxy
     );
-    logger.info(`${label} proxy registered at ${path}`, { label: 'Proxy' });
+    registeredRoutes.push({ name: label, path });
   };
 
   if (settings.plex.ip) {
@@ -186,9 +187,7 @@ export function createServiceProxyRouter(
 
     // Static assets (no auth - loaded as resources after authenticated page loads)
     router.use(TDARR_STATIC_PATH, createTdarrStaticProxy(tdarrConfig));
-    logger.info(`Tdarr Static proxy registered at ${TDARR_STATIC_PATH}`, {
-      label: 'Proxy',
-    });
+    registeredRoutes.push({ name: 'Tdarr Static', path: TDARR_STATIC_PATH });
   }
 
   // Register Tautulli proxy
@@ -208,6 +207,13 @@ export function createServiceProxyRouter(
       'Tautulli',
       false
     );
+  }
+
+  if (registeredRoutes.length > 0) {
+    logger.info('Proxy routes registered successfully', {
+      label: 'Proxy',
+      services: registeredRoutes.map(({ name, path }) => `${name} at ${path}`),
+    });
   }
 
   return router;
