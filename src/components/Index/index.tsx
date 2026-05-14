@@ -13,22 +13,24 @@ import { useRef } from 'react';
 
 function Index() {
   const targetRef = useRef(null);
-  const isInView = useInView(targetRef, 0.17);
+  const isInView = useInView(targetRef, 0.17, true);
   const { currentSettings } = useSettings();
 
   return (
     <main className="bg-gradient-to-b from-secondary from-20% via-primary/75 via-50% to-secondary to-80%">
-      <Header isInView={isInView} />
-      <Hero />
+      <Header isInView={!isInView} />
+      <div ref={targetRef}>
+        <Hero />
+      </div>
       {currentSettings.extendedHome && (
-        <div ref={targetRef}>
+        <>
           {currentSettings.seerrEnabled && <Requesting />}
           <Watching />
           <Favourites />
           <Devices />
           <FAQs />
           <Footer />
-        </div>
+        </>
       )}
     </main>
   );
