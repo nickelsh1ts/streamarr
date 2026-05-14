@@ -435,7 +435,7 @@
         "defaultMessage": "Usuario Local"
     },
     "common.loggingOut": {
-        "defaultMessage": "Cerrando sesión…"
+        "defaultMessage": "Cerrando sesión"
     },
     "common.logs": {
         "defaultMessage": "Registros"
@@ -5176,5 +5176,29 @@
     },
     "welcome.getStarted": {
         "defaultMessage": "Comenzar"
+    },
+    "common.available": {
+        "defaultMessage": "Disponible"
+    },
+    "common.blocklisted": {
+        "defaultMessage": "Listado bloqueado"
+    },
+    "common.declined": {
+        "defaultMessage": "Rechazado"
+    },
+    "common.deleted": {
+        "defaultMessage": "Eliminado"
+    },
+    "common.failed": {
+        "defaultMessage": "Fallido"
+    },
+    "common.partiallyAvailable": {
+        "defaultMessage": "Disponible parcialmente"
+    },
+    "common.pending": {
+        "defaultMessage": "Pendiente"
+    },
+    "common.requested": {
+        "defaultMessage": "Solicitado"
     }
 }
