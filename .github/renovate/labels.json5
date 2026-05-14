@@ -1,0 +1,42 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+
+  packageRules: [
+    // JavaScript/npm packages
+    {
+      matchManagers: ['npm'],
+      addLabels: ['javascript'],
+    },
+
+    // GitHub Actions
+    {
+      matchManagers: ['github-actions'],
+      addLabels: ['github_actions'],
+    },
+
+    // Docker images
+    {
+      matchManagers: ['dockerfile', 'docker-compose'],
+      addLabels: ['docker'],
+    },
+
+    // Python pip packages
+    {
+      matchManagers: ['pip_requirements'],
+      addLabels: ['python'],
+    },
+
+    // Major updates — always label and require manual review
+    {
+      matchUpdateTypes: ['major'],
+      addLabels: ['major'],
+      automerge: false,
+    },
+
+    // Lock file maintenance
+    {
+      matchUpdateTypes: ['lockFileMaintenance'],
+      addLabels: ['lockfile'],
+    },
+  ],
+}

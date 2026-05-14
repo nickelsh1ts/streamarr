@@ -1,0 +1,11 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+
+  // Run pnpm dedupe after every dependency update
+  postUpdateOptions: ['pnpmDedupe'],
+
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ['before 5am on the first day of the month'],
+  },
+}
