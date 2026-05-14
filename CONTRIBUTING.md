@@ -40,9 +40,9 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
    pnpm dev
    ```
 
-   This starts the Node.js server with hot reloading via `nodemon`. The app will be available at `http://localhost:3000`.
+   This starts the Node.js server with hot reloading via `nodemon`. The Node.js server also starts and monitors the Python Plex invite service. The app will be available at `http://localhost:3000`.
 
-   To also start the Python Plex invite service (in a separate terminal):
+   To start the Python Plex invite service independently:
 
    ```bash
    pnpm start:python
@@ -168,6 +168,9 @@ Streamarr uses `react-intl` for internationalization. Source strings are extract
 3. Use the self-hosted Weblate instance at https://weblate.streamarr.dev/ to translate existing strings.
 
 4. If you are changing translation keys or strings in code, make sure the extracted locale files are up to date before opening a PR.
+
+### Translation Status:
+<a href="https://weblate.streamarr.dev/engage/streamarr/"><img src="https://weblate.streamarr.dev/widget/streamarr/multi-auto.svg" alt="Translation status" /></a>
 
 ## Need Help?
 
