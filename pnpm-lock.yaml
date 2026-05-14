@@ -130,7 +130,7 @@ importers:
         version: 2.1.1
       nodemailer:
         specifier: ^8.0.6
-        version: 8.0.6
+        version: 8.0.7
       ofetch:
         specifier: ^1.5.1
         version: 1.5.1
@@ -6532,8 +6532,8 @@ packages:
     resolution: {integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==}
     engines: {node: '>=6.0.0'}
 
-  nodemailer@8.0.6:
-    resolution: {integrity: sha512-Nm2XeuDwwy2wi5A+8jPWwQwNzcjNjhWdE3pVLoXEusxJqCnAPAgnBGkSmiLknbnWuOF9qraRpYZjfxqtKZ4tPw==}
+  nodemailer@8.0.7:
+    resolution: {integrity: sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==}
     engines: {node: '>=6.0.0'}
 
   nodemon@3.1.14:
@@ -16102,7 +16102,7 @@ snapshots:
 
   nodemailer@7.0.13: {}
 
-  nodemailer@8.0.6: {}
+  nodemailer@8.0.7: {}
 
   nodemon@3.1.14:
     dependencies:
