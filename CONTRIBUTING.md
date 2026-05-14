@@ -40,7 +40,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
    pnpm dev
    ```
 
-   This starts the Node.js server with hot reloading via `nodemon` including the Python Plex invite service. The app will be available at `http://localhost:3000`.
+   This starts the Node.js server with hot reloading via `nodemon`. The Node.js server also starts and monitors the Python Plex invite service. The app will be available at `http://localhost:3000`.
 
    To start the Python Plex invite service independently:
 
