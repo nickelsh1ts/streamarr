@@ -70,7 +70,7 @@
     "jose": "^6.2.2",
     "lodash": "^4.18.1",
     "moment": "^2.30.1",
-    "moment-timezone": "^0.5.47",
+    "moment-timezone": "^0.6.0",
     "multer": "^2.1.1",
     "next": "^16.2.6",
     "nextjs-toploader": "^3.9.17",
