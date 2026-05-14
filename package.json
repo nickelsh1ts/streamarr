@@ -64,7 +64,7 @@
     "express-rate-limit": "^8.3.2",
     "express-session": "^1.19.0",
     "formik": "^2.4.9",
-    "http-proxy-middleware": "^3.0.5",
+    "http-proxy-middleware": "^4.0.0",
     "ical": "^0.8.0",
     "isomorphic-dompurify": "^3.8.0",
     "jose": "^6.2.2",
