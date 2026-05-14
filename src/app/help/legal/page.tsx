@@ -25,14 +25,14 @@ const LegalPage = () => {
         />
       </div>
       <section className="py-5 my-auto bg-zinc-100">
-        <main className=" container max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto place-content-center p-4 space-y-5">
-          <div role="tablist" className="tabs tabs-lifted">
+        <main className=" container max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto place-content-center p-1 sm:p-4 space-y-5">
+          <div role="tablist" className="tabs tabs-lifted overflow-x-auto">
             <input
               defaultChecked
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-32 !border-none"
+              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !border-none !whitespace-nowrap"
               aria-label={intl.formatMessage({
                 id: 'help.legal.termsTab',
                 defaultMessage: 'Terms of Use',
@@ -60,7 +60,7 @@ const LegalPage = () => {
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-44 !border-none"
+              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !border-none !whitespace-nowrap"
               aria-label={intl.formatMessage({
                 id: 'help.legal.privacyTab',
                 defaultMessage: 'Privacy Statement',
@@ -88,7 +88,7 @@ const LegalPage = () => {
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !w-36 !border-none"
+              className="tab checked:!bg-secondary checked:text-white text-primary font-extrabold !border-none !whitespace-nowrap"
               aria-label={intl.formatMessage({
                 id: 'help.legal.cookiesTab',
                 defaultMessage: 'Cookie Policy',
