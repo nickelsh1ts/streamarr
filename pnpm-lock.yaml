@@ -169,7 +169,7 @@ importers:
         version: 2.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-intl:
         specifier: ^10.1.2
-        version: 10.1.2(@types/react@19.2.14)(react@19.2.6)
+        version: 10.1.5(@types/react@19.2.14)(react@19.2.6)
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.14)(react@19.2.6)
@@ -260,7 +260,7 @@ importers:
         version: 10.0.1(eslint@9.39.4(jiti@1.21.7))
       '@formatjs/cli':
         specifier: ^6.14.2
-        version: 6.14.2
+        version: 6.14.5
       '@semantic-release/changelog':
         specifier: 6.0.3
         version: 6.0.3(semantic-release@25.0.3(typescript@6.0.3))
@@ -1563,8 +1563,8 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@formatjs/cli@6.14.2':
-    resolution: {integrity: sha512-0aZLIRcrxIf6QU2u04bIorYIVA1Sm8hHlHzlK9ROGB2BLN0WbiBCwK3jAPV9um+pPS6O4ZFT6K9c2j/3iMkmSw==}
+  '@formatjs/cli@6.14.5':
+    resolution: {integrity: sha512-wmxwchqv7pVgKFmYugsgwLEflNd9a+CfHZk6Pc5bEix2ZDe4pWYm8EeUfWRTeB8UwFvy5U0277YS4wN6+YKDqQ==}
     engines: {node: '>= 20.12.0'}
     hasBin: true
     peerDependencies:
@@ -1591,9 +1591,6 @@ packages:
       vue:
         optional: true
 
-  '@formatjs/fast-memoize@3.1.2':
-    resolution: {integrity: sha512-vPnriihkfK0lzoQGaXq+qXH23VsYyansRTkTgo2aTG0k1NjLFyZimFVdfj4C9JkSE5dm7CEngcQ5TTc1yAyBfQ==}
-
   '@formatjs/fast-memoize@3.1.4':
     resolution: {integrity: sha512-Lbke1aOrsygKKR09Ux0NrZgbTqpDmiwXOgzyDOJ8Owr1zd5qOKTauf62hH+Seeku3ju77rHWH9I5SfX2CN0vuA==}
 
@@ -1608,9 +1605,6 @@ packages:
 
   '@formatjs/icu-skeleton-parser@2.1.7':
     resolution: {integrity: sha512-cIw1SFP0bi0CUBiJ2jzp99ws3OJNQDfStcHq9Z0iHWzItmiIikihFO+npR8C80yDlp7ZuBCLXCcKjgWjHicksA==}
-
-  '@formatjs/intl@4.1.6':
-    resolution: {integrity: sha512-eQuZCkG7kVBIjMhLhvsRZmYnVbTHBiiM+fNxIbDg7LZ9WXcpWUISuv58baq2dov7vz3qXYtDEgJ9AODZK6idaQ==}
 
   '@formatjs/intl@4.1.9':
     resolution: {integrity: sha512-Pulbo0Z14FLESaMWsCFNyITMAGmuC+JZN5/IRnDDH+tcEr8YJJMzW2+PnLfr+FYiwlC7883W7xrhM89gTz/q8A==}
@@ -5388,9 +5382,6 @@ packages:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
 
-  intl-messageformat@11.2.1:
-    resolution: {integrity: sha512-1gAVEUt3wEPvTqML4Fsw9klZV5j0vszQxayP/fi6gUroAc8AUHiNaisBKLWxybL1AdWq1mP07YV1q8v4N92ilQ==}
-
   intl-messageformat@11.2.4:
     resolution: {integrity: sha512-iKP6+uJXn+XcfRgYfGPE3+mqCoODV2vATrXDLo/YkYgIdelJHJPBEbc0GZThipAYPuk+8QJFiPgOfblU085ABg==}
 
@@ -7398,8 +7389,8 @@ packages:
       react: '>=16'
       react-dom: '>=16'
 
-  react-intl@10.1.2:
-    resolution: {integrity: sha512-53iYLo+Sl6Qw1+/7VJ2v7mB2A8XHYeVFRujmoo8qVvvym4/WL9COKCcXKUyCYBwKgZNghKrgyQILx7qbrsdZ/w==}
+  react-intl@10.1.5:
+    resolution: {integrity: sha512-G0R8LZ6bsD6cB2MQiSsdOQX5NuW2tJn613bCVqjvCpyFQLe7pZB38+6/wvGNNr8nLVk0lLNNvnc301GMx/nNcQ==}
     peerDependencies:
       '@types/react': '19'
       react: '19'
@@ -10432,9 +10423,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@formatjs/cli@6.14.2': {}
-
-  '@formatjs/fast-memoize@3.1.2': {}
+  '@formatjs/cli@6.14.5': {}
 
   '@formatjs/fast-memoize@3.1.4': {}
 
@@ -10449,12 +10438,6 @@ snapshots:
   '@formatjs/icu-skeleton-parser@2.1.4': {}
 
   '@formatjs/icu-skeleton-parser@2.1.7': {}
-
-  '@formatjs/intl@4.1.6':
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.2
-      '@formatjs/icu-messageformat-parser': 3.5.4
-      intl-messageformat: 11.2.1
 
   '@formatjs/intl@4.1.9':
     dependencies:
@@ -14674,11 +14657,6 @@ snapshots:
       hasown: 2.0.3
       side-channel: 1.1.0
 
-  intl-messageformat@11.2.1:
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.2
-      '@formatjs/icu-messageformat-parser': 3.5.4
-
   intl-messageformat@11.2.4:
     dependencies:
       '@formatjs/fast-memoize': 3.1.4
@@ -16973,12 +16951,12 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  react-intl@10.1.2(@types/react@19.2.14)(react@19.2.6):
+  react-intl@10.1.5(@types/react@19.2.14)(react@19.2.6):
     dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.4
-      '@formatjs/intl': 4.1.6
+      '@formatjs/icu-messageformat-parser': 3.5.7
+      '@formatjs/intl': 4.1.9
       '@types/react': 19.2.14
-      intl-messageformat: 11.2.1
+      intl-messageformat: 11.2.4
       react: 19.2.6
 
   react-is@16.13.1: {}
