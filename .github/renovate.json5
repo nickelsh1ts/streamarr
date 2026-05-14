@@ -1,0 +1,46 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    ':dependencyDashboard',
+    ':timezone(America/Toronto)',
+
+    'group:nextjsMonorepo',
+    'group:reactMonorepo',
+    'group:typescript-eslintMonorepo',
+    'group:tailwindcssMonorepo',
+
+    'github>nickelsh1ts/streamarr//.github/renovate/actions.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+    'github>nickelsh1ts/streamarr//.github/renovate/docker.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+    'github>nickelsh1ts/streamarr//.github/renovate/groups.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+    'github>nickelsh1ts/streamarr//.github/renovate/labels.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+    'github>nickelsh1ts/streamarr//.github/renovate/pnpm.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+    'github>nickelsh1ts/streamarr//.github/renovate/semanticCommits.json5#e4fecf95c591199525a56550a17997a79dae70e7',
+  ],
+
+  dependencyDashboardTitle: 'Renovate Dashboard 🤖',
+  suppressNotifications: ['prEditedNotification', 'prIgnoreNotification'],
+
+  labels: ['dependencies'],
+  schedule: ['before 6am on monday'],
+  prConcurrentLimit: 10,
+  prHourlyLimit: 2,
+
+  minimumReleaseAge: '7 days',
+  rebaseWhen: 'conflicted',
+  platformAutomerge: true,
+
+  vulnerabilityAlerts: {
+    labels: ['security'],
+    automerge: true,
+  },
+
+  packageRules: [
+    // Auto-merge non-major devDependency updates without review
+    {
+      matchDepTypes: ['devDependencies'],
+      matchUpdateTypes: ['minor', 'patch'],
+      automerge: true,
+    },
+  ],
+}

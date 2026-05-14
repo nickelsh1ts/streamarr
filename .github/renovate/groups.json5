@@ -1,0 +1,106 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+
+  packageRules: [
+    // Node.js
+    {
+      matchPackageNames: ['node', '@types/node'],
+      matchManagers: ['dockerfile', 'npm'],
+      groupName: 'Node.js',
+      commitMessageTopic: 'Node.js',
+    },
+
+    // Database
+    {
+      matchPackageNames: ['sqlite3', 'typeorm', 'connect-typeorm'],
+      groupName: 'Database',
+    },
+
+    // Tailwind extras not in the tailwindcssMonorepo preset
+    {
+      matchPackageNames: ['daisyui', 'prettier-plugin-tailwindcss'],
+      groupName: 'tailwindcss monorepo',
+    },
+
+    // Download clients
+    {
+      matchPackageNames: [
+        '@ctrl/deluge',
+        '@ctrl/qbittorrent',
+        '@ctrl/shared-torrent',
+        '@ctrl/transmission',
+      ],
+      groupName: 'ctrl download clients',
+    },
+
+    // DnD Kit
+    {
+      matchPackageNames: [
+        '@dnd-kit/core',
+        '@dnd-kit/sortable',
+        '@dnd-kit/utilities',
+      ],
+      groupName: 'dnd-kit',
+    },
+
+    // ESLint core and all plugins
+    {
+      groupName: 'ESLint',
+      matchPackageNames: [
+        'eslint',
+        '@eslint/js',
+        '@eslint/compat',
+        'globals',
+        'eslint-config-prettier',
+        'eslint-plugin-prettier',
+        'eslint-plugin-react',
+        'eslint-plugin-react-hooks',
+        'eslint-plugin-jsx-a11y',
+        'eslint-plugin-formatjs',
+        'eslint-plugin-no-relative-import-paths',
+      ],
+    },
+
+    // Socket.IO client and server
+    {
+      groupName: 'Socket.IO',
+      matchPackageNames: ['socket.io', 'socket.io-client'],
+    },
+
+    // semantic-release and all official plugins
+    {
+      groupName: 'semantic-release',
+      matchPackageNames: [
+        'semantic-release',
+        '@semantic-release/changelog',
+        '@semantic-release/commit-analyzer',
+        '@semantic-release/git',
+      ],
+    },
+
+    // Cypress and its companion plugins
+    {
+      groupName: 'Cypress',
+      matchPackageNames: ['cypress', 'cy-mobile-commands'],
+    },
+
+    // FormatJS / i18n
+    {
+      groupName: 'FormatJS',
+      matchPackageNames: ['react-intl', '@formatjs/intl', '@formatjs/cli'],
+    },
+
+    // Express and its middleware/types
+    {
+      groupName: 'Express',
+      matchPackageNames: [
+        'express',
+        'express-openapi-validator',
+        'express-rate-limit',
+        'express-session',
+        '@types/express',
+        '@types/express-session',
+      ],
+    },
+  ],
+}
