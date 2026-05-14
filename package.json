@@ -173,7 +173,7 @@
     "globals": "^17.5.0",
     "lint-staged": "^16.4.0",
     "nodemon": "^3.1.14",
-    "postcss": "8.5.11",
+    "postcss": "8.5.14",
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.7.2",
