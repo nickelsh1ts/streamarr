@@ -33,7 +33,7 @@
         "defaultMessage": "Lanzamientos"
     },
     "aboutReleases.viewChangelog": {
-        "defaultMessage": "Ver Registro de Cambios"
+        "defaultMessage": "Ver registro de cambios"
     },
     "aboutReleases.viewOnGitHub": {
         "defaultMessage": "Ver en GitHub"
@@ -3819,7 +3819,7 @@
         "defaultMessage": "Importando usuarios de Plex…"
     },
     "plexImport.newSignIn.warning": {
-        "defaultMessage": "Advertencia: El nuevo inicio de sesión deshabilitará el acceso para usuarios existentes"
+        "defaultMessage": "La configuración <strong>Habilitar nuevo inicio de sesión de Plex </strong> está activada actualmente. Los usuarios de Plex con acceso a la biblioteca no necesitan ser importados para iniciar sesión."
     },
     "plexImport.noUsers": {
         "defaultMessage": "No hay usuarios disponibles para importar."
@@ -5200,5 +5200,59 @@
     },
     "common.requested": {
         "defaultMessage": "Solicitado"
+    },
+    "common.network": {
+        "defaultMessage": "Red"
+    },
+    "networkSettings.description": {
+        "defaultMessage": "Configura los ajustes de red globales para tu instancia de Streamarr."
+    },
+    "networkSettings.requestTimeout": {
+        "defaultMessage": "Tiempo de espera de la solicitud API agotado"
+    },
+    "networkSettings.requestTimeout.description": {
+        "defaultMessage": "Tiempo máximo (en segundos) de espera para respuestas de servicios externos."
+    },
+    "networkSettings.saveError": {
+        "defaultMessage": "Algo salió mal al guardar la configuración de red."
+    },
+    "networkSettings.saveSuccess": {
+        "defaultMessage": "Configuración de red guardada correctamente"
+    },
+    "networkSettings.title": {
+        "defaultMessage": "Configuración de red"
+    },
+    "networkSettings.validation.requestTimeout": {
+        "defaultMessage": "Debes proporcionar un tiempo de espera de solicitud válido"
+    },
+    "networkSettings.validation.requestTimeoutInteger": {
+        "defaultMessage": "El tiempo de espera de la solicitud debe ser un número entero de segundos"
+    },
+    "networkSettings.validation.requestTimeoutMax": {
+        "defaultMessage": "El tiempo de espera de la solicitud no debe exceder los 300 segundos"
+    },
+    "networkSettings.validation.requestTimeoutMin": {
+        "defaultMessage": "El tiempo de espera de la solicitud debe ser de al menos 1 segundo"
+    },
+    "profile.moviesLifetime": {
+        "defaultMessage": "Películas (De por vida)"
+    },
+    "profile.recentRequests": {
+        "defaultMessage": "Solicitudes recientes"
+    },
+    "profile.recentlyWatched": {
+        "defaultMessage": "Visto recientemente"
+    },
+    "profile.tvLifetime": {
+        "defaultMessage": "Series (De por vida)"
+    },
+    "season.specials": {
+        "defaultMessage": "Especiales"
+    },
+    "signIn.whitespaceWarning": {
+        "defaultMessage": "Los espacios al principio o al final de tu correo electrónico o contraseña pueden causar problemas al iniciar sesión."
+    },
+    "userProfile.status": {
+        "defaultMessage": "Estatus"
     }
 }
