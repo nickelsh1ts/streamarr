@@ -85,7 +85,7 @@ importers:
         version: 5.6.2(@types/json-schema@7.0.15)(express@5.2.1)
       express-rate-limit:
         specifier: ^8.3.2
-        version: 8.3.2(express@5.2.1)
+        version: 8.5.1(express@5.2.1)
       express-session:
         specifier: ^1.19.0
         version: 1.19.0
@@ -299,7 +299,7 @@ importers:
         version: 5.0.6
       '@types/express-session':
         specifier: ^1.18.1
-        version: 1.18.2
+        version: 1.19.0
       '@types/ical':
         specifier: ^0.8.3
         version: 0.8.3
@@ -2720,8 +2720,8 @@ packages:
   '@types/express-serve-static-core@5.1.1':
     resolution: {integrity: sha512-v4zIMr/cX7/d2BpAEX3KNKL/JrT1s43s96lLvvdTmza1oEvDudCqK9aF/djc/SWgy8Yh0h30TZx5VpzqFCxk5A==}
 
-  '@types/express-session@1.18.2':
-    resolution: {integrity: sha512-k+I0BxwVXsnEU2hV77cCobC08kIsn4y44C3gC0b46uxZVMaXA04lSPgRLR/bSL2w0t0ShJiG8o4jPzRG/nscFg==}
+  '@types/express-session@1.19.0':
+    resolution: {integrity: sha512-GbypG0bog68UbOq2tSAp7SclvCUm3ha1uDi58OPRGK1NfRvCIu7Gz0M7fTGtpNG1T9a29GpuurQj9zEcT/lMXQ==}
 
   '@types/express@5.0.6':
     resolution: {integrity: sha512-sKYVuV7Sv9fbPIt/442koC7+IIwK5olP1KWeD88e/idgoJqDm3JV/YUiPwkoKK92ylff2MGxSz1CSjsXelx0YA==}
@@ -4673,8 +4673,8 @@ packages:
     peerDependencies:
       express: '*'
 
-  express-rate-limit@8.3.2:
-    resolution: {integrity: sha512-77VmFeJkO0/rvimEDuUC5H30oqUC4EyOhyGccfqoLebB0oiEYfM7nwPrsDsBL1gsTpwfzX8SFy2MT3TDyRq+bg==}
+  express-rate-limit@8.5.1:
+    resolution: {integrity: sha512-5O6KYmyJEpuPJV5hNTXKbAHWRqrzyu+OI3vUnSd2kXFubIVpG7ezpgxQy76Zo5GQZtrQBg86hF+CM/NX+cioiQ==}
     engines: {node: '>= 16'}
     peerDependencies:
       express: '>= 4.11'
@@ -5401,8 +5401,8 @@ packages:
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
-  ip-address@10.1.0:
-    resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
+  ip-address@10.2.0:
+    resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -11465,7 +11465,7 @@ snapshots:
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
 
-  '@types/express-session@1.18.2':
+  '@types/express-session@1.19.0':
     dependencies:
       '@types/express': 5.0.6
 
@@ -12670,7 +12670,7 @@ snapshots:
   connect-typeorm@2.0.0(typeorm@0.3.28(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.8.0)(typescript@6.0.3))):
     dependencies:
       '@types/debug': 0.0.31
-      '@types/express-session': 1.18.2
+      '@types/express-session': 1.19.0
       debug: 4.4.3(supports-color@5.5.0)
       express-session: 1.19.0
       typeorm: 0.3.28(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.8.0)(typescript@6.0.3))
@@ -13831,10 +13831,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/json-schema'
 
-  express-rate-limit@8.3.2(express@5.2.1):
+  express-rate-limit@8.5.1(express@5.2.1):
     dependencies:
       express: 5.2.1
-      ip-address: 10.1.0
+      ip-address: 10.2.0
 
   express-session@1.19.0:
     dependencies:
@@ -14693,7 +14693,7 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  ip-address@10.1.0: {}
+  ip-address@10.2.0: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -17788,7 +17788,7 @@ snapshots:
 
   socks@2.8.7:
     dependencies:
-      ip-address: 10.1.0
+      ip-address: 10.2.0
       smart-buffer: 4.2.0
     optional: true
 
