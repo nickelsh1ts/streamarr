@@ -5,13 +5,15 @@ import { useEffect, useState, useRef } from 'react';
 /**
  * Custom Hook to determine if an element is in the viewport.
  * @param threshold Margin around the root, similar to the CSS margin property.
+ * @param initialState Initial value before the IntersectionObserver fires. Defaults to false.
  * @returns A boolean state indicating visibility.
  */
 export const useInView = (
   ref: RefObject<HTMLElement>,
-  threshold: number = 0.5
+  threshold: number = 0.5,
+  initialState: boolean = false
 ) => {
-  const [isInView, setInView] = useState(false);
+  const [isInView, setInView] = useState(initialState);
 
   // Use a single instance of IntersectionObserver
   const observerRef = useRef<IntersectionObserver | null>(null);
