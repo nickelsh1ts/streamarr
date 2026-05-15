@@ -158,7 +158,7 @@ const DownloadClientModal = ({
 
   useEffect(() => {
     if (downloadClient) {
-      testConnection({
+      void testConnection({
         name: downloadClient.name,
         hostname: downloadClient.hostname,
         port: downloadClient.port,

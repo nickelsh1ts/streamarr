@@ -176,7 +176,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
 
   useEffect(() => {
     if (radarr) {
-      testConnection({
+      void testConnection({
         apiKey: radarr.apiKey,
         hostname: radarr.hostname,
         port: radarr.port,
@@ -186,15 +186,13 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
     }
   }, [radarr, testConnection]);
 
-  // Reset auth status and validation when modal closes
-  useEffect(() => {
-    if (!show) {
-      setAuthStatus(null);
-      if (radarr) {
-        setIsValidated(false);
-      }
+  const handleClose = useCallback(() => {
+    setAuthStatus(null);
+    if (radarr) {
+      setIsValidated(false);
     }
-  }, [show, radarr]);
+    onClose();
+  }, [onClose, radarr]);
 
   // Fetch auth status when modal opens with existing radarr
   useEffect(() => {
@@ -308,7 +306,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       }) => {
         return (
           <Modal
-            onCancel={onClose}
+            onCancel={handleClose}
             okButtonType="primary"
             show={show}
             okText={

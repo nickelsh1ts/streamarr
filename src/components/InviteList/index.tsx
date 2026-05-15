@@ -84,7 +84,13 @@ const InviteList = () => {
   });
   const { user: currentUser, hasPermission } = useUser();
   const intl = useIntl();
+  const queryFilter = searchParams.get('filter') as Filter | null;
+  const querySort = searchParams.get('sort') as Sort | null;
   const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    if (Object.values(Filter).includes(queryFilter as Filter)) {
+      return queryFilter as Filter;
+    }
+
     if (typeof window !== 'undefined') {
       const filterString = window.localStorage.getItem(
         'invites-filter-settings'
@@ -97,6 +103,10 @@ const InviteList = () => {
     return Filter.ALL;
   });
   const [currentSort, setCurrentSort] = useState<Sort>(() => {
+    if (Object.values(['created', 'modified']).includes(querySort as Sort)) {
+      return querySort as Sort;
+    }
+
     if (typeof window !== 'undefined') {
       const filterString = window.localStorage.getItem(
         'invites-filter-settings'
@@ -120,6 +130,32 @@ const InviteList = () => {
     }
     return 10;
   });
+
+  useEffect(() => {
+    const nextFilter = searchParams.get('filter') as Filter | null;
+    const nextSort = searchParams.get('sort') as Sort | null;
+
+    if (
+      !Object.values(Filter).includes(nextFilter as Filter) &&
+      !Object.values(['created', 'modified']).includes(nextSort as Sort)
+    ) {
+      return;
+    }
+
+    if (
+      Object.values(Filter).includes(nextFilter as Filter) &&
+      nextFilter !== currentFilter
+    ) {
+      setCurrentFilter(nextFilter as Filter);
+    }
+
+    if (
+      Object.values(['created', 'modified']).includes(nextSort as Sort) &&
+      nextSort !== currentSort
+    ) {
+      setCurrentSort(nextSort as Sort);
+    }
+  }, [searchParams, currentFilter, currentSort]);
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -190,20 +226,6 @@ const InviteList = () => {
       revalidateQuota();
     }
   };
-
-  // Override with query params if provided
-  useEffect(() => {
-    if (Object.values(Filter).includes(searchParams.get('filter') as Filter)) {
-      setCurrentFilter(searchParams.get('filter') as Filter);
-    }
-    if (
-      Object.values(['created', 'modified']).includes(
-        searchParams.get('sort') as Sort
-      )
-    ) {
-      setCurrentSort(searchParams.get('sort') as Sort);
-    }
-  }, [searchParams]);
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {

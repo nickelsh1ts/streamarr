@@ -39,6 +39,44 @@ import * as Yup from 'yup';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
+const getSavedUserFilterSettings = (): {
+  currentSort?: Sort;
+  currentPageSize?: number;
+} => {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+
+  const filterString = window.localStorage.getItem('ul-filter-settings');
+  if (!filterString) {
+    return {};
+  }
+
+  try {
+    const filterSettings = JSON.parse(filterString) as {
+      currentSort?: string;
+      currentPageSize?: number;
+    };
+
+    const validSorts: Sort[] = ['created', 'updated', 'invites', 'displayname'];
+    const currentSort = validSorts.includes(filterSettings.currentSort as Sort)
+      ? (filterSettings.currentSort as Sort)
+      : undefined;
+
+    const currentPageSize =
+      typeof filterSettings.currentPageSize === 'number'
+        ? filterSettings.currentPageSize
+        : undefined;
+
+    return {
+      currentSort,
+      currentPageSize,
+    };
+  } catch {
+    return {};
+  }
+};
+
 const AdminUsers = () => {
   const intl = useIntl();
   const router = useRouter();
@@ -46,9 +84,12 @@ const AdminUsers = () => {
   const settings = useSettings();
   const searchParams = useSearchParams();
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
-  const [hasLoadedSettings, setHasLoadedSettings] = useState(false);
-  const [currentSort, setCurrentSort] = useState<Sort>('displayname');
-  const [currentPageSize, setCurrentPageSize] = useState<number>(10);
+  const [currentSort, setCurrentSort] = useState<Sort>(
+    () => getSavedUserFilterSettings().currentSort ?? 'displayname'
+  );
+  const [currentPageSize, setCurrentPageSize] = useState<number>(
+    () => getSavedUserFilterSettings().currentPageSize ?? 10
+  );
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -90,19 +131,6 @@ const AdminUsers = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
 
   useEffect(() => {
-    const filterString = window.localStorage.getItem('ul-filter-settings');
-
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-
-      setCurrentSort(filterSettings.currentSort);
-      setCurrentPageSize(filterSettings.currentPageSize);
-    }
-    setHasLoadedSettings(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedSettings) return;
     window.localStorage.setItem(
       'ul-filter-settings',
       JSON.stringify({
@@ -110,7 +138,7 @@ const AdminUsers = () => {
         currentPageSize,
       })
     );
-  }, [currentSort, currentPageSize, hasLoadedSettings]);
+  }, [currentSort, currentPageSize]);
 
   const isUserPermsEditable = (userId: number) =>
     userId !== 1 && userId !== currentUser?.id;

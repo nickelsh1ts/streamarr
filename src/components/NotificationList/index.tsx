@@ -30,6 +30,45 @@ enum Filter {
   UNREAD = 'unread',
 }
 
+const getSavedNotificationFilterSettings = (): {
+  currentFilter?: Filter;
+  currentPageSize?: number;
+} => {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+
+  const filterString = window.localStorage.getItem('nl-filter-settings');
+  if (!filterString) {
+    return {};
+  }
+
+  try {
+    const filterSettings = JSON.parse(filterString) as {
+      currentFilter?: string;
+      currentPageSize?: number;
+    };
+
+    const currentFilter = Object.values(Filter).includes(
+      filterSettings.currentFilter as Filter
+    )
+      ? (filterSettings.currentFilter as Filter)
+      : undefined;
+
+    const currentPageSize =
+      typeof filterSettings.currentPageSize === 'number'
+        ? filterSettings.currentPageSize
+        : undefined;
+
+    return {
+      currentFilter,
+      currentPageSize,
+    };
+  } catch {
+    return {};
+  }
+};
+
 const NotificationsList = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -46,8 +85,16 @@ const NotificationsList = () => {
         : null
     );
   const intl = useIntl();
-  const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
-  const [currentPageSize, setCurrentPageSize] = useState<number>(10);
+  const savedSettings = getSavedNotificationFilterSettings();
+  const queryFilter = searchParams.get('filter') as Filter | null;
+  const initialFilter = Object.values(Filter).includes(queryFilter as Filter)
+    ? (queryFilter as Filter)
+    : (savedSettings.currentFilter ?? Filter.ALL);
+
+  const [currentFilter, setCurrentFilter] = useState<Filter>(initialFilter);
+  const [currentPageSize, setCurrentPageSize] = useState<number>(
+    savedSettings.currentPageSize ?? 10
+  );
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -83,24 +130,18 @@ const NotificationsList = () => {
     notification: null | Notification;
   }>({ open: false, notification: null });
 
-  useNotifications();
-
-  // Restore last set filter values on component mount
   useEffect(() => {
-    const filterString = window.localStorage.getItem('nl-filter-settings');
-
-    if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentPageSize(filterSettings.currentPageSize);
+    const nextFilter = searchParams.get('filter') as Filter | null;
+    if (!Object.values(Filter).includes(nextFilter as Filter)) {
+      return;
     }
 
-    // If filter value is provided in query, use that instead
-    if (Object.values(Filter).includes(searchParams.get('filter') as Filter)) {
-      setCurrentFilter(searchParams.get('filter') as Filter);
+    if (nextFilter !== currentFilter) {
+      setCurrentFilter(nextFilter as Filter);
     }
-  }, [searchParams]);
+  }, [searchParams, currentFilter]);
+
+  useNotifications();
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {

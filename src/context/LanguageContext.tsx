@@ -55,7 +55,21 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   children,
   initialLocale = 'en',
 }) => {
-  const [locale, setLocaleState] = useState<AvailableLocale>(initialLocale);
+  const [locale, setLocaleState] = useState<AvailableLocale>(() => {
+    if (typeof window === 'undefined') {
+      return initialLocale;
+    }
+
+    const savedLocale = localStorage.getItem(
+      'streamarr-locale'
+    ) as AvailableLocale | null;
+
+    if (savedLocale && availableLanguages[savedLocale]) {
+      return savedLocale;
+    }
+
+    return initialLocale;
+  });
   const [messages, setMessages] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -75,7 +89,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
 
   // Initialize messages and moment locale on mount
   useEffect(() => {
-    loadMessages(locale);
+    void loadMessages(locale);
     // Synchronize moment.js locale with current locale
     setMomentLocale(locale);
   }, [loadMessages, locale]);
@@ -89,25 +103,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
         if (typeof window !== 'undefined') {
           localStorage.setItem('streamarr-locale', newLocale);
         }
-        loadMessages(newLocale);
         // Synchronize moment.js locale with new locale
         setMomentLocale(newLocale);
       }
     },
-    [locale, loadMessages]
+    [locale]
   );
-
-  // Load saved locale on client-side
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedLocale = localStorage.getItem(
-        'streamarr-locale'
-      ) as AvailableLocale;
-      if (savedLocale && availableLanguages[savedLocale]) {
-        setLocale(savedLocale);
-      }
-    }
-  }, [setLocale]);
 
   const contextValue: LanguageContextProps = { locale, setLocale };
 

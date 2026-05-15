@@ -145,7 +145,7 @@ const ServicesProwlarr = () => {
       !isValidated &&
       !isTesting
     ) {
-      testConnection({
+      void testConnection({
         hostname: dataProwlarr.hostname,
         port: dataProwlarr.port,
         apiKey: dataProwlarr.apiKey,

@@ -159,8 +159,29 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 
   useEffect(() => {
     // keep the input in sync when the color changes externally
-    setInputValue(getFormattedValue());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const c = colord(color);
+    switch (format) {
+      case 'hex':
+        setInputValue(c.toHex());
+        break;
+      case 'rgb': {
+        const rgb = c.toRgb();
+        setInputValue(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`);
+        break;
+      }
+      case 'hsl': {
+        const h = c.toHsl();
+        setInputValue(`hsl(${h.h}, ${h.s}%, ${h.l}%)`);
+        break;
+      }
+      case 'oklch': {
+        const oklch = rgbToOklch(c.toRgb().r, c.toRgb().g, c.toRgb().b);
+        setInputValue(
+          `oklch(${oklch.l.toFixed(3)} ${oklch.c.toFixed(3)} ${oklch.h.toFixed(1)})`
+        );
+        break;
+      }
+    }
   }, [color, format]);
 
   const presets = getAllTailwindColors();

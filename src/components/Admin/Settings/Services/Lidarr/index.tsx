@@ -149,7 +149,7 @@ const ServicesLidarr = () => {
       !isValidated &&
       !isTesting
     ) {
-      testConnection({
+      void testConnection({
         hostname: dataLidarr.hostname,
         port: dataLidarr.port,
         apiKey: dataLidarr.apiKey,

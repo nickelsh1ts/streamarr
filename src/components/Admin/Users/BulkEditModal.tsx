@@ -18,6 +18,35 @@ interface BulkEditProps {
   onSaving?: (isSaving: boolean) => void;
 }
 
+const getSharedPermission = (
+  users: User[] | undefined,
+  selectedUserIds: number[]
+): number => {
+  if (!users) {
+    return 0;
+  }
+
+  const selectedUsers = users.filter((user) =>
+    selectedUserIds.includes(user.id)
+  );
+  if (selectedUsers.length === 0) {
+    return 0;
+  }
+
+  const { permissions: sharedPermission } = selectedUsers.reduce(
+    (
+      { permissions: currentPermissions },
+      { permissions: nextPermissions }
+    ) => ({
+      permissions:
+        currentPermissions === nextPermissions ? currentPermissions : NaN,
+    }),
+    { permissions: selectedUsers[0].permissions }
+  );
+
+  return Number.isNaN(sharedPermission) ? 0 : sharedPermission;
+};
+
 const BulkEditModal = ({
   selectedUserIds,
   users,
@@ -28,7 +57,9 @@ const BulkEditModal = ({
 }: BulkEditProps) => {
   const { user: currentUser } = useUser();
   const intl = useIntl();
-  const [currentPermission, setCurrentPermission] = useState(0);
+  const [currentPermission, setCurrentPermission] = useState(() =>
+    getSharedPermission(users, selectedUserIds)
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -68,24 +99,6 @@ const BulkEditModal = ({
       setIsSaving(false);
     }
   };
-
-  useEffect(() => {
-    if (users) {
-      const selectedUsers = users.filter((u) => selectedUserIds.includes(u.id));
-      if (selectedUsers.length === 0) return;
-      const { permissions: allPermissionsEqual } = selectedUsers.reduce(
-        ({ permissions: aPerms }, { permissions: bPerms }) => {
-          return {
-            permissions: aPerms === bPerms ? aPerms : NaN,
-          };
-        },
-        { permissions: selectedUsers[0].permissions }
-      );
-      if (allPermissionsEqual) {
-        setCurrentPermission(allPermissionsEqual);
-      }
-    }
-  }, [users, selectedUserIds]);
 
   return (
     <Modal

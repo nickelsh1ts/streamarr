@@ -20,7 +20,7 @@ import type {
   DownloadClientType,
 } from '@server/lib/settings';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 
 const CLIENT_NAMES: Record<DownloadClientType, string> = {
@@ -84,7 +84,7 @@ const DownloadClientInstance = ({
   } | null>(null);
   const [isTesting, setIsTesting] = useState(false);
 
-  const testConnection = async () => {
+  const testConnection = useCallback(async () => {
     setIsTesting(true);
     try {
       const response = await axios.post(
@@ -99,12 +99,11 @@ const DownloadClientInstance = ({
     } finally {
       setIsTesting(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
-    testConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void testConnection();
+  }, [testConnection]);
 
   const internalUrl =
     (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);

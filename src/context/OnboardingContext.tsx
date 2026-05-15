@@ -153,7 +153,11 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     if (isSetupRoute) return;
     if (adminOnboardingJustCompleted) return;
     if (isAdminOnboarding && adminPhase === 'idle') {
-      setAdminPhase('welcome');
+      const timeoutId = window.setTimeout(() => {
+        setAdminPhase('welcome');
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     }
   }, [
     isAdminOnboarding,
@@ -177,7 +181,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     } catch {
       // Silently fail - UI state already updated
     }
-  }, [mutate, user?.id, resetTutorialState]);
+  }, [mutate, user, resetTutorialState]);
 
   const completeAdminTutorial = finalizeAdminOnboarding;
 
@@ -198,7 +202,11 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   }, [data, loading, error, user, shouldBlockUserOnboarding]);
 
   useEffect(() => {
-    setWelcomeOpen(shouldwelcomeOpenModal);
+    const timeoutId = window.setTimeout(() => {
+      setWelcomeOpen(shouldwelcomeOpenModal);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [shouldwelcomeOpenModal]);
 
   // After welcome completes (or is disabled), check if tutorial should show
@@ -265,7 +273,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [isPreviewMode, showAdminWelcome, user?.id, mutate]);
+  }, [isPreviewMode, showAdminWelcome, user, mutate]);
 
   const startTutorial = useCallback(() => {
     setTutorialActive(true);

@@ -176,7 +176,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
 
   useEffect(() => {
     if (sonarr) {
-      testConnection({
+      void testConnection({
         apiKey: sonarr.apiKey,
         hostname: sonarr.hostname,
         port: sonarr.port,
@@ -186,15 +186,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
     }
   }, [sonarr, testConnection]);
 
-  // Reset auth status and validation when modal closes
-  useEffect(() => {
-    if (!show) {
-      setAuthStatus(null);
-      if (sonarr) {
-        setIsValidated(false);
-      }
+  const handleClose = useCallback(() => {
+    setAuthStatus(null);
+    if (sonarr) {
+      setIsValidated(false);
     }
-  }, [show, sonarr]);
+    onClose();
+  }, [onClose, sonarr]);
 
   // Fetch auth status when modal opens with existing sonarr
   useEffect(() => {
@@ -309,7 +307,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
       }) => {
         return (
           <Modal
-            onCancel={onClose}
+            onCancel={handleClose}
             show={show}
             okButtonType="primary"
             okText={

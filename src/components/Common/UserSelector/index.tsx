@@ -91,12 +91,6 @@ const UserSelector = ({
   const [dropdownMeasured, setDropdownMeasured] = useState(false);
 
   useEffect(() => {
-    if (listboxOpen) {
-      setDropdownMeasured(false);
-    }
-  }, [listboxOpen]);
-
-  useEffect(() => {
     function updateDropdownPosition() {
       if (listboxOpen && optionsRef.current && buttonRef.current) {
         const dropdownRect = optionsRef.current.getBoundingClientRect();
@@ -152,7 +146,12 @@ const UserSelector = ({
     >
       {({ open }) => {
         if (open !== listboxOpen) {
-          setTimeout(() => setListboxOpen(open), 0);
+          setTimeout(() => {
+            if (open) {
+              setDropdownMeasured(false);
+            }
+            setListboxOpen(open);
+          }, 0);
         }
         return (
           <div className="relative">

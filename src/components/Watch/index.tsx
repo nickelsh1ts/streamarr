@@ -9,7 +9,7 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser, Permission } from '@app/hooks/useUser';
 import { setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const Watch = ({ children, ...props }) => {
@@ -22,26 +22,24 @@ const Watch = ({ children, ...props }) => {
     retry,
   } = useServiceProxy({ proxyPath: '/web' });
 
-  const [contentRef, setContentRef] = useState(null);
+  const contentRef = useRef<HTMLIFrameElement | null>(null);
   const [loadingIframe, setLoadingIframe] = useState(true);
-  let mountNode = null;
-  let innerFrame = null;
-  try {
-    if (
-      contentRef?.contentWindow &&
-      contentRef?.contentWindow.location.origin === window.location.origin
-    ) {
-      mountNode = contentRef.contentWindow.document.body;
-      innerFrame = contentRef.contentWindow;
-    }
-  } catch {
-    // Cross-origin access error, ignore or handle gracefully
-    mountNode = null;
-    innerFrame = null;
-  }
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [innerFrame, setInnerFrame] = useState<Window | null>(null);
 
-  const [hostname, setHostname] = useState('');
-  const [iframeUrl, setIframeUrl] = useState('');
+  const hostname =
+    typeof window !== 'undefined'
+      ? `${window.location.protocol}//${window.location.host}`
+      : '';
+  const [iframeUrl, setIframeUrl] = useState(() =>
+    typeof window !== 'undefined'
+      ? (
+          window.location.pathname +
+          window.location.search +
+          window.location.hash
+        ).replace('/watch', '')
+      : ''
+  );
   const { currentSettings } = useSettings();
 
   // Use custom logos if available, otherwise fallback to defaults
@@ -54,7 +52,6 @@ const Watch = ({ children, ...props }) => {
     let lastParentUrl =
       window.location.pathname + window.location.search + window.location.hash;
     let lastIframeUrl = '';
-    setIframeUrl(lastParentUrl.replace('/watch', ''));
     const interval = setInterval(() => {
       let parentUrl =
         window.location.pathname +
@@ -252,20 +249,11 @@ const Watch = ({ children, ...props }) => {
   }, [mountNode, currentSettings.theme, innerFrame]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
-    }
-  }, [setHostname]);
+    const normalizedIframeUrl = `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`;
 
-  useEffect(() => {
-    if (
-      contentRef &&
-      contentRef.src !==
-        `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`
-    ) {
-      contentRef.src = `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`;
+    if (contentRef.current && contentRef.current.src !== normalizedIframeUrl) {
+      contentRef.current.src = normalizedIframeUrl;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iframeUrl, hostname]);
 
   if (proxyStatus === 'loading') {
@@ -302,11 +290,31 @@ const Watch = ({ children, ...props }) => {
         {...props}
         loading="eager"
         onLoad={() => {
+          let nextMountNode: HTMLElement | null = null;
+          let nextInnerFrame: Window | null = null;
+
+          try {
+            if (
+              contentRef.current?.contentWindow &&
+              contentRef.current.contentWindow.location.origin ===
+                window.location.origin
+            ) {
+              nextMountNode = contentRef.current.contentWindow.document.body;
+              nextInnerFrame = contentRef.current.contentWindow;
+            }
+          } catch {
+            nextMountNode = null;
+            nextInnerFrame = null;
+          }
+
+          setMountNode(nextMountNode);
+          setInnerFrame(nextInnerFrame);
+
           setTimeout(() => {
             setLoadingIframe(false);
           }, 1000);
         }}
-        ref={setContentRef}
+        ref={contentRef}
         className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
         src={`${hostname}${iframeUrl && iframeUrl.replace('null', '')}`}
         allowFullScreen

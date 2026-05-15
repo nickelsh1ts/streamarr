@@ -79,9 +79,11 @@ const jobModalReducer = (
   }
 };
 
+const INITIAL_NOW = Date.now();
+
 const JobsCacheSettings = () => {
   const intl = useIntl();
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(INITIAL_NOW);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 1000);

@@ -28,6 +28,7 @@ const Slider = ({
   placeholder = <RecentInvite.Placeholder />,
 }: SliderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const debouncedScrollRef = useRef<ReturnType<typeof debounce> | null>(null);
   const [scrollPos, setScrollPos] = useState({ isStart: true, isEnd: false });
 
   const handleScroll = useCallback(() => {
@@ -49,15 +50,21 @@ const Slider = ({
     setScrollPos({ isStart, isEnd });
   }, [items]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedScroll = useCallback(
-    debounce(() => handleScroll(), 50),
-    [handleScroll]
-  );
+  useEffect(() => {
+    const debouncedScroll = debounce(handleScroll, 50);
+    debouncedScrollRef.current = debouncedScroll;
+
+    return () => {
+      debouncedScroll.cancel();
+      if (debouncedScrollRef.current === debouncedScroll) {
+        debouncedScrollRef.current = null;
+      }
+    };
+  }, [handleScroll]);
 
   useEffect(() => {
     const handleResize = () => {
-      debouncedScroll();
+      debouncedScrollRef.current?.();
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
@@ -65,14 +72,14 @@ const Slider = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [debouncedScroll]);
+  }, []);
 
   useEffect(() => {
     handleScroll();
   }, [items, handleScroll]);
 
   const onScroll = () => {
-    debouncedScroll();
+    debouncedScrollRef.current?.();
   };
 
   const [, setX] = useSpring(() => ({
