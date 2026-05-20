@@ -5310,6 +5310,58 @@ paths:
       responses:
         '204':
           description: User password updated
+  /user/{userId}/settings/linked-accounts/plex:
+    post:
+      summary: Link a Plex account to the logged-in user
+      description: Links a Plex account to the logged-in user using a provided Plex token. Requires an active session.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                authToken:
+                  type: string
+              required:
+                - authToken
+      responses:
+        '204':
+          description: Plex account successfully linked
+        '401':
+          description: Invalid or expired Plex token
+        '422':
+          description: Plex account already linked to another user, or email mismatch
+        '500':
+          description: Server error while linking Plex account
+    delete:
+      summary: Unlink the Plex account from the logged-in user
+      description: Unlinks the Plex account from the logged-in user. Requires an active session.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Plex account successfully unlinked
+        '400':
+          description: Cannot unlink — user is the primary administrator or has no local credentials
+        '404':
+          description: User not found
+        '500':
+          description: Server error while unlinking Plex account
   /user/{userId}/settings/notifications:
     get:
       summary: Get notification settings for a user

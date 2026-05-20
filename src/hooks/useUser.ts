@@ -45,7 +45,7 @@ export interface UserSettings {
   inAppEnabled?: boolean;
 }
 
-interface UserHookResponse {
+export interface UserHookResponse {
   user?: User;
   loading: boolean;
   error: string;

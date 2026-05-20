@@ -26,7 +26,7 @@ import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
 import { In, Not } from 'typeorm';
-import userSettingsRoutes, { isOwnProfileOrAdmin } from './usersettings';
+import userSettingsRoutes from './usersettings';
 import userOnboardingRoutes from './onboarding';
 import PreparedEmail from '@server/lib/email';
 import path from 'path';
@@ -34,6 +34,7 @@ import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
 import { plexSync } from '@server/lib/plexSync';
+import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
 
 const router = Router();
 
