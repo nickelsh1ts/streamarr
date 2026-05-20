@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from plexapi.myplex import MyPlexAccount
 import traceback
-import logging
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import os
 import json
@@ -52,16 +52,21 @@ def health():
 
 @app.route('/invite', methods=['POST'])
 def invite():
-    data = request.json
+    data = request.json or {}
     token = data.get('token')
     server_id = data.get('server_id')
     email = data.get('email')
+
+    if not token or not server_id or not email:
+        return jsonify({'success': False, 'error': 'Missing required parameters: token, server_id, email'}), 400
+
     libraries = data.get('libraries', [])
     allow_sync = data.get('allow_sync', False)
     allow_camera_upload = data.get('allow_camera_upload', False)
     allow_channels = data.get('allow_channels', False)
     plex_home = data.get('plex_home', False)
     user_token = data.get('user_token')  # Optional: token of the user being invited for auto-accept
+    server_name = data.get('server_name')  # Optional: friendly name of the Plex server for invite matching
 
     try:
         account = MyPlexAccount(token=token)
@@ -77,7 +82,6 @@ def invite():
         sections_response.raise_for_status()
 
         # Parse the XML response to get section info
-        import xml.etree.ElementTree as ET
         root = ET.fromstring(sections_response.text)
 
         # Build mappings of section key to title (key is what Node.js sends)
@@ -131,18 +135,39 @@ def invite():
 
             if user_token:
                 try:
-                    time.sleep(3)
                     user_account = MyPlexAccount(token=user_token)
-                    pending_invites = user_account.pendingInvites()
+                    matching_invite = None
+                    # Retry up to 5 times (3 s apart) — Plex can take a few seconds to
+                    # propagate a new invite to the receiver's account.
+                    for _ in range(5):
+                        time.sleep(3)
+                        pending_invites = user_account.pendingInvites(includeSent=False, includeReceived=True)
+                        if not pending_invites:
+                            continue
+                        # Match by server friendly name (primary) or any server-share invite (fallback).
+                        server_invite_fallback = None
+                        for inv in pending_invites:
+                            if server_name:
+                                for srv in getattr(inv, 'servers', []):
+                                    if getattr(srv, 'name', None) == server_name:
+                                        matching_invite = inv
+                                        break
+                            if getattr(inv, 'server', False) and server_invite_fallback is None:
+                                server_invite_fallback = inv
+                            if matching_invite:
+                                break
+                        if not matching_invite and server_invite_fallback:
+                            matching_invite = server_invite_fallback
+                        if matching_invite:
+                            break
 
-                    if pending_invites and len(pending_invites) > 0:
-                        user_account.acceptInvite(pending_invites[0])
+                    if matching_invite:
+                        user_account.acceptInvite(matching_invite)
                         message = 'User invited and automatically accepted.'
+                    else:
+                        logger.error('Auto-accept failed: invite never appeared in pending list', {'email': email})
                 except Exception as accept_error:
-                    logger.error('Unable to auto-accept invite', {
-                        'email': email,
-                        'error': str(accept_error)
-                    })
+                    logger.error('Unable to auto-accept invite', {'email': email, 'error': str(accept_error)})
 
         return jsonify({'success': True, 'message': message})
     except Exception as e:
@@ -176,13 +201,7 @@ def libraries():
                 break
 
         if not target_user:
-            logger.error(f'User not found in account friends: {email}', {
-                'email': email,
-                'available_users': [
-                    {'email': user.email, 'title': getattr(user, 'title', 'N/A')}
-                    for user in account_users if user.email
-                ]
-            })
+            logger.error('User not found in Plex account friends', {'email': email, 'total_users': len(account_users)})
             return jsonify({'success': False, 'error': 'User not found in account friends'}), 404
 
         if request.method == 'GET':
@@ -273,7 +292,6 @@ def libraries():
                 sections_response.raise_for_status()
 
                 # Parse the XML response to get section IDs
-                import xml.etree.ElementTree as ET
                 root = ET.fromstring(sections_response.text)
 
                 # Build a mapping of section title to section id
@@ -597,7 +615,6 @@ def pin_libraries():
 
     except Exception as e:
         logger.error('Pin libraries error', {'error': str(e)})
-        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/library-details', methods=['GET'])
@@ -641,7 +658,6 @@ def library_details():
 
     except Exception as e:
         logger.error('Library details error', {'error': str(e)})
-        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
