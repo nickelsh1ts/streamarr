@@ -11,8 +11,6 @@ import { useParams, usePathname } from 'next/navigation';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-//TODO: Add a Linked Accounts page for users to link their accounts with external services and manage those connections
-
 const UserSettings = ({ children }: { children: React.ReactNode }) => {
   const intl = useIntl();
   const settings = useSettings();
@@ -56,6 +54,14 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
         (currentUser?.id !== 1 &&
           currentUser?.id !== user?.id &&
           hasPermission(Permission.ADMIN, user?.permissions ?? 0)),
+    },
+    {
+      text: intl.formatMessage({
+        id: 'settings.linkedAccounts',
+        defaultMessage: 'Linked Accounts',
+      }),
+      route: '/settings/linked-accounts',
+      regex: /\/settings\/linked-accounts/,
     },
     {
       text: intl.formatMessage({

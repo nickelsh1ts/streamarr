@@ -15,23 +15,11 @@ import { Router } from 'express';
 import { canMakePermissionsChange } from '@server/routes/user';
 import { UserType } from '@server/constants/user';
 import axios from 'axios';
-
-export const isOwnProfileOrAdmin = () => {
-  const authMiddleware = (req, res, next) => {
-    if (
-      !req.user?.hasPermission(Permission.MANAGE_USERS) &&
-      req.user?.id !== Number(req.params.id)
-    ) {
-      return next({
-        status: 403,
-        message: "You do not have permission to view this user's settings.",
-      });
-    }
-
-    next();
-  };
-  return authMiddleware;
-};
+import PlexTvAPI from '@server/api/plextv';
+import {
+  isOwnProfile,
+  isOwnProfileOrAdmin,
+} from '@server/utils/profileMiddleware';
 
 const userSettingsRoutes = Router({ mergeParams: true });
 
@@ -149,7 +137,7 @@ userSettingsRoutes.post<
 
     if (!user.settings) {
       user.settings = new UserSettings({
-        user: req.user,
+        user,
         locale: req.body.locale,
         sharedLibraries: newSharedLibraries,
         allowDownloads: req.body.allowDownloads ?? false,
@@ -326,6 +314,277 @@ userSettingsRoutes.post<
   }
 });
 
+userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
+  '/linked-accounts/plex',
+  isOwnProfile(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    let account: Awaited<ReturnType<PlexTvAPI['getUser']>>;
+    try {
+      const plextv = new PlexTvAPI(req.body.authToken);
+      account = await plextv.getUser();
+    } catch {
+      return next({ status: 401, message: 'Invalid or expired Plex token.' });
+    }
+
+    try {
+      if (await userRepository.exists({ where: { plexId: account.id } })) {
+        return next({
+          status: 422,
+          message: 'This Plex account is already linked to a Streamarr user.',
+        });
+      }
+
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+        relations: ['settings'],
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.email?.toLowerCase() !== account.email?.toLowerCase()) {
+        return next({
+          status: 422,
+          message:
+            'This Plex account is registered under a different email address.',
+        });
+      }
+
+      const plexServerId = getSettings().plex.machineId;
+      let librarySectionIds: string[] = [];
+
+      const adminUser = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.id = :id', { id: 1 })
+        .getOne();
+
+      // Resolve the libraries to share: honour any pre-existing user setting first,
+      // then fall back to the admin-configured default.
+      const existingSharedLibraries = user.settings?.sharedLibraries;
+      const enabledLibraries = getSettings().plex.libraries.filter(
+        (lib) => lib.enabled
+      );
+
+      if (existingSharedLibraries) {
+        // User already has explicit library settings — validate against enabled list
+        const requestedIds = existingSharedLibraries
+          .split(/[,|]/)
+          .map((id) => id.trim())
+          .filter((id) => id !== '');
+        librarySectionIds = requestedIds.filter((libId) =>
+          enabledLibraries.some((enabled) => enabled.id === libId)
+        );
+      } else {
+        // Fall back to admin default shared libraries
+        const defaultLibs = getSettings().main.sharedLibraries;
+
+        if (defaultLibs === 'all' || !defaultLibs) {
+          librarySectionIds = enabledLibraries.map((lib) => lib.id);
+        } else {
+          const adminConfiguredLibs = defaultLibs
+            .split(/[,|]/)
+            .map((id) => id.trim())
+            .filter((id) => id !== '');
+          librarySectionIds = adminConfiguredLibs.filter((libId) =>
+            enabledLibraries.some((enabled) => enabled.id === libId)
+          );
+        }
+      }
+
+      // valid plex user found, link to current user
+      user.userType = UserType.PLEX;
+      user.plexId = account.id;
+      user.plexUsername = account.username;
+      user.plexToken = account.authToken;
+
+      if (!user.settings) {
+        user.settings = new UserSettings({
+          user,
+          sharedLibraries:
+            librarySectionIds.length > 0 ? librarySectionIds.join('|') : null,
+          allowDownloads: getSettings().main.downloads ?? false,
+          allowLiveTv: getSettings().main.liveTv ?? false,
+        });
+      } else {
+        // Only overwrite sharedLibraries if the user didn't already have an explicit value
+        if (!existingSharedLibraries) {
+          user.settings.sharedLibraries =
+            librarySectionIds.length > 0 ? librarySectionIds.join('|') : null;
+        }
+        user.settings.allowDownloads =
+          user.settings.allowDownloads ?? getSettings().main.downloads ?? false;
+        user.settings.allowLiveTv =
+          user.settings.allowLiveTv ?? getSettings().main.liveTv ?? false;
+      }
+
+      await userRepository.save(user);
+
+      if (!adminUser || !adminUser.plexToken) {
+        logger.error(
+          'Missing Plex admin token — skipping Plex invitation for linked account',
+          { label: 'User Settings', userEmail: user.email }
+        );
+        return res.status(204).send();
+      }
+
+      // Check whether the user already has access to the Plex server.
+      const mainPlexTv = new PlexTvAPI(adminUser.plexToken);
+      let alreadyOnServer = false;
+      try {
+        alreadyOnServer = await mainPlexTv.checkUserAccess(account.id);
+      } catch (e) {
+        logger.error('Failed to check Plex server access for linked account', {
+          label: 'User Settings',
+          userEmail: user.email,
+          error: e.message,
+        });
+      }
+
+      const identifiers = [user.email, user.plexUsername].filter(
+        (identifier): identifier is string => !!identifier
+      );
+
+      if (alreadyOnServer) {
+        // User already has server access — update libraries
+        for (const identifier of identifiers) {
+          try {
+            const response = await axios.post(
+              'http://localhost:5005/libraries',
+              {
+                token: adminUser.plexToken,
+                server_id: plexServerId,
+                email: identifier,
+                libraries: librarySectionIds,
+                allow_sync: getSettings().main.downloads ?? false,
+                allow_camera_upload: false,
+                allow_channels: false,
+              }
+            );
+
+            if (!response.data.success) {
+              throw new Error(
+                response.data.error || 'Failed to update shared libraries'
+              );
+            }
+
+            logger.debug('Plex account linked successfully', {
+              label: 'User Settings',
+              userEmail: user.email,
+              identifier,
+              sharedLibraries: librarySectionIds,
+            });
+            break;
+          } catch (e) {
+            logger.warn(`Plex account link attempt failed`, {
+              label: 'User Settings',
+              userEmail: user.email,
+              identifier,
+              message: e.message,
+              responseData: e.response?.data,
+            });
+          }
+        }
+      } else {
+        // User not yet on server — send invite with auto-accept
+        for (const identifier of identifiers) {
+          try {
+            const response = await axios.post('http://localhost:5005/invite', {
+              token: adminUser.plexToken,
+              server_id: plexServerId,
+              server_name: getSettings().plex.name || null,
+              email: identifier,
+              libraries: librarySectionIds,
+              allow_sync: getSettings().main.downloads ?? false,
+              allow_camera_upload: false,
+              allow_channels: false,
+              plex_home: false,
+              user_token: req.body.authToken || user.plexToken || null,
+            });
+
+            if (!response.data.success) {
+              throw new Error(
+                response.data.error ||
+                  'Failed to invite user via Python service'
+              );
+            }
+
+            logger.debug('Plex account linked successfully', {
+              label: 'User Settings',
+              userEmail: user.email,
+              identifier,
+              sharedLibraries: librarySectionIds,
+            });
+            break;
+          } catch (e) {
+            logger.warn(`Plex account link attempt failed`, {
+              label: 'User Settings',
+              userEmail: user.email,
+              identifier,
+              message: e.message,
+              responseData: e.response?.data,
+            });
+          }
+        }
+      }
+
+      return res.status(204).send();
+    } catch (e) {
+      return next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string }>(
+  '/linked-accounts/plex',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.password')
+        .where({
+          id: Number(req.params.id),
+        })
+        .getOne();
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.id === 1) {
+        return next({
+          status: 400,
+          message:
+            'Cannot unlink media server accounts for the primary administrator.',
+        });
+      }
+
+      if (!user.email || !user.password) {
+        return next({
+          status: 400,
+          message: 'User does not have a local email or password set.',
+        });
+      }
+
+      user.userType = UserType.LOCAL;
+      user.plexId = null;
+      user.plexUsername = null;
+      user.plexToken = null;
+      await userRepository.save(user);
+
+      return res.status(204).send();
+    } catch (e) {
+      return next({ status: 500, message: e.message });
+    }
+  }
+);
+
 userSettingsRoutes.get<{ id: string }, UserSettingsNotificationsResponse>(
   '/notifications',
   isOwnProfileOrAdmin(),
@@ -380,7 +639,7 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
 
       if (!user.settings) {
         user.settings = new UserSettings({
-          user: req.user,
+          user,
           pgpKey: req.body.pgpKey,
           notificationTypes: req.body.notificationTypes,
         });
@@ -503,13 +762,13 @@ userSettingsRoutes.post<{ id: string }>(
         });
       }
 
-      const mainUser = await userRepository
+      const adminUser = await userRepository
         .createQueryBuilder('user')
         .addSelect('user.plexToken')
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      if (!mainUser || !mainUser.plexToken) {
+      if (!adminUser || !adminUser.plexToken) {
         return next({
           status: 500,
           message: 'Admin Plex token missing',
@@ -538,7 +797,7 @@ userSettingsRoutes.post<{ id: string }>(
           'http://localhost:5005/library-details',
           {
             params: {
-              token: mainUser.plexToken,
+              token: adminUser.plexToken,
               server_id: plexSettings.machineId,
               email: user.email,
             },

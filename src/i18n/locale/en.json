@@ -746,6 +746,9 @@
   "common.unlimited": {
     "defaultMessage": "Unlimited"
   },
+  "common.unlinkAccount": {
+    "defaultMessage": "Unlink Account"
+  },
   "common.unread": {
     "defaultMessage": "unread"
   },
@@ -3608,6 +3611,30 @@
   "librarySelector.defaultLibrariesWith": {
     "defaultMessage": "Default Libraries ({libraries})"
   },
+  "linkedAccounts.deleteFailed": {
+    "defaultMessage": "Failed to delete linked account"
+  },
+  "linkedAccounts.linkButton": {
+    "defaultMessage": "Link {name} Account"
+  },
+  "linkedAccounts.linkFailed": {
+    "defaultMessage": "An error occurred while linking your Plex account"
+  },
+  "linkedAccounts.noLinkedAccounts": {
+    "defaultMessage": "You do not have any external accounts linked to your account."
+  },
+  "linkedAccounts.noPermissionDescription": {
+    "defaultMessage": "You do not have permission to view this user's linked accounts"
+  },
+  "linkedAccounts.notLinked": {
+    "defaultMessage": "No Account Linked"
+  },
+  "linkedAccounts.title": {
+    "defaultMessage": "Linked Accounts"
+  },
+  "linkedAccounts.userNoLinkedAccounts": {
+    "defaultMessage": "This user does not have any external accounts linked to their account."
+  },
   "localSignup.confirmPasswordRequired": {
     "defaultMessage": "Please confirm your password"
   },
@@ -4297,6 +4324,9 @@
   },
   "settings.librariesSynced": {
     "defaultMessage": "Libraries have been synced with Plex."
+  },
+  "settings.linkedAccounts": {
+    "defaultMessage": "Linked Accounts"
   },
   "settings.notifications.description": {
     "defaultMessage": "Configure and enable notification agents."
