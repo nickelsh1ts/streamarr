@@ -35,6 +35,36 @@
     automerge: true,
   },
 
+  customManagers: [
+    {
+      customType: 'regex',
+      description: 'Track Node workflow containers',
+      fileMatch: ['^\\.github/workflows/.+\\.ya?ml$'],
+      matchStrings: ['container:\\s*node:(?<currentValue>\\d+(?:\\.\\d+){0,2})(?:-[^@\\s]+)?(?:@sha256:[a-fA-F0-9]+)?'],
+      datasourceTemplate: 'node',
+      depNameTemplate: 'node',
+      versioningTemplate: 'node',
+    },
+    {
+      customType: 'regex',
+      description: 'Track actions/setup-node runtime',
+      fileMatch: ['^\\.github/workflows/.+\\.ya?ml$'],
+      matchStrings: ['node-version:\\s*[\"\']?(?<currentValue>\\d+(?:\\.\\d+(?:\\.\\d+)?)?)[\"\']?'],
+      datasourceTemplate: 'node',
+      depNameTemplate: 'node',
+      versioningTemplate: 'node',
+    },
+    {
+      customType: 'regex',
+      description: 'Track package engines.node lower bound major',
+      fileMatch: ['^package\\.json$'],
+      matchStrings: ['\"node\"\\s*:\\s*\">=(?<currentValue>\\d+)\\.0\\.0\"'],
+      datasourceTemplate: 'node',
+      depNameTemplate: 'node',
+      versioningTemplate: 'node',
+    },
+  ],
+
   packageRules: [
     // Auto-merge non-major devDependency updates without review
     {
