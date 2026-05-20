@@ -4,17 +4,20 @@ import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as Yup from 'yup';
 import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
+import type { UserHookResponse } from '@app/hooks/useUser';
 
 interface LocalLoginProps {
-  revalidate: () => void;
+  revalidate: UserHookResponse['revalidate'];
 }
 
 const LocalLogin = ({ revalidate }: LocalLoginProps) => {
   const settings = useSettings();
+  const router = useRouter();
   const [loginError, setLoginError] = useState<string | null>(null);
   const intl = useIntl();
 
@@ -57,10 +60,16 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
       onSubmit={async (values) => {
         setLoginError(null);
         try {
-          await axios.post('/api/v1/auth/local', {
-            email: values.email.trim(),
-            password: values.password,
-          });
+          const { data: authenticatedUser } = await axios.post(
+            '/api/v1/auth/local',
+            {
+              email: values.email.trim(),
+              password: values.password,
+            }
+          );
+          revalidate(authenticatedUser, false).then(() =>
+            router.push('/watch')
+          );
         } catch {
           setLoginError(
             intl.formatMessage({
@@ -68,8 +77,6 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
               defaultMessage: 'Something went wrong while trying to sign in.',
             })
           );
-        } finally {
-          revalidate();
         }
       }}
     >
