@@ -91,12 +91,9 @@ const Topics = () => {
     },
     {
       label: (
-        <FormattedMessage
-          id="help.quickLinks.stats"
-          defaultMessage="Watch history"
-        />
+        <FormattedMessage id="common.activity" defaultMessage="Activity" />
       ),
-      href: '/stats',
+      href: '/activity',
       hidden: !userSettings?.tautulliEnabled,
     },
     {

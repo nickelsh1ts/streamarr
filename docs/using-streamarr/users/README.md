@@ -276,14 +276,14 @@ Each card shows the poster for the movie or TV show (using the Plex image proxy 
 Clicking/tapping a card opens the item directly in Plex Web. On touch devices, the first tap shows the detail overlay and the second tap navigates.
 
 {% hint style="info" %}
-The "Recently Watched" link at the top of the slider navigates to `/stats/history` — the watch history page within the embedded Tautulli interface.
+The "Recently Watched" link at the top of the slider navigates to `/activity/history` — the watch history page within the embedded Tautulli interface.
 {% endhint %}
 
 ### Profile Background
 
 The profile layout background dynamically uses TMDB backdrop images sourced from the user's recent watch history. If no watch history is available (or Tautulli is not configured), it falls back to Plex library backdrops or the default cinema image.
 
-These links navigate to `/stats` (Tautulli) and `/request` (Seerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
+These links navigate to `/activity` (Tautulli) and `/request` (Seerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
 
 ---
 

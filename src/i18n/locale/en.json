@@ -224,6 +224,9 @@
   "common.active": {
     "defaultMessage": "Active"
   },
+  "common.activity": {
+    "defaultMessage": "Activity"
+  },
   "common.addFirstTorrent": {
     "defaultMessage": "Add your first torrent to get started."
   },
@@ -2567,9 +2570,6 @@
   "help.quickLinks.resetPlexPassword": {
     "defaultMessage": "Reset Plex Password"
   },
-  "help.quickLinks.stats": {
-    "defaultMessage": "Watch history"
-  },
   "help.quickLinks.visitPlex": {
     "defaultMessage": "Visit {plex}.tv"
   },
@@ -4242,7 +4242,7 @@
     "defaultMessage": "Prowlarr Settings"
   },
   "servicesSettings.tautulli.description": {
-    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
+    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
   },
   "servicesSettings.tautulli.title": {
     "defaultMessage": "Tautulli Settings"
@@ -4981,9 +4981,6 @@
   },
   "userDropdown.startTutorial": {
     "defaultMessage": "Start Tutorial"
-  },
-  "userDropdown.watchHistory": {
-    "defaultMessage": "Watch History"
   },
   "userPermissions.admin.description": {
     "defaultMessage": "Full administrator access. Bypasses all other permission checks."

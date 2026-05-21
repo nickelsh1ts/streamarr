@@ -562,7 +562,7 @@ const UserProfile = () => {
             <div className="flex my-4 relative">
               <Link
                 className="flex items-center gap-2 link-primary"
-                href="/stats/history"
+                href="/activity/history"
               >
                 <span className="text-2xl font-bold">
                   <FormattedMessage

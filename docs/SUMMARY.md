@@ -17,7 +17,7 @@
 - [Plex Web](using-streamarr/plex-web.md)
 - [Calendar](using-streamarr/calendar/README.md)
 - [Requests](using-streamarr/requests.md)
-- [Stats](using-streamarr/stats.md)
+- [Activity](using-streamarr/activity.md)
 - [Downloads](using-streamarr/downloads/README.md)
 - [Notifications](using-streamarr/notifications/README.md)
   - [Email](using-streamarr/notifications/email.md)

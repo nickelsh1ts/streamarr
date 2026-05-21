@@ -139,7 +139,7 @@ const ServicesTautulli = () => {
         <p className="mb-5">
           <FormattedMessage
             id="servicesSettings.tautulli.description"
-            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
+            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
           />
         </p>
       </div>
