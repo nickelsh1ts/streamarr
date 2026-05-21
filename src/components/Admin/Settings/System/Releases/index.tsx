@@ -26,7 +26,7 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className="flex w-full flex-col space-y-3 rounded-md bg-secondary px-4 py-2 shadow-md ring-1 ring-primary sm:flex-row sm:space-y-0 sm:space-x-3">
+    <div className="flex w-full flex-col space-y-3 rounded-lg bg-base-200/50 hover:bg-base-200/30 px-4 py-2 shadow-md ring-1 ring-base-content/10 sm:flex-row sm:space-y-0 sm:space-x-3">
       <Modal
         onCancel={() => setModalOpen(false)}
         title={intl.formatMessage(
@@ -58,18 +58,12 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
         </span>
         {isLatest && (
           <Badge badgeType="success">
-            <FormattedMessage
-              id="aboutReleases.latestVersion"
-              defaultMessage="Latest Version"
-            />
+            <FormattedMessage id="common.latest" defaultMessage="Latest" />
           </Badge>
         )}
         {release.name.includes(currentVersion) && (
           <Badge badgeType="primary">
-            <FormattedMessage
-              id="aboutReleases.currentVersion"
-              defaultMessage="Current Version"
-            />
+            <FormattedMessage id="common.current" defaultMessage="Current" />
           </Badge>
         )}
       </div>

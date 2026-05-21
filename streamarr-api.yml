@@ -4216,6 +4216,9 @@ paths:
                   version:
                     type: string
                     example: '1.0.0'
+                  totalUsers:
+                    type: number
+                    example: 42
                   totalInvites:
                     type: number
                     example: 100
@@ -4223,9 +4226,75 @@ paths:
                     type: string
                     nullable: true
                     example: Asia/Tokyo
+                  uptime:
+                    type: number
+                    description: Node.js process uptime in seconds at time of request
+                    example: 1482643.5
+                  database:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: SQLite
+                      version:
+                        type: string
+                        example: 3.40.1
+                  nodeVersion:
+                    type: string
+                    example: '20.19.2'
+                  pythonVersion:
+                    type: string
+                    example: '3.11.9'
                   appDataPath:
                     type: string
                     example: /app/config
+                  diskSpace:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            deviceId:
+                              type: string
+                              example: '2064'
+                            name:
+                              type: string
+                              example: App Data
+                            path:
+                              type: string
+                              example: /app/config
+                            mountPoint:
+                              type: string
+                              example: /
+                            pathUsedBytes:
+                              type: number
+                              example: 104857600
+                            totalBytes:
+                              type: number
+                              example: 249108103168
+                            freeBytes:
+                              type: number
+                              example: 124554051584
+                            usedBytes:
+                              type: number
+                              example: 124554051584
+                            usedPercent:
+                              type: number
+                              format: float
+                              example: 50
+                      failedPaths:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: Image Cache
+                            path:
+                              type: string
+                              example: /app/config/cache/images
   /settings/releases:
     get:
       summary: Get GitHub releases

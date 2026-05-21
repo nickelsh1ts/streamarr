@@ -20,14 +20,8 @@
   "aboutReleases.changelogTitle": {
     "defaultMessage": "Release {version} Changelog"
   },
-  "aboutReleases.currentVersion": {
-    "defaultMessage": "Current Version"
-  },
   "aboutReleases.dataUnavailable": {
     "defaultMessage": "Release data is currently unavailable"
-  },
-  "aboutReleases.latestVersion": {
-    "defaultMessage": "Latest Version"
   },
   "aboutReleases.title": {
     "defaultMessage": "Releases"
@@ -218,6 +212,9 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
+  "common.about": {
+    "defaultMessage": "About"
+  },
   "common.actions": {
     "defaultMessage": "Actions"
   },
@@ -311,8 +308,14 @@
   "common.createEvent": {
     "defaultMessage": "Create Event"
   },
+  "common.current": {
+    "defaultMessage": "Current"
+  },
   "common.currentPassword": {
     "defaultMessage": "Current Password"
+  },
+  "common.database": {
+    "defaultMessage": "Database"
   },
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
@@ -439,6 +442,9 @@
   },
   "common.joined": {
     "defaultMessage": "Joined"
+  },
+  "common.latest": {
+    "defaultMessage": "Latest"
   },
   "common.lifetime": {
     "defaultMessage": "Life time"
@@ -781,6 +787,9 @@
   },
   "common.validation.titleRequired": {
     "defaultMessage": "You must provide a valid title"
+  },
+  "common.version": {
+    "defaultMessage": "Version"
   },
   "common.videoUrl": {
     "defaultMessage": "Video URL"
@@ -4913,11 +4922,38 @@
   "systemSettings.developWarning": {
     "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
   },
+  "systemSettings.diskSpace.collapseChildren": {
+    "defaultMessage": "Collapse children"
+  },
+  "systemSettings.diskSpace.expandChildren": {
+    "defaultMessage": "Expand children"
+  },
+  "systemSettings.diskSpace.freeSpace": {
+    "defaultMessage": "Free Space"
+  },
+  "systemSettings.diskSpace.location": {
+    "defaultMessage": "Location"
+  },
+  "systemSettings.diskSpace.title": {
+    "defaultMessage": "Disk Space"
+  },
+  "systemSettings.diskSpace.totalSpace": {
+    "defaultMessage": "Total Space"
+  },
+  "systemSettings.diskSpace.usedSpace": {
+    "defaultMessage": "Used Space"
+  },
+  "systemSettings.diskSpace.warningBody": {
+    "defaultMessage": "Streamarr could not read every configured local path. Available disk usage is shown below."
+  },
+  "systemSettings.diskSpace.warningTitle": {
+    "defaultMessage": "Some disk metrics are unavailable"
+  },
   "systemSettings.documentation": {
     "defaultMessage": "Documentation"
   },
-  "systemSettings.gettingSupport": {
-    "defaultMessage": "Getting Support"
+  "systemSettings.featureRequests": {
+    "defaultMessage": "Feature Requests"
   },
   "systemSettings.githubDiscussions": {
     "defaultMessage": "GitHub Discussions"
@@ -4925,20 +4961,29 @@
   "systemSettings.helpPayForCoffee": {
     "defaultMessage": "Help Pay for Coffee ☕️"
   },
+  "systemSettings.homePage": {
+    "defaultMessage": "Home Page"
+  },
+  "systemSettings.moreInfo": {
+    "defaultMessage": "More Info"
+  },
+  "systemSettings.nodeVersion": {
+    "defaultMessage": "Node.js"
+  },
   "systemSettings.outOfDate": {
     "defaultMessage": "Out of date"
   },
   "systemSettings.preferred": {
     "defaultMessage": "Preferred"
   },
-  "systemSettings.supportStreamarr": {
-    "defaultMessage": "Support Streamarr"
+  "systemSettings.pythonVersion": {
+    "defaultMessage": "Python"
+  },
+  "systemSettings.source": {
+    "defaultMessage": "Source"
   },
   "systemSettings.timeZone": {
     "defaultMessage": "Time Zone"
-  },
-  "systemSettings.title": {
-    "defaultMessage": "About Streamarr"
   },
   "systemSettings.totalUsers": {
     "defaultMessage": "Total Users"
@@ -4946,8 +4991,8 @@
   "systemSettings.upToDate": {
     "defaultMessage": "Up to date"
   },
-  "systemSettings.version": {
-    "defaultMessage": "Version"
+  "systemSettings.uptime": {
+    "defaultMessage": "Uptime"
   },
   "tutorial.ready.description": {
     "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."
