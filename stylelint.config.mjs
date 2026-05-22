@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     'at-rule-no-unknown': null,
     'no-descending-specificity': null,
