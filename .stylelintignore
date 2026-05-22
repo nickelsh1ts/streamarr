@@ -1,2 +1,3 @@
-// .stylelintignore
+# .stylelintignore
 **/*js
+public/tailwind.css
