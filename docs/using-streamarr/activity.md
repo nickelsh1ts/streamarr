@@ -1,6 +1,6 @@
-# Stats
+# Activity
 
-The Stats page embeds Tautulli to provide detailed Plex server statistics and activity monitoring.
+The Activity page embeds Tautulli to provide detailed Plex server statistics and activity monitoring.
 
 ## Overview
 
@@ -11,7 +11,7 @@ Tautulli integration provides:
 - Library analytics
 - User activity tracking
 
-Access Stats by clicking **Stats** in the navigation menu (requires Tautulli configuration).
+Access Activity by clicking **Activity** in the navigation menu (requires Tautulli configuration).
 
 ---
 
@@ -48,7 +48,7 @@ Analyze your media libraries:
 
 ## Configuration
 
-Tautulli must be configured in Settings before the Stats page becomes available.
+Tautulli must be configured in Settings before the Activity page becomes available.
 
 ### Setup
 
@@ -68,7 +68,7 @@ Tautulli must be configured in Settings before the Stats page becomes available.
 
 ### User Access
 
-Users see the Stats navigation item when Tautulli is configured. Access is controlled through the internal proxy system.
+Users see the Activity navigation item when Tautulli is configured. Access is controlled through the internal proxy system.
 
 ---
 
@@ -76,7 +76,7 @@ Users see the Stats navigation item when Tautulli is configured. Access is contr
 
 Tautulli is accessed through Streamarr's internal proxy:
 
-- URL path: `/stats` → proxies to Tautulli
+- URL path: `/activity` → proxies to Tautulli
 - Authentication handled by Streamarr session
 - No need to expose Tautulli directly to users
 
@@ -84,7 +84,7 @@ Tautulli is accessed through Streamarr's internal proxy:
 
 ## Troubleshooting
 
-### "Stats not appearing in navigation"
+### "Activity not appearing in navigation"
 
 1. Verify Tautulli is configured in Settings → Services → Tautulli
 2. Check that the service is enabled

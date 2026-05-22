@@ -8,7 +8,7 @@ import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSet
 import { useState } from 'react';
 import useSWR from 'swr';
 
-const Stats = () => {
+const Activity = () => {
   const { user, hasPermission } = useUser();
   const isAdmin = hasPermission(Permission.ADMIN);
   const [hostname] = useState(() =>
@@ -43,18 +43,18 @@ const Stats = () => {
   return (
     <div className="relative">
       <DynamicFrame
-        title="Stats"
+        title="Activity"
         domainURL={hostname}
         basePath={userSettings.tautulliBaseUrl}
-        newBase="/stats"
+        newBase="/activity"
         serviceName="Tautulli"
         settingsPath="/admin/settings/services/tautulli"
         isConfigured={true}
       >
-        <link rel="stylesheet" href="/stats.css" />
+        <link rel="stylesheet" href="/tautulli.css" />
       </DynamicFrame>
     </div>
   );
 };
 
-export default Stats;
+export default Activity;

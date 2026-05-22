@@ -111,11 +111,8 @@ const UserDropdown = ({
           />
         </DropDownMenu.Item>
         {userSettings?.tautulliEnabled && userSettings?.tautulliBaseUrl && (
-          <DropDownMenu.Item href="/stats">
-            <FormattedMessage
-              id="userDropdown.watchHistory"
-              defaultMessage="Watch History"
-            />
+          <DropDownMenu.Item href="/activity">
+            <FormattedMessage id="common.activity" defaultMessage="Activity" />
           </DropDownMenu.Item>
         )}
         {currentSettings.enableHelpCentre && (
