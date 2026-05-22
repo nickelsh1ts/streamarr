@@ -81,10 +81,16 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 3. Run the pre-commit checks before committing:
 
    ```bash
-   pnpm prepare
+   pnpm check
    ```
 
-   This runs formatting, linting, and type checking.
+   This runs formatting, linting, CSS linting, and type checking. Prettier and ESLint also run automatically on staged files via Husky when you commit (but not type checking — run `pnpm check` manually before opening a PR).
+
+   Commit messages are also validated against [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `feat: add X`, `fix: correct Y`). To bypass the commit message check in exceptional cases (e.g. a WIP merge commit):
+
+   ```bash
+   HUSKY_BYPASS=1 git commit -m "your message"
+   ```
 
 4. Commit your changes with clear, descriptive commit messages.
 
@@ -114,7 +120,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 - **Path aliases**: Use `@server/*` and `@app/*` for cross-folder imports. Same-folder relative imports (e.g. `./MyComponent`) are allowed and enforced by ESLint.
 - **TypeScript**: Strict mode is off by design. `experimentalDecorators` is enabled for TypeORM.
-- **Formatting**: Prettier handles code formatting. Run `pnpm format` or let `pnpm prepare` handle it.
+- **Formatting**: Prettier handles code formatting. Run `pnpm format` or `pnpm check` to run all checks at once.
 
 ### Backend (`server/`)
 
@@ -170,6 +176,7 @@ Streamarr uses `react-intl` for internationalization. Source strings are extract
 4. If you are changing translation keys or strings in code, make sure the extracted locale files are up to date before opening a PR.
 
 ### Translation Status:
+
 <a href="https://weblate.streamarr.dev/engage/streamarr/"><img src="https://weblate.streamarr.dev/widget/streamarr/multi-auto.svg" alt="Translation status" /></a>
 
 ## Need Help?

@@ -42,7 +42,9 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+        run: pnpm install --frozen-lockfile
       - name: i18n Check
         shell: bash
         env:
@@ -82,9 +84,11 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+        run: pnpm install --frozen-lockfile
       - name: Prepare
-        run: pnpm format && pnpm lint && pnpm typecheck
+        run: pnpm check
       - name: Build
         run: pnpm build
 

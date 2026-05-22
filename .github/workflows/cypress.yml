@@ -63,7 +63,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cypress-store-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts && pnpm rebuild cypress sqlite3 bcrypt sharp
+        run: pnpm install --frozen-lockfile
 
       - name: Cypress run
         uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0

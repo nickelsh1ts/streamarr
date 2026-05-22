@@ -25,7 +25,7 @@ Express serves API routes (`/api/v1/*`) and delegates everything else to Next.js
 | Dev (Node only)    | `pnpm dev`                                                           |
 | Dev (Python svc)   | `pnpm start:python` (separate terminal)                              |
 | Build all          | `pnpm build`                                                         |
-| Pre-commit check   | `pnpm prepare` (format + lint + typecheck)                           |
+| Pre-commit check   | `pnpm check` (format + lint + typecheck)                             |
 | Type check         | `pnpm typecheck` / `pnpm typecheck:server` / `pnpm typecheck:client` |
 | Lint               | `pnpm lint` / `pnpm css-lint`                                        |
 | Format             | `pnpm format`                                                        |
