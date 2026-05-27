@@ -215,6 +215,9 @@
   "common.about": {
     "defaultMessage": "About"
   },
+  "common.accountExpired": {
+    "defaultMessage": "Account Expired"
+  },
   "common.actions": {
     "defaultMessage": "Actions"
   },
@@ -320,6 +323,9 @@
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
   },
+  "common.deactivate": {
+    "defaultMessage": "Deactivate"
+  },
   "common.declined": {
     "defaultMessage": "Declined"
   },
@@ -409,6 +415,9 @@
   },
   "common.goBack": {
     "defaultMessage": "Go back"
+  },
+  "common.here": {
+    "defaultMessage": "here"
   },
   "common.home": {
     "defaultMessage": "Home"
@@ -574,6 +583,9 @@
   },
   "common.progress": {
     "defaultMessage": "Progress"
+  },
+  "common.promote": {
+    "defaultMessage": "Promote"
   },
   "common.ratio": {
     "defaultMessage": "Ratio"
@@ -1237,6 +1249,21 @@
   },
   "event.summaryRequired": {
     "defaultMessage": "You must provide a valid summary"
+  },
+  "expiredAccess.accountSettings": {
+    "defaultMessage": "Account Settings"
+  },
+  "expiredAccess.message": {
+    "defaultMessage": "Your account is currently expired. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}"
+  },
+  "expiredAccess.signOut": {
+    "defaultMessage": "Sign Out"
+  },
+  "expiredAccess.title": {
+    "defaultMessage": "Account Access Expired"
+  },
+  "expiredAccess.viewProfile": {
+    "defaultMessage": "View Profile"
   },
   "footer.contactUs": {
     "defaultMessage": "Contact Us"
@@ -3437,6 +3464,9 @@
   "invite.expiration": {
     "defaultMessage": "Expiration"
   },
+  "invite.expiresAt": {
+    "defaultMessage": "{past, select, true {Expired} other {Expires}} {inDate}"
+  },
   "invite.inviteAs": {
     "defaultMessage": "Invite As"
   },
@@ -3469,6 +3499,12 @@
   },
   "invite.timeUnit.week": {
     "defaultMessage": "{count, plural, one {Week} other {Weeks}}"
+  },
+  "invite.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "invite.trialPeriodOutcome": {
+    "defaultMessage": "{outcome, select, promote {Promote} other {Deactivate}} after {period} {period, plural, one {day} other {days}}"
   },
   "invite.updatedSuccessfully": {
     "defaultMessage": "Invite updated successfully!"
@@ -3779,6 +3815,12 @@
   "notFound.quote": {
     "defaultMessage": "There are places out there you can't find on any map. They're not gone, they're just lost."
   },
+  "notification.accessExtensionRequested": {
+    "defaultMessage": "Access Extension Requested"
+  },
+  "notification.accessExtensionRequested.description": {
+    "defaultMessage": "Get notified when a user requests an access extension"
+  },
   "notification.deleteThis": {
     "defaultMessage": "Delete this notification"
   },
@@ -4027,6 +4069,12 @@
   },
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
+  },
+  "profile.accountExpiredMessage": {
+    "defaultMessage": "Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
+  },
+  "profile.accountExpiredMessageAdmin": {
+    "defaultMessage": "This user's account has expired. {trialPeriodEnabled, select, true {Extend by setting a new trial period {link}.} other {Enable trial periods again to extend access.}}"
   },
   "profile.editSettings": {
     "defaultMessage": "Edit Settings"
@@ -4307,6 +4355,33 @@
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "URL must not end in a trailing slash"
   },
+  "settings.ExpiredTrialPeriodDescriptionPromote": {
+    "defaultMessage": "Cannot create invites until after this date (Default: {count, plural, one {# day} other {# days}})"
+  },
+  "settings.accessExtensionRequest.button": {
+    "defaultMessage": "Request Extension"
+  },
+  "settings.accessExtensionRequest.description": {
+    "defaultMessage": "Request an access extension from administrators."
+  },
+  "settings.accessExtensionRequest.error": {
+    "defaultMessage": "Failed to send access extension request."
+  },
+  "settings.accessExtensionRequest.requested": {
+    "defaultMessage": "Request Pending"
+  },
+  "settings.accessExtensionRequest.submitting": {
+    "defaultMessage": "Sending Request..."
+  },
+  "settings.accessExtensionRequest.success": {
+    "defaultMessage": "Access extension request sent successfully."
+  },
+  "settings.accessExtensionRequest.title": {
+    "defaultMessage": "Access Extension"
+  },
+  "settings.accessExtensionRequested": {
+    "defaultMessage": "Extension Requested"
+  },
   "settings.accountType": {
     "defaultMessage": "Account Type"
   },
@@ -4318,6 +4393,9 @@
   },
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.allowPlexHome": {
+    "defaultMessage": "Plex Home Member"
   },
   "settings.crossOriginAccess": {
     "defaultMessage": "Cross-Origin Access"
@@ -4628,11 +4706,8 @@
   "settings.trialPeriod": {
     "defaultMessage": "Trial Period"
   },
-  "settings.trialPeriodDefaultDays": {
-    "defaultMessage": "{count, plural, one {(Default: # day)} other {(Default: # days)}}"
-  },
-  "settings.trialPeriodEndDateDescription": {
-    "defaultMessage": "Cannot create invites until after this date"
+  "settings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "Access will be deactivated after this date (Default: {count, plural, one {# day} other {# days}})"
   },
   "settings.user.onboardingDescription": {
     "defaultMessage": "Reset the welcome modal and tutorial {ownProfile, select, true {} other {for this user}}"
@@ -5123,6 +5198,9 @@
   "userSettings.InviteSettingsDescription": {
     "defaultMessage": "Initial settings associated to new invites"
   },
+  "userSettings.accessExtensionRequested": {
+    "defaultMessage": "Access Extension Requested"
+  },
   "userSettings.browser": {
     "defaultMessage": "Browser"
   },
@@ -5143,9 +5221,6 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
-  },
-  "userSettings.enableTrialPeriodDescription": {
-    "defaultMessage": "Set a period of days where new users cannot create invites"
   },
   "userSettings.engine": {
     "defaultMessage": "Engine"
@@ -5260,6 +5335,18 @@
   },
   "userSettings.title": {
     "defaultMessage": "User Settings"
+  },
+  "userSettings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "Set a period of days until users are deactivated and lose access"
+  },
+  "userSettings.trialPeriodDescriptionPromote": {
+    "defaultMessage": "Set a period of days until users can create invites"
+  },
+  "userSettings.trialPeriodOutcome.deactivate": {
+    "defaultMessage": "Deactivate"
+  },
+  "userSettings.trialPeriodOutcome.promote": {
+    "defaultMessage": "Promote"
   },
   "users.automaticallyGeneratePassword": {
     "defaultMessage": "Automatically Generate Password"

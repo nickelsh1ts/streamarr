@@ -10,6 +10,7 @@ import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 
 interface SeerrMainSettings {
+  defaultPermissions?: number;
   defaultQuotas: {
     movie: { quotaLimit: number; quotaDays: number };
     tv: { quotaLimit: number; quotaDays: number };
@@ -24,6 +25,7 @@ interface RawSeerrUser {
   plexUsername?: string | null;
   email?: string;
   avatar?: string | null;
+  permissions?: number;
   movieQuotaLimit?: number | null;
   movieQuotaDays?: number | null;
   tvQuotaLimit?: number | null;
@@ -116,6 +118,15 @@ class SeerrAPI {
     return users.find((u) => u.plexId === plexId) ?? null;
   }
 
+  private async updatePermissions(
+    seerrUserId: number,
+    permissions: number
+  ): Promise<void> {
+    await this.axios.post(`/user/${seerrUserId}/settings/permissions`, {
+      permissions,
+    });
+  }
+
   private async fetchMediaDetails(
     path: string,
     label: string
@@ -154,6 +165,27 @@ class SeerrAPI {
       });
       throw new Error(
         `[Seerr] Failed to fetch default quotas: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
+  public async getDefaultPermissions(): Promise<number> {
+    try {
+      const response =
+        await this.axios.get<SeerrMainSettings>('/settings/main');
+
+      if (typeof response.data.defaultPermissions !== 'number') {
+        throw new Error('Seerr default permissions are missing or invalid.');
+      }
+
+      return response.data.defaultPermissions;
+    } catch (e) {
+      logger.error('Something went wrong fetching Seerr default permissions', {
+        label: 'Seerr API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error(
+        `[Seerr] Failed to fetch default permissions: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -293,6 +325,29 @@ class SeerrAPI {
 
   public getTvDetails(tmdbId: number): Promise<Record<string, unknown>> {
     return this.fetchMediaDetails(`/tv/${tmdbId}`, 'TV details');
+  }
+
+  public async revokeAllPermissionsByPlexId(plexId: number): Promise<void> {
+    const seerrUser = await this.findSeerrUserByPlexId(plexId);
+
+    if (!seerrUser) {
+      throw new Error('Seerr user not found for Plex ID.');
+    }
+
+    await this.updatePermissions(seerrUser.id, 0);
+  }
+
+  public async restoreDefaultPermissionsByPlexId(
+    plexId: number
+  ): Promise<void> {
+    const seerrUser = await this.findSeerrUserByPlexId(plexId);
+
+    if (!seerrUser) {
+      throw new Error('Seerr user not found for Plex ID.');
+    }
+
+    const defaultPermissions = await this.getDefaultPermissions();
+    await this.updatePermissions(seerrUser.id, defaultPermissions);
   }
 }
 

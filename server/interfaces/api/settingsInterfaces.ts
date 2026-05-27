@@ -69,6 +69,7 @@ export interface PublicSettingsResponse {
   enableHelpCentre: boolean;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  trialPeriodOutcome: 'promote' | 'deactivate';
   defaultInviteQuotas: {
     quotaLimit?: number;
     quotaDays?: number;

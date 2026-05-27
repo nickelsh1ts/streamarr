@@ -25,7 +25,10 @@ import {
   UserPlusIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+import {
+  CheckBadgeIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/solid';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import axios from 'axios';
@@ -36,6 +39,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import validator from 'validator';
 import * as Yup from 'yup';
+import ToolTip from '@app/components/Common/ToolTip';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
@@ -679,7 +683,34 @@ const AdminUsers = () => {
                 )}
               </Table.TD>
               <Table.TD>
-                {user.userType === UserType.PLEX ? (
+                {!user?.active ? (
+                  <div className="flex items-center gap-1">
+                    <Badge
+                      href={`/admin/users/${user.id}/settings`}
+                      badgeType="error"
+                    >
+                      <FormattedMessage
+                        id="common.expired"
+                        defaultMessage="Expired"
+                      />
+                    </Badge>
+                    {user?.settings?.trialExtensionRequested && (
+                      <ToolTip
+                        content={intl.formatMessage({
+                          id: 'userSettings.accessExtensionRequested',
+                          defaultMessage: 'Access Extension Requested',
+                        })}
+                      >
+                        <Link
+                          href={`/admin/users/${user.id}/settings`}
+                          className="text-warning transition duration-300 hover:opacity-80"
+                        >
+                          <ExclamationTriangleIcon className="h-5 w-5" />
+                        </Link>
+                      </ToolTip>
+                    )}
+                  </div>
+                ) : user.userType === UserType.PLEX ? (
                   <Badge
                     className="bg-accent/70 text-accent-content"
                     badgeType="warning"

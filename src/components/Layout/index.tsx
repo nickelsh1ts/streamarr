@@ -2,7 +2,8 @@
 import Footer from '@app/components/Layout/Footer';
 import Header from '@app/components/Layout/Header';
 import MobileMenu from '@app/components/Layout/MobileMenu';
-import { redirect, usePathname } from 'next/navigation';
+import Modal from '@app/components/Common/Modal';
+import { redirect, usePathname, useRouter } from 'next/navigation';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import useSWR, { SWRConfig } from 'swr';
@@ -15,6 +16,7 @@ import { OnboardingProvider } from '@app/context/OnboardingContext';
 import WelcomeModal from '@app/components/WelcomeModal';
 import TutorialSpotlight from '@app/components/TutorialSpotlight';
 import TutorialWizard from '@app/components/TutorialWizard';
+import { useIntl } from 'react-intl';
 import type {
   UserSettingsGeneralResponse,
   UserSettingsNotificationsResponse,
@@ -45,6 +47,18 @@ const Layout = ({
     dynamicSettings?.initialized ??
     currentSettings.initialized ??
     serverInitialized;
+  const isExpiredUser = !user?.active;
+  const isExpiredAllowedRoute = useMemo(
+    () =>
+      pathname.match(
+        /^\/(profile(\/settings(\/.*)?)?|logout|signin|resetpassword(\/.*)?|setup)$/
+      ) !== null,
+    [pathname]
+  );
+  const isExpiredRestrictedRoute =
+    !!user && isExpiredUser && !loading && !isExpiredAllowedRoute;
+  const shouldShowExpiredOverlay =
+    isExpiredRestrictedRoute && !publicRoutes.test(pathname);
 
   const isMainLayout = useMemo(
     () =>
@@ -125,7 +139,7 @@ const Layout = ({
 
     // Authenticated users on signin/home go to watch
     if (pathname.match(/(signin|\/$)/) && user && !loading) {
-      redirect('/watch');
+      redirect(isExpiredUser ? '/profile' : '/watch');
     }
 
     // Signup disabled redirect
@@ -178,11 +192,56 @@ const Layout = ({
         ) : (
           children
         )}
+        {shouldShowExpiredOverlay && <ExpiredAccessOverlay />}
       </OnboardingProvider>
     </SWRConfig>
   );
 };
 export default Layout;
+
+const ExpiredAccessOverlay = () => {
+  const intl = useIntl();
+  const router = useRouter();
+  const { currentSettings } = useSettings();
+
+  return (
+    <Modal
+      show
+      size="sm"
+      onCancel={() => router.push('/profile')}
+      title={intl.formatMessage({
+        id: 'expiredAccess.title',
+        defaultMessage: 'Account Access Expired',
+      })}
+      subtitle={intl.formatMessage(
+        {
+          id: 'expiredAccess.message',
+          defaultMessage:
+            'Your account is currently expired. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}',
+        },
+        { isTrialEnabled: currentSettings.enableTrialPeriod }
+      )}
+      onOk={() => router.push('/profile/settings/general')}
+      okText={intl.formatMessage({
+        id: 'expiredAccess.accountSettings',
+        defaultMessage: 'Account Settings',
+      })}
+      okButtonType="primary"
+      onSecondary={() => router.push('/profile')}
+      secondaryText={intl.formatMessage({
+        id: 'expiredAccess.viewProfile',
+        defaultMessage: 'View Profile',
+      })}
+      secondaryButtonType="default"
+      onTertiary={() => router.push('/logout')}
+      tertiaryText={intl.formatMessage({
+        id: 'expiredAccess.signOut',
+        defaultMessage: 'Sign Out',
+      })}
+      tertiaryButtonType="ghost"
+    />
+  );
+};
 
 const FaderBackground = () => {
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {

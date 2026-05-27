@@ -170,6 +170,21 @@ const NotificationTypeSelector = ({
           }),
         hasNotifyUser: true,
       },
+      {
+        id: 'access-extension-requested',
+        name: intl.formatMessage({
+          id: 'notification.accessExtensionRequested',
+          defaultMessage: 'Access Extension Requested',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.accessExtensionRequested.description',
+          defaultMessage:
+            'Get notified when a user requests an access extension',
+        }),
+        value: Notification.ACCESS_EXTENSION_REQUESTED,
+        hidden: !user || !hasPermission(Permission.MANAGE_USERS),
+        hasNotifyUser: true,
+      },
       // {
       //   id: 'system',
       //   name: intl.formatMessage({

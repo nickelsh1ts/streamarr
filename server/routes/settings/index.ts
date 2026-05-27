@@ -856,20 +856,35 @@ settingsRoutes.get(
 );
 
 settingsRoutes.get('/jobs', (_req, res) => {
+  const settings = getSettings();
   res.status(200).json(
-    scheduledJobs.map((job) => ({
-      id: job.id,
-      name: job.name,
-      type: job.type,
-      interval: job.interval,
-      cronSchedule: job.cronSchedule,
-      nextExecutionTime: job.job.nextInvocation(),
-      running: job.running ? job.running() : false,
-    }))
+    scheduledJobs
+      .filter((job) => {
+        // Hide trial expiry job if trial periods are disabled
+        if (job.id === 'trial-expiry' && !settings.main.enableTrialPeriod) {
+          return false;
+        }
+        return true;
+      })
+      .map((job) => ({
+        id: job.id,
+        name: job.name,
+        type: job.type,
+        interval: job.interval,
+        cronSchedule: job.cronSchedule,
+        nextExecutionTime: job.job.nextInvocation(),
+        running: job.running ? job.running() : false,
+      }))
   );
 });
 
 settingsRoutes.post<{ jobId: string }>('/jobs/:jobId/run', (req, res, next) => {
+  const settings = getSettings();
+  // Prevent running trial expiry job if trial periods are disabled
+  if (req.params.jobId === 'trial-expiry' && !settings.main.enableTrialPeriod) {
+    return next({ status: 404, message: 'Job not found.' });
+  }
+
   const scheduledJob = scheduledJobs.find((job) => job.id === req.params.jobId);
 
   if (!scheduledJob) {
@@ -892,6 +907,15 @@ settingsRoutes.post<{ jobId: string }>('/jobs/:jobId/run', (req, res, next) => {
 settingsRoutes.post<{ jobId: JobId }>(
   '/jobs/:jobId/cancel',
   (req, res, next) => {
+    const settings = getSettings();
+    // Prevent canceling trial expiry job if trial periods are disabled
+    if (
+      req.params.jobId === 'trial-expiry' &&
+      !settings.main.enableTrialPeriod
+    ) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
     const scheduledJob = scheduledJobs.find(
       (job) => job.id === req.params.jobId
     );
@@ -919,6 +943,15 @@ settingsRoutes.post<{ jobId: JobId }>(
 settingsRoutes.post<{ jobId: JobId }>(
   '/jobs/:jobId/schedule',
   (req, res, next) => {
+    const settings = getSettings();
+    // Prevent scheduling trial expiry job if trial periods are disabled
+    if (
+      req.params.jobId === 'trial-expiry' &&
+      !settings.main.enableTrialPeriod
+    ) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
     const scheduledJob = scheduledJobs.find(
       (job) => job.id === req.params.jobId
     );
@@ -928,7 +961,6 @@ settingsRoutes.post<{ jobId: JobId }>(
     }
 
     const result = rescheduleJob(scheduledJob.job, req.body.schedule);
-    const settings = getSettings();
 
     if (result) {
       settings.jobs[scheduledJob.id].schedule = req.body.schedule;

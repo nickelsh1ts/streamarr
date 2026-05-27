@@ -9,6 +9,10 @@ import type {
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { plexSync } from '@server/lib/plexSync';
+import {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
@@ -20,6 +24,10 @@ import {
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
+import { trialExtensionRequestLimiter } from '@server/lib/rateLimiters';
+import { getIntl } from '@server/i18n';
+import moment from '@server/utils/momentWithLocale';
+import notificationManager from '@server/lib/notifications';
 
 const userSettingsRoutes = Router({ mergeParams: true });
 
@@ -36,6 +44,7 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         liveTv: globalLiveTv,
         enableTrialPeriod,
         trialPeriodDays,
+        trialPeriodOutcome,
         releaseSched,
       },
       tautulli: { urlBase, enabled: tautulliEnabled },
@@ -73,10 +82,17 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         sharedLibraries: user.settings?.sharedLibraries ?? null,
         allowDownloads: user.settings?.allowDownloads ?? false,
         allowLiveTv: user.settings?.allowLiveTv ?? false,
+        allowPlexHome: user.settings?.allowPlexHome ?? false,
         globalSharedLibraries: defaultSharedLibraries,
         trialPeriodEndsAt: user.settings?.trialPeriodEndsAt ?? null,
+        trialPeriodOutcome: user.settings?.trialPeriodOutcome ?? null,
+        trialExtensionRequested:
+          user.settings?.trialExtensionRequested ?? false,
+        trialExtensionRequestedAt:
+          user.settings?.trialExtensionRequestedAt ?? null,
         globalEnableTrialPeriod: enableTrialPeriod,
         globalTrialPeriodDays: trialPeriodDays,
+        globalTrialPeriodOutcome: trialPeriodOutcome,
         tautulliBaseUrl: urlBase,
         tautulliEnabled: tautulliEnabled,
         requestUrl: requestUrl,
@@ -86,6 +102,115 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
       });
     } catch (e) {
       next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.post<{ id: string }>(
+  '/extension',
+  trialExtensionRequestLimiter,
+  isOwnProfile(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.active) {
+        if (!getSettings().main.enableTrialPeriod) {
+          return next({
+            status: 403,
+            message: 'Trial periods are not enabled.',
+          });
+        }
+        if (!user.settings?.trialPeriodEndsAt) {
+          return next({
+            status: 403,
+            message:
+              'Trial extension requests are only available for users in trial or already expired.',
+          });
+        }
+      }
+
+      if (!user.settings) {
+        user.settings = new UserSettings({
+          user,
+          trialPeriodOutcome: getSettings().main.trialPeriodOutcome,
+          trialExtensionRequested: false,
+          trialExtensionRequestedAt: null,
+        });
+      }
+
+      if (user.settings.trialExtensionRequested) {
+        return res.status(204).send();
+      }
+
+      user.settings.trialExtensionRequested = true;
+      user.settings.trialExtensionRequestedAt = new Date();
+
+      await userRepository.save(user);
+
+      const admins = await userRepository
+        .createQueryBuilder('user')
+        .where(
+          '(user.permissions & :manageUsers) = :manageUsers OR (user.permissions & :admin) = :admin',
+          {
+            manageUsers: Permission.MANAGE_USERS,
+            admin: Permission.ADMIN,
+          }
+        )
+        .getMany();
+
+      await Promise.all(
+        admins.map(async (adminUser) => {
+          const intl = getIntl(adminUser.settings?.locale);
+
+          notificationManager.sendNotification(
+            NotificationType.ACCESS_EXTENSION_REQUESTED,
+            {
+              subject: intl.formatMessage({
+                id: 'notifications.userSettings.extensionRequested',
+                defaultMessage: 'Access extension requested',
+              }),
+              message: intl.formatMessage(
+                {
+                  id: 'notifications.userSettings.extensionRequestedMessage',
+                  defaultMessage:
+                    '{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}',
+                },
+                {
+                  displayName: user.displayName,
+                  accessEndDate:
+                    moment(
+                      user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
+                    )
+                      .locale(intl.locale)
+                      .format('MMM D, h:mm A') ?? 'Unknown',
+                  isPast: moment(
+                    user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
+                  ).isBefore(moment()),
+                }
+              ),
+              notifySystem: false,
+              notifyAdmin: false,
+              notifyUser: adminUser,
+              actionUrl: `/admin/users/${user.id}/settings`,
+              actionUrlTitle: 'Manage User',
+              severity: NotificationSeverity.WARNING,
+            }
+          );
+        })
+      );
+
+      return res.status(204).send();
+    } catch (e) {
+      return next({ status: 500, message: e.message });
     }
   }
 );
@@ -117,6 +242,8 @@ userSettingsRoutes.post<
     // Store previous sharedLibraries value to detect changes
     const previousSharedLibraries = user.settings?.sharedLibraries;
     const previousAllowDownloads = user.settings?.allowDownloads;
+    const previousAllowPlexHome = user.settings?.allowPlexHome ?? false;
+    const previousState = user.active;
     const newSharedLibraries =
       req.body.sharedLibraries === '' || req.body.sharedLibraries === 'server'
         ? null
@@ -142,12 +269,18 @@ userSettingsRoutes.post<
         sharedLibraries: newSharedLibraries,
         allowDownloads: req.body.allowDownloads ?? false,
         allowLiveTv: req.body.allowLiveTv ?? false,
+        allowPlexHome:
+          req.user?.id === 1 ? (req.body.allowPlexHome ?? false) : false,
+        trialPeriodOutcome: getSettings().main.trialPeriodOutcome,
       });
     } else {
       user.settings.locale = req.body.locale;
       user.settings.sharedLibraries = newSharedLibraries;
       user.settings.allowDownloads = req.body.allowDownloads ?? false;
       user.settings.allowLiveTv = req.body.allowLiveTv ?? false;
+      if (req.user?.id === 1) {
+        user.settings.allowPlexHome = req.body.allowPlexHome ?? false;
+      }
     }
 
     if (
@@ -155,31 +288,225 @@ userSettingsRoutes.post<
       req.user.id !== user.id &&
       user.id !== 1 &&
       !user.hasPermission(Permission.MANAGE_USERS) &&
-      req.body.trialPeriodEndsAt !== undefined
+      (req.body.trialPeriodEndsAt !== undefined ||
+        req.body.trialPeriodOutcome !== undefined)
     ) {
-      if (req.body.trialPeriodEndsAt === null) {
+      if (
+        req.body.trialPeriodEndsAt === null ||
+        req.body.trialPeriodOutcome === null
+      ) {
         user.settings.trialPeriodEndsAt = null;
+        user.settings.trialPeriodOutcome = null;
+        user.settings.trialExtensionRequested = false;
+        user.settings.trialExtensionRequestedAt = null;
+        if (!user.active) {
+          user.active = true;
+          user.accessRevokedAt = null;
+        }
       } else {
         const trialDate = new Date(req.body.trialPeriodEndsAt);
+        const trialPeriodOutcome =
+          req.body.trialPeriodOutcome ??
+          user.settings?.trialPeriodOutcome ??
+          getSettings().main.trialPeriodOutcome;
 
-        if (isNaN(trialDate.getTime())) {
+        if (
+          isNaN(trialDate.getTime()) ||
+          (trialPeriodOutcome !== 'promote' &&
+            trialPeriodOutcome !== 'deactivate')
+        ) {
           return next({
             status: 400,
-            message: 'Invalid trial period end date.',
+            message:
+              'Invalid trial period settings. Provide a valid ISO date for trialPeriodEndsAt and outcome must be "promote" or "deactivate".',
           });
         }
 
         user.settings.trialPeriodEndsAt = trialDate;
+        user.settings.trialPeriodOutcome = trialPeriodOutcome;
+        user.settings.trialExtensionRequested = false;
+        user.settings.trialExtensionRequestedAt = null;
+
+        if (
+          (trialPeriodOutcome === 'promote' && !user.active) ||
+          trialDate > new Date()
+        ) {
+          user.active = true;
+          user.accessRevokedAt = null;
+        } else if (
+          trialPeriodOutcome === 'deactivate' &&
+          user.active &&
+          trialDate < new Date()
+        ) {
+          user.active = false;
+          user.accessRevokedAt = new Date();
+        }
       }
     }
 
     await userRepository.save(user);
 
-    // Sync with Plex if sharedLibraries changed, or forcePlexSync is true, and user has permissions
+    const plexHomeChanged =
+      user.userType === UserType.PLEX &&
+      user.active &&
+      (user.settings?.allowPlexHome ?? false) !== previousAllowPlexHome;
+
+    if (user.plexId && (previousState !== user.active || plexHomeChanged)) {
+      const settings = getSettings();
+      const seerrSettings = settings.overseerr;
+
+      const admin = await getRepository(User)
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.id = :id', { id: 1 })
+        .getOne();
+
+      if (!admin?.plexToken || !settings.plex.machineId) {
+        logger.warn('Missing plex admin token or machine id', {
+          label: 'User Settings',
+          userId: user.id,
+        });
+      } else {
+        try {
+          const plexTvApi = new PlexTvAPI(admin.plexToken);
+          if (previousState && !plexHomeChanged) {
+            try {
+              await plexTvApi.deprovisionUser(
+                user.plexId,
+                settings.plex.machineId
+              );
+            } catch (e) {
+              logger.error('Failed to deprovision user.', {
+                label: 'User Settings',
+                userId: user.id,
+                errorMessage: e instanceof Error ? e.message : String(e),
+              });
+            }
+          } else {
+            if (plexHomeChanged) {
+              try {
+                await plexTvApi.deprovisionUser(
+                  user.plexId,
+                  settings.plex.machineId
+                );
+              } catch (e) {
+                logger.error(
+                  'Failed to deprovision user before plexHome re-invite',
+                  {
+                    label: 'User Settings',
+                    userId: user.id,
+                    errorMessage: e instanceof Error ? e.message : String(e),
+                  }
+                );
+              }
+            }
+
+            const inviteAttempts = [user.email, user.plexUsername].filter(
+              Boolean
+            );
+
+            const librarySectionIds =
+              user.settings?.sharedLibraries === 'all' ||
+              ((user.settings?.sharedLibraries === 'server' ||
+                user.settings?.sharedLibraries === '' ||
+                user.settings?.sharedLibraries === null) &&
+                getSettings().main.sharedLibraries === 'all')
+                ? getSettings()
+                    .plex.libraries.filter((lib) => lib.enabled)
+                    .map((lib) => lib.id)
+                : user.settings?.sharedLibraries === 'server'
+                  ? null
+                  : (user.settings?.sharedLibraries
+                      ?.split(/[,|]/)
+                      .map((id) => id.trim())
+                      .filter((id) => id !== '') ??
+                    getSettings()
+                      .main.sharedLibraries.split(/[,|]/)
+                      .map((id) => id.trim())
+                      .filter(
+                        (id) =>
+                          id !== '' &&
+                          getSettings()
+                            .plex.libraries.filter((lib) => lib.enabled)
+                            .some((lib) => lib.id === id)
+                      ));
+
+            for (const identifier of inviteAttempts) {
+              try {
+                const response = await axios.post(
+                  'http://localhost:5005/invite',
+                  {
+                    token: admin.plexToken,
+                    server_id: settings.plex.machineId,
+                    email: identifier,
+                    libraries: librarySectionIds,
+                    allow_sync: user?.settings?.allowDownloads ?? false,
+                    allow_camera_upload: false,
+                    plex_home: user.settings?.allowPlexHome ?? false,
+                    user_token: user.plexToken,
+                  }
+                );
+
+                if (!response.data.success)
+                  throw new Error(
+                    response.data.error ||
+                      'Failed to invite user via Python service'
+                  );
+                break;
+              } catch (e) {
+                logger.warn(`Plex invite attempt failed for ${identifier}`, {
+                  label: 'User Settings',
+                  errorMessage: e instanceof Error ? e.message : String(e),
+                });
+              }
+            }
+          }
+        } catch (e) {
+          logger.error(
+            `Failed to ${previousState && !plexHomeChanged ? 'deprovision' : 'provision'} user`,
+            {
+              label: 'User Settings',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
+        }
+      }
+
+      if (
+        seerrSettings.enabled &&
+        seerrSettings.hostname &&
+        previousState !== user.active
+      ) {
+        try {
+          const seerrApi = new SeerrAPI(seerrSettings);
+          if (previousState) {
+            await seerrApi.revokeAllPermissionsByPlexId(user.plexId);
+          } else {
+            await seerrApi.restoreDefaultPermissionsByPlexId(user.plexId);
+          }
+        } catch (e) {
+          logger.error(
+            `Failed to ${previousState ? 'revoke' : 'restore'} Seerr permissions`,
+            {
+              label: 'User Settings',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
+        }
+      }
+    }
+
+    // Sync with Plex if sharedLibraries changed, or forcePlexSync is true, and user has permissions.
+    // Skip when a plexHome re-invite just ran — the invite already set up libraries
     const shouldSync =
-      previousSharedLibraries !== newSharedLibraries ||
-      previousAllowDownloads !== newAllowDownloads ||
-      forcePlexSync;
+      (previousSharedLibraries !== newSharedLibraries ||
+        previousAllowDownloads !== newAllowDownloads ||
+        forcePlexSync ||
+        !previousState) &&
+      !plexHomeChanged &&
+      user.active;
 
     if (
       req.user?.hasPermission(Permission.MANAGE_USERS) &&
@@ -192,7 +519,7 @@ userSettingsRoutes.post<
         await plexSync.syncUserLibraries(user, syncValue, {
           allowSync: req.body.allowDownloads,
           allowCameraUpload: false,
-          plexHome: false,
+          plexHome: user.settings?.allowPlexHome ?? false,
         });
       } catch (syncError) {
         logger.error('Failed to sync user libraries with Plex', {
@@ -289,7 +616,7 @@ userSettingsRoutes.post<
         userEmail: user.email,
         changingUser: req.user.email,
       });
-      res.status(204).send();
+      return res.status(204).send();
     }
 
     // If the user has a password, we need to check the currentPassword is correct
@@ -501,7 +828,7 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
               allow_sync: getSettings().main.downloads ?? false,
               allow_camera_upload: false,
               allow_channels: false,
-              plex_home: false,
+              plex_home: user.settings?.allowPlexHome ?? false,
               user_token: req.body.authToken || user.plexToken || null,
             });
 

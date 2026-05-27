@@ -166,6 +166,7 @@ export interface MainSettings {
   customLogoSmall?: string;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  trialPeriodOutcome: 'promote' | 'deactivate';
   enableHelpCentre: boolean;
   theme: Theme;
 }
@@ -194,6 +195,7 @@ export interface FullPublicSettings extends PublicSettings {
   enableHelpCentre: boolean;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  trialPeriodOutcome: 'promote' | 'deactivate';
   defaultInviteQuotas: {
     quotaLimit?: number;
     quotaDays?: number;
@@ -272,7 +274,8 @@ export type JobId =
   | 'plex-refresh-token'
   | 'invites-qrcode-cleanup'
   | 'image-cache-cleanup'
-  | 'notification-cleanup';
+  | 'notification-cleanup'
+  | 'trial-expiry';
 
 export interface AllSettings {
   clientId: string;
@@ -343,6 +346,7 @@ class Settings {
         libraryCounts: true,
         enableTrialPeriod: false,
         trialPeriodDays: 30,
+        trialPeriodOutcome: 'promote',
         enableHelpCentre: true,
         theme: {
           primary: '#974ede',
@@ -437,6 +441,7 @@ class Settings {
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
+        'trial-expiry': { schedule: '0 0 0 * * *' },
       },
       onboarding: {
         initialized: false,
@@ -593,6 +598,7 @@ class Settings {
       enableHelpCentre: this.data.main.enableHelpCentre,
       enableTrialPeriod: this.data.main.enableTrialPeriod,
       trialPeriodDays: this.data.main.trialPeriodDays,
+      trialPeriodOutcome: this.data.main.trialPeriodOutcome,
       defaultInviteQuotas: {
         quotaLimit: this.data.main.defaultQuotas.invites.quotaLimit ?? 3,
         quotaDays: this.data.main.defaultQuotas.invites.quotaDays ?? 0,

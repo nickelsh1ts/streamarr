@@ -123,15 +123,44 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <p className="text-xs truncate w-full text-warning">
                   {invite?.expiresAt != null &&
                   (invite?.status !== InviteStatus.REDEEMED ||
-                    moment(invite?.expiresAt).isAfter(moment()))
-                    ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
-                    : invite?.status !== InviteStatus.REDEEMED && (
-                        <FormattedMessage
-                          id="invite.neverExpires"
-                          defaultMessage="Never expires"
-                        />
-                      )}
+                    moment(invite?.expiresAt).isAfter(moment())) ? (
+                    <FormattedMessage
+                      id="invite.expiresAt"
+                      defaultMessage="{past, select, true {Expired} other {Expires}} {inDate}"
+                      values={{
+                        past: moment(invite.expiresAt).isBefore(moment()),
+                        inDate: moment(invite.expiresAt).fromNow(),
+                      }}
+                    />
+                  ) : (
+                    !invite?.expiresAt && (
+                      <FormattedMessage
+                        id="invite.neverExpires"
+                        defaultMessage="Never expires"
+                      />
+                    )
+                  )}
                 </p>
+                {data?.globalEnableTrialPeriod &&
+                  (invite?.trialPeriodOutcome ||
+                    data?.globalTrialPeriodOutcome) && (
+                    <p className="whitespace-normal break-words ">
+                      <span className="text-xs whitespace-nowrap">
+                        <FormattedMessage
+                          id="invite.trialPeriodOutcome"
+                          defaultMessage="{outcome, select, promote {Promote} other {Deactivate}} after {period} {period, plural, one {day} other {days}}"
+                          values={{
+                            outcome:
+                              invite?.trialPeriodOutcome ??
+                              data?.globalTrialPeriodOutcome,
+                            period:
+                              invite?.trialPeriodDays ??
+                              data.globalTrialPeriodDays,
+                          }}
+                        />
+                      </span>
+                    </p>
+                  )}
                 <div className="flex flex-wrap w-full items-center gap-x-2 gap-y-1">
                   <p className="text-xs flex items-center">
                     <FormattedMessage

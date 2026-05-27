@@ -233,6 +233,8 @@ Configure the default feature access granted when creating new invites:
 
 These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
 
+**Plex Home Access**: When enabled, invited users are added as managed Plex Home users (not just friends). The invitee must accept the Plex Home invite to complete onboarding. If the user is already a Plex Home member, re-inviting will re-provision their access if needed.
+
 {% hint style="info" %}
 **Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
 {% endhint %}
@@ -243,13 +245,25 @@ These defaults pre-fill the corresponding toggles when creating new invites. Ind
 
 ### Enable Trial Period
 
-When enabled, newly signed-up users are placed in a trial period where certain features are restricted (such as creating invites).
+When enabled, newly signed-up users are placed in a trial period. During the trial period:
+
+- Users cannot create invites
+- Other feature restrictions may apply based on permissions
+- Trial users are clearly marked in the user list and on their profile
+
+Admins can manually end a user's trial or extend it from the user settings page. When the trial ends, the user is promoted to full access (subject to their permissions) or deactivated.
+
+If a user's account expires (e.g., due to admin action or policy), their status is shown as **Expired** and they lose access until reactivated.
 
 This setting is **disabled** by default.
 
 ### Trial Period Days
 
-The number of days a new user remains in trial status. Default is 30 days.
+The number of days a new user remains in trial status. Default is 30 days. Admins can adjust this per user or globally.
+
+#### Trial Outcome & Extension Requests
+
+When a trial ends, the user is either promoted to full access or marked as expired, depending on admin policy. If enabled, users can request an extension to their trial or access period from their profile. Admins review and approve/deny these requests in the user management area.
 
 ---
 

@@ -16,10 +16,15 @@ export interface UserSettingsGeneralResponse {
   sharedLibraries?: string;
   allowDownloads?: boolean;
   allowLiveTv?: boolean;
+  allowPlexHome?: boolean;
   globalSharedLibraries?: string;
   trialPeriodEndsAt?: Date | null;
+  trialPeriodOutcome?: 'promote' | 'deactivate' | null;
+  trialExtensionRequested?: boolean;
+  trialExtensionRequestedAt?: Date | null;
   globalEnableTrialPeriod?: boolean;
   globalTrialPeriodDays?: number;
+  globalTrialPeriodOutcome?: 'promote' | 'deactivate';
   tautulliBaseUrl?: string;
   tautulliEnabled?: boolean;
   forcePlexSync?: boolean;
