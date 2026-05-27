@@ -19,6 +19,8 @@ export interface User {
   userType: number;
   createdAt: Date;
   updatedAt: Date;
+  active?: boolean;
+  accessRevokedAt?: Date | null;
   inviteQuotaLimit?: number;
   inviteQuotaDays?: number;
   inviteCount?: number;
@@ -38,6 +40,7 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 
 export interface UserSettings {
   locale?: string;
+  trialPeriodOutcome?: 'promote' | 'deactivate' | null;
   notificationTypes: Partial<NotificationAgentTypes>;
   emailEnabled?: boolean;
   pgpKey?: string;

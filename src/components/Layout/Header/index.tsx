@@ -13,6 +13,7 @@ const Header = ({ isInView = true }) => {
   const path = usePathname();
   const { currentSettings } = useSettings();
   const { user } = useUser();
+  const homeHref = !user?.active ? '/profile/settings/general' : '/watch';
 
   return (
     <header
@@ -26,7 +27,7 @@ const Header = ({ isInView = true }) => {
         )}
         {(!path.match(/^\/$/) || user) && <BackButton />}
         <Link
-          href={user ? '/watch' : '/'}
+          href={user ? homeHref : '/'}
           data-tutorial="logo"
           className={`hover:brightness-75 transition-opacity duration-500 ml-0.5 -mt-1 md:ml-0.5 md:-mt-0.5 ${!isInView && 'opacity-0 pointer-events-none'}`}
         >

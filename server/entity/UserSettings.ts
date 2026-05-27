@@ -49,8 +49,20 @@ export class UserSettings {
   @Column({ type: 'boolean', default: false })
   public allowLiveTv: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  public allowPlexHome: boolean;
+
   @Column({ type: 'datetime', nullable: true })
   public trialPeriodEndsAt?: Date;
+
+  @Column({ type: 'text', nullable: true })
+  public trialPeriodOutcome?: 'promote' | 'deactivate' | null;
+
+  @Column({ type: 'boolean', default: false })
+  public trialExtensionRequested: boolean;
+
+  @Column({ type: 'datetime', nullable: true })
+  public trialExtensionRequestedAt?: Date | null;
 
   @Column({
     type: 'text',

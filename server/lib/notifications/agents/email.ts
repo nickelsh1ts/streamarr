@@ -81,6 +81,25 @@ class EmailAgent
       };
     }
 
+    if (type === NotificationType.ACCESS_EXTENSION_REQUESTED) {
+      return {
+        template: path.join(
+          __dirname,
+          '../../../templates/email/accessextensionrequest'
+        ),
+        message: { to: recipientEmail },
+        locals: {
+          subject: payload.subject,
+          message: payload.message,
+          applicationUrl,
+          applicationTitle,
+          recipientName,
+          recipientEmail,
+          logoUrl,
+        },
+      };
+    }
+
     if (type === NotificationType.USER_CREATED) {
       return {
         template: path.join(__dirname, '../../../templates/email/usercreated'),

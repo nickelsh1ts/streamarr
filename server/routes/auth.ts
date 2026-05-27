@@ -105,7 +105,8 @@ authRoutes.post('/plex', async (req, res, next) => {
       if (
         account.id === mainUser.plexId ||
         (account.email === mainUser.email && !mainUser.plexId) ||
-        (await mainPlexTv.checkUserAccess(account.id))
+        (await mainPlexTv.checkUserAccess(account.id)) ||
+        (user && !user.active)
       ) {
         if (user) {
           if (!user.plexId) {

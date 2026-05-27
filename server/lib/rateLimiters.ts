@@ -27,3 +27,10 @@ export const settingsAboutLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const trialExtensionRequestLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+});

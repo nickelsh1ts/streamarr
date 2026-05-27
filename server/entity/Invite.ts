@@ -50,6 +50,12 @@ export class Invite {
   @Column({ type: 'text', default: '' })
   public sharedLibraries: string;
 
+  @Column({ type: 'text', nullable: true })
+  public trialPeriodOutcome?: 'promote' | 'deactivate' | null;
+
+  @Column({ type: 'int', nullable: true })
+  public trialPeriodDays?: number | null;
+
   @Index('IDX_invite_createdById')
   @ManyToOne(() => User, (user) => user.createdInvites, {
     eager: true,

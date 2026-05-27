@@ -87,6 +87,12 @@ export class User {
   @Column({ type: 'integer', default: 32 })
   public permissions = 32;
 
+  @Column({ type: 'boolean', default: true })
+  public active: boolean;
+
+  @Column({ type: 'datetime', nullable: true })
+  public accessRevokedAt?: Date | null;
+
   @Column('text')
   public avatar: string;
 

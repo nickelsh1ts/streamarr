@@ -66,6 +66,16 @@ const InviteModal = ({
       ? '/api/v1/user?take=1000&sort=displayname'
       : null
   );
+  const inviteAsPermission = currentHasPermission([
+    Permission.MANAGE_INVITES,
+    Permission.MANAGE_USERS,
+  ]);
+  const trialPeriodPermission =
+    currentHasPermission(Permission.MANAGE_USERS) &&
+    currentHasPermission(
+      [Permission.ADVANCED_INVITES, Permission.MANAGE_INVITES],
+      { type: 'or' }
+    );
   const filteredUserData = userData?.results.filter((user) =>
     hasPermission(
       [Permission.CREATE_INVITES, Permission.STREAMARR],
@@ -192,25 +202,33 @@ const InviteModal = ({
           : data?.sharedLibraries && data?.sharedLibraries !== ''
             ? data.sharedLibraries
             : 'server',
+        trialPeriodOutcome:
+          invite?.trialPeriodOutcome ?? data?.globalTrialPeriodOutcome,
+        trialPeriodDays: invite?.trialPeriodDays ?? data?.globalTrialPeriodDays,
       }}
       enableReinitialize
       validationSchema={icodeValidation}
       onSubmit={async (values) => {
         try {
-          const submission = {
-            icode: values.icode,
-            expiryLimit: values.inviteExpiryLimit,
-            expiryTime: values.inviteExpiryTime,
-            usageLimit: values.inviteUsageLimit ?? null,
-            downloads: values.downloads,
-            liveTv: values.liveTv,
-            plexHome: values.plexHome,
-            sharedLibraries: values.sharedLibraries,
-            inviteAs: invite ? null : (selectedUser ?? currentUser),
-            updatedBy: currentUser,
-          };
+          const trialFields = trialPeriodPermission
+            ? {
+                trialPeriodOutcome: values.trialPeriodOutcome,
+                trialPeriodDays:
+                  values.trialPeriodDays != null
+                    ? Number(values.trialPeriodDays)
+                    : null,
+              }
+            : {};
+
           if (invite) {
-            await axios.put(`/api/v1/invite/${invite.id}`, submission);
+            await axios.put(`/api/v1/invite/${invite.id}`, {
+              usageLimit: values.inviteUsageLimit ?? null,
+              downloads: values.downloads,
+              liveTv: values.liveTv,
+              plexHome: user?.id === 1 ? values.plexHome : undefined,
+              sharedLibraries: values.sharedLibraries,
+              ...trialFields,
+            });
             Toast({
               title: intl.formatMessage({
                 id: 'invite.updatedSuccessfully',
@@ -221,7 +239,18 @@ const InviteModal = ({
             });
             onComplete();
           } else {
-            const response = await axios.post('/api/v1/invite', submission);
+            const response = await axios.post('/api/v1/invite', {
+              icode: values.icode,
+              expiryLimit: values.inviteExpiryLimit,
+              expiryTime: values.inviteExpiryTime,
+              usageLimit: values.inviteUsageLimit ?? null,
+              downloads: values.downloads,
+              liveTv: values.liveTv,
+              plexHome: user?.id === 1 ? values.plexHome : false,
+              sharedLibraries: values.sharedLibraries,
+              ...trialFields,
+              inviteAs: selectedUser ?? currentUser,
+            });
             Toast({
               title: intl.formatMessage({
                 id: 'invite.createdSuccessfully',
@@ -674,7 +703,7 @@ const InviteModal = ({
                         />
                       </label>
                     </div>
-                    {currentHasPermission(Permission.ADMIN) && (
+                    {currentUser?.id === 1 && (
                       <div className="inline-flex items-center space-x-2">
                         <span
                           id="plexHome"
@@ -682,25 +711,17 @@ const InviteModal = ({
                           tabIndex={0}
                           aria-checked={values.plexHome}
                           onClick={() =>
-                            currentHasPermission(Permission.ADMIN)
-                              ? setFieldValue('plexHome', !values.plexHome)
-                              : undefined
+                            setFieldValue('plexHome', !values.plexHome)
                           }
                           onKeyDown={(e) => {
-                            if (
-                              (e.key === 'Enter' || e.key === 'Space') &&
-                              currentHasPermission(Permission.ADMIN)
-                            ) {
+                            if (e.key === 'Enter' || e.key === 'Space') {
                               e.preventDefault();
                               setFieldValue('plexHome', !values.plexHome);
                             }
                           }}
                           className={`${
                             values.plexHome ? 'bg-primary' : 'bg-neutral'
-                          } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring ${!currentHasPermission(Permission.ADMIN) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                          aria-disabled={
-                            !currentHasPermission(Permission.ADMIN)
-                          }
+                          } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                         >
                           <span
                             aria-hidden="true"
@@ -758,10 +779,80 @@ const InviteModal = ({
                       />
                     </div>
                   </div>
-                  {currentHasPermission([
-                    Permission.MANAGE_INVITES,
-                    Permission.MANAGE_USERS,
-                  ]) &&
+                  {data?.globalEnableTrialPeriod && trialPeriodPermission && (
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="trialPeriod"
+                        className="block text-sm my-0 font-medium leading-6 text-left"
+                      >
+                        <FormattedMessage
+                          id="invite.trialPeriod"
+                          defaultMessage="Trial Period"
+                        />
+                      </label>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Field
+                          as="select"
+                          name="trialPeriodOutcome"
+                          id="trialPeriodOutcome"
+                          className="select select-sm select-primary rounded-md"
+                          onChange={(e) =>
+                            setFieldValue('trialPeriodOutcome', e.target.value)
+                          }
+                          value={values.trialPeriodOutcome ?? ''}
+                        >
+                          <option value="promote">
+                            {intl.formatMessage({
+                              id: 'userSettings.trialPeriodOutcome.promote',
+                              defaultMessage: 'Promote',
+                            })}
+                          </option>
+                          <option value="deactivate">
+                            {intl.formatMessage({
+                              id: 'userSettings.trialPeriodOutcome.deactivate',
+                              defaultMessage: 'Deactivate',
+                            })}
+                          </option>
+                        </Field>
+                        <span className="whitespace-nowrap lowercase">
+                          <FormattedMessage
+                            id="common.after"
+                            defaultMessage="After"
+                          />
+                        </span>
+                        <Field
+                          as="select"
+                          name="trialPeriodDays"
+                          id="trialPeriodDays"
+                          className="select select-sm select-primary rounded-md"
+                          onChange={(e) =>
+                            setFieldValue(
+                              'trialPeriodDays',
+                              Number(e.target.value)
+                            )
+                          }
+                          value={values.trialPeriodDays}
+                        >
+                          {[...Array(90)].map((_item, i) => (
+                            <option
+                              value={i + 1}
+                              key={`invite-trial-days-${i + 1}`}
+                            >
+                              {intl.formatMessage(
+                                {
+                                  id: 'common.days',
+                                  defaultMessage:
+                                    '{count, plural, one {# day} other {# days}}',
+                                },
+                                { count: i + 1 }
+                              )}
+                            </option>
+                          ))}
+                        </Field>
+                      </div>
+                    </div>
+                  )}
+                  {inviteAsPermission &&
                     selectedUser &&
                     !invite &&
                     (filteredUserData ?? []).length > 1 && (

@@ -61,6 +61,7 @@ const UserSettings = () => {
           plexHome: data?.plexHome,
           enableTrialPeriod: data?.enableTrialPeriod ?? false,
           trialPeriodDays: data?.trialPeriodDays ?? 30,
+          trialPeriodOutcome: data?.trialPeriodOutcome ?? 'promote',
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -84,6 +85,7 @@ const UserSettings = () => {
               plexHome: values.plexHome,
               enableTrialPeriod: values.enableTrialPeriod,
               trialPeriodDays: values.trialPeriodDays,
+              trialPeriodOutcome: values.trialPeriodOutcome,
             });
             mutate('/api/v1/settings/public');
 
@@ -218,7 +220,7 @@ const UserSettings = () => {
                 </div>
                 <div className="" />
                 <div className="col-span-2 space-x-2">
-                  <span>
+                  <span className="lowercase">
                     <FormattedMessage
                       id="common.expires"
                       defaultMessage="Expires"
@@ -291,10 +293,17 @@ const UserSettings = () => {
                     defaultMessage="Enable Trial Period"
                   />
                   <span className="text-sm block font-light text-neutral">
-                    <FormattedMessage
-                      id="userSettings.enableTrialPeriodDescription"
-                      defaultMessage="Set a period of days where new users cannot create invites"
-                    />
+                    {values.trialPeriodOutcome === 'promote' ? (
+                      <FormattedMessage
+                        id="userSettings.trialPeriodDescriptionPromote"
+                        defaultMessage="Set a period of days until users can create invites"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="userSettings.trialPeriodDescriptionDeactivate"
+                        defaultMessage="Set a period of days until users are deactivated and lose access"
+                      />
+                    )}
                   </span>
                 </label>
                 <div className="col-span-2 gap-4 inline-flex items-center">
@@ -311,25 +320,55 @@ const UserSettings = () => {
                     className="checkbox checkbox-primary rounded-md"
                   />
                   {values.enableTrialPeriod && (
-                    <Field
-                      as="select"
-                      name="trialPeriodDays"
-                      id="trialPeriodDays"
-                      className="select select-sm select-primary rounded-md"
-                      onChange={(e) =>
-                        setFieldValue('trialPeriodDays', Number(e.target.value))
-                      }
-                    >
-                      {[...Array(90)].map((_item, i) => (
-                        <option value={i + 1} key={`trial-period-${i + 1}`}>
-                          <FormattedMessage
-                            id="common.days"
-                            defaultMessage="{count, plural, one {# day} other {# days}}"
-                            values={{ count: i + 1 }}
-                          />
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Field
+                        as="select"
+                        name="trialPeriodOutcome"
+                        id="trialPeriodOutcome"
+                        className="select select-sm select-primary rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40"
+                      >
+                        <option value="promote">
+                          {intl.formatMessage({
+                            id: 'userSettings.trialPeriodOutcome.promote',
+                            defaultMessage: 'Promote',
+                          })}
                         </option>
-                      ))}
-                    </Field>
+                        <option value="deactivate">
+                          {intl.formatMessage({
+                            id: 'userSettings.trialPeriodOutcome.deactivate',
+                            defaultMessage: 'Deactivate',
+                          })}
+                        </option>
+                      </Field>
+                      <span className="whitespace-nowrap lowercase">
+                        <FormattedMessage
+                          id="common.after"
+                          defaultMessage="After"
+                        />
+                      </span>
+                      <Field
+                        as="select"
+                        name="trialPeriodDays"
+                        id="trialPeriodDays"
+                        className="select select-sm select-primary rounded-md"
+                        onChange={(e) =>
+                          setFieldValue(
+                            'trialPeriodDays',
+                            Number(e.target.value)
+                          )
+                        }
+                      >
+                        {[...Array(90)].map((_item, i) => (
+                          <option value={i + 1} key={`trial-period-${i + 1}`}>
+                            <FormattedMessage
+                              id="common.days"
+                              defaultMessage="{count, plural, one {# day} other {# days}}"
+                              values={{ count: i + 1 }}
+                            />
+                          </option>
+                        ))}
+                      </Field>
+                    </div>
                   )}
                 </div>
                 <span id="group-label" className="block font-bold">

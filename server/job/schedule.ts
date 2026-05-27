@@ -7,6 +7,7 @@ import logger from '@server/logger';
 import schedule from 'node-schedule';
 import expiredInvites from '@server/lib/expiredInvites';
 import cleanUpNotifications from '@server/lib/cleanUpNotifications';
+import trialExpiry from '@server/lib/trialExpiry';
 
 interface ScheduledJob {
   id: JobId;
@@ -100,6 +101,21 @@ export const startJobs = (): void => {
       });
       cleanUpNotifications.run();
     }),
+  });
+
+  scheduledJobs.push({
+    id: 'trial-expiry',
+    name: 'Account Expiry Check',
+    type: 'process',
+    interval: 'hours',
+    cronSchedule: jobs['trial-expiry']?.schedule,
+    job: schedule.scheduleJob(jobs['trial-expiry']?.schedule, () => {
+      logger.info('Starting scheduled job: Account Expiry Check', {
+        label: 'Jobs',
+      });
+      trialExpiry.run();
+    }),
+    running: () => trialExpiry.status().running,
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

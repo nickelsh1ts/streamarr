@@ -161,6 +161,8 @@ inviteRoutes.post<
     status?: InviteStatus;
     usageLimit?: number;
     inviteAs?: User;
+    trialPeriodOutcome?: 'promote' | 'deactivate' | null;
+    trialPeriodDays?: number | null;
   }
 >(
   '/',
@@ -178,6 +180,16 @@ inviteRoutes.post<
     if (!req.user) {
       return next({ status: 500, message: 'User missing from request.' });
     }
+    const inviteAsPermission = req.user.hasPermission([
+      Permission.MANAGE_INVITES,
+      Permission.MANAGE_USERS,
+    ]);
+    const trialPeriodPermission =
+      req.user.hasPermission(Permission.MANAGE_USERS) &&
+      req.user.hasPermission(
+        [Permission.ADVANCED_INVITES, Permission.MANAGE_INVITES],
+        { type: 'or' }
+      );
 
     // Check if user is in trial period (bypass for MANAGE_USERS and MANAGE_INVITES)
     if (
@@ -201,6 +213,43 @@ inviteRoutes.post<
         status: 403,
         message:
           'Invite creation is disabled. Signup must be enabled to create invites.',
+      });
+    }
+
+    if (
+      (req.body.trialPeriodOutcome !== undefined ||
+        req.body.trialPeriodDays !== undefined) &&
+      !trialPeriodPermission
+    ) {
+      return next({
+        status: 403,
+        message: 'You do not have permission to set trial periods on invites.',
+      });
+    }
+
+    if (
+      !inviteAsPermission &&
+      req.body.inviteAs &&
+      req.body.inviteAs.id !== req.user.id
+    ) {
+      return next({
+        status: 403,
+        message:
+          'You do not have permission to create invites on behalf of other users.',
+      });
+    }
+
+    if (
+      req.body.trialPeriodDays !== undefined &&
+      req.body.trialPeriodDays !== null &&
+      (!Number.isInteger(req.body.trialPeriodDays) ||
+        req.body.trialPeriodDays < 1 ||
+        req.body.trialPeriodDays > 90)
+    ) {
+      return next({
+        status: 400,
+        message:
+          'Trial period days override must be an integer between 1 and 90.',
       });
     }
 
@@ -242,10 +291,12 @@ inviteRoutes.post<
         usageLimit: req.body.usageLimit ?? 1,
         downloads: req.body.downloads ?? true,
         liveTv: req.body.liveTv ?? false,
-        plexHome: req.body.plexHome ?? false,
+        plexHome: req.user?.id === 1 ? (req.body.plexHome ?? false) : false,
         sharedLibraries: req.body.sharedLibraries ?? '',
         expiryLimit: req.body.expiryLimit ?? 1,
         expiryTime: req.body.expiryTime ?? 'days',
+        trialPeriodOutcome: req.body.trialPeriodOutcome,
+        trialPeriodDays: req.body.trialPeriodDays,
       });
       const newinvite = await inviteRepository.save(invite);
 
@@ -263,7 +314,19 @@ inviteRoutes.post<
   }
 );
 
-inviteRoutes.put<{ id: string }, Invite, Invite>(
+inviteRoutes.put<
+  { id: string },
+  Invite,
+  {
+    usageLimit?: number;
+    downloads?: boolean;
+    liveTv?: boolean;
+    plexHome?: boolean;
+    sharedLibraries?: string;
+    trialPeriodOutcome?: 'promote' | 'deactivate' | null;
+    trialPeriodDays?: number | null;
+  }
+>(
   '/:id',
   isAuthenticated([Permission.MANAGE_INVITES, Permission.ADVANCED_INVITES], {
     type: 'or',
@@ -274,6 +337,35 @@ inviteRoutes.put<{ id: string }, Invite, Invite>(
       return next({ status: 500, message: 'User missing from request.' });
     }
 
+    if (
+      (req.body.trialPeriodOutcome !== undefined ||
+        req.body.trialPeriodDays !== undefined) &&
+      !req.user.hasPermission(Permission.MANAGE_USERS)
+    ) {
+      return next({
+        status: 403,
+        message: 'You do not have permission to set trial periods on invites.',
+      });
+    }
+
+    if (
+      (req.body.trialPeriodDays !== undefined &&
+        req.body.trialPeriodDays !== null &&
+        (!Number.isInteger(req.body.trialPeriodDays) ||
+          req.body.trialPeriodDays < 1 ||
+          req.body.trialPeriodDays > 90)) ||
+      (req.body.trialPeriodOutcome !== undefined &&
+        req.body.trialPeriodOutcome !== null &&
+        req.body.trialPeriodOutcome !== 'promote' &&
+        req.body.trialPeriodOutcome !== 'deactivate')
+    ) {
+      return next({
+        status: 400,
+        message:
+          'Invalid trial period settings. Outcome must be "promote" or "deactivate". Days must be an integer between 1 and 90.',
+      });
+    }
+
     const inviteRepository = getRepository(Invite);
 
     try {
@@ -281,7 +373,12 @@ inviteRoutes.put<{ id: string }, Invite, Invite>(
         where: { id: Number(req.params.id) },
       });
 
+      const previousPlexHome = invite.plexHome;
       inviteRepository.merge(invite, req.body);
+      invite.updatedBy = req.user;
+      if (req.user?.id !== 1) {
+        invite.plexHome = previousPlexHome;
+      }
       // If invite was REDEEMED and usageLimit is now greater than uses, set back to ACTIVE
       if (
         invite.status === InviteStatus.REDEEMED &&

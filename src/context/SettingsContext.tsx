@@ -22,6 +22,7 @@ const defaultSettings: PublicSettingsResponse = {
   enableHelpCentre: true,
   enableTrialPeriod: false,
   trialPeriodDays: 30,
+  trialPeriodOutcome: 'promote',
   defaultInviteQuotas: {},
   seerrEnabled: false,
   statusUrl: '',

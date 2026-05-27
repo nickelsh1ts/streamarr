@@ -175,6 +175,9 @@ signupRoutes.post('/plexauth', async (req, res) => {
         : {}),
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,
+      allowPlexHome: invite.plexHome ?? false,
+      trialPeriodOutcome:
+        invite.trialPeriodOutcome ?? settings.main.trialPeriodOutcome,
     });
 
     if (
@@ -186,7 +189,8 @@ signupRoutes.post('/plexauth', async (req, res) => {
       user.id !== 1
     ) {
       const trialEndDate = new Date(
-        Date.now() + settings.main.trialPeriodDays * 86400000
+        Date.now() +
+          (invite.trialPeriodDays ?? settings.main.trialPeriodDays) * 86400000
       );
       user.settings.trialPeriodEndsAt = trialEndDate;
     }
@@ -619,6 +623,9 @@ signupRoutes.post('/localauth', async (req, res) => {
         : {}),
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,
+      allowPlexHome: invite.plexHome ?? false,
+      trialPeriodOutcome:
+        invite.trialPeriodOutcome ?? settings.main.trialPeriodOutcome,
     });
 
     if (
@@ -630,7 +637,8 @@ signupRoutes.post('/localauth', async (req, res) => {
       user.id !== 1
     ) {
       const trialEndDate = new Date(
-        Date.now() + settings.main.trialPeriodDays * 86400000
+        Date.now() +
+          (invite.trialPeriodDays ?? settings.main.trialPeriodDays) * 86400000
       );
       user.settings.trialPeriodEndsAt = trialEndDate;
     }

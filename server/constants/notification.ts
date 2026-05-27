@@ -10,6 +10,7 @@ export enum NotificationType {
   UPDATES = 4096,
   FRIEND_WATCHING = 8192,
   NEW_INVITE = 16384,
+  ACCESS_EXTENSION_REQUESTED = 32768,
 }
 
 export enum NotificationSeverity {
