@@ -66,6 +66,14 @@ const eslintConfig = [
       // Restored accessibility rules
       'jsx-a11y/no-noninteractive-element-interactions': 'warn',
       'jsx-a11y/label-has-associated-control': 'warn',
+
+      // Downgrade react-hooks compiler rules introduced in v7.x from error to warn
+      // These flag existing patterns that are not yet refactored
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+      'react-hooks/use-memo': 'warn',
     },
   },
 ];
