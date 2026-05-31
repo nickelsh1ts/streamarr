@@ -234,17 +234,100 @@ export interface NotificationAgentEmail extends NotificationAgentConfig {
 }
 
 export interface NotificationAgentWebhook extends NotificationAgentConfig {
-  options: { webhookUrl: string; jsonPayload: string; authHeader?: string };
+  options: {
+    webhookUrl: string;
+    jsonPayload: string;
+    authHeader?: string;
+    customHeaders?: { key: string; value: string }[];
+    supportVariables?: boolean;
+  };
+}
+
+export interface NotificationAgentDiscord extends NotificationAgentConfig {
+  options: {
+    webhookUrl: string;
+    webhookRoleId?: string;
+    enableMentions: boolean;
+    botUsername?: string;
+    botAvatarUrl?: string;
+  };
+}
+
+export interface NotificationAgentSlack extends NotificationAgentConfig {
+  options: {
+    webhookUrl: string;
+  };
+}
+
+export interface NotificationAgentTelegram extends NotificationAgentConfig {
+  options: {
+    botAPI: string;
+    botUsername?: string;
+    chatId: string;
+    messageThreadId?: string;
+    sendSilently: boolean;
+  };
+}
+
+export interface NotificationAgentPushbullet extends NotificationAgentConfig {
+  options: {
+    accessToken: string;
+    channelTag?: string;
+  };
+}
+
+export interface NotificationAgentPushover extends NotificationAgentConfig {
+  options: {
+    accessToken: string;
+    userToken: string;
+    sound: string;
+  };
+}
+
+export interface NotificationAgentGotify extends NotificationAgentConfig {
+  options: {
+    url: string;
+    token: string;
+    priority: number;
+  };
+}
+
+export interface NotificationAgentNtfy extends NotificationAgentConfig {
+  options: {
+    url: string;
+    topic: string;
+    authMethod?: 'none' | 'usernamePassword' | 'token';
+    username?: string;
+    password?: string;
+    token?: string;
+    priority?: number;
+  };
 }
 
 export enum NotificationAgentKey {
+  DISCORD = 'discord',
   EMAIL = 'email',
+  GOTIFY = 'gotify',
+  NTFY = 'ntfy',
+  PUSHBULLET = 'pushbullet',
+  PUSHOVER = 'pushover',
+  SLACK = 'slack',
+  TELEGRAM = 'telegram',
+  WEBHOOK = 'webhook',
   WEBPUSH = 'webpush',
   IN_APP = 'inApp',
 }
 
-interface NotificationAgents {
+export interface NotificationAgents {
+  discord: NotificationAgentDiscord;
   email: NotificationAgentEmail;
+  gotify: NotificationAgentGotify;
+  ntfy: NotificationAgentNtfy;
+  pushbullet: NotificationAgentPushbullet;
+  pushover: NotificationAgentPushover;
+  slack: NotificationAgentSlack;
+  telegram: NotificationAgentTelegram;
+  webhook: NotificationAgentWebhook;
   webpush: NotificationAgentConfig;
   inApp: NotificationAgentConfig;
 }
@@ -418,6 +501,13 @@ class Settings {
       public: { initialized: false },
       notifications: {
         agents: {
+          discord: {
+            enabled: false,
+            options: {
+              webhookUrl: '',
+              enableMentions: false,
+            },
+          },
           email: {
             enabled: false,
             options: {
@@ -429,6 +519,62 @@ class Settings {
               requireTls: false,
               allowSelfSigned: false,
               senderName: 'Streamarr',
+            },
+          },
+          gotify: {
+            enabled: false,
+            options: {
+              url: '',
+              token: '',
+              priority: 0,
+            },
+          },
+          ntfy: {
+            enabled: false,
+            options: {
+              url: '',
+              topic: '',
+              priority: 3,
+            },
+          },
+          pushbullet: {
+            enabled: false,
+            options: {
+              accessToken: '',
+              channelTag: '',
+            },
+          },
+          pushover: {
+            enabled: false,
+            options: {
+              accessToken: '',
+              userToken: '',
+              sound: '',
+            },
+          },
+          slack: {
+            enabled: false,
+            options: {
+              webhookUrl: '',
+            },
+          },
+          telegram: {
+            enabled: false,
+            options: {
+              botAPI: '',
+              botUsername: '',
+              chatId: '',
+              messageThreadId: '',
+              sendSilently: false,
+            },
+          },
+          webhook: {
+            enabled: false,
+            options: {
+              webhookUrl: '',
+              jsonPayload: '',
+              customHeaders: [],
+              supportVariables: false,
             },
           },
           webpush: { enabled: false, options: {} },
