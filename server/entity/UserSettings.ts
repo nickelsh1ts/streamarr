@@ -1,5 +1,8 @@
 import type { NotificationAgentTypes } from '@server/interfaces/api/userSettingsInterfaces';
-import { hasNotificationType } from '@server/lib/notifications';
+import {
+  ALL_NOTIFICATIONS,
+  hasNotificationType,
+} from '@server/lib/notifications';
 import { NotificationAgentKey } from '@server/lib/settings';
 import {
   Column,
@@ -9,11 +12,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
-import { NotificationType } from '@server/constants/notification';
-
-export const ALL_NOTIFICATIONS = Object.values(NotificationType)
-  .filter((v) => !isNaN(Number(v)))
-  .reduce((a, v) => a + Number(v), 0);
+import type { NotificationType } from '@server/constants/notification';
 
 @Entity()
 export class UserSettings {
@@ -39,6 +38,30 @@ export class UserSettings {
 
   @Column({ type: 'text', nullable: true })
   public pgpKey?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public discordId?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public pushbulletAccessToken?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public pushoverApplicationToken?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public pushoverUserKey?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public pushoverSound?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public telegramChatId?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public telegramMessageThreadId?: string;
+
+  @Column({ type: 'boolean', default: false })
+  public telegramSendSilently?: boolean;
 
   @Column({ type: 'text', nullable: true })
   public sharedLibraries?: string;
@@ -120,6 +143,9 @@ export class UserSettings {
     key: NotificationAgentKey,
     type: NotificationType
   ): boolean {
-    return hasNotificationType(type, this.notificationTypes[key] ?? 0);
+    return hasNotificationType(
+      type,
+      this.notificationTypes[key] ?? ALL_NOTIFICATIONS
+    );
   }
 }

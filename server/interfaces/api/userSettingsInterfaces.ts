@@ -36,9 +36,22 @@ export interface UserSettingsGeneralResponse {
 
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 export interface UserSettingsNotificationsResponse {
+  discordEnabled?: boolean;
   emailEnabled?: boolean;
   pgpKey?: string;
+  pushbulletEnabled?: boolean;
+  pushbulletAccessToken?: string;
+  pushoverEnabled?: boolean;
+  pushoverApplicationToken?: string;
+  pushoverUserKey?: string;
+  pushoverSound?: string;
+  telegramEnabled?: boolean;
+  telegramBotUsername?: string;
+  telegramChatId?: string;
+  telegramMessageThreadId?: string;
+  telegramSendSilently?: boolean;
   webPushEnabled?: boolean;
   inAppEnabled?: boolean;
+  discordId?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
 }

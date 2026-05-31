@@ -20,14 +20,14 @@ import { canMakePermissionsChange } from '@server/routes/user';
 import { UserType } from '@server/constants/user';
 import axios from 'axios';
 import PlexTvAPI from '@server/api/plextv';
+import PushoverAPI from '@server/api/pushover';
 import {
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
 import { trialExtensionRequestLimiter } from '@server/lib/rateLimiters';
-import { getIntl } from '@server/i18n';
 import moment from '@server/utils/momentWithLocale';
-import notificationManager from '@server/lib/notifications';
+import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 
 const userSettingsRoutes = Router({ mergeParams: true });
 
@@ -167,44 +167,34 @@ userSettingsRoutes.post<{ id: string }>(
         )
         .getMany();
 
-      await Promise.all(
-        admins.map(async (adminUser) => {
-          const intl = getIntl(adminUser.settings?.locale);
-
-          notificationManager.sendNotification(
-            NotificationType.ACCESS_EXTENSION_REQUESTED,
+      await sendGroupNotification(
+        NotificationType.ACCESS_EXTENSION_REQUESTED,
+        admins,
+        (intl) => ({
+          subject: intl.formatMessage({
+            id: 'notifications.userSettings.extensionRequested',
+            defaultMessage: 'Access extension requested',
+          }),
+          message: intl.formatMessage(
             {
-              subject: intl.formatMessage({
-                id: 'notifications.userSettings.extensionRequested',
-                defaultMessage: 'Access extension requested',
-              }),
-              message: intl.formatMessage(
-                {
-                  id: 'notifications.userSettings.extensionRequestedMessage',
-                  defaultMessage:
-                    '{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}',
-                },
-                {
-                  displayName: user.displayName,
-                  accessEndDate:
-                    moment(
-                      user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
-                    )
-                      .locale(intl.locale)
-                      .format('MMM D, h:mm A') ?? 'Unknown',
-                  isPast: moment(
-                    user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
-                  ).isBefore(moment()),
-                }
-              ),
-              notifySystem: false,
-              notifyAdmin: false,
-              notifyUser: adminUser,
-              actionUrl: `/admin/users/${user.id}/settings`,
-              actionUrlTitle: 'Manage User',
-              severity: NotificationSeverity.WARNING,
+              id: 'notifications.userSettings.extensionRequestedMessage',
+              defaultMessage:
+                '{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}',
+            },
+            {
+              displayName: user.displayName,
+              accessEndDate:
+                moment(user.settings.trialPeriodEndsAt ?? user.accessRevokedAt)
+                  .locale(intl.locale)
+                  .format('MMM D, h:mm A') ?? 'Unknown',
+              isPast: moment(
+                user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
+              ).isBefore(moment()),
             }
-          );
+          ),
+          actionUrl: `/admin/users/${user.id}/settings`,
+          actionUrlTitle: 'Manage User',
+          severity: NotificationSeverity.WARNING,
         })
       );
 
@@ -929,14 +919,71 @@ userSettingsRoutes.get<{ id: string }, UserSettingsNotificationsResponse>(
       }
 
       res.status(200).json({
+        discordEnabled: settings.discord.enabled,
         emailEnabled: settings.email.enabled,
         pgpKey: user.settings?.pgpKey,
+        pushbulletEnabled: settings.pushbullet.enabled,
+        pushbulletAccessToken: user.settings?.pushbulletAccessToken,
+        pushoverEnabled: settings.pushover.enabled,
+        pushoverApplicationToken: user.settings?.pushoverApplicationToken,
+        pushoverUserKey: user.settings?.pushoverUserKey,
+        pushoverSound: user.settings?.pushoverSound,
+        telegramEnabled: settings.telegram.enabled,
+        telegramBotUsername: settings.telegram.options.botUsername,
+        telegramChatId: user.settings?.telegramChatId,
+        telegramMessageThreadId: user.settings?.telegramMessageThreadId,
+        telegramSendSilently: user.settings?.telegramSendSilently,
         webPushEnabled: settings.webpush.enabled,
         inAppEnabled: settings.inApp.enabled,
+        discordId: user.settings?.discordId,
         notificationTypes: user.settings?.notificationTypes ?? {},
       });
     } catch (e) {
       next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.get<{ id: string }>(
+  '/notifications/pushover/sounds',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+    const pushoverApi = new PushoverAPI();
+
+    try {
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      const token = user.settings?.pushoverApplicationToken;
+      if (!token) {
+        return next({
+          status: 400,
+          message:
+            'Pushover application token is not configured for this user.',
+        });
+      }
+
+      const sounds = await pushoverApi.getSounds(token);
+      res.status(200).json(
+        sounds.map((sound) => ({
+          value: sound.name,
+          label: sound.description,
+        }))
+      );
+    } catch (e) {
+      next({
+        status: 500,
+        message:
+          e instanceof Error
+            ? e.message
+            : 'Unable to retrieve Pushover sounds.',
+      });
     }
   }
 );
@@ -965,24 +1012,59 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
       }
 
       if (!user.settings) {
-        user.settings = new UserSettings({
-          user,
-          pgpKey: req.body.pgpKey,
-          notificationTypes: req.body.notificationTypes,
-        });
-      } else {
-        user.settings.pgpKey = req.body.pgpKey;
-        user.settings.notificationTypes = Object.assign(
-          {},
-          user.settings.notificationTypes,
-          req.body.notificationTypes
-        );
+        user.settings = new UserSettings({ user });
       }
+
+      // Discord IDs are interpolated into mention syntax in the Discord agent,
+      // so reject anything that is not a valid numeric snowflake to prevent
+      // mention injection (e.g. @everyone) into the shared channel.
+      if (
+        req.body.discordId != null &&
+        req.body.discordId !== '' &&
+        !/^\d{17,20}$/.test(req.body.discordId)
+      ) {
+        return next({
+          status: 400,
+          message: 'Discord user ID must be a valid numeric ID.',
+        });
+      }
+
+      user.settings.discordId = req.body.discordId ?? user.settings.discordId;
+      user.settings.pgpKey = req.body.pgpKey ?? user.settings.pgpKey;
+      user.settings.pushbulletAccessToken =
+        req.body.pushbulletAccessToken ?? user.settings.pushbulletAccessToken;
+      user.settings.pushoverApplicationToken =
+        req.body.pushoverApplicationToken ??
+        user.settings.pushoverApplicationToken;
+      user.settings.pushoverUserKey =
+        req.body.pushoverUserKey ?? user.settings.pushoverUserKey;
+      user.settings.pushoverSound =
+        req.body.pushoverSound ?? user.settings.pushoverSound;
+      user.settings.telegramChatId =
+        req.body.telegramChatId ?? user.settings.telegramChatId;
+      user.settings.telegramMessageThreadId =
+        req.body.telegramMessageThreadId ??
+        user.settings.telegramMessageThreadId;
+      user.settings.telegramSendSilently =
+        req.body.telegramSendSilently ?? user.settings.telegramSendSilently;
+      user.settings.notificationTypes = Object.assign(
+        {},
+        user.settings.notificationTypes,
+        req.body.notificationTypes
+      );
 
       await userRepository.save(user);
 
       res.status(200).json({
+        discordId: user.settings.discordId,
         pgpKey: user.settings.pgpKey,
+        pushbulletAccessToken: user.settings.pushbulletAccessToken,
+        pushoverApplicationToken: user.settings.pushoverApplicationToken,
+        pushoverUserKey: user.settings.pushoverUserKey,
+        pushoverSound: user.settings.pushoverSound,
+        telegramChatId: user.settings.telegramChatId,
+        telegramMessageThreadId: user.settings.telegramMessageThreadId,
+        telegramSendSilently: user.settings.telegramSendSilently,
         notificationTypes: user.settings.notificationTypes,
       });
     } catch (e) {

@@ -9,6 +9,14 @@ import LocalAgent, {
 } from '@server/lib/notifications/agents/inApp';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
+import DiscordAgent from '@server/lib/notifications/agents/discord';
+import GotifyAgent from '@server/lib/notifications/agents/gotify';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
+import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
+import PushoverAgent from '@server/lib/notifications/agents/pushover';
+import SlackAgent from '@server/lib/notifications/agents/slack';
+import TelegramAgent from '@server/lib/notifications/agents/telegram';
+import WebhookAgent from '@server/lib/notifications/agents/webhook';
 import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import { initI18n } from '@server/i18n';
@@ -76,7 +84,15 @@ app
 
     // Register Notification Agents
     notificationManager.registerAgents([
+      new DiscordAgent(),
       new EmailAgent(),
+      new GotifyAgent(),
+      new NtfyAgent(),
+      new PushbulletAgent(),
+      new PushoverAgent(),
+      new SlackAgent(),
+      new TelegramAgent(),
+      new WebhookAgent(),
       new WebPushAgent(),
       new LocalAgent(),
     ]);
@@ -164,6 +180,20 @@ app
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
+
+    // Next.js lazily attaches a catch-all `upgrade` listener (via
+    // getRequestHandler) that hijacks the /socket.io/ upgrade and corrupts the
+    // WebSocket frame ("Invalid frame header"). Mark Next's WS setup as already
+    // done so it never registers its catch-all, then route only /_next/* (HMR)
+    // upgrades to Next ourselves. Must stay after the Socket.IO server is
+    // constructed so engine.io's upgrade listener is registered first.
+    (app as unknown as { didWebSocketSetup: boolean }).didWebSocketSetup = true;
+    const nextUpgradeHandler = app.getUpgradeHandler();
+    httpServer.on('upgrade', (req, socket, head) => {
+      if (req.url?.startsWith('/_next/')) {
+        nextUpgradeHandler(req, socket, head);
+      }
+    });
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user
