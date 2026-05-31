@@ -90,10 +90,13 @@ const NotificationsList = () => {
     const filterString = window.localStorage.getItem('nl-filter-settings');
 
     if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentPageSize(filterSettings.currentPageSize);
+      try {
+        const filterSettings = JSON.parse(filterString);
+        setCurrentFilter(filterSettings.currentFilter);
+        setCurrentPageSize(filterSettings.currentPageSize);
+      } catch {
+        window.localStorage.removeItem('nl-filter-settings');
+      }
     }
 
     // If filter value is provided in query, use that instead
@@ -116,8 +119,10 @@ const NotificationsList = () => {
   const hasNextPage = (data?.pageInfo.pages ?? 0) > pageIndex + 1;
   const hasPrevPage = pageIndex > 0;
 
-  const subtextItems: React.ReactNode[] =
-    user?.id != currentUser?.id ? [user?.displayName] : null;
+  const subtextItems: React.ReactNode[] | null =
+    user?.id !== currentUser?.id && user?.displayName
+      ? [user.displayName]
+      : null;
 
   const deleteNotification = async (notificationId: number, userId: string) => {
     try {
@@ -315,7 +320,7 @@ const NotificationsList = () => {
                     values={{
                       start: pageIndex * currentPageSize + 1,
                       end:
-                        (data?.results.length ?? 0 < currentPageSize)
+                        (data?.results.length ?? 0) < currentPageSize
                           ? pageIndex * currentPageSize +
                             (data?.results.length ?? 0)
                           : (pageIndex + 1) * currentPageSize,

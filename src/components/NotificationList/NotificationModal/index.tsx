@@ -40,6 +40,9 @@ const NotificationModal = ({
 }: NotificationModalProps) => {
   const intl = useIntl();
   const { hasPermission: currentHasPermission } = useUser();
+  const allNotificationTypes = Object.values(NotificationType)
+    .filter((value) => !isNaN(Number(value)))
+    .reduce((acc, value) => acc + Number(value), 0);
 
   const { data: userData } = useSWR<UserResultsResponse>(
     currentHasPermission(
@@ -59,9 +62,38 @@ const NotificationModal = ({
       const localMessageBit = NotificationType.LOCAL_MESSAGE;
 
       return (
-        ((notificationTypes.inApp ?? 0) & localMessageBit) !== 0 ||
-        ((notificationTypes.webpush ?? 0) & localMessageBit) !== 0 ||
-        ((notificationTypes.email ?? 0) & localMessageBit) !== 0
+        ((notificationTypes.inApp ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.webpush ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.email ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.discord ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.gotify ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.telegram ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.webhook ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.ntfy ?? allNotificationTypes) & localMessageBit) !==
+          0 ||
+        ((notificationTypes.pushbullet ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.pushover ?? allNotificationTypes) &
+          localMessageBit) !==
+          0 ||
+        ((notificationTypes.slack ?? allNotificationTypes) &
+          localMessageBit) !==
+          0
       );
     }) ?? [];
 

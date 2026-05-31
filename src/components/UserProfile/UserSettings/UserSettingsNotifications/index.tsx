@@ -8,6 +8,10 @@ import {
   CloudIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/solid';
+import DiscordIcon from '@app/assets/extlogos/discord.svg';
+import PushbulletIcon from '@app/assets/extlogos/pushbullet.svg';
+import PushoverIcon from '@app/assets/extlogos/pushover.svg';
+import TelegramIcon from '@app/assets/extlogos/telegram.svg';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useParams, usePathname } from 'next/navigation';
 import useSWR from 'swr';
@@ -19,10 +23,14 @@ const UserSettingsNotifications = ({
   children: React.ReactNode;
 }) => {
   const intl = useIntl();
-  const userQuery = useParams<{ userid: string }>();
-  const { user } = useUser({ id: Number(userQuery.userid) });
+  const { userid } = useParams<{ userid: string }>();
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+  } = useUser({ id: Number(userid) });
   const { data, error } = useSWR<UserSettingsNotificationsResponse>(
-    user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+    user ? `/api/v1/user/${user.id}/settings/notifications` : null
   );
 
   const pathname = usePathname();
@@ -73,6 +81,66 @@ const UserSettingsNotifications = ({
       hidden: !data?.inAppEnabled,
       regex: /\/settings\/notifications\/inapp/,
     },
+    {
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.discordTitle',
+        defaultMessage: 'Discord Notifications',
+      }),
+      route: '/settings/notifications/discord',
+      content: (
+        <span className="flex">
+          <DiscordIcon className="size-5 mr-2" />
+          Discord
+        </span>
+      ),
+      regex: /\/settings\/notifications\/discord/,
+      hidden: !data?.discordEnabled,
+    },
+    {
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.pushbulletTitle',
+        defaultMessage: 'Pushbullet Notifications',
+      }),
+      route: '/settings/notifications/pushbullet',
+      content: (
+        <span className="flex">
+          <PushbulletIcon className="size-5 mr-2" />
+          Pushbullet
+        </span>
+      ),
+      hidden: !data?.pushbulletEnabled,
+      regex: /\/settings\/notifications\/pushbullet/,
+    },
+    {
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.pushoverTitle',
+        defaultMessage: 'Pushover Notifications',
+      }),
+      route: '/settings/notifications/pushover',
+      content: (
+        <span className="flex">
+          <PushoverIcon className="size-5 mr-2" />
+          Pushover
+        </span>
+      ),
+      hidden: !data?.pushoverEnabled,
+      regex: /\/settings\/notifications\/pushover/,
+    },
+    {
+      text: intl.formatMessage({
+        id: 'userSettings.notifications.telegramTitle',
+        defaultMessage: 'Telegram Notifications',
+      }),
+      route: '/settings/notifications/telegram',
+      content: (
+        <span className="flex">
+          <TelegramIcon className="size-5 mr-2" />
+          Telegram
+        </span>
+      ),
+      hidden: !data?.telegramEnabled,
+      regex: /\/settings\/notifications\/telegram/,
+    },
   ].map((settingsRoute) => ({
     ...settingsRoute,
     route: pathname.includes('/profile')
@@ -80,8 +148,14 @@ const UserSettingsNotifications = ({
       : `/admin/users/${user?.id}${settingsRoute.route}`,
   }));
 
-  if (!data && !error) {
+  if (userLoading || (!data && !error)) {
     return <LoadingEllipsis />;
+  }
+
+  if (userError || !user) {
+    return (
+      <Error statusCode={500} error={{ name: 'error' }} reset={() => {}} />
+    );
   }
 
   if (!data) {

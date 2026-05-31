@@ -33,8 +33,8 @@ import useSWR, { mutate } from 'swr';
 
 const UserWebPushSettings = () => {
   const intl = useIntl();
-  const searchParams = useParams<{ userid: string }>();
-  const { user } = useUser({ id: Number(searchParams.userid) });
+  const { userid } = useParams<{ userid: string }>();
+  const { user } = useUser({ id: Number(userid) });
   const { currentSettings } = useSettings();
   const [webPushEnabled, setWebPushEnabled] = useState(false);
   const [subEndpoint, setSubEndpoint] = useState<string | null>(null);

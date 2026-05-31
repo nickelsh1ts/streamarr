@@ -1002,7 +1002,7 @@ const UserSettingsGeneral = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
-                                className={`absolute right-0 !w-5 !h-5 !p-1.5 text-primary 
+                                className={`absolute right-0 !w-5 !h-5 !p-1.5 text-primary
                                   ${values.trialPeriodEnabled ? '' : 'opacity-50'}
                                 `}
                               >
@@ -1024,7 +1024,7 @@ const UserSettingsGeneral = () => {
                         </div>
                         {errors.trialPeriodEndsAt &&
                           touched.trialPeriodEndsAt && (
-                            <div className="text-sm text-red-500 mt-1">
+                            <div className="text-sm text-error mt-1">
                               {errors.trialPeriodEndsAt}
                             </div>
                           )}
