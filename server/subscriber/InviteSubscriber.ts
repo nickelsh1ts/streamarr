@@ -4,9 +4,11 @@ import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import { getIntl } from '@server/i18n';
-import notificationManager from '@server/lib/notifications';
+import notificationManager, {
+  userAcceptsNotificationType,
+} from '@server/lib/notifications';
+import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
-import { NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import type {
   EntitySubscriberInterface,
@@ -24,28 +26,31 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
   private async notifyRedeemedInvite(entity: Invite) {
     const intl = getIntl(entity.createdBy?.settings?.locale);
     try {
-      notificationManager.sendNotification(NotificationType.INVITE_REDEEMED, {
-        invite: entity,
-        subject: intl.formatMessage(
-          {
-            id: 'notifications.invite.redeemed.subject',
-            defaultMessage: 'Invite Redeemed: {icode}',
-          },
-          { icode: entity.icode }
-        ),
-        message: intl.formatMessage(
-          {
-            id: 'notifications.invite.redeemed.message',
-            defaultMessage: 'Your invite has been redeemed by {displayName}.',
-          },
-          { displayName: entity.redeemedBy.at(-1)?.displayName ?? '' }
-        ),
-        notifySystem: false,
-        notifyAdmin: false,
-        notifyUser: entity.createdBy,
-        actionUrl: '/invites',
-        actionUrlTitle: 'View Invites',
-      });
+      await notificationManager.sendNotification(
+        NotificationType.INVITE_REDEEMED,
+        {
+          invite: entity,
+          subject: intl.formatMessage(
+            {
+              id: 'notifications.invite.redeemed.subject',
+              defaultMessage: 'Invite Redeemed: {icode}',
+            },
+            { icode: entity.icode }
+          ),
+          message: intl.formatMessage(
+            {
+              id: 'notifications.invite.redeemed.message',
+              defaultMessage: 'Your invite has been redeemed by {displayName}.',
+            },
+            { displayName: entity.redeemedBy.at(-1)?.displayName ?? '' }
+          ),
+          notifySystem: false,
+          notifyAdmin: false,
+          notifyUser: entity.createdBy,
+          actionUrl: '/invites',
+          actionUrlTitle: 'View Invites',
+        }
+      );
     } catch (e) {
       logger.error('Failed to send invite redeemed notification', {
         label: 'Notifications',
@@ -59,22 +64,25 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
   private async notifyExpiredInvite(entity: Invite) {
     const intl = getIntl(entity.createdBy?.settings?.locale);
     try {
-      notificationManager.sendNotification(NotificationType.INVITE_EXPIRED, {
-        invite: entity,
-        subject: intl.formatMessage(
-          {
-            id: 'notifications.invite.expired.subject',
-            defaultMessage: 'Invite Expired: {icode}',
-          },
-          { icode: entity.icode }
-        ),
-        message: '',
-        notifySystem: false,
-        notifyAdmin: false,
-        notifyUser: entity.createdBy,
-        actionUrl: '/invites',
-        actionUrlTitle: 'View Invites',
-      });
+      await notificationManager.sendNotification(
+        NotificationType.INVITE_EXPIRED,
+        {
+          invite: entity,
+          subject: intl.formatMessage(
+            {
+              id: 'notifications.invite.expired.subject',
+              defaultMessage: 'Invite Expired: {icode}',
+            },
+            { icode: entity.icode }
+          ),
+          message: '',
+          notifySystem: false,
+          notifyAdmin: false,
+          notifyUser: entity.createdBy,
+          actionUrl: '/invites',
+          actionUrlTitle: 'View Invites',
+        }
+      );
     } catch (e) {
       logger.error('Failed to send invite expired notification', {
         label: 'Notifications',
@@ -100,94 +108,64 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
         })
     );
 
-    const adminsToNotify = admins.filter((user) => {
-      const settings = user.settings;
-      return (
-        !settings ||
-        settings.hasNotificationType(
-          NotificationAgentKey.IN_APP,
-          NotificationType.NEW_INVITE
-        ) ||
-        settings.hasNotificationType(
-          NotificationAgentKey.EMAIL,
-          NotificationType.NEW_INVITE
-        ) ||
-        settings.hasNotificationType(
-          NotificationAgentKey.WEBPUSH,
-          NotificationType.NEW_INVITE
-        )
-      );
-    });
+    const adminsToNotify = admins.filter((user) =>
+      userAcceptsNotificationType(user, NotificationType.NEW_INVITE)
+    );
 
-    await Promise.all(
-      adminsToNotify.map(async (user) => {
-        const intl = getIntl(user.settings?.locale);
-        try {
-          notificationManager.sendNotification(NotificationType.NEW_INVITE, {
-            invite: entity,
-            subject: intl.formatMessage(
-              {
-                id: 'notifications.invite.new.subject',
-                defaultMessage: 'New Invite: {icode}',
-              },
-              { icode: entity.icode }
-            ),
-            message: intl.formatMessage(
-              {
-                id: 'notifications.invite.new.message',
-                defaultMessage:
-                  'A new invite has been created by {displayName}.',
-              },
-              { displayName: entity.createdBy?.displayName ?? '' }
-            ),
-            notifySystem: false,
-            notifyAdmin: true,
-            notifyUser: user,
-            actionUrl: '/invites',
-            actionUrlTitle: 'View Invites',
-          });
-        } catch (e) {
-          logger.error('Failed to send new invite notification', {
-            label: 'Notifications',
-            errorMessage: e.message,
-            invitedById: entity.createdBy?.id,
-            icode: entity.icode,
-          });
-        }
+    await sendGroupNotification(
+      NotificationType.NEW_INVITE,
+      adminsToNotify,
+      (intl) => ({
+        invite: entity,
+        subject: intl.formatMessage(
+          {
+            id: 'notifications.invite.new.subject',
+            defaultMessage: 'New Invite: {icode}',
+          },
+          { icode: entity.icode }
+        ),
+        message: intl.formatMessage(
+          {
+            id: 'notifications.invite.new.message',
+            defaultMessage: 'A new invite has been created by {displayName}.',
+          },
+          { displayName: entity.createdBy?.displayName ?? '' }
+        ),
+        actionUrl: '/invites',
+        actionUrlTitle: 'View Invites',
       })
     );
   }
 
-  public afterInsert(event: InsertEvent<Invite>): void {
+  public async afterInsert(event: InsertEvent<Invite>): Promise<void> {
     if (!event.entity) {
       return;
     }
 
-    this.notifyNewInvite(event.entity);
+    await this.notifyNewInvite(event.entity);
   }
 
-  public afterUpdate(event: UpdateEvent<Invite>): void {
+  public async afterUpdate(event: UpdateEvent<Invite>): Promise<void> {
     if (!event.entity) {
       return;
     }
 
     const previousUses = event.databaseEntity?.uses ?? 0;
     const currentUses = event.entity.uses ?? 0;
-    const usesIncreased = currentUses > previousUses;
-
-    if (
-      usesIncreased ||
-      (event.entity.status === InviteStatus.REDEEMED &&
-        event.databaseEntity?.status !== InviteStatus.REDEEMED)
+    if (currentUses > previousUses) {
+      await this.notifyRedeemedInvite(event.entity as Invite);
+    } else if (
+      event.entity.status === InviteStatus.REDEEMED &&
+      event.databaseEntity?.status !== InviteStatus.REDEEMED
     ) {
-      this.notifyRedeemedInvite(event.entity as Invite);
+      await this.notifyRedeemedInvite(event.entity as Invite);
     }
 
     if (
       event.entity.status === InviteStatus.EXPIRED &&
       event.databaseEntity?.status !== InviteStatus.EXPIRED
     ) {
-      this.notifyExpiredInvite(event.entity as Invite);
+      await this.notifyExpiredInvite(event.entity as Invite);
     }
   }
 }
