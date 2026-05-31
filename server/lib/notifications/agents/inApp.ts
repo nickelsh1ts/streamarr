@@ -15,16 +15,12 @@ import { getRepository } from '@server/datasource';
 import type { User } from '@server/entity/User';
 import { NotificationSeverity } from '@server/constants/notification';
 import Notification from '@server/entity/Notification';
+import {
+  ALL_NOTIFICATIONS,
+  hasNotificationType,
+} from '@server/lib/notifications';
 
 interface InAppNotificationPayload extends NotificationPayload {
-  type: NotificationType;
-  severity: NotificationSeverity;
-  message: string;
-  createdBy: User;
-  updatedBy: User;
-  actionUrl?: string;
-  actionUrlTitle?: string;
-  inviteId?: number;
   notifyUser: User;
 }
 
@@ -51,9 +47,9 @@ class InAppAgent
   private getNotificationPayload(
     type: NotificationType,
     payload: InAppNotificationPayload
-  ): InAppNotificationPayload {
+  ) {
     return {
-      type: type,
+      type,
       subject: payload.subject,
       severity: payload.severity ?? NotificationSeverity.INFO,
       message: payload.message ?? '',
@@ -63,75 +59,75 @@ class InAppAgent
       inviteId: payload.invite?.id,
       actionUrl: payload.actionUrl,
       actionUrlTitle: payload.actionUrlTitle,
-      notifySystem: payload.notifySystem,
-      notifyAdmin: payload.notifyAdmin,
     };
   }
 
   public shouldSend(): boolean {
-    if (this.getSettings().enabled) {
-      return true;
-    }
-
-    return false;
+    return this.getSettings().enabled;
   }
 
   public async send(
     type: NotificationType,
-    payload: InAppNotificationPayload
+    payload: NotificationPayload
   ): Promise<boolean> {
-    if (payload.notifyUser) {
-      if (
-        !payload.notifyUser.settings ||
-        // Check if user has in-app notifications enabled and fallback to true if undefined
-        // since inApp should default to true
-        (payload.notifyUser.settings.hasNotificationType(
-          NotificationAgentKey.IN_APP,
-          type
-        ) ??
-          true)
-      ) {
-        logger.debug('Sending inApp notification', {
-          label: 'Notifications',
-          recipient: payload.notifyUser.displayName,
-          type: NotificationType[type],
-          subject: payload.subject,
-        });
-
-        const notificationPayload = this.getNotificationPayload(type, payload);
-
-        try {
-          const notificationRepository = getRepository(Notification);
-          const notification = new Notification(notificationPayload);
-
-          await notificationRepository.save(notification);
-
-          if (io) {
-            // Emit only serializable data to avoid entity method serialization issues
-            io.to(String(payload.notifyUser.id)).emit('newNotification', {
-              type: notificationPayload.type,
-              subject: notificationPayload.subject,
-              severity: notificationPayload.severity,
-              description: notificationPayload.message,
-              message: notificationPayload.message,
-              inviteId: notificationPayload.inviteId,
-              actionUrl: notificationPayload.actionUrl,
-              actionUrlTitle: notificationPayload.actionUrlTitle,
-            });
-          }
-        } catch (e) {
-          logger.error('Error sending local notification', {
-            label: 'Notifications',
-            type: NotificationType[type],
-            errorMessage: e.message,
-          });
-
-          return false;
-        }
-      }
-
+    const settings = this.getSettings();
+    if (!hasNotificationType(type, settings.types ?? ALL_NOTIFICATIONS)) {
       return true;
     }
+
+    if (
+      !payload.notifyUser ||
+      (payload.notifyUser.settings &&
+        !payload.notifyUser.settings.hasNotificationType(
+          NotificationAgentKey.IN_APP,
+          type
+        ))
+    ) {
+      return true;
+    }
+
+    logger.debug('Sending inApp notification', {
+      label: 'Notifications',
+      recipient: payload.notifyUser.displayName,
+      type: NotificationType[type],
+      subject: payload.subject,
+    });
+
+    const notificationPayload = this.getNotificationPayload(
+      type,
+      payload as InAppNotificationPayload
+    );
+
+    try {
+      const notificationRepository = getRepository(Notification);
+      const notification = new Notification(notificationPayload);
+
+      await notificationRepository.save(notification);
+
+      if (io) {
+        // Emit only serializable data to avoid entity method serialization issues
+        io.to(String(payload.notifyUser.id)).emit('newNotification', {
+          type: notificationPayload.type,
+          subject: notificationPayload.subject,
+          severity: notificationPayload.severity,
+          description: notificationPayload.message,
+          message: notificationPayload.message,
+          inviteId: notificationPayload.inviteId,
+          actionUrl: notificationPayload.actionUrl,
+          actionUrlTitle: notificationPayload.actionUrlTitle,
+        });
+      }
+    } catch (e) {
+      logger.error('Error sending local notification', {
+        label: 'Notifications',
+        type: NotificationType[type],
+        errorMessage: e.message,
+      });
+
+      return false;
+    }
+
+    return true;
   }
 }
 

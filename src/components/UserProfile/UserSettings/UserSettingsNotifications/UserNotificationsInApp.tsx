@@ -6,7 +6,11 @@ import NotificationTypeSelector, {
 } from '@app/components/Common/NotificationTypeSelector';
 import Toast from '@app/components/Toast';
 import { useUser } from '@app/hooks/useUser';
-import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
+import {
+  ArrowDownTrayIcon,
+  CheckBadgeIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
@@ -17,8 +21,8 @@ import useSWR from 'swr';
 
 const UserInAppSettings = () => {
   const intl = useIntl();
-  const searchParams = useParams<{ userid: string }>();
-  const { user } = useUser({ id: Number(searchParams.userid) });
+  const { userid } = useParams<{ userid: string }>();
+  const { user } = useUser({ id: Number(userid) });
   const {
     data,
     error,
@@ -60,7 +64,7 @@ const UserInAppSettings = () => {
               defaultMessage: 'In App notification settings failed to save.',
             }),
             type: 'error',
-            icon: <CheckBadgeIcon className="size-7" />,
+            icon: <XCircleIcon className="size-7" />,
             message: e.message,
           });
         } finally {

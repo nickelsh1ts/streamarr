@@ -10,7 +10,7 @@ type NotificationCallback = (notification: SocketNotificationPayload) => void;
 interface UseNotificationsOptions {
   /**
    * Controls automatic SWR cache revalidation:
-   * - 'new-only': Only revalidate for new notifications (default)
+   * - 'new-only': Revalidate for new notifications and bulk updates (default)
    * - true: Always revalidate
    * - false: Never revalidate automatically
    */
@@ -41,7 +41,8 @@ export const useNotifications = (
     return subscribe((notification) => {
       const shouldRevalidate =
         autoRevalidate === true ||
-        (autoRevalidate === 'new-only' && !notification.action);
+        (autoRevalidate === 'new-only' &&
+          (!notification.action || notification.action === 'bulkUpdated'));
 
       if (shouldRevalidate) {
         mutate(

@@ -4,10 +4,20 @@ import { NotificationType } from '@server/constants/notification';
 import type { NotificationAgent } from '@server/lib/notifications/agents/agent';
 import { getIntl } from '@server/i18n';
 import type { IntlShape } from '@server/i18n';
+import type { NotificationAgents } from '@server/lib/settings';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
 import { Router } from 'express';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import InAppAgent from '@server/lib/notifications/agents/inApp';
+import DiscordAgent from '@server/lib/notifications/agents/discord';
+import SlackAgent from '@server/lib/notifications/agents/slack';
+import TelegramAgent from '@server/lib/notifications/agents/telegram';
+import WebhookAgent from '@server/lib/notifications/agents/webhook';
+import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
+import PushoverAgent from '@server/lib/notifications/agents/pushover';
+import GotifyAgent from '@server/lib/notifications/agents/gotify';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
+import PushoverAPI from '@server/api/pushover';
 
 const notificationRoutes = Router();
 
@@ -31,136 +41,163 @@ const sendTestNotification = async (
   });
 };
 
-notificationRoutes.get('/email', (_req, res) => {
-  const settings = getSettings();
+const registerAgentRoutes = <K extends keyof NotificationAgents>(
+  routePath: string,
+  settingsKey: K,
+  typeName: string,
+  factory: (settings: NotificationAgents[K]) => NotificationAgent
+) => {
+  notificationRoutes.get<unknown, NotificationAgents[K]>(
+    `/${routePath}`,
+    (_req, res) => {
+      const settings = getSettings();
+      const agentSettings = settings.notifications.agents[settingsKey];
 
-  res.status(200).json(settings.notifications.agents.email);
-});
+      res.status(200).json(agentSettings);
+    }
+  );
 
-notificationRoutes.post('/email', (req, res) => {
-  const settings = getSettings();
+  notificationRoutes.post<
+    unknown,
+    NotificationAgents[K],
+    NotificationAgents[K]
+  >(`/${routePath}`, (req, res) => {
+    const settings = getSettings();
 
-  settings.notifications.agents.email = req.body;
-  settings.save();
+    settings.notifications.agents[settingsKey] = req.body;
+    settings.save();
 
-  res.status(200).json(settings.notifications.agents.email);
-});
+    res.status(200).json(settings.notifications.agents[settingsKey]);
+  });
 
-notificationRoutes.post('/email/test', (req, res, next) => {
-  (async () => {
-    if (!req.user) {
+  notificationRoutes.post<unknown, unknown, NotificationAgents[K]>(
+    `/${routePath}/test`,
+    (req, res, next) => {
+      (async () => {
+        if (!req.user) {
+          return next({
+            status: 500,
+            message: 'User information is missing from the request.',
+          });
+        }
+
+        const intl = getIntl(req.user.settings?.locale);
+
+        const agent = factory(req.body);
+        if (await sendTestNotification(agent, req.user, intl)) {
+          res.status(204).send();
+        } else {
+          return next({
+            status: 500,
+            message: intl.formatMessage(
+              {
+                id: 'notifications.test.failed',
+                defaultMessage: 'Failed to send {type} notification.',
+              },
+              { type: typeName }
+            ),
+          });
+        }
+      })().catch(next);
+    }
+  );
+};
+
+registerAgentRoutes(
+  'discord',
+  'discord',
+  'Discord',
+  (settings) => new DiscordAgent(settings)
+);
+registerAgentRoutes(
+  'email',
+  'email',
+  'email',
+  (settings) => new EmailAgent(settings)
+);
+registerAgentRoutes(
+  'gotify',
+  'gotify',
+  'Gotify',
+  (settings) => new GotifyAgent(settings)
+);
+registerAgentRoutes(
+  'ntfy',
+  'ntfy',
+  'ntfy',
+  (settings) => new NtfyAgent(settings)
+);
+registerAgentRoutes(
+  'pushbullet',
+  'pushbullet',
+  'Pushbullet',
+  (settings) => new PushbulletAgent(settings)
+);
+registerAgentRoutes(
+  'pushover',
+  'pushover',
+  'Pushover',
+  (settings) => new PushoverAgent(settings)
+);
+
+notificationRoutes.get('/pushover/sounds', async (_req, res, next) => {
+  const pushoverApi = new PushoverAPI();
+
+  try {
+    const token =
+      getSettings().notifications.agents.pushover.options.accessToken;
+
+    if (!token) {
       return next({
-        status: 500,
-        message: 'User information is missing from the request.',
+        status: 400,
+        message: 'Pushover application token is not configured.',
       });
     }
 
-    const intl = getIntl(req.user.settings?.locale);
-
-    const emailAgent = new EmailAgent(req.body);
-    if (await sendTestNotification(emailAgent, req.user, intl)) {
-      res.status(204).send();
-    } else {
-      return next({
-        status: 500,
-        message: intl.formatMessage(
-          {
-            id: 'notifications.test.failed',
-            defaultMessage: 'Failed to send {type} notification.',
-          },
-          { type: 'email' }
-        ),
-      });
-    }
-  })().catch(next);
+    const sounds = await pushoverApi.getSounds(token);
+    res.status(200).json(
+      sounds.map((sound) => ({
+        value: sound.name,
+        label: sound.description,
+      }))
+    );
+  } catch (e) {
+    next({
+      status: 500,
+      message:
+        e instanceof Error ? e.message : 'Unable to retrieve Pushover sounds.',
+    });
+  }
 });
-
-notificationRoutes.get('/webpush', (_req, res) => {
-  const settings = getSettings();
-
-  res.status(200).json(settings.notifications.agents.webpush);
-});
-
-notificationRoutes.post('/webpush', (req, res) => {
-  const settings = getSettings();
-
-  settings.notifications.agents.webpush = req.body;
-  settings.save();
-
-  res.status(200).json(settings.notifications.agents.webpush);
-});
-
-notificationRoutes.post('/webpush/test', (req, res, next) => {
-  (async () => {
-    if (!req.user) {
-      return next({
-        status: 500,
-        message: 'User information is missing from the request.',
-      });
-    }
-
-    const intl = getIntl(req.user.settings?.locale);
-
-    const webpushAgent = new WebPushAgent(req.body);
-    if (await sendTestNotification(webpushAgent, req.user, intl)) {
-      res.status(204).send();
-    } else {
-      return next({
-        status: 500,
-        message: intl.formatMessage(
-          {
-            id: 'notifications.test.failed',
-            defaultMessage: 'Failed to send {type} notification.',
-          },
-          { type: 'web push' }
-        ),
-      });
-    }
-  })().catch(next);
-});
-
-notificationRoutes.get('/inapp', (_req, res) => {
-  const settings = getSettings();
-
-  res.status(200).json(settings.notifications.agents.inApp);
-});
-
-notificationRoutes.post('/inapp', (req, res) => {
-  const settings = getSettings();
-
-  settings.notifications.agents.inApp = req.body;
-  settings.save();
-
-  res.status(200).json(settings.notifications.agents.inApp);
-});
-
-notificationRoutes.post('/inapp/test', (req, res, next) => {
-  (async () => {
-    if (!req.user) {
-      return next({
-        status: 500,
-        message: 'User information is missing from the request.',
-      });
-    }
-
-    const intl = getIntl(req.user.settings?.locale);
-
-    const inAppAgent = new InAppAgent(req.body);
-    if (await sendTestNotification(inAppAgent, req.user, intl)) {
-      res.status(204).send();
-    } else {
-      return next({
-        status: 500,
-        message: intl.formatMessage(
-          {
-            id: 'notifications.test.failed',
-            defaultMessage: 'Failed to send {type} notification.',
-          },
-          { type: 'in-app' }
-        ),
-      });
-    }
-  })().catch(next);
-});
+registerAgentRoutes(
+  'slack',
+  'slack',
+  'Slack',
+  (settings) => new SlackAgent(settings)
+);
+registerAgentRoutes(
+  'telegram',
+  'telegram',
+  'Telegram',
+  (settings) => new TelegramAgent(settings)
+);
+registerAgentRoutes(
+  'webhook',
+  'webhook',
+  'webhook',
+  (settings) => new WebhookAgent(settings)
+);
+registerAgentRoutes(
+  'webpush',
+  'webpush',
+  'web push',
+  (settings) => new WebPushAgent(settings)
+);
+registerAgentRoutes(
+  'inapp',
+  'inApp',
+  'in-app',
+  (settings) => new InAppAgent(settings)
+);
 
 export default notificationRoutes;

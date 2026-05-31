@@ -60,9 +60,15 @@ const UserDropdown = ({
     (allowSkip || (!tutorialAutostart && welcomeDone));
 
   useEffect(() => {
-    socket.on('newNotification', () => {
+    const handleNewNotification = () => {
       revalidate();
-    });
+    };
+
+    socket.on('newNotification', handleNewNotification);
+
+    return () => {
+      socket.off('newNotification', handleNewNotification);
+    };
   }, [revalidate]);
 
   return (

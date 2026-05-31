@@ -8,7 +8,11 @@ import webpush from 'web-push';
 import { NotificationType } from '@server/constants/notification';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
-import { shouldSendAdminNotification } from '@server/lib/notifications';
+import {
+  ALL_NOTIFICATIONS,
+  hasNotificationType,
+  shouldSendAdminNotification,
+} from '@server/lib/notifications';
 
 interface PushNotificationPayload {
   notificationType: string;
@@ -55,24 +59,23 @@ class WebPushAgent
   }
 
   public shouldSend(): boolean {
-    if (this.getSettings().enabled) {
-      return true;
-    }
-
-    return false;
+    return this.getSettings().enabled;
   }
 
   public async send(
     type: NotificationType,
     payload: NotificationPayload
   ): Promise<boolean> {
+    const agentSettings = this.getSettings();
+    if (!hasNotificationType(type, agentSettings.types ?? ALL_NOTIFICATIONS)) {
+      return true;
+    }
+
     const userRepository = getRepository(User);
     const userPushSubRepository = getRepository(UserPushSubscription);
     const settings = getSettings();
 
     const pushSubs: UserPushSubscription[] = [];
-
-    const mainUser = await userRepository.findOne({ where: { id: 1 } });
 
     const webPushNotification = async (
       pushSub: UserPushSubscription,
@@ -120,13 +123,11 @@ class WebPushAgent
 
     if (
       payload.notifyUser &&
-      // Check if user has webpush notifications enabled and fallback to true if undefined
-      // since web push should default to true
-      (payload.notifyUser.settings?.hasNotificationType(
-        NotificationAgentKey.WEBPUSH,
-        type
-      ) ??
-        true)
+      (!payload.notifyUser.settings ||
+        payload.notifyUser.settings.hasNotificationType(
+          NotificationAgentKey.WEBPUSH,
+          type
+        ))
     ) {
       const notifySubs = await userPushSubRepository.find({
         where: { user: { id: payload.notifyUser.id } },
@@ -136,17 +137,15 @@ class WebPushAgent
     }
 
     if (payload.notifyAdmin) {
-      const users = await userRepository.find();
+      const users = await userRepository.find({ relations: ['settings'] });
 
       const manageUsers = users.filter(
         (user) =>
-          // Check if user has webpush notifications enabled and fallback to true if undefined
-          // since web push should default to true
-          (user.settings?.hasNotificationType(
-            NotificationAgentKey.WEBPUSH,
-            type
-          ) ??
-            true) &&
+          (!user.settings ||
+            user.settings.hasNotificationType(
+              NotificationAgentKey.WEBPUSH,
+              type
+            )) &&
           shouldSendAdminNotification(type, user, payload)
       );
 
@@ -164,9 +163,16 @@ class WebPushAgent
       pushSubs.push(...allSubs);
     }
 
-    if (mainUser && pushSubs.length > 0) {
+    if (pushSubs.length > 0) {
+      const adminUser = await userRepository.findOne({ where: { id: 1 } });
+      const contactSubject = adminUser?.email
+        ? `mailto:${adminUser.email}`
+        : settings.main.applicationUrl?.startsWith('https://')
+          ? settings.main.applicationUrl
+          : 'mailto:noreply@streamarr.local';
+
       webpush.setVapidDetails(
-        `mailto:${mainUser.email}`,
+        contactSubject,
         settings.vapidPublic,
         settings.vapidPrivate
       );
@@ -176,8 +182,14 @@ class WebPushAgent
         'utf-8'
       );
 
+      // Dedupe subscriptions so a user who is both the recipient and an admin
+      // is only notified once per device.
+      const uniqueSubs = [
+        ...new Map(pushSubs.map((sub) => [sub.id, sub])).values(),
+      ];
+
       await Promise.all(
-        pushSubs.map((sub) => webPushNotification(sub, notificationPayload))
+        uniqueSubs.map((sub) => webPushNotification(sub, notificationPayload))
       );
     }
 

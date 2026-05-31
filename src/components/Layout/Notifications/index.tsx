@@ -11,7 +11,7 @@ import {
   QueueListIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
 import { useUser } from '@app/hooks/useUser';
@@ -161,6 +161,21 @@ const Notifications = () => {
     }
   }, [isOpen]);
 
+  const unreadNotifications = useMemo(
+    () => data?.results.filter((notification) => !notification.isRead) ?? [],
+    [data]
+  );
+  const readNotifications = useMemo(
+    () => data?.results.filter((notification) => notification.isRead) ?? [],
+    [data]
+  );
+  // When filtering on "all" and there are read notifications shown below, keep
+  // the New section compact; otherwise allow it to show more before paginating.
+  const newLimit =
+    filter === 'all' && readNotifications.length > 0
+      ? newPageSize
+      : newPageSize + 10;
+
   return (
     <Transition show={isOpen || false}>
       <TransitionChild
@@ -275,9 +290,7 @@ const Notifications = () => {
             <ul className="flex flex-col gap-2 mb-2">
               {!data && !error ? (
                 <LoadingEllipsis />
-              ) : (data?.results.filter((notification) => {
-                  return !notification.isRead;
-                }).length ?? 0) === 0 ? (
+              ) : unreadNotifications.length === 0 ? (
                 <span className="text-center w-full text-neutral">
                   {intl.formatMessage({
                     id: 'notification.noUnread',
@@ -285,47 +298,22 @@ const Notifications = () => {
                   })}
                 </span>
               ) : (
-                data?.results
-                  .filter((notification) => {
-                    return !notification.isRead;
-                  })
-                  .slice(
-                    0,
-                    filter === 'all'
-                      ? (data.results.filter(
-                          (notification) => notification.isRead
-                        ).length ?? 0) > 0
-                        ? newPageSize
-                        : newPageSize + 10
-                      : newPageSize + 10
-                  )
-                  .map((notification) => {
-                    return (
-                      <NotificationCard
-                        key={`notification-card-${notification.id}`}
-                        onDelete={() =>
-                          deleteNotification(notification.id, String(user.id))
-                        }
-                        onRead={() =>
-                          readNotification(
-                            notification.id,
-                            String(user.id),
-                            true
-                          )
-                        }
-                        notification={notification}
-                      />
-                    );
-                  })
+                unreadNotifications.slice(0, newLimit).map((notification) => {
+                  return (
+                    <NotificationCard
+                      key={`notification-card-${notification.id}`}
+                      onDelete={() =>
+                        deleteNotification(notification.id, String(user.id))
+                      }
+                      onRead={() =>
+                        readNotification(notification.id, String(user.id), true)
+                      }
+                      notification={notification}
+                    />
+                  );
+                })
               )}
-              {(data?.results.filter((notification) => !notification.isRead)
-                .length ?? 0) >
-                ((data?.results.filter((notification) => notification.isRead)
-                  .length ??
-                  0 > 0) &&
-                filter === 'all'
-                  ? newPageSize
-                  : newPageSize + 10) && (
+              {unreadNotifications.length > newLimit && (
                 <button
                   className="text-center w-full text-neutral-400 hover:text-white hover:bg-primary-content/10 rounded-lg p-2"
                   onClick={() => setNewPageSize(newPageSize + 5)}
@@ -337,59 +325,51 @@ const Notifications = () => {
                 </button>
               )}
             </ul>
-            {filter === 'all' &&
-              (data?.results.filter((notification) => notification.isRead)
-                .length ?? 0) > 0 && (
-                <div className="flex flex-col">
-                  <div className="mb-2 mx-3">
-                    <span className="font-bold text-xl">
-                      <FormattedMessage
-                        id="notification.earlier"
-                        defaultMessage="Earlier"
-                      />
-                    </span>
-                  </div>
-                  <ul className="flex flex-col gap-2">
-                    {data?.results
-                      .filter((notification) => notification.isRead)
-                      .slice(0, earlierPageSize)
-                      .map((notification) => {
-                        return (
-                          <NotificationCard
-                            key={`notification-card-${notification.id}`}
-                            onDelete={() =>
-                              deleteNotification(
-                                notification.id,
-                                String(user.id)
-                              )
-                            }
-                            onRead={() =>
-                              readNotification(
-                                notification.id,
-                                String(user.id),
-                                !notification.isRead
-                              )
-                            }
-                            notification={notification}
-                          />
-                        );
-                      })}
-                    {(data?.results.filter(
-                      (notification) => notification.isRead
-                    ).length ?? 0) > earlierPageSize && (
-                      <button
-                        className="text-center w-full text-neutral-400 hover:text-white hover:bg-primary-content/10 rounded-lg p-2"
-                        onClick={() => setEarlierPageSize(earlierPageSize + 5)}
-                      >
-                        {intl.formatMessage({
-                          id: 'common.viewMore',
-                          defaultMessage: 'View More',
-                        })}
-                      </button>
-                    )}
-                  </ul>
+            {filter === 'all' && readNotifications.length > 0 && (
+              <div className="flex flex-col">
+                <div className="mb-2 mx-3">
+                  <span className="font-bold text-xl">
+                    <FormattedMessage
+                      id="notification.earlier"
+                      defaultMessage="Earlier"
+                    />
+                  </span>
                 </div>
-              )}
+                <ul className="flex flex-col gap-2">
+                  {readNotifications
+                    .slice(0, earlierPageSize)
+                    .map((notification) => {
+                      return (
+                        <NotificationCard
+                          key={`notification-card-${notification.id}`}
+                          onDelete={() =>
+                            deleteNotification(notification.id, String(user.id))
+                          }
+                          onRead={() =>
+                            readNotification(
+                              notification.id,
+                              String(user.id),
+                              !notification.isRead
+                            )
+                          }
+                          notification={notification}
+                        />
+                      );
+                    })}
+                  {readNotifications.length > earlierPageSize && (
+                    <button
+                      className="text-center w-full text-neutral-400 hover:text-white hover:bg-primary-content/10 rounded-lg p-2"
+                      onClick={() => setEarlierPageSize(earlierPageSize + 5)}
+                    >
+                      {intl.formatMessage({
+                        id: 'common.viewMore',
+                        defaultMessage: 'View More',
+                      })}
+                    </button>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </TransitionChild>

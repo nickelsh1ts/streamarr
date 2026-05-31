@@ -1,17 +1,14 @@
 import { User } from '@server/entity/User';
-import { getIntl } from '@server/i18n';
 import { Permission } from '@server/lib/permissions';
 import type { EntitySubscriberInterface, InsertEvent } from 'typeorm';
-import { EventSubscriber, In } from 'typeorm';
+import { EventSubscriber } from 'typeorm';
 import { getRepository } from '@server/datasource';
 import {
   NotificationSeverity,
   NotificationType,
 } from '@server/constants/notification';
-import { NotificationAgentKey } from '@server/lib/settings';
-import notificationManager from '@server/lib/notifications';
-import logger from '@server/logger';
-import type { NotificationPayload } from '@server/lib/notifications/agents/agent';
+import { userAcceptsNotificationType } from '@server/lib/notifications';
+import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
@@ -26,77 +23,44 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
     const userRepository = getRepository(User);
 
-    const permittedUsers = await userRepository.find({
-      where: {
-        permissions: In([Permission.MANAGE_USERS, Permission.ADMIN]),
-      },
-      relations: ['settings'],
+    const allUsers = await userRepository.find({ relations: ['settings'] });
+
+    const usersToNotify = allUsers.filter((user) => {
+      if (
+        user.id === entity.id ||
+        !user.hasPermission([Permission.MANAGE_USERS, Permission.ADMIN], {
+          type: 'or',
+        })
+      ) {
+        return false;
+      }
+
+      return userAcceptsNotificationType(user, NotificationType.USER_CREATED);
     });
 
-    const usersToNotify = permittedUsers.filter((user) => {
-      const settings = user.settings;
-      return (
-        !settings ||
-        settings.hasNotificationType(
-          NotificationAgentKey.IN_APP,
-          NotificationType.USER_CREATED
-        ) ||
-        settings.hasNotificationType(
-          NotificationAgentKey.EMAIL,
-          NotificationType.USER_CREATED
-        ) ||
-        settings.hasNotificationType(
-          NotificationAgentKey.WEBPUSH,
-          NotificationType.USER_CREATED
-        )
-      );
-    });
-
-    if (usersToNotify.length === 0) {
-      return;
-    }
-
-    await Promise.all(
-      usersToNotify.map(async (user) => {
-        const intl = getIntl(user.settings?.locale);
-        try {
-          const payload: NotificationPayload = {
-            subject: intl.formatMessage(
+    await sendGroupNotification(
+      NotificationType.USER_CREATED,
+      usersToNotify,
+      (intl) => ({
+        subject: intl.formatMessage(
+          {
+            id: 'notifications.user.created.subject',
+            defaultMessage: 'New User Created: {displayName}',
+          },
+          { displayName: entity.displayName }
+        ),
+        message: entity.redeemedInvite?.createdBy
+          ? intl.formatMessage(
               {
-                id: 'notifications.user.created.subject',
-                defaultMessage: 'New User Created: {displayName}',
+                id: 'notifications.user.created.message',
+                defaultMessage: 'Invited by {displayName}.',
               },
-              { displayName: entity.displayName }
-            ),
-            message: entity.redeemedInvite?.createdBy
-              ? intl.formatMessage(
-                  {
-                    id: 'notifications.user.created.message',
-                    defaultMessage: 'Invited by {displayName}.',
-                  },
-                  { displayName: entity.redeemedInvite.createdBy.displayName }
-                )
-              : '',
-            notifySystem: false,
-            notifyAdmin: false,
-            notifyUser: user,
-            actionUrl: '/admin/users',
-            actionUrlTitle: 'View Users',
-            severity: NotificationSeverity.PRIMARY,
-          };
-
-          notificationManager.sendNotification(
-            NotificationType.USER_CREATED,
-            payload
-          );
-        } catch (e) {
-          logger.error('Failed to send new user notification', {
-            label: 'Notifications',
-            errorMessage: e.message,
-            newUser: entity.displayName,
-            newUserId: entity.id,
-          });
-        }
+              { displayName: entity.redeemedInvite.createdBy.displayName }
+            )
+          : '',
+        actionUrl: '/admin/users',
+        actionUrlTitle: 'View Users',
+        severity: NotificationSeverity.PRIMARY,
       })
     );
   }

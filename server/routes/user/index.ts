@@ -785,8 +785,8 @@ router.get<{ id: string }, UserNotificationsResponse>(
       if (
         Number(req.params.id) !== req.user?.id &&
         !req.user?.hasPermission(
-          [Permission.MANAGE_USERS, Permission.MANAGE_NOTIFICATIONS],
-          { type: 'and' }
+          [Permission.MANAGE_NOTIFICATIONS, Permission.VIEW_NOTIFICATIONS],
+          { type: 'or' }
         )
       ) {
         return next({
@@ -860,7 +860,7 @@ router.put<
 
     if (
       user.id !== req.user?.id &&
-      !req.user?.hasPermission(Permission.MANAGE_USERS)
+      !req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS)
     ) {
       return next({
         status: 403,
@@ -870,7 +870,10 @@ router.put<
     }
 
     const notification = await notificationRepository.findOneOrFail({
-      where: { id: Number(req.params.notificationId) },
+      where: {
+        id: Number(req.params.notificationId),
+        notifyUser: { id: user.id },
+      },
       relations: ['createdBy', 'updatedBy', 'notifyUser'],
     });
 
@@ -923,10 +926,7 @@ router.put<
     // Basic permission: user can update their own notifications, or admin can update any
     if (
       user.id !== req.user?.id &&
-      !req.user?.hasPermission(
-        [Permission.MANAGE_NOTIFICATIONS, Permission.MANAGE_USERS],
-        { type: 'and' }
-      )
+      !req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS)
     ) {
       return next({
         status: 403,
@@ -935,14 +935,9 @@ router.put<
       });
     }
 
-    // Enhanced permission: for non-isRead updates, require notification management permissions
+    // Enhanced permission: for non-isRead updates, require notification management permission
     if (!isOnlyReadStatusUpdate) {
-      if (
-        !req.user?.hasPermission(
-          [Permission.CREATE_NOTIFICATIONS, Permission.MANAGE_NOTIFICATIONS],
-          { type: 'or' }
-        )
-      ) {
+      if (!req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS)) {
         return next({
           status: 403,
           message:
@@ -1028,7 +1023,7 @@ router.delete<{ userId: string; notificationId: string }>(
 
       if (
         user.id !== req.user?.id &&
-        !req.user?.hasPermission(Permission.MANAGE_USERS)
+        !req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS)
       ) {
         return next({
           status: 403,
@@ -1038,7 +1033,10 @@ router.delete<{ userId: string; notificationId: string }>(
       }
 
       const notification = await notificationRepository.findOneOrFail({
-        where: { id: Number(req.params.notificationId) },
+        where: {
+          id: Number(req.params.notificationId),
+          notifyUser: { id: user.id },
+        },
       });
 
       await notificationRepository.remove(notification);

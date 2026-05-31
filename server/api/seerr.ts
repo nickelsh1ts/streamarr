@@ -192,11 +192,15 @@ class SeerrAPI {
 
   public async getEnabledNotificationAgents(): Promise<SeerrNotificationsResponse> {
     const agentNames = [
-      'email',
       'discord',
+      'email',
+      'gotify',
+      'ntfy',
+      'pushbullet',
+      'pushover',
       'slack',
       'telegram',
-      'pushover',
+      'webhook',
       'webpush',
     ];
 

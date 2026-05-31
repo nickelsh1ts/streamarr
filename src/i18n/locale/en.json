@@ -608,6 +608,9 @@
   "common.remove": {
     "defaultMessage": "Remove"
   },
+  "common.removeHeader": {
+    "defaultMessage": "Remove"
+  },
   "common.removing": {
     "defaultMessage": "Removing…"
   },
@@ -2390,11 +2393,20 @@
   "help.notifications.seerrEmailDesc": {
     "defaultMessage": "Email notifications for request status changes."
   },
+  "help.notifications.seerrGotifyDesc": {
+    "defaultMessage": "Notifications sent via the Gotify push server."
+  },
+  "help.notifications.seerrNtfyDesc": {
+    "defaultMessage": "Notifications sent via ntfy push notifications."
+  },
   "help.notifications.seerrPush": {
     "defaultMessage": "Push Notifications"
   },
   "help.notifications.seerrPushDesc": {
     "defaultMessage": "Browser push notifications for request updates."
+  },
+  "help.notifications.seerrPushbulletDesc": {
+    "defaultMessage": "Notifications sent via the Pushbullet service."
   },
   "help.notifications.seerrPushover": {
     "defaultMessage": "Pushover"
@@ -2416,6 +2428,12 @@
   },
   "help.notifications.seerrTitle": {
     "defaultMessage": "Seerr Request Notifications"
+  },
+  "help.notifications.seerrWebhook": {
+    "defaultMessage": "Webhook"
+  },
+  "help.notifications.seerrWebhookDesc": {
+    "defaultMessage": "Notifications sent to a custom webhook endpoint."
   },
   "help.notifications.streamarrDesc": {
     "defaultMessage": "{appTitle} can send you notifications to keep you informed about your account activity, invite updates, and important announcements. These are managed by the {appTitle} admin."
@@ -3938,8 +3956,284 @@
   "notificationModal.subjectRequired": {
     "defaultMessage": "Subject is required"
   },
+  "notifications.discord.idInvalid": {
+    "defaultMessage": "You must provide a valid Discord user ID"
+  },
+  "notifications.discord.idRequired": {
+    "defaultMessage": "You must provide your Discord user ID"
+  },
+  "notifications.discord.webhookUrlInvalid": {
+    "defaultMessage": "You must provide a valid Discord webhook URL"
+  },
+  "notifications.discord.webhookUrlRequired": {
+    "defaultMessage": "You must provide your Discord webhook URL"
+  },
   "notifications.enableAgent": {
     "defaultMessage": "Enable Agent"
+  },
+  "notifications.fields.accessToken": {
+    "defaultMessage": "Access Token"
+  },
+  "notifications.fields.applicationToken": {
+    "defaultMessage": "Application Token"
+  },
+  "notifications.fields.authMethodNone": {
+    "defaultMessage": "None"
+  },
+  "notifications.fields.authMethodToken": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.authMethodUsernamePassword": {
+    "defaultMessage": "Username / Password"
+  },
+  "notifications.fields.authentication": {
+    "defaultMessage": "Authentication"
+  },
+  "notifications.fields.authorizationHeader": {
+    "defaultMessage": "Authorization Header"
+  },
+  "notifications.fields.botAvatarUrl": {
+    "defaultMessage": "Bot Avatar URL"
+  },
+  "notifications.fields.botUsername": {
+    "defaultMessage": "Bot Username"
+  },
+  "notifications.fields.channelTag": {
+    "defaultMessage": "Channel Tag"
+  },
+  "notifications.fields.enableMentions": {
+    "defaultMessage": "Enable Mentions"
+  },
+  "notifications.fields.jsonPayload": {
+    "defaultMessage": "JSON Payload"
+  },
+  "notifications.fields.notificationRoleId": {
+    "defaultMessage": "Notification Role ID"
+  },
+  "notifications.fields.priority": {
+    "defaultMessage": "Priority"
+  },
+  "notifications.fields.pushoverAccessToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "notifications.fields.pushoverApplicationToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "notifications.fields.pushoverUserKey": {
+    "defaultMessage": "User Key"
+  },
+  "notifications.fields.serverUrl": {
+    "defaultMessage": "Server URL"
+  },
+  "notifications.fields.sound": {
+    "defaultMessage": "Sound"
+  },
+  "notifications.fields.telegramBotApi": {
+    "defaultMessage": "Bot API Token or URL"
+  },
+  "notifications.fields.telegramBotUsername": {
+    "defaultMessage": "Bot Username"
+  },
+  "notifications.fields.telegramChatId": {
+    "defaultMessage": "Chat ID"
+  },
+  "notifications.fields.telegramMessageThreadId": {
+    "defaultMessage": "Message Thread ID"
+  },
+  "notifications.fields.telegramSendSilently": {
+    "defaultMessage": "Send Silently"
+  },
+  "notifications.fields.token": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.topic": {
+    "defaultMessage": "Topic"
+  },
+  "notifications.fields.webhookUrl": {
+    "defaultMessage": "Webhook URL"
+  },
+  "notifications.gotify.tokenRequired": {
+    "defaultMessage": "You must provide a Gotify application token"
+  },
+  "notifications.gotify.urlInvalid": {
+    "defaultMessage": "You must provide a valid Gotify server URL"
+  },
+  "notifications.gotify.urlRequired": {
+    "defaultMessage": "You must provide your Gotify server URL"
+  },
+  "notifications.ntfy.passwordRequired": {
+    "defaultMessage": "You must provide a password"
+  },
+  "notifications.ntfy.priorityDefault": {
+    "defaultMessage": "Default"
+  },
+  "notifications.ntfy.priorityHigh": {
+    "defaultMessage": "High"
+  },
+  "notifications.ntfy.priorityLow": {
+    "defaultMessage": "Low"
+  },
+  "notifications.ntfy.priorityMin": {
+    "defaultMessage": "Minimum"
+  },
+  "notifications.ntfy.priorityUrgent": {
+    "defaultMessage": "Urgent"
+  },
+  "notifications.ntfy.tokenRequired": {
+    "defaultMessage": "You must provide a token"
+  },
+  "notifications.ntfy.topicInvalid": {
+    "defaultMessage": "Topic may only contain letters, numbers, dashes and underscores"
+  },
+  "notifications.ntfy.topicRequired": {
+    "defaultMessage": "You must provide your ntfy topic"
+  },
+  "notifications.ntfy.urlInvalid": {
+    "defaultMessage": "You must provide a valid URL"
+  },
+  "notifications.ntfy.urlRequired": {
+    "defaultMessage": "You must provide your ntfy server URL"
+  },
+  "notifications.ntfy.usernameRequired": {
+    "defaultMessage": "You must provide a username"
+  },
+  "notifications.provider.saveError": {
+    "defaultMessage": "{provider} notification settings failed to save."
+  },
+  "notifications.provider.saveSuccess": {
+    "defaultMessage": "{provider} notification settings saved successfully!"
+  },
+  "notifications.provider.testError": {
+    "defaultMessage": "{provider} test notification failed to send."
+  },
+  "notifications.provider.testSuccess": {
+    "defaultMessage": "{provider} test notification sent!"
+  },
+  "notifications.providers.discord": {
+    "defaultMessage": "Discord"
+  },
+  "notifications.providers.gotify": {
+    "defaultMessage": "Gotify"
+  },
+  "notifications.providers.ntfy": {
+    "defaultMessage": "ntfy"
+  },
+  "notifications.providers.pushbullet": {
+    "defaultMessage": "Pushbullet"
+  },
+  "notifications.providers.pushover": {
+    "defaultMessage": "Pushover"
+  },
+  "notifications.providers.slack": {
+    "defaultMessage": "Slack"
+  },
+  "notifications.providers.telegram": {
+    "defaultMessage": "Telegram"
+  },
+  "notifications.providers.webhook": {
+    "defaultMessage": "Webhook"
+  },
+  "notifications.pushbullet.accessTokenRequired": {
+    "defaultMessage": "You must provide your Pushbullet access token"
+  },
+  "notifications.pushbullet.tokenRequired": {
+    "defaultMessage": "You must provide your Pushbullet access token"
+  },
+  "notifications.pushover.accessTokenRequired": {
+    "defaultMessage": "You must provide your Pushover application API token"
+  },
+  "notifications.pushover.applicationTokenRequired": {
+    "defaultMessage": "You must provide your Pushover application API token"
+  },
+  "notifications.pushover.userKeyRequired": {
+    "defaultMessage": "You must provide your Pushover user key"
+  },
+  "notifications.slack.webhookUrlRequired": {
+    "defaultMessage": "You must provide a valid Slack webhook URL"
+  },
+  "notifications.telegram.botApiRequired": {
+    "defaultMessage": "You must provide your Telegram bot API token or URL"
+  },
+  "notifications.telegram.chatIdRequired": {
+    "defaultMessage": "You must provide your Telegram chat ID"
+  },
+  "notifications.validation.typesRequired": {
+    "defaultMessage": "You must select at least one notification type."
+  },
+  "notifications.webhook.addHeader": {
+    "defaultMessage": "Add Header"
+  },
+  "notifications.webhook.authHeaderConflict": {
+    "defaultMessage": "You cannot use both the Authorization Header field and an 'Authorization' custom header. Remove one."
+  },
+  "notifications.webhook.customHeaders": {
+    "defaultMessage": "Custom Headers"
+  },
+  "notifications.webhook.headerName": {
+    "defaultMessage": "Header Name"
+  },
+  "notifications.webhook.headerNameRequired": {
+    "defaultMessage": "You must provide a header name"
+  },
+  "notifications.webhook.headerValue": {
+    "defaultMessage": "Value"
+  },
+  "notifications.webhook.headerValueRequired": {
+    "defaultMessage": "You must provide a header value"
+  },
+  "notifications.webhook.payloadEmptyJson": {
+    "defaultMessage": "JSON payload must not be empty"
+  },
+  "notifications.webhook.payloadInvalidJson": {
+    "defaultMessage": "You must provide valid JSON"
+  },
+  "notifications.webhook.payloadRequired": {
+    "defaultMessage": "You must provide a JSON payload"
+  },
+  "notifications.webhook.removeHeader": {
+    "defaultMessage": "Remove header"
+  },
+  "notifications.webhook.resetPayload": {
+    "defaultMessage": "Reset to Default"
+  },
+  "notifications.webhook.templateVariables": {
+    "defaultMessage": "Template Variables"
+  },
+  "notifications.webhook.urlRequired": {
+    "defaultMessage": "You must provide a valid URL"
+  },
+  "notifications.webhook.varExtra": {
+    "defaultMessage": "Array of additional data — use as a JSON key with an empty array value"
+  },
+  "notifications.webhook.varGroupGeneral": {
+    "defaultMessage": "General"
+  },
+  "notifications.webhook.varGroupNotifyUser": {
+    "defaultMessage": "Notify User"
+  },
+  "notifications.webhook.varGroupSpecial": {
+    "defaultMessage": "Special (JSON keys)"
+  },
+  "notifications.webhook.varImage": {
+    "defaultMessage": "The notification image URL"
+  },
+  "notifications.webhook.varMessage": {
+    "defaultMessage": "The notification message body"
+  },
+  "notifications.webhook.varNotificationType": {
+    "defaultMessage": "The notification type (e.g. NEW_INVITE)"
+  },
+  "notifications.webhook.varNotifyAvatar": {
+    "defaultMessage": "Recipient's avatar URL"
+  },
+  "notifications.webhook.varNotifyEmail": {
+    "defaultMessage": "Recipient's email address"
+  },
+  "notifications.webhook.varNotifyUsername": {
+    "defaultMessage": "Recipient's display name"
+  },
+  "notifications.webhook.varSubject": {
+    "defaultMessage": "The notification subject"
   },
   "plex.login.button": {
     "defaultMessage": "Sign in with"
@@ -5252,6 +5546,12 @@
   "userSettings.notifications.disableWebPush": {
     "defaultMessage": "Disable web push"
   },
+  "userSettings.notifications.discordId": {
+    "defaultMessage": "Discord User ID"
+  },
+  "userSettings.notifications.discordTitle": {
+    "defaultMessage": "Discord Notifications"
+  },
   "userSettings.notifications.emailTitle": {
     "defaultMessage": "Email Notifications"
   },
@@ -5261,6 +5561,30 @@
   "userSettings.notifications.inAppTitle": {
     "defaultMessage": "In-App Notifications"
   },
+  "userSettings.notifications.pushbulletAccessToken": {
+    "defaultMessage": "Access Token"
+  },
+  "userSettings.notifications.pushbulletTitle": {
+    "defaultMessage": "Pushbullet Notifications"
+  },
+  "userSettings.notifications.pushoverApplicationToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "userSettings.notifications.pushoverSound": {
+    "defaultMessage": "Sound"
+  },
+  "userSettings.notifications.pushoverTitle": {
+    "defaultMessage": "Pushover Notifications"
+  },
+  "userSettings.notifications.pushoverUserKey": {
+    "defaultMessage": "User Key"
+  },
+  "userSettings.notifications.settingsLoadError": {
+    "defaultMessage": "Unable to load notification settings."
+  },
+  "userSettings.notifications.soundDefault": {
+    "defaultMessage": "Device Default"
+  },
   "userSettings.notifications.subscriptionActive": {
     "defaultMessage": "Active Subscription"
   },
@@ -5269,6 +5593,21 @@
   },
   "userSettings.notifications.subscriptionDeleted": {
     "defaultMessage": "Subscription Deleted Successfully."
+  },
+  "userSettings.notifications.telegramChatId": {
+    "defaultMessage": "Chat ID"
+  },
+  "userSettings.notifications.telegramMessageThreadId": {
+    "defaultMessage": "Message Thread ID"
+  },
+  "userSettings.notifications.telegramSendSilently": {
+    "defaultMessage": "Send Silently"
+  },
+  "userSettings.notifications.telegramTitle": {
+    "defaultMessage": "Telegram Notifications"
+  },
+  "userSettings.notifications.userLoadError": {
+    "defaultMessage": "Unable to load user profile settings."
   },
   "userSettings.notifications.webpushDisableError": {
     "defaultMessage": "Something went wrong while disabling web push."
@@ -5407,6 +5746,9 @@
   },
   "users.title": {
     "defaultMessage": "User List"
+  },
+  "validation.required": {
+    "defaultMessage": "This field is required."
   },
   "webpushNotifications.httpsRequired": {
     "defaultMessage": "In order to receive web push notifications, Streamarr must be served over HTTPS."

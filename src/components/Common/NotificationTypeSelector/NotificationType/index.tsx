@@ -30,25 +30,25 @@ const NotificationType = ({
       >
         <div className="flex h-6 items-center">
           <input
-            className="checkbox checkbox-primary rounded-md"
+            className="checkbox checkbox-sm checkbox-primary rounded-md"
             id={agentId}
             name={agentId}
             type="checkbox"
             disabled={
               !!parent?.value && hasNotificationType(parent.value, currentTypes)
             }
-            onClick={() => {
-              onUpdate(
-                hasNotificationType(option.value, currentTypes)
-                  ? currentTypes - option.value
-                  : currentTypes + option.value
-              );
-            }}
-            defaultChecked={
-              hasNotificationType(option.value, currentTypes) ||
+            checked={
+              Boolean(currentTypes & option.value) ||
               (!!parent?.value &&
                 hasNotificationType(parent.value, currentTypes))
             }
+            onChange={(event) => {
+              onUpdate(
+                event.target.checked
+                  ? currentTypes | option.value
+                  : currentTypes & ~option.value
+              );
+            }}
           />
         </div>
         <div className="ml-3 text-sm leading-6">

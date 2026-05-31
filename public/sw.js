@@ -80,9 +80,7 @@ self.addEventListener('push', (event) => {
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: '2',
       actionUrl: payload.actionUrl,
-      requestId: payload.requestId,
     },
     actions: [],
   };

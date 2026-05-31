@@ -221,6 +221,48 @@ const HelpContent = () => {
                 />
               </li>
             )}
+            {enabledAgents.includes('pushbullet') && (
+              <li>
+                <span className="font-bold">Pushbullet</span> —{' '}
+                <FormattedMessage
+                  id="help.notifications.seerrPushbulletDesc"
+                  defaultMessage="Notifications sent via the Pushbullet service."
+                />
+              </li>
+            )}
+            {enabledAgents.includes('ntfy') && (
+              <li>
+                <span className="font-bold">ntfy</span> —{' '}
+                <FormattedMessage
+                  id="help.notifications.seerrNtfyDesc"
+                  defaultMessage="Notifications sent via ntfy push notifications."
+                />
+              </li>
+            )}
+            {enabledAgents.includes('gotify') && (
+              <li>
+                <span className="font-bold">Gotify</span> —{' '}
+                <FormattedMessage
+                  id="help.notifications.seerrGotifyDesc"
+                  defaultMessage="Notifications sent via the Gotify push server."
+                />
+              </li>
+            )}
+            {enabledAgents.includes('webhook') && (
+              <li>
+                <span className="font-bold">
+                  <FormattedMessage
+                    id="help.notifications.seerrWebhook"
+                    defaultMessage="Webhook"
+                  />
+                </span>{' '}
+                —{' '}
+                <FormattedMessage
+                  id="help.notifications.seerrWebhookDesc"
+                  defaultMessage="Notifications sent to a custom webhook endpoint."
+                />
+              </li>
+            )}
           </ul>
         </>
       )}

@@ -98,7 +98,7 @@ router.use('/user', isAuthenticated(), user);
 router.get('/settings/public', async (req, res) => {
   const settings = getSettings();
 
-  if (!(req.user?.settings?.notificationTypes.webpush ?? true)) {
+  if (!(req.user?.settings?.notificationTypes?.webpush ?? true)) {
     res
       .status(200)
       .json({ ...settings.fullPublicSettings, enablePushRegistration: false });
