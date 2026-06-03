@@ -1,7 +1,8 @@
-import type { Server, IncomingMessage } from 'http';
+import type { IncomingMessage } from 'http';
 import type { Socket } from 'net';
 import type { Request, RequestHandler, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 
 /** Hardcoded proxy paths for Tdarr (no custom base URL support) */
@@ -128,12 +129,15 @@ export function createTdarrStaticProxy(config: TdarrProxyConfig) {
  * Registers WebSocket handler for Tdarr Socket.IO connections.
  */
 export function registerTdarrWebSocketHandler(
-  httpServer: Server,
+  dispatcher: UpgradeDispatcher,
   sessionMiddleware: RequestHandler,
   proxy: ReturnType<typeof createProxyMiddleware>
 ) {
-  httpServer.on('upgrade', (req: SessionRequest, socket, head) => {
-    if (req.url?.startsWith(`${TDARR_PROXY_PATH}/socket.io`)) {
+  const wsPath = `${TDARR_PROXY_PATH}/socket.io`;
+  dispatcher.register({
+    name: `tdarr:${wsPath}`,
+    match: (url) => url.startsWith(wsPath),
+    handle: (req: SessionRequest, socket, head) => {
       sessionMiddleware(req as unknown as Request, {} as Response, () => {
         if (!req.session?.userId) {
           socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
@@ -142,6 +146,6 @@ export function registerTdarrWebSocketHandler(
         }
         proxy.upgrade(req, socket as Socket, head);
       });
-    }
+    },
   });
 }

@@ -1,9 +1,9 @@
-import type { Server } from 'http';
 import type { RequestHandler } from 'express';
 import { Router } from 'express';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
+import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
 import {
@@ -68,7 +68,7 @@ export function getActiveProxyPaths(): string[] {
  * Creates the service proxy router with session-protected proxy routes.
  */
 export function createServiceProxyRouter(
-  httpServer: Server,
+  dispatcher: UpgradeDispatcher,
   sessionMiddleware: RequestHandler
 ): Router {
   const router = Router();
@@ -99,7 +99,7 @@ export function createServiceProxyRouter(
   if (settings.plex.ip) {
     registerProxy(
       '/web',
-      createPlexProxy(httpServer, sessionMiddleware),
+      createPlexProxy(dispatcher, sessionMiddleware),
       'Plex'
     );
   }
@@ -183,7 +183,7 @@ export function createServiceProxyRouter(
 
     const tdarrProxy = createTdarrProxy(tdarrConfig);
     registerProxy(TDARR_PROXY_PATH, tdarrProxy, 'Tdarr', true);
-    registerTdarrWebSocketHandler(httpServer, sessionMiddleware, tdarrProxy);
+    registerTdarrWebSocketHandler(dispatcher, sessionMiddleware, tdarrProxy);
 
     // Static assets (no auth - loaded as resources after authenticated page loads)
     router.use(TDARR_STATIC_PATH, createTdarrStaticProxy(tdarrConfig));

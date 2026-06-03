@@ -1,7 +1,7 @@
-import type { Server } from 'http';
 import type { RequestHandler } from 'express';
 import { getSettings } from '@server/lib/settings';
 import { getPlexHealth } from '@server/lib/plexHealthCheck';
+import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import { createServiceProxy, registerWebSocketHandler } from './index';
 
 function getPlexTarget(): string {
@@ -11,7 +11,7 @@ function getPlexTarget(): string {
 }
 
 export function createPlexProxy(
-  httpServer: Server,
+  dispatcher: UpgradeDispatcher,
   sessionMiddleware: RequestHandler
 ) {
   const proxy = createServiceProxy({
@@ -23,7 +23,7 @@ export function createPlexProxy(
     suppressErrors: () => getPlexHealth().status !== 'healthy',
   });
 
-  registerWebSocketHandler(httpServer, sessionMiddleware, '/web', proxy);
+  registerWebSocketHandler(dispatcher, sessionMiddleware, '/web', proxy);
 
   return proxy;
 }
