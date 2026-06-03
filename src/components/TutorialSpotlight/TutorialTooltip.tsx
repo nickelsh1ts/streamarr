@@ -380,7 +380,7 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
   return (
     <div
       ref={tooltipRef}
-      className="z-[1150] bg-base-200 rounded-xl shadow-2xl border border-primary/30 p-5 max-w-sm animate-scale-in"
+      className="z-1150 bg-base-200 rounded-xl shadow-2xl border border-primary/30 p-5 max-w-sm animate-scale-in"
       style={tooltipStyle}
     >
       <div className="bg-base-200" style={arrowStyle} />

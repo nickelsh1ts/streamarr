@@ -90,7 +90,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
                   {error || errors.icode}
                 </div>
               )}
-              <div className="input input-bordered input-primary flex items-center mb-2 uppercase text-lg ">
+              <div className="input input-primary flex w-full items-center mb-2 uppercase text-lg ">
                 <TicketIcon className="size-7 mr-2" />
                 <Field
                   id="icode"

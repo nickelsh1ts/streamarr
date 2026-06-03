@@ -78,7 +78,7 @@ export default function Hero() {
               <div className="label">
                 <label
                   htmlFor="icode"
-                  className="label-text mb-2 text-sm md:text-base text-center md:text-start"
+                  className="mb-2 text-sm md:text-base text-center md:text-start"
                 >
                   <FormattedMessage
                     id="hero.inviteCode"
@@ -92,27 +92,24 @@ export default function Hero() {
                 </div>
               )}
               <div className="flex flex-col sm:flex-row items-end mb-6 w-full max-w-md">
-                <div className="relative w-full sm:max-w-48">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-7 md:size-9"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z"
-                      />
-                    </svg>
-                  </div>
+                <label className="input text-xl rounded-none rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none w-full sm:max-w-48 uppercase border-warning focus-within:border-warning focus-within:outline-warning/30">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-7 md:size-9 shrink-0"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z"
+                    />
+                  </svg>
                   <input
                     id="icode"
                     ref={inputRef}
-                    className="input text-xl rounded-none rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none w-full pl-12 sm:pl-14 p-2.5 uppercase border-warning focus:border-warning focus:outline-warning/30"
                     name="icode"
                     aria-label="Invite Code"
                     placeholder={intl.formatMessage({
@@ -122,7 +119,7 @@ export default function Hero() {
                     required
                     onChange={() => setError(null)}
                   />
-                </div>
+                </label>
                 <button
                   type="button"
                   className="btn btn-warning rounded-none rounded-b-lg sm:rounded-r-lg sm:rounded-bl-none w-full sm:w-auto sm:mt-0 sm:ml-0"
@@ -152,18 +149,21 @@ export default function Hero() {
             </form>
           )}
           {currentSettings.libraryCounts && (
-            <div className="flex flex-wrap space-x-4 items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
+            <div className="flex flex-wrap items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
               {mediaLibraries ? (
                 mediaLibraries.length > 0 && (
                   <>
                     {mediaLibraries.slice(0, 4).map((lib) => (
-                      <p className="first:pl-0 pl-4" key={`library-${lib.id}`}>
+                      <p
+                        className="px-4 first:ps-0 last:pe-0"
+                        key={`library-${lib.id}`}
+                      >
                         <span className="font-bold">{lib.name} </span>{' '}
                         {lib.mediaCount}
                       </p>
                     ))}
                     {mediaLibraries.length > 4 && (
-                      <p className="first:pl-0 pl-4 font-bold">
+                      <p className="px-4 first:ps-0 last:pe-0 font-bold">
                         <FormattedMessage
                           id="hero.more"
                           defaultMessage="+ more"

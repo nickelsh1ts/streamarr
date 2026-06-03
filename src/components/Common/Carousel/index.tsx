@@ -171,7 +171,7 @@ const Carousel = forwardRef<CarouselHandle, CarouselProps>(
             {childArray.map((child, index) => (
               <div
                 key={index}
-                className={`w-full flex-shrink-0 ${fillHeight ? 'h-full' : ''}`}
+                className={`w-full shrink-0 ${fillHeight ? 'h-full' : ''}`}
               >
                 {child}
               </div>
@@ -186,7 +186,7 @@ const Carousel = forwardRef<CarouselHandle, CarouselProps>(
               className={`group absolute left-0 top-1/2 -translate-y-1/2 px-4 h-full disabled:cursor-not-allowed ${arrowClassName}`}
               aria-label="Previous slide"
             >
-              <span className="absolute inset-0 bg-gradient-to-l to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:!opacity-0 transition-opacity duration-200" />
+              <span className="absolute inset-0 bg-linear-to-l to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:opacity-0! transition-opacity duration-200" />
               <ChevronLeftIcon className="relative w-5 h-5" />
             </button>
             <button
@@ -195,7 +195,7 @@ const Carousel = forwardRef<CarouselHandle, CarouselProps>(
               className={`group absolute right-0 top-1/2 -translate-y-1/2 px-4 h-full disabled:cursor-not-allowed ${arrowClassName}`}
               aria-label="Next slide"
             >
-              <span className="absolute inset-0 bg-gradient-to-r to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:!opacity-0 transition-opacity duration-200" />
+              <span className="absolute inset-0 bg-linear-to-r to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:opacity-0! transition-opacity duration-200" />
               <ChevronRightIcon className="relative w-5 h-5" />
             </button>
           </>

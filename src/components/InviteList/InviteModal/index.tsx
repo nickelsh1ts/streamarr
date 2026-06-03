@@ -481,7 +481,7 @@ const InviteModal = ({
                         { type: 'or' }
                       ) || !!invite
                     }
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                     onChange={(e) =>
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
@@ -512,7 +512,7 @@ const InviteModal = ({
                           { type: 'or' }
                         ) || !!invite
                       }
-                      className="select select-sm select-primary rounded-md"
+                      className="select select-sm select-primary rounded-md w-auto min-w-24 shrink-0"
                       onChange={(e) =>
                         setFieldValue('inviteExpiryTime', e.target.value)
                       }
@@ -568,7 +568,7 @@ const InviteModal = ({
                       as="select"
                       name="inviteUsageLimit"
                       id="inviteUsageLimit"
-                      className="select select-sm select-primary rounded-md"
+                      className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                       onChange={(e) =>
                         setFieldValue(
                           'inviteUsageLimit',
@@ -618,7 +618,7 @@ const InviteModal = ({
                         }}
                         className={`${
                           values.downloads ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                        } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                       >
                         <span
                           aria-hidden="true"
@@ -668,7 +668,7 @@ const InviteModal = ({
                         }}
                         className={`${
                           values.liveTv ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                        } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                       >
                         <span
                           aria-hidden="true"
@@ -721,7 +721,7 @@ const InviteModal = ({
                           }}
                           className={`${
                             values.plexHome ? 'bg-primary' : 'bg-neutral'
-                          } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                          } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                         >
                           <span
                             aria-hidden="true"
@@ -795,7 +795,7 @@ const InviteModal = ({
                           as="select"
                           name="trialPeriodOutcome"
                           id="trialPeriodOutcome"
-                          className="select select-sm select-primary rounded-md"
+                          className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0"
                           onChange={(e) =>
                             setFieldValue('trialPeriodOutcome', e.target.value)
                           }
@@ -824,7 +824,7 @@ const InviteModal = ({
                           as="select"
                           name="trialPeriodDays"
                           id="trialPeriodDays"
-                          className="select select-sm select-primary rounded-md"
+                          className="select select-sm select-primary rounded-md w-auto min-w-24 shrink-0"
                           onChange={(e) =>
                             setFieldValue(
                               'trialPeriodDays',
@@ -884,7 +884,7 @@ const InviteModal = ({
                                       <CachedImage
                                         src={`/avatarproxy/${selectedUser.id}`}
                                         alt=""
-                                        className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                                        className="h-6 w-6 shrink-0 rounded-full object-cover"
                                         width={24}
                                         height={24}
                                       />
@@ -907,7 +907,7 @@ const InviteModal = ({
                                   {listboxOpen && (
                                     <ListboxOptions
                                       ref={optionsRef}
-                                      className="z-[9999] px-1 max-h-60 overflow-auto rounded-md bg-base-100 border border-primary py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5"
+                                      className="z-9999 px-1 max-h-60 overflow-auto rounded-md bg-base-100 border border-primary py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5"
                                       style={{
                                         position: 'absolute',
                                         top: dropdownMeasured
@@ -951,11 +951,11 @@ const InviteModal = ({
                                                 <CachedImage
                                                   src={`/avatarproxy/${user.id}`}
                                                   alt=""
-                                                  className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                                                  className="h-6 w-6 shrink-0 rounded-full object-cover"
                                                   width={24}
                                                   height={24}
                                                 />
-                                                <span className="ml-3 block flex-shrink-0">
+                                                <span className="ml-3 block shrink-0">
                                                   {user.displayName}
                                                 </span>
                                                 {user.displayName.toLowerCase() !==

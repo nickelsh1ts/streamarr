@@ -448,7 +448,7 @@ const ConfirmAccountForm = ({
                     </span>
                   </Badge>
                 </div>
-                <div className="text-xs text-gray-400 !ml-0">
+                <div className="text-xs text-gray-400 ml-0!">
                   <FormattedMessage
                     id="signUp.autoPinLibrariesHelp"
                     defaultMessage="Automatically pin shared libraries to your Plex home screen"

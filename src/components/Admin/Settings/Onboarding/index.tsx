@@ -351,7 +351,7 @@ const OnboardingSettings = () => {
                       as="select"
                       id="tutorialMode"
                       name="tutorialMode"
-                      className="select select-primary select-sm"
+                      className="select select-primary select-sm w-auto min-w-32 shrink-0"
                     >
                       <option value="spotlight">
                         {intl.formatMessage({
@@ -425,7 +425,7 @@ const OnboardingSettings = () => {
                           name="tutorialAutostartDelay"
                           min="0"
                           step="500"
-                          className="input input-sm input-primary"
+                          className="input input-sm input-primary w-1/8"
                         />
                       </div>
                     </div>

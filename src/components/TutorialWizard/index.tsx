@@ -180,13 +180,13 @@ const TutorialWizard: React.FC = () => {
       <Dialog onClose={handleClose} open={showPrompt}>
         <DialogBackdrop
           transition
-          className="fixed inset-0 z-[1050] w-full bg-base-300 backdrop-blur-sm bg-opacity-30 transition-opacity data-[closed]:opacity-0"
+          className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
         />
-        <div className="fixed inset-0 z-[1050] w-screen overflow-y-auto">
+        <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-2 sm:p-0">
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-md border border-primary/30 bg-base-200 transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0"
+              className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-md border border-primary/30 bg-base-200 transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0"
             >
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-base-content mb-3">
@@ -238,13 +238,13 @@ const TutorialWizard: React.FC = () => {
     <Dialog onClose={handleClose} open={showWizard}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[1050] w-full bg-black backdrop-blur-sm bg-opacity-30 transition-opacity data-[closed]:opacity-0"
+        className="fixed inset-0 z-1050 w-full bg-black/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
       />
-      <div className="fixed inset-0 z-[1050] w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-1 sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-2xl border border-primary/30 bg-base-200 transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0"
+            className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-2xl border border-primary/30 bg-base-200 transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0"
           >
             {canDismiss && (
               <button
@@ -347,7 +347,7 @@ const TutorialWizard: React.FC = () => {
         {isPreviewMode && (
           <Badge
             badgeType="warning"
-            className="fixed top-4 left-4 z-[1051] px-3 py-1.5 border border-warning bg-warning/30"
+            className="fixed top-4 left-4 z-1051 px-3 py-1.5 border border-warning bg-warning/30"
           >
             <FormattedMessage
               id="settings.onboarding.previewMode"

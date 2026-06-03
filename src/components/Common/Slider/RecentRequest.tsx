@@ -104,7 +104,7 @@ const RequestCardError = ({
       <div className="w-20 sm:w-28">
         <div className="w-full" style={{ paddingBottom: '150%' }}>
           <div className="absolute inset-0 z-10 flex min-w-0 flex-1 flex-col p-4 gap-1">
-            <div className="overflow-hidden overflow-ellipsis whitespace-normal text-base font-bold text-white sm:text-lg">
+            <div className="overflow-hidden text-ellipsis whitespace-normal text-base font-bold text-white sm:text-lg">
               <FormattedMessage
                 id="userProfile.mediaError"
                 defaultMessage="{mediaType, select, movie {Movie} tv {TV show} other {Media}} not found"
@@ -206,7 +206,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-secondary to-secondary/75" />
+          <div className="absolute inset-0 bg-linear-to-l from-secondary to-secondary/75" />
         </div>
       )}
       <div className="relative z-10 flex min-w-0 flex-1 gap-1 flex-col pr-4">
@@ -219,7 +219,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
               ? `/request/movie/${requestData.media.tmdbId}`
               : `/request/tv/${requestData.media.tmdbId}`
           }
-          className="overflow-hidden overflow-ellipsis whitespace-nowrap text-base font-bold hover:underline sm:text-lg"
+          className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold hover:underline sm:text-lg"
         >
           {title.title || title.name}
         </Link>
@@ -292,7 +292,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             ? `/request/movie/${requestData.media.tmdbId}`
             : `/request/tv/${requestData.media.tmdbId}`
         }
-        className="w-20 flex-shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28"
+        className="w-20 shrink-0 scale-100 transform-gpu cursor-pointer overflow-hidden rounded-md shadow-sm transition duration-300 hover:scale-105 hover:shadow-md sm:w-28"
       >
         {title.posterPath ? (
           <CachedImage
@@ -304,7 +304,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             height={900}
           />
         ) : (
-          <div className="flex aspect-[2/3] w-full items-center justify-center bg-base-300">
+          <div className="flex aspect-2/3 w-full items-center justify-center bg-base-300">
             {request.type === 'tv' ? (
               <TvIcon className="size-10 text-base-content/20" />
             ) : (

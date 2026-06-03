@@ -59,7 +59,7 @@ const Spotlight: React.FC<SpotlightProps> = ({
         />
       )}
       <div
-        className={`fixed inset-0 pointer-events-none transition-all duration-300 animate-fade-in bg-black backdrop-blur-sm bg-opacity-30 ${className}`}
+        className={`fixed inset-0 pointer-events-none transition-all duration-300 animate-fade-in bg-black/30 backdrop-blur-sm ${className}`}
         style={spotlightStyle}
       />
       {blockClicks && (

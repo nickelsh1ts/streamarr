@@ -39,7 +39,7 @@ const QuotaSelector = ({
     <div className={`${isDisabled ? 'opacity-50' : ''}`}>
       <span className="flex space-x-4">
         <select
-          className="select select-sm select-primary rounded-md disabled:border disabled:border-primary"
+          className="select select-sm select-primary rounded-md disabled:border disabled:border-primary w-auto min-w-20 shrink-0"
           value={limitOverride ?? quotaLimit}
           onChange={(e) => setQuotaLimit(Number(e.target.value))}
           disabled={isDisabled}
@@ -75,7 +75,7 @@ const QuotaSelector = ({
         {quotaLimit > 0 && (
           <>
             <select
-              className="select select-sm select-primary rounded-md disabled:border disabled:border-primary"
+              className="select select-sm select-primary rounded-md disabled:border disabled:border-primary w-auto min-w-20 shrink-0"
               value={dayOverride ?? quotaDays}
               onChange={(e) => setQuotaDays(Number(e.target.value))}
               disabled={isDisabled}

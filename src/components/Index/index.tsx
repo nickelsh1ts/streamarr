@@ -17,7 +17,7 @@ function Index() {
   const { currentSettings } = useSettings();
 
   return (
-    <main className="bg-gradient-to-b from-secondary from-20% via-primary/75 via-50% to-secondary to-80%">
+    <main className="bg-linear-to-b from-secondary from-20% via-primary/75 via-50% to-secondary to-80%">
       <Header isInView={!isInView} />
       <div ref={targetRef}>
         <Hero />

@@ -52,50 +52,44 @@ const Toast = (
   switch (type) {
     case 'primary':
       toastStyle.push(
-        'bg-primary/30 ring-primary-content ring-opacity-30 text-primary-content'
+        'bg-primary/30 ring-primary-content/30 text-primary-content'
       );
       ringStyle.push('focus:ring-primary-content');
       break;
     case 'secondary':
       toastStyle.push(
-        'bg-secondary ring-secondary-content ring-opacity-30 text-secondary-content'
+        'bg-secondary/60 ring-secondary-content/30 text-secondary-content'
       );
       ringStyle.push('focus:ring-secondary-content');
       break;
     case 'error':
-      toastStyle.push(
-        'bg-error ring-error-content ring-opacity-30 text-error-content'
-      );
+      toastStyle.push('bg-error/60 ring-error-content/30 text-error-content');
       ringStyle.push('focus:ring-error-content');
       break;
     case 'warning':
       toastStyle.push(
-        'bg-warning ring-warning-content ring-opacity-30 text-warning-content'
+        'bg-warning/60 ring-warning-content/30 text-warning-content'
       );
       ringStyle.push('focus:ring-warning-content');
       break;
     case 'success':
       toastStyle.push(
-        'bg-success ring-success-content ring-opacity-30 text-success-content'
+        'bg-success/60 ring-success-content/30 text-success-content'
       );
       ringStyle.push('focus:ring-success-content');
       break;
     case 'info':
-      toastStyle.push(
-        'bg-info ring-info-content ring-opacity-30 text-info-content'
-      );
+      toastStyle.push('bg-info/60 ring-info-content/30 text-info-content');
       ringStyle.push('focus:ring-info-content');
       break;
     case 'accent':
       toastStyle.push(
-        'bg-accent ring-accent-content ring-opacity-30 text-accent-content'
+        'bg-accent/60 ring-accent-content/30 text-accent-content'
       );
       ringStyle.push('focus:ring-accent-content');
       break;
     default:
-      toastStyle.push(
-        'bg-base-100 ring-base-content ring-opacity-30 text-base-content'
-      );
+      toastStyle.push('bg-base-100/60 ring-base-content/30 text-base-content');
       ringStyle.push('focus:ring-base-content');
   }
   const id = toast.custom(
@@ -103,11 +97,11 @@ const Toast = (
       <div
         className={`${
           t.visible ? 'animate-slide-in' : 'animate-leave'
-        } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 backdrop-blur-md bg-opacity-60 ${toastStyle.join(' ')}`}
+        } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 backdrop-blur-md ${toastStyle.join(' ')}`}
       >
         <div className="flex-1 w-0 p-4">
           <div className="flex">
-            {icon && <div className="flex-shrink-0 -mt-1">{icon}</div>}
+            {icon && <div className="shrink-0 -mt-1">{icon}</div>}
             {(title || message) && (
               <div className="ml-3 mr-2 flex-1">
                 {title && <p className="text-sm font-bold">{title}</p>}
@@ -119,7 +113,7 @@ const Toast = (
         <div className="flex">
           <button
             onClick={() => toast.dismiss(t.id)}
-            className={`absolute top-0 right-0 p-1 m-1 rounded-md focus:outline-none focus:ring-2 ${ringStyle} hover:opacity-70`}
+            className={`absolute top-0 right-0 p-1 m-1 rounded-md focus:outline-none focus:ring-2 ${ringStyle} hover:opacity-70 hover:cursor-pointer`}
           >
             <XMarkIcon className="size-5" />
           </button>

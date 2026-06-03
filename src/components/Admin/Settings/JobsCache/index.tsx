@@ -415,7 +415,7 @@ const JobsCacheSettings = () => {
                     {moment(job.nextExecutionTime).from(now)}
                   </div>
                 </Table.TD>
-                <Table.TD alignText="right" className="space-y-2">
+                <Table.TD alignText="right" className="max-sm:space-y-2">
                   {job.interval !== 'fixed' && (
                     <Button
                       type="button"

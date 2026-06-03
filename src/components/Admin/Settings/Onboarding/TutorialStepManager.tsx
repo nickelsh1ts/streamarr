@@ -87,7 +87,7 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
       >
         <Bars3Icon className="size-5" />
       </button>
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         {(step.mode === 'spotlight' && tutorialMode === 'both') ||
         tutorialMode === 'spotlight' ? (
           <CursorArrowRippleIcon className="size-5 text-primary" />
@@ -114,7 +114,7 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
         </p>
       </div>
       {(step.imageUrl || step.videoUrl || step.customHtml) && (
-        <div className="flex-shrink-0 flex items-center gap-1 text-neutral">
+        <div className="shrink-0 flex items-center gap-1 text-neutral">
           {step.imageUrl && <PhotoIcon className="size-4 text-primary" />}
           {step.imageUrl && step.videoUrl && <span>/</span>}
           {step.videoUrl && <VideoCameraIcon className="size-4 text-primary" />}
@@ -126,7 +126,7 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
           )}
         </div>
       )}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <span
           className={`badge ${step.enabled ? 'badge-success' : 'badge-neutral'}`}
         >
@@ -555,7 +555,7 @@ const TutorialStepManager = () => {
                     htmlFor="mode"
                     className="block text-sm font-medium leading-6 text-left"
                   >
-                    <span className="label-text">
+                    <span className="text-sm">
                       <FormattedMessage
                         id="settings.onboarding.stepMode"
                         defaultMessage="Step Rendering Style"
@@ -597,7 +597,7 @@ const TutorialStepManager = () => {
                     htmlFor="targetSelector"
                     className="block text-sm font-medium leading-6 text-left"
                   >
-                    <span className="label-text">
+                    <span className="text-sm">
                       <FormattedMessage
                         id="settings.onboarding.targetSelector"
                         defaultMessage="Target Selector"
@@ -656,7 +656,7 @@ const TutorialStepManager = () => {
                     htmlFor="tooltipPosition"
                     className="block text-sm font-medium leading-6 text-left"
                   >
-                    <span className="label-text">
+                    <span className="text-sm">
                       <FormattedMessage
                         id="settings.onboarding.tooltipPosition"
                         defaultMessage="Tooltip Position"
@@ -707,7 +707,7 @@ const TutorialStepManager = () => {
                   htmlFor="route"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="settings.onboarding.route"
                       defaultMessage="Route"
@@ -741,7 +741,7 @@ const TutorialStepManager = () => {
                   htmlFor="imageUrl"
                   className="block text-sm font-medium leading-6 text-left mb-2"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="common.image"
                       defaultMessage="Image"
@@ -778,7 +778,7 @@ const TutorialStepManager = () => {
                   htmlFor="videoUrl"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="common.videoUrl"
                       defaultMessage="Video URL"
@@ -837,7 +837,7 @@ const TutorialStepManager = () => {
                   htmlFor="customHtml"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="settings.onboarding.customHtml"
                       defaultMessage="Custom HTML"

@@ -285,14 +285,14 @@ const MobileMenu = () => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 sm:hidden z-[1010]"
+      className="fixed bottom-0 left-0 right-0 sm:hidden z-1010"
       ref={ref}
       data-tutorial="mobile-nav"
     >
       <Transition
         show={isOpen}
         as="div"
-        className="absolute top-0 left-0 right-0 flex w-full max-h-[85dvh] transition ease-out duration-500 opacity-100 -translate-y-full data-[leave]:duration-500 data-[leave]:opacity-0 data-[leave]:translate-y-0 data-[closed]:opacity-0 data-[closed]:translate-y-0 flex-col border-t border-primary bg-primary bg-opacity-30 px-6 pt-6 font-semibold backdrop-blur"
+        className="absolute top-0 left-0 right-0 flex w-full max-h-[85dvh] transition ease-out duration-500 opacity-100 -translate-y-full data-leave:duration-500 data-leave:opacity-0 data-leave:translate-y-0 data-closed:opacity-0 data-closed:translate-y-0 flex-col border-t border-primary bg-primary/30 px-6 pt-6 font-semibold backdrop-blur"
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
@@ -328,14 +328,14 @@ const MobileMenu = () => {
               <RequestMenu onClick={setIsOpen} url={url} />
             )}
             {menuType === 'settings' && (
-              <ul className="menu p-0 m-0 space-y-1">
+              <ul className="menu p-0 m-0 space-y-1 w-full">
                 {settingsLinks.map((link, i) => {
                   const isActive = url.match(link.activeRegExp);
                   return (
                     <li key={i} className="">
                       <Link
                         onClick={() => setIsOpen(!isOpen)}
-                        className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                        className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                         href={link.href}
                       >
                         {link.content}
@@ -345,12 +345,12 @@ const MobileMenu = () => {
                 })}
               </ul>
             )}
-            <ul className="menu p-0 m-0 mt-2 mb-2">
+            <ul className="menu p-0 m-0 mt-2 mb-2 w-full">
               {(isWatchRoute || !requestDisabled) && (
                 <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
                   <button
                     onClick={() => setMenuType('library')}
-                    className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
                     <FormattedMessage
                       id="mobileMenu.libraries"
@@ -360,7 +360,7 @@ const MobileMenu = () => {
                   {!requestDisabled && (
                     <button
                       onClick={() => setMenuType('request')}
-                      className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <FormattedMessage
                         id="common.request"
@@ -371,7 +371,7 @@ const MobileMenu = () => {
                   {isWatchRoute && (
                     <button
                       onClick={() => setMenuType('settings')}
-                      className={`flex items-center focus:!bg-primary/70 active:!bg-primary/20 capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <FormattedMessage
                         id="common.settings"
@@ -385,11 +385,11 @@ const MobileMenu = () => {
           </>
         )}
       </Transition>
-      <div className="padding-bottom-safe border-t border-primary bg-primary bg-opacity-30 backdrop-blur">
+      <div className="padding-bottom-safe border-t border-primary bg-primary/30 backdrop-blur">
         <div className="flex h-full items-center justify-between px-6 py-2 text-primary-content backdrop-filter-none">
           <button
             data-tutorial="mobile-menu-toggle"
-            className={`flex flex-col items-center space-y-1 ${
+            className={`flex flex-col items-center space-y-1 hover:cursor-pointer ${
               isOpen &&
               (menuType === 'library' ||
                 menuType === 'settings' ||
@@ -459,7 +459,7 @@ const MobileMenu = () => {
             })}
           {filteredLinks.length > 3 && filteredLinks.length !== 4 && (
             <button
-              className={`flex flex-col items-center space-y-1 ${
+              className={`flex flex-col items-center space-y-1 hover:cursor-pointer ${
                 isOpen && menuType === 'nav' ? 'text-primary' : ''
               }`}
               onClick={() => {

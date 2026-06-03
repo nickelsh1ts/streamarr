@@ -159,14 +159,14 @@ const UserSelector = ({
             <span className="inline-block w-full relative rounded-md shadow-sm">
               <ListboxButton
                 ref={buttonRef}
-                className={`relative w-full cursor-default rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:outline focus:outline-2 ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
+                className={`relative w-full cursor-default rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:outline ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
               >
                 {!multiple && !Array.isArray(selectedUser) && selectedUser ? (
                   <span className="flex items-center">
                     <CachedImage
                       src={`/avatarproxy/${selectedUser.id}`}
                       alt=""
-                      className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                      className="h-6 w-6 shrink-0 rounded-full object-cover"
                       width={24}
                       height={24}
                     />
@@ -189,7 +189,7 @@ const UserSelector = ({
                         key={user?.id || idx}
                         src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                         alt=""
-                        className="size-6 flex-shrink-0 rounded-full object-cover"
+                        className="size-6 shrink-0 rounded-full object-cover"
                         width={24}
                         height={24}
                       />
@@ -212,7 +212,7 @@ const UserSelector = ({
               {listboxOpen && (
                 <ListboxOptions
                   ref={optionsRef}
-                  className={`z-[9999] px-1 max-h-60 overflow-auto rounded-md bg-base-100 border ${valid ? 'border-primary' : 'border-error'} py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5`}
+                  className={`z-9999 px-1 max-h-60 overflow-auto rounded-md bg-base-100 border ${valid ? 'border-primary' : 'border-error'} py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5`}
                   style={{
                     position: 'absolute',
                     top: dropdownMeasured ? dropdownPos.top : 0,
@@ -238,11 +238,11 @@ const UserSelector = ({
                             <CachedImage
                               src={`/avatarproxy/${user.id}`}
                               alt=""
-                              className="h-6 w-6 flex-shrink-0 rounded-full object-cover"
+                              className="h-6 w-6 shrink-0 rounded-full object-cover"
                               width={24}
                               height={24}
                             />
-                            <span className="ml-3 block flex-shrink-0">
+                            <span className="ml-3 block shrink-0">
                               {user.displayName}
                             </span>
                             {user.displayName.toLowerCase() !== user.email &&

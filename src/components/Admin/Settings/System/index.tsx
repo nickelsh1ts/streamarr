@@ -178,7 +178,7 @@ const SystemSettings = () => {
                 >
                   <Badge
                     badgeType="warning"
-                    className="ml-2 !cursor-pointer transition"
+                    className="ml-2 cursor-pointer! transition"
                   >
                     <FormattedMessage
                       id="systemSettings.outOfDate"
@@ -198,7 +198,7 @@ const SystemSettings = () => {
                 >
                   <Badge
                     badgeType="success"
-                    className="ml-2 !cursor-pointer transition"
+                    className="ml-2 cursor-pointer! transition"
                   >
                     <FormattedMessage
                       id="systemSettings.upToDate"

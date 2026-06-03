@@ -191,7 +191,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteUsageLimit"
                     id="inviteUsageLimit"
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                     onChange={(e) =>
                       setFieldValue('inviteUsageLimit', Number(e.target.value))
                     }
@@ -236,7 +236,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteExpiryLimit"
                     id="inviteExpiryLimit"
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                     onChange={(e) =>
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
@@ -258,7 +258,7 @@ const UserSettings = () => {
                       as="select"
                       name="inviteExpiryTime"
                       id="inviteExpiryTime"
-                      className="select select-sm select-primary rounded-md"
+                      className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                       onChange={(e) =>
                         setFieldValue('inviteExpiryTime', e.target.value)
                       }
@@ -325,7 +325,7 @@ const UserSettings = () => {
                         as="select"
                         name="trialPeriodOutcome"
                         id="trialPeriodOutcome"
-                        className="select select-sm select-primary rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40"
+                        className="select select-sm select-primary rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 w-auto min-w-20 shrink-0"
                       >
                         <option value="promote">
                           {intl.formatMessage({
@@ -350,7 +350,7 @@ const UserSettings = () => {
                         as="select"
                         name="trialPeriodDays"
                         id="trialPeriodDays"
-                        className="select select-sm select-primary rounded-md"
+                        className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                         onChange={(e) =>
                           setFieldValue(
                             'trialPeriodDays',
@@ -401,7 +401,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.downloads ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
                         aria-hidden="true"
@@ -451,7 +451,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.liveTv ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
                         aria-hidden="true"
@@ -497,7 +497,7 @@ const UserSettings = () => {
                         onKeyDown={() => undefined}
                         className={`${
                           values.plexHome ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
+                        } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
                         aria-disabled={true}
                       >
                         <span

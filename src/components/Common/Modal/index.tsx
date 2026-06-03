@@ -61,18 +61,18 @@ export default function Modal({
     <Dialog onClose={onCancel} open={show}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-[1050] w-full bg-base-300 backdrop-blur-sm bg-opacity-30 transition-opacity data-[closed]:opacity-0"
+        className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
       />
-      <div className="fixed inset-0 z-[1050] w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-1 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : size === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-[closed]:opacity-0 data-[closed]:scale-0 data-[closed]:max-sm:translate-y-full`}
+            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : size === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0 data-closed:max-sm:translate-y-full`}
           >
             <div className="absolute pt-1 pr-1 top-0 right-0 z-10">
               <button
                 type="button"
-                className="btn hover:bg-zinc-700 p-1 btn-sm rounded-md"
+                className="btn hover:bg-zinc-700 btn-square btn-sm rounded-md"
                 onClick={onCancel}
               >
                 <span className="absolute w-1 h-1 p-0 -m-1 whitespace-nowrap border-0 sr-only">

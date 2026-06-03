@@ -344,7 +344,7 @@ const TutorialSpotlight: React.FC = () => {
     }
 
     return createPortal(
-      <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-30 animate-fade-in">
+      <div className="fixed inset-0 z-1100 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
         <div className="bg-base-200 rounded-xl p-4 sm:p-6 max-w-md mx-1 shadow-2xl border border-primary/30 animate-scale-in">
           <h3 className="text-xl font-bold text-base-content mb-3">
             <FormattedMessage
@@ -394,12 +394,12 @@ const TutorialSpotlight: React.FC = () => {
       {targetRect ? (
         <Spotlight targetRect={targetRect} />
       ) : (
-        <div className="fixed inset-0 z-[1100] bg-black/30 backdrop-blur-sm animate-fade-in" />
+        <div className="fixed inset-0 z-1100 bg-black/30 backdrop-blur-sm animate-fade-in" />
       )}
       {isPreviewMode && (
         <Badge
           badgeType="warning"
-          className="fixed top-4 left-4 z-[1200] px-3 py-1.5 border border-warning backdrop-blur-sm bg-warning/30 animate-fade-in"
+          className="fixed top-4 left-4 z-1200 px-3 py-1.5 border border-warning backdrop-blur-sm bg-warning/30 animate-fade-in"
         >
           <FormattedMessage
             id="settings.onboarding.previewMode"
