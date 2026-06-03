@@ -22,7 +22,7 @@ RUN pnpm rebuild bcrypt sharp sqlite3
 
 COPY src ./src
 COPY public ./public
-COPY next.config.mjs tsconfig.json tailwind.config.ts postcss.config.js streamarr-api.yml ./
+COPY next.config.mjs tsconfig.json postcss.config.js streamarr-api.yml ./
 COPY server ./server
 
 RUN if [ -f server/python/requirements.txt ]; then \

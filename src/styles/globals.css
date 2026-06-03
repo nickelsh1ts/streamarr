@@ -1,5 +1,80 @@
-@tailwind base;
-@tailwind components;
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui';
+
+@plugin "daisyui/theme" {
+  name: 'streamarr';
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-primary: #974ede;
+  --color-primary-content: #fff;
+  --color-secondary: #2b0b53;
+  --color-secondary-content: #cfcbdc;
+  --color-accent: #e5a00d;
+  --color-accent-content: #fff;
+  --color-neutral: #6c757d;
+  --color-neutral-content: #e0e2e4;
+  --color-base-100: #121212;
+  --color-base-200: #121418;
+  --color-base-300: #0d1013;
+  --color-base-content: #fff;
+  --color-info: #2563eb;
+  --color-info-content: #d2e2ff;
+  --color-success: #84cc16;
+  --color-success-content: #fff;
+  --color-warning: #ffc107;
+  --color-warning-content: #fff;
+  --color-error: #b91c1c;
+  --color-error-content: #fff;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-field: 0.3rem;
+}
+
+@theme {
+  --color-brand-dark: #080011;
+  --color-brand-light: #2b0b53;
+  --shadow-3xl: 0rem 0.25rem 1rem 0rem #00000033;
+  --transition-property-max-height: max-height;
+  --transition-property-width: width;
+  --animate-enter: enter 200ms ease-out;
+  --animate-slide-in: slide-in 0.3s cubic-bezier(0.41, 0.73, 0.51, 1.02);
+  --animate-leave: leave 150ms ease-in forwards;
+}
+
+@keyframes enter {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes leave {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 @layer components {
   .list-circle {
     list-style-type: circle;
@@ -9,7 +84,6 @@
   }
 }
 
-@tailwind utilities;
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -32,6 +106,22 @@
   .animate-scale-in {
     animation: scaleIn 0.3s ease-out forwards;
   }
+}
+
+.select {
+  @apply hover:cursor-pointer;
+}
+
+.btn:not(
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-3xl
+) {
+  box-shadow: none;
 }
 
 @keyframes fadeIn {
@@ -191,7 +281,7 @@
 }
 
 .react-select-container .react-select__input {
-  @apply !text-primary-content p-2;
+  @apply text-primary-content! p-2;
 }
 
 .react-select__value-container {
@@ -203,11 +293,11 @@
 }
 
 .react-select__multi-value__label {
-  @apply !text-primary-content text-sm px-2 py-1;
+  @apply text-primary-content! text-sm px-2 py-1;
 }
 
 .react-select__multi-value__remove {
-  @apply hover:!bg-secondary hover:!bg-opacity-70 hover:!text-error px-1 rounded-r-md;
+  @apply hover:bg-secondary/70! hover:text-error! px-1 rounded-r-md;
 }
 
 .react-select-container .react-select__indicator-separator {
@@ -231,15 +321,15 @@
 }
 
 .react-select__option--is-focused {
-  @apply !bg-primary rounded-md text-primary-content;
+  @apply bg-primary! rounded-md text-primary-content;
 }
 
 .react-select__option--is-selected {
-  @apply !bg-primary text-primary-content;
+  @apply bg-primary! text-primary-content;
 }
 
 .react-select__option:active {
-  @apply !bg-primary text-primary-content;
+  @apply bg-primary! text-primary-content;
 }
 
 .custom-range {
