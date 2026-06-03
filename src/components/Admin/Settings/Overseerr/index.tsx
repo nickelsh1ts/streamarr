@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-css-tags */
 'use client';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import Button from '@app/components/Common/Button';
+import { withVersion } from '@app/utils/assetVersion';
 import type { ServiceSettings } from '@server/lib/settings';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';
@@ -85,8 +85,9 @@ const AdminOverseerr = () => {
         serviceName="Seerr"
         settingsPath="/admin/settings/services/overseerr"
         isConfigured={isConfigured}
+        injectTheme
       >
-        <link rel="stylesheet" href="/request.css" />
+        <link rel="stylesheet" href={withVersion('/request.css')} />
       </DynamicFrame>
     </div>
   );

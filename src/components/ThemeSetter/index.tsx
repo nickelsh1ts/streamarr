@@ -2,8 +2,7 @@
 
 import { useEffect, useContext } from 'react';
 import { SettingsContext } from '@app/context/SettingsContext';
-import { colord } from 'colord';
-import { rgbToOklch, daisyUIMapping } from '@app/utils/themeUtils';
+import { daisyUIMapping, parseColorToHex } from '@app/utils/themeUtils';
 
 const ThemeSetter: React.FC = () => {
   const { currentSettings } = useContext(SettingsContext);
@@ -15,14 +14,11 @@ const ThemeSetter: React.FC = () => {
     }
 
     Object.entries(theme).forEach(([key, value]) => {
-      const daisyKey = daisyUIMapping[key];
-      if (daisyKey) {
-        const color = colord(value);
-        if (color.isValid()) {
-          const rgb = color.toRgb();
-          const oklch = rgbToOklch(rgb.r, rgb.g, rgb.b);
-          const cssValue = `${oklch.l} ${oklch.c} ${oklch.h}`;
-          document.documentElement.style.setProperty(`--${daisyKey}`, cssValue);
+      const daisyVar = daisyUIMapping[key];
+      if (daisyVar) {
+        const hex = parseColorToHex(value);
+        if (hex) {
+          document.documentElement.style.setProperty(daisyVar, hex);
         }
       }
     });

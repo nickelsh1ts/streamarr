@@ -1,9 +1,9 @@
-/* eslint-disable @next/next/no-css-tags */
 'use client';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ServiceNotConfigured } from '@app/components/Common/ServiceError';
 import { useUser, Permission } from '@app/hooks/useUser';
+import { withVersion } from '@app/utils/assetVersion';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';
 import useSWR from 'swr';
@@ -50,8 +50,9 @@ const Activity = () => {
         serviceName="Tautulli"
         settingsPath="/admin/settings/services/tautulli"
         isConfigured={true}
+        injectTheme
       >
-        <link rel="stylesheet" href="/tautulli.css" />
+        <link rel="stylesheet" href={withVersion('/tautulli.css')} />
       </DynamicFrame>
     </div>
   );
