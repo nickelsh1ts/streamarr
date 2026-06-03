@@ -10,6 +10,7 @@ const nextConfig = {
     : ['localhost:3000'],
   env: {
     commitTag: process.env.COMMIT_TAG || 'local',
+    cssVersion: process.env.COMMIT_TAG || `local-${Date.now()}`,
     RANDOM_STRING: randomString,
   },
   images: {
