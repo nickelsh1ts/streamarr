@@ -10,9 +10,11 @@
 
 - [Admin Panel](using-streamarr/admin.md)
 - [Settings](using-streamarr/settings/README.md)
+  - [Logs](using-streamarr/settings/logs.md)
   - [Onboarding](using-streamarr/settings/onboarding.md)
   - [System](using-streamarr/settings/system.md)
 - [Users](using-streamarr/users/README.md)
+  - [Linked Accounts](using-streamarr/users/linked-accounts.md)
 - [Invites](using-streamarr/invites/README.md)
 - [Plex Web](using-streamarr/plex-web.md)
 - [Calendar](using-streamarr/calendar/README.md)
