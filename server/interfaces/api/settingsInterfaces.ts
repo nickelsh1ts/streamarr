@@ -18,7 +18,35 @@ export interface SettingsAboutResponse {
   totalUsers?: number;
   totalInvites?: number;
   tz?: string;
+  uptime: number;
+  nodeVersion: string;
+  pythonVersion: string;
   appDataPath: string;
+  database: {
+    type: string;
+    version: string;
+  };
+  diskSpace: {
+    items: DiskSpaceItem[];
+    failedPaths: DiskSpaceFailure[];
+  };
+}
+
+export interface DiskSpaceItem {
+  deviceId: string;
+  name: string;
+  path: string;
+  mountPoint: string;
+  pathUsedBytes: number;
+  totalBytes: number;
+  freeBytes: number;
+  usedBytes: number;
+  usedPercent: number;
+}
+
+export interface DiskSpaceFailure {
+  name: string;
+  path: string;
 }
 
 export interface PublicSettingsResponse {
@@ -41,6 +69,7 @@ export interface PublicSettingsResponse {
   enableHelpCentre: boolean;
   enableTrialPeriod: boolean;
   trialPeriodDays: number;
+  trialPeriodOutcome: 'promote' | 'deactivate';
   defaultInviteQuotas: {
     quotaLimit?: number;
     quotaDays?: number;

@@ -61,6 +61,7 @@ const UserSettings = () => {
           plexHome: data?.plexHome,
           enableTrialPeriod: data?.enableTrialPeriod ?? false,
           trialPeriodDays: data?.trialPeriodDays ?? 30,
+          trialPeriodOutcome: data?.trialPeriodOutcome ?? 'promote',
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -84,6 +85,7 @@ const UserSettings = () => {
               plexHome: values.plexHome,
               enableTrialPeriod: values.enableTrialPeriod,
               trialPeriodDays: values.trialPeriodDays,
+              trialPeriodOutcome: values.trialPeriodOutcome,
             });
             mutate('/api/v1/settings/public');
 
@@ -189,7 +191,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteUsageLimit"
                     id="inviteUsageLimit"
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                     onChange={(e) =>
                       setFieldValue('inviteUsageLimit', Number(e.target.value))
                     }
@@ -218,7 +220,7 @@ const UserSettings = () => {
                 </div>
                 <div className="" />
                 <div className="col-span-2 space-x-2">
-                  <span>
+                  <span className="lowercase">
                     <FormattedMessage
                       id="common.expires"
                       defaultMessage="Expires"
@@ -234,7 +236,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteExpiryLimit"
                     id="inviteExpiryLimit"
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                     onChange={(e) =>
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
@@ -256,7 +258,7 @@ const UserSettings = () => {
                       as="select"
                       name="inviteExpiryTime"
                       id="inviteExpiryTime"
-                      className="select select-sm select-primary rounded-md"
+                      className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
                       onChange={(e) =>
                         setFieldValue('inviteExpiryTime', e.target.value)
                       }
@@ -291,10 +293,17 @@ const UserSettings = () => {
                     defaultMessage="Enable Trial Period"
                   />
                   <span className="text-sm block font-light text-neutral">
-                    <FormattedMessage
-                      id="userSettings.enableTrialPeriodDescription"
-                      defaultMessage="Set a period of days where new users cannot create invites"
-                    />
+                    {values.trialPeriodOutcome === 'promote' ? (
+                      <FormattedMessage
+                        id="userSettings.trialPeriodDescriptionPromote"
+                        defaultMessage="Set a period of days until users can create invites"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="userSettings.trialPeriodDescriptionDeactivate"
+                        defaultMessage="Set a period of days until users are deactivated and lose access"
+                      />
+                    )}
                   </span>
                 </label>
                 <div className="col-span-2 gap-4 inline-flex items-center">
@@ -311,25 +320,55 @@ const UserSettings = () => {
                     className="checkbox checkbox-primary rounded-md"
                   />
                   {values.enableTrialPeriod && (
-                    <Field
-                      as="select"
-                      name="trialPeriodDays"
-                      id="trialPeriodDays"
-                      className="select select-sm select-primary rounded-md"
-                      onChange={(e) =>
-                        setFieldValue('trialPeriodDays', Number(e.target.value))
-                      }
-                    >
-                      {[...Array(90)].map((_item, i) => (
-                        <option value={i + 1} key={`trial-period-${i + 1}`}>
-                          <FormattedMessage
-                            id="common.days"
-                            defaultMessage="{count, plural, one {# day} other {# days}}"
-                            values={{ count: i + 1 }}
-                          />
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Field
+                        as="select"
+                        name="trialPeriodOutcome"
+                        id="trialPeriodOutcome"
+                        className="select select-sm select-primary rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 w-auto min-w-20 shrink-0"
+                      >
+                        <option value="promote">
+                          {intl.formatMessage({
+                            id: 'userSettings.trialPeriodOutcome.promote',
+                            defaultMessage: 'Promote',
+                          })}
                         </option>
-                      ))}
-                    </Field>
+                        <option value="deactivate">
+                          {intl.formatMessage({
+                            id: 'userSettings.trialPeriodOutcome.deactivate',
+                            defaultMessage: 'Deactivate',
+                          })}
+                        </option>
+                      </Field>
+                      <span className="whitespace-nowrap lowercase">
+                        <FormattedMessage
+                          id="common.after"
+                          defaultMessage="After"
+                        />
+                      </span>
+                      <Field
+                        as="select"
+                        name="trialPeriodDays"
+                        id="trialPeriodDays"
+                        className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                        onChange={(e) =>
+                          setFieldValue(
+                            'trialPeriodDays',
+                            Number(e.target.value)
+                          )
+                        }
+                      >
+                        {[...Array(90)].map((_item, i) => (
+                          <option value={i + 1} key={`trial-period-${i + 1}`}>
+                            <FormattedMessage
+                              id="common.days"
+                              defaultMessage="{count, plural, one {# day} other {# days}}"
+                              values={{ count: i + 1 }}
+                            />
+                          </option>
+                        ))}
+                      </Field>
+                    </div>
                   )}
                 </div>
                 <span id="group-label" className="block font-bold">
@@ -362,7 +401,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.downloads ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
                         aria-hidden="true"
@@ -412,7 +451,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.liveTv ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                     >
                       <span
                         aria-hidden="true"
@@ -458,7 +497,7 @@ const UserSettings = () => {
                         onKeyDown={() => undefined}
                         className={`${
                           values.plexHome ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
+                        } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
                         aria-disabled={true}
                       >
                         <span

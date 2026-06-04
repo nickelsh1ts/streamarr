@@ -58,7 +58,10 @@ const UserCard = ({
       </Link>
       {notificationSettings?.inAppEnabled && (
         <div className="absolute top-1 right-1">
-          <button onClick={() => setIsOpen(true)} className="indicator">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="indicator hover:cursor-pointer"
+          >
             {unRead > 0 && (
               <span className="indicator-item indicator-top indicator-end top-2 right-2 badge badge-xs py-2 text-xs font-thin badge-error">
                 {unRead}
@@ -74,7 +77,7 @@ const UserCard = ({
       )}
       {path.match(/^\/(help\/?(.*)?|\/?$)/) && (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start btn-ghost`}
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start btn-ghost hover:bg-neutral/20`}
           href={'/watch'}
         >
           <HomeIcon className="size-5" />
@@ -83,7 +86,7 @@ const UserCard = ({
       )}
       {hasPermission(Permission.ADMIN) ? (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
           href="/admin"
         >
           <LockClosedIcon className="size-5 inline-flex" />
@@ -94,7 +97,7 @@ const UserCard = ({
         </Link>
       ) : hasPermission(Permission.MANAGE_USERS) ? (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
           href="/admin/users"
         >
           <LockClosedIcon className="size-5 inline-flex" />

@@ -169,12 +169,12 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
           </Alert>
         ) : (
           <>
-            <div className="form-control">
+            <div className="flex flex-col">
               <label
                 htmlFor="client"
                 className="block text-sm font-medium leading-6 text-left"
               >
-                <span className="label-text">
+                <span className="text-sm">
                   <FormattedMessage
                     id="downloads.downloadClient"
                     defaultMessage="Download Client"
@@ -183,7 +183,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               </label>
               <select
                 id="client"
-                className="select select-sm select-primary"
+                className="select select-sm select-primary w-full"
                 value={selectedClient}
                 onChange={(e) => setSelectedClient(Number(e.target.value))}
                 required
@@ -196,12 +196,12 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               </select>
             </div>
             <div className="gap-1 flex flex-col">
-              <div className="form-control">
+              <div className="flex flex-col">
                 <label
                   htmlFor="magnetOrUrl"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="downloads.magnetOrUrl"
                       defaultMessage="Magnet Link or URL"
@@ -211,7 +211,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                 <input
                   type="text"
                   id="magnetOrUrl"
-                  className="input input-sm input-primary"
+                  className="input input-sm input-primary w-full"
                   placeholder="magnet:?xt=urn:btih:... or https://..."
                   value={magnetOrUrl}
                   onChange={(e) => {
@@ -226,12 +226,12 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               <div className="divider mb-0 mt-2 uppercase">
                 <FormattedMessage id="common.or" defaultMessage="or" />
               </div>
-              <div className="form-control -mt-1">
+              <div className="flex flex-col -mt-1">
                 <label
                   htmlFor="torrentFile"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="downloads.torrentFile"
                       defaultMessage="Upload .torrent File"
@@ -279,12 +279,12 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
 
               return (
                 <div className="gap-2 flex flex-col">
-                  <div className="form-control">
+                  <div className="flex flex-col">
                     <label
                       htmlFor="category"
                       className="block text-sm font-medium leading-6 text-left"
                     >
-                      <span className="label-text">
+                      <span className="text-sm">
                         {client?.client === 'deluge' ? (
                           <FormattedMessage
                             id="downloads.label"
@@ -309,7 +309,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                     <input
                       id="category"
                       type="text"
-                      className="input input-sm input-primary"
+                      className="input input-sm input-primary w-full"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       placeholder={intl.formatMessage({

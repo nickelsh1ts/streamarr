@@ -69,6 +69,8 @@ Override which Plex libraries this user has access to:
 - **All Libraries** — Access to all enabled libraries
 - **Specific Libraries** — Select specific library IDs
 
+If the user is a Plex Home member, library access is managed through Plex Home. Re-inviting a user as Plex Home will re-provision their access if needed. Only users who have accepted their Plex Home invite will appear as active members.
+
 #### Pin Libraries
 
 Pin selected libraries to the user's Plex sidebar so they appear prominently when the user opens Plex. This uses the Plex Sync (Python) service to set library pins on the Plex server.
@@ -154,12 +156,15 @@ If email notifications are configured, the user will receive a welcome email wit
 
 ## Trial Period
 
-If [Trial Period](../settings/README.md#enable-trial-period) is enabled, newly signed-up users are restricted during their trial:
+If [Trial Period](../settings/README.md#enable-trial-period) is enabled, newly signed-up users are placed in a trial state:
 
-- Cannot create invites
-- May have other restrictions based on their permissions
+- Trial users cannot create invites
+- Other restrictions may apply based on permissions
+- Trial users are clearly marked in the user list and on their profile
 
-The trial period duration is configurable in Settings. Users with **Manage Users** or **Manage Invites** permissions bypass trial restrictions.
+When the trial ends, the user is either promoted to full access or marked as **Expired** (loses access) depending on admin policy. Admins can manually end or extend a user's trial from the user settings page. Users may request an extension to their trial or access period from their profile, which admins can grant by extending their trial period.
+
+Users with **Manage Users** or **Manage Invites** permissions bypass trial restrictions.
 
 ---
 
@@ -276,14 +281,14 @@ Each card shows the poster for the movie or TV show (using the Plex image proxy 
 Clicking/tapping a card opens the item directly in Plex Web. On touch devices, the first tap shows the detail overlay and the second tap navigates.
 
 {% hint style="info" %}
-The "Recently Watched" link at the top of the slider navigates to `/stats/history` — the watch history page within the embedded Tautulli interface.
+The "Recently Watched" link at the top of the slider navigates to `/activity/history` — the watch history page within the embedded Tautulli interface.
 {% endhint %}
 
 ### Profile Background
 
 The profile layout background dynamically uses TMDB backdrop images sourced from the user's recent watch history. If no watch history is available (or Tautulli is not configured), it falls back to Plex library backdrops or the default cinema image.
 
-These links navigate to `/stats` (Tautulli) and `/request` (Seerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
+These links navigate to `/activity` (Tautulli) and `/request` (Seerr) respectively, which load the corresponding service through Streamarr's internal proxy. The availability of each link is controlled entirely by admin configuration in [Settings](../settings/README.md) — users cannot toggle them on or off.
 
 ---
 

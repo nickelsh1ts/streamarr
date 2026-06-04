@@ -123,15 +123,44 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <p className="text-xs truncate w-full text-warning">
                   {invite?.expiresAt != null &&
                   (invite?.status !== InviteStatus.REDEEMED ||
-                    moment(invite?.expiresAt).isAfter(moment()))
-                    ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
-                    : invite?.status !== InviteStatus.REDEEMED && (
-                        <FormattedMessage
-                          id="invite.neverExpires"
-                          defaultMessage="Never expires"
-                        />
-                      )}
+                    moment(invite?.expiresAt).isAfter(moment())) ? (
+                    <FormattedMessage
+                      id="invite.expiresAt"
+                      defaultMessage="{past, select, true {Expired} other {Expires}} {inDate}"
+                      values={{
+                        past: moment(invite.expiresAt).isBefore(moment()),
+                        inDate: moment(invite.expiresAt).fromNow(),
+                      }}
+                    />
+                  ) : (
+                    !invite?.expiresAt && (
+                      <FormattedMessage
+                        id="invite.neverExpires"
+                        defaultMessage="Never expires"
+                      />
+                    )
+                  )}
                 </p>
+                {data?.globalEnableTrialPeriod &&
+                  (invite?.trialPeriodOutcome ||
+                    data?.globalTrialPeriodOutcome) && (
+                    <p className="whitespace-normal wrap-break-word ">
+                      <span className="text-xs whitespace-nowrap">
+                        <FormattedMessage
+                          id="invite.trialPeriodOutcome"
+                          defaultMessage="{outcome, select, promote {Promote} other {Deactivate}} after {period} {period, plural, one {day} other {days}}"
+                          values={{
+                            outcome:
+                              invite?.trialPeriodOutcome ??
+                              data?.globalTrialPeriodOutcome,
+                            period:
+                              invite?.trialPeriodDays ??
+                              data.globalTrialPeriodDays,
+                          }}
+                        />
+                      </span>
+                    </p>
+                  )}
                 <div className="flex flex-wrap w-full items-center gap-x-2 gap-y-1">
                   <p className="text-xs flex items-center">
                     <FormattedMessage
@@ -168,14 +197,14 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   </p>
                 </div>
                 <div className="text-sm">
-                  <p className="whitespace-normal break-words">
+                  <p className="whitespace-normal wrap-break-word">
                     <span className="font-bold whitespace-nowrap">
                       <FormattedMessage
                         id="invite.sharedLibraries"
                         defaultMessage="Shared Libraries:"
                       />{' '}
                     </span>
-                    <span className="whitespace-normal break-words align-baseline text-neutral">
+                    <span className="whitespace-normal wrap-break-word align-baseline text-neutral">
                       {(() => {
                         if (!Libraries) return null;
                         const allIds = Libraries.map((lib) => lib.id).sort();
@@ -497,7 +526,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <button
                   onClick={() => onShare()}
                   data-testid="invite-share-button"
-                  className="btn btn-sm btn-block btn-neutral rounded-md flex-1"
+                  className="btn btn-sm btn-block btn-neutral rounded-md"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -524,7 +553,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <button
                   onClick={() => onEdit()}
                   data-testid="invite-edit-button"
-                  className="btn btn-sm btn-block btn-neutral rounded-md flex-1"
+                  className="btn btn-sm btn-block btn-neutral rounded-md"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -554,7 +583,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                     id: 'common.areYouSure',
                     defaultMessage: 'Are you sure?',
                   })}
-                  className="w-full flex-1"
+                  className="w-full"
                 >
                   <TrashIcon className="size-5 mr-2" />
                   <span>

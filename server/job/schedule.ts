@@ -7,6 +7,7 @@ import logger from '@server/logger';
 import schedule from 'node-schedule';
 import expiredInvites from '@server/lib/expiredInvites';
 import cleanUpNotifications from '@server/lib/cleanUpNotifications';
+import trialExpiry from '@server/lib/trialExpiry';
 
 interface ScheduledJob {
   id: JobId;
@@ -52,11 +53,10 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Image Cache Cleanup', {
         label: 'Jobs',
       });
-      // Clean TMDB, Plex, and avatar image caches
-      ImageProxy.clearCache('tmdb');
-      ImageProxy.clearCache('plex');
-      ImageProxy.clearCache('avatar');
+      ImageProxy.clearCache(['tmdb', 'plex', 'avatar']);
     }),
+    running: () => ImageProxy.status().running,
+    cancelFn: () => ImageProxy.cancel(),
   });
 
   scheduledJobs.push({
@@ -71,6 +71,8 @@ export const startJobs = (): void => {
       });
       refreshToken.run();
     }),
+    running: () => refreshToken.status().running,
+    cancelFn: () => refreshToken.cancel(),
   });
 
   // Run expired invites cleanup every 24 hours
@@ -86,6 +88,8 @@ export const startJobs = (): void => {
       });
       expiredInvites.run();
     }),
+    running: () => expiredInvites.status().running,
+    cancelFn: () => expiredInvites.cancel(),
   });
 
   scheduledJobs.push({
@@ -100,6 +104,24 @@ export const startJobs = (): void => {
       });
       cleanUpNotifications.run();
     }),
+    running: () => cleanUpNotifications.status().running,
+    cancelFn: () => cleanUpNotifications.cancel(),
+  });
+
+  scheduledJobs.push({
+    id: 'trial-expiry',
+    name: 'Account Expiry Check',
+    type: 'process',
+    interval: 'hours',
+    cronSchedule: jobs['trial-expiry']?.schedule,
+    job: schedule.scheduleJob(jobs['trial-expiry']?.schedule, () => {
+      logger.info('Starting scheduled job: Account Expiry Check', {
+        label: 'Jobs',
+      });
+      trialExpiry.run();
+    }),
+    running: () => trialExpiry.status().running,
+    cancelFn: () => trialExpiry.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

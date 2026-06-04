@@ -123,22 +123,24 @@ const WebpushNotifications = () => {
           };
 
           return (
-            <Form className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
-              <label htmlFor="preset">
-                <FormattedMessage
-                  id="notifications.enableAgent"
-                  defaultMessage="Enable Agent"
-                />
-                <span className="ml-1 text-error">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    type="checkbox"
-                    id="enabled"
-                    name="enabled"
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+            <Form className="mt-5">
+              <div className=" sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
+                <label htmlFor="preset">
+                  <FormattedMessage
+                    id="notifications.enableAgent"
+                    defaultMessage="Enable Agent"
                   />
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      type="checkbox"
+                      id="enabled"
+                      name="enabled"
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />

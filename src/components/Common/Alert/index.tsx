@@ -12,7 +12,7 @@ interface AlertProps {
 
 const Alert = ({ title, children, type }: AlertProps) => {
   let design = {
-    bgColor: 'border border-warning backdrop-blur bg-warning bg-opacity-20',
+    bgColor: 'border border-warning backdrop-blur bg-warning/20',
     titleColor: 'text-warning',
     textColor: 'text-warning',
     svg: <ExclamationTriangleIcon className="size-5" />,
@@ -21,7 +21,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
   switch (type) {
     case 'info':
       design = {
-        bgColor: 'border border-info backdrop-blur bg-info bg-opacity-20',
+        bgColor: 'border border-info backdrop-blur bg-info/20',
         titleColor: 'text-info-content',
         textColor: 'text-info-content',
         svg: <InformationCircleIcon className="size-5" />,
@@ -29,7 +29,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
       break;
     case 'error':
       design = {
-        bgColor: 'bg-error backdrop-blur bg-opacity-20 border border-error',
+        bgColor: 'bg-error/20 backdrop-blur border border-error',
         titleColor: 'text-error-content',
         textColor: 'text-error-content',
         svg: <XCircleIcon className="size-5" />,
@@ -37,7 +37,7 @@ const Alert = ({ title, children, type }: AlertProps) => {
       break;
     case 'primary':
       design = {
-        bgColor: 'bg-primary backdrop-blur bg-opacity-20 border border-primary',
+        bgColor: 'bg-primary/20 backdrop-blur border border-primary',
         titleColor: 'text-primary-content',
         textColor: 'text-primary-content',
         svg: <InformationCircleIcon className="size-5" />,
@@ -47,18 +47,14 @@ const Alert = ({ title, children, type }: AlertProps) => {
 
   return (
     <div className={`mb-4 rounded-md p-4 ${design.bgColor}`}>
-      <div className={`flex flex-wrap gap-2 ${design.titleColor}`}>
-        <div className={`flex-shrink-0 content-start ${design.titleColor}`}>
-          {design.svg}
+      <div className={`text-sm flex flex-wrap gap-2 ${design.textColor}`}>
+        <div className="flex flex-wrap gap-2 w-full">
+          <span className={`inline-flex gap-2 ${design.titleColor}`}>
+            {design.svg}
+            {title && <span className="font-medium flex-1">{title}</span>}
+          </span>
+          {children}
         </div>
-        {title && (
-          <div
-            className={`text-sm font-medium content-center ${design.titleColor}`}
-          >
-            {title}
-          </div>
-        )}
-        {children && children}
       </div>
     </div>
   );

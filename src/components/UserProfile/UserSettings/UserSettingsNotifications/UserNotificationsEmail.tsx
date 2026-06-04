@@ -23,8 +23,8 @@ import { useParams } from 'next/navigation';
 
 const UserEmailSettings = () => {
   const intl = useIntl();
-  const searchParams = useParams<{ userid: string }>();
-  const { user } = useUser({ id: Number(searchParams.userid) });
+  const { userid } = useParams<{ userid: string }>();
+  const { user } = useUser({ id: Number(userid) });
   const {
     data,
     error,

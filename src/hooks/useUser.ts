@@ -19,6 +19,8 @@ export interface User {
   userType: number;
   createdAt: Date;
   updatedAt: Date;
+  active?: boolean;
+  accessRevokedAt?: Date | null;
   inviteQuotaLimit?: number;
   inviteQuotaDays?: number;
   inviteCount?: number;
@@ -38,14 +40,31 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 
 export interface UserSettings {
   locale?: string;
+  trialPeriodOutcome?: 'promote' | 'deactivate' | null;
   notificationTypes: Partial<NotificationAgentTypes>;
+  discordEnabled?: boolean;
+  gotifyEnabled?: boolean;
   emailEnabled?: boolean;
+  ntfyEnabled?: boolean;
   pgpKey?: string;
+  pushbulletEnabled?: boolean;
+  pushbulletAccessToken?: string;
+  pushoverEnabled?: boolean;
+  pushoverApplicationToken?: string;
+  pushoverUserKey?: string;
+  pushoverSound?: string;
+  slackEnabled?: boolean;
+  telegramEnabled?: boolean;
+  telegramChatId?: string;
+  telegramMessageThreadId?: string;
+  telegramSendSilently?: boolean;
+  webhookEnabled?: boolean;
   webPushEnabled?: boolean;
   inAppEnabled?: boolean;
+  discordId?: string;
 }
 
-interface UserHookResponse {
+export interface UserHookResponse {
   user?: User;
   loading: boolean;
   error: string;

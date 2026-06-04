@@ -11,8 +11,7 @@ import { useUser, Permission } from '@app/hooks/useUser';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { setIframeTheme } from '@app/utils/themeUtils';
-import { colord } from 'colord';
+import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
 import {
   ArrowTopRightOnSquareIcon,
   LockClosedIcon,
@@ -126,86 +125,50 @@ const Request = ({ children, ...props }) => {
         : '0,0,0';
     };
     const theme = currentSettings.theme;
-    mountNode.style.setProperty(
-      '--color-background-accent',
-      theme.primary,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--accent-color',
-      colord(theme.primary).toRgbString().replace('rgb(', '').replace(')', ''),
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--color-brand-accent',
-      theme.secondary,
-      'important'
-    );
-    mountNode.style.setProperty('--bs-primary', theme.primary, 'important');
-    mountNode.style.setProperty(
-      '--color-background-accent-focus',
-      theme.secondary,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--color-text-accent',
-      theme.secondary,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--main-bg-color',
-      theme['base-300'],
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--modal-bg-color',
-      theme['base-100'],
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--drop-down-menu-bg',
-      theme.neutral,
-      'important'
-    );
-    mountNode.style.setProperty('--text', theme['base-content'], 'important');
-    mountNode.style.setProperty(
-      '--text-hover',
-      theme['base-content'],
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--color-text-on-accent',
-      theme['base-content'],
-      'important'
-    );
-    mountNode.style.setProperty('--link-color', theme.primary, 'important');
-    mountNode.style.setProperty('--button-color', theme.primary, 'important');
-    mountNode.style.setProperty(
-      '--button-color-hover',
-      theme.secondary,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--plex-poster-unwatched',
-      theme['base-content'],
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--transparency-light-15',
-      `rgba(${hexToRgb(theme.primary)}, 0.15)`,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--overseerr-gradient',
-      `linear-gradient(180deg, rgba(${hexToRgb(theme.primary)}, 0.47) 0%, rgba(${hexToRgb(theme['base-300'])}, 1) 100%)`,
-      'important'
-    );
-    mountNode.style.setProperty(
-      '--label-text-color',
-      theme['base-content'],
-      'important'
-    );
-    mountNode.style.setProperty('--tw-ring-color', theme.primary, 'important');
+    const primaryHex = parseColorToHex(theme.primary) ?? theme.primary;
+    const base300Hex = parseColorToHex(theme['base-300']) ?? theme['base-300'];
+    const primaryChannels = hexToRgb(primaryHex);
+
+    // Seerr's base CSS consumes --accent-color exclusively as raw RGB channels
+    // (e.g. rgb(var(--accent-color))), so it must be comma-separated channels,
+    // never a whole color value.
+    const seerrVars: Record<string, string> = {
+      '--color-background-accent': theme.primary,
+      '--accent-color': primaryChannels,
+      '--color-brand-accent': theme.secondary,
+      '--bs-primary': theme.primary,
+      '--color-background-accent-focus': theme.secondary,
+      '--color-text-accent': theme.secondary,
+      '--main-bg-color': theme['base-300'],
+      '--modal-bg-color': theme['base-100'],
+      '--drop-down-menu-bg': theme.neutral,
+      '--text': theme['base-content'],
+      '--text-hover': theme['base-content'],
+      '--color-text-on-accent': theme['base-content'],
+      '--link-color': theme.primary,
+      '--button-color': theme.primary,
+      '--button-color-hover': theme.secondary,
+      '--plex-poster-unwatched': theme['base-content'],
+      '--transparency-light-15': `rgba(${primaryChannels}, 0.15)`,
+      '--overseerr-gradient': `linear-gradient(180deg, rgba(${primaryChannels}, 0.47) 0%, rgba(${hexToRgb(base300Hex)}, 1) 100%)`,
+      '--label-text-color': theme['base-content'],
+      '--tw-ring-color': theme.primary,
+    };
+
+    // Seerr declares these vars on :root and on the .react-chroma-dark wrapper,
+    // but request.css makes the wrapper inherit them from :root. Setting them on
+    // the document root therefore cascades everywhere (including content Seerr's
+    // SPA adds later); body is also set so the portal-injected nav picks them up.
+    const targets: HTMLElement[] = [
+      innerFrame?.document?.documentElement as HTMLElement,
+      mountNode,
+    ].filter(Boolean) as HTMLElement[];
+
+    targets.forEach((target) => {
+      Object.entries(seerrVars).forEach(([name, value]) => {
+        target.style.setProperty(name, value, 'important');
+      });
+    });
 
     // Set DaisyUI CSS variables for injected components
     if (innerFrame) {

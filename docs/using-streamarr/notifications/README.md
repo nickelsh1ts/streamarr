@@ -4,11 +4,24 @@ Streamarr supports multiple notification channels to keep you and your users inf
 
 ## Available Notification Agents
 
-| Agent                  | Description                                                 |
-| ---------------------- | ----------------------------------------------------------- |
-| [Email](email.md)      | SMTP-based email notifications with optional PGP encryption |
-| [Web Push](webpush.md) | Browser push notifications via VAPID                        |
-| [In-App](inapp.md)     | Real-time in-app notifications via Socket.IO                |
+Streamarr groups notification agents into two delivery models:
+
+- **Per-recipient** agents deliver to individual users, who each configure their own destination.
+- **Shared-channel** agents post each notification once to a common destination configured by an administrator.
+
+| Agent                       | Delivery       | Description                                                 |
+| --------------------------- | -------------- | ----------------------------------------------------------- |
+| [Email](email.md)           | Per-recipient  | SMTP-based email notifications with optional PGP encryption |
+| [Web Push](webpush.md)      | Per-recipient  | Browser push notifications via VAPID                        |
+| [In-App](inapp.md)          | Per-recipient  | Real-time in-app notifications via Socket.IO                |
+| [Telegram](telegram.md)     | Per-recipient  | Direct messages via a Telegram bot                          |
+| [Pushover](pushover.md)     | Per-recipient  | Push notifications via the Pushover service                 |
+| [Pushbullet](pushbullet.md) | Per-recipient  | Push notifications via the Pushbullet service               |
+| [Discord](discord.md)       | Shared-channel | Posts to a Discord channel via webhook                      |
+| [Slack](slack.md)           | Shared-channel | Posts to a Slack channel via incoming webhook               |
+| [Gotify](gotify.md)         | Shared-channel | Posts to a self-hosted Gotify server                        |
+| [ntfy](ntfy.md)             | Shared-channel | Publishes to an ntfy topic                                  |
+| [Webhook](webhook.md)       | Shared-channel | Sends a customizable JSON payload to any HTTP endpoint      |
 
 ---
 

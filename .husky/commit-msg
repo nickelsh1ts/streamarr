@@ -1,0 +1,1 @@
+[ -n "$HUSKY_BYPASS" ] || pnpm commitlint --edit $1

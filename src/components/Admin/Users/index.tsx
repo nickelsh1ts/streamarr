@@ -25,7 +25,10 @@ import {
   UserPlusIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+import {
+  CheckBadgeIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/solid';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import axios from 'axios';
@@ -36,6 +39,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import validator from 'validator';
 import * as Yup from 'yup';
+import ToolTip from '@app/components/Common/ToolTip';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
@@ -483,11 +487,11 @@ const AdminUsers = () => {
         <Header>
           <FormattedMessage id="users.title" defaultMessage="User List" />
         </Header>
-        <div className="mt-2 flex flex-grow flex-col lg:flex-grow-0 lg:flex-row">
-          <div className="mb-2 flex flex-grow flex-col justify-between sm:flex-row lg:mb-0 lg:flex-grow-0">
+        <div className="mt-2 flex grow flex-col lg:grow-0 lg:flex-row">
+          <div className="mb-2 flex grow flex-col justify-between sm:flex-row lg:mb-0 lg:grow-0">
             <Button
               buttonSize="sm"
-              className="mb-2 flex-grow sm:mb-0 sm:mr-2"
+              className="mb-2 grow sm:mb-0 sm:mr-2"
               buttonType="primary"
               data-testid="create-user-button"
               onClick={() => setCreateModal({ isOpen: true })}
@@ -503,7 +507,7 @@ const AdminUsers = () => {
             {currentHasPermission(Permission.ADMIN) && (
               <Button
                 buttonSize="sm"
-                className="flex-grow lg:mr-2"
+                className="grow lg:mr-2"
                 buttonType="primary"
                 data-testid="import-plex-button"
                 onClick={() => setShowImportModal(true)}
@@ -518,8 +522,8 @@ const AdminUsers = () => {
               </Button>
             )}
           </div>
-          <div className="mb-2 flex flex-grow lg:mb-0 lg:flex-grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 sm:text-sm">
+          <div className="mb-2 flex grow lg:mb-0 lg:grow-0">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
               <BarsArrowDownIcon className="size-7" />
             </span>
             <select
@@ -636,7 +640,7 @@ const AdminUsers = () => {
                 <div className="flex items-center">
                   <Link
                     href={`/admin/users/${user.id}`}
-                    className="h-10 w-10 flex-shrink-0"
+                    className="h-10 w-10 shrink-0"
                   >
                     <CachedImage
                       className="h-10 w-10 rounded-full object-cover"
@@ -679,7 +683,34 @@ const AdminUsers = () => {
                 )}
               </Table.TD>
               <Table.TD>
-                {user.userType === UserType.PLEX ? (
+                {!user?.active ? (
+                  <div className="flex items-center gap-1">
+                    <Badge
+                      href={`/admin/users/${user.id}/settings`}
+                      badgeType="error"
+                    >
+                      <FormattedMessage
+                        id="common.expired"
+                        defaultMessage="Expired"
+                      />
+                    </Badge>
+                    {user?.settings?.trialExtensionRequested && (
+                      <ToolTip
+                        content={intl.formatMessage({
+                          id: 'userSettings.accessExtensionRequested',
+                          defaultMessage: 'Access Extension Requested',
+                        })}
+                      >
+                        <Link
+                          href={`/admin/users/${user.id}/settings`}
+                          className="text-warning transition duration-300 hover:opacity-80"
+                        >
+                          <ExclamationTriangleIcon className="h-5 w-5" />
+                        </Link>
+                      </ToolTip>
+                    )}
+                  </div>
+                ) : user.userType === UserType.PLEX ? (
                   <Badge
                     className="bg-accent/70 text-accent-content"
                     badgeType="warning"
@@ -735,13 +766,13 @@ const AdminUsers = () => {
                   </span>
                 ) : null}
               </Table.TD>
-              <Table.TD alignText="right" className="space-y-2">
+              <Table.TD alignText="right" className="max-xl:space-y-2">
                 <Button
                   buttonSize="sm"
                   buttonType="warning"
                   disabled={user.id === 1 && currentUser?.id !== 1}
                   data-testid={`edit-user-button-${user.id}`}
-                  className="mr-2 disabled:bg-warning/50 max-md:btn-block"
+                  className="mr-2 disabled:bg-warning/50 max-xl:btn-block"
                   onClick={() =>
                     router.push(`/admin/users/${user.id}/settings`)
                   }
@@ -752,7 +783,7 @@ const AdminUsers = () => {
                   buttonType="error"
                   buttonSize="sm"
                   data-testid={`delete-user-button-${user.id}`}
-                  className="disabled:bg-error/50 disabled:pointer-events-auto disabled:hover:cursor-not-allowed disabled:hover:bg-error/40 max-md:btn-block"
+                  className="disabled:bg-error/50 disabled:pointer-events-auto disabled:hover:cursor-not-allowed disabled:hover:bg-error/40 max-xl:btn-block"
                   disabled={
                     user.id === 1 ||
                     (currentUser?.id !== 1 &&
@@ -811,7 +842,7 @@ const AdminUsers = () => {
                               window.scrollTo(0, 0);
                             }}
                             defaultValue={currentPageSize}
-                            className="select select-primary select-sm mx-1 inline"
+                            className="select select-primary select-sm mx-1 w-auto min-w-20"
                           >
                             <option value="5">5</option>
                             <option value="10">10</option>

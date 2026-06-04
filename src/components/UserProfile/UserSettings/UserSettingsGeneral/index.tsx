@@ -43,6 +43,7 @@ const UserSettingsGeneral = () => {
   const { resetOnboarding, data: onboardingData } = useOnboardingContext();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
+  const [isRequestingExtension, setIsRequestingExtension] = useState(false);
   const [plexLibrariesDiffer, setPlexLibrariesDiffer] = useState(false);
   const [plexPermissionsDiffer, setPlexPermissionsDiffer] = useState<{
     allowDownloads: boolean;
@@ -189,10 +190,15 @@ const UserSettingsGeneral = () => {
                 : 'server',
           allowDownloads: data?.allowDownloads ?? false,
           allowLiveTv: data?.allowLiveTv ?? false,
+          allowPlexHome: data?.allowPlexHome ?? false,
           trialPeriodEnabled: data?.trialPeriodEndsAt ? true : false,
           trialPeriodEndsAt: data?.trialPeriodEndsAt
             ? momentWithLocale(data.trialPeriodEndsAt).format('YYYY-MM-DD')
             : momentWithLocale().format('YYYY-MM-DD'),
+          trialPeriodOutcome:
+            data?.trialPeriodOutcome ??
+            data?.globalTrialPeriodOutcome ??
+            'promote',
         }}
         enableReinitialize
         onSubmit={async (values) => {
@@ -229,7 +235,9 @@ const UserSettingsGeneral = () => {
               sharedLibraries: string | null;
               allowDownloads: boolean;
               allowLiveTv: boolean;
+              allowPlexHome?: boolean;
               trialPeriodEndsAt?: string | null;
+              trialPeriodOutcome?: 'promote' | 'deactivate' | null;
               forcePlexSync?: boolean;
             } = {
               username: values.displayName,
@@ -244,6 +252,8 @@ const UserSettingsGeneral = () => {
               allowDownloads: values.allowDownloads,
               allowLiveTv: values.allowLiveTv,
               forcePlexSync: shouldForceSync,
+              allowPlexHome:
+                currentUser?.id === 1 ? values.allowPlexHome : undefined,
             };
 
             if (
@@ -254,12 +264,14 @@ const UserSettingsGeneral = () => {
             ) {
               if (!values.trialPeriodEnabled) {
                 submitData.trialPeriodEndsAt = null;
+                submitData.trialPeriodOutcome = null;
               } else {
                 const dateStr = values.trialPeriodEndsAt;
                 const endOfDay = momentWithLocale(dateStr)
                   .endOf('day')
                   .toISOString();
                 submitData.trialPeriodEndsAt = endOfDay;
+                submitData.trialPeriodOutcome = values.trialPeriodOutcome;
               }
             }
 
@@ -333,7 +345,14 @@ const UserSettingsGeneral = () => {
                   </div>
                   <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
                     <div className="flex max-w-lg items-center">
-                      {user?.userType === UserType.PLEX ? (
+                      {!user?.active ? (
+                        <Badge badgeType="error">
+                          <FormattedMessage
+                            id="common.expired"
+                            defaultMessage="Expired"
+                          />
+                        </Badge>
+                      ) : user?.userType === UserType.PLEX ? (
                         <Badge badgeType="warning">
                           <FormattedMessage
                             id="common.plexUser"
@@ -513,7 +532,7 @@ const UserSettingsGeneral = () => {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 sm:space-x-2">
                         <div className="col-span-1"></div>
-                        <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                        <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-2">
                           {!plexLibrariesLoading ? (
                             <>
                               <Toggle
@@ -548,6 +567,24 @@ const UserSettingsGeneral = () => {
                                   />
                                 }
                               />
+                              {currentUser?.id === 1 && (
+                                <Toggle
+                                  id="allowPlexHome"
+                                  valueOf={values.allowPlexHome}
+                                  onClick={() =>
+                                    setFieldValue(
+                                      'allowPlexHome',
+                                      !values.allowPlexHome
+                                    )
+                                  }
+                                  title={
+                                    <FormattedMessage
+                                      id="settings.allowPlexHome"
+                                      defaultMessage="Plex Home Member"
+                                    />
+                                  }
+                                />
+                              )}
                             </>
                           ) : (
                             <>
@@ -557,7 +594,7 @@ const UserSettingsGeneral = () => {
                                     values.allowDownloads
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -600,7 +637,7 @@ const UserSettingsGeneral = () => {
                                     values.allowLiveTv
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -854,17 +891,41 @@ const UserSettingsGeneral = () => {
                           defaultMessage="Trial Period"
                         />
                         <span className="block text-xs text-neutral mt-1">
-                          <FormattedMessage
-                            id="settings.trialPeriodEndDateDescription"
-                            defaultMessage="Cannot create invites until after this date"
-                          />{' '}
-                          <FormattedMessage
-                            id="settings.trialPeriodDefaultDays"
-                            defaultMessage="{count, plural, one {(Default: # day)} other {(Default: # days)}}"
-                            values={{
-                              count: data?.globalTrialPeriodDays ?? 30,
-                            }}
-                          />
+                          {values.trialPeriodOutcome === 'promote' ? (
+                            <FormattedMessage
+                              id="settings.ExpiredTrialPeriodDescriptionPromote"
+                              defaultMessage="Cannot create invites until after this date (Default: {count, plural, one {# day} other {# days}})"
+                              values={{
+                                count: data?.globalTrialPeriodDays ?? 30,
+                              }}
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="settings.trialPeriodDescriptionDeactivate"
+                              defaultMessage="Access will be deactivated after this date (Default: {count, plural, one {# day} other {# days}})"
+                              values={{
+                                count: data?.globalTrialPeriodDays ?? 30,
+                              }}
+                            />
+                          )}
+                          {data?.trialExtensionRequested && (
+                            <div className="my-2 flex flex-wrap items-center gap-1">
+                              <ExclamationTriangleIcon className="h-5 w-5 text-warning mt-1" />
+                              <Badge badgeType="warning">
+                                <FormattedMessage
+                                  id="settings.accessExtensionRequested"
+                                  defaultMessage="Extension Requested"
+                                />
+                              </Badge>
+                              {data.trialExtensionRequestedAt && (
+                                <span className="text-neutral font-semibold">
+                                  {momentWithLocale(
+                                    data.trialExtensionRequestedAt
+                                  ).format('LLL')}
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </span>
                       </div>
                       <div className="col-span-2">
@@ -888,55 +949,166 @@ const UserSettingsGeneral = () => {
                             />
                           </label>
                         </div>
-                        <DatePicker
-                          disabled={!values.trialPeriodEnabled}
-                          dateFormat="MMMM d, yyyy"
-                          locale={locale !== 'en' ? locale : undefined}
-                          showIcon
-                          toggleCalendarOnIconClick
-                          selected={
-                            momentWithLocale(
-                              values.trialPeriodEndsAt
-                            ).toDate() ?? momentWithLocale().toDate()
-                          }
-                          onChange={(date: Date) =>
-                            date
-                              ? setFieldValue(
-                                  'trialPeriodEndsAt',
-                                  momentWithLocale(date).format('YYYY-MM-DD')
-                                )
-                              : null
-                          }
-                          icon={
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              className={
-                                values.trialPeriodEnabled ? '' : 'opacity-50'
-                              }
-                            >
-                              <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
-                              <path
-                                fillRule="evenodd"
-                                d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          }
-                          className={`input input-sm input-primary rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40 ${
-                            errors.trialPeriodEndsAt &&
-                            touched.trialPeriodEndsAt
-                              ? 'input-error'
-                              : ''
-                          }`}
-                        />
+                        <div className="flex flex-wrap items-center gap-4 mb-2">
+                          <Field
+                            as="select"
+                            id="trialPeriodOutcome"
+                            name="trialPeriodOutcome"
+                            className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0 disabled:border disabled:border-primary/40 disabled:opacity-40"
+                            disabled={!values.trialPeriodEnabled}
+                          >
+                            <option value="promote">
+                              {intl.formatMessage({
+                                id: 'common.promote',
+                                defaultMessage: 'Promote',
+                              })}
+                            </option>
+                            <option value="deactivate">
+                              {intl.formatMessage({
+                                id: 'common.deactivate',
+                                defaultMessage: 'Deactivate',
+                              })}
+                            </option>
+                          </Field>
+                          <span
+                            className={`whitespace-nowrap lowercase ${!values.trialPeriodEnabled ? 'opacity-40' : ''}`}
+                          >
+                            <FormattedMessage
+                              id="common.after"
+                              defaultMessage="After"
+                            />
+                          </span>
+                          <DatePicker
+                            disabled={!values.trialPeriodEnabled}
+                            dateFormat="MMMM d, yyyy"
+                            locale={locale !== 'en' ? locale : undefined}
+                            showIcon
+                            toggleCalendarOnIconClick
+                            selected={
+                              momentWithLocale(
+                                values.trialPeriodEndsAt
+                              ).toDate() ?? momentWithLocale().toDate()
+                            }
+                            onChange={(date: Date) =>
+                              date
+                                ? setFieldValue(
+                                    'trialPeriodEndsAt',
+                                    momentWithLocale(date).format('YYYY-MM-DD')
+                                  )
+                                : null
+                            }
+                            icon={
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                className={`absolute right-0 w-5! h-5! p-1.5! text-primary
+                                  ${values.trialPeriodEnabled ? '' : 'opacity-50'}
+                                `}
+                              >
+                                <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                                <path
+                                  fillRule="evenodd"
+                                  d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            }
+                            className={`input input-sm input-primary pl-2! rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 ${
+                              errors.trialPeriodEndsAt &&
+                              touched.trialPeriodEndsAt
+                                ? 'input-error'
+                                : ''
+                            }`}
+                          />
+                        </div>
                         {errors.trialPeriodEndsAt &&
                           touched.trialPeriodEndsAt && (
-                            <div className="text-sm text-red-500 mt-1">
+                            <div className="text-sm text-error mt-1">
                               {errors.trialPeriodEndsAt}
                             </div>
                           )}
+                      </div>
+                    </div>
+                  )}
+                {user?.id === currentUser?.id &&
+                  (!user?.active ||
+                    (data?.globalEnableTrialPeriod &&
+                      !!data?.trialPeriodEndsAt &&
+                      user?.settings?.trialPeriodOutcome !== 'promote')) &&
+                  !currentHasPermission(Permission.MANAGE_USERS) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="col-span-1">
+                        <FormattedMessage
+                          id="settings.accessExtensionRequest.title"
+                          defaultMessage="Access Extension"
+                        />
+                        <span className="block text-xs text-neutral mt-1">
+                          <FormattedMessage
+                            id="settings.accessExtensionRequest.description"
+                            defaultMessage="Request an access extension from administrators."
+                          />
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <Button
+                          buttonType="primary"
+                          buttonSize="sm"
+                          disabled={
+                            isRequestingExtension ||
+                            data?.trialExtensionRequested
+                          }
+                          onClick={async () => {
+                            try {
+                              setIsRequestingExtension(true);
+                              await axios.post(
+                                `/api/v1/user/${user?.id}/settings/extension`
+                              );
+                              Toast({
+                                title: intl.formatMessage({
+                                  id: 'settings.accessExtensionRequest.success',
+                                  defaultMessage:
+                                    'Access extension request sent successfully.',
+                                }),
+                                type: 'success',
+                                icon: <CheckBadgeIcon className="size-7" />,
+                              });
+                              await revalidate();
+                              await revalidateUser();
+                            } catch (e) {
+                              Toast({
+                                title: intl.formatMessage({
+                                  id: 'settings.accessExtensionRequest.error',
+                                  defaultMessage:
+                                    'Failed to send access extension request.',
+                                }),
+                                type: 'error',
+                                message:
+                                  e?.response?.data?.message ?? e?.message,
+                                icon: <XCircleIcon className="size-7" />,
+                              });
+                            } finally {
+                              setIsRequestingExtension(false);
+                            }
+                          }}
+                        >
+                          {data?.trialExtensionRequested ? (
+                            <FormattedMessage
+                              id="settings.accessExtensionRequest.requested"
+                              defaultMessage="Request Pending"
+                            />
+                          ) : isRequestingExtension ? (
+                            <FormattedMessage
+                              id="settings.accessExtensionRequest.submitting"
+                              defaultMessage="Sending Request..."
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="settings.accessExtensionRequest.button"
+                              defaultMessage="Request Extension"
+                            />
+                          )}
+                        </Button>
                       </div>
                     </div>
                   )}

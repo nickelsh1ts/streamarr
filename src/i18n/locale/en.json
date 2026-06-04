@@ -20,14 +20,8 @@
   "aboutReleases.changelogTitle": {
     "defaultMessage": "Release {version} Changelog"
   },
-  "aboutReleases.currentVersion": {
-    "defaultMessage": "Current Version"
-  },
   "aboutReleases.dataUnavailable": {
     "defaultMessage": "Release data is currently unavailable"
-  },
-  "aboutReleases.latestVersion": {
-    "defaultMessage": "Latest Version"
   },
   "aboutReleases.title": {
     "defaultMessage": "Releases"
@@ -218,11 +212,20 @@
   "common.4kserver": {
     "defaultMessage": "4K Server"
   },
+  "common.about": {
+    "defaultMessage": "About"
+  },
+  "common.accountExpired": {
+    "defaultMessage": "Account Expired"
+  },
   "common.actions": {
     "defaultMessage": "Actions"
   },
   "common.active": {
     "defaultMessage": "Active"
+  },
+  "common.activity": {
+    "defaultMessage": "Activity"
   },
   "common.addFirstTorrent": {
     "defaultMessage": "Add your first torrent to get started."
@@ -308,11 +311,20 @@
   "common.createEvent": {
     "defaultMessage": "Create Event"
   },
+  "common.current": {
+    "defaultMessage": "Current"
+  },
   "common.currentPassword": {
     "defaultMessage": "Current Password"
   },
+  "common.database": {
+    "defaultMessage": "Database"
+  },
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
+  },
+  "common.deactivate": {
+    "defaultMessage": "Deactivate"
   },
   "common.declined": {
     "defaultMessage": "Declined"
@@ -404,6 +416,9 @@
   "common.goBack": {
     "defaultMessage": "Go back"
   },
+  "common.here": {
+    "defaultMessage": "here"
+  },
   "common.home": {
     "defaultMessage": "Home"
   },
@@ -436,6 +451,9 @@
   },
   "common.joined": {
     "defaultMessage": "Joined"
+  },
+  "common.latest": {
+    "defaultMessage": "Latest"
   },
   "common.lifetime": {
     "defaultMessage": "Life time"
@@ -566,6 +584,9 @@
   "common.progress": {
     "defaultMessage": "Progress"
   },
+  "common.promote": {
+    "defaultMessage": "Promote"
+  },
   "common.ratio": {
     "defaultMessage": "Ratio"
   },
@@ -585,6 +606,9 @@
     "defaultMessage": "remaining"
   },
   "common.remove": {
+    "defaultMessage": "Remove"
+  },
+  "common.removeHeader": {
     "defaultMessage": "Remove"
   },
   "common.removing": {
@@ -746,6 +770,9 @@
   "common.unlimited": {
     "defaultMessage": "Unlimited"
   },
+  "common.unlinkAccount": {
+    "defaultMessage": "Unlink Account"
+  },
   "common.unread": {
     "defaultMessage": "unread"
   },
@@ -775,6 +802,9 @@
   },
   "common.validation.titleRequired": {
     "defaultMessage": "You must provide a valid title"
+  },
+  "common.version": {
+    "defaultMessage": "Version"
   },
   "common.videoUrl": {
     "defaultMessage": "Video URL"
@@ -1222,6 +1252,21 @@
   },
   "event.summaryRequired": {
     "defaultMessage": "You must provide a valid summary"
+  },
+  "expiredAccess.accountSettings": {
+    "defaultMessage": "Account Settings"
+  },
+  "expiredAccess.message": {
+    "defaultMessage": "Your account is currently expired. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}"
+  },
+  "expiredAccess.signOut": {
+    "defaultMessage": "Sign Out"
+  },
+  "expiredAccess.title": {
+    "defaultMessage": "Account Access Expired"
+  },
+  "expiredAccess.viewProfile": {
+    "defaultMessage": "View Profile"
   },
   "footer.contactUs": {
     "defaultMessage": "Contact Us"
@@ -2348,11 +2393,20 @@
   "help.notifications.seerrEmailDesc": {
     "defaultMessage": "Email notifications for request status changes."
   },
+  "help.notifications.seerrGotifyDesc": {
+    "defaultMessage": "Notifications sent via the Gotify push server."
+  },
+  "help.notifications.seerrNtfyDesc": {
+    "defaultMessage": "Notifications sent via ntfy push notifications."
+  },
   "help.notifications.seerrPush": {
     "defaultMessage": "Push Notifications"
   },
   "help.notifications.seerrPushDesc": {
     "defaultMessage": "Browser push notifications for request updates."
+  },
+  "help.notifications.seerrPushbulletDesc": {
+    "defaultMessage": "Notifications sent via the Pushbullet service."
   },
   "help.notifications.seerrPushover": {
     "defaultMessage": "Pushover"
@@ -2374,6 +2428,12 @@
   },
   "help.notifications.seerrTitle": {
     "defaultMessage": "Seerr Request Notifications"
+  },
+  "help.notifications.seerrWebhook": {
+    "defaultMessage": "Webhook"
+  },
+  "help.notifications.seerrWebhookDesc": {
+    "defaultMessage": "Notifications sent to a custom webhook endpoint."
   },
   "help.notifications.streamarrDesc": {
     "defaultMessage": "{appTitle} can send you notifications to keep you informed about your account activity, invite updates, and important announcements. These are managed by the {appTitle} admin."
@@ -2563,9 +2623,6 @@
   },
   "help.quickLinks.resetPlexPassword": {
     "defaultMessage": "Reset Plex Password"
-  },
-  "help.quickLinks.stats": {
-    "defaultMessage": "Watch history"
   },
   "help.quickLinks.visitPlex": {
     "defaultMessage": "Visit {plex}.tv"
@@ -3425,6 +3482,9 @@
   "invite.expiration": {
     "defaultMessage": "Expiration"
   },
+  "invite.expiresAt": {
+    "defaultMessage": "{past, select, true {Expired} other {Expires}} {inDate}"
+  },
   "invite.inviteAs": {
     "defaultMessage": "Invite As"
   },
@@ -3457,6 +3517,12 @@
   },
   "invite.timeUnit.week": {
     "defaultMessage": "{count, plural, one {Week} other {Weeks}}"
+  },
+  "invite.trialPeriod": {
+    "defaultMessage": "Trial Period"
+  },
+  "invite.trialPeriodOutcome": {
+    "defaultMessage": "{outcome, select, promote {Promote} other {Deactivate}} after {period} {period, plural, one {day} other {days}}"
   },
   "invite.updatedSuccessfully": {
     "defaultMessage": "Invite updated successfully!"
@@ -3608,6 +3674,30 @@
   "librarySelector.defaultLibrariesWith": {
     "defaultMessage": "Default Libraries ({libraries})"
   },
+  "linkedAccounts.deleteFailed": {
+    "defaultMessage": "Failed to delete linked account"
+  },
+  "linkedAccounts.linkButton": {
+    "defaultMessage": "Link {name} Account"
+  },
+  "linkedAccounts.linkFailed": {
+    "defaultMessage": "An error occurred while linking your Plex account"
+  },
+  "linkedAccounts.noLinkedAccounts": {
+    "defaultMessage": "You do not have any external accounts linked to your account."
+  },
+  "linkedAccounts.noPermissionDescription": {
+    "defaultMessage": "You do not have permission to view this user's linked accounts"
+  },
+  "linkedAccounts.notLinked": {
+    "defaultMessage": "No Account Linked"
+  },
+  "linkedAccounts.title": {
+    "defaultMessage": "Linked Accounts"
+  },
+  "linkedAccounts.userNoLinkedAccounts": {
+    "defaultMessage": "This user does not have any external accounts linked to their account."
+  },
   "localSignup.confirmPasswordRequired": {
     "defaultMessage": "Please confirm your password"
   },
@@ -3743,6 +3833,12 @@
   "notFound.quote": {
     "defaultMessage": "There are places out there you can't find on any map. They're not gone, they're just lost."
   },
+  "notification.accessExtensionRequested": {
+    "defaultMessage": "Access Extension Requested"
+  },
+  "notification.accessExtensionRequested.description": {
+    "defaultMessage": "Get notified when a user requests an access extension"
+  },
   "notification.deleteThis": {
     "defaultMessage": "Delete this notification"
   },
@@ -3860,8 +3956,284 @@
   "notificationModal.subjectRequired": {
     "defaultMessage": "Subject is required"
   },
+  "notifications.discord.idInvalid": {
+    "defaultMessage": "You must provide a valid Discord user ID"
+  },
+  "notifications.discord.idRequired": {
+    "defaultMessage": "You must provide your Discord user ID"
+  },
+  "notifications.discord.webhookUrlInvalid": {
+    "defaultMessage": "You must provide a valid Discord webhook URL"
+  },
+  "notifications.discord.webhookUrlRequired": {
+    "defaultMessage": "You must provide your Discord webhook URL"
+  },
   "notifications.enableAgent": {
     "defaultMessage": "Enable Agent"
+  },
+  "notifications.fields.accessToken": {
+    "defaultMessage": "Access Token"
+  },
+  "notifications.fields.applicationToken": {
+    "defaultMessage": "Application Token"
+  },
+  "notifications.fields.authMethodNone": {
+    "defaultMessage": "None"
+  },
+  "notifications.fields.authMethodToken": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.authMethodUsernamePassword": {
+    "defaultMessage": "Username / Password"
+  },
+  "notifications.fields.authentication": {
+    "defaultMessage": "Authentication"
+  },
+  "notifications.fields.authorizationHeader": {
+    "defaultMessage": "Authorization Header"
+  },
+  "notifications.fields.botAvatarUrl": {
+    "defaultMessage": "Bot Avatar URL"
+  },
+  "notifications.fields.botUsername": {
+    "defaultMessage": "Bot Username"
+  },
+  "notifications.fields.channelTag": {
+    "defaultMessage": "Channel Tag"
+  },
+  "notifications.fields.enableMentions": {
+    "defaultMessage": "Enable Mentions"
+  },
+  "notifications.fields.jsonPayload": {
+    "defaultMessage": "JSON Payload"
+  },
+  "notifications.fields.notificationRoleId": {
+    "defaultMessage": "Notification Role ID"
+  },
+  "notifications.fields.priority": {
+    "defaultMessage": "Priority"
+  },
+  "notifications.fields.pushoverAccessToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "notifications.fields.pushoverApplicationToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "notifications.fields.pushoverUserKey": {
+    "defaultMessage": "User Key"
+  },
+  "notifications.fields.serverUrl": {
+    "defaultMessage": "Server URL"
+  },
+  "notifications.fields.sound": {
+    "defaultMessage": "Sound"
+  },
+  "notifications.fields.telegramBotApi": {
+    "defaultMessage": "Bot API Token or URL"
+  },
+  "notifications.fields.telegramBotUsername": {
+    "defaultMessage": "Bot Username"
+  },
+  "notifications.fields.telegramChatId": {
+    "defaultMessage": "Chat ID"
+  },
+  "notifications.fields.telegramMessageThreadId": {
+    "defaultMessage": "Message Thread ID"
+  },
+  "notifications.fields.telegramSendSilently": {
+    "defaultMessage": "Send Silently"
+  },
+  "notifications.fields.token": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.topic": {
+    "defaultMessage": "Topic"
+  },
+  "notifications.fields.webhookUrl": {
+    "defaultMessage": "Webhook URL"
+  },
+  "notifications.gotify.tokenRequired": {
+    "defaultMessage": "You must provide a Gotify application token"
+  },
+  "notifications.gotify.urlInvalid": {
+    "defaultMessage": "You must provide a valid Gotify server URL"
+  },
+  "notifications.gotify.urlRequired": {
+    "defaultMessage": "You must provide your Gotify server URL"
+  },
+  "notifications.ntfy.passwordRequired": {
+    "defaultMessage": "You must provide a password"
+  },
+  "notifications.ntfy.priorityDefault": {
+    "defaultMessage": "Default"
+  },
+  "notifications.ntfy.priorityHigh": {
+    "defaultMessage": "High"
+  },
+  "notifications.ntfy.priorityLow": {
+    "defaultMessage": "Low"
+  },
+  "notifications.ntfy.priorityMin": {
+    "defaultMessage": "Minimum"
+  },
+  "notifications.ntfy.priorityUrgent": {
+    "defaultMessage": "Urgent"
+  },
+  "notifications.ntfy.tokenRequired": {
+    "defaultMessage": "You must provide a token"
+  },
+  "notifications.ntfy.topicInvalid": {
+    "defaultMessage": "Topic may only contain letters, numbers, dashes and underscores"
+  },
+  "notifications.ntfy.topicRequired": {
+    "defaultMessage": "You must provide your ntfy topic"
+  },
+  "notifications.ntfy.urlInvalid": {
+    "defaultMessage": "You must provide a valid URL"
+  },
+  "notifications.ntfy.urlRequired": {
+    "defaultMessage": "You must provide your ntfy server URL"
+  },
+  "notifications.ntfy.usernameRequired": {
+    "defaultMessage": "You must provide a username"
+  },
+  "notifications.provider.saveError": {
+    "defaultMessage": "{provider} notification settings failed to save."
+  },
+  "notifications.provider.saveSuccess": {
+    "defaultMessage": "{provider} notification settings saved successfully!"
+  },
+  "notifications.provider.testError": {
+    "defaultMessage": "{provider} test notification failed to send."
+  },
+  "notifications.provider.testSuccess": {
+    "defaultMessage": "{provider} test notification sent!"
+  },
+  "notifications.providers.discord": {
+    "defaultMessage": "Discord"
+  },
+  "notifications.providers.gotify": {
+    "defaultMessage": "Gotify"
+  },
+  "notifications.providers.ntfy": {
+    "defaultMessage": "ntfy"
+  },
+  "notifications.providers.pushbullet": {
+    "defaultMessage": "Pushbullet"
+  },
+  "notifications.providers.pushover": {
+    "defaultMessage": "Pushover"
+  },
+  "notifications.providers.slack": {
+    "defaultMessage": "Slack"
+  },
+  "notifications.providers.telegram": {
+    "defaultMessage": "Telegram"
+  },
+  "notifications.providers.webhook": {
+    "defaultMessage": "Webhook"
+  },
+  "notifications.pushbullet.accessTokenRequired": {
+    "defaultMessage": "You must provide your Pushbullet access token"
+  },
+  "notifications.pushbullet.tokenRequired": {
+    "defaultMessage": "You must provide your Pushbullet access token"
+  },
+  "notifications.pushover.accessTokenRequired": {
+    "defaultMessage": "You must provide your Pushover application API token"
+  },
+  "notifications.pushover.applicationTokenRequired": {
+    "defaultMessage": "You must provide your Pushover application API token"
+  },
+  "notifications.pushover.userKeyRequired": {
+    "defaultMessage": "You must provide your Pushover user key"
+  },
+  "notifications.slack.webhookUrlRequired": {
+    "defaultMessage": "You must provide a valid Slack webhook URL"
+  },
+  "notifications.telegram.botApiRequired": {
+    "defaultMessage": "You must provide your Telegram bot API token or URL"
+  },
+  "notifications.telegram.chatIdRequired": {
+    "defaultMessage": "You must provide your Telegram chat ID"
+  },
+  "notifications.validation.typesRequired": {
+    "defaultMessage": "You must select at least one notification type."
+  },
+  "notifications.webhook.addHeader": {
+    "defaultMessage": "Add Header"
+  },
+  "notifications.webhook.authHeaderConflict": {
+    "defaultMessage": "You cannot use both the Authorization Header field and an 'Authorization' custom header. Remove one."
+  },
+  "notifications.webhook.customHeaders": {
+    "defaultMessage": "Custom Headers"
+  },
+  "notifications.webhook.headerName": {
+    "defaultMessage": "Header Name"
+  },
+  "notifications.webhook.headerNameRequired": {
+    "defaultMessage": "You must provide a header name"
+  },
+  "notifications.webhook.headerValue": {
+    "defaultMessage": "Value"
+  },
+  "notifications.webhook.headerValueRequired": {
+    "defaultMessage": "You must provide a header value"
+  },
+  "notifications.webhook.payloadEmptyJson": {
+    "defaultMessage": "JSON payload must not be empty"
+  },
+  "notifications.webhook.payloadInvalidJson": {
+    "defaultMessage": "You must provide valid JSON"
+  },
+  "notifications.webhook.payloadRequired": {
+    "defaultMessage": "You must provide a JSON payload"
+  },
+  "notifications.webhook.removeHeader": {
+    "defaultMessage": "Remove header"
+  },
+  "notifications.webhook.resetPayload": {
+    "defaultMessage": "Reset to Default"
+  },
+  "notifications.webhook.templateVariables": {
+    "defaultMessage": "Template Variables"
+  },
+  "notifications.webhook.urlRequired": {
+    "defaultMessage": "You must provide a valid URL"
+  },
+  "notifications.webhook.varExtra": {
+    "defaultMessage": "Array of additional data — use as a JSON key with an empty array value"
+  },
+  "notifications.webhook.varGroupGeneral": {
+    "defaultMessage": "General"
+  },
+  "notifications.webhook.varGroupNotifyUser": {
+    "defaultMessage": "Notify User"
+  },
+  "notifications.webhook.varGroupSpecial": {
+    "defaultMessage": "Special (JSON keys)"
+  },
+  "notifications.webhook.varImage": {
+    "defaultMessage": "The notification image URL"
+  },
+  "notifications.webhook.varMessage": {
+    "defaultMessage": "The notification message body"
+  },
+  "notifications.webhook.varNotificationType": {
+    "defaultMessage": "The notification type (e.g. NEW_INVITE)"
+  },
+  "notifications.webhook.varNotifyAvatar": {
+    "defaultMessage": "Recipient's avatar URL"
+  },
+  "notifications.webhook.varNotifyEmail": {
+    "defaultMessage": "Recipient's email address"
+  },
+  "notifications.webhook.varNotifyUsername": {
+    "defaultMessage": "Recipient's display name"
+  },
+  "notifications.webhook.varSubject": {
+    "defaultMessage": "The notification subject"
   },
   "plex.login.button": {
     "defaultMessage": "Sign in with"
@@ -3991,6 +4363,12 @@
   },
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
+  },
+  "profile.accountExpiredMessage": {
+    "defaultMessage": "Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
+  },
+  "profile.accountExpiredMessageAdmin": {
+    "defaultMessage": "This user's account has expired. {trialPeriodEnabled, select, true {Extend by setting a new trial period {link}.} other {Enable trial periods again to extend access.}}"
   },
   "profile.editSettings": {
     "defaultMessage": "Edit Settings"
@@ -4215,7 +4593,7 @@
     "defaultMessage": "Prowlarr Settings"
   },
   "servicesSettings.tautulli.description": {
-    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /stats for users."
+    "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
   },
   "servicesSettings.tautulli.title": {
     "defaultMessage": "Tautulli Settings"
@@ -4271,6 +4649,33 @@
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "URL must not end in a trailing slash"
   },
+  "settings.ExpiredTrialPeriodDescriptionPromote": {
+    "defaultMessage": "Cannot create invites until after this date (Default: {count, plural, one {# day} other {# days}})"
+  },
+  "settings.accessExtensionRequest.button": {
+    "defaultMessage": "Request Extension"
+  },
+  "settings.accessExtensionRequest.description": {
+    "defaultMessage": "Request an access extension from administrators."
+  },
+  "settings.accessExtensionRequest.error": {
+    "defaultMessage": "Failed to send access extension request."
+  },
+  "settings.accessExtensionRequest.requested": {
+    "defaultMessage": "Request Pending"
+  },
+  "settings.accessExtensionRequest.submitting": {
+    "defaultMessage": "Sending Request..."
+  },
+  "settings.accessExtensionRequest.success": {
+    "defaultMessage": "Access extension request sent successfully."
+  },
+  "settings.accessExtensionRequest.title": {
+    "defaultMessage": "Access Extension"
+  },
+  "settings.accessExtensionRequested": {
+    "defaultMessage": "Extension Requested"
+  },
   "settings.accountType": {
     "defaultMessage": "Account Type"
   },
@@ -4282,6 +4687,9 @@
   },
   "settings.allowLiveTv": {
     "defaultMessage": "Allow Live TV Access"
+  },
+  "settings.allowPlexHome": {
+    "defaultMessage": "Plex Home Member"
   },
   "settings.crossOriginAccess": {
     "defaultMessage": "Cross-Origin Access"
@@ -4297,6 +4705,9 @@
   },
   "settings.librariesSynced": {
     "defaultMessage": "Libraries have been synced with Plex."
+  },
+  "settings.linkedAccounts": {
+    "defaultMessage": "Linked Accounts"
   },
   "settings.notifications.description": {
     "defaultMessage": "Configure and enable notification agents."
@@ -4589,11 +5000,8 @@
   "settings.trialPeriod": {
     "defaultMessage": "Trial Period"
   },
-  "settings.trialPeriodDefaultDays": {
-    "defaultMessage": "{count, plural, one {(Default: # day)} other {(Default: # days)}}"
-  },
-  "settings.trialPeriodEndDateDescription": {
-    "defaultMessage": "Cannot create invites until after this date"
+  "settings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "Access will be deactivated after this date (Default: {count, plural, one {# day} other {# days}})"
   },
   "settings.user.onboardingDescription": {
     "defaultMessage": "Reset the welcome modal and tutorial {ownProfile, select, true {} other {for this user}}"
@@ -4883,11 +5291,38 @@
   "systemSettings.developWarning": {
     "defaultMessage": "You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
   },
+  "systemSettings.diskSpace.collapseChildren": {
+    "defaultMessage": "Collapse children"
+  },
+  "systemSettings.diskSpace.expandChildren": {
+    "defaultMessage": "Expand children"
+  },
+  "systemSettings.diskSpace.freeSpace": {
+    "defaultMessage": "Free Space"
+  },
+  "systemSettings.diskSpace.location": {
+    "defaultMessage": "Location"
+  },
+  "systemSettings.diskSpace.title": {
+    "defaultMessage": "Disk Space"
+  },
+  "systemSettings.diskSpace.totalSpace": {
+    "defaultMessage": "Total Space"
+  },
+  "systemSettings.diskSpace.usedSpace": {
+    "defaultMessage": "Used Space"
+  },
+  "systemSettings.diskSpace.warningBody": {
+    "defaultMessage": "Streamarr could not read every configured local path. Available disk usage is shown below."
+  },
+  "systemSettings.diskSpace.warningTitle": {
+    "defaultMessage": "Some disk metrics are unavailable"
+  },
   "systemSettings.documentation": {
     "defaultMessage": "Documentation"
   },
-  "systemSettings.gettingSupport": {
-    "defaultMessage": "Getting Support"
+  "systemSettings.featureRequests": {
+    "defaultMessage": "Feature Requests"
   },
   "systemSettings.githubDiscussions": {
     "defaultMessage": "GitHub Discussions"
@@ -4895,20 +5330,29 @@
   "systemSettings.helpPayForCoffee": {
     "defaultMessage": "Help Pay for Coffee ☕️"
   },
+  "systemSettings.homePage": {
+    "defaultMessage": "Home Page"
+  },
+  "systemSettings.moreInfo": {
+    "defaultMessage": "More Info"
+  },
+  "systemSettings.nodeVersion": {
+    "defaultMessage": "Node.js"
+  },
   "systemSettings.outOfDate": {
     "defaultMessage": "Out of date"
   },
   "systemSettings.preferred": {
     "defaultMessage": "Preferred"
   },
-  "systemSettings.supportStreamarr": {
-    "defaultMessage": "Support Streamarr"
+  "systemSettings.pythonVersion": {
+    "defaultMessage": "Python"
+  },
+  "systemSettings.source": {
+    "defaultMessage": "Source"
   },
   "systemSettings.timeZone": {
     "defaultMessage": "Time Zone"
-  },
-  "systemSettings.title": {
-    "defaultMessage": "About Streamarr"
   },
   "systemSettings.totalUsers": {
     "defaultMessage": "Total Users"
@@ -4916,8 +5360,8 @@
   "systemSettings.upToDate": {
     "defaultMessage": "Up to date"
   },
-  "systemSettings.version": {
-    "defaultMessage": "Version"
+  "systemSettings.uptime": {
+    "defaultMessage": "Uptime"
   },
   "tutorial.ready.description": {
     "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."
@@ -4951,9 +5395,6 @@
   },
   "userDropdown.startTutorial": {
     "defaultMessage": "Start Tutorial"
-  },
-  "userDropdown.watchHistory": {
-    "defaultMessage": "Watch History"
   },
   "userPermissions.admin.description": {
     "defaultMessage": "Full administrator access. Bypasses all other permission checks."
@@ -5051,6 +5492,9 @@
   "userSettings.InviteSettingsDescription": {
     "defaultMessage": "Initial settings associated to new invites"
   },
+  "userSettings.accessExtensionRequested": {
+    "defaultMessage": "Access Extension Requested"
+  },
   "userSettings.browser": {
     "defaultMessage": "Browser"
   },
@@ -5071,9 +5515,6 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
-  },
-  "userSettings.enableTrialPeriodDescription": {
-    "defaultMessage": "Set a period of days where new users cannot create invites"
   },
   "userSettings.engine": {
     "defaultMessage": "Engine"
@@ -5105,6 +5546,12 @@
   "userSettings.notifications.disableWebPush": {
     "defaultMessage": "Disable web push"
   },
+  "userSettings.notifications.discordId": {
+    "defaultMessage": "Discord User ID"
+  },
+  "userSettings.notifications.discordTitle": {
+    "defaultMessage": "Discord Notifications"
+  },
   "userSettings.notifications.emailTitle": {
     "defaultMessage": "Email Notifications"
   },
@@ -5114,6 +5561,30 @@
   "userSettings.notifications.inAppTitle": {
     "defaultMessage": "In-App Notifications"
   },
+  "userSettings.notifications.pushbulletAccessToken": {
+    "defaultMessage": "Access Token"
+  },
+  "userSettings.notifications.pushbulletTitle": {
+    "defaultMessage": "Pushbullet Notifications"
+  },
+  "userSettings.notifications.pushoverApplicationToken": {
+    "defaultMessage": "Application API Token"
+  },
+  "userSettings.notifications.pushoverSound": {
+    "defaultMessage": "Sound"
+  },
+  "userSettings.notifications.pushoverTitle": {
+    "defaultMessage": "Pushover Notifications"
+  },
+  "userSettings.notifications.pushoverUserKey": {
+    "defaultMessage": "User Key"
+  },
+  "userSettings.notifications.settingsLoadError": {
+    "defaultMessage": "Unable to load notification settings."
+  },
+  "userSettings.notifications.soundDefault": {
+    "defaultMessage": "Device Default"
+  },
   "userSettings.notifications.subscriptionActive": {
     "defaultMessage": "Active Subscription"
   },
@@ -5122,6 +5593,21 @@
   },
   "userSettings.notifications.subscriptionDeleted": {
     "defaultMessage": "Subscription Deleted Successfully."
+  },
+  "userSettings.notifications.telegramChatId": {
+    "defaultMessage": "Chat ID"
+  },
+  "userSettings.notifications.telegramMessageThreadId": {
+    "defaultMessage": "Message Thread ID"
+  },
+  "userSettings.notifications.telegramSendSilently": {
+    "defaultMessage": "Send Silently"
+  },
+  "userSettings.notifications.telegramTitle": {
+    "defaultMessage": "Telegram Notifications"
+  },
+  "userSettings.notifications.userLoadError": {
+    "defaultMessage": "Unable to load user profile settings."
   },
   "userSettings.notifications.webpushDisableError": {
     "defaultMessage": "Something went wrong while disabling web push."
@@ -5189,6 +5675,18 @@
   "userSettings.title": {
     "defaultMessage": "User Settings"
   },
+  "userSettings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "Set a period of days until users are deactivated and lose access"
+  },
+  "userSettings.trialPeriodDescriptionPromote": {
+    "defaultMessage": "Set a period of days until users can create invites"
+  },
+  "userSettings.trialPeriodOutcome.deactivate": {
+    "defaultMessage": "Deactivate"
+  },
+  "userSettings.trialPeriodOutcome.promote": {
+    "defaultMessage": "Promote"
+  },
   "users.automaticallyGeneratePassword": {
     "defaultMessage": "Automatically Generate Password"
   },
@@ -5248,6 +5746,9 @@
   },
   "users.title": {
     "defaultMessage": "User List"
+  },
+  "validation.required": {
+    "defaultMessage": "This field is required."
   },
   "webpushNotifications.httpsRequired": {
     "defaultMessage": "In order to receive web push notifications, Streamarr must be served over HTTPS."

@@ -24,13 +24,59 @@ const baseCacheDirectory = process.env.CONFIG_DIRECTORY
   : path.join(__dirname, '../../config/cache/images');
 
 class ImageProxy {
-  public static async clearCache(key: string) {
+  private static isRunning = false;
+
+  public static cancel(): void {
+    ImageProxy.isRunning = false;
+  }
+
+  public static status(): { running: boolean } {
+    return { running: ImageProxy.isRunning };
+  }
+
+  public static async clearCache(keys: string | string[]) {
     const settings = getSettings();
 
     if (!settings.main.cacheImages) {
       return;
     }
 
+    const keysArray = Array.isArray(keys) ? keys : [keys];
+
+    if (ImageProxy.isRunning) {
+      logger.warn(
+        'Image cache cleanup job is already running, skipping duplicate run.',
+        {
+          label: 'Image Cache',
+        }
+      );
+      return;
+    }
+
+    ImageProxy.isRunning = true;
+
+    try {
+      for (const key of keysArray) {
+        if (!ImageProxy.isRunning) {
+          logger.info('Image cache cleanup cancelled', {
+            label: 'Image Cache',
+          });
+          return;
+        }
+
+        await ImageProxy.clearCacheForKey(key);
+      }
+    } catch (e) {
+      logger.error('Image cache cleanup job failed.', {
+        label: 'Image Cache',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    } finally {
+      ImageProxy.isRunning = false;
+    }
+  }
+
+  private static async clearCacheForKey(key: string): Promise<void> {
     let deletedImages = 0;
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
@@ -43,6 +89,13 @@ class ImageProxy {
     const files = await promises.readdir(cacheDirectory);
 
     for (const file of files) {
+      if (!ImageProxy.isRunning) {
+        logger.info('Image cache cleanup cancelled', {
+          label: 'Image Cache',
+        });
+        return;
+      }
+
       const filePath = path.join(cacheDirectory, file);
       const stat = await promises.lstat(filePath);
 
@@ -50,6 +103,13 @@ class ImageProxy {
         const imageFiles = await promises.readdir(filePath);
 
         for (const imageFile of imageFiles) {
+          if (!ImageProxy.isRunning) {
+            logger.info('Image cache cleanup cancelled', {
+              label: 'Image Cache',
+            });
+            return;
+          }
+
           const [, expireAtSt] = imageFile.split('.');
           const expireAt = Number(expireAtSt);
           const now = Date.now();
@@ -62,7 +122,7 @@ class ImageProxy {
       }
     }
 
-    logger.info(`Cleared ${deletedImages} stale image(s) from cache`, {
+    logger.info(`Cleared ${deletedImages} stale ${key} image(s) from cache`, {
       label: 'Image Cache',
     });
   }

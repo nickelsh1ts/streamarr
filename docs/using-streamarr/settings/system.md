@@ -1,6 +1,6 @@
 # System
 
-The System page provides health monitoring, restart controls, version information, and release history for your Streamarr instance.
+The System page provides health monitoring, restart controls, disk space usage, version information, and release history for your Streamarr instance.
 
 ## Overview
 
@@ -113,17 +113,61 @@ The service restart process:
 
 ---
 
+## Disk Space
+
+The System page displays disk usage for your configuration directory and the filesystem it lives on, so you can keep an eye on available storage at a glance.
+
+### What Is Shown
+
+Disk usage is presented as an expandable, hierarchical list:
+
+| Level              | Represents                                                                   |
+| ------------------ | ---------------------------------------------------------------------------- |
+| **Mount point**    | The physical filesystem that holds your configuration directory (e.g. `/`)   |
+| **App Data**       | Your Streamarr configuration directory (the volume mounted to `/app/config`) |
+| **Subdirectories** | Each immediate subfolder of the configuration directory (logs, cache, etc.)  |
+
+Each row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. Use the chevron to expand or collapse the App Data row and reveal its subdirectories.
+
+### Usage Bar Colours
+
+The usage bar changes colour as space fills up:
+
+| Usage         | Colour           |
+| ------------- | ---------------- |
+| Below 75%     | Normal (primary) |
+| 75% – 84.9%   | Warning (amber)  |
+| 85% and above | Critical (red)   |
+
+{% hint style="info" %}
+Subdirectory rows show how much space each folder consumes within your configuration directory, while the mount point row reflects the entire underlying filesystem. This makes it easy to spot whether it is Streamarr's data—or the host disk overall—that is running low.
+{% endhint %}
+
+### Unavailable Metrics
+
+If Streamarr cannot read one or more local paths (for example, due to permissions), a warning banner reads **"Some disk metrics are unavailable."** The paths that could be read are still shown; only the unreadable ones are omitted.
+
+{% hint style="info" %}
+Disk statistics are gathered using the system `df` utility, with an internal filesystem fallback when `df` is not available. Symbolic links are skipped when calculating folder sizes.
+{% endhint %}
+
+---
+
 ## About Streamarr
 
 The System page displays key information about your installation:
 
-| Field              | Description                                          |
-| ------------------ | ---------------------------------------------------- |
-| **Version**        | Current version with update status badge             |
-| **Total Users**    | Number of registered users                           |
-| **Total Invites**  | Number of invites created                            |
-| **Data Directory** | Path to the configuration directory                  |
-| **Time Zone**      | Server timezone (if configured via `TZ` environment) |
+| Field               | Description                                                 |
+| ------------------- | ----------------------------------------------------------- |
+| **Version**         | Current version with update status badge                    |
+| **Uptime**          | How long the current server process has been running        |
+| **Total Users**     | Number of registered users                                  |
+| **Total Invites**   | Number of invites created                                   |
+| **Data Directory**  | Path to the configuration directory                         |
+| **Time Zone**       | Server timezone (if configured via `TZ` environment)        |
+| **Node.js Version** | Node.js runtime version the server is running on            |
+| **Python Version**  | Version of the Python runtime used by the Plex Sync service |
+| **Database**        | Database type and version (e.g. SQLite/PostgreSQL)          |
 
 ### Update Status
 
@@ -162,16 +206,16 @@ This helps you see what has changed between versions and what is included in ava
 
 ## API Reference
 
-| Endpoint                            | Method | Description                                                    |
-| ----------------------------------- | ------ | -------------------------------------------------------------- |
-| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                 |
-| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                       |
-| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status                            |
-| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service                                  |
-| `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users) |
-| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)  |
-| `/api/v1/status`                    | GET    | Get version, update availability                               |
-| `/api/v1/settings/about`            | GET    | Get version, user/invite counts, data path                     |
+| Endpoint                            | Method | Description                                                                                       |
+| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
+| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                                                    |
+| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                                                          |
+| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status                                                               |
+| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service                                                                     |
+| `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users)                                    |
+| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                     |
+| `/api/v1/status`                    | GET    | Get version, update availability                                                                  |
+| `/api/v1/settings/about`            | GET    | Get version, uptime, user/invite counts, data path, Node/Python/database versions, and disk space |
 
 ### Restart Status Response
 
@@ -190,6 +234,38 @@ This helps you see what has changed between versions and what is included in ava
   "lastChecked": "2026-02-19T12:00:00.000Z",
   "lastHealthy": "2026-02-19T12:00:00.000Z",
   "consecutiveFailures": 0
+}
+```
+
+### About Response (excerpt)
+
+```json
+{
+  "version": "1.4.0",
+  "uptime": 86400,
+  "totalUsers": 42,
+  "totalInvites": 17,
+  "tz": "America/New_York",
+  "appDataPath": "/app/config",
+  "nodeVersion": "v24.0.0",
+  "pythonVersion": "3.12.0",
+  "database": { "type": "sqlite", "version": "3.45.0" },
+  "diskSpace": {
+    "items": [
+      {
+        "deviceId": "/dev/sda1",
+        "name": "App Data",
+        "path": "/app/config",
+        "mountPoint": "/",
+        "pathUsedBytes": 524288000,
+        "totalBytes": 107374182400,
+        "freeBytes": 96636764160,
+        "usedBytes": 10737418240,
+        "usedPercent": 10.0
+      }
+    ],
+    "failedPaths": []
+  }
 }
 ```
 
@@ -232,6 +308,12 @@ This helps you see what has changed between versions and what is included in ava
 1. The server may still be initializing — wait a few seconds
 2. Check the application logs for errors during startup
 3. Verify the database is accessible and not corrupted
+
+### "Some disk metrics are unavailable"
+
+1. Confirm the configuration directory and its subfolders are readable by the user running Streamarr
+2. If running in Docker, verify the `/app/config` volume is mounted correctly
+3. Check the application logs for `Failed to collect disk usage stats` warnings to identify the affected path
 
 ### "Restart required but I haven't changed anything"
 

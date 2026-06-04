@@ -9,6 +9,7 @@ import {
   rgbToOklch,
   getAllTailwindColors,
   oklchToRgb,
+  parseColorToHex,
 } from '@app/utils/themeUtils';
 import Button from '@app/components/Common/Button';
 import {
@@ -35,9 +36,13 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   onClose,
   show,
 }) => {
-  const [color, setColor] = useState(theme[colorName]);
+  const [color, setColor] = useState(
+    parseColorToHex(theme[colorName]) ?? theme[colorName]
+  );
   const [tab, setTab] = useState<'picker' | 'sliders' | 'palette'>('palette');
-  const [hsl, setHsl] = useState<HslColor>(colord(theme[colorName]).toHsl());
+  const [hsl, setHsl] = useState<HslColor>(
+    colord(parseColorToHex(theme[colorName]) ?? theme[colorName]).toHsl()
+  );
   const [format, setFormat] = useState<'hex' | 'rgb' | 'hsl' | 'oklch'>(
     'oklch'
   );
@@ -83,7 +88,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 
   useEffect(() => {
     if (show && theme[colorName]) {
-      setColor(theme[colorName]);
+      setColor(parseColorToHex(theme[colorName]) ?? theme[colorName]);
     }
   }, [colorName, show, theme]);
 

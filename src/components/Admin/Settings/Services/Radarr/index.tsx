@@ -119,9 +119,9 @@ export const ServerInstance = ({
           className="opacity-50 hover:opacity-100"
         >
           {isSonarr ? (
-            <SonarrLogo className="h-10 w-10 flex-shrink-0" />
+            <SonarrLogo className="h-10 w-10 shrink-0" />
           ) : (
-            <RadarrLogo className="h-10 w-10 flex-shrink-0" />
+            <RadarrLogo className="h-10 w-10 shrink-0" />
           )}
         </a>
       </div>
@@ -130,7 +130,7 @@ export const ServerInstance = ({
           <div className="flex w-0 flex-1 border-r border-primary">
             <button
               onClick={() => onEdit()}
-              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <PencilIcon className="mr-2 h-5 w-5" />
               <span>
@@ -141,7 +141,7 @@ export const ServerInstance = ({
           <div className="-ml-px flex w-0 flex-1">
             <button
               onClick={() => onDelete()}
-              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary text-primary-content bg-opacity-45 hover:bg-opacity-70 focus:z-10 focus:border-primary focus:outline-none"
+              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none"
             >
               <TrashIcon className="mr-2 h-5 w-5" />
               <span>

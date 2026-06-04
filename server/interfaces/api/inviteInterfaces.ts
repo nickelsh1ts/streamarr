@@ -4,8 +4,3 @@ import type { PaginatedResponse } from './common';
 export interface InviteResultsResponse extends PaginatedResponse {
   results: Invite[];
 }
-
-export type InviteBody = {
-  icode?: string;
-  userId?: number;
-};

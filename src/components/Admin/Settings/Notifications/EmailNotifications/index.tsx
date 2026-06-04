@@ -242,8 +242,8 @@ const EmailNotifications = () => {
           }
         };
         return (
-          <Form>
-            <div className="mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
+          <Form className="mt-5">
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
               <label htmlFor="preset">
                 <FormattedMessage
                   id="notifications.enableAgent"
@@ -257,7 +257,7 @@ const EmailNotifications = () => {
                     id="enabled"
                     name="enabled"
                     type="checkbox"
-                    className="checkbox checkbox-sm checkbox-primary rounded-md w-full"
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
                 </div>
               </div>
@@ -415,7 +415,7 @@ const EmailNotifications = () => {
                   type="checkbox"
                   id="allowSelfSigned"
                   name="allowSelfSigned"
-                  className="checkbox checkbox-sm checkbox-primary rounded-md w-full"
+                  className="checkbox checkbox-sm checkbox-primary rounded-md"
                 />
               </div>
               <label htmlFor="authUser">
@@ -536,59 +536,59 @@ const EmailNotifications = () => {
                     <div className="error">{errors.pgpPassword}</div>
                   )}
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-full mt-4">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
-                  <Button
-                    buttonSize="sm"
-                    buttonType="warning"
-                    disabled={isSubmitting || !isValid || isTesting}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      testSettings();
-                    }}
-                    className="disabled:bg-warning/30"
-                  >
-                    <BeakerIcon className="size-5 mr-2" />
-                    <span>
-                      {isTesting ? (
-                        <FormattedMessage
-                          id="common.testing"
-                          defaultMessage="Testing…"
-                        />
-                      ) : (
-                        <FormattedMessage
-                          id="common.test"
-                          defaultMessage="Test"
-                        />
-                      )}
-                    </span>
-                  </Button>
-                </span>
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
-                  <Button
-                    buttonSize="sm"
-                    buttonType="primary"
-                    type="submit"
-                    disabled={isSubmitting || !isValid || isTesting}
-                  >
-                    <ArrowDownTrayIcon className="size-5 mr-2" />
-                    <span>
-                      {isSubmitting ? (
-                        <FormattedMessage
-                          id="common.saving"
-                          defaultMessage="Saving…"
-                        />
-                      ) : (
-                        <FormattedMessage
-                          id="common.saveChanges"
-                          defaultMessage="Save Changes"
-                        />
-                      )}
-                    </span>
-                  </Button>
-                </span>
-              </div>
+            </div>
+            <div className="divider divider-primary mb-0 col-span-full" />
+            <div className="flex justify-end col-span-full mt-4">
+              <span className="ml-3 inline-flex rounded-md shadow-sm">
+                <Button
+                  buttonSize="sm"
+                  buttonType="warning"
+                  disabled={isSubmitting || !isValid || isTesting}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    testSettings();
+                  }}
+                  className="disabled:bg-warning/30"
+                >
+                  <BeakerIcon className="size-5 mr-2" />
+                  <span>
+                    {isTesting ? (
+                      <FormattedMessage
+                        id="common.testing"
+                        defaultMessage="Testing…"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="common.test"
+                        defaultMessage="Test"
+                      />
+                    )}
+                  </span>
+                </Button>
+              </span>
+              <span className="ml-3 inline-flex rounded-md shadow-sm">
+                <Button
+                  buttonSize="sm"
+                  buttonType="primary"
+                  type="submit"
+                  disabled={isSubmitting || !isValid || isTesting}
+                >
+                  <ArrowDownTrayIcon className="size-5 mr-2" />
+                  <span>
+                    {isSubmitting ? (
+                      <FormattedMessage
+                        id="common.saving"
+                        defaultMessage="Saving…"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="common.saveChanges"
+                        defaultMessage="Save Changes"
+                      />
+                    )}
+                  </span>
+                </Button>
+              </span>
             </div>
           </Form>
         );

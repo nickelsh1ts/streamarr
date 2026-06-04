@@ -17,7 +17,10 @@ import type {
 } from '@server/interfaces/api/settingsInterfaces';
 import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useEffect, useState } from 'react';
 import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import DiskSpace from '@app/components/Admin/Settings/System/DiskSpace';
+import { formatUptime } from '@app/utils/numberHelper';
 
 const SystemSettings = () => {
   const intl = useIntl();
@@ -43,6 +46,18 @@ const SystemSettings = () => {
 
   const { data: status } = useSWR<StatusResponse>('/api/v1/status');
 
+  const [liveUptime, setLiveUptime] = useState<number | null>(null);
+  useEffect(() => {
+    if (!data) return;
+    const base = Math.floor(data.uptime);
+    let tick = 0;
+    const interval = setInterval(() => {
+      tick += 1;
+      setLiveUptime(base + tick);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [data]);
+
   if (!data && !error && !restartError) {
     return <LoadingEllipsis />;
   }
@@ -59,14 +74,15 @@ const SystemSettings = () => {
 
   return (
     <div>
-      <Alert type="primary">
-        <p className="text-sm leading-5 flex-1">
-          <FormattedMessage
-            id="systemSettings.betaWarning"
-            defaultMessage="This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."
-          />
-        </p>
-        <p className="text-sm leading-5 place-content-center ml-7 sm:w-auto w-full">
+      <Alert
+        type="primary"
+        title={intl.formatMessage({
+          id: 'systemSettings.betaWarning',
+          defaultMessage:
+            'This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates.',
+        })}
+      >
+        <span className="ml-7">
           <a
             href="https://github.com/nickelsh1ts/streamarr"
             className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
@@ -75,7 +91,7 @@ const SystemSettings = () => {
           >
             GitHub <ArrowRightIcon className="size-4 inline-flex" />
           </a>
-        </p>
+        </span>
       </Alert>
       <div className="mt-6 flex justify-between items-center">
         <h3 className="text-2xl font-extrabold gap-2 flex items-center">
@@ -133,16 +149,17 @@ const SystemSettings = () => {
           onRestart={handleRestartPython}
         />
       </div>
+      <DiskSpace data={data} />
       <div className="mt-6">
         <List
           title={intl.formatMessage({
-            id: 'systemSettings.title',
-            defaultMessage: 'About Streamarr',
+            id: 'common.about',
+            defaultMessage: 'About',
           })}
         >
           <List.Item
             title={intl.formatMessage({
-              id: 'systemSettings.version',
+              id: 'common.version',
               defaultMessage: 'Version',
             })}
             className="flex flex-row items-center truncate"
@@ -161,7 +178,7 @@ const SystemSettings = () => {
                 >
                   <Badge
                     badgeType="warning"
-                    className="ml-2 !cursor-pointer transition"
+                    className="ml-2 cursor-pointer! transition"
                   >
                     <FormattedMessage
                       id="systemSettings.outOfDate"
@@ -181,7 +198,7 @@ const SystemSettings = () => {
                 >
                   <Badge
                     badgeType="success"
-                    className="ml-2 !cursor-pointer transition"
+                    className="ml-2 cursor-pointer! transition"
                   >
                     <FormattedMessage
                       id="systemSettings.upToDate"
@@ -190,6 +207,32 @@ const SystemSettings = () => {
                   </Badge>
                 </a>
               ))}
+          </List.Item>
+          <List.Item
+            title={intl.formatMessage({
+              id: 'common.database',
+              defaultMessage: 'Database',
+            })}
+          >
+            <code>
+              {data.database.type} {data.database.version}
+            </code>
+          </List.Item>
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.nodeVersion',
+              defaultMessage: 'Node.js',
+            })}
+          >
+            <code>{data.nodeVersion}</code>
+          </List.Item>
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.pythonVersion',
+              defaultMessage: 'Python',
+            })}
+          >
+            <code>{data.pythonVersion}</code>
           </List.Item>
           <List.Item
             title={intl.formatMessage({
@@ -225,15 +268,38 @@ const SystemSettings = () => {
               <code>{data.tz}</code>
             </List.Item>
           )}
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.uptime',
+              defaultMessage: 'Uptime',
+            })}
+          >
+            <code>{formatUptime(liveUptime ?? Math.floor(data.uptime))}</code>
+          </List.Item>
         </List>
       </div>
       <div className="mt-6">
         <List
           title={intl.formatMessage({
-            id: 'systemSettings.gettingSupport',
-            defaultMessage: 'Getting Support',
+            id: 'systemSettings.moreInfo',
+            defaultMessage: 'More Info',
           })}
         >
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.homePage',
+              defaultMessage: 'Home Page',
+            })}
+          >
+            <a
+              href="https://streamarr.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary transition duration-300 hover:underline"
+            >
+              streamarr.dev
+            </a>
+          </List.Item>
           <List.Item
             title={intl.formatMessage({
               id: 'systemSettings.documentation',
@@ -246,7 +312,7 @@ const SystemSettings = () => {
               rel="noreferrer"
               className="text-primary transition duration-300 hover:underline"
             >
-              https://docs.streamarr.dev
+              docs.streamarr.dev
             </a>
           </List.Item>
           <List.Item
@@ -261,18 +327,9 @@ const SystemSettings = () => {
               rel="noreferrer"
               className="text-primary transition duration-300 hover:underline"
             >
-              https://github.com/nickelsh1ts/streamarr/discussions
+              github.com/nickelsh1ts/streamarr/discussions
             </a>
           </List.Item>
-        </List>
-      </div>
-      <div className="mt-6">
-        <List
-          title={intl.formatMessage({
-            id: 'systemSettings.supportStreamarr',
-            defaultMessage: 'Support Streamarr',
-          })}
-        >
           <List.Item
             title={intl.formatMessage({
               id: 'systemSettings.helpPayForCoffee',
@@ -285,7 +342,7 @@ const SystemSettings = () => {
               rel="noreferrer"
               className="text-primary transition duration-300 hover:underline"
             >
-              https://github.com/sponsors/nickelsh1ts
+              github.com/sponsors/nickelsh1ts
             </a>
             <Badge className="ml-2">
               <FormattedMessage
@@ -301,12 +358,41 @@ const SystemSettings = () => {
               rel="noreferrer"
               className="text-primary transition duration-300 hover:underline"
             >
-              https://patreon.com/nickelsh1ts
+              patreon.com/nickelsh1ts
+            </a>
+          </List.Item>
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.source',
+              defaultMessage: 'Source',
+            })}
+          >
+            <a
+              href="https://github.com/nickelsh1ts/streamarr"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary transition duration-300 hover:underline"
+            >
+              github.com/nickelsh1ts/streamarr
+            </a>
+          </List.Item>
+          <List.Item
+            title={intl.formatMessage({
+              id: 'systemSettings.featureRequests',
+              defaultMessage: 'Feature Requests',
+            })}
+          >
+            <a
+              href="https://github.com/nickelsh1ts/streamarr/issues"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary transition duration-300 hover:underline"
+            >
+              github.com/nickelsh1ts/streamarr/issues
             </a>
           </List.Item>
         </List>
       </div>
-
       <div className="section">
         <Releases currentVersion={data.version} />
       </div>

@@ -2,10 +2,16 @@ import useSettings from '@app/hooks/useSettings';
 import PlexLogo from '@app/assets/services/plex.svg';
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
-import type { ReactNode } from 'react';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { type ReactNode, useState } from 'react';
 
 function FAQs() {
   const { currentSettings } = useSettings();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFaq = (idx: number) => {
+    setOpenIndex((prev) => (prev === idx ? null : idx));
+  };
 
   const defaultLimit = currentSettings.defaultInviteQuotas?.quotaLimit;
   const defaultDays = currentSettings.defaultInviteQuotas?.quotaDays;
@@ -387,18 +393,34 @@ function FAQs() {
           {faqs
             .filter((faq) => !faq.hidden)
             .map((faq, idx) => (
-              <details
+              <div
                 key={idx}
-                name={`faq-${idx}`}
-                className="collapse collapse-arrow join-item bg-base-100"
+                className="join-item bg-base-100 rounded-box overflow-hidden"
               >
-                <summary className="collapse-title text-xl font-medium">
-                  {faq.question}
-                </summary>
-                <div className="collapse-content border-t border-base-300 pt-4">
-                  {faq.answer}
+                <button
+                  type="button"
+                  className="flex w-full cursor-pointer items-center justify-between px-4 py-4 text-left text-xl font-medium"
+                  onClick={() => toggleFaq(idx)}
+                >
+                  <span>{faq.question}</span>
+                  <ChevronDownIcon
+                    className={`ml-4 size-5 shrink-0 transition-transform duration-300 ease-in-out ${
+                      openIndex === idx ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    openIndex === idx ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="border-t border-base-300 px-4 pb-4 pt-4">
+                      {faq.answer}
+                    </div>
+                  </div>
                 </div>
-              </details>
+              </div>
             ))}
         </div>
       </div>

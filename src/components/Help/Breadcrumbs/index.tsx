@@ -4,6 +4,8 @@ import React from 'react';
 import { ChevronRightIcon, PrinterIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import { useUser } from '@app/hooks/useUser';
 
 type TBreadCrumbProps = {
   homeElement: ReactNode;
@@ -20,7 +22,7 @@ type TBreadCrumbProps = {
 const Breadcrumbs = ({
   homeElement = 'Help Centre',
   separator = <ChevronRightIcon className="w-5 h-5 mx-3" />,
-  containerClasses = 'flex flex-wrap mx-4 md:mx-16 place-items-center print:hidden',
+  containerClasses = 'flex flex-wrap mx-4 md:mx-16 place-items-center print:hidden relative',
   listClasses = 'inline-flex items-center gap-2 link-primary',
   activeClasses = 'text-neutral hover:text-neutral pointer-events-none',
   capitalizeLinks = true,
@@ -30,6 +32,7 @@ const Breadcrumbs = ({
 }: TBreadCrumbProps) => {
   const pathNames = paths.split('/').filter((path) => path);
   const pathTitles = names.split(',').filter((name) => name);
+  const { user, loading } = useUser({ disableAutoRevalidation: true });
 
   return (
     <div className={containerClasses}>
@@ -55,18 +58,25 @@ const Breadcrumbs = ({
           </React.Fragment>
         );
       })}
-      {print && (
-        <button
-          onClick={() => {
-            window.print();
-            return false;
-          }}
-          className="btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase ms-auto"
-        >
-          <PrinterIcon className="w-5 h-5" />{' '}
-          <FormattedMessage id="common.print" defaultMessage="Print" />
-        </button>
-      )}
+      <div className="ms-auto flex flex-wrap items-center gap-2">
+        {!user && !loading && (
+          <div className="text-white">
+            <LanguagePicker />
+          </div>
+        )}
+        {print && (
+          <button
+            onClick={() => {
+              window.print();
+              return false;
+            }}
+            className="btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase"
+          >
+            <PrinterIcon className="w-5 h-5" />{' '}
+            <FormattedMessage id="common.print" defaultMessage="Print" />
+          </button>
+        )}
+      </div>
     </div>
   );
 };

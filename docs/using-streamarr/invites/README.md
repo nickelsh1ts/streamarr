@@ -81,9 +81,7 @@ Toggle additional features for invited users:
 | **Live TV**   | Access to Plex Live TV (if available)        |
 | **Plex Home** | Add user to Plex Home instead of as a friend |
 
-{% hint style="info" %}
-**Plex Home** creates a managed user under your Plex account, which is useful for family members. Regular invites add users as "friends" to your Plex server.
-{% endhint %}
+**Plex Home**: When enabled, the invited user is added as a managed Plex Home user. The invitee must accept the Plex Home invite to complete onboarding. If the user is already a Plex Home member, re-inviting will re-provision their access if needed. Regular invites add users as "friends" to your Plex server.
 
 ---
 
@@ -207,8 +205,10 @@ Users with **Manage Users** or **Manage Invites** permissions are exempt from in
 If [Trial Period](../settings/README.md#enable-trial-period) is enabled:
 
 - Users who sign up via invite are placed in trial status
-- Trial users cannot create invites until the trial period ends
-- Trial duration is configured in Settings
+- Trial users cannot create invites or request access extensions until the trial period ends
+- Trial duration is configured in Settings and can be extended or ended by an admin
+- When the trial ends, the user is either promoted to full access or marked as expired, depending on admin policy
+- If enabled, users may request an extension to their trial or access period from their profile; admins can approve or deny these requests
 
 This helps prevent abuse while allowing you to evaluate new users before granting full access.
 

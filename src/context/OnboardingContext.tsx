@@ -84,6 +84,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   const pathname = usePathname();
 
   const isSetupRoute = pathname?.startsWith('/setup');
+  const isSignupRoute = pathname?.startsWith('/signup');
   const isAdmin = hasPermission(Permission.ADMIN);
   const allowSkipWelcome = data?.settings.allowSkipWelcome ?? true;
   const allowSkipTutorial = data?.settings.allowSkipTutorial ?? true;
@@ -138,12 +139,14 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   const shouldBlockUserOnboarding = useMemo(() => {
     return (
       isSetupRoute ||
+      isSignupRoute ||
       isAdminOnboarding ||
       adminOnboardingJustCompleted ||
       adminPhase !== 'idle'
     );
   }, [
     isSetupRoute,
+    isSignupRoute,
     isAdminOnboarding,
     adminOnboardingJustCompleted,
     adminPhase,
@@ -151,6 +154,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
 
   useEffect(() => {
     if (isSetupRoute) return;
+    if (isSignupRoute) return;
     if (adminOnboardingJustCompleted) return;
     if (isAdminOnboarding && adminPhase === 'idle') {
       setAdminPhase('welcome');
@@ -159,6 +163,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     isAdminOnboarding,
     adminPhase,
     isSetupRoute,
+    isSignupRoute,
     adminOnboardingJustCompleted,
   ]);
 

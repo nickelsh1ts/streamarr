@@ -24,46 +24,46 @@ const Badge = (
   ];
 
   if (href) {
-    badgeStyle.push('transition cursor-pointer !no-underline');
+    badgeStyle.push('transition cursor-pointer no-underline!');
   } else {
     badgeStyle.push('cursor-default');
   }
 
   switch (badgeType) {
     case 'error':
-      badgeStyle.push('bg-error bg-opacity-80 text-error-content');
+      badgeStyle.push('bg-error/80 text-error-content');
       if (href) {
-        badgeStyle.push('hover:bg-error bg-opacity-100');
+        badgeStyle.push('hover:bg-error/100');
       }
       break;
     case 'warning':
-      badgeStyle.push('bg-warning bg-opacity-80 text-warning-content');
+      badgeStyle.push('bg-warning/80 text-warning-content');
       if (href) {
-        badgeStyle.push('hover:bg-warning hover:bg-opacity-100');
+        badgeStyle.push('hover:bg-warning/100');
       }
       break;
     case 'success':
-      badgeStyle.push('bg-success bg-opacity-80 text-success-content');
+      badgeStyle.push('bg-success/80 text-success-content');
       if (href) {
-        badgeStyle.push('hover:bg-success hover:bg-opacity-100');
+        badgeStyle.push('hover:bg-success/100');
       }
       break;
     case 'dark':
-      badgeStyle.push('bg-gray-900 !text-gray-400');
+      badgeStyle.push('bg-gray-900 text-gray-400!');
       if (href) {
         badgeStyle.push('hover:bg-gray-800');
       }
       break;
     case 'light':
-      badgeStyle.push('bg-gray-700 !text-gray-300');
+      badgeStyle.push('bg-gray-700 text-gray-300!');
       if (href) {
         badgeStyle.push('hover:bg-gray-600');
       }
       break;
     default:
-      badgeStyle.push('bg-primary bg-opacity-80 text-primary-content');
+      badgeStyle.push('bg-primary/80 text-primary-content');
       if (href) {
-        badgeStyle.push('hover:bg-primary hover:bg-opacity-100');
+        badgeStyle.push('hover:bg-primary/100');
       }
   }
 

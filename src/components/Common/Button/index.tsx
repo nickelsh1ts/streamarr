@@ -49,7 +49,7 @@ function Button<P extends ElementTypes = 'button'>(
   }: ButtonProps<P>,
   ref?: React.Ref<Element<P>>
 ): JSX.Element {
-  const buttonStyle = ['btn rounded-md gap-0.5'];
+  const buttonStyle = ['btn rounded-md gap-0.5 shadow-none'];
   switch (buttonType) {
     case 'primary':
       buttonStyle.push('btn-primary');

@@ -15,6 +15,17 @@ export const formatSpeed = (speed: number): string => {
   return `${formatBytes(speed)}/s`;
 };
 
+export const formatUptime = (totalSeconds: number): string => {
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return days > 0
+    ? `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+    : `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+};
+
 export const formatEta = (seconds: number | null): string => {
   if (!seconds || seconds <= 0) return '-';
   if (seconds === Infinity) return '∞';

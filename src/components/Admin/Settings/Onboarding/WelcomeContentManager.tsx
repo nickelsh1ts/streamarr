@@ -88,7 +88,7 @@ const SortableItem = ({ item, onEdit, onDelete }: SortableItemProps) => {
         </p>
       </div>
       {(item.imageUrl || item.videoUrl || item.customHtml) && (
-        <div className="flex-shrink-0 flex items-center gap-1 text-neutral">
+        <div className="shrink-0 flex items-center gap-1 text-neutral">
           {item.imageUrl && <PhotoIcon className="size-4 text-primary" />}
           {item.imageUrl && item.videoUrl && <span>/</span>}
           {item.videoUrl && <VideoCameraIcon className="size-4 text-primary" />}
@@ -100,7 +100,7 @@ const SortableItem = ({ item, onEdit, onDelete }: SortableItemProps) => {
           )}
         </div>
       )}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <span
           className={`badge ${item.enabled ? 'badge-success' : 'badge-neutral'}`}
         >
@@ -509,7 +509,7 @@ const WelcomeContentManager = () => {
                   htmlFor="description"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="common.description"
                       defaultMessage="Description"
@@ -571,7 +571,7 @@ const WelcomeContentManager = () => {
                   htmlFor="videoUrl"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="common.videoUrl"
                       defaultMessage="Video URL"
@@ -630,7 +630,7 @@ const WelcomeContentManager = () => {
                   htmlFor="customHtml"
                   className="block text-sm font-medium leading-6 text-left"
                 >
-                  <span className="label-text">
+                  <span className="text-sm">
                     <FormattedMessage
                       id="settings.onboarding.customHtml"
                       defaultMessage="Custom HTML"

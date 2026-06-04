@@ -168,7 +168,9 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
     };
 
     return (
-      <span className={`badge ${statusColors[status] || 'badge-neutral'}`}>
+      <span
+        className={`badge rounded-full ${statusColors[status] || 'badge-neutral'}`}
+      >
         {renderStatusMessage()}
       </span>
     );
@@ -264,7 +266,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                       id: 'downloads.clientUnreachable',
                       defaultMessage: 'Client Unreachable.',
                     })}
-                    className="size-5 text-warning flex-shrink-0"
+                    className="size-5 text-warning shrink-0"
                   />
                 </Tooltip>
               )}

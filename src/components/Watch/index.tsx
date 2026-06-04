@@ -7,7 +7,7 @@ import {
 import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
 import { useUser, Permission } from '@app/hooks/useUser';
-import { setIframeTheme } from '@app/utils/themeUtils';
+import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -173,6 +173,7 @@ const Watch = ({ children, ...props }) => {
   useEffect(() => {
     if (mountNode && currentSettings.theme) {
       const theme = currentSettings.theme;
+      const primaryHex = parseColorToHex(theme.primary) ?? theme.primary;
       mountNode.style.setProperty(
         '--link-color-hover',
         theme['primary'],
@@ -180,10 +181,7 @@ const Watch = ({ children, ...props }) => {
       );
       mountNode.style.setProperty(
         '--accent-color',
-        colord(theme.primary)
-          .toRgbString()
-          .replace('rgb(', '')
-          .replace(')', ''),
+        colord(primaryHex).toRgbString().replace('rgb(', '').replace(')', ''),
         'important'
       );
       mountNode.style.setProperty(

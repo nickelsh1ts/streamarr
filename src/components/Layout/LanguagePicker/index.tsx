@@ -22,7 +22,7 @@ const LanguagePicker = () => {
   return (
     <div className="relative z-10">
       <button
-        className={`rounded-full p-1 hover:bg-primary/70 hover:text-white focus:bg-primary/80 focus:text-white focus:outline-none focus:ring-1 focus:ring-primary sm:p-2 ${
+        className={`rounded-full p-1 hover:bg-primary/70 hover:text-white focus:bg-primary/80 focus:text-white focus:outline-none focus:ring-1 focus:ring-primary sm:p-2 hover:cursor-pointer ${
           isDropdownOpen ? 'bg-primary/60 text-white' : 'text-neutral'
         }`}
         aria-label="Language Picker"
@@ -44,7 +44,7 @@ const LanguagePicker = () => {
           className="absolute right-0 mt-2 w-56 origin-top-right rounded-md shadow-lg"
           ref={dropdownRef}
         >
-          <div className="rounded-md bg-[#1f1f1f] px-3 py-2 ring-1 ring-black ring-opacity-5">
+          <div className="rounded-md bg-[#1f1f1f] px-3 py-2 ring-1 ring-black/5">
             <label
               htmlFor="language"
               className="block pb-2 text-sm font-bold leading-5 text-neutral"

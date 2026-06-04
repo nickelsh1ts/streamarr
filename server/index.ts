@@ -1,9 +1,7 @@
 import type { IncomingMessage } from 'http';
 import type { Session as ExpressSession } from 'express-session';
-import PlexAPI from '@server/api/plexapi';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
-import { User } from '@server/entity/User';
 import { startJobs } from '@server/job/schedule';
 import notificationManager from '@server/lib/notifications';
 import LocalAgent, {
@@ -11,6 +9,14 @@ import LocalAgent, {
 } from '@server/lib/notifications/agents/inApp';
 import EmailAgent from '@server/lib/notifications/agents/email';
 import WebPushAgent from '@server/lib/notifications/agents/webpush';
+import DiscordAgent from '@server/lib/notifications/agents/discord';
+import GotifyAgent from '@server/lib/notifications/agents/gotify';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
+import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
+import PushoverAgent from '@server/lib/notifications/agents/pushover';
+import SlackAgent from '@server/lib/notifications/agents/slack';
+import TelegramAgent from '@server/lib/notifications/agents/telegram';
+import WebhookAgent from '@server/lib/notifications/agents/webhook';
 import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import { initI18n } from '@server/i18n';
@@ -34,6 +40,7 @@ import {
   createServiceProxyRouter,
   getActiveProxyPaths,
 } from '@server/routes/serviceProxy';
+import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
@@ -43,6 +50,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'http';
+import type { Duplex } from 'stream';
 
 interface SocketRequest extends IncomingMessage {
   session?: ExpressSession & { userId?: number };
@@ -76,30 +84,17 @@ app
     initI18n();
     await initializeOnboardingDefaults();
 
-    // Migrate library types
-    if (
-      settings.plex.libraries.length > 1 &&
-      !settings.plex.libraries[0].type
-    ) {
-      const userRepository = getRepository(User);
-      const admin = await userRepository.findOne({
-        select: { id: true, plexToken: true },
-        where: { id: 1 },
-      });
-
-      if (admin) {
-        logger.info('Migrating Plex libraries to include media type', {
-          label: 'Settings',
-        });
-
-        const plexapi = new PlexAPI({ plexToken: admin.plexToken });
-        await plexapi.syncLibraries();
-      }
-    }
-
     // Register Notification Agents
     notificationManager.registerAgents([
+      new DiscordAgent(),
       new EmailAgent(),
+      new GotifyAgent(),
+      new NtfyAgent(),
+      new PushbulletAgent(),
+      new PushoverAgent(),
+      new SlackAgent(),
+      new TelegramAgent(),
+      new WebhookAgent(),
       new WebPushAgent(),
       new LocalAgent(),
     ]);
@@ -182,11 +177,46 @@ app
         origin: '*',
         methods: ['GET', 'POST'],
       },
+      destroyUpgrade: false,
     });
     io.engine.use(sessionMiddleware);
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
+    const upgradeDispatcher = createUpgradeDispatcher(httpServer);
+
+    // Next.js lazily attaches a catch-all `upgrade` listener (via
+    // getRequestHandler) that hijacks the /socket.io/ upgrade and corrupts the
+    // WebSocket frame ("Invalid frame header"). Mark Next's WS setup as already
+    // done so it never registers its catch-all. This relies on NextCustomServer
+    // internals (`didWebSocketSetup`) and must be re-verified on Next.js major
+    // upgrades.
+    (app as unknown as { didWebSocketSetup: boolean }).didWebSocketSetup = true;
+    if (dev) {
+      const nextUpgradeHandler = (
+        app as unknown as {
+          upgradeHandler?: (
+            req: IncomingMessage,
+            socket: Duplex,
+            head: Buffer
+          ) => void;
+        }
+      ).upgradeHandler;
+
+      if (typeof nextUpgradeHandler === 'function') {
+        upgradeDispatcher.register({
+          name: 'next:hmr',
+          match: (url) => url.startsWith('/_next/'),
+          handle: (req, socket, head) =>
+            nextUpgradeHandler(req, socket as Duplex, head),
+        });
+      } else {
+        logger.warn(
+          'Next.js upgradeHandler unavailable; HMR over WebSocket disabled',
+          { label: 'Server' }
+        );
+      }
+    }
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user
@@ -222,7 +252,7 @@ app
     );
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
-    server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
+    server.use(createServiceProxyRouter(upgradeDispatcher, sessionMiddleware));
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,

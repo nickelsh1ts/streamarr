@@ -10,5 +10,7 @@
   "notifications.test.message": "Check check, 1, 2, 3. Are we coming in clear?",
   "notifications.test.subject": "Test Notification",
   "notifications.user.created.message": "Invited by {displayName}.",
-  "notifications.user.created.subject": "New User Created: {displayName}"
+  "notifications.user.created.subject": "New User Created: {displayName}",
+  "notifications.userSettings.extensionRequested": "Access extension requested",
+  "notifications.userSettings.extensionRequestedMessage": "{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}"
 }

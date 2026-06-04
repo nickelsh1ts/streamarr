@@ -173,7 +173,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                 toggleAllUsers();
                               }
                             }}
-                            className="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center pt-2 focus:outline-none"
+                            className="relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center justify-center pt-2 focus:outline-none"
                           >
                             <span
                               aria-hidden="true"
@@ -211,7 +211,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                   toggleUser(user.id);
                                 }
                               }}
-                              className="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center pt-2 focus:outline-none"
+                              className="relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center justify-center pt-2 focus:outline-none"
                             >
                               <span
                                 aria-hidden="true"
@@ -234,7 +234,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                           <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-neutral-content md:px-6">
                             <div className="flex items-center">
                               <CachedImage
-                                className="h-10 w-10 flex-shrink-0 rounded-full"
+                                className="h-10 w-10 shrink-0 rounded-full"
                                 src={user.thumb}
                                 alt=""
                                 width={24}

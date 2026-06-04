@@ -28,32 +28,6 @@ You must configure this setting to enable:
 - Correct links in email notifications
 - QR codes for invites
 
-### Enable Proxy Support
-
-If you have Streamarr behind a [reverse proxy](../../extending-streamarr/reverse-proxy.md), enable this setting to allow Streamarr to correctly register client IP addresses.
-
-For details, please see the [Express documentation](http://expressjs.com/en/guide/behind-proxies.html).
-
-This setting is **disabled** by default.
-
-### Enable CSRF Protection
-
-{% hint style="danger" %}
-**This is an advanced setting.** We do not recommend enabling it unless you understand the implications of doing so.
-{% endhint %}
-
-CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When this setting is enabled, all external API access that alters Streamarr application data is blocked.
-
-If you do not use Streamarr integrations with third-party applications to modify data, you can enable this setting for additional security.
-
-{% hint style="warning" %}
-**HTTPS is required** when CSRF protection is enabled. You will no longer be able to access Streamarr over HTTP.
-
-If you enable this setting and find yourself unable to access Streamarr, you can disable it by editing `settings.json` in your config directory.
-{% endhint %}
-
-This setting is **disabled** by default.
-
 ### Enable Image Caching
 
 When enabled, Streamarr will proxy and cache images from external sources. Two image proxies are active when this setting is on:
@@ -182,6 +156,58 @@ Theme colors are applied globally at runtime via CSS custom properties. They als
 
 To reset all colors to defaults, click the **"Reset to Default"** button in the theme section.
 
+## Network
+
+The Network page configures how Streamarr communicates over the network—proxy awareness, API access protection, and timeouts for outbound requests. Access it via **Settings → Network**.
+
+{% hint style="info" %}
+Changes to **Enable Proxy Support** and **Enable CSRF Protection** require a server restart to take effect. See [System → Restart System](system.md#restart-system).
+{% endhint %}
+
+### Enable Proxy Support
+
+If you have Streamarr behind a [reverse proxy](../../extending-streamarr/reverse-proxy.md), enable this setting to allow Streamarr to correctly register client IP addresses.
+
+For details, please see the [Express documentation](http://expressjs.com/en/guide/behind-proxies.html).
+
+This setting is **disabled** by default.
+
+### Enable CSRF Protection
+
+{% hint style="danger" %}
+**This is an advanced setting.** We do not recommend enabling it unless you understand the implications of doing so.
+{% endhint %}
+
+CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When this setting is enabled, all external API access that alters Streamarr application data is blocked (external API access becomes read-only).
+
+If you do not use Streamarr integrations with third-party applications to modify data, you can enable this setting for additional security.
+
+{% hint style="warning" %}
+**HTTPS is required** when CSRF protection is enabled. You will no longer be able to access Streamarr over HTTP.
+
+If you enable this setting and find yourself unable to access Streamarr, you can disable it by editing `settings.json` in your config directory.
+{% endhint %}
+
+This setting is **disabled** by default.
+
+### API Request Timeout
+
+The maximum time, in seconds, that Streamarr will wait for a response from an external service (such as Plex, the \*Arr apps, or download clients) before giving up.
+
+- Must be a whole number of seconds.
+- Minimum: **1 second**. Maximum: **300 seconds**.
+
+Increase this value if you connect to slow or remote services that occasionally time out; lower it if you would rather fail fast when a service is unresponsive.
+
+---
+
+## API Reference
+
+| Endpoint                   | Method | Description                       |
+| -------------------------- | ------ | --------------------------------- |
+| `/api/v1/settings/network` | GET    | Retrieve current network settings |
+| `/api/v1/settings/network` | POST   | Update network settings           |
+
 ---
 
 ## Users
@@ -233,6 +259,8 @@ Configure the default feature access granted when creating new invites:
 
 These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
 
+**Plex Home Access**: When enabled, invited users are added as managed Plex Home users (not just friends). The invitee must accept the Plex Home invite to complete onboarding. If the user is already a Plex Home member, re-inviting will re-provision their access if needed.
+
 {% hint style="info" %}
 **Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
 {% endhint %}
@@ -243,13 +271,25 @@ These defaults pre-fill the corresponding toggles when creating new invites. Ind
 
 ### Enable Trial Period
 
-When enabled, newly signed-up users are placed in a trial period where certain features are restricted (such as creating invites).
+When enabled, newly signed-up users are placed in a trial period. During the trial period:
+
+- Users cannot create invites
+- Other feature restrictions may apply based on permissions
+- Trial users are clearly marked in the user list and on their profile
+
+Admins can manually end a user's trial or extend it from the user settings page. When the trial ends, the user is promoted to full access (subject to their permissions) or deactivated.
+
+If a user's account expires (e.g., due to admin action or policy), their status is shown as **Expired** and they lose access until reactivated.
 
 This setting is **disabled** by default.
 
 ### Trial Period Days
 
-The number of days a new user remains in trial status. Default is 30 days.
+The number of days a new user remains in trial status. Default is 30 days. Admins can adjust this per user or globally.
+
+#### Trial Outcome & Extension Requests
+
+When a trial ends, the user is either promoted to full access or marked as expired, depending on admin policy. If enabled, users can request an extension to their trial or access period from their profile. Admins review and approve/deny these requests in the user management area.
 
 ---
 
@@ -495,17 +535,58 @@ Configure notification agents. See [Notifications](../notifications/README.md) f
 
 ## Jobs & Cache
 
-Streamarr performs maintenance tasks as scheduled jobs. You can also manually trigger them here.
+Streamarr performs maintenance tasks as scheduled jobs. You can also run them on demand, cancel a job that is currently running, and adjust the schedule of interval-based jobs.
 
 ### Scheduled Jobs
 
-| Job                        | Default Schedule | Description                             |
-| -------------------------- | ---------------- | --------------------------------------- |
-| **Plex Full Library Scan** | Daily at 3:00 AM | Full sync of Plex library metadata      |
-| **Plex Token Refresh**     | Daily at 5:00 AM | Refresh admin Plex token                |
-| **Image Cache Cleanup**    | Daily at 5:00 AM | Clean stale cached images               |
-| **Invite & QR Cleanup**    | Daily at 1:00 AM | Mark expired invites and clean QR codes |
-| **Notification Cleanup**   | Daily at 1:30 AM | Clean old notifications                 |
+| Job                          | Default Schedule  | Description                                                                           |
+| ---------------------------- | ----------------- | ------------------------------------------------------------------------------------- |
+| **Plex Full Library Scan**   | Daily at 3:00 AM  | Full sync of Plex library metadata                                                    |
+| **Plex Refresh Token**       | Daily at 5:00 AM  | Refresh admin Plex token                                                              |
+| **Image Cache Cleanup**      | Daily at 5:00 AM  | Clean stale cached images                                                             |
+| **Invite & QR Code Cleanup** | Daily at 1:00 AM  | Mark expired invites and clean QR codes                                               |
+| **Notification Cleanup**     | Daily at 1:30 AM  | Clean old notifications                                                               |
+| **Account Expiry Check**     | Daily at 12:00 AM | Check for expired trials and account access, and process trial outcomes / expirations |
+
+Each job row shows the job name, a type badge, the next scheduled execution time, and the available actions.
+
+{% hint style="info" %}
+The **Account Expiry Check** job underpins the [Trial Period](README.md#trial-period) feature—it evaluates trial end dates and account access windows each day. See [Trial Outcome & Extension Requests](README.md#trial-outcome--extension-requests).
+{% endhint %}
+
+### Job Status
+
+The jobs list updates automatically every few seconds, so the running state stays current without refreshing the page.
+
+- When a job is **running**, an activity indicator appears next to its name.
+- When a job is **idle**, it shows its next scheduled execution time.
+
+### Running a Job
+
+Click **Run Now** next to any job to trigger it immediately.
+
+{% hint style="info" %}
+Manually running a job does **not** alter its schedule—the next automatic run still happens at its normal time.
+{% endhint %}
+
+### Cancelling a Job
+
+While a job is running, the **Run Now** button is replaced by a **Cancel Job** button. Click it to request that the running job stop.
+
+{% hint style="info" %}
+Cancellation asks the job to wind down at the next safe point, so a long-running job may take a moment to fully stop. The list will reflect the idle state once it has stopped.
+{% endhint %}
+
+### Modifying a Job Schedule
+
+For interval-based jobs, click **Modify** to set a custom interval (hours, minutes, and seconds). Jobs with a **fixed** schedule cannot be modified and will not show the Modify option.
+
+### Job Types
+
+| Type        | Badge   | Description                      |
+| ----------- | ------- | -------------------------------- |
+| **Process** | Primary | A background maintenance process |
+| **Command** | Warning | A one-off command-style task     |
 
 ### Cache Management
 
@@ -526,3 +607,14 @@ Streamarr caches requests to external APIs. You can flush individual caches if n
 {% hint style="info" %}
 Calendar event data is held in a separate in-memory cache and is not affected by flushing the Radarr or Sonarr cache here. Calendar data refreshes automatically in the background on every visit.
 {% endhint %}
+
+### API Reference
+
+| Endpoint                              | Method | Description                             |
+| ------------------------------------- | ------ | --------------------------------------- |
+| `/api/v1/settings/jobs`               | GET    | List all jobs and their running status  |
+| `/api/v1/settings/jobs/{id}/run`      | POST   | Run a job immediately                   |
+| `/api/v1/settings/jobs/{id}/cancel`   | POST   | Cancel a currently running job          |
+| `/api/v1/settings/jobs/{id}/schedule` | POST   | Update an interval-based job's schedule |
+| `/api/v1/settings/cache`              | GET    | List API caches and their sizes         |
+| `/api/v1/settings/cache/{id}/flush`   | POST   | Flush a specific cache                  |

@@ -29,7 +29,7 @@ import RecentRequest from '@app/components/Common/Slider/RecentRequest';
 
 const Placeholder = () => {
   return (
-    <div className="relative animate-pulse p-4 rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+    <div className="relative animate-pulse p-4 rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
       <div className="w-24 sm:w-24">
         <div className="w-full" style={{ paddingBottom: '63%' }} />
       </div>
@@ -145,7 +145,7 @@ const UserProfile = () => {
             (user.inviteCountRedeemed > 0 ||
               currentSettings.enableSignUp ||
               user.redeemedInvite?.createdBy) && (
-              <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+              <div className="overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
                 {(currentSettings.enableSignUp ||
                   user.inviteCountRedeemed > 0) && (
                   <div>
@@ -207,7 +207,7 @@ const UserProfile = () => {
               <>
                 {quota.invite.trialPeriodActive &&
                 quota.invite.trialPeriodEnabled ? (
-                  <div className="overflow-hidden rounded-lg bg-yellow-900 bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
+                  <div className="overflow-hidden rounded-lg bg-yellow-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
                     <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
                       <ClockIcon className="size-5 mr-2" />
                       <FormattedMessage
@@ -229,11 +229,63 @@ const UserProfile = () => {
                       </div>
                     </dd>
                   </div>
+                ) : !user.active ? (
+                  <div className="overflow-hidden xl:col-span-2 rounded-lg bg-red-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-red-500 sm:p-6">
+                    <dt className="truncate text-sm font-bold text-red-300 flex items-center">
+                      <FormattedMessage
+                        id="common.accountExpired"
+                        defaultMessage="Account Expired"
+                      />
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold text-red-200">
+                      {user?.id !== currentUser?.id ? (
+                        <FormattedMessage
+                          id="profile.accountExpiredMessageAdmin"
+                          defaultMessage="This user's account has expired. {trialPeriodEnabled, select, true {Extend by setting a new trial period {link}.} other {Enable trial periods again to extend access.}}"
+                          values={{
+                            link: (
+                              <Link
+                                href={`/admin/users/${user.id}/settings`}
+                                className="font-bold underline hover:text-red-300"
+                              >
+                                <FormattedMessage
+                                  id="common.here"
+                                  defaultMessage="here"
+                                />
+                              </Link>
+                            ),
+                            trialPeriodEnabled:
+                              quota.invite.trialPeriodEnabled ?? false,
+                          }}
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="profile.accountExpiredMessage"
+                          defaultMessage="Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
+                          values={{
+                            link: (
+                              <Link
+                                href="/profile/settings"
+                                className="font-bold underline hover:text-red-300"
+                              >
+                                <FormattedMessage
+                                  id="common.here"
+                                  defaultMessage="here"
+                                />
+                              </Link>
+                            ),
+                            trialPeriodEnabled:
+                              quota.invite.trialPeriodEnabled ?? false,
+                          }}
+                        />
+                      )}
+                    </dd>
+                  </div>
                 ) : (
                   <div
-                    className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                    className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
                       quota.invite.restricted &&
-                      'bg-gradient-to-t from-error/60 to-transparent ring-error'
+                      'bg-linear-to-t from-error/60 to-transparent ring-error'
                     } sm:p-6`}
                   >
                     <dt
@@ -321,12 +373,14 @@ const UserProfile = () => {
               <Placeholder />
             )
           ) : null}
-          {currentSettings.seerrEnabled && !seerrUserQuotaError ? (
+          {user.active &&
+          currentSettings.seerrEnabled &&
+          !seerrUserQuotaError ? (
             seerrUserQuota ? (
               <div
-                className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
                   anyRestricted &&
-                  'bg-gradient-to-t from-error/60 to-transparent ring-error'
+                  'bg-linear-to-t from-error/60 to-transparent ring-error'
                 } sm:p-6 grid grid-cols-2 gap-x-4`}
               >
                 <div className="text-sm font-bold col-span-2">
@@ -562,7 +616,7 @@ const UserProfile = () => {
             <div className="flex my-4 relative">
               <Link
                 className="flex items-center gap-2 link-primary"
-                href="/stats/history"
+                href="/activity/history"
               >
                 <span className="text-2xl font-bold">
                   <FormattedMessage

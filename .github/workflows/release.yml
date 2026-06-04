@@ -38,7 +38,9 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+        run: pnpm install --frozen-lockfile
       - name: Release
         id: semantic
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0

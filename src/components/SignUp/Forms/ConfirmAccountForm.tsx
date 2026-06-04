@@ -32,6 +32,13 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Tabs from '@app/components/Common/Tabs';
 import Toggle from '@app/components/Common/Toggle';
 
+type SignupNotificationTab = {
+  id: string;
+  title: string;
+  content: React.ReactNode;
+  hidden?: boolean;
+};
+
 const ConfirmAccountForm = ({
   onComplete,
   user,
@@ -202,8 +209,26 @@ const ConfirmAccountForm = ({
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
+        discordId: notificationsData?.discordId ?? '',
+        discordTypes:
+          notificationsData?.notificationTypes?.discord ?? ALL_NOTIFICATIONS,
         emailTypes:
           notificationsData?.notificationTypes?.email ?? ALL_NOTIFICATIONS,
+        pushbulletAccessToken: notificationsData?.pushbulletAccessToken ?? '',
+        pushbulletTypes:
+          notificationsData?.notificationTypes?.pushbullet ?? ALL_NOTIFICATIONS,
+        pushoverApplicationToken:
+          notificationsData?.pushoverApplicationToken ?? '',
+        pushoverUserKey: notificationsData?.pushoverUserKey ?? '',
+        pushoverSound: notificationsData?.pushoverSound ?? '',
+        pushoverTypes:
+          notificationsData?.notificationTypes?.pushover ?? ALL_NOTIFICATIONS,
+        telegramChatId: notificationsData?.telegramChatId ?? '',
+        telegramMessageThreadId:
+          notificationsData?.telegramMessageThreadId ?? '',
+        telegramSendSilently: notificationsData?.telegramSendSilently ?? false,
+        telegramTypes:
+          notificationsData?.notificationTypes?.telegram ?? ALL_NOTIFICATIONS,
         webpushTypes:
           notificationsData?.notificationTypes?.webpush ?? ALL_NOTIFICATIONS,
         inAppTypes:
@@ -233,8 +258,20 @@ const ConfirmAccountForm = ({
             });
           }
           await axios.post(`/api/v1/user/${user.id}/settings/notifications`, {
+            discordId: values.discordId,
+            pushbulletAccessToken: values.pushbulletAccessToken,
+            pushoverApplicationToken: values.pushoverApplicationToken,
+            pushoverUserKey: values.pushoverUserKey,
+            pushoverSound: values.pushoverSound,
+            telegramChatId: values.telegramChatId,
+            telegramMessageThreadId: values.telegramMessageThreadId,
+            telegramSendSilently: values.telegramSendSilently,
             notificationTypes: {
+              discord: values.discordTypes,
               email: values.emailTypes,
+              pushbullet: values.pushbulletTypes,
+              pushover: values.pushoverTypes,
+              telegram: values.telegramTypes,
               webpush: values.webpushTypes,
               inApp: values.inAppTypes,
             },
@@ -411,7 +448,7 @@ const ConfirmAccountForm = ({
                     </span>
                   </Badge>
                 </div>
-                <div className="text-xs text-gray-400 !ml-0">
+                <div className="text-xs text-gray-400 ml-0!">
                   <FormattedMessage
                     id="signUp.autoPinLibrariesHelp"
                     defaultMessage="Automatically pin shared libraries to your Plex home screen"
@@ -526,14 +563,15 @@ const ConfirmAccountForm = ({
                   defaultMessage="Notification Settings"
                 />
               </h3>
-              <Tabs
-                tabs={[
+              {(() => {
+                const signupNotificationTabs: SignupNotificationTab[] = [
                   {
                     id: 'email-notifications',
                     title: intl.formatMessage({
                       id: 'common.email',
                       defaultMessage: 'Email',
                     }),
+                    hidden: !notificationsData?.emailEnabled,
                     content: (
                       <div className="max-w-6xl space-y-2">
                         <NotificationTypeSelector
@@ -559,6 +597,7 @@ const ConfirmAccountForm = ({
                       id: 'common.webPush',
                       defaultMessage: 'Web Push',
                     }),
+                    hidden: !notificationsData?.webPushEnabled,
                     content: (
                       <div className="max-w-6xl space-y-2">
                         <div className="flex col-span-3 mt-4 mb-4">
@@ -615,6 +654,7 @@ const ConfirmAccountForm = ({
                       id: 'common.inApp',
                       defaultMessage: 'In-App',
                     }),
+                    hidden: !notificationsData?.inAppEnabled,
                     content: (
                       <div className="max-w-6xl space-y-2">
                         <NotificationTypeSelector
@@ -634,8 +674,270 @@ const ConfirmAccountForm = ({
                       </div>
                     ),
                   },
-                ]}
-              />
+                  {
+                    id: 'discord-notifications',
+                    title: intl.formatMessage({
+                      id: 'notifications.providers.discord',
+                      defaultMessage: 'Discord',
+                    }),
+                    hidden: !notificationsData?.discordEnabled,
+                    content: (
+                      <div className="max-w-6xl space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label htmlFor="discordId" className="col-span-1">
+                            <FormattedMessage
+                              id="userSettings.notifications.discordId"
+                              defaultMessage="Discord User ID"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <Field
+                              id="discordId"
+                              name="discordId"
+                              type="text"
+                              className="input input-primary input-sm w-full"
+                            />
+                          </div>
+                        </div>
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.discordTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('discordTypes', newTypes);
+                            setFieldTouched('discordTypes');
+                          }}
+                          error={
+                            errors.discordTypes && touched.discordTypes
+                              ? (errors.discordTypes as string)
+                              : undefined
+                          }
+                          agent="discord"
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'pushbullet-notifications',
+                    title: intl.formatMessage({
+                      id: 'notifications.providers.pushbullet',
+                      defaultMessage: 'Pushbullet',
+                    }),
+                    hidden: !notificationsData?.pushbulletEnabled,
+                    content: (
+                      <div className="max-w-6xl space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="pushbulletAccessToken"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.pushbulletAccessToken"
+                              defaultMessage="Access Token"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <SensitiveInput
+                              as="field"
+                              id="pushbulletAccessToken"
+                              buttonSize="sm"
+                              name="pushbulletAccessToken"
+                              className="input input-sm input-primary w-full"
+                            />
+                          </div>
+                        </div>
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.pushbulletTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('pushbulletTypes', newTypes);
+                            setFieldTouched('pushbulletTypes');
+                          }}
+                          error={
+                            errors.pushbulletTypes && touched.pushbulletTypes
+                              ? (errors.pushbulletTypes as string)
+                              : undefined
+                          }
+                          agent="pushbullet"
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'pushover-notifications',
+                    title: intl.formatMessage({
+                      id: 'notifications.providers.pushover',
+                      defaultMessage: 'Pushover',
+                    }),
+                    hidden: !notificationsData?.pushoverEnabled,
+                    content: (
+                      <div className="max-w-6xl space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="pushoverApplicationToken"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.pushoverApplicationToken"
+                              defaultMessage="Application API Token"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <SensitiveInput
+                              as="field"
+                              id="pushoverApplicationToken"
+                              buttonSize="sm"
+                              name="pushoverApplicationToken"
+                              className="input input-sm input-primary w-full"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="pushoverUserKey"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.pushoverUserKey"
+                              defaultMessage="User Key"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <SensitiveInput
+                              as="field"
+                              id="pushoverUserKey"
+                              buttonSize="sm"
+                              name="pushoverUserKey"
+                              className="input input-sm input-primary w-full"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label htmlFor="pushoverSound" className="col-span-1">
+                            <FormattedMessage
+                              id="userSettings.notifications.pushoverSound"
+                              defaultMessage="Sound"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <Field
+                              id="pushoverSound"
+                              name="pushoverSound"
+                              type="text"
+                              className="input input-primary input-sm w-full"
+                            />
+                          </div>
+                        </div>
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.pushoverTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('pushoverTypes', newTypes);
+                            setFieldTouched('pushoverTypes');
+                          }}
+                          error={
+                            errors.pushoverTypes && touched.pushoverTypes
+                              ? (errors.pushoverTypes as string)
+                              : undefined
+                          }
+                          agent="pushover"
+                        />
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'telegram-notifications',
+                    title: intl.formatMessage({
+                      id: 'notifications.providers.telegram',
+                      defaultMessage: 'Telegram',
+                    }),
+                    hidden: !notificationsData?.telegramEnabled,
+                    content: (
+                      <div className="max-w-6xl space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="telegramChatId"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.telegramChatId"
+                              defaultMessage="Chat ID"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <Field
+                              id="telegramChatId"
+                              name="telegramChatId"
+                              type="text"
+                              className="input input-primary input-sm w-full"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="telegramMessageThreadId"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.telegramMessageThreadId"
+                              defaultMessage="Message Thread ID"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <Field
+                              id="telegramMessageThreadId"
+                              name="telegramMessageThreadId"
+                              type="text"
+                              className="input input-primary input-sm w-full"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                          <label
+                            htmlFor="telegramSendSilently"
+                            className="col-span-1"
+                          >
+                            <FormattedMessage
+                              id="userSettings.notifications.telegramSendSilently"
+                              defaultMessage="Send Silently"
+                            />
+                          </label>
+                          <div className="col-span-2">
+                            <Field
+                              id="telegramSendSilently"
+                              name="telegramSendSilently"
+                              type="checkbox"
+                              className="checkbox checkbox-sm checkbox-primary rounded-md"
+                            />
+                          </div>
+                        </div>
+                        <NotificationTypeSelector
+                          user={user}
+                          currentTypes={values.telegramTypes}
+                          onUpdate={(newTypes) => {
+                            setFieldValue('telegramTypes', newTypes);
+                            setFieldTouched('telegramTypes');
+                          }}
+                          error={
+                            errors.telegramTypes && touched.telegramTypes
+                              ? (errors.telegramTypes as string)
+                              : undefined
+                          }
+                          agent="telegram"
+                        />
+                      </div>
+                    ),
+                  },
+                ];
+                const visibleSignupNotificationTabs = signupNotificationTabs
+                  .filter((tab) => !tab.hidden)
+                  .map((tab) => ({
+                    id: tab.id,
+                    title: tab.title,
+                    content: tab.content,
+                  }));
+
+                return <Tabs tabs={visibleSignupNotificationTabs} />;
+              })()}
             </div>
           </div>
           <Button

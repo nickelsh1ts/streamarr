@@ -27,7 +27,7 @@ applyTo: 'src/**'
 ## Styling
 
 - Tailwind CSS only — no inline styles or CSS modules
-- Use `tailwindcss/nesting` for complex selectors in CSS files
+- Tailwind CSS v4 supports native CSS nesting for complex selectors in CSS files
 - Tailwind classes are auto-sorted by Prettier plugin
 
 ## Imports

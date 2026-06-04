@@ -96,6 +96,12 @@ interface UsersResponse {
   };
 }
 
+export interface DeprovisionResult {
+  shareRevoked: boolean;
+  friendRevoked: boolean;
+  homeRevoked: boolean;
+}
+
 interface WatchlistResponse {
   MediaContainer: { totalSize: number; Metadata?: { ratingKey: string }[] };
 }
@@ -262,6 +268,77 @@ class PlexTvAPI extends ExternalAPI {
       ignoreAttrs: false,
     })) as UsersResponse;
     return parsedXml;
+  }
+
+  public async deprovisionUser(
+    userId: number,
+    machineId: string
+  ): Promise<DeprovisionResult> {
+    const result: DeprovisionResult = {
+      shareRevoked: false,
+      friendRevoked: false,
+      homeRevoked: false,
+    };
+
+    const safeUserId = Math.trunc(Number(userId));
+    if (!Number.isFinite(safeUserId) || safeUserId <= 0) {
+      throw new Error('Invalid userId: must be a positive integer.');
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(machineId)) {
+      throw new Error('Invalid machineId: must be alphanumeric.');
+    }
+
+    const usersResponse = await this.getUsers();
+    const usersRaw = usersResponse.MediaContainer.User;
+    const users = Array.isArray(usersRaw)
+      ? usersRaw
+      : usersRaw
+        ? [usersRaw]
+        : [];
+    const targetUser = users.find((u) => parseInt(u.$.id, 10) === safeUserId);
+
+    if (!targetUser) {
+      throw new Error('User not found in Plex shared users list.');
+    }
+
+    const serversRaw = targetUser.Server;
+    const servers = Array.isArray(serversRaw)
+      ? serversRaw
+      : serversRaw
+        ? [serversRaw]
+        : [];
+    const sharedServer = servers.find(
+      (server) => server.$.machineIdentifier === machineId
+    );
+
+    if (sharedServer?.$.id) {
+      await this.axios.delete(
+        `/api/servers/${machineId}/shared_servers/${sharedServer.$.id}`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        }
+      );
+      result.shareRevoked = true;
+    }
+
+    // Best-effort cleanup. These endpoints may not be available in all Plex setups.
+    try {
+      await this.axios.delete(`/api/v2/friends/${safeUserId}`);
+      result.friendRevoked = true;
+    } catch {
+      // no-op
+    }
+
+    try {
+      await this.axios.delete(`/api/home/users/${safeUserId}`);
+      result.homeRevoked = true;
+    } catch {
+      // no-op
+    }
+
+    return result;
   }
 
   public async pingToken() {

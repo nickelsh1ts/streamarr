@@ -4,17 +4,20 @@ import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as Yup from 'yup';
 import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
+import type { UserHookResponse } from '@app/hooks/useUser';
 
 interface LocalLoginProps {
-  revalidate: () => void;
+  revalidate: UserHookResponse['revalidate'];
 }
 
 const LocalLogin = ({ revalidate }: LocalLoginProps) => {
   const settings = useSettings();
+  const router = useRouter();
   const [loginError, setLoginError] = useState<string | null>(null);
   const intl = useIntl();
 
@@ -57,10 +60,16 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
       onSubmit={async (values) => {
         setLoginError(null);
         try {
-          await axios.post('/api/v1/auth/local', {
-            email: values.email.trim(),
-            password: values.password,
-          });
+          const { data: authenticatedUser } = await axios.post(
+            '/api/v1/auth/local',
+            {
+              email: values.email.trim(),
+              password: values.password,
+            }
+          );
+          revalidate(authenticatedUser, false).then(() =>
+            router.push('/watch')
+          );
         } catch {
           setLoginError(
             intl.formatMessage({
@@ -68,8 +77,6 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
               defaultMessage: 'Something went wrong while trying to sign in.',
             })
           );
-        } finally {
-          revalidate();
         }
       }}
     >
@@ -82,7 +89,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
           <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
             <Form className="mt-4">
               <div>
-                <div className="input input-bordered input-primary flex items-center mb-2">
+                <div className="input input-primary flex items-center mb-2 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -112,7 +119,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       {errors.email}
                     </div>
                   )}
-                <div className="input input-bordered input-primary flex items-center pr-0">
+                <div className="input input-primary flex items-center pr-0 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -151,14 +158,14 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     />
                   </div>
                 )}
-                <div className="form-control my-4">
+                <div className="flex flex-col my-4">
                   <label className="flex cursor-pointer place-items-center">
                     <input
                       type="checkbox"
                       defaultChecked
                       className="checkbox checkbox-primary checkbox-xs me-2 rounded-md"
                     />
-                    <span className="label-text">
+                    <span className="text-sm">
                       <FormattedMessage
                         id="signIn.rememberMe"
                         defaultMessage="Remember me"

@@ -11,7 +11,7 @@ The onboarding system consists of two components:
 
 Streamarr provides **two separate onboarding tracks**:
 
-- **User Onboarding** — Welcomes regular users and guides them through the main interface (watching, invites, schedule, etc.)
+- **User Onboarding** — Welcomes regular users and guides them through the main interface (watching, invites, schedule, trial period, account status, etc.)
 - **Admin Onboarding** — Welcomes administrators and guides them through admin-specific features (settings, services, user management)
 
 Each track has its own welcome slides and tutorial steps, and is triggered independently based on the user's role. User onboarding content is fully customizable by administrators, while admin onboarding content is built into the application.
@@ -155,7 +155,7 @@ Streamarr includes default tutorial steps covering:
 5. User profile dropdown
 6. Library pinning in user settings
 
-Steps for disabled features (e.g., invites when sign-up is disabled) are automatically hidden.
+Steps for disabled features (e.g., invites when sign-up is disabled, trial period not enabled, or user is not in trial/expired state) are automatically hidden.
 
 ---
 

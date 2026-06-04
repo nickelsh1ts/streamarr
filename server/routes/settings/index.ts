@@ -4,7 +4,7 @@ import TautulliAPI from '@server/api/tautulli';
 import GithubAPI from '@server/api/github';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
-import { getRepository } from '@server/datasource';
+import dataSource, { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
 import type {
@@ -34,6 +34,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { appDataPath } from '@server/utils/appDataVolume';
+import { getConfigDiskSpace } from '@server/utils/diskSpace';
 import { getAppVersion } from '@server/utils/appVersion';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -41,6 +42,8 @@ import QRCodeProxy from '@server/lib/qrcodeproxy';
 import path from 'path';
 import fs from 'fs';
 import { promises as fsPromises } from 'fs';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
 import { rescheduleJob } from 'node-schedule';
 import semver from 'semver';
@@ -53,7 +56,7 @@ import logoSettingsRoutes from './logos';
 import downloadsRoutes from './downloads';
 import onboardingRoutes from './onboarding';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
-import { arrAuthLimiter } from '@server/lib/rateLimiters';
+import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
 
 const settingsRoutes = Router();
 
@@ -74,6 +77,8 @@ const filteredMainSettings = (
 
   return main;
 };
+
+const execFileAsync = promisify(execFile);
 
 settingsRoutes.get('/main', (req, res, next) => {
   const settings = getSettings();
@@ -851,20 +856,35 @@ settingsRoutes.get(
 );
 
 settingsRoutes.get('/jobs', (_req, res) => {
+  const settings = getSettings();
   res.status(200).json(
-    scheduledJobs.map((job) => ({
-      id: job.id,
-      name: job.name,
-      type: job.type,
-      interval: job.interval,
-      cronSchedule: job.cronSchedule,
-      nextExecutionTime: job.job.nextInvocation(),
-      running: job.running ? job.running() : false,
-    }))
+    scheduledJobs
+      .filter((job) => {
+        // Hide trial expiry job if trial periods are disabled
+        if (job.id === 'trial-expiry' && !settings.main.enableTrialPeriod) {
+          return false;
+        }
+        return true;
+      })
+      .map((job) => ({
+        id: job.id,
+        name: job.name,
+        type: job.type,
+        interval: job.interval,
+        cronSchedule: job.cronSchedule,
+        nextExecutionTime: job.job.nextInvocation(),
+        running: job.running ? job.running() : false,
+      }))
   );
 });
 
 settingsRoutes.post<{ jobId: string }>('/jobs/:jobId/run', (req, res, next) => {
+  const settings = getSettings();
+  // Prevent running trial expiry job if trial periods are disabled
+  if (req.params.jobId === 'trial-expiry' && !settings.main.enableTrialPeriod) {
+    return next({ status: 404, message: 'Job not found.' });
+  }
+
   const scheduledJob = scheduledJobs.find((job) => job.id === req.params.jobId);
 
   if (!scheduledJob) {
@@ -887,6 +907,15 @@ settingsRoutes.post<{ jobId: string }>('/jobs/:jobId/run', (req, res, next) => {
 settingsRoutes.post<{ jobId: JobId }>(
   '/jobs/:jobId/cancel',
   (req, res, next) => {
+    const settings = getSettings();
+    // Prevent canceling trial expiry job if trial periods are disabled
+    if (
+      req.params.jobId === 'trial-expiry' &&
+      !settings.main.enableTrialPeriod
+    ) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
     const scheduledJob = scheduledJobs.find(
       (job) => job.id === req.params.jobId
     );
@@ -914,6 +943,15 @@ settingsRoutes.post<{ jobId: JobId }>(
 settingsRoutes.post<{ jobId: JobId }>(
   '/jobs/:jobId/schedule',
   (req, res, next) => {
+    const settings = getSettings();
+    // Prevent scheduling trial expiry job if trial periods are disabled
+    if (
+      req.params.jobId === 'trial-expiry' &&
+      !settings.main.enableTrialPeriod
+    ) {
+      return next({ status: 404, message: 'Job not found.' });
+    }
+
     const scheduledJob = scheduledJobs.find(
       (job) => job.id === req.params.jobId
     );
@@ -923,7 +961,6 @@ settingsRoutes.post<{ jobId: JobId }>(
     }
 
     const result = rescheduleJob(scheduledJob.job, req.body.schedule);
-    const settings = getSettings();
 
     if (result) {
       settings.jobs[scheduledJob.id].schedule = req.body.schedule;
@@ -1015,19 +1052,77 @@ settingsRoutes.post(
   }
 );
 
-settingsRoutes.get('/about', async (req, res) => {
+settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
   const inviteRepository = getRepository(Invite);
   const userRepository = getRepository(User);
+  const configPath = appDataPath();
 
-  const totalInvites = await inviteRepository.count();
-  const totalUsers = await userRepository.count();
+  const [totalInvites, totalUsers, diskSpace] = await Promise.all([
+    inviteRepository.count(),
+    userRepository.count(),
+    getConfigDiskSpace(configPath),
+  ]);
+
+  const dbTypeRaw = dataSource.options.type;
+  let dbVersion = 'unknown';
+  try {
+    if (dbTypeRaw === 'sqlite' || dbTypeRaw === 'better-sqlite3') {
+      const result = await dataSource.query(
+        'SELECT sqlite_version() as version'
+      );
+      dbVersion = result[0]?.version ?? 'unknown';
+    } else if (dbTypeRaw === 'postgres') {
+      const result = await dataSource.query('SELECT version()');
+      const match = String(result[0]?.version ?? '').match(
+        /PostgreSQL ([\d.]+)/
+      );
+      dbVersion = match?.[1] ?? 'unknown';
+    }
+  } catch (e) {
+    logger.warn('Failed to query database version', {
+      label: 'Settings',
+      errorMessage: e instanceof Error ? e.message : 'Unknown error',
+    });
+  }
+
+  const dbDisplayType =
+    dbTypeRaw === 'sqlite' || dbTypeRaw === 'better-sqlite3'
+      ? 'SQLite'
+      : dbTypeRaw === 'postgres'
+        ? 'PostgreSQL'
+        : dbTypeRaw;
+
+  let pythonVersion = 'unknown';
+  try {
+    const venvPython = path.join(process.cwd(), 'venv/bin/python');
+    const pythonExe = fs.existsSync(venvPython) ? venvPython : 'python3';
+    const { stdout } = await execFileAsync(
+      pythonExe,
+      [
+        '-c',
+        'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")',
+      ],
+      { encoding: 'utf-8', timeout: 5000 }
+    );
+    pythonVersion = stdout.trim();
+  } catch (e) {
+    logger.warn('Failed to query Python version', {
+      label: 'Settings',
+      errorMessage: e instanceof Error ? e.message : 'Unknown error',
+    });
+  }
 
   res.status(200).json({
     version: getAppVersion(),
     totalInvites,
     totalUsers,
     tz: process.env.TZ,
-    appDataPath: appDataPath(),
+    uptime: process.uptime(),
+    nodeVersion: process.version.replace(/^v/, ''),
+    pythonVersion,
+    appDataPath: configPath,
+    database: { type: dbDisplayType, version: dbVersion },
+    diskSpace,
   } as SettingsAboutResponse);
 });
 

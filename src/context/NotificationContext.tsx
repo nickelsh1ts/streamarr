@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useEffect, useRef } from 'react';
+import { createContext, useCallback, useEffect, useRef } from 'react';
 import { socket } from '@app/utils/webSocket';
 import type { NotificationType } from '@server/constants/notification';
 import type { NotificationSeverity } from '@server/constants/notification';
@@ -31,10 +31,10 @@ export const NotificationContext = createContext<NotificationContextProps>({
 const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
   const listenersRef = useRef(new Set<NotificationCallback>());
 
-  const subscribe = (callback: NotificationCallback) => {
+  const subscribe = useCallback((callback: NotificationCallback) => {
     listenersRef.current.add(callback);
     return () => listenersRef.current.delete(callback);
-  };
+  }, []);
 
   useEffect(() => {
     const handleNewNotification = (notification: SocketNotificationPayload) => {

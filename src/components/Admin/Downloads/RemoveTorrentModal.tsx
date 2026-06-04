@@ -68,7 +68,7 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
             values={{ count: torrentCount }}
           />
         </p>
-        <div className="form-control">
+        <div className="flex flex-col">
           <label
             htmlFor="permanently"
             className="label cursor-pointer justify-start gap-3"
@@ -81,7 +81,7 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
               onChange={(e) => setDeleteFiles(e.target.checked)}
               disabled={isProcessing}
             />
-            <span className="label-text">
+            <span className="text-sm">
               <FormattedMessage
                 id="downloads.alsoDeleteFiles"
                 defaultMessage="Also permanently delete the files"

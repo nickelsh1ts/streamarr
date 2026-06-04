@@ -20,3 +20,17 @@ export const avatarLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const settingsAboutLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit expensive settings/about introspection per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const trialExtensionRequestLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+});

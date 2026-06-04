@@ -25,7 +25,7 @@ jobs:
   i18n:
     name: i18n Check
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
@@ -42,7 +42,9 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+        run: pnpm install --frozen-lockfile
       - name: i18n Check
         shell: bash
         env:
@@ -73,7 +75,7 @@ jobs:
     name: Prepare & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    container: node:25-alpine
+    container: node:26-alpine
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -82,9 +84,11 @@ jobs:
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+        run: pnpm install --frozen-lockfile
       - name: Prepare
-        run: pnpm format && pnpm lint && pnpm typecheck
+        run: pnpm check
       - name: Build
         run: pnpm build
 

@@ -239,7 +239,7 @@ const DeviceTabs = () => {
 
   return (
     <div className="grid">
-      <div className="tabs tabs-boxed flex flex-wrap place-content-evenly rounded-none bg-zinc-200 p-0">
+      <div className="tabs tabs-box flex flex-wrap place-content-evenly rounded-none bg-zinc-200 p-0">
         {tabs?.map((tab, i) => {
           return (
             <button
@@ -250,7 +250,7 @@ const DeviceTabs = () => {
               }}
               id={`tab-${i}`}
               role="tab"
-              className={`tab group flex flex-col flex-nowrap flex-grow h-fit py-5 text-black !rounded-none ${activeTab === `tab-${i}` ? 'bg-zinc-100 border-x border-zinc-300' : ''} `}
+              className={`tab group flex flex-col flex-nowrap grow h-fit py-5 text-black rounded-none! ${activeTab === `tab-${i}` ? 'bg-zinc-100 border-x border-zinc-300' : ''} `}
             >
               {tab.icon}
               {tab.link}
@@ -274,7 +274,7 @@ const DeviceTabs = () => {
               key={i}
               className={`flex flex-wrap relative max-w-screen-xl mx-auto px-5 text-white ${activeTab === `tab-${i}` ? 'block' : 'hidden'}`}
             >
-              <div className="container mx-auto max-w-screen-sm md:max-lg:w-1/2 mt-6 px-4 md:flex-grow">
+              <div className="container mx-auto max-w-screen-sm md:max-lg:w-1/2 mt-6 px-4 md:grow">
                 <p className="text-2xl leading-6 text-white uppercase border-s-2 border-primary ps-6 py-2">
                   {tab.heading}
                 </p>

@@ -55,7 +55,7 @@ const Tooltip = ({
               }}
               className={
                 !tooltipConfig?.followCursor
-                  ? `absolute left-1/2 -ml-[7px] ${tooltipConfig?.placement === 'top' || !tooltipConfig ? 'bottom-0 -mb-2' : 'top-0 rotate-180'}`
+                  ? `absolute left-1/2 ml-[-7px] ${tooltipConfig?.placement === 'top' || !tooltipConfig ? 'bottom-0 -mb-2' : 'top-0 rotate-180'}`
                   : ''
               }
             >

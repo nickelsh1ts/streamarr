@@ -60,9 +60,15 @@ const UserDropdown = ({
     (allowSkip || (!tutorialAutostart && welcomeDone));
 
   useEffect(() => {
-    socket.on('newNotification', () => {
+    const handleNewNotification = () => {
       revalidate();
-    });
+    };
+
+    socket.on('newNotification', handleNewNotification);
+
+    return () => {
+      socket.off('newNotification', handleNewNotification);
+    };
   }, [revalidate]);
 
   return (
@@ -111,11 +117,8 @@ const UserDropdown = ({
           />
         </DropDownMenu.Item>
         {userSettings?.tautulliEnabled && userSettings?.tautulliBaseUrl && (
-          <DropDownMenu.Item href="/stats">
-            <FormattedMessage
-              id="userDropdown.watchHistory"
-              defaultMessage="Watch History"
-            />
+          <DropDownMenu.Item href="/activity">
+            <FormattedMessage id="common.activity" defaultMessage="Activity" />
           </DropDownMenu.Item>
         )}
         {currentSettings.enableHelpCentre && (

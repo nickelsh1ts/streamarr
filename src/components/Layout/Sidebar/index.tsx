@@ -50,7 +50,7 @@ const Sidebar = () => {
       <header
         id="sidebar"
         data-tutorial="sidebar-nav"
-        className="w-fit transition duration-500 drawer font-bold z-[1006] max-sm:hidden lg:hidden"
+        className="w-fit transition duration-500 drawer font-bold z-1006 max-sm:hidden lg:hidden"
       >
         <input
           id="my-drawer-3"
@@ -66,7 +66,7 @@ const Sidebar = () => {
           <label
             htmlFor="my-drawer-3"
             aria-label="open sidebar"
-            className="inline-flex h-10 min-h-10 flex-shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:!text-primary cursor-pointer"
+            className="inline-flex h-10 min-h-10 shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:text-primary! cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@ const Sidebar = () => {
             aria-label="close sidebar"
             className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
           />
-          <ul className="menu bg-primary backdrop-blur-md bg-opacity-30 min-h-full w-full max-w-64 p-2 border-r border-primary">
+          <ul className="menu bg-primary/30 backdrop-blur-md min-h-full w-full max-w-64 p-2 border-r border-primary">
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <Image
                 src={logoSrc}
@@ -212,7 +212,7 @@ const Sidebar = () => {
         </div>
       </header>
       {currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && (
-        <div className="fixed top-0 right-0 mt-2 me-2 z-[1000] lg:flex lg:flex-shrink-0 flex-nowrap pointer-events-none">
+        <div className="fixed top-0 right-0 mt-2 me-2 z-1000 lg:flex lg:shrink-0 flex-nowrap pointer-events-none">
           <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
             <DropDownMenu
               title={intl.formatMessage({
@@ -353,7 +353,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
               <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
                 <button
                   onClick={() => handleClick(0)}
-                  className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 gap-0 rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30'}`}
+                  className={`items-center flex-1 flex focus:bg-primary/70! active:bg-primary/20! gap-0 rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30'}`}
                 >
                   <ChevronDownIcon className="size-5" />
                 </button>
@@ -367,7 +367,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             }) &&
               userSettings?.requestUrl && (
                 <>
-                  <div className="flex">
+                  <div className="flex mb-1">
                     <SingleItem
                       className="flex-1"
                       linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
@@ -399,7 +399,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                     >
                       <button
                         onClick={() => handleClick(1)}
-                        className={`items-center flex-1 flex focus:!bg-primary/70 active:!bg-primary/20 rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                        className={`items-center flex-1 flex focus:bg-primary/70! active:bg-primary/20! rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
                       >
                         <ChevronDownIcon className="size-5" />
                       </button>
@@ -513,7 +513,7 @@ export const RequestMenu = ({
     },
   ];
   return (
-    <ul className="menu m-0 p-0 space-y-1 mt-1">
+    <ul className="menu m-0 p-0 space-y-1 my-1 w-full">
       {RequestLinks.map((link) => {
         return (
           <SingleItem

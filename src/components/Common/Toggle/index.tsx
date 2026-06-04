@@ -28,7 +28,7 @@ const Toggle = ({ id, valueOf, onClick, title, ariaLabel }: ToggleProps) => {
         }}
         className={`${
           valueOf ? 'bg-primary' : 'bg-neutral'
-        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+        } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
       >
         <span
           aria-hidden="true"

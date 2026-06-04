@@ -1,18 +1,19 @@
 'use client';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import LoadingEllipsis, {
+  SmallLoadingEllipsis,
+} from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import Table from '@app/components/Common/Table';
 import Toast from '@app/components/Toast';
 import { formatBytes } from '@app/utils/numberHelper';
+import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
-  PencilIcon,
+  CheckBadgeIcon,
+  XCircleIcon,
   StopIcon,
-  PlayIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
+} from '@heroicons/react/24/solid';
 import type {
   CacheResponse,
   CacheItem,
@@ -381,7 +382,7 @@ const JobsCacheSettings = () => {
             {data?.map((job) => (
               <tr key={`job-list-${job.id}`}>
                 <Table.TD>
-                  <div className="flex items-center text-sm leading-5">
+                  <div className="flex items-center text-sm leading-5 gap-2">
                     <span>
                       {job.name ??
                         intl.formatMessage({
@@ -389,7 +390,7 @@ const JobsCacheSettings = () => {
                           defaultMessage: 'Unknown Job',
                         })}
                     </span>
-                    {job.running && <LoadingEllipsis />}
+                    {job.running && <SmallLoadingEllipsis text="" />}
                   </div>
                 </Table.TD>
                 <Table.TD>
@@ -415,7 +416,7 @@ const JobsCacheSettings = () => {
                     {moment(job.nextExecutionTime).from(now)}
                   </div>
                 </Table.TD>
-                <Table.TD alignText="right" className="space-y-2">
+                <Table.TD alignText="right" className="max-sm:space-y-2">
                   {job.interval !== 'fixed' && (
                     <Button
                       type="button"
@@ -436,6 +437,7 @@ const JobsCacheSettings = () => {
                       type="button"
                       buttonSize="sm"
                       buttonType="error"
+                      className="whitespace-nowrap max-sm:btn-block"
                       onClick={() => cancelJob(job)}
                     >
                       <StopIcon className="size-5 mr-2" />

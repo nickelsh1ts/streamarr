@@ -9,8 +9,9 @@ import { NotificationType } from '@server/constants/notification';
 import { User } from '@server/entity/User';
 import logger from '@server/logger';
 import notificationManager, {
-  hasNotificationType,
+  userAcceptsNotificationType,
 } from '@server/lib/notifications';
+import { NotificationDeliveryScope } from '@server/lib/notifications/agents/agent';
 
 const notificationRoutes = Router();
 
@@ -114,7 +115,7 @@ interface NotificationCreationResult {
 
 notificationRoutes.post<
   Record<string, string>,
-  NotificationCreationResult | NotificationCreationResult[],
+  NotificationCreationResult[],
   {
     type: NotificationType;
     severity: NotificationSeverity;
@@ -160,24 +161,9 @@ notificationRoutes.post<
     }
 
     // Filter users who have at least one notification type enabled
-    const eligibleUsers = users.filter((user) => {
-      const settings = user.settings;
-      return (
-        !settings ||
-        hasNotificationType(
-          req.body.type,
-          settings.notificationTypes?.inApp ?? 0
-        ) ||
-        hasNotificationType(
-          req.body.type,
-          settings.notificationTypes?.email ?? 0
-        ) ||
-        hasNotificationType(
-          req.body.type,
-          settings.notificationTypes?.webpush ?? 0
-        )
-      );
-    });
+    const eligibleUsers = users.filter((user) =>
+      userAcceptsNotificationType(user, req.body.type)
+    );
 
     if (eligibleUsers.length === 0) {
       logger.debug('All selected users have disabled this notification type', {
@@ -195,7 +181,6 @@ notificationRoutes.post<
       eligibleUsers.map(async (user) => {
         try {
           const payload = {
-            notificationType: NotificationType[req.body.type],
             type: req.body.type,
             severity: req.body.severity,
             subject: req.body.subject,
@@ -209,7 +194,30 @@ notificationRoutes.post<
             notifyAdmin: false,
           };
 
-          notificationManager.sendNotification(req.body.type, payload);
+          const delivered = await notificationManager.sendNotification(
+            req.body.type,
+            payload,
+            NotificationDeliveryScope.Individual
+          );
+
+          if (!delivered) {
+            logger.error(
+              'Notification delivery failed for one or more agents',
+              {
+                label: 'Notifications',
+                recipient: user.displayName,
+                type: NotificationType[req.body.type],
+                subject: req.body.subject,
+              }
+            );
+            createdNotifications.push({
+              success: false,
+              userId: user.id,
+              error: 'Failed to deliver notification via one or more agents.',
+            });
+            return;
+          }
+
           createdNotifications.push({ success: true, userId: user.id });
         } catch (e) {
           logger.error('Error creating notification', {
@@ -248,7 +256,7 @@ notificationRoutes.put<{ id: string }, Notification, Notification>(
 
       if (
         !req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS) &&
-        notification.createdBy.id !== req.user?.id
+        notification.createdBy?.id !== req.user?.id
       ) {
         return next({
           status: 403,
@@ -299,7 +307,7 @@ notificationRoutes.delete<{ id: string }>(
 
       if (
         !req.user?.hasPermission(Permission.MANAGE_NOTIFICATIONS) &&
-        notification.createdBy.id !== req.user?.id
+        notification.createdBy?.id !== req.user?.id
       ) {
         return next({
           status: 403,

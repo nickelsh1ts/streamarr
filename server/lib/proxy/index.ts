@@ -1,7 +1,8 @@
-import type { IncomingMessage, Server } from 'http';
+import type { IncomingMessage } from 'http';
 import type { Socket } from 'net';
 import type { Request, RequestHandler, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 
 // Extended request type for session data
@@ -87,13 +88,15 @@ export function createServiceProxy(config: ServiceProxyConfig) {
 }
 
 export function registerWebSocketHandler(
-  httpServer: Server,
+  dispatcher: UpgradeDispatcher,
   sessionMiddleware: RequestHandler,
   wsPath: string,
   proxy: ReturnType<typeof createProxyMiddleware>
 ) {
-  httpServer.on('upgrade', (req: SessionRequest, socket, head) => {
-    if (req.url?.startsWith(wsPath)) {
+  dispatcher.register({
+    name: `proxy:${wsPath}`,
+    match: (url) => url.startsWith(wsPath),
+    handle: (req: SessionRequest, socket, head) => {
       sessionMiddleware(req as unknown as Request, {} as Response, () => {
         if (!req.session?.userId) {
           logger.warn('Unauthenticated WebSocket upgrade attempt', {
@@ -106,6 +109,6 @@ export function registerWebSocketHandler(
         }
         proxy.upgrade(req, socket as Socket, head);
       });
-    }
+    },
   });
 }

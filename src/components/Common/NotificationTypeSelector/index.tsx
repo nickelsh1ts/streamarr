@@ -81,7 +81,7 @@ const NotificationTypeSelector = ({
         }),
         value: Notification.INVITE_REDEEMED,
         hidden:
-          !user ||
+          !!user &&
           !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
             type: 'or',
           }),
@@ -99,7 +99,7 @@ const NotificationTypeSelector = ({
         }),
         value: Notification.INVITE_EXPIRED,
         hidden:
-          !user ||
+          !!user &&
           !hasPermission([Permission.CREATE_INVITES, Permission.STREAMARR], {
             type: 'or',
           }),
@@ -146,7 +146,7 @@ const NotificationTypeSelector = ({
         }),
         value: Notification.NEW_EVENT,
         hidden:
-          !user ||
+          !!user &&
           !hasPermission([Permission.STREAMARR, Permission.VIEW_SCHEDULE], {
             type: 'or',
           }),
@@ -164,10 +164,25 @@ const NotificationTypeSelector = ({
         }),
         value: Notification.NEW_INVITE,
         hidden:
-          !user ||
+          !!user &&
           !hasPermission([Permission.MANAGE_USERS, Permission.MANAGE_INVITES], {
             type: 'or',
           }),
+        hasNotifyUser: true,
+      },
+      {
+        id: 'access-extension-requested',
+        name: intl.formatMessage({
+          id: 'notification.accessExtensionRequested',
+          defaultMessage: 'Access Extension Requested',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.accessExtensionRequested.description',
+          defaultMessage:
+            'Get notified when a user requests an access extension',
+        }),
+        value: Notification.ACCESS_EXTENSION_REQUESTED,
+        hidden: !!user && !hasPermission(Permission.MANAGE_USERS),
         hasNotifyUser: true,
       },
       // {
@@ -209,7 +224,7 @@ const NotificationTypeSelector = ({
           defaultMessage: 'Get notified when a new user is created',
         }),
         value: Notification.USER_CREATED,
-        hidden: !user || !hasPermission(Permission.ADMIN),
+        hidden: !!user && !hasPermission(Permission.ADMIN),
         hasNotifyUser: true,
       },
     ];

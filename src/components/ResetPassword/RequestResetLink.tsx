@@ -63,7 +63,7 @@ const ResetPassword = () => {
             />
           </p>
         </div>
-        <div className="bg-secondary backdrop-blur-md bg-opacity-50 shadow rounded-lg border border-secondary">
+        <div className="bg-secondary/50 backdrop-blur-md shadow rounded-lg border border-secondary">
           <div className="p-4">
             {hasSubmitted ? (
               <>
@@ -137,7 +137,7 @@ const ResetPassword = () => {
                     <Form>
                       <div>
                         <div className="mt-4 mb-2 sm:col-span-2">
-                          <div className="input input-bordered input-primary flex items-center mb-2">
+                          <div className="input input-primary flex items-center mb-2">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"

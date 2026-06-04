@@ -2,54 +2,52 @@
 /* CSS Document */
 @import url(https://theme-park.dev/css/base/overseerr/overseerr-base.css);
 .react-chroma-dark {
-  --color-background-accent: oklch(var(--p));
-  --color-brand-accent: oklch(var(--p));
-  --main-bg-color: #1f1f1f;
-  --modal-bg-color: #1b1b1b;
-  --link-color: #fff;
-  --button-color: oklch(var(--p)) !important;
-  --button-color-hover: oklch(var(--p));
-  --accent-color: oklch(var(--p));
-  --plex-poster-unwatched: #fff;
-  --color-background-accent: oklch(var(--p));
-  --text: #fff;
-  --text-hover: #fff;
-  --drop-down-menu-bg: #1f1f1f;
-  --color-background-accent: oklch(var(--p));
-  --color-background-accent-focus: oklch(var(--p)) ;
-  --bs-primary: oklch(var(--p)) ;
-  --color-text-accent: oklch(var(--p));
-  --color-text-on-accent: #fff;
+  --color-background-accent: inherit;
+  --color-brand-accent: inherit;
+  --main-bg-color: inherit;
+  --modal-bg-color: inherit;
+  --link-color: inherit;
+  --button-color: inherit;
+  --button-color-hover: inherit;
+  --accent-color: inherit;
+  --plex-poster-unwatched: inherit;
+  --text: inherit;
+  --text-hover: inherit;
+  --drop-down-menu-bg: inherit;
+  --color-background-accent-focus: inherit;
+  --bs-primary: inherit;
+  --color-text-accent: inherit;
+  --color-text-on-accent: inherit;
   --zIndex-overlay: 1009;
-  --transparency-light-15: oklch(var(--p));
-  --overseerr-gradient: linear-gradient(180deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
-  --label-text-color: #fff;
-  --tw-ring-color: 7E27D3;
+  --transparency-light-15: inherit;
+  --overseerr-gradient: inherit;
+  --label-text-color: inherit;
+  --tw-ring-color: inherit;
 }
 :root {
-  --color-background-accent: oklch(var(--p));
-  --color-brand-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-brand-accent: var(--color-primary);
   --main-bg-color: #1f1f1f;
   --modal-bg-color: #1b1b1b;
   --link-color: #fff;
-  --button-color: oklch(var(--p));
-  --button-color-hover: oklch(var(--p));
-  --accent-color: oklch(var(--p));
+  --button-color: var(--color-primary);
+  --button-color-hover: var(--color-primary);
+  --accent-color: 127, 17, 224;
   --plex-poster-unwatched: #fff;
-  --color-background-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
   --text: #fff;
   --text-hover: #fff;
   --drop-down-menu-bg: #1f1f1f;
-  --color-background-accent: oklch(var(--p));
-  --color-background-accent-focus: oklch(var(--p)) ;
-  --bs-primary: oklch(var(--p)) ;
-  --color-text-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-background-accent-focus: var(--color-primary) ;
+  --bs-primary: var(--color-primary) ;
+  --color-text-accent: var(--color-primary);
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
   --transparency-light-15: rgba(127, 17, 224, .15);
-  --overseerr-gradient: linear-gradient(180deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
+  --overseerr-gradient: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   --label-text-color: #fff;
-  --tw-ring-color: oklch(var(--p))!important;
+  --tw-ring-color: var(--color-primary)!important;
 }
 /* Desktop Only */
 @media (min-width: 1024px) {

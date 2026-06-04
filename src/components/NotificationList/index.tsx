@@ -90,10 +90,13 @@ const NotificationsList = () => {
     const filterString = window.localStorage.getItem('nl-filter-settings');
 
     if (filterString) {
-      const filterSettings = JSON.parse(filterString);
-
-      setCurrentFilter(filterSettings.currentFilter);
-      setCurrentPageSize(filterSettings.currentPageSize);
+      try {
+        const filterSettings = JSON.parse(filterString);
+        setCurrentFilter(filterSettings.currentFilter);
+        setCurrentPageSize(filterSettings.currentPageSize);
+      } catch {
+        window.localStorage.removeItem('nl-filter-settings');
+      }
     }
 
     // If filter value is provided in query, use that instead
@@ -116,8 +119,10 @@ const NotificationsList = () => {
   const hasNextPage = (data?.pageInfo.pages ?? 0) > pageIndex + 1;
   const hasPrevPage = pageIndex > 0;
 
-  const subtextItems: React.ReactNode[] =
-    user?.id != currentUser?.id ? [user?.displayName] : null;
+  const subtextItems: React.ReactNode[] | null =
+    user?.id !== currentUser?.id && user?.displayName
+      ? [user.displayName]
+      : null;
 
   const deleteNotification = async (notificationId: number, userId: string) => {
     try {
@@ -179,8 +184,8 @@ const NotificationsList = () => {
             defaultMessage="Notifications"
           />
         </Header>
-        <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
-          <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+        <div className="mt-2 flex grow flex-col sm:flex-row lg:grow-0">
+          <div className="mb-2 flex grow sm:mb-0 sm:mr-2 lg:grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
               <FunnelIcon className="h-6 w-6" />
             </span>
@@ -315,7 +320,7 @@ const NotificationsList = () => {
                     values={{
                       start: pageIndex * currentPageSize + 1,
                       end:
-                        (data?.results.length ?? 0 < currentPageSize)
+                        (data?.results.length ?? 0) < currentPageSize
                           ? pageIndex * currentPageSize +
                             (data?.results.length ?? 0)
                           : (pageIndex + 1) * currentPageSize,
@@ -339,7 +344,7 @@ const NotificationsList = () => {
                         setCurrentPageSize(Number(e.target.value));
                       }}
                       value={currentPageSize}
-                      className="select select-sm select-primary mx-1"
+                      className="select select-sm select-primary mx-1 w-auto min-w-16 shrink-0"
                     >
                       <option value="5">5</option>
                       <option value="10">10</option>
