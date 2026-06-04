@@ -10,8 +10,8 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (LTS recommended)
-- [pnpm](https://pnpm.io/) (v10)
+- [Node.js](https://nodejs.org/) **v24 or higher** (required by `engines` in `package.json`; the official Docker images build on Node 26)
+- [pnpm](https://pnpm.io/) **v10** (the repo pins a specific version via the `packageManager` field — enable it with `corepack enable`)
 - [Python 3](https://www.python.org/) (for the Plex invite service)
 - [Git](https://git-scm.com/)
 

@@ -71,6 +71,18 @@ If your administrator has configured a status page (e.g., Uptime Kuma), a link t
 
 See [Uptime Kuma](settings/README.md#uptime-kuma) in Settings for configuration.
 
+### Display Language
+
+Visitors browsing the Help Centre **without being signed in** can change the display language directly from the Help Centre. A language (globe) button appears in the top-right corner of the Help Centre header; clicking it opens a **Display Language** menu for selecting from the available languages.
+
+This lets prospective members read the Help Centre in their preferred language before they have an account.
+
+{% hint style="info" %}
+The language picker in the Help Centre is intended for **unauthenticated visitors**. Once signed in, your display language follows your account's language preference instead.
+{% endhint %}
+
+The list of selectable languages is the same set Streamarr is translated into. See [Translations](../support/translations.md) for how languages are added and how to contribute new ones.
+
 ---
 
 ## Configuration
@@ -125,3 +137,4 @@ See [Onboarding](settings/onboarding.md) for tutorial configuration.
 
 - [Progressive Web App (PWA)](pwa.md) — Install Streamarr on your device
 - [System](settings/system.md) — Server health, version info, and support links
+- [Translations](../support/translations.md) — Supported languages and how to contribute

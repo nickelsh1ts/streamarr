@@ -51,7 +51,7 @@ Dev uses `nodemon` watching `server/**/*.ts` and `streamarr-api.yml`.
 - **Lifecycle hooks**: TypeORM subscribers in `server/subscriber/` (notifications on entity create/update)
 - **Settings**: JSON file via `getSettings()` singleton from `server/lib/settings.ts`
 - **Logging**: Winston logger from `@server/logger` — always include `{ label: 'ComponentName' }`
-- **Notifications**: `notificationManager.sendNotification()` — agents: Local (Socket.IO), Email, WebPush
+- **Notifications**: `notificationManager.sendNotification()` — agents in `server/lib/notifications/agents/`: In-App (Socket.IO), Email, Web Push, Discord, Slack, Telegram, Pushover, Pushbullet, Gotify, ntfy, Webhook
 - **Scheduled jobs**: `server/job/schedule.ts` using `node-schedule`
 - **Error responses**: Use `{ message: string }` (matching the error schema in `streamarr-api.yml`) via `res.status(N).json({ message: '…' })`. Do not invent custom error shapes.
 
@@ -115,7 +115,7 @@ A separate, lightweight migration system for JSON settings (not TypeORM). Files 
 - **Python service (port 5005)**: Internal-only; must not be exposed externally. The Node server communicates with it over `localhost:5005` with no auth token (loopback-only trust). Do not add public-facing routes that proxy directly to port 5005.
 - **Session store**: TypeORM-backed sessions (`Session` entity via `connect-typeorm`). Cleared on server restart in development — expect re-login after restart.
 - **Server-side i18n**: `server/i18n/index.ts` provides translation helpers for notification emails and subscribers. Locale files live at `server/i18n/locale/<lang>.json`. Extract with `pnpm i18n:extract:server`. The build step copies these to `dist/i18n/locale/`.
-- **Docker runtime**: Uses `node:26-alpine`. `engines` in `package.json` requires `node >=22.0.0` and `pnpm ^10.0.0`.
+- **Docker runtime**: Uses `node:26-alpine`. `engines` in `package.json` requires `node >=24.0.0` and `pnpm ^10.0.0`.
 
 ## External Integrations
 
@@ -125,7 +125,7 @@ A separate, lightweight migration system for JSON settings (not TypeORM). Files 
 | Sonarr/Radarr          | `server/api/servarr/`            | Calendar + proxy                  |
 | Lidarr/Prowlarr/Bazarr | Settings-based                   | Proxy only                        |
 | Tdarr                  | `server/lib/proxy/tdarrProxy.ts` | WebSocket proxy                   |
-| Tautulli               | `server/api/tautulli.ts`         | Stats proxy                       |
+| Tautulli               | `server/api/tautulli.ts`         | Activity/stats proxy              |
 | TMDB                   | `server/api/themoviedb/`         | Metadata enrichment               |
 | Download clients       | `server/api/downloads/`          | qBittorrent, Deluge, Transmission |
 
