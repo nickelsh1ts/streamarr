@@ -73,10 +73,10 @@ importers:
         version: 3.14.0
       date-fns:
         specifier: ^4.1.0
-        version: 4.1.0
+        version: 4.3.0
       date-fns-tz:
         specifier: ^3.2.0
-        version: 3.2.0(date-fns@4.1.0)
+        version: 3.2.0(date-fns@4.3.0)
       email-templates:
         specifier: ^13.0.1
         version: 13.0.1(@babel/core@7.29.0)(handlebars@4.7.9)(mustache@4.2.0)(pug@3.0.4)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(underscore@1.13.8)
@@ -166,7 +166,7 @@ importers:
         version: 5.7.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-datepicker:
         specifier: ^9.1.0
-        version: 9.1.0(date-fns-tz@3.2.0(date-fns@4.1.0))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 9.1.0(date-fns-tz@3.2.0(date-fns@4.3.0))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-dom:
         specifier: ^19.2.5
         version: 19.2.6(react@19.2.6)
@@ -4138,8 +4138,8 @@ packages:
     peerDependencies:
       date-fns: ^3.0.0 || ^4.0.0
 
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+  date-fns@4.3.0:
+    resolution: {integrity: sha512-OYcL+3N/jyWbYdFGqoMAhytDgxP9pbYPUUiRCOgn4Fewaadk9l/Wam4Avciiyp2BgkpfQyBV9B+ehnVJych+eQ==}
 
   dayjs@1.11.21:
     resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
@@ -12878,11 +12878,11 @@ snapshots:
 
   date-arithmetic@4.1.0: {}
 
-  date-fns-tz@3.2.0(date-fns@4.1.0):
+  date-fns-tz@3.2.0(date-fns@4.3.0):
     dependencies:
-      date-fns: 4.1.0
+      date-fns: 4.3.0
 
-  date-fns@4.1.0: {}
+  date-fns@4.3.0: {}
 
   dayjs@1.11.21: {}
 
@@ -16696,15 +16696,15 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  react-datepicker@9.1.0(date-fns-tz@3.2.0(date-fns@4.1.0))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-datepicker@9.1.0(date-fns-tz@3.2.0(date-fns@4.3.0))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@floating-ui/react': 0.27.19(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       clsx: 2.1.1
-      date-fns: 4.1.0
+      date-fns: 4.3.0
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
     optionalDependencies:
-      date-fns-tz: 3.2.0(date-fns@4.1.0)
+      date-fns-tz: 3.2.0(date-fns@4.3.0)
 
   react-devtools-core@6.1.5:
     dependencies:
