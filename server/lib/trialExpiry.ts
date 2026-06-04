@@ -9,6 +9,10 @@ import logger from '@server/logger';
 class TrialExpiry {
   private isRunning = false;
 
+  public cancel(): void {
+    this.isRunning = false;
+  }
+
   private async deprovisionExternalAccess(
     user: User,
     adminToken: string,
@@ -25,6 +29,12 @@ class TrialExpiry {
     }
 
     try {
+      if (!this.isRunning) {
+        logger.info('Trial expiry job cancelled.', {
+          label: 'Jobs',
+        });
+        return failures;
+      }
       const plexTvApi = new PlexTvAPI(adminToken);
       await plexTvApi.deprovisionUser(user.plexId, machineId);
     } catch (e) {
@@ -34,6 +44,12 @@ class TrialExpiry {
     const seerrSettings = settings.overseerr;
     if (seerrSettings.enabled && seerrSettings.hostname) {
       try {
+        if (!this.isRunning) {
+          logger.info('Trial expiry job cancelled.', {
+            label: 'Jobs',
+          });
+          return failures;
+        }
         const seerrApi = new SeerrAPI(seerrSettings);
         await seerrApi.revokeAllPermissionsByPlexId(user.plexId);
       } catch (e) {
@@ -116,6 +132,13 @@ class TrialExpiry {
           )
         ) {
           continue;
+        }
+
+        if (!this.isRunning) {
+          logger.info('Trial expiry job cancelled.', {
+            label: 'Jobs',
+          });
+          return;
         }
 
         const outcome =

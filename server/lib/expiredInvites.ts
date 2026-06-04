@@ -8,7 +8,29 @@ import QRCodeProxy from '@server/lib/qrcodeproxy';
 import fs from 'fs/promises';
 
 class ExpiredInvites {
+  private isRunning = false;
+
+  public status(): { running: boolean } {
+    return { running: this.isRunning };
+  }
+
+  public cancel(): void {
+    this.isRunning = false;
+  }
+
   public async run() {
+    if (this.isRunning) {
+      logger.warn(
+        'Expired invites job is already running, skipping duplicate run.',
+        {
+          label: 'Jobs',
+        }
+      );
+      return;
+    }
+
+    this.isRunning = true;
+
     try {
       const inviteRepository = getRepository(Invite);
       const qrProxy = new QRCodeProxy();
@@ -24,6 +46,13 @@ class ExpiredInvites {
       let qrDeletedCount = 0;
 
       for (const invite of expiredInvites) {
+        if (!this.isRunning) {
+          logger.info('Expired invites job cancelled.', {
+            label: 'Jobs',
+          });
+          return;
+        }
+
         invite.status = InviteStatus.EXPIRED;
         await inviteRepository.save(invite);
         updatedCount++;
@@ -53,6 +82,12 @@ class ExpiredInvites {
         });
         const files = await fs.readdir(cacheDir);
         for (const file of files) {
+          if (!this.isRunning) {
+            logger.info('Expired invites job cancelled.', {
+              label: 'Jobs',
+            });
+            return;
+          }
           if (file.endsWith('.png')) {
             const cacheKey = file.replace('.png', '');
             const inviteExists = allInvites.some(
@@ -81,6 +116,8 @@ class ExpiredInvites {
         label: 'Jobs',
         errorMessage: e instanceof Error ? e.message : String(e),
       });
+    } finally {
+      this.isRunning = false;
     }
   }
 }

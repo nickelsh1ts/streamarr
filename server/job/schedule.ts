@@ -53,11 +53,10 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Image Cache Cleanup', {
         label: 'Jobs',
       });
-      // Clean TMDB, Plex, and avatar image caches
-      ImageProxy.clearCache('tmdb');
-      ImageProxy.clearCache('plex');
-      ImageProxy.clearCache('avatar');
+      ImageProxy.clearCache(['tmdb', 'plex', 'avatar']);
     }),
+    running: () => ImageProxy.status().running,
+    cancelFn: () => ImageProxy.cancel(),
   });
 
   scheduledJobs.push({
@@ -72,6 +71,8 @@ export const startJobs = (): void => {
       });
       refreshToken.run();
     }),
+    running: () => refreshToken.status().running,
+    cancelFn: () => refreshToken.cancel(),
   });
 
   // Run expired invites cleanup every 24 hours
@@ -87,6 +88,8 @@ export const startJobs = (): void => {
       });
       expiredInvites.run();
     }),
+    running: () => expiredInvites.status().running,
+    cancelFn: () => expiredInvites.cancel(),
   });
 
   scheduledJobs.push({
@@ -101,6 +104,8 @@ export const startJobs = (): void => {
       });
       cleanUpNotifications.run();
     }),
+    running: () => cleanUpNotifications.status().running,
+    cancelFn: () => cleanUpNotifications.cancel(),
   });
 
   scheduledJobs.push({
@@ -116,6 +121,7 @@ export const startJobs = (): void => {
       trialExpiry.run();
     }),
     running: () => trialExpiry.status().running,
+    cancelFn: () => trialExpiry.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });
