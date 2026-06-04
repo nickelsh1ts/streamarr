@@ -40,6 +40,7 @@ import {
   createServiceProxyRouter,
   getActiveProxyPaths,
 } from '@server/routes/serviceProxy';
+import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import * as OpenApiValidator from 'express-openapi-validator';
 import type { Store } from 'express-session';
 import session from 'express-session';
@@ -49,6 +50,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'http';
+import type { Duplex } from 'stream';
 
 interface SocketRequest extends IncomingMessage {
   session?: ExpressSession & { userId?: number };
@@ -175,25 +177,46 @@ app
         origin: '*',
         methods: ['GET', 'POST'],
       },
+      destroyUpgrade: false,
     });
     io.engine.use(sessionMiddleware);
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
+    const upgradeDispatcher = createUpgradeDispatcher(httpServer);
 
     // Next.js lazily attaches a catch-all `upgrade` listener (via
     // getRequestHandler) that hijacks the /socket.io/ upgrade and corrupts the
     // WebSocket frame ("Invalid frame header"). Mark Next's WS setup as already
-    // done so it never registers its catch-all, then route only /_next/* (HMR)
-    // upgrades to Next ourselves. Must stay after the Socket.IO server is
-    // constructed so engine.io's upgrade listener is registered first.
+    // done so it never registers its catch-all. This relies on NextCustomServer
+    // internals (`didWebSocketSetup`) and must be re-verified on Next.js major
+    // upgrades.
     (app as unknown as { didWebSocketSetup: boolean }).didWebSocketSetup = true;
-    const nextUpgradeHandler = app.getUpgradeHandler();
-    httpServer.on('upgrade', (req, socket, head) => {
-      if (req.url?.startsWith('/_next/')) {
-        nextUpgradeHandler(req, socket, head);
+    if (dev) {
+      const nextUpgradeHandler = (
+        app as unknown as {
+          upgradeHandler?: (
+            req: IncomingMessage,
+            socket: Duplex,
+            head: Buffer
+          ) => void;
+        }
+      ).upgradeHandler;
+
+      if (typeof nextUpgradeHandler === 'function') {
+        upgradeDispatcher.register({
+          name: 'next:hmr',
+          match: (url) => url.startsWith('/_next/'),
+          handle: (req, socket, head) =>
+            nextUpgradeHandler(req, socket as Duplex, head),
+        });
+      } else {
+        logger.warn(
+          'Next.js upgradeHandler unavailable; HMR over WebSocket disabled',
+          { label: 'Server' }
+        );
       }
-    });
+    }
     io.on('connection', async (socket) => {
       const req = socket.request as SocketRequest;
       // Check for valid session and user
@@ -229,7 +252,7 @@ app
     );
     const apiDocs = YAML.load(API_SPEC_PATH);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
-    server.use(createServiceProxyRouter(httpServer, sessionMiddleware));
+    server.use(createServiceProxyRouter(upgradeDispatcher, sessionMiddleware));
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,
