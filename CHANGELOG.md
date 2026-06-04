@@ -1,3 +1,53 @@
+## [1.8.0](https://github.com/nickelsh1ts/streamarr/compare/v1.7.0...v1.8.0) (2026-06-04)
+
+### ✨ Features
+
+* add disk space monitoring and versions in system settings ([#338](https://github.com/nickelsh1ts/streamarr/issues/338)) ([fc4c604](https://github.com/nickelsh1ts/streamarr/commit/fc4c60415c622d470d01703654ffba8a4a562f8f))
+* add trial outcome, user active, access extension, better plex invites ([#341](https://github.com/nickelsh1ts/streamarr/issues/341)) ([7147239](https://github.com/nickelsh1ts/streamarr/commit/7147239838a94a0a203a2af96600e3469acf6b9e))
+* **assets:** cache-bust hand-maintained public stylesheets ([5456132](https://github.com/nickelsh1ts/streamarr/commit/54561326247fe398a1451a9a4c6d5253d8eb7d4b))
+* **i18n:** add LanguagePicker to Help Centre ([#279](https://github.com/nickelsh1ts/streamarr/issues/279)) ([7770d0e](https://github.com/nickelsh1ts/streamarr/commit/7770d0e35f1473d9b8545b3f8cef40c0bf56f53b))
+* **jobs:** enhance job management with running status and cancellation support ([9e130e3](https://github.com/nickelsh1ts/streamarr/commit/9e130e3c9c3bba437aa351fe68ac27116c80ca08))
+* linked accounts settings and improved Plex invite and localAuth ([#329](https://github.com/nickelsh1ts/streamarr/issues/329)) ([1430b6b](https://github.com/nickelsh1ts/streamarr/commit/1430b6b78c8b38457af0a16d33e9521fdcf56800))
+* **linked-accounts:** add linked accounts management ([1f2bf67](https://github.com/nickelsh1ts/streamarr/commit/1f2bf670f7a573bc378547393728f2aac8c08537))
+* **notifications:** extended agent support ([#343](https://github.com/nickelsh1ts/streamarr/issues/343)) ([27852ac](https://github.com/nickelsh1ts/streamarr/commit/27852ac553e208116808429f182e955165c32d49))
+
+### 🐛 Bug Fixes
+
+* adjust tabs for better overflow handling ([#287](https://github.com/nickelsh1ts/streamarr/issues/287)) ([c4a05c8](https://github.com/nickelsh1ts/streamarr/commit/c4a05c895740308ce3acbeaf43394ce94e94c0e9))
+* enhance FAQs animation and improve header intersection ([#286](https://github.com/nickelsh1ts/streamarr/issues/286)) ([e665537](https://github.com/nickelsh1ts/streamarr/commit/e66553751467026dba931b1f331684c54f9c14d0))
+* improve Alert component layout ([#281](https://github.com/nickelsh1ts/streamarr/issues/281)) ([b22b152](https://github.com/nickelsh1ts/streamarr/commit/b22b152b62a4f1d13afd362d3c656fc550c1c0e0))
+* improve condition for displaying progress in RecentlyWatched ([#285](https://github.com/nickelsh1ts/streamarr/issues/285)) ([10203fd](https://github.com/nickelsh1ts/streamarr/commit/10203fd093df4c5da9245b788323b7951cff5aef))
+* improve revalidation on localAuth ([cf69a09](https://github.com/nickelsh1ts/streamarr/commit/cf69a0989b37ffa539a8329c919213bd03b76c25))
+* **onboarding:** prevent onboarding starting on signup prematurely ([#335](https://github.com/nickelsh1ts/streamarr/issues/335)) ([5e980a0](https://github.com/nickelsh1ts/streamarr/commit/5e980a0226dedffbd3d653722eb5cf115ef216c9))
+* **python:** improve plex invite auto-accept with server matching ([9f11f66](https://github.com/nickelsh1ts/streamarr/commit/9f11f669fee86b0e1de92b3cf23d289524ca57ff))
+* reduce excessive logging in service proxy registration ([#282](https://github.com/nickelsh1ts/streamarr/issues/282)) ([b318c74](https://github.com/nickelsh1ts/streamarr/commit/b318c74f3cf7f49ba04f60c1d3a55de604083f53))
+* **theme:** support oklch colors and scope iframe theme injection ([b1b25ef](https://github.com/nickelsh1ts/streamarr/commit/b1b25ef485cecb8f9613c6526714a3c304c97cbe))
+* update BackButton styling to ensure consistency ([#280](https://github.com/nickelsh1ts/streamarr/issues/280)) ([6b870a6](https://github.com/nickelsh1ts/streamarr/commit/6b870a64bb66289f512021e5b6ef5b26aeeef088))
+* **websocket:** upgrade dispatcher & guarded Next.js HMR ([#348](https://github.com/nickelsh1ts/streamarr/issues/348)) ([316402a](https://github.com/nickelsh1ts/streamarr/commit/316402a864263242ff5af8421ec08298713c4530))
+
+### 📚 Documentation
+
+* note iframe theming and stylesheet cache-busting conventions ([4622f3b](https://github.com/nickelsh1ts/streamarr/commit/4622f3b023b0b5068479f940db86c2022782e82f))
+
+### ♻️ Refactoring
+
+* **stats:** rename tautulli stats to activity and rebuild route ([#337](https://github.com/nickelsh1ts/streamarr/issues/337)) ([6161d11](https://github.com/nickelsh1ts/streamarr/commit/6161d11295a231513dd2795d40c9dd06936243b2))
+* **ui:** migrate component classes to daisyui v5 ([e371cb2](https://github.com/nickelsh1ts/streamarr/commit/e371cb2e3830bd88f0009bdd74dbb2ef2b990495))
+
+### 📦 Build System
+
+* **deps:** upgrade to tailwind css v4 and daisyui v5 ([71fa7e5](https://github.com/nickelsh1ts/streamarr/commit/71fa7e5da1425831434250b4bf08687c19958a83))
+* **node:** update node.js runtime to v24 ([#333](https://github.com/nickelsh1ts/streamarr/issues/333)) ([6637453](https://github.com/nickelsh1ts/streamarr/commit/66374531c4bc5fc7268295d4784f79f3dbfa9853))
+
+### 🤖 CI/CD
+
+* **deps-dev:** bump eslint-config-next from 16.2.3 to 16.2.6 ([#224](https://github.com/nickelsh1ts/streamarr/issues/224)) ([4475811](https://github.com/nickelsh1ts/streamarr/commit/44758118a7254d92a03b980e38b31a1816a68fd6))
+* **deps-dev:** bump typescript from 6.0.2 to 6.0.3 ([#225](https://github.com/nickelsh1ts/streamarr/issues/225)) ([b7843df](https://github.com/nickelsh1ts/streamarr/commit/b7843df5a043b48594150a773acb01dce071665f))
+* **deps:** bump @babel/plugin-transform-modules-systemjs ([#238](https://github.com/nickelsh1ts/streamarr/issues/238)) ([e09179f](https://github.com/nickelsh1ts/streamarr/commit/e09179fc5c5ed553f0a5776db56b8e8231d6d7cd))
+* **deps:** bump next in the npm_and_yarn group across 1 directory ([#284](https://github.com/nickelsh1ts/streamarr/issues/284)) ([706e4cf](https://github.com/nickelsh1ts/streamarr/commit/706e4cf42ab881e473516e09679bd04ae092c100))
+* **deps:** bump node from 25-alpine to 26-alpine ([#239](https://github.com/nickelsh1ts/streamarr/issues/239)) ([1a4d486](https://github.com/nickelsh1ts/streamarr/commit/1a4d48677efa205ee81ef97044d54a924437bd74))
+* **deps:** bump systeminformation from 5.31.5 to 5.31.6 ([#288](https://github.com/nickelsh1ts/streamarr/issues/288)) ([f6de0f6](https://github.com/nickelsh1ts/streamarr/commit/f6de0f6d3a7d3d4973c46f00629d4cd31461ca9a))
+
 ## [1.7.0](https://github.com/nickelsh1ts/streamarr/compare/v1.6.0...v1.7.0) (2026-05-12)
 
 ### ✨ Features
