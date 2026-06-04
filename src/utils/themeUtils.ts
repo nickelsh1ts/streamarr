@@ -96,27 +96,49 @@ export const oklchToRgb = (L: number, C: number, hDeg: number) => {
   return { r, g, b: bOut };
 };
 
+export const parseColorToHex = (value: string): string | null => {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  const oklchMatch = trimmed.match(
+    /oklch\(\s*([0-9]*\.?[0-9]+%?)\s+([0-9]*\.?[0-9]+%?)\s+([0-9]*\.?[0-9]+(?:deg)?%?)\s*\)/i
+  );
+  if (oklchMatch) {
+    const Lraw = oklchMatch[1];
+    const Craw = oklchMatch[2];
+    const Hraw = oklchMatch[3];
+    const L = Lraw.endsWith('%') ? parseFloat(Lraw) / 100 : parseFloat(Lraw);
+    const C = Craw.endsWith('%') ? parseFloat(Craw) / 100 : parseFloat(Craw);
+    const H = parseFloat(Hraw.replace(/deg/i, '').replace(/%/g, ''));
+    const rgb = oklchToRgb(L, C, H);
+    return colord({ r: rgb.r, g: rgb.g, b: rgb.b }).toHex();
+  }
+  const c = colord(trimmed);
+  return c.isValid() ? c.toHex() : null;
+};
+
 export const daisyUIMapping: Record<string, string> = {
-  primary: 'p',
-  'primary-content': 'pc',
-  secondary: 's',
-  'secondary-content': 'sc',
-  accent: 'a',
-  'accent-content': 'ac',
-  neutral: 'n',
-  'neutral-content': 'nc',
-  'base-100': 'b1',
-  'base-200': 'b2',
-  'base-300': 'b3',
-  'base-content': 'bc',
-  info: 'in',
-  'info-content': 'inc',
-  success: 'su',
-  'success-content': 'suc',
-  warning: 'wa',
-  'warning-content': 'wac',
-  error: 'er',
-  'error-content': 'erc',
+  primary: '--color-primary',
+  'primary-content': '--color-primary-content',
+  secondary: '--color-secondary',
+  'secondary-content': '--color-secondary-content',
+  accent: '--color-accent',
+  'accent-content': '--color-accent-content',
+  neutral: '--color-neutral',
+  'neutral-content': '--color-neutral-content',
+  'base-100': '--color-base-100',
+  'base-200': '--color-base-200',
+  'base-300': '--color-base-300',
+  'base-content': '--color-base-content',
+  info: '--color-info',
+  'info-content': '--color-info-content',
+  success: '--color-success',
+  'success-content': '--color-success-content',
+  warning: '--color-warning',
+  'warning-content': '--color-warning-content',
+  error: '--color-error',
+  'error-content': '--color-error-content',
 };
 
 export const setIframeTheme = (innerFrame: Window, theme: Theme) => {
@@ -127,18 +149,13 @@ export const setIframeTheme = (innerFrame: Window, theme: Theme) => {
   ) {
     return;
   }
+  innerFrame.document.documentElement.setAttribute('data-theme', 'streamarr');
   Object.entries(theme).forEach(([key, value]) => {
-    const daisyKey = daisyUIMapping[key];
-    if (daisyKey) {
-      const color = colord(value);
-      if (color.isValid()) {
-        const rgb = color.toRgb();
-        const oklch = rgbToOklch(rgb.r, rgb.g, rgb.b);
-        const cssValue = `${oklch.l} ${oklch.c} ${oklch.h}`;
-        innerFrame.document.documentElement.style.setProperty(
-          `--${daisyKey}`,
-          cssValue
-        );
+    const daisyVar = daisyUIMapping[key];
+    if (daisyVar) {
+      const hex = parseColorToHex(value);
+      if (hex) {
+        innerFrame.document.documentElement.style.setProperty(daisyVar, hex);
       }
     }
   });

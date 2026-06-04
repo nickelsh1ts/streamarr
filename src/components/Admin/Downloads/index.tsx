@@ -412,8 +412,8 @@ const AdminDownloads = () => {
               </h1>
             </div>
           </div>
-          <div className="mt-2 flex flex-grow flex-col md:flex-row xl:flex-grow-0">
-            <div className="mb-2 flex flex-grow md:mb-0 md:mr-2 lg:flex-grow-0">
+          <div className="mt-2 flex grow flex-col md:flex-row xl:grow-0">
+            <div className="mb-2 flex grow md:mb-0 md:mr-2 lg:grow-0">
               <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
                 <ArrowDownTrayIcon className="h-6 w-6" />
               </span>
@@ -439,7 +439,7 @@ const AdminDownloads = () => {
                 ))}
               </select>
             </div>
-            <div className="mb-2 flex flex-grow md:mb-0 md:mr-2 lg:flex-grow-0">
+            <div className="mb-2 flex grow md:mb-0 md:mr-2 lg:grow-0">
               <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
                 <FunnelIcon className="h-6 w-6" />
               </span>
@@ -508,7 +508,7 @@ const AdminDownloads = () => {
                 </option>
               </select>
             </div>
-            <div className="mb-2 flex flex-grow gap-2 md:mb-0 md:mr-2">
+            <div className="mb-2 flex grow gap-2 md:mb-0 md:mr-2">
               <div className="flex items-center">
                 <Tooltip
                   content={intl.formatMessage({
@@ -534,7 +534,7 @@ const AdminDownloads = () => {
                 buttonType={isPaused ? 'primary' : 'default'}
                 buttonSize="sm"
                 onClick={() => setIsPaused(!isPaused)}
-                className="max-md:flex-grow"
+                className="max-md:grow"
               >
                 {isPaused ? (
                   <PlayIcon className="size-5" />
@@ -561,7 +561,7 @@ const AdminDownloads = () => {
                 buttonSize="sm"
                 buttonType="primary"
                 onClick={() => setIsAddModalOpen(true)}
-                className="max-md:flex-grow"
+                className="max-md:grow"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
                 <FormattedMessage
@@ -673,7 +673,7 @@ const AdminDownloads = () => {
                             disabled={isRetrying}
                             buttonSize="xs"
                             buttonType="ghost"
-                            className="btn-circle !rounded-full text-warning hover:text-warning-content"
+                            className="btn-circle rounded-full! text-warning hover:text-warning-content"
                             aria-label="Retry unhealthy clients"
                           >
                             {isRetrying ? (
@@ -755,7 +755,7 @@ const AdminDownloads = () => {
                         hasValidPriority && (
                           <>
                             <select
-                              className="select select-xs pr-1 select-primary block sm:hidden"
+                              className="select select-xs pr-1 select-primary block sm:hidden w-auto min-w-16"
                               disabled={isBulkActing}
                               defaultValue=""
                               onChange={(e) => {
@@ -866,7 +866,7 @@ const AdminDownloads = () => {
                     })()}
                     <>
                       <select
-                        className="select select-xs pr-1 select-primary block sm:hidden"
+                        className="select select-xs pr-1 select-primary block sm:hidden w-auto min-w-16"
                         disabled={isBulkActing}
                         defaultValue=""
                         onChange={(e) => {
@@ -919,7 +919,7 @@ const AdminDownloads = () => {
                           })}
                         </option>
                       </select>
-                      <div className="btn-group btn-group-xs hidden sm:flex gap-1">
+                      <div className="hidden sm:flex gap-1">
                         <Button
                           buttonSize="xs"
                           buttonType="success"
@@ -1279,7 +1279,7 @@ const AdminDownloads = () => {
                         setCurrentPageSize(Number(e.target.value));
                       }}
                       value={currentPageSize}
-                      className="select select-sm select-primary mx-1"
+                      className="select select-sm select-primary mx-1 w-auto min-w-16 shrink-0"
                     >
                       <option value="5">5</option>
                       <option value="10">10</option>

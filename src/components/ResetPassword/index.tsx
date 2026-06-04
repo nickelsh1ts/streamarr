@@ -68,7 +68,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
             />
           </p>
         </div>
-        <div className="bg-secondary backdrop-blur-md bg-opacity-50 shadow rounded-lg border border-secondary">
+        <div className="bg-secondary/50 backdrop-blur-md shadow rounded-lg border border-secondary">
           <div className="p-4">
             {hasSubmitted ? (
               <>
@@ -119,7 +119,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                     <Form className="mt-4">
                       <div>
                         <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
-                          <div className="input input-bordered input-primary flex items-center pr-0">
+                          <div className="input input-primary flex items-center pr-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
@@ -152,7 +152,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             )}
                         </div>
                         <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
-                          <div className="input input-bordered input-primary flex items-center pr-0">
+                          <div className="input input-primary flex items-center pr-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"

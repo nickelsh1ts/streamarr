@@ -404,7 +404,7 @@ function FAQs() {
                 >
                   <span>{faq.question}</span>
                   <ChevronDownIcon
-                    className={`ml-4 size-5 flex-shrink-0 transition-transform duration-300 ease-in-out ${
+                    className={`ml-4 size-5 shrink-0 transition-transform duration-300 ease-in-out ${
                       openIndex === idx ? 'rotate-180' : ''
                     }`}
                   />

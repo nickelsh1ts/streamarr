@@ -182,7 +182,7 @@ const Layout = ({
                   isFooterLayout
                     ? 'min-h-[calc(100dvh-4rem)]'
                     : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
-                } flex flex-col flex-grow relative`}
+                } flex flex-col grow relative`}
               >
                 {children}
               </div>

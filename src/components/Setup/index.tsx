@@ -120,7 +120,7 @@ const Setup = () => {
         <AppDataWarning />
         <nav className="relative z-50">
           <ul
-            className="divide-y divide-primary rounded-md border border-primary bg-primary bg-opacity-50 md:flex md:divide-y-0"
+            className="divide-y divide-primary rounded-md border border-primary bg-primary/50 md:flex md:divide-y-0"
             style={{ backdropFilter: 'blur(5px)' }}
           >
             <SetupSteps
@@ -152,7 +152,7 @@ const Setup = () => {
             />
           </ul>
         </nav>
-        <div className="mt-10 w-full rounded-md border border-secondary bg-secondary bg-opacity-50 backdrop-blur p-4 text-white">
+        <div className="mt-10 w-full rounded-md border border-secondary bg-secondary/50 backdrop-blur p-4 text-white">
           {currentStep === 1 && (
             <LoginWithPlex onComplete={() => setCurrentStep(2)} />
           )}

@@ -594,7 +594,7 @@ const UserSettingsGeneral = () => {
                                     values.allowDownloads
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -637,7 +637,7 @@ const UserSettingsGeneral = () => {
                                     values.allowLiveTv
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -954,7 +954,7 @@ const UserSettingsGeneral = () => {
                             as="select"
                             id="trialPeriodOutcome"
                             name="trialPeriodOutcome"
-                            className="select select-sm select-primary rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40"
+                            className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0 disabled:border disabled:border-primary/40 disabled:opacity-40"
                             disabled={!values.trialPeriodEnabled}
                           >
                             <option value="promote">
@@ -971,7 +971,7 @@ const UserSettingsGeneral = () => {
                             </option>
                           </Field>
                           <span
-                            className={`whitespace-nowrap lowercase ${!values.trialPeriodEnabled ? 'text-opacity-40' : ''}`}
+                            className={`whitespace-nowrap lowercase ${!values.trialPeriodEnabled ? 'opacity-40' : ''}`}
                           >
                             <FormattedMessage
                               id="common.after"
@@ -1002,7 +1002,7 @@ const UserSettingsGeneral = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
-                                className={`absolute right-0 !w-5 !h-5 !p-1.5 text-primary
+                                className={`absolute right-0 w-5! h-5! p-1.5! text-primary
                                   ${values.trialPeriodEnabled ? '' : 'opacity-50'}
                                 `}
                               >
@@ -1014,7 +1014,7 @@ const UserSettingsGeneral = () => {
                                 />
                               </svg>
                             }
-                            className={`input input-sm input-primary !pl-2 rounded-md disabled:border-1 disabled:border-primary/40 disabled:bg-opacity-40 disabled:text-opacity-40 ${
+                            className={`input input-sm input-primary pl-2! rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 ${
                               errors.trialPeriodEndsAt &&
                               touched.trialPeriodEndsAt
                                 ? 'input-error'

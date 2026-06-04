@@ -264,8 +264,8 @@ const LogsSettings = () => {
           }}
         />
       </p>
-      <div className="mt-2 flex flex-grow flex-col md:flex-grow-0 sm:flex-row sm:justify-end">
-        <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 md:flex-grow-0">
+      <div className="mt-2 flex grow flex-col md:grow-0 sm:flex-row sm:justify-end">
+        <div className="mb-2 flex grow sm:mb-0 sm:mr-2 md:grow-0">
           <span className="btn btn-sm rounded-md btn-primary rounded-r-none px-3 text-sm pointer-events-none">
             <MagnifyingGlassIcon className="size-5" />
           </span>
@@ -279,7 +279,7 @@ const LogsSettings = () => {
         <div className="mb-2 flex flex-1 flex-row justify-between sm:mb-0 sm:flex-none">
           <Button
             type="button"
-            className="mr-2 flex flex-grow rounded-md"
+            className="mr-2 flex grow rounded-md"
             buttonType={refreshInterval ? 'default' : 'primary'}
             buttonSize="sm"
             onClick={() => toggleLogs()}
@@ -297,7 +297,7 @@ const LogsSettings = () => {
               )}
             </span>
           </Button>
-          <div className="flex flex-grow">
+          <div className="flex grow">
             <span className="btn btn-sm rounded-md btn-primary rounded-r-none pointer-events-none">
               <FunnelIcon className="h-6 w-6" />
             </span>
@@ -507,7 +507,7 @@ const LogsSettings = () => {
                               setCurrentPageSize(Number(e.target.value));
                             }}
                             value={currentPageSize}
-                            className="select select-sm select-primary mx-1"
+                            className="select select-sm select-primary mx-1 w-auto min-w-16 shrink-0"
                           >
                             <option value="10">10</option>
                             <option value="25">25</option>

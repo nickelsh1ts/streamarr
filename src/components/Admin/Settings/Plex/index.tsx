@@ -509,7 +509,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 h-8 sm:text-sm">
+                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
                       {values.useSsl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -609,7 +609,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     as="select"
                     id="defaultPivot"
                     name="defaultPivot"
-                    className="select select-sm select-primary rounded-md"
+                    className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0"
                   >
                     <option value="library">
                       {intl.formatMessage({

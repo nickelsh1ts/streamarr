@@ -119,7 +119,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
   if (isEditing) {
     return (
-      <div ref={containerRef} className="flex flex-grow items-center gap-2">
+      <div ref={containerRef} className="flex grow items-center gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -128,7 +128,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isSaving}
-          className="input input-sm input-primary flex-grow"
+          className="input input-sm input-primary grow"
         />
         {isSaving && (
           <span className="loading loading-spinner loading-xs"></span>

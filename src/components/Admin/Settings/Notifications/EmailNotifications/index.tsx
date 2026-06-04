@@ -257,7 +257,7 @@ const EmailNotifications = () => {
                     id="enabled"
                     name="enabled"
                     type="checkbox"
-                    className="checkbox checkbox-sm checkbox-primary rounded-md w-full"
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
                 </div>
               </div>
@@ -415,7 +415,7 @@ const EmailNotifications = () => {
                   type="checkbox"
                   id="allowSelfSigned"
                   name="allowSelfSigned"
-                  className="checkbox checkbox-sm checkbox-primary rounded-md w-full"
+                  className="checkbox checkbox-sm checkbox-primary rounded-md"
                 />
               </div>
               <label htmlFor="authUser">

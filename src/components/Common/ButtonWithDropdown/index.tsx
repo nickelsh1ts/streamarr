@@ -67,16 +67,14 @@ const ButtonWithDropdown = ({
       styleClasses.mainButtonClasses +=
         '  bg-base-100/20 border-primary-content/60 hover:bg-gradient-to-tl from-primary-content/10 via-primary-content/15 from-10% via-30% to-primary-content/0 hover:border-primary-content/40 focus:border-primary-content/30 active:border-primary-content/20';
       styleClasses.dropdownSideButtonClasses = styleClasses.mainButtonClasses;
-      styleClasses.dropdownClasses +=
-        ' bg-base-100 border border-white/40 bg-opacity-30';
+      styleClasses.dropdownClasses += ' bg-base-100/30 border border-white/40';
       break;
     default:
       styleClasses.mainButtonClasses +=
-        ' bg-primary border-primary bg-opacity-60 hover:bg-opacity-100 hover:border-primary/60 active:bg-primary/40 active:border-primary focus:ring-1 focus:ring-primary-content';
+        ' bg-primary/60 border-primary hover:bg-primary hover:border-primary/60 active:bg-primary/40 active:border-primary focus:ring-1 focus:ring-primary-content';
       styleClasses.dropdownSideButtonClasses +=
-        ' bg-primary bg-opacity-60 border-primary hover:bg-opacity-100 active:bg-opacity-40 focus:ring-1 focus:ring-primary-content';
-      styleClasses.dropdownClasses +=
-        ' bg-primary bg-opacity-30 border-primary';
+        ' bg-primary/60 border-primary hover:bg-primary active:bg-primary/40 focus:ring-1 focus:ring-primary-content';
+      styleClasses.dropdownClasses += ' bg-primary/30 border-primary';
   }
 
   return (
@@ -112,10 +110,10 @@ const ButtonWithDropdown = ({
           </button>
           <Transition as={Fragment} show={isOpen}>
             <div
-              className={`absolute menu min-w-52 text-sm -my-1 ${side === 'left' ? '-ml-1 left-0' : '-mr-1 right-0'} transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-[closed]:translate-y-2 data-[leave]:translate-y-2' : 'origin-top-right data-[closed]:-translate-y-2 data-[leave]:-translate-y-2'}`}
+              className={`absolute menu min-w-52 text-sm -my-1 ${side === 'left' ? '-ml-1 left-0' : '-mr-1 right-0'} transition ease-out duration-75 opacity-100 translate-y-0 data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-closed:translate-y-2 data-leave:translate-y-2' : 'origin-top-right data-closed:-translate-y-2 data-leave:-translate-y-2'}`}
             >
               <div
-                className={`rounded-md ring-1 ring-black ring-opacity-5 ${styleClasses.dropdownClasses}`}
+                className={`rounded-md ring-1 ring-black/5 ${styleClasses.dropdownClasses}`}
               >
                 <div className={`flex flex-col`}>{children}</div>
               </div>

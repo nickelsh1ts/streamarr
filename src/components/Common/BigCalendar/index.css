@@ -1,3 +1,4 @@
+@reference '../../../styles/globals.css';
 @import 'react-big-calendar/lib/css/react-big-calendar.css';
 .rbc-header {
   @apply text-secondary-content bg-secondary items-center justify-center h-9 text-sm;
@@ -16,11 +17,11 @@
 }
 
 .react-datepicker__calendar-icon {
-  @apply !h-5 !w-5 !p-1.5 text-primary;
+  @apply h-5! w-5! p-1.5! text-primary;
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply !pt-1.5 !pe-7 !pb-1.5 !ps-2.5;
+  @apply pt-1.5! pe-7! pb-1.5! ps-2.5!;
 }
 
 h2.react-datepicker__current-month {
@@ -28,11 +29,11 @@ h2.react-datepicker__current-month {
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply select select-sm select-primary select-bordered w-full;
+  @apply select select-sm select-primary w-full;
   background-image: none;
 }
 .react-datepicker-popper {
-  @apply max-xl:mx-1.5 !z-20;
+  @apply max-xl:mx-1.5 z-20!;
 }
 .rbc-agenda-view {
   @apply overflow-visible;
@@ -41,17 +42,17 @@ h2.react-datepicker__current-month {
   @apply min-h-9;
 }
 .rbc-today {
-  @apply bg-primary backdrop-blur-md bg-opacity-30;
+  @apply bg-primary/30 backdrop-blur-md;
 }
 .rbc-off-range-bg {
-  @apply bg-secondary backdrop-blur-md bg-opacity-30;
+  @apply bg-secondary/30 backdrop-blur-md;
 }
 .rbc-day-bg {
-  @apply backdrop-blur-md bg-opacity-30;
+  @apply backdrop-blur-md;
 }
 
 .rbc-day-slot {
-  @apply backdrop-blur-md bg-opacity-30;
+  @apply backdrop-blur-md;
 }
 
 .rbc-event,
@@ -67,19 +68,19 @@ h2.react-datepicker__current-month {
   @apply hidden;
 }
 .rbc-time-content > .rbc-time-gutter {
-  @apply backdrop-blur-md bg-opacity-30;
+  @apply backdrop-blur-md;
 }
 .rbc-agenda-view table.rbc-agenda-table {
-  @apply backdrop-blur-md bg-opacity-30;
+  @apply backdrop-blur-md;
 }
 .rbc-time-header-gutter {
-  @apply backdrop-blur-md bg-opacity-30;
+  @apply backdrop-blur-md;
 }
 .rbc-show-more {
-  @apply text-primary-content bg-primary backdrop-blur-md bg-opacity-30 hover:text-neutral-content p-0.5 rounded active:text-primary focus:text-primary;
+  @apply text-primary-content bg-primary/30 backdrop-blur-md hover:text-neutral-content p-0.5 rounded active:text-primary focus:text-primary;
 }
 .rbc-overlay {
-  @apply bg-secondary backdrop-blur-md bg-opacity-30 border-secondary rounded-lg;
+  @apply bg-secondary/30 backdrop-blur-md border-secondary rounded-lg;
 }
 
 .rbc-overlay-header {
@@ -117,7 +118,7 @@ h2.react-datepicker__current-month {
   @apply m-0;
 }
 .react-datepicker-wrapper {
-  @apply !flex flex-1;
+  @apply flex! flex-1;
 }
 
 .rbc-off-range {

@@ -741,28 +741,26 @@ const GeneralSettings = () => {
                       defaultMessage="Display Language"
                     />
                   </label>
-                  <div>
-                    <Field
-                      as="select"
-                      id="locale"
-                      name="locale"
-                      className="select select-primary select-sm w-full"
-                    >
-                      {(
-                        Object.keys(
-                          availableLanguages
-                        ) as (keyof typeof availableLanguages)[]
-                      ).map((key) => (
-                        <option
-                          key={key}
-                          value={availableLanguages[key].code}
-                          lang={availableLanguages[key].code}
-                        >
-                          {availableLanguages[key].display}
-                        </option>
-                      ))}
-                    </Field>
-                  </div>
+                  <Field
+                    as="select"
+                    id="locale"
+                    name="locale"
+                    className="select select-primary select-sm w-full"
+                  >
+                    {(
+                      Object.keys(
+                        availableLanguages
+                      ) as (keyof typeof availableLanguages)[]
+                    ).map((key) => (
+                      <option
+                        key={key}
+                        value={availableLanguages[key].code}
+                        lang={availableLanguages[key].code}
+                      >
+                        {availableLanguages[key].display}
+                      </option>
+                    ))}
+                  </Field>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
                   <label htmlFor="supportUrl" className="col-span-1">
@@ -933,7 +931,7 @@ const GeneralSettings = () => {
                       >
                         <button
                           type="button"
-                          className="size-12 rounded-lg text-xl"
+                          className="size-12 rounded-lg text-xl hover:cursor-pointer"
                           style={{
                             backgroundColor:
                               colorKey === 'base-content'

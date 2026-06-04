@@ -10,7 +10,7 @@ import Badge from '@app/components/Common/Badge';
 import { FormattedMessage } from 'react-intl';
 
 const WatchCardPlaceholder = () => (
-  <div className="w-36 sm:w-44 animate-pulse rounded-xl bg-base-200 aspect-[2/3] flex-shrink-0" />
+  <div className="w-36 sm:w-44 animate-pulse rounded-xl bg-base-200 aspect-2/3 shrink-0" />
 );
 
 const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
@@ -83,7 +83,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           </Badge>
         </div>
       )}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent px-2 pb-2 pt-8">
+      <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent px-2 pb-2 pt-8">
         <p
           className="text-xs font-bold leading-tight text-white truncate"
           title={displayTitle}
@@ -135,7 +135,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
   return (
     <div
       ref={ref}
-      className={`relative w-36 sm:w-44 aspect-[2/3] flex-shrink-0 transition-transform duration-200 hover:scale-[1.06] hover:z-10 ${showDetail ? 'scale-[1.06] z-10' : ''}`}
+      className={`relative w-36 sm:w-44 aspect-2/3 shrink-0 transition-transform duration-200 hover:scale-[1.06] hover:z-10 ${showDetail ? 'scale-[1.06] z-10' : ''}`}
       onMouseEnter={() => {
         if (!isTouch) setShowDetail(true);
       }}

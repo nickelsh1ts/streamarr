@@ -42,7 +42,7 @@ const ExpandButton = ({
   return (
     <button
       type="button"
-      className="rounded p-0.5 text-neutral transition hover:text-base-content"
+      className="rounded p-0.5 text-neutral transition hover:text-base-content hover:cursor-pointer"
       onClick={onToggle}
       aria-label={
         isExpanded

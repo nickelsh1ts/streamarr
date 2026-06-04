@@ -35,8 +35,6 @@ import useSettings from '@app/hooks/useSettings';
 import Alert from '@app/components/Common/Alert';
 import { momentWithLocale } from '@app/utils/momentLocale';
 
-//TODO: Add support for invite duration (auto-access removal after a certain time period)
-
 enum Filter {
   ALL = 'all',
   ACTIVE = 'active',
@@ -309,8 +307,8 @@ const InviteList = () => {
               defaultMessage="Invite a Friend"
             />
           </Header>
-          <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
-            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+          <div className="mt-2 flex grow flex-col sm:flex-row lg:grow-0">
+            <div className="mb-2 flex grow sm:mb-0 sm:mr-2 lg:grow-0">
               <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
                 <FunnelIcon className="h-6 w-6" />
               </span>
@@ -353,7 +351,7 @@ const InviteList = () => {
                 </option>
               </select>
             </div>
-            <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0 sm:mr-2">
+            <div className="mb-2 flex grow sm:mb-0 lg:grow-0 sm:mr-2">
               <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
                 <BarsArrowDownIcon className="h-6 w-6" />
               </span>
@@ -365,7 +363,7 @@ const InviteList = () => {
                   setCurrentSort(e.target.value as Sort);
                 }}
                 value={currentSort}
-                className="select select-sm select-primary rounded-l-none block w-full flex-1"
+                className="select select-sm select-primary rounded-l-none w-full flex-1"
               >
                 <option value="created">
                   <FormattedMessage
@@ -572,7 +570,7 @@ const InviteList = () => {
                         setCurrentPageSize(Number(e.target.value));
                       }}
                       value={currentPageSize}
-                      className="select select-sm select-primary mx-1"
+                      className="select select-sm select-primary mx-1 w-auto min-w-16 shrink-0"
                     >
                       <option value="5">5</option>
                       <option value="10">10</option>

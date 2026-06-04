@@ -175,7 +175,7 @@ function Footer() {
         </nav>
       </div>
       <p
-        className="place-self-start container md:px-20 mx-auto"
+        className="place-self-start container md:px-20 mx-auto text-base-content"
         style={{ fontSize: '0.8rem' }}
       >
         © {currentYear} Streamarr

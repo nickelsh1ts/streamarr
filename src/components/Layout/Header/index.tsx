@@ -21,7 +21,7 @@ const Header = ({ isInView = true }) => {
       data-tutorial="main-header"
       className={`main navbar pt-[0.6rem] min-h-14 sticky top-0 transition duration-500 ${isInView ? (path.match(/\/(|signin|signup|resetpassword\/?(.*)?|help\/?(.*)?)?$/) ? 'bg-secondary backdrop-brightness-50' : 'bg-base-200') : ''} font-bold z-20`}
     >
-      <div className="flex-1 max-sm:flex-wrap max-sm:place min-h-10">
+      <div className="flex flex-1 items-center max-sm:flex-wrap max-sm:place min-h-10">
         {!path.match(/^(\/|\/signin|\/signup|\/help\/?(.*)?)$/) && user && (
           <Sidebar />
         )}

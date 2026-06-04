@@ -209,10 +209,10 @@ export const NotificationCard = ({
               }
             : undefined
         }
-        className={`flex gap-3 p-2 text-primary-content w-full ${isTouch ? '' : 'rounded-lg'} relative text-start ${!notification.isRead ? 'bg-primary/20 ring-1 ring-inset ring-primary/20' : ''} hover:bg-primary-content/10 group/item`}
+        className={`flex gap-3 p-2 text-primary-content w-full ${isTouch ? '' : 'rounded-lg'} relative text-start ${!notification.isRead ? 'bg-primary/20 ring-1 ring-inset ring-primary/20' : ''} hover:bg-primary-content/10 group/item hover:cursor-pointer`}
         {...(isTouch ? handlers : {})}
       >
-        <div className="relative inline-flex size-16 flex-shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
+        <div className="relative inline-flex size-16 shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
           <div>
             <CachedImage
               src={
@@ -273,7 +273,7 @@ export const NotificationCard = ({
                 chevron={false}
                 size="md"
                 dropdownIcon={<EllipsisHorizontalIcon className="size-7" />}
-                className="p-1 rounded-full hover:bg-base-200 actions text-neutral hover:text-base-content"
+                className="p-1 rounded-full hover:bg-base-200 actions text-neutral hover:text-base-content hover:cursor-pointer"
               >
                 <DropDownMenu.Item
                   onClick={(e) => {

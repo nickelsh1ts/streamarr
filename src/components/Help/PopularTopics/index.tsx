@@ -40,7 +40,7 @@ const PopularTopics = () => {
 
   return (
     <div className="bg-zinc-100 text-black p-4">
-      <div className="container max-w-screen-xl mx-auto border-b-2">
+      <div className="container max-w-screen-xl mx-auto border-b-2 border-gray-200">
         <h4 className="text-2xl font-extrabold mb-1">
           <FormattedMessage
             id="help.popularTopics"

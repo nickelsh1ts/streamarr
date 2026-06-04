@@ -315,7 +315,7 @@ const ProviderNotificationsForm = ({
                             id={field.name}
                             name={field.name}
                             as="select"
-                            className="select select-sm select-primary rounded-md"
+                            className="select select-sm select-primary rounded-md w-auto min-w-36 shrink-0"
                             disabled={field.disabled}
                           >
                             {field.options?.map((opt) => (

@@ -184,8 +184,8 @@ const NotificationsList = () => {
             defaultMessage="Notifications"
           />
         </Header>
-        <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
-          <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+        <div className="mt-2 flex grow flex-col sm:flex-row lg:grow-0">
+          <div className="mb-2 flex grow sm:mb-0 sm:mr-2 lg:grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
               <FunnelIcon className="h-6 w-6" />
             </span>
@@ -344,7 +344,7 @@ const NotificationsList = () => {
                         setCurrentPageSize(Number(e.target.value));
                       }}
                       value={currentPageSize}
-                      className="select select-sm select-primary mx-1"
+                      className="select select-sm select-primary mx-1 w-auto min-w-16 shrink-0"
                     >
                       <option value="5">5</option>
                       <option value="10">10</option>

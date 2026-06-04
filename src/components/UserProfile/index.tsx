@@ -29,7 +29,7 @@ import RecentRequest from '@app/components/Common/Slider/RecentRequest';
 
 const Placeholder = () => {
   return (
-    <div className="relative animate-pulse p-4 rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+    <div className="relative animate-pulse p-4 rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
       <div className="w-24 sm:w-24">
         <div className="w-full" style={{ paddingBottom: '63%' }} />
       </div>
@@ -145,7 +145,7 @@ const UserProfile = () => {
             (user.inviteCountRedeemed > 0 ||
               currentSettings.enableSignUp ||
               user.redeemedInvite?.createdBy) && (
-              <div className="overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+              <div className="overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
                 {(currentSettings.enableSignUp ||
                   user.inviteCountRedeemed > 0) && (
                   <div>
@@ -207,7 +207,7 @@ const UserProfile = () => {
               <>
                 {quota.invite.trialPeriodActive &&
                 quota.invite.trialPeriodEnabled ? (
-                  <div className="overflow-hidden rounded-lg bg-yellow-900 bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
+                  <div className="overflow-hidden rounded-lg bg-yellow-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
                     <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
                       <ClockIcon className="size-5 mr-2" />
                       <FormattedMessage
@@ -230,7 +230,7 @@ const UserProfile = () => {
                     </dd>
                   </div>
                 ) : !user.active ? (
-                  <div className="overflow-hidden xl:col-span-2 rounded-lg bg-red-900 bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-red-500 sm:p-6">
+                  <div className="overflow-hidden xl:col-span-2 rounded-lg bg-red-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-red-500 sm:p-6">
                     <dt className="truncate text-sm font-bold text-red-300 flex items-center">
                       <FormattedMessage
                         id="common.accountExpired"
@@ -283,9 +283,9 @@ const UserProfile = () => {
                   </div>
                 ) : (
                   <div
-                    className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                    className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
                       quota.invite.restricted &&
-                      'bg-gradient-to-t from-error/60 to-transparent ring-error'
+                      'bg-linear-to-t from-error/60 to-transparent ring-error'
                     } sm:p-6`}
                   >
                     <dt
@@ -378,9 +378,9 @@ const UserProfile = () => {
           !seerrUserQuotaError ? (
             seerrUserQuota ? (
               <div
-                className={`overflow-hidden rounded-lg bg-primary bg-opacity-30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
                   anyRestricted &&
-                  'bg-gradient-to-t from-error/60 to-transparent ring-error'
+                  'bg-linear-to-t from-error/60 to-transparent ring-error'
                 } sm:p-6 grid grid-cols-2 gap-x-4`}
               >
                 <div className="text-sm font-bold col-span-2">

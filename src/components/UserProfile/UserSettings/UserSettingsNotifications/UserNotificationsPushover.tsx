@@ -223,7 +223,7 @@ const UserNotificationsPushover = () => {
                   id="pushoverSound"
                   name="pushoverSound"
                   as="select"
-                  className="select select-sm select-primary rounded-md"
+                  className="select select-sm select-primary rounded-md w-auto min-w-36 shrink-0"
                   value={values.pushoverSound}
                   onChange={(e) => {
                     setFieldValue('pushoverSound', e.target.value);

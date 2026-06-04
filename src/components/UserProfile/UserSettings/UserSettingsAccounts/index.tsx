@@ -159,10 +159,10 @@ const UserSettingsAccounts = () => {
                   />
                 </div>
               </div>
-              <div className="flex-grow" />
+              <div className="grow" />
               <button
                 onClick={action}
-                className="max-sm:btn-block rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="max-sm:btn-block rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <FormattedMessage
                   id="linkedAccounts.linkButton"
@@ -196,7 +196,7 @@ const UserSettingsAccounts = () => {
                   {acct.username}
                 </div>
               </div>
-              <div className="flex-grow" />
+              <div className="grow" />
               {currentUser?.id === user?.id && enableMediaServerUnlink && (
                 <ConfirmButton
                   buttonSize="sm"

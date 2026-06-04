@@ -1,47 +1,63 @@
 @charset "utf-8";
 /* CSS Document */
 @import url(https://theme-park.dev/css/base/plex/plex-base.css);
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
 .react-chroma-dark {
-  --color-background-accent: oklch(var(--p));
-  --color-brand-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-brand-accent: var(--color-primary);
+  --accent-color: var(--color-primary);
   --main-bg-color: #1f1f1f;
   --modal-bg-color: #1b1b1b;
   --link-color: #fff;
-  --button-color: oklch(var(--p)) !important;
-  --button-color-hover: oklch(var(--p));
-  --accent-color: oklch(var(--p));
+  --button-color: var(--color-primary) !important;
+  --button-color-hover: var(--color-primary);
+  --accent-color: var(--color-primary);
   --plex-poster-unwatched: #fff;
-  --color-background-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
   --text: #fff;
   --text-hover: #fff;
   --drop-down-menu-bg: #1f1f1f;
-  --color-background-accent: oklch(var(--p));
-  --color-background-accent-focus: oklch(var(--p)) ;
-  --bs-primary: oklch(var(--p)) ;
-  --color-text-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-background-accent-focus: var(--color-primary) ;
+  --bs-primary: var(--color-primary) ;
+  --color-text-accent: var(--color-primary);
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
   --logo-image-url:  url("/logo_full.png");
   --logo-sm-url:  url("/streamarr-logo-512x512.png");
 }
 :root {
-  --color-background-accent: oklch(var(--p));
-  --color-brand-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-brand-accent: var(--color-primary);
   --main-bg-color: #1f1f1f;
   --modal-bg-color: #1b1b1b;
   --link-color: #fff;
-  --button-color: oklch(var(--p));
-  --button-color-hover: oklch(var(--p));
+  --button-color: var(--color-primary);
+  --button-color-hover: var(--color-primary);
   --accent-color: 151, 78, 222;
   --plex-poster-unwatched: #fff;
-  --color-background-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
   --text: #fff;
   --text-hover: #fff;
   --drop-down-menu-bg: #1f1f1f;
-  --color-background-accent: oklch(var(--p));
-  --color-background-accent-focus: oklch(var(--p)) ;
-  --bs-primary: oklch(var(--p)) ;
-  --color-text-accent: oklch(var(--p));
+  --color-background-accent: var(--color-primary);
+  --color-background-accent-focus: var(--color-primary) ;
+  --bs-primary: var(--color-primary) ;
+  --color-text-accent: var(--color-primary);
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
   --logo-image-url:  url("/logo_full.png");
@@ -267,7 +283,7 @@ svg {
 }
 /*Color Corrections*/
 [class*=MetadataPosterCardProgressBar-bar-], [class*=PosterCardOverlayProgress-progressBar-], [class*=SeekBar-seekBarFill-], [class*=SessionTile-playProgressPercent-], [class*=VolumeSlider-fill-] {
-  background-color: oklch(var(--p)) !important;
+  background-color: var(--color-primary) !important;
 }
 .card {
   background-color: #171717 ;
@@ -276,7 +292,7 @@ svg {
   filter: brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(2935%) hue-rotate(265deg) brightness(83%) contrast(99%);
 }
 .label-primary[href]:focus, .label-primary[href]:hover {
-  background-color: oklch(var(--s));
+  background-color: var(--color-secondary);
 }
 /*top menu*/
 @media all and (display-mode: browser) {
@@ -395,7 +411,7 @@ svg {
   mask-position: center;
   mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_qM83%7Banimation:spinner_8HQG 1.05s infinite%7D.spinner_oXPr%7Banimation-delay:.1s%7D.spinner_ZTLf%7Banimation-delay:.2s%7D@keyframes spinner_8HQG%7B0%25,57.14%25%7Banimation-timing-function:cubic-bezier(0.33,.66,.66,1);transform:translate(0)%7D28.57%25%7Banimation-timing-function:cubic-bezier(0.33,0,.66,.33);transform:translateY(-6px)%7D100%25%7Btransform:translate(0)%7D%7D%3C/style%3E%3Ccircle class='spinner_qM83' cx='4' cy='12' r='3'/%3E%3Ccircle class='spinner_qM83 spinner_oXPr' cx='12' cy='12' r='3'/%3E%3Ccircle class='spinner_qM83 spinner_ZTLf' cx='20' cy='12' r='3'/%3E%3C/svg%3E");
   --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p))/var(--tw-text-opacity));
+  color: var(--color-primary);
   margin-top: 0.5rem /* 8px */;
   animation: none;
   border-radius: 0;
@@ -416,20 +432,20 @@ svg {
   line-height: 1.75rem /* 28px */;
 }
 .btn-default {
-  background-color: oklch(var(--p));
-  color: oklch(var(--pc));
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
 }
 .btn-default:hover {
-  background: oklch(var(--s));
+  background: var(--color-secondary);
 }
 .label {
   display: initial;
 }
 .label-primary {
-  background-color: oklch(var(--p));
+  background-color: var(--color-primary);
 }
 .label-primary:hover:hover {
-  background-color: oklch(var(--s));
+  background-color: var(--color-secondary);
 }
 select {
   color: initial;
@@ -471,7 +487,7 @@ code {
   text-overflow: ellipsis;
   white-space: nowrap;
   border-radius: 0.375rem;
-  background-color: var(--fallback-b1,oklch(var(--b1)/0.75));
+  background-color: color-mix(in oklab, var(--color-base-100) 75%, transparent);
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   padding-left: 0.375rem;
@@ -610,8 +626,8 @@ code {
   display: inline-flex;
 }
 .hover\:text-primary-content\/70:hover {
-  color: var(--fallback-pc,oklch(var(--pc)/0.7));
+  color: color-mix(in oklab, var(--color-primary-content) 70%, transparent);
 }
 .hover\:text-base-content\/70:hover {
-  color: var(--fallback-bc,oklch(var(--bc)/0.7));
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }

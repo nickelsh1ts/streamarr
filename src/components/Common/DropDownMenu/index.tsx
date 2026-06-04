@@ -137,7 +137,7 @@ const DropDownMenu = ({
         >
           <button
             type="button"
-            className={`relative inline-flex h-full items-center text-sm font-medium leading-5 ${styleClasses.dropdownSideButtonClasses}`}
+            className={`relative inline-flex h-full items-center text-sm font-medium leading-5 hover:cursor-pointer ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={(e) => {
               setIsOpen((state) => !state);
@@ -160,7 +160,7 @@ const DropDownMenu = ({
         </Tooltip>
         <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -ml-1 -my-1 ${side}-0 transition ease-out duration-75 opacity-100 translate-y-0 data-[closed]:opacity-0 data-[leave]:opacity-0 ${dropUp ? `top-auto bottom-full origin-bottom-${side} data-[closed]:translate-y-2 data-[leave]:translate-y-2` : `origin-top-${side} data-[closed]:-translate-y-2 data-[leave]:-translate-y-2`}`}
+            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -ml-1 -my-1 ${side}-0 transition ease-out duration-75 opacity-100 translate-y-0 data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? `top-auto bottom-full origin-bottom-${side} data-closed:translate-y-2 data-leave:translate-y-2` : `origin-top-${side} data-closed:-translate-y-2 data-leave:-translate-y-2`}`}
           >
             <div className={`${styleClasses.dropdownClasses}`}>
               {title && (

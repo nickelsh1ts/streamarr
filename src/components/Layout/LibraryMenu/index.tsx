@@ -183,7 +183,7 @@ const LibraryMenu = ({
 
   return (
     <ul
-      className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto"
+      className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto w-full"
       data-tutorial="library-menu"
     >
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
@@ -372,7 +372,7 @@ export const SingleItem = ({
         href={
           href && pivotList && type ? href + '&pivot=' + defaultPivot : href
         }
-        className={`w-full items-center focus:!bg-primary/70 active:!bg-primary/20 focus:text-primary-content capitalize gap-0 space-x-2 ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
+        className={`w-full items-center focus:bg-primary/70! active:bg-primary/20! focus:text-primary-content capitalize gap-0 space-x-2 px-4 py-2 ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
@@ -387,7 +387,7 @@ export const SingleItem = ({
                   onClick?.();
                 }}
                 href={href && pivotList ? href + '&pivot=' + pivot : href}
-                className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+                className={`active:bg-white/15! ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/5' : ''}`}
               >
                 <p className="capitalize">{pivot}</p>
                 {isActive && url.includes(`&pivot=${pivot}`) && (
@@ -456,7 +456,7 @@ export const MultiItem = ({
         )}
         className="group"
       >
-        <summary className="active:!bg-primary/20 space-x-2 gap-0 hover:text-base-content group-open:text-base-content capitalize">
+        <summary className="active:bg-primary/20! space-x-2 gap-0 hover:text-base-content group-open:text-base-content capitalize px-4 py-2">
           {icon}
           <p className="inline-flex">{title}</p>
         </summary>
@@ -479,7 +479,7 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:!bg-primary/70 active:!bg-primary/20 capitalize space-x-2 w-full ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
+                  className={`focus:bg-primary/70! active:bg-primary/20! capitalize space-x-2 w-full ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>
@@ -497,7 +497,7 @@ export const MultiItem = ({
                               ? item.href + '&pivot=' + pivot
                               : item.href
                           }
-                          className={`active:!bg-white/15 ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/[0.05]' : ''}`}
+                          className={`active:bg-white/15! ${isActive && url.includes(`&pivot=${pivot}`) ? 'bg-white/10 hover:bg-white/5' : ''}`}
                         >
                           <p className="capitalize">{pivot}</p>
                           {isActive && url.includes(`&pivot=${pivot}`) && (

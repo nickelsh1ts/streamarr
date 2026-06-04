@@ -89,7 +89,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
           <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
             <Form className="mt-4">
               <div>
-                <div className="input input-bordered input-primary flex items-center mb-2">
+                <div className="input input-primary flex items-center mb-2 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -119,7 +119,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                       {errors.email}
                     </div>
                   )}
-                <div className="input input-bordered input-primary flex items-center pr-0">
+                <div className="input input-primary flex items-center pr-0 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -158,14 +158,14 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                     />
                   </div>
                 )}
-                <div className="form-control my-4">
+                <div className="flex flex-col my-4">
                   <label className="flex cursor-pointer place-items-center">
                     <input
                       type="checkbox"
                       defaultChecked
                       className="checkbox checkbox-primary checkbox-xs me-2 rounded-md"
                     />
-                    <span className="label-text">
+                    <span className="text-sm">
                       <FormattedMessage
                         id="signIn.rememberMe"
                         defaultMessage="Remember me"

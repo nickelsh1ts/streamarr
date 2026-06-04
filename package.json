@@ -28,8 +28,8 @@
     "cypress:run": "cypress run",
     "cypress:prepare": "tsx --tsconfig server/tsconfig.json server/scripts/prepareTestDb.ts",
     "cypress:build": "pnpm build && pnpm cypress:prepare",
-    "css-build": "tailwindcss -o public/tailwind.css",
-    "css-watch": "tailwindcss -o public/tailwind.css --watch",
+    "css-build": "tailwindcss -i src/styles/globals.css -o public/tailwind.css && node bin/flatten-css.mjs public/tailwind.css",
+    "css-watch": "tailwindcss -i src/styles/globals.css -o public/tailwind.css --watch",
     "start:python": "cd server/python && CONFIG_DIRECTORY=../../config gunicorn -w 2 -b 0.0.0.0:5005 --timeout 60 --graceful-timeout 30 --keep-alive 5 plex_invite:app"
   },
   "repository": {
@@ -129,9 +129,9 @@
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/git": "10.0.1",
     "@svgr/webpack": "8.1.0",
-    "@tailwindcss/aspect-ratio": "0.4.2",
-    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/cli": "^4.3.0",
     "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/cookie-parser": "^1.4.10",
     "@types/copyfiles": "^2.4.4",
@@ -156,14 +156,13 @@
     "@types/yamljs": "^0.2.34",
     "@typescript-eslint/eslint-plugin": "8.59.3",
     "@typescript-eslint/parser": "8.59.3",
-    "autoprefixer": "^10.5.0",
     "commitizen": "4.3.1",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.13.1",
     "cz-conventional-changelog": "3.3.0",
-    "daisyui": "4.12.24",
+    "daisyui": "5.5.20",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
@@ -181,10 +180,9 @@
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.8.0",
-    "sass": "^1.99.0",
     "semantic-release": "^25.0.3",
     "stylelint": "^17.7.0",
-    "tailwindcss": "3.4.19",
+    "tailwindcss": "4.3.0",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
@@ -201,7 +199,9 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx,js}": [
-      "prettier --write",
+      "prettier --write"
+    ],
+    "{server,src}/**/*.{ts,tsx}": [
       "eslint"
     ],
     "**/*.{json,md,css}": [

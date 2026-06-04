@@ -90,10 +90,10 @@ const CalendarToolBar = ({
   }, [date, setDate, view]);
 
   return (
-    <div className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2 p-4 justify-between">
+    <div className="flex grow flex-col-reverse sm:flex-row lg:grow-0 gap-2 p-4 justify-between">
       <div
         id="datePicker"
-        className="flex flex-grow flex-col sm:flex-row lg:flex-grow-0 gap-2"
+        className="flex grow flex-col sm:flex-row lg:grow-0 gap-2"
       >
         {view != Views.WEEK ? (
           <DatePicker
@@ -184,9 +184,9 @@ const CalendarToolBar = ({
       </div>
       <div
         id="view"
-        className="flex flex-grow flex-col-reverse sm:flex-row lg:flex-grow-0 gap-2"
+        className="flex grow flex-col-reverse sm:flex-row lg:grow-0 gap-2"
       >
-        <div className="flex flex-grow sm:mb-0 lg:flex-grow-0">
+        <div className="flex grow sm:mb-0 lg:grow-0">
           <button
             id="previous"
             onClick={onPrev}
@@ -231,7 +231,7 @@ const CalendarToolBar = ({
             </svg>
           </button>
         </div>
-        <div className="flex flex-grow sm:mb-0 lg:flex-grow-0">
+        <div className="flex grow sm:mb-0 lg:grow-0">
           <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
             {view === 'month' ? (
               <CalendarIcon className="size-6" />

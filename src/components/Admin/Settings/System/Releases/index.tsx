@@ -49,7 +49,7 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
           <ReactMarkdown>{release.body}</ReactMarkdown>
         </div>
       </Modal>
-      <div className="flex w-full flex-grow items-center justify-center space-x-2 truncate sm:justify-start">
+      <div className="flex w-full grow items-center justify-center space-x-2 truncate sm:justify-start">
         <span className="truncate text-lg font-bold">
           <span className="mr-2 whitespace-nowrap text-xs font-normal align-center">
             {moment(release.created_at)?.fromNow()}

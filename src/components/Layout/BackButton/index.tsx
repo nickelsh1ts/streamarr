@@ -9,7 +9,7 @@ const BackButton = () => {
     <Tooltip tooltipConfig={{ placement: 'bottom' }} content="Back">
       <button
         onClick={() => router.back()}
-        className="pwa-only pointer-events-auto hover:opacity-70 mr-0.5 text-base-content"
+        className="pwa-only pointer-events-auto hover:opacity-70 mr-0.5 text-base-content hover:cursor-pointer"
       >
         <ArrowLeftIcon className="size-7 m-2" />
       </button>
