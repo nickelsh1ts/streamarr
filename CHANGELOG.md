@@ -1,3 +1,9 @@
+## [1.8.1](https://github.com/nickelsh1ts/streamarr/compare/v1.8.0...v1.8.1) (2026-06-05)
+
+### 🐛 Bug Fixes
+
+* **websocket:** drop ws-only transport & remove plex ws hijack ([#367](https://github.com/nickelsh1ts/streamarr/issues/367)) ([ba8be0f](https://github.com/nickelsh1ts/streamarr/commit/ba8be0facc889bc218cd3a084112049d4b6d36c9))
+
 ## [1.8.0](https://github.com/nickelsh1ts/streamarr/compare/v1.7.0...v1.8.0) (2026-06-04)
 
 ### ✨ Features
