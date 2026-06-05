@@ -22,19 +22,30 @@ export const getAllTailwindColors = (): string[] => {
     'white',
   ];
 
+  // Tailwind v4 exposes its palette as oklch() strings, but the color picker
+  // (react-colorful / colord) operates on hex, so normalize every preset to a
+  // hex value here and drop anything that cannot be parsed.
+  const addColor = (value: string) => {
+    const hex = parseColorToHex(value);
+    if (hex) {
+      allColors.push(hex);
+    }
+  };
+
   Object.entries(colors).forEach(([colorName, colorShades]) => {
     if (excludeColors.includes(colorName)) return;
     if (typeof colorShades === 'object' && colorShades !== null) {
       Object.values(colorShades).forEach((shade) => {
         if (typeof shade === 'string') {
-          allColors.push(shade);
+          addColor(shade);
         }
       });
     }
   });
 
   // Add black and white separately
-  allColors.push(colors.black, colors.white);
+  addColor(colors.black);
+  addColor(colors.white);
 
   return allColors;
 };
