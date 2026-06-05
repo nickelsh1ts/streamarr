@@ -90,11 +90,13 @@ const UserSelector = ({
   const [listboxOpen, setListboxOpen] = useState(false);
   const [dropdownMeasured, setDropdownMeasured] = useState(false);
 
-  useEffect(() => {
+  const [prevListboxOpen, setPrevListboxOpen] = useState(listboxOpen);
+  if (prevListboxOpen !== listboxOpen) {
+    setPrevListboxOpen(listboxOpen);
     if (listboxOpen) {
       setDropdownMeasured(false);
     }
-  }, [listboxOpen]);
+  }
 
   useEffect(() => {
     function updateDropdownPosition() {

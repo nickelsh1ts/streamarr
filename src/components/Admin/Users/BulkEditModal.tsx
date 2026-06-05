@@ -69,23 +69,30 @@ const BulkEditModal = ({
     }
   };
 
-  useEffect(() => {
+  // Seed the editable permission from the selected users when the selection changes
+  const [prevUsers, setPrevUsers] = useState(users);
+  const [prevSelectedUserIds, setPrevSelectedUserIds] =
+    useState(selectedUserIds);
+  if (prevUsers !== users || prevSelectedUserIds !== selectedUserIds) {
+    setPrevUsers(users);
+    setPrevSelectedUserIds(selectedUserIds);
     if (users) {
       const selectedUsers = users.filter((u) => selectedUserIds.includes(u.id));
-      if (selectedUsers.length === 0) return;
-      const { permissions: allPermissionsEqual } = selectedUsers.reduce(
-        ({ permissions: aPerms }, { permissions: bPerms }) => {
-          return {
-            permissions: aPerms === bPerms ? aPerms : NaN,
-          };
-        },
-        { permissions: selectedUsers[0].permissions }
-      );
-      if (allPermissionsEqual) {
-        setCurrentPermission(allPermissionsEqual);
+      if (selectedUsers.length > 0) {
+        const { permissions: allPermissionsEqual } = selectedUsers.reduce(
+          ({ permissions: aPerms }, { permissions: bPerms }) => {
+            return {
+              permissions: aPerms === bPerms ? aPerms : NaN,
+            };
+          },
+          { permissions: selectedUsers[0].permissions }
+        );
+        if (allPermissionsEqual) {
+          setCurrentPermission(allPermissionsEqual);
+        }
       }
     }
-  }, [users, selectedUserIds]);
+  }
 
   return (
     <Modal

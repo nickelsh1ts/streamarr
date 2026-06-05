@@ -7,23 +7,23 @@ import { BeakerIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useClientValue } from '@app/hooks/useIsClient';
 import useSWR, { mutate } from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
 
 const WebpushNotifications = () => {
   const intl = useIntl();
   const [isTesting, setIsTesting] = useState(false);
-  const [isHttps, setIsHttps] = useState(false);
+  const isHttps = useClientValue(
+    () => window.location.protocol.startsWith('https'),
+    false
+  );
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR('/api/v1/settings/notifications/webpush');
-
-  useEffect(() => {
-    setIsHttps(window.location.protocol.startsWith('https'));
-  }, []);
 
   if (!data && !error) {
     return <LoadingEllipsis />;

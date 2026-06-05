@@ -20,7 +20,7 @@ import type {
   DownloadClientType,
 } from '@server/lib/settings';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 
 const CLIENT_NAMES: Record<DownloadClientType, string> = {
@@ -82,29 +82,34 @@ const DownloadClientInstance = ({
     version?: string;
     error?: string;
   } | null>(null);
-  const [isTesting, setIsTesting] = useState(false);
+  const [isTesting, setIsTesting] = useState(true);
 
-  const testConnection = async () => {
-    setIsTesting(true);
-    try {
-      const response = await axios.post(
-        `/api/v1/settings/downloads/test/${id}`
+  const performTest = useCallback(async () => {
+    const result = await axios
+      .post(`/api/v1/settings/downloads/test/${id}`)
+      .then(
+        (response) => response.data,
+        (e) => ({
+          connected: false,
+          error: e.message || 'Connection failed',
+        })
       );
-      setConnectionStatus(response.data);
-    } catch (e) {
-      setConnectionStatus({
-        connected: false,
-        error: e.message || 'Connection failed',
-      });
+
+    try {
+      setConnectionStatus(result);
     } finally {
       setIsTesting(false);
     }
-  };
+  }, [id]);
+
+  const testConnection = useCallback(() => {
+    setIsTesting(true);
+    void performTest();
+  }, [performTest]);
 
   useEffect(() => {
-    testConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void performTest();
+  }, [performTest]);
 
   const internalUrl =
     (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);
