@@ -77,7 +77,7 @@ const DiskMetrics = ({
   totalBytes,
 }: DiskMetricsProps) => (
   <div className="grid grid-cols-3 gap-2 text-sm md:col-span-6 md:text-right">
-    <div className="flex items-center justify-between md:block">
+    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
       <span className="text-xs text-neutral md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.freeSpace"
@@ -86,7 +86,7 @@ const DiskMetrics = ({
       </span>
       <span className="text-base-content">{formatBytes(freeBytes)}</span>
     </div>
-    <div className="flex items-center justify-between md:block">
+    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
       <span className="text-xs text-neutral md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.usedSpace"
@@ -95,7 +95,7 @@ const DiskMetrics = ({
       </span>
       <span className="text-base-content">{formatBytes(usedBytes)}</span>
     </div>
-    <div className="flex items-center justify-between md:block">
+    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
       <span className="text-xs text-neutral md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.totalSpace"

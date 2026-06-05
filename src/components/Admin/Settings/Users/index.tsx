@@ -115,10 +115,7 @@ const UserSettings = () => {
           return (
             <Form className="mt-5 max-w-6xl">
               <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-y-5">
-                <label
-                  htmlFor="localLogin"
-                  className="font-bold block mt-2 sm:mt-5"
-                >
+                <label htmlFor="localLogin" className="font-bold">
                   <FormattedMessage
                     id="userSettings.localLogin"
                     defaultMessage="Enable Local Sign-in"
