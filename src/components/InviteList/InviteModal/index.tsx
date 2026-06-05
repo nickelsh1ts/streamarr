@@ -110,13 +110,13 @@ const InviteModal = ({
       ),
   });
 
-  useEffect(() => {
-    if (filteredUserData && !user) {
-      setSelectedUser(
-        filteredUserData?.find((u) => u.id === currentUser?.id) ?? null
-      );
-    }
-  }, [currentUser?.id, filteredUserData, user]);
+  const [hasDefaultedUser, setHasDefaultedUser] = useState(false);
+  if (!hasDefaultedUser && filteredUserData && !user) {
+    setHasDefaultedUser(true);
+    setSelectedUser(
+      filteredUserData.find((u) => u.id === currentUser?.id) ?? null
+    );
+  }
 
   const buttonRef = useRef(null);
   const optionsRef = useRef(null);
@@ -129,11 +129,13 @@ const InviteModal = ({
   const [listboxOpen, setListboxOpen] = useState(false);
   const [dropdownMeasured, setDropdownMeasured] = useState(false);
 
-  useEffect(() => {
+  const [prevListboxOpen, setPrevListboxOpen] = useState(listboxOpen);
+  if (prevListboxOpen !== listboxOpen) {
+    setPrevListboxOpen(listboxOpen);
     if (listboxOpen) {
       setDropdownMeasured(false);
     }
-  }, [listboxOpen]);
+  }
 
   useEffect(() => {
     function updateDropdownPosition() {

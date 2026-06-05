@@ -32,7 +32,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
   const intl = useIntl();
   const initialLoad = useRef(false);
   const [isValidated, setIsValidated] = useState(sonarr ? true : false);
-  const [isTesting, setIsTesting] = useState(false);
+  const [isTesting, setIsTesting] = useState(() => Boolean(sonarr));
   const [testResponse, setTestResponse] = useState<TestResponse>();
   const [authStatus, setAuthStatus] = useState<{
     authenticationMethod: string;
@@ -101,7 +101,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
       ),
   });
 
-  const testConnection = useCallback(
+  const performTest = useCallback(
     async ({
       hostname,
       port,
@@ -115,56 +115,59 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
       baseUrl?: string;
       useSsl?: boolean;
     }) => {
-      setIsTesting(true);
-      try {
-        const response = await axios.post<TestResponse>(
-          '/api/v1/settings/sonarr/test',
-          {
-            hostname,
-            apiKey,
-            port: Number(port),
-            baseUrl,
-            useSsl,
-          }
+      const response = await axios
+        .post<TestResponse>('/api/v1/settings/sonarr/test', {
+          hostname,
+          apiKey,
+          port: Number(port),
+          baseUrl,
+          useSsl,
+        })
+        .then(
+          (res) => res,
+          () => null
         );
 
-        setIsValidated(true);
-        setTestResponse(response.data);
-        // Fetch auth status after successful test
-        if (sonarr) {
-          axios
-            .get(`/api/v1/settings/sonarr/${sonarr.id}/auth`)
-            .then((authRes) => setAuthStatus(authRes.data))
-            .catch(() => setAuthStatus(null));
-        }
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testsuccess',
-                defaultMessage:
-                  '{service} connection established successfully!',
-              },
-              { service: 'Sonarr' }
-            ),
-            type: 'success',
-            icon: <CheckBadgeIcon className="size-7" />,
-          });
-        }
-      } catch {
-        setIsValidated(false);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testfailed',
-                defaultMessage: 'Failed to connect to {service}.',
-              },
-              { service: 'Sonarr' }
-            ),
-            type: 'error',
-            icon: <XCircleIcon className="size-7" />,
-          });
+      try {
+        if (response) {
+          setIsValidated(true);
+          setTestResponse(response.data);
+          // Fetch auth status after successful test
+          if (sonarr) {
+            axios
+              .get(`/api/v1/settings/sonarr/${sonarr.id}/auth`)
+              .then((authRes) => setAuthStatus(authRes.data))
+              .catch(() => setAuthStatus(null));
+          }
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testsuccess',
+                  defaultMessage:
+                    '{service} connection established successfully!',
+                },
+                { service: 'Sonarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testfailed',
+                  defaultMessage: 'Failed to connect to {service}.',
+                },
+                { service: 'Sonarr' }
+              ),
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
         }
       } finally {
         setIsTesting(false);
@@ -174,9 +177,23 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
     [intl, sonarr]
   );
 
+  const testConnection = useCallback(
+    (params: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      baseUrl?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
+  );
+
   useEffect(() => {
     if (sonarr) {
-      testConnection({
+      void performTest({
         apiKey: sonarr.apiKey,
         hostname: sonarr.hostname,
         port: sonarr.port,
@@ -184,17 +201,19 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
         useSsl: sonarr.useSsl,
       });
     }
-  }, [sonarr, testConnection]);
+  }, [sonarr, performTest]);
 
   // Reset auth status and validation when modal closes
-  useEffect(() => {
+  const [prevShow, setPrevShow] = useState(show);
+  if (prevShow !== show) {
+    setPrevShow(show);
     if (!show) {
       setAuthStatus(null);
       if (sonarr) {
         setIsValidated(false);
       }
     }
-  }, [show, sonarr]);
+  }
 
   // Fetch auth status when modal opens with existing sonarr
   useEffect(() => {

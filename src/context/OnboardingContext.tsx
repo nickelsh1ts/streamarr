@@ -152,20 +152,16 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     adminPhase,
   ]);
 
-  useEffect(() => {
-    if (isSetupRoute) return;
-    if (isSignupRoute) return;
-    if (adminOnboardingJustCompleted) return;
-    if (isAdminOnboarding && adminPhase === 'idle') {
-      setAdminPhase('welcome');
-    }
-  }, [
-    isAdminOnboarding,
-    adminPhase,
-    isSetupRoute,
-    isSignupRoute,
-    adminOnboardingJustCompleted,
-  ]);
+  // Begin the admin welcome phase once admin onboarding starts
+  if (
+    !isSetupRoute &&
+    !isSignupRoute &&
+    !adminOnboardingJustCompleted &&
+    isAdminOnboarding &&
+    adminPhase === 'idle'
+  ) {
+    setAdminPhase('welcome');
+  }
 
   const finalizeAdminOnboarding = useCallback(async () => {
     setAdminOnboardingJustCompleted(true);
@@ -182,7 +178,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     } catch {
       // Silently fail - UI state already updated
     }
-  }, [mutate, user?.id, resetTutorialState]);
+  }, [mutate, user, resetTutorialState]);
 
   const completeAdminTutorial = finalizeAdminOnboarding;
 
@@ -202,9 +198,13 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     );
   }, [data, loading, error, user, shouldBlockUserOnboarding]);
 
-  useEffect(() => {
+  const [prevShouldWelcomeOpen, setPrevShouldWelcomeOpen] = useState(
+    shouldwelcomeOpenModal
+  );
+  if (prevShouldWelcomeOpen !== shouldwelcomeOpenModal) {
+    setPrevShouldWelcomeOpen(shouldwelcomeOpenModal);
     setWelcomeOpen(shouldwelcomeOpenModal);
-  }, [shouldwelcomeOpenModal]);
+  }
 
   // After welcome completes (or is disabled), check if tutorial should show
   useEffect(() => {
@@ -270,7 +270,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     } catch {
       // Silently fail - UI state already handles this
     }
-  }, [isPreviewMode, showAdminWelcome, user?.id, mutate]);
+  }, [isPreviewMode, showAdminWelcome, user, mutate]);
 
   const startTutorial = useCallback(() => {
     setTutorialActive(true);

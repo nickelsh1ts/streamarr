@@ -40,7 +40,7 @@ const DownloadClientModal = ({
   const intl = useIntl();
   const initialLoad = useRef(false);
   const [isValidated, setIsValidated] = useState(downloadClient ? true : false);
-  const [isTesting, setIsTesting] = useState(false);
+  const [isTesting, setIsTesting] = useState(() => Boolean(downloadClient));
   const DownloadClientSchema = Yup.object().shape({
     name: Yup.string().required(
       intl.formatMessage({
@@ -85,7 +85,7 @@ const DownloadClientModal = ({
     }),
   });
 
-  const testConnection = useCallback(
+  const performTest = useCallback(
     async ({
       name,
       hostname,
@@ -103,9 +103,8 @@ const DownloadClientModal = ({
       client: DownloadClientType;
       useSsl: boolean;
     }) => {
-      setIsTesting(true);
-      try {
-        const response = await axios.post('/api/v1/settings/downloads/test', {
+      const result = await axios
+        .post('/api/v1/settings/downloads/test', {
           name,
           hostname,
           port,
@@ -113,40 +112,50 @@ const DownloadClientModal = ({
           password,
           client,
           useSsl,
-        });
+        })
+        .then(
+          (response) => ({
+            connected: Boolean(response.data.connected),
+            error: response.data.error,
+          }),
+          (e) => ({
+            connected: false,
+            error: e.response?.data?.message || e.message,
+          })
+        );
 
-        if (!response.data.connected) {
-          throw new Error(response.data.error || 'Connection failed');
-        }
-        setIsValidated(true);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.downloads.testsuccess',
-                defaultMessage: 'Successfully connected to {client}',
-              },
-              { client: CLIENT_NAMES[client] }
-            ),
-            type: 'success',
-            icon: <CheckBadgeIcon className="size-7" />,
-          });
-        }
-      } catch (e) {
-        setIsValidated(false);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.downloads.testfailed',
-                defaultMessage: 'Failed to connect to {client}',
-              },
-              { client: CLIENT_NAMES[client] }
-            ),
-            message: e.response?.data?.message || e.message,
-            type: 'error',
-            icon: <XCircleIcon className="size-7" />,
-          });
+      try {
+        if (result.connected) {
+          setIsValidated(true);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.downloads.testsuccess',
+                  defaultMessage: 'Successfully connected to {client}',
+                },
+                { client: CLIENT_NAMES[client] }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.downloads.testfailed',
+                  defaultMessage: 'Failed to connect to {client}',
+                },
+                { client: CLIENT_NAMES[client] }
+              ),
+              message: result.error || 'Connection failed',
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
         }
       } finally {
         setIsTesting(false);
@@ -156,9 +165,25 @@ const DownloadClientModal = ({
     [intl]
   );
 
+  const testConnection = useCallback(
+    (params: {
+      name: string;
+      hostname: string;
+      port: number;
+      username?: string;
+      password?: string;
+      client: DownloadClientType;
+      useSsl: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
+  );
+
   useEffect(() => {
     if (downloadClient) {
-      testConnection({
+      void performTest({
         name: downloadClient.name,
         hostname: downloadClient.hostname,
         port: downloadClient.port,
@@ -168,7 +193,7 @@ const DownloadClientModal = ({
         useSsl: downloadClient.useSsl,
       });
     }
-  }, [downloadClient, testConnection]);
+  }, [downloadClient, performTest]);
 
   return (
     <Formik

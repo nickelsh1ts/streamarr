@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import type { HslColor } from 'colord';
 import { colord } from 'colord';
@@ -40,9 +40,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
     parseColorToHex(theme[colorName]) ?? theme[colorName]
   );
   const [tab, setTab] = useState<'picker' | 'sliders' | 'palette'>('palette');
-  const [hsl, setHsl] = useState<HslColor>(
-    colord(parseColorToHex(theme[colorName]) ?? theme[colorName]).toHsl()
-  );
+  const hsl = useMemo<HslColor>(() => colord(color).toHsl(), [color]);
   const [format, setFormat] = useState<'hex' | 'rgb' | 'hsl' | 'oklch'>(
     'oklch'
   );
@@ -86,15 +84,16 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
     },
   ];
 
-  useEffect(() => {
-    if (show && theme[colorName]) {
-      setColor(parseColorToHex(theme[colorName]) ?? theme[colorName]);
+  // Sync the working color to the theme value when the modal opens or target changes
+  const themeColor = theme[colorName];
+  const colorSyncKey = `${show}|${colorName}|${themeColor}`;
+  const [prevColorSyncKey, setPrevColorSyncKey] = useState(colorSyncKey);
+  if (prevColorSyncKey !== colorSyncKey) {
+    setPrevColorSyncKey(colorSyncKey);
+    if (show && themeColor) {
+      setColor(parseColorToHex(themeColor) ?? themeColor);
     }
-  }, [colorName, show, theme]);
-
-  useEffect(() => {
-    setHsl(colord(color).toHsl());
-  }, [color]);
+  }
 
   const getFormattedValue = () => {
     const c = colord(color);
@@ -155,18 +154,19 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 
   const updateFromHsl = (newHsl: Partial<HslColor>) => {
     const updated = { ...hsl, ...newHsl };
-    setHsl(updated);
     setColor(colord(updated).toHex());
   };
 
   // Local editable input state so users can type values
   const [inputValue, setInputValue] = useState<string>(getFormattedValue());
 
-  useEffect(() => {
-    // keep the input in sync when the color changes externally
-    setInputValue(getFormattedValue());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [color, format]);
+  // Keep the editable input in sync when the color or format changes externally
+  const formattedValue = getFormattedValue();
+  const [prevFormattedValue, setPrevFormattedValue] = useState(formattedValue);
+  if (prevFormattedValue !== formattedValue) {
+    setPrevFormattedValue(formattedValue);
+    setInputValue(formattedValue);
+  }
 
   const presets = getAllTailwindColors();
   const currentOption = formatOptions.find((opt) => opt.value === format);

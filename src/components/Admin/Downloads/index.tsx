@@ -24,7 +24,7 @@ import {
 import useSWR from 'swr';
 import Button from '@app/components/Common/Button';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useDownloads, useDownloadActions } from '@app/hooks/useDownloads';
@@ -144,7 +144,6 @@ const AdminDownloads = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedHashes, setSelectedHashes] = useState<Set<string>>(new Set());
-  const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
   const [isBulkActing, setIsBulkActing] = useState(false);
   const [showBulkRemoveModal, setShowBulkRemoveModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -192,10 +191,13 @@ const AdminDownloads = () => {
   }, []);
 
   // Clear selections when filter/page changes
-  useEffect(() => {
+  const selectionResetKey = `${currentFilter}|${currentClient}|${page}`;
+  const [prevSelectionResetKey, setPrevSelectionResetKey] =
+    useState(selectionResetKey);
+  if (prevSelectionResetKey !== selectionResetKey) {
+    setPrevSelectionResetKey(selectionResetKey);
     setSelectedHashes(new Set());
-    setIsSelectAllChecked(false);
-  }, [currentFilter, currentClient, page]);
+  }
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {
@@ -239,16 +241,22 @@ const AdminDownloads = () => {
     DownloadClientSettings[]
   >('/api/v1/settings/downloads');
 
+  // Whether every visible download is currently selected (derived state)
+  const isSelectAllChecked = useMemo(() => {
+    if (data?.results && selectedHashes.size > 0) {
+      return data.results.every((t) => selectedHashes.has(t.hash));
+    }
+    return false;
+  }, [selectedHashes, data]);
+
   // Handle select all checkbox
   const handleSelectAll = useCallback(() => {
     if (isSelectAllChecked) {
       setSelectedHashes(new Set());
-      setIsSelectAllChecked(false);
     } else {
       if (data?.results) {
         const allHashes = new Set(data.results.map((t) => t.hash));
         setSelectedHashes(allHashes);
-        setIsSelectAllChecked(true);
       }
     }
   }, [isSelectAllChecked, data]);
@@ -285,7 +293,6 @@ const AdminDownloads = () => {
 
         // Clear selection after action
         setSelectedHashes(new Set());
-        setIsSelectAllChecked(false);
 
         // Refresh data
         refetch();
@@ -322,7 +329,6 @@ const AdminDownloads = () => {
 
         // Clear selection after action
         setSelectedHashes(new Set());
-        setIsSelectAllChecked(false);
         setShowBulkRemoveModal(false);
 
         // Refresh data
@@ -373,16 +379,6 @@ const AdminDownloads = () => {
       (s) => s.health?.status === 'unhealthy' || s.health?.status === 'retrying'
     ) || [];
   const hasUnhealthyClients = unhealthyClients.length > 0;
-
-  // Update select-all state when selection changes
-  useEffect(() => {
-    if (data?.results && selectedHashes.size > 0) {
-      const allSelected = data.results.every((t) => selectedHashes.has(t.hash));
-      setIsSelectAllChecked(allSelected);
-    } else {
-      setIsSelectAllChecked(false);
-    }
-  }, [selectedHashes, data]);
 
   // Only show full page loading on initial load when we have no data yet
   const isInitialLoading = (isLoadingClients || isLoadingDownloads) && !data;

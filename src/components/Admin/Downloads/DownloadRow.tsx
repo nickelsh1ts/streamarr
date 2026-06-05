@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
 import type {
@@ -11,6 +11,7 @@ import Toast from '@app/components/Toast';
 import TorrentDetailsModal from './TorrentDetailsModal';
 import RemoveTorrentModal from './RemoveTorrentModal';
 import { useDownloadActions } from '@app/hooks/useDownloads';
+import { useIsClient } from '@app/hooks/useIsClient';
 import {
   PlayIcon,
   PauseIcon,
@@ -54,11 +55,8 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
   const [isActing, setIsActing] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsClient();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
   const {
     pause,
     resume,

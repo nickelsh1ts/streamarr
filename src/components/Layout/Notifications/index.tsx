@@ -11,7 +11,7 @@ import {
   QueueListIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
 import { useUser } from '@app/hooks/useUser';
@@ -153,13 +153,15 @@ const Notifications = () => {
     }
   };
 
-  useEffect(() => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
     if (!isOpen) {
       setFilter('all');
       setNewPageSize(5);
       setEarlierPageSize(5);
     }
-  }, [isOpen]);
+  }
 
   const unreadNotifications = useMemo(
     () => data?.results.filter((notification) => !notification.isRead) ?? [],

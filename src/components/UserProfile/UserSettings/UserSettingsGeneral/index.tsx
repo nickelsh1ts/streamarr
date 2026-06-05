@@ -16,7 +16,7 @@ import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import Toast, { dismissToast } from '@app/components/Toast';
@@ -44,10 +44,6 @@ const UserSettingsGeneral = () => {
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
   const [isRequestingExtension, setIsRequestingExtension] = useState(false);
-  const [plexLibrariesDiffer, setPlexLibrariesDiffer] = useState(false);
-  const [plexPermissionsDiffer, setPlexPermissionsDiffer] = useState<{
-    allowDownloads: boolean;
-  }>({ allowDownloads: false });
   const searchParams = useParams<{ userid: string }>();
   const {
     user,
@@ -92,25 +88,31 @@ const UserSettingsGeneral = () => {
     revalidateOnFocus: false,
   });
 
-  useEffect(() => {
-    setInviteQuotaEnabled(
-      data?.inviteQuotaLimit != undefined && data?.inviteQuotaDays != undefined
-    );
-  }, [data]);
+  // Reset the editable invite-quota toggle whenever the loaded user data changes
+  const derivedInviteQuotaEnabled =
+    data?.inviteQuotaLimit != undefined && data?.inviteQuotaDays != undefined;
+  const [prevQuotaData, setPrevQuotaData] = useState(data);
+  if (prevQuotaData !== data) {
+    setPrevQuotaData(data);
+    setInviteQuotaEnabled(derivedInviteQuotaEnabled);
+  }
 
   // Compare database library/permission values with current Plex state
-  useEffect(() => {
+  const { plexLibrariesDiffer, plexPermissionsDiffer } = useMemo<{
+    plexLibrariesDiffer: boolean;
+    plexPermissionsDiffer: { allowDownloads: boolean };
+  }>(() => {
     if (!data || !plexLibrariesData?.canFetchFromPlex) {
-      setPlexLibrariesDiffer(false);
-      setPlexPermissionsDiffer({ allowDownloads: false });
-      return;
+      return {
+        plexLibrariesDiffer: false,
+        plexPermissionsDiffer: { allowDownloads: false },
+      };
     }
 
     // === Library comparison ===
+    let librariesDiffer = false;
     const plexLibraries = plexLibrariesData.currentPlexLibraries;
-    if (plexLibraries === null) {
-      setPlexLibrariesDiffer(false);
-    } else {
+    if (plexLibraries !== null) {
       // Resolve DB value - if 'server'/null/empty, use global default
       const dbValue =
         !data.sharedLibraries || data.sharedLibraries === 'server'
@@ -138,18 +140,22 @@ const UserSettingsGeneral = () => {
 
       const normalizedDb = normalizeValue(dbValue);
       const normalizedPlex = normalizeValue(plexValue);
-      setPlexLibrariesDiffer(normalizedDb !== normalizedPlex);
+      librariesDiffer = normalizedDb !== normalizedPlex;
     }
 
     // === Permission comparison ===
     const plexPerms = plexLibrariesData.permissions;
-    if (!plexPerms) {
-      setPlexPermissionsDiffer({ allowDownloads: false });
-    } else {
-      setPlexPermissionsDiffer({
-        allowDownloads: (data.allowDownloads ?? false) !== plexPerms.allowSync,
-      });
-    }
+    const permissionsDiffer = !plexPerms
+      ? { allowDownloads: false }
+      : {
+          allowDownloads:
+            (data.allowDownloads ?? false) !== plexPerms.allowSync,
+        };
+
+    return {
+      plexLibrariesDiffer: librariesDiffer,
+      plexPermissionsDiffer: permissionsDiffer,
+    };
   }, [data, plexLibrariesData, allLibrariesData]);
 
   if (!data && !error) {

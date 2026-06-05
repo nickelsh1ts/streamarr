@@ -30,6 +30,20 @@ enum Filter {
   UNREAD = 'unread',
 }
 
+const getStoredNotificationFilterSettings = (): {
+  currentFilter?: Filter;
+  currentPageSize?: number;
+} => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const filterString = window.localStorage.getItem('nl-filter-settings');
+    return filterString ? JSON.parse(filterString) : {};
+  } catch {
+    window.localStorage.removeItem('nl-filter-settings');
+    return {};
+  }
+};
+
 const NotificationsList = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -46,8 +60,14 @@ const NotificationsList = () => {
         : null
     );
   const intl = useIntl();
-  const [currentFilter, setCurrentFilter] = useState<Filter>(Filter.ALL);
-  const [currentPageSize, setCurrentPageSize] = useState<number>(10);
+  const [currentFilter, setCurrentFilter] = useState<Filter>(() => {
+    const queryFilter = searchParams.get('filter') as Filter;
+    if (Object.values(Filter).includes(queryFilter)) return queryFilter;
+    return getStoredNotificationFilterSettings().currentFilter ?? Filter.ALL;
+  });
+  const [currentPageSize, setCurrentPageSize] = useState<number>(
+    () => getStoredNotificationFilterSettings().currentPageSize ?? 10
+  );
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -85,25 +105,15 @@ const NotificationsList = () => {
 
   useNotifications();
 
-  // Restore last set filter values on component mount
-  useEffect(() => {
-    const filterString = window.localStorage.getItem('nl-filter-settings');
-
-    if (filterString) {
-      try {
-        const filterSettings = JSON.parse(filterString);
-        setCurrentFilter(filterSettings.currentFilter);
-        setCurrentPageSize(filterSettings.currentPageSize);
-      } catch {
-        window.localStorage.removeItem('nl-filter-settings');
-      }
+  // Keep the filter in sync with the URL query param when it changes
+  const queryFilter = searchParams.get('filter') as Filter;
+  const [prevQueryFilter, setPrevQueryFilter] = useState(queryFilter);
+  if (prevQueryFilter !== queryFilter) {
+    setPrevQueryFilter(queryFilter);
+    if (Object.values(Filter).includes(queryFilter)) {
+      setCurrentFilter(queryFilter);
     }
-
-    // If filter value is provided in query, use that instead
-    if (Object.values(Filter).includes(searchParams.get('filter') as Filter)) {
-      setCurrentFilter(searchParams.get('filter') as Filter);
-    }
-  }, [searchParams]);
+  }
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {
