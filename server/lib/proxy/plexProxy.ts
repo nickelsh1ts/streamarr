@@ -18,7 +18,7 @@ export function createPlexProxy(
     name: 'Plex',
     getTarget: getPlexTarget,
     pathPrefix: '/web',
-    webSocket: true,
+    webSocket: false,
     wsPath: '/web',
     suppressErrors: () => getPlexHealth().status !== 'healthy',
   });
