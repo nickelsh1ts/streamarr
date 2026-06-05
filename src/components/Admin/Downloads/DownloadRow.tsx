@@ -502,7 +502,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
         <td>
           <>
             <select
-              className="select select-xs select-primary block sm:hidden"
+              className="select select-xs select-primary sm:hidden w-auto min-w-32"
               disabled={isActing || isSelected}
               defaultValue=""
               onChange={(e) => {

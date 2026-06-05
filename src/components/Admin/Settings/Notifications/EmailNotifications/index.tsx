@@ -243,298 +243,299 @@ const EmailNotifications = () => {
         };
         return (
           <Form className="mt-5">
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
-              <label htmlFor="preset">
-                <FormattedMessage
-                  id="notifications.enableAgent"
-                  defaultMessage="Enable Agent"
-                />
-                <span className="ml-1 text-error">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
+            <div className="space-y-4 max-w-5xl">
+              <div className="sm:grid sm:grid-cols-3 sm:items-center space-y-4">
+                <label htmlFor="enabled">
+                  <FormattedMessage
+                    id="notifications.enableAgent"
+                    defaultMessage="Enable Agent"
+                  />
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      id="enabled"
+                      name="enabled"
+                      type="checkbox"
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
+                </div>
+                <label htmlFor="senderName">
+                  <FormattedMessage
+                    id="emailNotifications.senderName"
+                    defaultMessage="Sender Name"
+                  />
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      className="input input-sm input-primary rounded-md w-full"
+                      id="senderName"
+                      name="senderName"
+                      type="text"
+                    />
+                  </div>
+                </div>
+                <label htmlFor="emailFrom">
+                  <FormattedMessage
+                    id="emailNotifications.senderAddress"
+                    defaultMessage="Sender Address"
+                  />
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      id="emailFrom"
+                      name="emailFrom"
+                      type="text"
+                      inputMode="email"
+                      autoComplete="off"
+                      data-1pignore="true"
+                      data-lpignore="true"
+                      data-bwignore="true"
+                      className="input input-sm input-primary rounded-md w-full"
+                    />
+                  </div>
+                  {errors.emailFrom &&
+                    touched.emailFrom &&
+                    typeof errors.emailFrom === 'string' && (
+                      <div className="error">{errors.emailFrom}</div>
+                    )}
+                </div>
+                <label htmlFor="smtpHost">
+                  <FormattedMessage
+                    id="emailNotifications.smtpHost"
+                    defaultMessage="SMTP Host"
+                  />
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      id="smtpHost"
+                      name="smtpHost"
+                      type="text"
+                      inputMode="url"
+                      autoComplete="off"
+                      data-1pignore="true"
+                      data-lpignore="true"
+                      data-bwignore="true"
+                      className="input input-sm input-primary rounded-md w-full"
+                    />
+                  </div>
+                  {errors.smtpHost &&
+                    touched.smtpHost &&
+                    typeof errors.smtpHost === 'string' && (
+                      <div className="error">{errors.smtpHost}</div>
+                    )}
+                </div>
+                <label htmlFor="smtpPort">
+                  <FormattedMessage
+                    id="emailNotifications.smtpPort"
+                    defaultMessage="SMTP Port"
+                  />
+                  <span className="ml-1 text-error">*</span>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
                   <Field
-                    id="enabled"
-                    name="enabled"
+                    id="smtpPort"
+                    name="smtpPort"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
+                    className="input input-sm input-primary rounded-md w-1/6"
+                  />
+                  {errors.smtpPort &&
+                    touched.smtpPort &&
+                    typeof errors.smtpPort === 'string' && (
+                      <div className="error">{errors.smtpPort}</div>
+                    )}
+                </div>
+                <label htmlFor="encryption">
+                  <FormattedMessage
+                    id="emailNotifications.encryptionMethod"
+                    defaultMessage="Encryption Method"
+                  />
+                  <span className="ml-1 text-error">*</span>
+                  <span className="block text-sm text-neutral">
+                    <FormattedMessage
+                      id="emailNotifications.encryptionMethodDescription"
+                      defaultMessage="In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
+                    />
+                  </span>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      as="select"
+                      id="encryption"
+                      name="encryption"
+                      className="select select-sm select-primary rounded-md w-full"
+                    >
+                      <option value="none">
+                        {intl.formatMessage({
+                          id: 'common.none',
+                          defaultMessage: 'None',
+                        })}
+                      </option>
+                      <option value="default">
+                        {intl.formatMessage({
+                          id: 'emailNotifications.encryption.default',
+                          defaultMessage: 'Use STARTTLS if available',
+                        })}
+                      </option>
+                      <option value="opportunistic">
+                        {intl.formatMessage({
+                          id: 'emailNotifications.encryption.opportunistic',
+                          defaultMessage: 'Always use STARTTLS',
+                        })}
+                      </option>
+                      <option value="implicit">
+                        {intl.formatMessage({
+                          id: 'emailNotifications.encryption.implicit',
+                          defaultMessage: 'Use Implicit TLS',
+                        })}
+                      </option>
+                    </Field>
+                  </div>
+                </div>
+                <label htmlFor="allowSelfSigned" className="checkbox-label">
+                  <FormattedMessage
+                    id="emailNotifications.allowSelfSigned"
+                    defaultMessage="Allow Self-Signed Certificates"
+                  />
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <Field
                     type="checkbox"
+                    id="allowSelfSigned"
+                    name="allowSelfSigned"
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
                 </div>
-              </div>
-              <label htmlFor="senderName">
-                <FormattedMessage
-                  id="emailNotifications.senderName"
-                  defaultMessage="Sender Name"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    className="input input-sm input-primary rounded-md w-full"
-                    id="senderName"
-                    name="senderName"
-                    type="text"
-                  />
-                </div>
-              </div>
-              <label htmlFor="emailFrom">
-                <FormattedMessage
-                  id="emailNotifications.senderAddress"
-                  defaultMessage="Sender Address"
-                />
-                <span className="ml-1 text-error">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    id="emailFrom"
-                    name="emailFrom"
-                    type="text"
-                    inputMode="email"
-                    autoComplete="off"
-                    data-1pignore="true"
-                    data-lpignore="true"
-                    data-bwignore="true"
-                    className="input input-sm input-primary rounded-md w-full"
-                  />
-                </div>
-                {errors.emailFrom &&
-                  touched.emailFrom &&
-                  typeof errors.emailFrom === 'string' && (
-                    <div className="error">{errors.emailFrom}</div>
-                  )}
-              </div>
-              <label htmlFor="smtpHost">
-                <FormattedMessage
-                  id="emailNotifications.smtpHost"
-                  defaultMessage="SMTP Host"
-                />
-                <span className="ml-1 text-error">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    id="smtpHost"
-                    name="smtpHost"
-                    type="text"
-                    inputMode="url"
-                    autoComplete="off"
-                    data-1pignore="true"
-                    data-lpignore="true"
-                    data-bwignore="true"
-                    className="input input-sm input-primary rounded-md w-full"
-                  />
-                </div>
-                {errors.smtpHost &&
-                  touched.smtpHost &&
-                  typeof errors.smtpHost === 'string' && (
-                    <div className="error">{errors.smtpHost}</div>
-                  )}
-              </div>
-              <label htmlFor="smtpPort">
-                <FormattedMessage
-                  id="emailNotifications.smtpPort"
-                  defaultMessage="SMTP Port"
-                />
-                <span className="ml-1 text-error">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <Field
-                  id="smtpPort"
-                  name="smtpPort"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="off"
-                  data-1pignore="true"
-                  data-lpignore="true"
-                  data-bwignore="true"
-                  className="input input-sm input-primary rounded-md w-1/6"
-                />
-                {errors.smtpPort &&
-                  touched.smtpPort &&
-                  typeof errors.smtpPort === 'string' && (
-                    <div className="error">{errors.smtpPort}</div>
-                  )}
-              </div>
-              <label htmlFor="encryption">
-                <FormattedMessage
-                  id="emailNotifications.encryptionMethod"
-                  defaultMessage="Encryption Method"
-                />
-                <span className="ml-1 text-error">*</span>
-                <span className="block text-sm text-neutral">
+                <label htmlFor="authUser">
                   <FormattedMessage
-                    id="emailNotifications.encryptionMethodDescription"
-                    defaultMessage="In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
+                    id="emailNotifications.smtpUsername"
+                    defaultMessage="SMTP Username"
                   />
-                </span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    as="select"
-                    id="encryption"
-                    name="encryption"
-                    className="select select-sm select-primary rounded-md w-full"
-                  >
-                    <option value="none">
-                      {intl.formatMessage({
-                        id: 'common.none',
-                        defaultMessage: 'None',
-                      })}
-                    </option>
-                    <option value="default">
-                      {intl.formatMessage({
-                        id: 'emailNotifications.encryption.default',
-                        defaultMessage: 'Use STARTTLS if available',
-                      })}
-                    </option>
-                    <option value="opportunistic">
-                      {intl.formatMessage({
-                        id: 'emailNotifications.encryption.opportunistic',
-                        defaultMessage: 'Always use STARTTLS',
-                      })}
-                    </option>
-                    <option value="implicit">
-                      {intl.formatMessage({
-                        id: 'emailNotifications.encryption.implicit',
-                        defaultMessage: 'Use Implicit TLS',
-                      })}
-                    </option>
-                  </Field>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      type="text"
+                      id="authUser"
+                      name="authUser"
+                      className="input input-sm input-primary rounded-md w-full"
+                    />
+                  </div>
                 </div>
-              </div>
-              <label htmlFor="allowSelfSigned" className="checkbox-label">
-                <FormattedMessage
-                  id="emailNotifications.allowSelfSigned"
-                  defaultMessage="Allow Self-Signed Certificates"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <Field
-                  type="checkbox"
-                  id="allowSelfSigned"
-                  name="allowSelfSigned"
-                  className="checkbox checkbox-sm checkbox-primary rounded-md"
-                />
-              </div>
-              <label htmlFor="authUser">
-                <FormattedMessage
-                  id="emailNotifications.smtpUsername"
-                  defaultMessage="SMTP Username"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    type="text"
-                    id="authUser"
-                    name="authUser"
-                    className="input input-sm input-primary rounded-md w-full"
-                  />
-                </div>
-              </div>
-              <label htmlFor="authPass">
-                <FormattedMessage
-                  id="emailNotifications.smtpPassword"
-                  defaultMessage="SMTP Password"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <SensitiveInput
-                    as="field"
-                    id="authPass"
-                    name="authPass"
-                    buttonSize="sm"
-                    className="input input-sm input-primary rounded-md w-full"
-                  />
-                </div>
-              </div>
-              <label htmlFor="pgpPrivateKey">
-                <span className="mr-2">
+                <label htmlFor="authPass">
                   <FormattedMessage
-                    id="emailNotifications.pgpPrivateKey"
-                    defaultMessage="PGP Private Key"
+                    id="emailNotifications.smtpPassword"
+                    defaultMessage="SMTP Password"
                   />
-                </span>
-                <SettingsBadge badgeType="advanced" />
-                <span className="block text-sm text-neutral">
-                  <FormattedMessage
-                    id="emailNotifications.pgpPasswordDescription"
-                    defaultMessage="Sign encrypted email messages using {link}"
-                    values={{
-                      link: (
-                        <a
-                          href="https://www.openpgp.org/"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          OpenPGP
-                        </a>
-                      ),
-                    }}
-                  />
-                </span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <SensitiveInput
-                    as="field"
-                    id="pgpPrivateKey"
-                    name="pgpPrivateKey"
-                    type="textarea"
-                    buttonSize="sm"
-                    className="textarea textarea-sm textarea-primary rounded-md w-full"
-                  />
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <SensitiveInput
+                      as="field"
+                      id="authPass"
+                      name="authPass"
+                      buttonSize="sm"
+                      className="input input-sm input-primary rounded-md w-full"
+                    />
+                  </div>
                 </div>
-                {errors.pgpPrivateKey &&
-                  touched.pgpPrivateKey &&
-                  typeof errors.pgpPrivateKey === 'string' && (
-                    <div className="error">{errors.pgpPrivateKey}</div>
-                  )}
-              </div>
-              <label htmlFor="pgpPassword">
-                <span className="mr-2">
-                  <FormattedMessage
-                    id="emailNotifications.pgpPassword"
-                    defaultMessage="PGP Password"
-                  />
-                </span>
-                <SettingsBadge badgeType="advanced" />
-                <p className="text-sm text-neutral">
-                  <FormattedMessage
-                    id="emailNotifications.pgpPasswordDescription"
-                    defaultMessage="Sign encrypted email messages using {link}"
-                    values={{
-                      link: (
-                        <a
-                          href="https://www.openpgp.org/"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          OpenPGP
-                        </a>
-                      ),
-                    }}
-                  />
-                </p>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <SensitiveInput
-                    as="field"
-                    id="pgpPassword"
-                    name="pgpPassword"
-                    buttonSize="sm"
-                    className="input input-sm input-primary rounded-md w-full"
-                  />
+                <label htmlFor="pgpPrivateKey">
+                  <span className="mr-2">
+                    <FormattedMessage
+                      id="emailNotifications.pgpPrivateKey"
+                      defaultMessage="PGP Private Key"
+                    />
+                  </span>
+                  <SettingsBadge badgeType="advanced" />
+                  <span className="block text-sm text-neutral">
+                    <FormattedMessage
+                      id="emailNotifications.pgpPasswordDescription"
+                      defaultMessage="Sign encrypted email messages using {link}"
+                      values={{
+                        link: (
+                          <a
+                            href="https://www.openpgp.org/"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            OpenPGP
+                          </a>
+                        ),
+                      }}
+                    />
+                  </span>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <SensitiveInput
+                      as="field"
+                      id="pgpPrivateKey"
+                      name="pgpPrivateKey"
+                      type="textarea"
+                      buttonSize="sm"
+                      className="textarea textarea-sm textarea-primary rounded-md w-full"
+                    />
+                  </div>
+                  {errors.pgpPrivateKey &&
+                    touched.pgpPrivateKey &&
+                    typeof errors.pgpPrivateKey === 'string' && (
+                      <div className="error">{errors.pgpPrivateKey}</div>
+                    )}
                 </div>
-                {errors.pgpPassword &&
-                  touched.pgpPassword &&
-                  typeof errors.pgpPassword === 'string' && (
-                    <div className="error">{errors.pgpPassword}</div>
-                  )}
+                <label htmlFor="pgpPassword">
+                  <span className="mr-2">
+                    <FormattedMessage
+                      id="emailNotifications.pgpPassword"
+                      defaultMessage="PGP Password"
+                    />
+                  </span>
+                  <SettingsBadge badgeType="advanced" />
+                  <p className="text-sm text-neutral">
+                    <FormattedMessage
+                      id="emailNotifications.pgpPasswordDescription"
+                      defaultMessage="Sign encrypted email messages using {link}"
+                      values={{
+                        link: (
+                          <a
+                            href="https://www.openpgp.org/"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            OpenPGP
+                          </a>
+                        ),
+                      }}
+                    />
+                  </p>
+                </label>
+                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="flex">
+                    <SensitiveInput
+                      as="field"
+                      id="pgpPassword"
+                      name="pgpPassword"
+                      buttonSize="sm"
+                      className="input input-sm input-primary rounded-md w-full"
+                    />
+                  </div>
+                  {errors.pgpPassword &&
+                    touched.pgpPassword &&
+                    typeof errors.pgpPassword === 'string' && (
+                      <div className="error">{errors.pgpPassword}</div>
+                    )}
+                </div>
               </div>
             </div>
             <div className="divider divider-primary mb-0 col-span-full" />
