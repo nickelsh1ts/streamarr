@@ -115,7 +115,7 @@ A separate, lightweight migration system for JSON settings (not TypeORM). Files 
 - **Python service (port 5005)**: Internal-only; must not be exposed externally. The Node server communicates with it over `localhost:5005` with no auth token (loopback-only trust). Do not add public-facing routes that proxy directly to port 5005.
 - **Session store**: TypeORM-backed sessions (`Session` entity via `connect-typeorm`). Cleared on server restart in development — expect re-login after restart.
 - **Server-side i18n**: `server/i18n/index.ts` provides translation helpers for notification emails and subscribers. Locale files live at `server/i18n/locale/<lang>.json`. Extract with `pnpm i18n:extract:server`. The build step copies these to `dist/i18n/locale/`.
-- **Docker runtime**: Uses `node:26-alpine`. `engines` in `package.json` requires `node >=24.0.0` and `pnpm ^10.0.0`.
+- **Docker runtime**: Uses `node:26-alpine`. `engines` in `package.json` requires `node >=24.0.0` and `pnpm ^11.0.0`.
 
 ## External Integrations
 
