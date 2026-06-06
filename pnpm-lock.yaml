@@ -133,7 +133,7 @@ importers:
         version: 2.1.1
       nodemailer:
         specifier: ^8.0.6
-        version: 8.0.9
+        version: 8.0.10
       ofetch:
         specifier: ^1.5.1
         version: 1.5.1
@@ -6586,12 +6586,12 @@ packages:
     resolution: {integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==}
     engines: {node: '>=6.0.0'}
 
-  nodemailer@8.0.5:
-    resolution: {integrity: sha512-0PF8Yb1yZuQfQbq+5/pZJrtF6WQcjTd5/S4JOHs9PGFxuTqoB/icwuB44pOdURHJbRKX1PPoJZtY7R4VUoCC8w==}
+  nodemailer@8.0.10:
+    resolution: {integrity: sha512-BLFuSth7QtHOkBzyqTehWWyub0NTRDuK2Q2SQfnGLsrJnzyU+Yeh4WpV1eZGuARFj1xQJHIdnTuJZLP+b9R1GQ==}
     engines: {node: '>=6.0.0'}
 
-  nodemailer@8.0.9:
-    resolution: {integrity: sha512-5ofa7BUN8+C+Hckh5V2GjeeOGRQBx0CJQA6KxrvuZfC8iU4/q7sLn8XrtEEhJkjV6HdyIiQs7Bba6bTao8JhkA==}
+  nodemailer@8.0.5:
+    resolution: {integrity: sha512-0PF8Yb1yZuQfQbq+5/pZJrtF6WQcjTd5/S4JOHs9PGFxuTqoB/icwuB44pOdURHJbRKX1PPoJZtY7R4VUoCC8w==}
     engines: {node: '>=6.0.0'}
 
   nodemon@3.1.14:
@@ -15989,10 +15989,10 @@ snapshots:
 
   nodemailer@7.0.13: {}
 
+  nodemailer@8.0.10: {}
+
   nodemailer@8.0.5:
     optional: true
-
-  nodemailer@8.0.9: {}
 
   nodemon@3.1.14:
     dependencies:
@@ -16449,7 +16449,7 @@ snapshots:
       fixpack: 4.0.0
       get-port: 5.1.1
       mailparser: 3.9.8
-      nodemailer: 8.0.9
+      nodemailer: 8.0.10
       open: 7.4.2
       p-event: 4.2.0
       p-wait-for: 3.2.0
