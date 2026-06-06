@@ -1,3 +1,20 @@
+## [1.8.2](https://github.com/nickelsh1ts/streamarr/compare/v1.8.1...v1.8.2) (2026-06-06)
+
+### 🐛 Bug Fixes
+
+* **docker:** copy pnpm-workspace.yaml before installing dependencies ([#380](https://github.com/nickelsh1ts/streamarr/issues/380)) ([670d2e9](https://github.com/nickelsh1ts/streamarr/commit/670d2e9c575e9928d7b6d8c28646610917c1b486))
+* **hooks:** resolve react-hooks compiler rule violations ([#377](https://github.com/nickelsh1ts/streamarr/issues/377)) ([a6ddecf](https://github.com/nickelsh1ts/streamarr/commit/a6ddecf56acf90ece05e98357c11acd566202158))
+* **style:** fix various misaligned components ([#375](https://github.com/nickelsh1ts/streamarr/issues/375)) ([284aa6b](https://github.com/nickelsh1ts/streamarr/commit/284aa6bb29e2895648b1c922c58ea8f10aa15051))
+* **theme:** normalize tailwind color presets to hex for the color picker ([#379](https://github.com/nickelsh1ts/streamarr/issues/379)) ([65c07ce](https://github.com/nickelsh1ts/streamarr/commit/65c07ce9631e8b11409d82666f6158294651c168))
+
+### 📚 Documentation
+
+* update pnpm version references to v11 ([#378](https://github.com/nickelsh1ts/streamarr/issues/378)) ([73b5897](https://github.com/nickelsh1ts/streamarr/commit/73b5897be4502783aa69cad9881e6c88d6a50c29))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#321](https://github.com/nickelsh1ts/streamarr/issues/321)) ([e9a4567](https://github.com/nickelsh1ts/streamarr/commit/e9a45675fbc93dbe2e028853f19ad8d022234e36))
+
 ## [1.8.1](https://github.com/nickelsh1ts/streamarr/compare/v1.8.0...v1.8.1) (2026-06-05)
 
 ### 🐛 Bug Fixes
