@@ -160,7 +160,7 @@ importers:
         version: 3.49.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-big-calendar:
         specifier: ^1.19.4
-        version: 1.19.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.19.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-colorful:
         specifier: ^5.6.1
         version: 5.7.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -7313,8 +7313,8 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  react-big-calendar@1.19.4:
-    resolution: {integrity: sha512-FrvbDx2LF6JAWFD96LU1jjloppC5OgIvMYUYIPzAw5Aq+ArYFPxAjLqXc4DyxfsQDN0TJTMuS/BIbcSB7Pg0YA==}
+  react-big-calendar@1.19.6:
+    resolution: {integrity: sha512-2vCG/LBuNOOok4Olet4S7M6l11DjCO6RyWwqGRkZcR0cTOWEKVCwpqe5r24NobmVKPQV6nU3/DZGoAkrOypRlw==}
     peerDependencies:
       react: ^16.14.0 || ^17 || ^18 || ^19
       react-dom: ^16.14.0 || ^17 || ^18 || ^19
@@ -16668,7 +16668,7 @@ snapshots:
       react-stately: 3.47.0(react@19.2.6)
       use-sync-external-store: 1.6.0(react@19.2.6)
 
-  react-big-calendar@1.19.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-big-calendar@1.19.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@babel/runtime': 7.29.7
       clsx: 1.2.1
