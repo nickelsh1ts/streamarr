@@ -77,7 +77,7 @@ const ServicesLidarr = () => {
       ),
   });
 
-  const testConnection = useCallback(
+  const performTest = useCallback(
     async ({
       hostname,
       port,
@@ -91,46 +91,52 @@ const ServicesLidarr = () => {
       urlBase?: string;
       useSsl?: boolean;
     }) => {
-      setIsTesting(true);
-      try {
-        await axios.post<TestResponse>('/api/v1/settings/lidarr/test', {
+      const success = await axios
+        .post<TestResponse>('/api/v1/settings/lidarr/test', {
           hostname,
           port: Number(port),
           apiKey,
           urlBase,
           useSsl,
-        });
+        })
+        .then(
+          () => true,
+          () => false
+        );
 
-        setIsValidated(true);
-        revalidateAuthStatus();
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testsuccess',
-                defaultMessage:
-                  '{service} connection established successfully!',
-              },
-              { service: 'Lidarr' }
-            ),
-            type: 'success',
-            icon: <CheckBadgeIcon className="size-7" />,
-          });
-        }
-      } catch {
-        setIsValidated(false);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testfailed',
-                defaultMessage: 'Failed to connect to {service}.',
-              },
-              { service: 'Lidarr' }
-            ),
-            type: 'error',
-            icon: <XCircleIcon className="size-7" />,
-          });
+      try {
+        if (success) {
+          setIsValidated(true);
+          revalidateAuthStatus();
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testsuccess',
+                  defaultMessage:
+                    '{service} connection established successfully!',
+                },
+                { service: 'Lidarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testfailed',
+                  defaultMessage: 'Failed to connect to {service}.',
+                },
+                { service: 'Lidarr' }
+              ),
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
         }
       } finally {
         setIsTesting(false);
@@ -138,6 +144,20 @@ const ServicesLidarr = () => {
       }
     },
     [revalidateAuthStatus, intl]
+  );
+
+  const testConnection = useCallback(
+    (params: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      urlBase?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
   );
 
   // Auto-test connection on page load if service is configured
@@ -149,7 +169,7 @@ const ServicesLidarr = () => {
       !isValidated &&
       !isTesting
     ) {
-      testConnection({
+      void performTest({
         hostname: dataLidarr.hostname,
         port: dataLidarr.port,
         apiKey: dataLidarr.apiKey,
@@ -157,7 +177,7 @@ const ServicesLidarr = () => {
         useSsl: dataLidarr.useSsl,
       });
     }
-  }, [dataLidarr, isTesting, isValidated, testConnection]);
+  }, [dataLidarr, isTesting, isValidated, performTest]);
 
   const handleDisableAuth = async () => {
     if (!dataLidarr || isDisablingAuth) return;

@@ -5,6 +5,7 @@ import {
   ServiceNotConfigured,
 } from '@app/components/Common/ServiceError';
 import { useServiceProxy } from '@app/hooks/useServiceProxy';
+import { useClientValue } from '@app/hooks/useIsClient';
 import useSettings from '@app/hooks/useSettings';
 import { useUser, Permission } from '@app/hooks/useUser';
 import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
@@ -40,7 +41,10 @@ const Watch = ({ children, ...props }) => {
     innerFrame = null;
   }
 
-  const [hostname, setHostname] = useState('');
+  const hostname = useClientValue(
+    () => `${window.location.protocol}//${window.location.host}`,
+    ''
+  );
   const [iframeUrl, setIframeUrl] = useState('');
   const { currentSettings } = useSettings();
 
@@ -51,10 +55,10 @@ const Watch = ({ children, ...props }) => {
 
   // Track the parent window's location for the iframe src
   useEffect(() => {
-    let lastParentUrl =
-      window.location.pathname + window.location.search + window.location.hash;
+    // Start empty so the first interval tick seeds iframeUrl from the current
+    // location instead of calling setState synchronously inside the effect.
+    let lastParentUrl = '';
     let lastIframeUrl = '';
-    setIframeUrl(lastParentUrl.replace('/watch', ''));
     const interval = setInterval(() => {
       let parentUrl =
         window.location.pathname +
@@ -248,23 +252,6 @@ const Watch = ({ children, ...props }) => {
       setIframeTheme(innerFrame, currentSettings.theme);
     }
   }, [mountNode, currentSettings.theme, innerFrame]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHostname(`${window?.location?.protocol}//${window?.location?.host}`);
-    }
-  }, [setHostname]);
-
-  useEffect(() => {
-    if (
-      contentRef &&
-      contentRef.src !==
-        `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`
-    ) {
-      contentRef.src = `${hostname}${iframeUrl && iframeUrl.replace('null', '')}`;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [iframeUrl, hostname]);
 
   if (proxyStatus === 'loading') {
     return <LoadingEllipsis fixed />;

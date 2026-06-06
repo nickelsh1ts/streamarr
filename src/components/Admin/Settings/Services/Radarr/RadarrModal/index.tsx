@@ -32,7 +32,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
   const intl = useIntl();
   const initialLoad = useRef(false);
   const [isValidated, setIsValidated] = useState(radarr ? true : false);
-  const [isTesting, setIsTesting] = useState(false);
+  const [isTesting, setIsTesting] = useState(() => Boolean(radarr));
   const [testResponse, setTestResponse] = useState<TestResponse>();
   const [authStatus, setAuthStatus] = useState<{
     authenticationMethod: string;
@@ -101,7 +101,7 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       ),
   });
 
-  const testConnection = useCallback(
+  const performTest = useCallback(
     async ({
       hostname,
       port,
@@ -115,56 +115,59 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
       baseUrl?: string;
       useSsl?: boolean;
     }) => {
-      setIsTesting(true);
-      try {
-        const response = await axios.post<TestResponse>(
-          '/api/v1/settings/radarr/test',
-          {
-            hostname,
-            apiKey,
-            port: Number(port),
-            baseUrl,
-            useSsl,
-          }
+      const response = await axios
+        .post<TestResponse>('/api/v1/settings/radarr/test', {
+          hostname,
+          apiKey,
+          port: Number(port),
+          baseUrl,
+          useSsl,
+        })
+        .then(
+          (res) => res,
+          () => null
         );
 
-        setIsValidated(true);
-        setTestResponse(response.data);
-        // Fetch auth status after successful test
-        if (radarr) {
-          axios
-            .get(`/api/v1/settings/radarr/${radarr.id}/auth`)
-            .then((authRes) => setAuthStatus(authRes.data))
-            .catch(() => setAuthStatus(null));
-        }
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testsuccess',
-                defaultMessage:
-                  '{service} connection established successfully!',
-              },
-              { service: 'Radarr' }
-            ),
-            type: 'success',
-            icon: <CheckBadgeIcon className="size-7" />,
-          });
-        }
-      } catch {
-        setIsValidated(false);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testfailed',
-                defaultMessage: 'Failed to connect to {service}.',
-              },
-              { service: 'Radarr' }
-            ),
-            type: 'error',
-            icon: <XCircleIcon className="size-7" />,
-          });
+      try {
+        if (response) {
+          setIsValidated(true);
+          setTestResponse(response.data);
+          // Fetch auth status after successful test
+          if (radarr) {
+            axios
+              .get(`/api/v1/settings/radarr/${radarr.id}/auth`)
+              .then((authRes) => setAuthStatus(authRes.data))
+              .catch(() => setAuthStatus(null));
+          }
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testsuccess',
+                  defaultMessage:
+                    '{service} connection established successfully!',
+                },
+                { service: 'Radarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testfailed',
+                  defaultMessage: 'Failed to connect to {service}.',
+                },
+                { service: 'Radarr' }
+              ),
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
         }
       } finally {
         setIsTesting(false);
@@ -174,9 +177,24 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
     [intl, radarr]
   );
 
+  const testConnection = useCallback(
+    (params: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      baseUrl?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
+  );
+
+  // Auto-test the saved connection when editing an existing server
   useEffect(() => {
     if (radarr) {
-      testConnection({
+      void performTest({
         apiKey: radarr.apiKey,
         hostname: radarr.hostname,
         port: radarr.port,
@@ -184,17 +202,19 @@ const RadarrModal = ({ onClose, radarr, onSave, show }: RadarrModalProps) => {
         useSsl: radarr.useSsl,
       });
     }
-  }, [radarr, testConnection]);
+  }, [radarr, performTest]);
 
-  // Reset auth status and validation when modal closes
-  useEffect(() => {
+  // Reset auth status and validation when the modal closes
+  const [prevShow, setPrevShow] = useState(show);
+  if (prevShow !== show) {
+    setPrevShow(show);
     if (!show) {
       setAuthStatus(null);
       if (radarr) {
         setIsValidated(false);
       }
     }
-  }, [show, radarr]);
+  }
 
   // Fetch auth status when modal opens with existing radarr
   useEffect(() => {

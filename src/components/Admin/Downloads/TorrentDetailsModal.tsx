@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
 import Modal from '@app/components/Common/Modal';
 import Alert from '@app/components/Common/Alert';
@@ -50,14 +50,16 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
   const [newTagInput, setNewTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
 
-  // Reset transient state when modal closes or torrent changes
-  useEffect(() => {
+  // Reset transient state when the modal transitions to closed
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
     if (!isOpen) {
       setShouldLoadFiles(false);
       setShowTagInput(false);
       setNewTagInput('');
     }
-  }, [isOpen, torrent?.hash]);
+  }
 
   const supportsGlobalTags = torrent?.clientType === 'qbittorrent';
   const supportsTags =

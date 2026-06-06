@@ -220,7 +220,9 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
   }, [targetRect, step.tooltipPosition, isMobile]);
 
   // Keep ref in sync with latest calculatePosition
-  calculatePositionRef.current = calculatePosition;
+  useEffect(() => {
+    calculatePositionRef.current = calculatePosition;
+  }, [calculatePosition]);
 
   // Recalculate position when targetRect, step, or layout changes
   useEffect(() => {

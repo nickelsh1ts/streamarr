@@ -73,7 +73,7 @@ const ServicesProwlarr = () => {
       ),
   });
 
-  const testConnection = useCallback(
+  const performTest = useCallback(
     async ({
       hostname,
       port,
@@ -87,46 +87,52 @@ const ServicesProwlarr = () => {
       urlBase?: string;
       useSsl?: boolean;
     }) => {
-      setIsTesting(true);
-      try {
-        await axios.post('/api/v1/settings/prowlarr/test', {
+      const success = await axios
+        .post('/api/v1/settings/prowlarr/test', {
           hostname,
           port: Number(port),
           apiKey,
           urlBase,
           useSsl,
-        });
+        })
+        .then(
+          () => true,
+          () => false
+        );
 
-        setIsValidated(true);
-        revalidateAuthStatus();
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testsuccess',
-                defaultMessage:
-                  '{service} connection established successfully!',
-              },
-              { service: 'Prowlarr' }
-            ),
-            type: 'success',
-            icon: <CheckBadgeIcon className="size-7" />,
-          });
-        }
-      } catch {
-        setIsValidated(false);
-        if (initialLoad.current) {
-          Toast({
-            title: intl.formatMessage(
-              {
-                id: 'servicesSettings.testfailed',
-                defaultMessage: 'Failed to connect to {service}.',
-              },
-              { service: 'Prowlarr' }
-            ),
-            type: 'error',
-            icon: <XCircleIcon className="size-7" />,
-          });
+      try {
+        if (success) {
+          setIsValidated(true);
+          revalidateAuthStatus();
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testsuccess',
+                  defaultMessage:
+                    '{service} connection established successfully!',
+                },
+                { service: 'Prowlarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testfailed',
+                  defaultMessage: 'Failed to connect to {service}.',
+                },
+                { service: 'Prowlarr' }
+              ),
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
         }
       } finally {
         setIsTesting(false);
@@ -134,6 +140,20 @@ const ServicesProwlarr = () => {
       }
     },
     [revalidateAuthStatus, intl]
+  );
+
+  const testConnection = useCallback(
+    (params: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      urlBase?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
   );
 
   // Auto-test connection on page load if service is configured
@@ -145,7 +165,7 @@ const ServicesProwlarr = () => {
       !isValidated &&
       !isTesting
     ) {
-      testConnection({
+      void performTest({
         hostname: dataProwlarr.hostname,
         port: dataProwlarr.port,
         apiKey: dataProwlarr.apiKey,
@@ -153,7 +173,7 @@ const ServicesProwlarr = () => {
         useSsl: dataProwlarr.useSsl,
       });
     }
-  }, [dataProwlarr, isTesting, isValidated, testConnection]);
+  }, [dataProwlarr, isTesting, isValidated, performTest]);
 
   const handleDisableAuth = async () => {
     if (!dataProwlarr || isDisablingAuth) return;

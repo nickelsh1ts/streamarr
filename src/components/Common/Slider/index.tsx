@@ -49,11 +49,13 @@ const Slider = ({
     setScrollPos({ isStart, isEnd });
   }, [items]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedScroll = useCallback(
-    debounce(() => handleScroll(), 50),
-    [handleScroll]
-  );
+  const debouncedScrollRef = useRef<ReturnType<typeof debounce> | null>(null);
+  useEffect(() => {
+    const debounced = debounce(() => handleScroll(), 50);
+    debouncedScrollRef.current = debounced;
+    return () => debounced.cancel();
+  }, [handleScroll]);
+  const debouncedScroll = useCallback(() => debouncedScrollRef.current?.(), []);
 
   useEffect(() => {
     const handleResize = () => {

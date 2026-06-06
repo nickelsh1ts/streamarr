@@ -189,19 +189,23 @@ const InviteList = () => {
     }
   };
 
-  // Override with query params if provided
-  useEffect(() => {
-    if (Object.values(Filter).includes(searchParams.get('filter') as Filter)) {
-      setCurrentFilter(searchParams.get('filter') as Filter);
+  // Override with query params if provided, keeping in sync as the URL changes
+  const queryFilter = searchParams.get('filter') as Filter;
+  const querySort = searchParams.get('sort') as Sort;
+  const [prevQueryFilter, setPrevQueryFilter] = useState(queryFilter);
+  const [prevQuerySort, setPrevQuerySort] = useState(querySort);
+  if (prevQueryFilter !== queryFilter) {
+    setPrevQueryFilter(queryFilter);
+    if (Object.values(Filter).includes(queryFilter)) {
+      setCurrentFilter(queryFilter);
     }
-    if (
-      Object.values(['created', 'modified']).includes(
-        searchParams.get('sort') as Sort
-      )
-    ) {
-      setCurrentSort(searchParams.get('sort') as Sort);
+  }
+  if (prevQuerySort !== querySort) {
+    setPrevQuerySort(querySort);
+    if (['created', 'modified'].includes(querySort)) {
+      setCurrentSort(querySort);
     }
-  }, [searchParams]);
+  }
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {
