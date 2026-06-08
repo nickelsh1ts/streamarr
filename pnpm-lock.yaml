@@ -160,7 +160,7 @@ importers:
         version: 3.49.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-big-calendar:
         specifier: ^1.19.4
-        version: 1.19.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.20.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-colorful:
         specifier: ^5.6.1
         version: 5.7.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -3735,6 +3735,9 @@ packages:
     resolution: {integrity: sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg==}
     engines: {node: '>=8'}
 
+  cldrjs@0.5.5:
+    resolution: {integrity: sha512-KDwzwbmLIPfCgd8JERVDpQKrUUM1U4KpFJJg2IROv89rF172lLufoJnqJ/Wea6fXL5bO6WjuLMzY8V52UWPvkA==}
+
   clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
@@ -3800,10 +3803,6 @@ packages:
   clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
-
-  clsx@1.2.1:
-    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
-    engines: {node: '>=6'}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -4283,6 +4282,9 @@ packages:
 
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
+
+  dom-helpers@6.0.1:
+    resolution: {integrity: sha512-IKySryuFwseGkrCA/pIqlwUPOD50w1Lj/B2Yief3vBOP18k5y4t+hTqKh55gULDVeJMRitcozve+g/wVFf4sFQ==}
 
   dom-serializer@1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}
@@ -5069,8 +5071,8 @@ packages:
     resolution: {integrity: sha512-awConJSVCHVGND6x3tmMaKcQvwXLhjdkmomy2W+Goaui8YPgYgXJZewhg3fWC+DlfqqQuWg8AwqjGTD2nAPVWg==}
     engines: {node: '>=6'}
 
-  globalize@0.1.1:
-    resolution: {integrity: sha512-5e01v8eLGfuQSOvx2MsDMOWS0GFtCx1wPzQSmcHw4hkxFzrQDBO3Xwg/m8Hr/7qXMrHeOIE29qWVzyv06u1TZA==}
+  globalize@1.7.1:
+    resolution: {integrity: sha512-PFymRL0PtitFOlSniuwwwNfkooi3cLQJo9Uke1+j1DsGfUkkHkwneImqVtGcqKI0TuzhAlHt7hAcgK324902HA==}
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
@@ -7313,8 +7315,8 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  react-big-calendar@1.19.6:
-    resolution: {integrity: sha512-2vCG/LBuNOOok4Olet4S7M6l11DjCO6RyWwqGRkZcR0cTOWEKVCwpqe5r24NobmVKPQV6nU3/DZGoAkrOypRlw==}
+  react-big-calendar@1.20.0:
+    resolution: {integrity: sha512-Lp1mvG34l/9xtb/2LsBb4UAF3iPcUkmDqbmpsvDHzp/n8GA5gtn3+nf8BsULWw08opKDgv38nQi75dQlOOqzkg==}
     peerDependencies:
       react: ^16.14.0 || ^17 || ^18 || ^19
       react-dom: ^16.14.0 || ^17 || ^18 || ^19
@@ -12394,6 +12396,8 @@ snapshots:
 
   ci-info@4.4.0: {}
 
+  cldrjs@0.5.5: {}
+
   clean-stack@2.2.0: {}
 
   clean-stack@5.3.0:
@@ -12467,8 +12471,6 @@ snapshots:
   clone@1.0.4: {}
 
   clone@2.1.2: {}
-
-  clsx@1.2.1: {}
 
   clsx@2.1.1: {}
 
@@ -12977,6 +12979,11 @@ snapshots:
     optional: true
 
   dom-helpers@5.2.1:
+    dependencies:
+      '@babel/runtime': 7.29.7
+      csstype: 3.2.3
+
+  dom-helpers@6.0.1:
     dependencies:
       '@babel/runtime': 7.29.7
       csstype: 3.2.3
@@ -14127,7 +14134,9 @@ snapshots:
       kind-of: 6.0.3
       which: 1.3.1
 
-  globalize@0.1.1: {}
+  globalize@1.7.1:
+    dependencies:
+      cldrjs: 0.5.5
 
   globals@14.0.0: {}
 
@@ -16658,14 +16667,14 @@ snapshots:
       react-stately: 3.47.0(react@19.2.6)
       use-sync-external-store: 1.6.0(react@19.2.6)
 
-  react-big-calendar@1.19.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-big-calendar@1.20.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@babel/runtime': 7.29.7
-      clsx: 1.2.1
+      clsx: 2.1.1
       date-arithmetic: 4.1.0
       dayjs: 1.11.21
-      dom-helpers: 5.2.1
-      globalize: 0.1.1
+      dom-helpers: 6.0.1
+      globalize: 1.7.1
       invariant: 2.2.4
       lodash: 4.18.1
       lodash-es: 4.18.1
