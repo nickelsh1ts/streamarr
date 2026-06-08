@@ -10,5 +10,7 @@
   "notifications.test.message": "Prueba, prueba, 1, 2, 3. ¿Se recibe correctamente?",
   "notifications.test.subject": "Notificación de prueba",
   "notifications.user.created.message": "Invitado por {displayName}.",
-  "notifications.user.created.subject": "Nuevo usuario creado: {displayName}"
+  "notifications.user.created.subject": "Nuevo usuario creado: {displayName}",
+  "notifications.userSettings.extensionRequested": "Extensión de acceso solicitada",
+  "notifications.userSettings.extensionRequestedMessage": "{displayName} Solicitó una extensión de acceso. {isPast, select, true {Periodo de Prueba Terminada} other {El período de prueba termina}}: {accessEndDate}"
 }
