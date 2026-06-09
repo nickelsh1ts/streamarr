@@ -4665,7 +4665,7 @@
     "defaultMessage": "Request Pending"
   },
   "settings.accessExtensionRequest.submitting": {
-    "defaultMessage": "Sending Request..."
+    "defaultMessage": "Sending Request…"
   },
   "settings.accessExtensionRequest.success": {
     "defaultMessage": "Access extension request sent successfully."

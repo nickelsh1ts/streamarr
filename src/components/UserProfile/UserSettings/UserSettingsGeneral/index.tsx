@@ -1106,7 +1106,7 @@ const UserSettingsGeneral = () => {
                           ) : isRequestingExtension ? (
                             <FormattedMessage
                               id="settings.accessExtensionRequest.submitting"
-                              defaultMessage="Sending Request..."
+                              defaultMessage="Sending Request…"
                             />
                           ) : (
                             <FormattedMessage
