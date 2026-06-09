@@ -18,22 +18,16 @@
         "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
     },
     "aboutReleases.changelogTitle": {
-        "defaultMessage": "Registro de Cambios de la Versión {version}"
-    },
-    "aboutReleases.currentVersion": {
-        "defaultMessage": "Versión Actual"
+        "defaultMessage": "Historial de cambios de la versión {version}"
     },
     "aboutReleases.dataUnavailable": {
         "defaultMessage": "Los datos de lanzamiento no están disponibles actualmente"
-    },
-    "aboutReleases.latestVersion": {
-        "defaultMessage": "Última Versión"
     },
     "aboutReleases.title": {
         "defaultMessage": "Lanzamientos"
     },
     "aboutReleases.viewChangelog": {
-        "defaultMessage": "Ver Registro de Cambios"
+        "defaultMessage": "Ver registro de cambios"
     },
     "aboutReleases.viewOnGitHub": {
         "defaultMessage": "Ver en GitHub"
@@ -78,7 +72,7 @@
         "defaultMessage": "Gestionar Usuarios"
     },
     "adminTutorial.onboarding.description": {
-        "defaultMessage": "Personaliza la experiencia de bienvenida para nuevos usuarios. Crea diapositivas de bienvenida, pasos de tutorial y controla cómo se introducen los usuarios a tu servidor."
+        "defaultMessage": "Personaliza la experiencia de bienvenida para nuevos usuarios. Crea diapositivas de bienvenida, tutoriales y controla cómo se introducen los usuarios a tu servidor."
     },
     "adminTutorial.onboarding.title": {
         "defaultMessage": "Incorporación de Usuarios"
@@ -96,10 +90,10 @@
         "defaultMessage": "Navegación de Administrador"
     },
     "appData.warning": {
-        "defaultMessage": "El montaje de volumen <code>{appDataPath}</code> no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
+        "defaultMessage": "El <code>{appDataPath}</code> montaje de volumen no se configuró correctamente. Todos los datos se borrarán cuando el contenedor se detenga o reinicie."
     },
     "arrSettings.urlBase.description": {
-        "defaultMessage": "La Url Base es requerida para que streamarr registre una ruta proxy. Se requiere un reinicio para que surta efecto."
+        "defaultMessage": "La Base Url es requerida para que streamarr registre una ruta proxy. Se requiere un reinicio para que surta efecto."
     },
     "auth.signin": {
         "defaultMessage": "Iniciar sesión"
@@ -117,7 +111,7 @@
         "defaultMessage": "Limpiar Caché"
     },
     "cache.flushed": {
-        "defaultMessage": "Caché {cacheName} limpiado."
+        "defaultMessage": "{cacheName} Caché limpiado."
     },
     "cache.table.cacheName": {
         "defaultMessage": "Nombre del Caché"
@@ -162,7 +156,7 @@
         "defaultMessage": "Editar Evento"
     },
     "calendar.event": {
-        "defaultMessage": "Evento"
+        "defaultMessage": "Nuevo Lanzamiento o Evento"
     },
     "calendar.eventAllDay": {
         "defaultMessage": "Evento de Todo el Día"
@@ -228,7 +222,7 @@
         "defaultMessage": "Añade tu primer torrent para comenzar."
     },
     "common.addserver": {
-        "defaultMessage": "Agregar servidor {arrApp}"
+        "defaultMessage": "Agregar {arrApp} servidor"
     },
     "common.admin": {
         "defaultMessage": "Administrador"
@@ -252,13 +246,13 @@
         "defaultMessage": "¿Estás seguro?"
     },
     "common.arrAdd4k": {
-        "defaultMessage": "Agregar Servidor 4K {arrApp}"
+        "defaultMessage": "Agregar {arrApp} Servidor 4K"
     },
     "common.arrEdit": {
-        "defaultMessage": "Editar Servidor {arrApp}"
+        "defaultMessage": "Editar {arrApp} Servidor"
     },
     "common.arrEdit4k": {
-        "defaultMessage": "Editar Servidor 4K {arrApp}"
+        "defaultMessage": "Editar {arrApp} Servidor 4K"
     },
     "common.back": {
         "defaultMessage": "Atrás"
@@ -270,7 +264,7 @@
         "defaultMessage": "Habilitar Sincronización de Calendario"
     },
     "common.calendarSync.description": {
-        "defaultMessage": "Sincronizar automáticamente eventos de {arrApp} al calendario"
+        "defaultMessage": "Sincronizar automáticamente {arrApp} eventos al calendario"
     },
     "common.cancel": {
         "defaultMessage": "Cancelar"
@@ -297,7 +291,7 @@
         "defaultMessage": "Copiado al portapapeles"
     },
     "common.copiedToClipboard": {
-        "defaultMessage": "¡{item} copiado al portapapeles!"
+        "defaultMessage": "¡copiado {item} al portapapeles!"
     },
     "common.createEvent": {
         "defaultMessage": "Crear Evento"
@@ -312,7 +306,7 @@
         "defaultMessage": "Predeterminado"
     },
     "common.default4k": {
-        "defaultMessage": "Predeterminado 4K"
+        "defaultMessage": "Servidor 4K predeterminado"
     },
     "common.defaultserver": {
         "defaultMessage": "Servidor predeterminado"
@@ -330,7 +324,7 @@
         "defaultMessage": "Desconectado"
     },
     "common.displayLanguage": {
-        "defaultMessage": "Idioma de Pantalla"
+        "defaultMessage": "Idioma de pantalla"
     },
     "common.displayName": {
         "defaultMessage": "Nombre para mostrar"
@@ -372,7 +366,7 @@
         "defaultMessage": "Expira"
     },
     "common.externalUrl": {
-        "defaultMessage": "URL externa"
+        "defaultMessage": "URL externo"
     },
     "common.finish": {
         "defaultMessage": "Finalizar"
@@ -393,7 +387,7 @@
         "defaultMessage": "Inicio"
     },
     "common.hostname": {
-        "defaultMessage": "Nombre del host"
+        "defaultMessage": "Nombre del host o Numero IP"
     },
     "common.image": {
         "defaultMessage": "Imagen"
@@ -2537,9 +2531,6 @@
     "help.quickLinks.resetPlexPassword": {
         "defaultMessage": "Restablecer Contraseña de Plex"
     },
-    "help.quickLinks.stats": {
-        "defaultMessage": "Historial de visualización"
-    },
     "help.quickLinks.visitPlex": {
         "defaultMessage": "Visitar {plex}.tv"
     },
@@ -3819,7 +3810,7 @@
         "defaultMessage": "Importando usuarios de Plex…"
     },
     "plexImport.newSignIn.warning": {
-        "defaultMessage": "Advertencia: El nuevo inicio de sesión deshabilitará el acceso para usuarios existentes"
+        "defaultMessage": "La configuración <strong>Habilitar nuevo inicio de sesión de Plex </strong> está activada actualmente. Los usuarios de Plex con acceso a la biblioteca no necesitan ser importados para iniciar sesión."
     },
     "plexImport.noUsers": {
         "defaultMessage": "No hay usuarios disponibles para importar."
@@ -4508,12 +4499,6 @@
     "settings.trialPeriod": {
         "defaultMessage": "Período de Prueba"
     },
-    "settings.trialPeriodDefaultDays": {
-        "defaultMessage": "{count, plural, one {(Predeterminado: # día)} other {(Predeterminado: # días)}}"
-    },
-    "settings.trialPeriodEndDateDescription": {
-        "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha"
-    },
     "settings.user.onboardingDescription": {
         "defaultMessage": "Restablecer el modal de bienvenida y el tutorial {ownProfile, select, true {} other {para este usuario}}"
     },
@@ -4802,9 +4787,6 @@
     "systemSettings.documentation": {
         "defaultMessage": "Documentación"
     },
-    "systemSettings.gettingSupport": {
-        "defaultMessage": "Obtener Soporte"
-    },
     "systemSettings.githubDiscussions": {
         "defaultMessage": "Discusiones de GitHub"
     },
@@ -4817,23 +4799,14 @@
     "systemSettings.preferred": {
         "defaultMessage": "Preferido"
     },
-    "systemSettings.supportStreamarr": {
-        "defaultMessage": "Apoyar Streamarr"
-    },
     "systemSettings.timeZone": {
         "defaultMessage": "Zona Horaria"
-    },
-    "systemSettings.title": {
-        "defaultMessage": "Acerca de Streamarr"
     },
     "systemSettings.totalUsers": {
         "defaultMessage": "Usuarios Totales"
     },
     "systemSettings.upToDate": {
         "defaultMessage": "Actualizado"
-    },
-    "systemSettings.version": {
-        "defaultMessage": "Versión"
     },
     "tutorial.ready.description": {
         "defaultMessage": "Te guiaremos a través de las funciones clave de {applicationTitle} con un recorrido rápido."
@@ -4867,9 +4840,6 @@
     },
     "userDropdown.startTutorial": {
         "defaultMessage": "Iniciar Tutorial"
-    },
-    "userDropdown.watchHistory": {
-        "defaultMessage": "Historial de Visualización"
     },
     "userPermissions.admin.description": {
         "defaultMessage": "Acceso completo de administrador. Omite todas las demás verificaciones de permisos."
@@ -4978,9 +4948,6 @@
     },
     "userSettings.description": {
         "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
-    },
-    "userSettings.enableTrialPeriodDescription": {
-        "defaultMessage": "Establecer un período de días en el que los nuevos usuarios no pueden crear invitaciones"
     },
     "userSettings.engine": {
         "defaultMessage": "Motor"
@@ -5193,12 +5160,135 @@
         "defaultMessage": "Fallido"
     },
     "common.partiallyAvailable": {
-        "defaultMessage": "Disponible parcialmente"
+        "defaultMessage": "Parcialmente Disponible"
     },
     "common.pending": {
         "defaultMessage": "Pendiente"
     },
     "common.requested": {
         "defaultMessage": "Solicitado"
+    },
+    "expiredAccess.viewProfile": {
+        "defaultMessage": "Ver Perfil"
+    },
+    "profile.moviesLifetime": {
+        "defaultMessage": "Películas (De por vida)"
+    },
+    "common.here": {
+        "defaultMessage": "Aqui"
+    },
+    "common.current": {
+        "defaultMessage": "Actual"
+    },
+    "help.notifications.seerrGotifyDesc": {
+        "defaultMessage": "Notificaciones enviadas mediante el servidor push de Gotify."
+    },
+    "invite.expiresAt": {
+        "defaultMessage": "{past, select, true {Expirado} other {Expira}} {inDate}"
+    },
+    "help.notifications.seerrPushbulletDesc": {
+        "defaultMessage": "Notificaciones enviadas a través del servicio Pushbullet."
+    },
+    "invite.trialPeriod": {
+        "defaultMessage": "Periodo De Prueba"
+    },
+    "common.removeHeader": {
+        "defaultMessage": "Remover"
+    },
+    "expiredAccess.message": {
+        "defaultMessage": "Tu cuenta ha expirado. Aún puedes acceder a tu perfil y configuración. {isTrialEnabled, select, true { incluyendo las opciones de solicitud de extensión de la prueba} other {. Por favor, contacta a un administrador para reactivar tu acceso.}}"
+    },
+    "expiredAccess.title": {
+        "defaultMessage": "El acceso a la cuenta ha expirado"
+    },
+    "help.notifications.seerrWebhookDesc": {
+        "defaultMessage": "Notificaciones enviadas a un endpoint de webhook personalizado."
+    },
+    "invite.trialPeriodOutcome": {
+        "defaultMessage": "{outcome, select, promote {Promover} other {Promover}} después de {period} {period, plural, one {día} other {días}}"
+    },
+    "linkedAccounts.deleteFailed": {
+        "defaultMessage": "Error al eliminar la cuenta vinculada"
+    },
+    "expiredAccess.accountSettings": {
+        "defaultMessage": "Ajustes de la cuenta"
+    },
+    "networkSettings.description": {
+        "defaultMessage": "Configura los ajustes de red globales para tu instancia de Streamarr."
+    },
+    "networkSettings.requestTimeout": {
+        "defaultMessage": "Tiempo de espera de la solicitud API agotado"
+    },
+    "networkSettings.requestTimeout.description": {
+        "defaultMessage": "Tiempo máximo (en segundos) de espera para respuestas de servicios externos."
+    },
+    "networkSettings.saveError": {
+        "defaultMessage": "Algo salió mal al guardar la configuración de red."
+    },
+    "networkSettings.saveSuccess": {
+        "defaultMessage": "Configuración de red guardada correctamente"
+    },
+    "networkSettings.title": {
+        "defaultMessage": "Configuración de red"
+    },
+    "networkSettings.validation.requestTimeout": {
+        "defaultMessage": "Debes proporcionar un tiempo de espera de solicitud válido"
+    },
+    "networkSettings.validation.requestTimeoutInteger": {
+        "defaultMessage": "El tiempo de espera de la solicitud debe ser un número entero de segundos"
+    },
+    "networkSettings.validation.requestTimeoutMax": {
+        "defaultMessage": "El tiempo de espera de la solicitud no debe exceder los 300 segundos"
+    },
+    "networkSettings.validation.requestTimeoutMin": {
+        "defaultMessage": "El tiempo de espera de la solicitud debe ser de al menos 1 segundo"
+    },
+    "profile.recentRequests": {
+        "defaultMessage": "Solicitudes recientes"
+    },
+    "profile.recentlyWatched": {
+        "defaultMessage": "Visto recientemente"
+    },
+    "profile.tvLifetime": {
+        "defaultMessage": "Series (De por vida)"
+    },
+    "season.specials": {
+        "defaultMessage": "Especiales"
+    },
+    "signIn.whitespaceWarning": {
+        "defaultMessage": "Los espacios al principio o al final de tu correo electrónico o contraseña pueden causar problemas al iniciar sesión."
+    },
+    "userProfile.status": {
+        "defaultMessage": "Estatus"
+    },
+    "common.latest": {
+        "defaultMessage": "Último"
+    },
+    "common.activity": {
+        "defaultMessage": "Actividad"
+    },
+    "common.deactivate": {
+        "defaultMessage": "Desactivar"
+    },
+    "common.promote": {
+        "defaultMessage": "Promocion"
+    },
+    "common.database": {
+        "defaultMessage": "Base de Datos"
+    },
+    "common.network": {
+        "defaultMessage": "Red"
+    },
+    "common.accountExpired": {
+        "defaultMessage": "Cuenta Expirada"
+    },
+    "common.unlinkAccount": {
+        "defaultMessage": "Desvincular Cuenta"
+    },
+    "expiredAccess.signOut": {
+        "defaultMessage": "Cerrar sesión"
+    },
+    "help.notifications.seerrWebhook": {
+        "defaultMessage": "Webhook"
     }
 }
