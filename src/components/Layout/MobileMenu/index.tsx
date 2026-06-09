@@ -26,8 +26,10 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import type { JSX } from 'react';
-import { cloneElement, useEffect, useRef, useState } from 'react';
+import { cloneElement, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { usePathname } from 'next/navigation';
+import useHash from '@app/hooks/useHash';
 import useSWR from 'swr';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
@@ -52,23 +54,10 @@ const MobileMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
-  const [currentUrl, setCurrentUrl] = useState(() =>
-    typeof window !== 'undefined'
-      ? window.location.pathname + window.location.hash
-      : ''
-  );
-  useEffect(() => {
-    let lastUrl = window.location.pathname + window.location.hash;
-    const interval = setInterval(() => {
-      const newUrl = window.location.pathname + window.location.hash;
-      if (newUrl !== lastUrl) {
-        lastUrl = newUrl;
-        setCurrentUrl(newUrl);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-  const url = currentUrl;
+  const pathname = usePathname();
+  const hash = useHash();
+  const url = pathname + (hash || '');
+
   useClickOutside(ref, () => {
     setTimeout(() => {
       if (isOpen) {
