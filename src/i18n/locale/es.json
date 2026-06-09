@@ -1775,9 +1775,6 @@
   "help.downloadPlex.step2": {
     "defaultMessage": "Si hay un enlace de descarga disponible, selecciónalo y sigue las indicaciones"
   },
-  "help.downloadPlex.step3": {
-    "defaultMessage": "Instala la aplicación"
-  },
   "help.downloadPlex.subheading": {
     "defaultMessage": "Aunque la aplicación {plexLogo} no es necesaria para usar {appTitle}, en ciertos dispositivos como smart TVs o consolas de juegos puede ofrecer una mejor experiencia. Algunos smart TVs y dispositivos multimedia ya vienen con la aplicación {plexLogo2} instalada, o se puede instalar fácilmente a través de sus tiendas de aplicaciones integradas."
   },
