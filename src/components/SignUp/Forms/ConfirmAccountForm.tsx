@@ -31,6 +31,8 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Tabs from '@app/components/Common/Tabs';
 import Toggle from '@app/components/Common/Toggle';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type { NotificationSelectOption } from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
 
 type SignupNotificationTab = {
   id: string;
@@ -65,7 +67,31 @@ const ConfirmAccountForm = ({
     data: notificationsData,
     error: notificationsError,
     mutate: revalidateNotifications,
-  } = useSWR(user ? `/api/v1/user/${user.id}/settings/notifications` : null);
+  } = useSWR<UserSettingsNotificationsResponse>(
+    user ? `/api/v1/user/${user.id}/settings/notifications` : null
+  );
+
+  const { data: soundsData } = useSWR<{ value: string; label: string }[]>(
+    user && data?.pushoverApplicationToken
+      ? `/api/v1/user/${user?.id}/settings/notifications/pushover/sounds`
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
+    }
+  );
+  const soundOptions: NotificationSelectOption[] = [
+    {
+      value: '',
+      label: intl.formatMessage({
+        id: 'userSettings.notifications.soundDefault',
+        defaultMessage: 'Device Default',
+      }),
+    },
+    ...(soundsData ?? []).map((s) => ({ value: s.value, label: s.label })),
+  ];
+
   const defaultLocale = data?.locale || 'en';
 
   // Password validation schema: make password fields optional
@@ -736,13 +762,15 @@ const ConfirmAccountForm = ({
                             />
                           </label>
                           <div className="col-span-2">
-                            <SensitiveInput
-                              as="field"
-                              id="pushbulletAccessToken"
-                              buttonSize="sm"
-                              name="pushbulletAccessToken"
-                              className="input input-sm input-primary w-full"
-                            />
+                            <div className="flex">
+                              <SensitiveInput
+                                as="field"
+                                id="pushbulletAccessToken"
+                                buttonSize="sm"
+                                name="pushbulletAccessToken"
+                                className="input input-sm input-primary w-full"
+                              />
+                            </div>
                           </div>
                         </div>
                         <NotificationTypeSelector
@@ -782,13 +810,15 @@ const ConfirmAccountForm = ({
                             />
                           </label>
                           <div className="col-span-2">
-                            <SensitiveInput
-                              as="field"
-                              id="pushoverApplicationToken"
-                              buttonSize="sm"
-                              name="pushoverApplicationToken"
-                              className="input input-sm input-primary w-full"
-                            />
+                            <div className="flex">
+                              <SensitiveInput
+                                as="field"
+                                id="pushoverApplicationToken"
+                                buttonSize="sm"
+                                name="pushoverApplicationToken"
+                                className="input input-sm input-primary w-full"
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
@@ -802,13 +832,15 @@ const ConfirmAccountForm = ({
                             />
                           </label>
                           <div className="col-span-2">
-                            <SensitiveInput
-                              as="field"
-                              id="pushoverUserKey"
-                              buttonSize="sm"
-                              name="pushoverUserKey"
-                              className="input input-sm input-primary w-full"
-                            />
+                            <div className="flex">
+                              <SensitiveInput
+                                as="field"
+                                id="pushoverUserKey"
+                                buttonSize="sm"
+                                name="pushoverUserKey"
+                                className="input input-sm input-primary w-full"
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
@@ -822,9 +854,19 @@ const ConfirmAccountForm = ({
                             <Field
                               id="pushoverSound"
                               name="pushoverSound"
-                              type="text"
-                              className="input input-primary input-sm w-full"
-                            />
+                              as="select"
+                              className="select select-sm select-primary rounded-md w-auto min-w-36 shrink-0"
+                              value={values.pushoverSound}
+                              onChange={(e) => {
+                                setFieldValue('pushoverSound', e.target.value);
+                              }}
+                            >
+                              {soundOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </Field>
                           </div>
                         </div>
                         <NotificationTypeSelector
