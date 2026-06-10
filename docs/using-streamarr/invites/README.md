@@ -259,4 +259,4 @@ When a user redeems an invite:
 ### User not appearing on Plex server
 
 - Plex invite operations require the internal Python service
-- Check application logs for errors from the Plex Sync service
+- Check application logs for 'Plex Sync' errors

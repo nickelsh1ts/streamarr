@@ -18,7 +18,12 @@ import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import { canMakePermissionsChange } from '@server/routes/user';
 import { UserType } from '@server/constants/user';
-import axios from 'axios';
+import {
+  isDefaultSentinel,
+  materializeDefaultSnapshot,
+  normalizeSharedLibrariesValue,
+  resolveSharedLibraryKeys,
+} from '@server/utils/sharedLibraries';
 import PlexTvAPI from '@server/api/plextv';
 import PushoverAPI from '@server/api/pushover';
 import {
@@ -221,6 +226,14 @@ userSettingsRoutes.post<
       return next({ status: 404, message: 'User not found.' });
     }
 
+    user.plexToken = (
+      await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.id = :id', { id: user.id })
+        .getOne()
+    )?.plexToken;
+
     // "Owner" user settings cannot be modified by other users
     if (user.id === 1 && req.user?.id !== 1) {
       return next({
@@ -235,10 +248,17 @@ userSettingsRoutes.post<
     const previousAllowPlexHome = user.settings?.allowPlexHome ?? false;
     const previousState = user.active;
     const newSharedLibraries =
-      req.body.sharedLibraries === '' || req.body.sharedLibraries === 'server'
-        ? null
-        : req.body.sharedLibraries;
-    const newAllowDownloads = req.body.allowDownloads;
+      req.body.sharedLibraries === undefined
+        ? (user.settings?.sharedLibraries ?? null)
+        : isDefaultSentinel(req.body.sharedLibraries)
+          ? materializeDefaultSnapshot({
+              adminDefault: getSettings().main.sharedLibraries,
+              enabledLibraries: getSettings().plex.libraries.filter(
+                (lib) => lib.enabled
+              ),
+            })
+          : normalizeSharedLibrariesValue(req.body.sharedLibraries);
+    const newAllowDownloads = req.body.allowDownloads ?? previousAllowDownloads;
     const forcePlexSync = req.body.forcePlexSync === true;
 
     user.username = req.body.username;
@@ -266,10 +286,14 @@ userSettingsRoutes.post<
     } else {
       user.settings.locale = req.body.locale;
       user.settings.sharedLibraries = newSharedLibraries;
-      user.settings.allowDownloads = req.body.allowDownloads ?? false;
-      user.settings.allowLiveTv = req.body.allowLiveTv ?? false;
-      if (req.user?.id === 1) {
-        user.settings.allowPlexHome = req.body.allowPlexHome ?? false;
+      if (req.body.allowDownloads !== undefined) {
+        user.settings.allowDownloads = req.body.allowDownloads;
+      }
+      if (req.body.allowLiveTv !== undefined) {
+        user.settings.allowLiveTv = req.body.allowLiveTv;
+      }
+      if (req.user?.id === 1 && req.body.allowPlexHome !== undefined) {
+        user.settings.allowPlexHome = req.body.allowPlexHome;
       }
     }
 
@@ -391,64 +415,26 @@ userSettingsRoutes.post<
               }
             }
 
-            const inviteAttempts = [user.email, user.plexUsername].filter(
-              Boolean
-            );
+            const librarySectionIds = resolveSharedLibraryKeys({
+              value: user.settings?.sharedLibraries,
+              adminDefault: getSettings().main.sharedLibraries,
+              enabledLibraries: getSettings().plex.libraries.filter(
+                (lib) => lib.enabled
+              ),
+            });
 
-            const librarySectionIds =
-              user.settings?.sharedLibraries === 'all' ||
-              ((user.settings?.sharedLibraries === 'server' ||
-                user.settings?.sharedLibraries === '' ||
-                user.settings?.sharedLibraries === null) &&
-                getSettings().main.sharedLibraries === 'all')
-                ? getSettings()
-                    .plex.libraries.filter((lib) => lib.enabled)
-                    .map((lib) => lib.id)
-                : user.settings?.sharedLibraries === 'server'
-                  ? null
-                  : (user.settings?.sharedLibraries
-                      ?.split(/[,|]/)
-                      .map((id) => id.trim())
-                      .filter((id) => id !== '') ??
-                    getSettings()
-                      .main.sharedLibraries.split(/[,|]/)
-                      .map((id) => id.trim())
-                      .filter(
-                        (id) =>
-                          id !== '' &&
-                          getSettings()
-                            .plex.libraries.filter((lib) => lib.enabled)
-                            .some((lib) => lib.id === id)
-                      ));
-
-            for (const identifier of inviteAttempts) {
-              try {
-                const response = await axios.post(
-                  'http://localhost:5005/invite',
-                  {
-                    token: admin.plexToken,
-                    server_id: settings.plex.machineId,
-                    email: identifier,
-                    libraries: librarySectionIds,
-                    allow_sync: user?.settings?.allowDownloads ?? false,
-                    allow_camera_upload: false,
-                    plex_home: user.settings?.allowPlexHome ?? false,
-                    user_token: user.plexToken,
-                  }
-                );
-
-                if (!response.data.success)
-                  throw new Error(
-                    response.data.error ||
-                      'Failed to invite user via Python service'
-                  );
-                break;
-              } catch (e) {
-                logger.warn(`Plex invite attempt failed for ${identifier}`, {
-                  label: 'User Settings',
-                  errorMessage: e instanceof Error ? e.message : String(e),
-                });
-              }
+            try {
+              await plexSync.inviteUser(user, {
+                libraries: librarySectionIds,
+                allowSync: user?.settings?.allowDownloads ?? false,
+                plexHome: user.settings?.allowPlexHome ?? false,
+              });
+            } catch (e) {
+              logger.warn('Plex invite failed during provisioning', {
+                label: 'User Settings',
+                userId: user.id,
+                errorMessage: e instanceof Error ? e.message : String(e),
+              });
             }
           }
         } catch (e) {
@@ -505,18 +491,16 @@ userSettingsRoutes.post<
       user.userType === UserType.PLEX
     ) {
       try {
-        const syncValue = newSharedLibraries || 'server';
-        await plexSync.syncUserLibraries(user, syncValue, {
+        // omitted values stay unchanged on Plex
+        await plexSync.syncUserLibraries(user, newSharedLibraries, {
           allowSync: req.body.allowDownloads,
-          allowCameraUpload: false,
-          plexHome: user.settings?.allowPlexHome ?? false,
         });
-      } catch (syncError) {
+      } catch (e) {
         logger.error('Failed to sync user libraries with Plex', {
           label: 'Plex Sync',
           userId: user.id,
           email: user.email,
-          error: syncError.message,
+          error: e instanceof Error ? e.message : String(e),
         });
       }
     }
@@ -670,47 +654,29 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
         });
       }
 
-      const plexServerId = getSettings().plex.machineId;
-      let librarySectionIds: string[] = [];
-
       const adminUser = await userRepository
         .createQueryBuilder('user')
         .addSelect('user.plexToken')
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      // Resolve the libraries to share: honour any pre-existing user setting first,
-      // then fall back to the admin-configured default.
+      // Honour any pre-existing explicit user setting; otherwise
+      // snapshot the current server default at link time
       const existingSharedLibraries = user.settings?.sharedLibraries;
       const enabledLibraries = getSettings().plex.libraries.filter(
         (lib) => lib.enabled
       );
-
-      if (existingSharedLibraries) {
-        // User already has explicit library settings — validate against enabled list
-        const requestedIds = existingSharedLibraries
-          .split(/[,|]/)
-          .map((id) => id.trim())
-          .filter((id) => id !== '');
-        librarySectionIds = requestedIds.filter((libId) =>
-          enabledLibraries.some((enabled) => enabled.id === libId)
-        );
-      } else {
-        // Fall back to admin default shared libraries
-        const defaultLibs = getSettings().main.sharedLibraries;
-
-        if (defaultLibs === 'all' || !defaultLibs) {
-          librarySectionIds = enabledLibraries.map((lib) => lib.id);
-        } else {
-          const adminConfiguredLibs = defaultLibs
-            .split(/[,|]/)
-            .map((id) => id.trim())
-            .filter((id) => id !== '');
-          librarySectionIds = adminConfiguredLibs.filter((libId) =>
-            enabledLibraries.some((enabled) => enabled.id === libId)
-          );
-        }
-      }
+      const linkSharedLibraries = existingSharedLibraries
+        ? normalizeSharedLibrariesValue(existingSharedLibraries)
+        : materializeDefaultSnapshot({
+            adminDefault: getSettings().main.sharedLibraries,
+            enabledLibraries,
+          });
+      const librarySectionIds = resolveSharedLibraryKeys({
+        value: linkSharedLibraries,
+        adminDefault: getSettings().main.sharedLibraries,
+        enabledLibraries,
+      });
 
       // valid plex user found, link to current user
       user.userType = UserType.PLEX;
@@ -721,16 +687,14 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
       if (!user.settings) {
         user.settings = new UserSettings({
           user,
-          sharedLibraries:
-            librarySectionIds.length > 0 ? librarySectionIds.join('|') : null,
+          sharedLibraries: linkSharedLibraries,
           allowDownloads: getSettings().main.downloads ?? false,
           allowLiveTv: getSettings().main.liveTv ?? false,
         });
       } else {
         // Only overwrite sharedLibraries if the user didn't already have an explicit value
         if (!existingSharedLibraries) {
-          user.settings.sharedLibraries =
-            librarySectionIds.length > 0 ? librarySectionIds.join('|') : null;
+          user.settings.sharedLibraries = linkSharedLibraries;
         }
         user.settings.allowDownloads =
           user.settings.allowDownloads ?? getSettings().main.downloads ?? false;
@@ -761,90 +725,40 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
         });
       }
 
-      const identifiers = [user.email, user.plexUsername].filter(
-        (identifier): identifier is string => !!identifier
-      );
-
       if (alreadyOnServer) {
-        // User already has server access — update libraries
-        for (const identifier of identifiers) {
-          try {
-            const response = await axios.post(
-              'http://localhost:5005/libraries',
-              {
-                token: adminUser.plexToken,
-                server_id: plexServerId,
-                email: identifier,
-                libraries: librarySectionIds,
-                allow_sync: getSettings().main.downloads ?? false,
-                allow_camera_upload: false,
-                allow_channels: false,
-              }
-            );
-
-            if (!response.data.success) {
-              throw new Error(
-                response.data.error || 'Failed to update shared libraries'
-              );
-            }
-
-            logger.debug('Plex account linked successfully', {
-              label: 'User Settings',
-              userEmail: user.email,
-              identifier,
-              sharedLibraries: librarySectionIds,
-            });
-            break;
-          } catch (e) {
-            logger.warn(`Plex account link attempt failed`, {
-              label: 'User Settings',
-              userEmail: user.email,
-              identifier,
-              message: e.message,
-              responseData: e.response?.data,
-            });
-          }
+        // User already has server access - update libraries to the snapshot
+        try {
+          await plexSync.syncUserLibraries(user, linkSharedLibraries, {
+            allowSync: getSettings().main.downloads ?? false,
+          });
+          logger.debug('Plex account linked successfully', {
+            label: 'User Settings',
+            userEmail: user.email,
+            sharedLibraries: librarySectionIds,
+          });
+        } catch (e) {
+          logger.warn('Plex account link library sync failed', {
+            label: 'User Settings',
+            userEmail: user.email,
+            errorMessage: e instanceof Error ? e.message : String(e),
+          });
         }
       } else {
-        // User not yet on server — send invite with auto-accept
-        for (const identifier of identifiers) {
-          try {
-            const response = await axios.post('http://localhost:5005/invite', {
-              token: adminUser.plexToken,
-              server_id: plexServerId,
-              server_name: getSettings().plex.name || null,
-              email: identifier,
-              libraries: librarySectionIds,
-              allow_sync: getSettings().main.downloads ?? false,
-              allow_camera_upload: false,
-              allow_channels: false,
-              plex_home: user.settings?.allowPlexHome ?? false,
-              user_token: req.body.authToken || user.plexToken || null,
-            });
-
-            if (!response.data.success) {
-              throw new Error(
-                response.data.error ||
-                  'Failed to invite user via Python service'
-              );
-            }
-
-            logger.debug('Plex account linked successfully', {
-              label: 'User Settings',
-              userEmail: user.email,
-              identifier,
-              sharedLibraries: librarySectionIds,
-            });
-            break;
-          } catch (e) {
-            logger.warn(`Plex account link attempt failed`, {
-              label: 'User Settings',
-              userEmail: user.email,
-              identifier,
-              message: e.message,
-              responseData: e.response?.data,
-            });
-          }
+        // User not yet on server - send invite; auto-accept runs in the
+        // background using the fresh auth token from this request
+        try {
+          await plexSync.inviteUser(user, {
+            libraries: librarySectionIds,
+            allowSync: getSettings().main.downloads ?? false,
+            plexHome: user.settings?.allowPlexHome ?? false,
+            userTokenOverride: req.body.authToken || user.plexToken,
+          });
+        } catch (e) {
+          logger.warn('Plex account link invite failed', {
+            label: 'User Settings',
+            userEmail: user.email,
+            errorMessage: e instanceof Error ? e.message : String(e),
+          });
         }
       }
 
@@ -1193,55 +1107,62 @@ userSettingsRoutes.post<{ id: string }>(
         });
       }
 
+      const enabledLibraries = getSettings().plex.libraries.filter(
+        (lib) => lib.enabled
+      );
+
       let librariesToPin: { id: string; name: string; type: string }[];
 
       if (user.id === 1) {
-        librariesToPin = plexSettings.libraries.map((lib) => ({
+        // Admin owns the server - pin all enabled libraries
+        librariesToPin = enabledLibraries.map((lib) => ({
           id: lib.id,
           name: lib.name,
           type: lib.type,
         }));
       } else {
-        const librariesResponse = await axios.get(
-          'http://localhost:5005/library-details',
+        const adminApi = new PlexTvAPI(adminUser.plexToken);
+        const share = await adminApi.getUserShare(
           {
-            params: {
-              token: adminUser.plexToken,
-              server_id: plexSettings.machineId,
-              email: user.email,
-            },
-            timeout: 15000,
-          }
+            plexId: user.plexId,
+            email: user.email,
+            username: user.plexUsername,
+          },
+          plexSettings.machineId
         );
 
-        if (
-          !librariesResponse.data.success ||
-          !librariesResponse.data.libraries
-        ) {
+        if (!share) {
           return next({
             status: 500,
             message: 'Failed to get library information.',
           });
         }
 
-        const allLibraries = librariesResponse.data.libraries;
-        const userSharedLibraries = user.settings?.sharedLibraries;
-        librariesToPin = allLibraries.filter((lib: { id: string }) =>
-          getSettings().main.sharedLibraries.split('|').includes(lib.id)
+        const sharedSections = share.allLibraries
+          ? enabledLibraries.map((lib) => ({
+              id: lib.id,
+              name: lib.name,
+              type: lib.type,
+            }))
+          : share.sections
+              .filter((section) => section.shared)
+              .map((section) => ({
+                id: section.key,
+                name: section.title,
+                type: section.type,
+              }));
+
+        const allowedKeys = new Set(
+          resolveSharedLibraryKeys({
+            value: user.settings?.sharedLibraries,
+            adminDefault: getSettings().main.sharedLibraries,
+            enabledLibraries,
+          })
         );
 
-        if (userSharedLibraries && userSharedLibraries !== 'all') {
-          const allowedLibraryIds = userSharedLibraries.split('|');
-          librariesToPin = allLibraries.filter((lib: { id: string }) =>
-            allowedLibraryIds.includes(lib.id)
-          );
-        } else if (userSharedLibraries && userSharedLibraries === 'all') {
-          librariesToPin = allLibraries.filter((lib: { id: string }) =>
-            getSettings().plex.libraries.some(
-              (library) => library.id === lib.id && library.enabled
-            )
-          );
-        }
+        librariesToPin = sharedSections.filter((lib) =>
+          allowedKeys.has(lib.id)
+        );
       }
 
       if (librariesToPin.length === 0) {
@@ -1253,44 +1174,25 @@ userSettingsRoutes.post<{ id: string }>(
         return;
       }
 
-      const pythonResponse = await axios.post(
-        'http://localhost:5005/pin-libraries',
-        {
-          user_token: user.plexToken,
-          server_id: plexSettings.machineId,
-          server_name: plexSettings.name || 'Streamarr',
-          libraries: librariesToPin,
-        },
-        {
-          timeout: 30000,
-        }
-      );
+      const userApi = new PlexTvAPI(user.plexToken);
+      const result = await userApi.pinServerLibraries({
+        machineId: plexSettings.machineId,
+        serverName: plexSettings.name || 'Streamarr',
+        libraries: librariesToPin,
+      });
 
-      if (pythonResponse.data.success) {
-        logger.debug('Libraries pinned successfully', {
-          label: 'Plex Sync',
-          userId: user.id,
-          email: user.email,
-          pinned_count: pythonResponse.data.pinned_count,
-        });
+      logger.debug('Libraries pinned successfully', {
+        label: 'Plex Sync',
+        userId: user.id,
+        email: user.email,
+        pinned_count: result.pinnedCount,
+      });
 
-        res.status(200).json({
-          success: true,
-          message: pythonResponse.data.message,
-          pinned_count: pythonResponse.data.pinned_count,
-        });
-      } else {
-        logger.error('Failed to pin libraries', {
-          label: 'Plex Sync',
-          userId: user.id,
-          error: pythonResponse.data.error,
-        });
-
-        return next({
-          status: 500,
-          message: pythonResponse.data.error || 'Failed to pin libraries.',
-        });
-      }
+      res.status(200).json({
+        success: true,
+        message: 'Libraries pinned successfully',
+        pinned_count: result.pinnedCount,
+      });
     } catch (e) {
       logger.error('Something went wrong trying to pin libraries', {
         label: 'Plex Sync',

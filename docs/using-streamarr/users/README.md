@@ -73,11 +73,7 @@ If the user is a Plex Home member, library access is managed through Plex Home. 
 
 #### Pin Libraries
 
-Pin selected libraries to the user's Plex sidebar so they appear prominently when the user opens Plex. This uses the Plex Sync (Python) service to set library pins on the Plex server.
-
-{% hint style="info" %}
-Library pinning requires the Plex Sync service to be running. Check the [System](../settings/system.md) page if pinning fails.
-{% endhint %}
+Pin selected libraries to the user's Plex sidebar so they appear prominently when the user opens Plex.
 
 ### Deleting Users
 

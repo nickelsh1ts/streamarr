@@ -7,7 +7,6 @@ import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import List from '@app/components/Common/List';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { usePythonRestart } from '@app/hooks/usePythonRestart';
 import { useServerRestart } from '@app/hooks/useServerRestart';
 import { ArrowPathIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import type {
@@ -30,11 +29,6 @@ const SystemSettings = () => {
     restart: handleRestartServer,
   } = useServerRestart();
 
-  const {
-    status: pythonStatus,
-    isRestarting: isRestartingPython,
-    restart: handleRestartPython,
-  } = usePythonRestart({ refreshInterval: 15_000 });
   const { data: restartData, error: restartError } =
     useSWR<RestartStatusResponse>(RESTART_REQUIRED_SWR_KEY, {
       revalidateOnFocus: true,
@@ -135,19 +129,6 @@ const SystemSettings = () => {
           isRestarting={isRestartingServer || isReconnecting}
           onRestart={handleRestartServer}
         />
-        <HealthCard
-          title={intl.formatMessage({
-            id: 'system.python.title',
-            defaultMessage: 'Plex Sync Service',
-          })}
-          description={intl.formatMessage({
-            id: 'system.python.description',
-            defaultMessage: 'Handles Plex invites and library synchronization.',
-          })}
-          status={pythonStatus?.status}
-          isRestarting={isRestartingPython}
-          onRestart={handleRestartPython}
-        />
       </div>
       <DiskSpace data={data} />
       <div className="mt-6">
@@ -225,14 +206,6 @@ const SystemSettings = () => {
             })}
           >
             <code>{data.nodeVersion}</code>
-          </List.Item>
-          <List.Item
-            title={intl.formatMessage({
-              id: 'systemSettings.pythonVersion',
-              defaultMessage: 'Python',
-            })}
-          >
-            <code>{data.pythonVersion}</code>
           </List.Item>
           <List.Item
             title={intl.formatMessage({

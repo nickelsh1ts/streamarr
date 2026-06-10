@@ -21,7 +21,6 @@ import { getSettings } from '@server/lib/settings';
 import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import { initI18n } from '@server/i18n';
 import restartManager from '@server/lib/restartManager';
-import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
 import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
@@ -63,7 +62,6 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-process.on('exit', () => pythonService.destroy());
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
@@ -100,7 +98,6 @@ app
     ]);
     // Start Jobs
     startJobs();
-    const pythonReady = pythonService.start();
     const server = express();
     if (settings.network.trustProxy) {
       server.set('trust proxy', 1);
@@ -292,7 +289,6 @@ app
           .json({ message: errorInfo.message, errors: errorInfo.errors });
       }
     );
-    await pythonReady;
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST;
     if (host) {
