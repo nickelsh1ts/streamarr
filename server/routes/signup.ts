@@ -8,7 +8,13 @@ import { getSettings } from '@server/lib/settings';
 import { InviteStatus } from '@server/constants/invite';
 import { UserType } from '@server/constants/user';
 import { Permission } from '@server/lib/permissions';
-import axios from 'axios';
+import { plexSync } from '@server/lib/plexSync';
+import {
+  isDefaultSentinel,
+  materializeDefaultSnapshot,
+  normalizeSharedLibrariesValue,
+  resolveSharedLibraryKeys,
+} from '@server/utils/sharedLibraries';
 import logger from '@server/logger';
 import crypto from 'crypto';
 
@@ -164,14 +170,23 @@ signupRoutes.post('/plexauth', async (req, res) => {
       displayName: plexUser.username, // Set display name immediately
       avatar: plexUser.thumb,
       userType: UserType.PLEX,
-      plexToken: plexUser.authToken,
+      plexToken: authToken,
       permissions: settings.main.defaultPermissions, // Assign default permissions from admin settings
     });
 
-    // Set up user settings with invite libraries
+    const enabledLibraries = settings.plex.libraries.filter(
+      (lib) => lib.enabled
+    );
+    const sharedLibrariesSnapshot = isDefaultSentinel(invite.sharedLibraries)
+      ? materializeDefaultSnapshot({
+          adminDefault: settings.main.sharedLibraries,
+          enabledLibraries,
+        })
+      : normalizeSharedLibrariesValue(invite.sharedLibraries);
+
     user.settings = new UserSettings({
-      ...(invite.sharedLibraries
-        ? { sharedLibraries: invite.sharedLibraries }
+      ...(sharedLibrariesSnapshot
+        ? { sharedLibraries: sharedLibrariesSnapshot }
         : {}),
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,
@@ -206,7 +221,7 @@ signupRoutes.post('/plexauth', async (req, res) => {
     });
 
     // Handle Plex server invitation immediately to avoid inconsistent state
-    if (invite.sharedLibraries || invite.sharedLibraries === '') {
+    if (user.settings.sharedLibraries) {
       const mainUser = await userRepository
         .createQueryBuilder('user')
         .addSelect('user.plexToken')
@@ -246,97 +261,22 @@ signupRoutes.post('/plexauth', async (req, res) => {
         return;
       }
 
-      // Handle Plex server invitation - filter libraries based on admin settings
-      // When invite or admin default is "all", only grant access to enabled libraries
-      const plexServerId = getSettings().plex.machineId;
-      let librarySectionIds = [];
+      // Resolve the snapshotted selection to explicit enabled library keys
+      const librarySectionIds = resolveSharedLibraryKeys({
+        value: user.settings.sharedLibraries,
+        adminDefault: settings.main.sharedLibraries,
+        enabledLibraries,
+      });
 
-      if (invite.sharedLibraries === 'all') {
-        // Get only enabled libraries from settings
-        const plexSettings = getSettings();
-        const enabledLibraries = plexSettings.plex.libraries.filter(
-          (lib) => lib.enabled
-        );
-        librarySectionIds = enabledLibraries.map((lib) => lib.id);
-      } else if (
-        invite.sharedLibraries === 'server' ||
-        invite.sharedLibraries === ''
-      ) {
-        // Use app settings for default libraries
-        const defaultLibs = getSettings().main.sharedLibraries;
-
-        if (defaultLibs === 'all' || !defaultLibs) {
-          // Admin set default to "All Libraries" - filter to only enabled libraries
-          const plexSettings = getSettings();
-          const enabledLibraries = plexSettings.plex.libraries.filter(
-            (lib) => lib.enabled
-          );
-          librarySectionIds = enabledLibraries.map((lib) => lib.id);
-        } else {
-          // Admin has specific libraries configured - filter against enabled libraries
-          const plexSettings = getSettings();
-          const enabledLibraries = plexSettings.plex.libraries.filter(
-            (lib) => lib.enabled
-          );
-
-          const adminConfiguredLibs = defaultLibs
-            ? defaultLibs
-                .split(/[,|]/)
-                .map((id) => id.trim())
-                .filter((id) => id !== '')
-            : [];
-
-          // Only include admin-configured libraries that are also enabled
-          librarySectionIds = adminConfiguredLibs.filter((libId) =>
-            enabledLibraries.some((enabled) => enabled.id === libId)
-          );
-        }
-      } else if (typeof invite.sharedLibraries === 'string') {
-        const plexSettings = getSettings();
-        const enabledLibraries = plexSettings.plex.libraries.filter(
-          (lib) => lib.enabled
-        );
-
-        const requestedLibs = invite.sharedLibraries
-          .split(/[,|]/)
-          .map((id) => id.trim())
-          .filter((id) => id !== '');
-
-        // Only include requested libraries that are also enabled
-        librarySectionIds = requestedLibs.filter((libId) =>
-          enabledLibraries.some((enabled) => enabled.id === libId)
-        );
-      } else if (Array.isArray(invite.sharedLibraries)) {
-        const plexSettings = getSettings();
-        const enabledLibraries = plexSettings.plex.libraries.filter(
-          (lib) => lib.enabled
-        );
-
-        const requestedLibs = (invite.sharedLibraries as string[])
-          .flatMap((id) => String(id).split(/[,|]/))
-          .map((id) => id.trim())
-          .filter((id) => id !== '');
-
-        // Only include requested libraries that are also enabled
-        librarySectionIds = requestedLibs.filter((libId) =>
-          enabledLibraries.some((enabled) => enabled.id === libId)
-        );
-      }
-
-      // Safeguard: If we have an empty array but expected specific libraries,
-      // this indicates a configuration error - fail rather than grant all access
-      if (
-        librarySectionIds.length === 0 &&
-        invite.sharedLibraries !== 'all' &&
-        invite.sharedLibraries !== 'server' &&
-        invite.sharedLibraries !== ''
-      ) {
+      // Safeguard: an empty resolution is a configuration error - fail
+      // rather than grant unintended access
+      if (librarySectionIds.length === 0) {
         logger.error(
-          'Library filtering resulted in empty array - potential misconfiguration',
+          'Library resolution resulted in an empty set - potential misconfiguration',
           {
             label: 'SignUp',
             inviteSharedLibraries: invite.sharedLibraries,
-            adminDefaultLibs: getSettings().main.sharedLibraries,
+            adminDefaultLibs: settings.main.sharedLibraries,
           }
         );
         // Clean up: remove the user we just created
@@ -348,84 +288,36 @@ signupRoutes.post('/plexauth', async (req, res) => {
         return;
       }
 
-      // Try inviting by email first, then username if available
-      const inviteAttempts = [user.email, user.plexUsername].filter(Boolean);
-      let inviteResult = null;
-      let inviteError = null;
-
-      for (const identifier of inviteAttempts) {
-        try {
-          // Build plex_base_url for Plex Home invites
-          let plex_base_url = undefined;
-          if (invite.plexHome) {
-            const plexSettings = getSettings().plex;
-            const protocol = plexSettings.useSsl ? 'https' : 'http';
-            plex_base_url = `${protocol}://${plexSettings.ip}:${plexSettings.port}`;
-          }
-
-          const response = await axios.post('http://localhost:5005/invite', {
-            token: mainUser.plexToken,
-            server_id: plexServerId,
-            email: identifier,
-            libraries: librarySectionIds,
-            allow_sync: invite.downloads ?? false,
-            allow_camera_upload: false,
-            plex_home: invite.plexHome ?? false,
-            plex_base_url,
-            user_token: user.plexToken,
-          });
-
-          if (!response.data.success)
-            throw new Error(
-              response.data.error || 'Failed to invite user via Python service'
-            );
-
-          inviteResult = response.data;
-          inviteError = null;
-          break;
-        } catch (err) {
-          inviteError = err;
-          logger.warn(
-            `Plex invite attempt failed for ${identifier}: ${err.message}`,
-            {
-              label: 'SignUp',
-            }
-          );
-        }
+      // Invite via plexSync (email first, then username); auto-accept runs
+      // in the background using the user's token
+      let inviteError: Error | null = null;
+      try {
+        await plexSync.inviteUser(user, {
+          libraries: librarySectionIds,
+          allowSync: invite.downloads ?? false,
+          plexHome: invite.plexHome ?? false,
+          userTokenOverride: authToken,
+        });
+      } catch (e) {
+        inviteError = e instanceof Error ? e : new Error(String(e));
       }
 
-      if (inviteError && !inviteResult) {
-        // Check if the error is about already sharing with this user
+      if (inviteError) {
+        // Check if the error is about an invite that already exists
         const errorMessage = inviteError.message || inviteError.toString();
-        let pythonError = '';
-        if (
-          inviteError.response &&
-          inviteError.response.data &&
-          inviteError.response.data.error
-        ) {
-          pythonError = inviteError.response.data.error;
-        }
 
-        if (
-          errorMessage.includes('already sharing this server with') ||
-          errorMessage.includes('already sharing') ||
-          pythonError.includes('already sharing this server with') ||
-          pythonError.includes('already sharing')
-        ) {
+        if (/already (shar|invit)/i.test(errorMessage)) {
           logger.info(
-            `User ${user.email} already has Plex access but tried to sign up`,
+            'A Plex invite is already pending for this user — Attempting auto-accept of the existing invite',
             {
               label: 'SignUp',
+              userId: user.id,
+              plexError: errorMessage,
             }
           );
-          // Clean up: remove the user we just created since they should log in instead
-          await userRepository.remove(user);
-          res.status(400).json({
-            success: false,
-            message:
-              'You already have access to this Plex server. Please sign in instead of signing up.',
+          plexSync.scheduleAutoAccept(user, {
+            userTokenOverride: authToken,
           });
-          return;
         } else {
           // Clean up: remove the user we just created since Plex invite failed
           await userRepository.remove(user);
@@ -616,10 +508,19 @@ signupRoutes.post('/localauth', async (req, res) => {
     // Set password
     await user.setPassword(password);
 
-    // Set up user settings with invite libraries
+    const enabledLibraries = appSettings.plex.libraries.filter(
+      (lib) => lib.enabled
+    );
+    const sharedLibrariesSnapshot = isDefaultSentinel(invite.sharedLibraries)
+      ? materializeDefaultSnapshot({
+          adminDefault: appSettings.main.sharedLibraries,
+          enabledLibraries,
+        })
+      : normalizeSharedLibrariesValue(invite.sharedLibraries);
+
     user.settings = new UserSettings({
-      ...(invite.sharedLibraries
-        ? { sharedLibraries: invite.sharedLibraries }
+      ...(sharedLibrariesSnapshot
+        ? { sharedLibraries: sharedLibrariesSnapshot }
         : {}),
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,

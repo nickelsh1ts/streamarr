@@ -5228,27 +5228,6 @@
   "system.health.title": {
     "defaultMessage": "Health"
   },
-  "system.python.alertMessage": {
-    "defaultMessage": "The Plex Sync service is unreachable. Plex invites and library sync are currently unavailable."
-  },
-  "system.python.alertTitle": {
-    "defaultMessage": "Plex Sync Service Down"
-  },
-  "system.python.description": {
-    "defaultMessage": "Handles Plex invites and library synchronization."
-  },
-  "system.python.restart": {
-    "defaultMessage": "Restart Service"
-  },
-  "system.python.restartFailed": {
-    "defaultMessage": "Failed to restart Plex Sync service"
-  },
-  "system.python.restartSuccess": {
-    "defaultMessage": "Plex Sync service restarted successfully"
-  },
-  "system.python.title": {
-    "defaultMessage": "Plex Sync Service"
-  },
   "system.reconnecting": {
     "defaultMessage": "Reconnecting…"
   },
@@ -5344,9 +5323,6 @@
   },
   "systemSettings.preferred": {
     "defaultMessage": "Preferred"
-  },
-  "systemSettings.pythonVersion": {
-    "defaultMessage": "Python"
   },
   "systemSettings.source": {
     "defaultMessage": "Source"

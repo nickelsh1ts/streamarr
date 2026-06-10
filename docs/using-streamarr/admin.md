@@ -155,7 +155,7 @@ View application logs:
 
 Monitor and manage your Streamarr instance:
 
-- Server and Plex Sync service health status with restart controls
+- Server health status with restart controls
 - Current version and update availability
 - Release history and changelogs
 - Support and sponsor links

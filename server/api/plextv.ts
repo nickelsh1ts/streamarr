@@ -1,4 +1,13 @@
-import type { PlexDevice } from '@server/interfaces/api/plexInterfaces';
+import type {
+  PlexDevice,
+  PlexPendingInvite,
+  PlexPinnableLibrary,
+  PlexServerSection,
+  PlexSharePermissions,
+  PlexSharedSection,
+  PlexUserIdentity,
+  PlexUserShare,
+} from '@server/interfaces/api/plexInterfaces';
 import cacheManager from '@server/lib/cache';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -78,6 +87,8 @@ interface ServerResponse {
     lastSeenAt: string;
     numLibraries: string;
     owned: string;
+    allLibraries?: string;
+    pending?: string;
   };
 }
 
@@ -90,6 +101,9 @@ interface UsersResponse {
         username: string;
         email: string;
         thumb: string;
+        allowSync?: string;
+        allowCameraUpload?: string;
+        allowChannels?: string;
       };
       Server: ServerResponse[];
     }[];
@@ -118,6 +132,128 @@ export interface PlexWatchlistCache {
   etag: string;
   response: WatchlistResponse;
 }
+
+interface PlexSectionXml {
+  $: {
+    id: string;
+    key: string;
+    title: string;
+    type: string;
+    shared?: string;
+  };
+}
+
+interface PlexServerSectionsXml {
+  MediaContainer?: {
+    Server?:
+      | { Section?: PlexSectionXml | PlexSectionXml[] }
+      | { Section?: PlexSectionXml | PlexSectionXml[] }[];
+  };
+}
+
+interface PlexSharedServerXml {
+  MediaContainer?: {
+    SharedServer?: {
+      Section?: PlexSectionXml | PlexSectionXml[];
+    };
+  };
+}
+
+interface PlexInviteXml {
+  $: {
+    id: string;
+    friend?: string;
+    home?: string;
+    server?: string;
+    email?: string;
+    username?: string;
+    friendlyName?: string;
+  };
+  Server?: { $: { name?: string } } | { $: { name?: string } }[];
+}
+
+interface PlexInvitesResponseXml {
+  MediaContainer?: { Invite?: PlexInviteXml | PlexInviteXml[] };
+}
+
+interface PlexPinnedSource {
+  key: string;
+  machineIdentifier?: string;
+  [field: string]: unknown;
+}
+
+interface PlexExperienceData {
+  sidebarSettings?: {
+    hasCompletedSetup?: boolean;
+    pinnedSources?: PlexPinnedSource[];
+    [field: string]: unknown;
+  };
+  [field: string]: unknown;
+}
+
+interface PlexUserSettingsResponse {
+  value?: { id: string; type?: string; value?: string; hidden?: boolean }[];
+}
+
+const toArray = <T>(value: T | T[] | undefined | null): T[] =>
+  Array.isArray(value) ? value : value ? [value] : [];
+
+/**
+ * plex.tv XML endpoints return boolean attributes as either "1"/"0" or
+ * "true"/"false" depending on the endpoint.
+ */
+const parsePlexBool = (value?: string | null): boolean =>
+  value === '1' || value === 'true';
+
+const extractFromErrorObject = (data: {
+  errors?: unknown;
+  error?: unknown;
+}): string | undefined => {
+  if (Array.isArray(data.errors) && data.errors.length > 0) {
+    const first = data.errors[0] as { message?: string } | string;
+    const message = typeof first === 'string' ? first : first?.message;
+    if (message) return message;
+  }
+  if (typeof data.error === 'string' && data.error) {
+    return data.error;
+  }
+  return undefined;
+};
+
+/**
+ * Extracts a human-readable error message from a plex.tv error response.
+ * Legacy plex.tv endpoints return XML error bodies (<errors><error>…) while
+ * newer ones return JSON — signup.ts depends on the message text surviving
+ * (e.g. "already sharing this server with").
+ */
+export const extractPlexError = (error: unknown): string => {
+  const fallback = error instanceof Error ? error.message : String(error);
+  const data = (error as { response?: { data?: unknown } })?.response?.data;
+
+  if (data && typeof data === 'object') {
+    const message = extractFromErrorObject(
+      data as { errors?: unknown; error?: unknown }
+    );
+    if (message) return message;
+  }
+
+  if (typeof data === 'string' && data) {
+    try {
+      const parsed = JSON.parse(data) as { errors?: unknown; error?: unknown };
+      const message = extractFromErrorObject(parsed);
+      if (message) return message;
+    } catch {
+      // Not JSON — fall through to XML/raw handling
+    }
+    const xmlMatch =
+      data.match(/<error[^>]*>([^<]+)<\/error>/i) ??
+      data.match(/status="([^"]+)"/i);
+    if (xmlMatch?.[1]) return xmlMatch[1];
+    return data.slice(0, 300);
+  }
+
+  return fallback;
+};
 
 class PlexTvAPI extends ExternalAPI {
   private authToken: string;
@@ -341,6 +477,457 @@ class PlexTvAPI extends ExternalAPI {
     return result;
   }
 
+  private static readonly USER_SETTINGS_URL =
+    'https://clients.plex.tv/api/v2/user/settings';
+
+  private validateMachineId(machineId: string): void {
+    if (!machineId) {
+      throw new Error('Plex is not configured!');
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(machineId)) {
+      throw new Error('Invalid machineId: must be alphanumeric.');
+    }
+  }
+
+  private async getXml<T>(url: string): Promise<T> {
+    const response = await this.axios.get(url, {
+      transformResponse: [],
+      responseType: 'text',
+    });
+    return (await xml2js.parseStringPromise(response.data as string, {
+      explicitArray: false,
+      ignoreAttrs: false,
+    })) as T;
+  }
+
+  private buildSharingSettings(
+    permissions: PlexSharePermissions
+  ): Record<string, string> {
+    return {
+      allowSync: permissions.allowSync ? '1' : '0',
+      allowCameraUpload: permissions.allowCameraUpload ? '1' : '0',
+      allowChannels: permissions.allowChannels ? '1' : '0',
+      filterMovies: '',
+      filterTelevision: '',
+      filterMusic: '',
+    };
+  }
+
+  /**
+   * Returns all library sections on the server as reported by plex.tv,
+   * including the global section `id` required by the shared_servers API
+   * and the server-local `key` used throughout Streamarr settings.
+   */
+  public async getServerSections(
+    machineId: string
+  ): Promise<PlexServerSection[]> {
+    this.validateMachineId(machineId);
+    const parsed = await this.getXml<PlexServerSectionsXml>(
+      `https://plex.tv/api/servers/${encodeURIComponent(machineId)}`
+    );
+    const servers = toArray(parsed?.MediaContainer?.Server);
+    const sections = servers.flatMap((server) => toArray(server.Section));
+    return sections.map((section) => ({
+      id: parseInt(section.$.id, 10),
+      key: section.$.key,
+      title: section.$.title,
+      type: section.$.type,
+    }));
+  }
+
+  /**
+   * Returns the share a user holds on the given server, or null when the
+   * user (or their share) cannot be found.
+   */
+  public async getUserShare(
+    identity: PlexUserIdentity,
+    machineId: string
+  ): Promise<PlexUserShare | null> {
+    this.validateMachineId(machineId);
+    const usersResponse = await this.getUsers();
+    const users = toArray(usersResponse.MediaContainer.User);
+
+    const target =
+      (identity.plexId != null
+        ? users.find((user) => parseInt(user.$.id, 10) === identity.plexId)
+        : undefined) ??
+      (identity.email
+        ? users.find(
+            (user) =>
+              user.$.email &&
+              user.$.email.toLowerCase() === identity.email?.toLowerCase()
+          )
+        : undefined) ??
+      (identity.username
+        ? users.find(
+            (user) =>
+              user.$.username &&
+              user.$.username.toLowerCase() === identity.username?.toLowerCase()
+          )
+        : undefined);
+
+    if (!target) {
+      return null;
+    }
+
+    const servers = toArray(target.Server);
+    const share = servers.find(
+      (server) => server.$.machineIdentifier === machineId
+    );
+
+    if (!share?.$.id) {
+      return null;
+    }
+
+    const sharingId = parseInt(share.$.id, 10);
+    const parsed = await this.getXml<PlexSharedServerXml>(
+      `https://plex.tv/api/servers/${encodeURIComponent(machineId)}/shared_servers/${encodeURIComponent(sharingId)}`
+    );
+    const sections: PlexSharedSection[] = toArray(
+      parsed?.MediaContainer?.SharedServer?.Section
+    ).map((section) => ({
+      id: parseInt(section.$.id, 10),
+      key: section.$.key,
+      title: section.$.title,
+      type: section.$.type,
+      shared: parsePlexBool(section.$.shared),
+    }));
+
+    return {
+      sharingId,
+      accountId: parseInt(target.$.id, 10),
+      pending: parsePlexBool(share.$.pending),
+      allLibraries: parsePlexBool(share.$.allLibraries),
+      sections,
+      allowSync: parsePlexBool(target.$.allowSync),
+      allowCameraUpload: parsePlexBool(target.$.allowCameraUpload),
+      allowChannels: parsePlexBool(target.$.allowChannels),
+    };
+  }
+
+  /**
+   * Invites a user to this server (regular friend/server share).
+   * `identifier` may be an email address or a Plex username — the
+   * invited_email field accepts either.
+   */
+  public async inviteUserToServer(options: {
+    identifier: string;
+    machineId: string;
+    sectionIds: number[];
+    allowSync?: boolean;
+    allowCameraUpload?: boolean;
+    allowChannels?: boolean;
+  }): Promise<void> {
+    this.validateMachineId(options.machineId);
+    await this.axios.post(
+      `https://plex.tv/api/servers/${encodeURIComponent(options.machineId)}/shared_servers`,
+      {
+        server_id: options.machineId,
+        shared_server: {
+          library_section_ids: options.sectionIds,
+          invited_email: options.identifier,
+        },
+        sharing_settings: this.buildSharingSettings(options),
+      }
+    );
+  }
+
+  /**
+   * Invites a user to the owner's Plex Home and shares this server:
+   * an existing friend only needs the Home invitation — their share
+   * is already in place — while a new user gets the Home invite
+   * followed by the server share.
+   */
+  public async inviteHomeUser(options: {
+    identifier: string;
+    machineId: string;
+    sectionIds: number[];
+    allowSync?: boolean;
+    allowCameraUpload?: boolean;
+    allowChannels?: boolean;
+  }): Promise<void> {
+    this.validateMachineId(options.machineId);
+    const users = toArray((await this.getUsers()).MediaContainer.User);
+    const identifierLower = options.identifier.toLowerCase();
+    const existing = users.find(
+      (user) =>
+        user.$.email?.toLowerCase() === identifierLower ||
+        user.$.username?.toLowerCase() === identifierLower
+    );
+
+    if (existing) {
+      await this.axios.post(
+        `https://plex.tv/api/home/users?invitedEmail=${encodeURIComponent(
+          existing.$.username || options.identifier
+        )}`
+      );
+      return;
+    }
+
+    await this.axios.post(
+      `https://plex.tv/api/home/users?invitedEmail=${encodeURIComponent(options.identifier)}`
+    );
+    await this.axios.post(
+      `https://plex.tv/api/servers/${encodeURIComponent(options.machineId)}/shared_servers`,
+      {
+        server_id: options.machineId,
+        shared_server: {
+          library_section_ids: options.sectionIds,
+          invited_email: options.identifier,
+        },
+        sharing_settings: this.buildSharingSettings(options),
+      }
+    );
+  }
+
+  /**
+   * Updates a user's shared library sections, and — only when permission
+   * values are explicitly provided and differ from the current share —
+   * recreates the share, which is the only reliable way to change
+   * allowSync/allowCameraUpload/allowChannels. Permissions are tri-state:
+   * undefined means "leave unchanged".
+   */
+  public async updateUserShare(options: {
+    machineId: string;
+    share: PlexUserShare;
+    sectionIds: number[];
+    permissions?: PlexSharePermissions;
+  }): Promise<{ permissionsUpdated: boolean }> {
+    this.validateMachineId(options.machineId);
+    const { machineId, share, sectionIds, permissions } = options;
+    const shareUrl = `https://plex.tv/api/servers/${encodeURIComponent(machineId)}/shared_servers/${encodeURIComponent(share.sharingId)}`;
+
+    await this.axios.put(shareUrl, {
+      server_id: machineId,
+      shared_server: { library_section_ids: sectionIds },
+    });
+
+    const permissionsChanged =
+      (permissions?.allowSync !== undefined &&
+        permissions.allowSync !== share.allowSync) ||
+      (permissions?.allowCameraUpload !== undefined &&
+        permissions.allowCameraUpload !== share.allowCameraUpload) ||
+      (permissions?.allowChannels !== undefined &&
+        permissions.allowChannels !== share.allowChannels);
+
+    if (!permissionsChanged) {
+      return { permissionsUpdated: false };
+    }
+
+    const effectivePermissions: PlexSharePermissions = {
+      allowSync: permissions?.allowSync ?? share.allowSync,
+      allowCameraUpload:
+        permissions?.allowCameraUpload ?? share.allowCameraUpload,
+      allowChannels: permissions?.allowChannels ?? share.allowChannels,
+    };
+
+    await this.axios.delete(shareUrl);
+    await this.axios.post(
+      `https://plex.tv/api/servers/${encodeURIComponent(machineId)}/shared_servers`,
+      {
+        server_id: machineId,
+        shared_server: {
+          library_section_ids: sectionIds,
+          invited_id: share.accountId,
+        },
+        sharing_settings: this.buildSharingSettings(effectivePermissions),
+      }
+    );
+
+    return { permissionsUpdated: true };
+  }
+
+  /**
+   * Returns the pending invites *received* by this token's account.
+   * Use with a user-token PlexTvAPI instance for auto-accept flows.
+   */
+  public async getPendingReceivedInvites(): Promise<PlexPendingInvite[]> {
+    const parsed = await this.getXml<PlexInvitesResponseXml>(
+      '/api/invites/requests'
+    );
+    return toArray(parsed?.MediaContainer?.Invite).map((invite) => ({
+      id: parseInt(invite.$.id, 10),
+      friend: parsePlexBool(invite.$.friend),
+      home: parsePlexBool(invite.$.home),
+      server: parsePlexBool(invite.$.server),
+      email: invite.$.email,
+      username: invite.$.username,
+      friendlyName: invite.$.friendlyName,
+      serverNames: toArray(invite.Server)
+        .map((server) => server.$?.name)
+        .filter((name): name is string => !!name),
+    }));
+  }
+
+  /**
+   * Accepts a pending invite, echoing the invite's own friend/home/server
+   * flags — this covers regular shares and Plex Home invites alike.
+   */
+  public async acceptInvite(invite: PlexPendingInvite): Promise<void> {
+    const server = invite.server || (!invite.friend && !invite.home) ? 1 : 0;
+    await this.axios.put(
+      `https://plex.tv/api/invites/requests/${encodeURIComponent(invite.id)}`,
+      undefined,
+      {
+        params: {
+          friend: invite.friend ? 1 : 0,
+          home: invite.home ? 1 : 0,
+          server,
+        },
+      }
+    );
+  }
+
+  /**
+   * Pins the given libraries (plus Discover/Watchlist defaults) in the
+   * user's Plex Web sidebar via clients.plex.tv user settings. Preserves
+   * pins belonging to other servers. Use with a user-token instance.
+   */
+  public async pinServerLibraries(options: {
+    machineId: string;
+    serverName: string;
+    libraries: PlexPinnableLibrary[];
+  }): Promise<{ pinnedCount: number }> {
+    this.validateMachineId(options.machineId);
+    const { machineId, serverName, libraries } = options;
+
+    // Fetch the user's current client settings. A brand-new Plex account
+    // has no settings record yet and this GET returns 404
+    let currentSettings: PlexUserSettingsResponse | null = null;
+    try {
+      const settingsResponse = await this.axios.get<PlexUserSettingsResponse>(
+        PlexTvAPI.USER_SETTINGS_URL,
+        {
+          params: {
+            sharedSettings: '1',
+            'X-Plex-Product': 'Plex Web',
+            'X-Plex-Version': '4.152.0',
+            'X-Plex-Client-Identifier': 'streamarr',
+          },
+          timeout: 15000,
+        }
+      );
+      currentSettings = settingsResponse.data;
+    } catch {
+      // No settings found or error fetching — we'll treat it as a blank slate and create the setting on POST
+    }
+
+    let experienceData: PlexExperienceData = {};
+    let existingPinned: PlexPinnedSource[] = [];
+    for (const setting of currentSettings?.value ?? []) {
+      if (setting.id === 'experience') {
+        experienceData = JSON.parse(setting.value || '{}');
+        existingPinned = experienceData.sidebarSettings?.pinnedSources ?? [];
+        break;
+      }
+    }
+
+    const preservedPins = existingPinned.filter(
+      (pin) => pin.machineIdentifier !== machineId
+    );
+
+    const byNumericId = (a: PlexPinnableLibrary, b: PlexPinnableLibrary) =>
+      parseInt(a.id, 10) - parseInt(b.id, 10);
+    const moviesAndShows = libraries
+      .filter((lib) => lib.type === 'movie' || lib.type === 'show')
+      .sort(byNumericId);
+    const music = libraries
+      .filter((lib) => lib.type === 'artist')
+      .sort(byNumericId);
+    const sortedLibraries = [...moviesAndShows, ...music];
+
+    const typeMapping: Record<string, string> = {
+      movie: 'movies',
+      show: 'tv',
+      artist: 'music',
+    };
+    const ourPinnedSources: PlexPinnedSource[] = sortedLibraries.map((lib) => {
+      const sourceType = typeMapping[lib.type] ?? lib.type;
+      return {
+        key: `source--${sourceType}--${machineId}--com.plexapp.plugins.library--${lib.id}`,
+        sourceType,
+        machineIdentifier: machineId,
+        providerIdentifier: 'com.plexapp.plugins.library',
+        directoryID: lib.id,
+        title: lib.name,
+        serverFriendlyName: serverName,
+        serverSourceTitle: null,
+        isFullOwnedServer: true,
+        hiddenAt: null,
+      };
+    });
+
+    const discoverWatchlistDefaults: PlexPinnedSource[] = [
+      {
+        key: 'source--discover--myPlex--tv.plex.provider.discover--home',
+        sourceType: 'discover',
+        machineIdentifier: 'myPlex',
+        providerIdentifier: 'tv.plex.provider.discover',
+        directoryID: 'home',
+        directoryIcon: 'https://provider-static.plex.tv/icons/discover-560.svg',
+        title: 'Discover',
+        serverFriendlyName: 'plex.tv',
+        providerSourceTitle: null,
+        isCloud: true,
+        isFullOwnedServer: false,
+        hiddenAt: null,
+      },
+      {
+        key: 'source--watchlist--myPlex--tv.plex.provider.discover--watchlist',
+        sourceType: 'watchlist',
+        machineIdentifier: 'myPlex',
+        providerIdentifier: 'tv.plex.provider.discover',
+        directoryID: 'watchlist',
+        directoryIcon: 'https://provider-static.plex.tv/icons/watchlist.svg',
+        title: 'Watchlist',
+        serverFriendlyName: 'plex.tv',
+        providerSourceTitle: null,
+        isCloud: true,
+        isFullOwnedServer: false,
+        hiddenAt: null,
+      },
+    ];
+
+    const finalPinnedSources = [...preservedPins, ...ourPinnedSources];
+    const existingKeys = new Set(finalPinnedSources.map((pin) => pin.key));
+    for (const defaultSource of discoverWatchlistDefaults) {
+      if (!existingKeys.has(defaultSource.key)) {
+        finalPinnedSources.push(defaultSource);
+      }
+    }
+
+    experienceData.sidebarSettings = {
+      ...(experienceData.sidebarSettings ?? {}),
+      hasCompletedSetup: true,
+      pinnedSources: finalPinnedSources,
+    };
+
+    await this.axios.post(
+      PlexTvAPI.USER_SETTINGS_URL,
+      {
+        value: JSON.stringify([
+          {
+            id: 'experience',
+            type: 'json',
+            value: JSON.stringify(experienceData),
+            hidden: false,
+          },
+        ]),
+      },
+      {
+        params: {
+          sharedSettings: '1',
+          'X-Plex-Product': 'Plex Web',
+          'X-Plex-Version': '4.152.0',
+          'X-Plex-Client-Identifier': 'streamarr-pin-libraries',
+        },
+        timeout: 15000,
+      }
+    );
+
+    return { pinnedCount: ourPinnedSources.length };
+  }
+
   public async pingToken() {
     try {
       const response = await this.axios.get('/api/v2/ping', {
@@ -354,6 +941,7 @@ class PlexTvAPI extends ExternalAPI {
         label: 'Plex Refresh Token',
         errorMessage: e.message,
       });
+      throw e;
     }
   }
 }

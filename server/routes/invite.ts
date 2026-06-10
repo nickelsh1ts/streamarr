@@ -7,6 +7,7 @@ import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfa
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
@@ -292,7 +293,9 @@ inviteRoutes.post<
         downloads: req.body.downloads ?? true,
         liveTv: req.body.liveTv ?? false,
         plexHome: req.user?.id === 1 ? (req.body.plexHome ?? false) : false,
-        sharedLibraries: req.body.sharedLibraries ?? '',
+        sharedLibraries: normalizeSharedLibrariesValue(
+          req.body.sharedLibraries
+        ),
         expiryLimit: req.body.expiryLimit ?? 1,
         expiryTime: req.body.expiryTime ?? 'days',
         trialPeriodOutcome: req.body.trialPeriodOutcome,
@@ -374,6 +377,11 @@ inviteRoutes.put<
       });
 
       const previousPlexHome = invite.plexHome;
+      if (req.body.sharedLibraries !== undefined) {
+        req.body.sharedLibraries = normalizeSharedLibrariesValue(
+          req.body.sharedLibraries
+        );
+      }
       inviteRepository.merge(invite, req.body);
       invite.updatedBy = req.user;
       if (req.user?.id !== 1) {

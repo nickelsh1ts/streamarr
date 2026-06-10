@@ -22,7 +22,7 @@ Welcome to the Streamarr Documentation.
 - **Custom Branding** — Upload custom logos to replace default Streamarr branding
 - **Library Counts** — Display Plex library item counts on the homepage with stale-while-revalidate caching
 - **Playlist Support** — Optional Plex playlists integration with configurable default library views
-- **System Health Monitoring** — Real-time health status for server and Plex Sync service with restart controls
+- **System Health Monitoring** — Real-time health status for the server with restart controls
 - **Plex Connection Resilience** — Automatic health detection with 5-second retry, 5-minute cooldown, and stale-while-revalidate library caching to serve data seamlessly when Plex is temporarily unreachable
 - **Status Page Integration** — Link to Uptime Kuma or any external status page
 - **Multi-language Support** — Localized interface with per-user language settings

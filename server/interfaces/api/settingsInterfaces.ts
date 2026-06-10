@@ -20,7 +20,6 @@ export interface SettingsAboutResponse {
   tz?: string;
   uptime: number;
   nodeVersion: string;
-  pythonVersion: string;
   appDataPath: string;
   database: {
     type: string;
@@ -123,13 +122,6 @@ export interface RestartStatusResponse {
 export interface RestartResponse {
   success: boolean;
   message: string;
-}
-
-export interface PythonServiceStatusResponse {
-  status: 'healthy' | 'unhealthy' | 'unknown';
-  lastChecked: string | null;
-  lastHealthy: string | null;
-  consecutiveFailures: number;
 }
 
 export interface GitHubRelease {

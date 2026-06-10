@@ -414,7 +414,7 @@ class Settings {
             quotaExpiryTime: 'days' as const,
           },
         },
-        sharedLibraries: '',
+        sharedLibraries: 'all',
         downloads: true,
         liveTv: false,
         plexHome: false,
@@ -862,6 +862,12 @@ class Settings {
         SETTINGS_PATH
       );
       this.data = mergeSettings(this.data, migratedSettings);
+      if (
+        !this.data.main.sharedLibraries ||
+        this.data.main.sharedLibraries === 'server'
+      ) {
+        this.data.main.sharedLibraries = 'all';
+      }
       this.save();
     }
 

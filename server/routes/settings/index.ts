@@ -29,7 +29,6 @@ import type {
   ServiceSettings,
 } from '@server/lib/settings';
 import restartManager from '@server/lib/restartManager';
-import pythonService from '@server/lib/pythonService';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -42,8 +41,6 @@ import QRCodeProxy from '@server/lib/qrcodeproxy';
 import path from 'path';
 import fs from 'fs';
 import { promises as fsPromises } from 'fs';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
 import { rescheduleJob } from 'node-schedule';
 import semver from 'semver';
@@ -77,8 +74,6 @@ const filteredMainSettings = (
 
   return main;
 };
-
-const execFileAsync = promisify(execFile);
 
 settingsRoutes.get('/main', (req, res, next) => {
   const settings = getSettings();
@@ -1092,26 +1087,6 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
         ? 'PostgreSQL'
         : dbTypeRaw;
 
-  let pythonVersion = 'unknown';
-  try {
-    const venvPython = path.join(process.cwd(), 'venv/bin/python');
-    const pythonExe = fs.existsSync(venvPython) ? venvPython : 'python3';
-    const { stdout } = await execFileAsync(
-      pythonExe,
-      [
-        '-c',
-        'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")',
-      ],
-      { encoding: 'utf-8', timeout: 5000 }
-    );
-    pythonVersion = stdout.trim();
-  } catch (e) {
-    logger.warn('Failed to query Python version', {
-      label: 'Settings',
-      errorMessage: e instanceof Error ? e.message : 'Unknown error',
-    });
-  }
-
   res.status(200).json({
     version: getAppVersion(),
     totalInvites,
@@ -1119,7 +1094,6 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
     tz: process.env.TZ,
     uptime: process.uptime(),
     nodeVersion: process.version.replace(/^v/, ''),
-    pythonVersion,
     appDataPath: configPath,
     database: { type: dbDisplayType, version: dbVersion },
     diskSpace,
@@ -1157,23 +1131,6 @@ settingsRoutes.post(
   (_req, res) => {
     res.status(200).json({ success: true, message: 'Restarting server...' });
     setTimeout(() => restartManager.triggerRestart(), 500);
-  }
-);
-
-settingsRoutes.get(
-  '/python/status',
-  isAuthenticated(Permission.ADMIN),
-  (_req, res) => {
-    res.status(200).json(pythonService.getStatus());
-  }
-);
-
-settingsRoutes.post(
-  '/python/restart',
-  isAuthenticated(Permission.ADMIN),
-  async (_req, res) => {
-    const result = await pythonService.restart();
-    res.status(result.success ? 200 : 500).json(result);
   }
 );
 

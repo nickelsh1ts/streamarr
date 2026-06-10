@@ -58,7 +58,10 @@ class RefreshToken {
     }
 
     const plexTvApi = new PlexTvAPI(user.plexToken);
-    plexTvApi.pingToken();
+    plexTvApi.pingToken().catch(() => {
+      // Failures are already logged inside pingToken; keep-alive pings are
+      // best-effort and must not become unhandled rejections.
+    });
   }
 }
 
