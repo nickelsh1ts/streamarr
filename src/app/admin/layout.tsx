@@ -178,7 +178,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="max-sm:mb-14">
-      <div className="mt-2 px-4">
+      <div className="mt-2 px-4 z-10 relative">
         <AdminTabs AdminRoutes={visibleRoutes} dataTutorial="admin-tabs" />
       </div>
       <div>
