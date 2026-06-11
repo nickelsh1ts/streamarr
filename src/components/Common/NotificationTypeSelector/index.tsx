@@ -185,6 +185,21 @@ const NotificationTypeSelector = ({
         hidden: !!user && !hasPermission(Permission.MANAGE_USERS),
         hasNotifyUser: true,
       },
+      {
+        id: 'plex-access-lost',
+        name: intl.formatMessage({
+          id: 'notification.plexAccessLost',
+          defaultMessage: 'Plex Access Removed',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.plexAccessLost.description',
+          defaultMessage:
+            'Get notified when a user is removed from the Plex server and deactivated',
+        }),
+        value: Notification.PLEX_ACCESS_LOST,
+        hidden: !!user && !hasPermission(Permission.MANAGE_USERS),
+        hasNotifyUser: true,
+      },
       // {
       //   id: 'system',
       //   name: intl.formatMessage({

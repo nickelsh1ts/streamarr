@@ -358,7 +358,8 @@ export type JobId =
   | 'invites-qrcode-cleanup'
   | 'image-cache-cleanup'
   | 'notification-cleanup'
-  | 'trial-expiry';
+  | 'trial-expiry'
+  | 'plex-membership-check';
 
 export interface AllSettings {
   clientId: string;
@@ -588,6 +589,7 @@ class Settings {
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
         'trial-expiry': { schedule: '0 0 0 * * *' },
+        'plex-membership-check': { schedule: '0 */15 * * * *' },
       },
       onboarding: {
         initialized: false,

@@ -692,10 +692,17 @@ const AdminUsers = () => {
                       href={`/admin/users/${user.id}/settings`}
                       badgeType="error"
                     >
-                      <FormattedMessage
-                        id="common.expired"
-                        defaultMessage="Expired"
-                      />
+                      {user?.accessRevokedReason === 'plex_removed' ? (
+                        <FormattedMessage
+                          id="common.deactivated"
+                          defaultMessage="Deactivated"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.expired"
+                          defaultMessage="Expired"
+                        />
+                      )}
                     </Badge>
                     {user?.settings?.trialExtensionRequested && (
                       <ToolTip

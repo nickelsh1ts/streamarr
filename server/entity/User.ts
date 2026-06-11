@@ -1,4 +1,5 @@
 import { UserType } from '@server/constants/user';
+import type { AccessRevokedReason } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import PreparedEmail from '@server/lib/email';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
@@ -92,6 +93,9 @@ export class User {
 
   @Column({ type: 'datetime', nullable: true })
   public accessRevokedAt?: Date | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  public accessRevokedReason?: AccessRevokedReason | null;
 
   @Column('text')
   public avatar: string;

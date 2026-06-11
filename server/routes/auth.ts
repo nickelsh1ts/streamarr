@@ -6,6 +6,7 @@ import { User } from '@server/entity/User';
 import type { UserSummary } from '@server/interfaces/api/userInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import logger from '@server/logger';
 import { resetPasswordLimiter } from '@server/lib/rateLimiters';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -102,12 +103,42 @@ authRoutes.post('/plex', async (req, res, next) => {
         });
       }
 
-      if (
+      const hasPlexAccess =
         account.id === mainUser.plexId ||
         (account.email === mainUser.email && !mainUser.plexId) ||
-        (await mainPlexTv.checkUserAccess(account.id)) ||
-        (user && !user.active)
+        (await mainPlexTv.checkUserAccess(account.id));
+
+      if (
+        !hasPlexAccess &&
+        user &&
+        user.active &&
+        user.userType === UserType.PLEX
       ) {
+        try {
+          const share = await mainPlexTv.getUserShare(
+            {
+              plexId: account.id,
+              email: account.email,
+              username: account.username,
+            },
+            settings.plex.machineId
+          );
+          if (share === null) {
+            await handlePlexAccessLost(user);
+          }
+        } catch (e) {
+          logger.debug(
+            'Unable to verify Plex share state during sign-in; leaving user active',
+            {
+              label: 'API',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
+        }
+      }
+
+      if (hasPlexAccess || (user && !user.active)) {
         if (user) {
           if (!user.plexId) {
             logger.info(
@@ -218,7 +249,15 @@ authRoutes.post('/local', async (req, res, next) => {
   try {
     const user = await userRepository
       .createQueryBuilder('user')
-      .select(['user.id', 'user.email', 'user.password', 'user.plexId'])
+      .select([
+        'user.id',
+        'user.email',
+        'user.password',
+        'user.plexId',
+        'user.plexUsername',
+        'user.userType',
+        'user.active',
+      ])
       .where('user.email = :email', { email: normalizedEmail })
       .getOne();
 
@@ -239,23 +278,52 @@ authRoutes.post('/local', async (req, res, next) => {
     const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
 
     if (
+      user.active &&
       user.plexId &&
       user.plexId !== mainUser.plexId &&
       !(await mainPlexTv.checkUserAccess(user.plexId))
     ) {
-      logger.warn(
-        'Failed sign-in attempt from Plex user without access to the media app',
-        {
-          label: 'API',
-          account: {
-            ip: req.ip,
-            email: normalizedEmail,
-            userId: user.id,
-            plexId: user.plexId,
-          },
+      let removedFromPlex = false;
+      if (user.userType === UserType.PLEX) {
+        try {
+          const share = await mainPlexTv.getUserShare(
+            {
+              plexId: user.plexId,
+              email: user.email,
+              username: user.plexUsername,
+            },
+            settings.plex.machineId
+          );
+          removedFromPlex = share === null;
+        } catch (e) {
+          logger.debug(
+            'Unable to verify Plex share state during sign-in; leaving user active',
+            {
+              label: 'API',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
         }
-      );
-      return next({ status: 403, message: 'Access denied.' });
+      }
+
+      if (removedFromPlex) {
+        await handlePlexAccessLost(user);
+      } else {
+        logger.warn(
+          'Failed sign-in attempt from Plex user without access to the media app',
+          {
+            label: 'API',
+            account: {
+              ip: req.ip,
+              email: normalizedEmail,
+              userId: user.id,
+              plexId: user.plexId,
+            },
+          }
+        );
+        return next({ status: 403, message: 'Access denied.' });
+      }
     }
 
     // Set logged in session

@@ -32,6 +32,7 @@ export interface UserSettingsGeneralResponse {
   requestHostname?: string;
   requestEnabled?: boolean;
   releaseSched?: boolean;
+  plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }
 
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;

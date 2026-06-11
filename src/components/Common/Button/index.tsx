@@ -8,6 +8,7 @@ export type ButtonType =
   | 'error'
   | 'warning'
   | 'success'
+  | 'accent'
   | 'info'
   | 'ghost';
 
@@ -68,6 +69,9 @@ function Button<P extends ElementTypes = 'button'>(
       break;
     case 'info':
       buttonStyle.push('btn-info');
+      break;
+    case 'accent':
+      buttonStyle.push('btn-accent');
       break;
     default:
       buttonStyle.push('btn-neutral');

@@ -192,14 +192,22 @@ const Layout = ({
         ) : (
           children
         )}
-        {shouldShowExpiredOverlay && <ExpiredAccessOverlay />}
+        {shouldShowExpiredOverlay && (
+          <ExpiredAccessOverlay
+            isTrialExpiry={user?.accessRevokedReason !== 'plex_removed'}
+          />
+        )}
       </OnboardingProvider>
     </SWRConfig>
   );
 };
 export default Layout;
 
-const ExpiredAccessOverlay = () => {
+const ExpiredAccessOverlay = ({
+  isTrialExpiry,
+}: {
+  isTrialExpiry: boolean;
+}) => {
   const intl = useIntl();
   const router = useRouter();
   const { currentSettings } = useSettings();
@@ -209,17 +217,27 @@ const ExpiredAccessOverlay = () => {
       show
       size="sm"
       onCancel={() => router.push('/profile')}
-      title={intl.formatMessage({
-        id: 'expiredAccess.title',
-        defaultMessage: 'Account Access Expired',
-      })}
+      title={
+        isTrialExpiry
+          ? intl.formatMessage({
+              id: 'expiredAccess.title',
+              defaultMessage: 'Account Access Expired',
+            })
+          : intl.formatMessage({
+              id: 'expiredAccess.deactivatedTitle',
+              defaultMessage: 'Account Deactivated',
+            })
+      }
       subtitle={intl.formatMessage(
         {
           id: 'expiredAccess.message',
           defaultMessage:
-            'Your account is currently expired. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}',
+            'Your account is currently {state, select, true {expired} other {deactivated}}. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}',
         },
-        { isTrialEnabled: currentSettings.enableTrialPeriod }
+        {
+          isTrialEnabled: currentSettings.enableTrialPeriod,
+          state: isTrialExpiry,
+        }
       )}
       onOk={() => router.push('/profile/settings/general')}
       okText={intl.formatMessage({

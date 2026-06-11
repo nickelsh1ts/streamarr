@@ -22,6 +22,13 @@ const AUTO_ACCEPT_DELAY_MS = 3_000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export class PlexUserNotFoundError extends Error {
+  constructor() {
+    super('User not found in Plex shared users list.');
+    this.name = 'PlexUserNotFoundError';
+  }
+}
+
 export interface PlexSyncOptions {
   /** undefined leaves the current Plex value unchanged */
   allowSync?: boolean;
@@ -94,9 +101,12 @@ class PlexSync {
 
   /**
    * Gets the user's current library access on the Plex server.
-   * The empty array means "all libraries"
+   * The empty array means "all libraries".
+   * `existsInPlex` is false when the user is definitively absent from the
+   * server's shared users list (transport errors still throw).
    */
   public async getCurrentPlexLibraries(user: User): Promise<{
+    existsInPlex: boolean;
     libraries: string[];
     permissions?: {
       allowSync: boolean;
@@ -112,10 +122,11 @@ class PlexSync {
     );
 
     if (!share) {
-      throw new Error('User not found in Plex shared users list.');
+      return { existsInPlex: false, libraries: [] };
     }
 
     return {
+      existsInPlex: true,
       libraries: share.allLibraries
         ? []
         : share.sections
@@ -184,7 +195,7 @@ class PlexSync {
 
         const share = await api.getUserShare(this.getIdentity(user), machineId);
         if (!share) {
-          throw new Error('User not found in Plex shared users list.');
+          throw new PlexUserNotFoundError();
         }
 
         const sectionIds = await this.mapKeysToSectionIds(
@@ -217,6 +228,9 @@ class PlexSync {
           userId: user.id,
           error: message,
         });
+        if (e instanceof PlexUserNotFoundError) {
+          throw e;
+        }
         throw new Error(`Plex sync error: ${message}`);
       }
     });
@@ -317,10 +331,26 @@ class PlexSync {
         });
       });
     } else {
-      logger.warn(
-        'No user token is available — auto-accept skipped, the user must accept the invite manually',
-        { label: LABEL, userId: user.id }
-      );
+      // Plex auto-accepts re-shares for previously connected accounts, so
+      // check the admin-side share before assuming a manual accept is needed.
+      void (async () => {
+        await sleep(AUTO_ACCEPT_DELAY_MS);
+        if (
+          (await this.isShareAccepted(this.getIdentity(user), user.id)) ===
+          false
+        ) {
+          logger.warn(
+            'No user token is available — auto-accept skipped, the user must accept the invite manually',
+            { label: LABEL, userId: user.id }
+          );
+        }
+      })().catch((e) => {
+        logger.error('Unable to verify Plex invite acceptance', {
+          label: LABEL,
+          userId: user.id,
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+      });
     }
   }
 
