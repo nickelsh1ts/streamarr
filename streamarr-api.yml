@@ -5932,6 +5932,10 @@ paths:
                   username:
                     type: string
                     example: 'Mr User'
+                  plexSync:
+                    type: string
+                    enum: [synced, removed, failed, skipped]
+                    description: Outcome of the Plex library sync attempted during save. `removed` means the user was not found in Plex and has been deactivated.
   /user/{userId}/settings/extension:
     post:
       summary: Request access extension
@@ -5981,6 +5985,10 @@ paths:
                   canFetchFromPlex:
                     type: boolean
                     description: Whether the system can fetch from Plex (false for non-Plex users)
+                  existsInPlex:
+                    type: boolean
+                    nullable: true
+                    description: False when the user is definitively absent from the Plex server's shared users list (omitted when verification was not possible)
                   permissions:
                     type: object
                     nullable: true
@@ -6232,6 +6240,61 @@ paths:
                   permissions:
                     type: number
                     example: 2
+  /user/{userId}/settings/reinvite:
+    post:
+      summary: Reactivate a deactivated user and re-invite them to Plex
+      description: |
+        Reactivates a deactivated Plex user and sends a new Plex invite using
+        their existing settings (shared libraries, downloads, and Plex Home).
+
+        The Plex invite is attempted first; if it fails, the user is left
+        unchanged (deactivated) and the response reports `plexInvite: failed`.
+        On success this endpoint:
+        - Sets the user back to active and clears their access revocation
+          date and reason
+        - Clears an already-expired trial period so the trial expiry job does
+          not immediately re-deactivate the user (a future trial is left untouched)
+        - Clears any pending access extension request
+        - Restores default Seerr permissions when Seerr is configured
+
+        Requires `MANAGE_USERS` permission. Cannot be used on yourself, the
+        owner, or non-Plex users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+          description: User ID to reactivate
+      responses:
+        '200':
+          description: User reactivated; includes the Plex invite outcome
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                    example: true
+                  plexInvite:
+                    type: string
+                    enum: [invited, failed]
+                    description: Whether the Plex invite was sent successfully. When `failed`, the user remains deactivated.
+                  plexInviteError:
+                    type: string
+                    nullable: true
+                    description: Error message when the Plex invite failed
+        '400':
+          description: Bad request (already active, owner, or non-Plex user)
+        '403':
+          description: Forbidden - user lacks permission
+        '404':
+          description: User not found
+        '500':
+          description: Server error during reactivation
   /user/{userId}/settings/pin-libraries:
     post:
       summary: Pin libraries to user's Plex home screen
