@@ -164,6 +164,20 @@ Users with **Manage Users** or **Manage Invites** permissions bypass trial restr
 
 ---
 
+## Removed from Plex
+
+If a user is removed from the Plex server's shared list outside of Streamarr (e.g. directly in the Plex app), Streamarr detects it automatically—when an admin views their profile or settings, when the user attempts to sign in, or via the [Plex Membership Check](../settings/README.md#scheduled-jobs) job—and deactivates the account. Any pending trial period is cleared, Seerr permissions are revoked, and admins with **Manage Users** permission receive a **Plex Access Removed** notification.
+
+Removed users are shown as **Deactivated** (distinct from **Expired**, which indicates a lapsed trial) in the user list and on their profile. Like expired users, they can still sign in to view their profile and settings, and may submit an access extension request.
+
+To restore access, open the user's settings and click **Reinvite**. This sends a new Plex invite using the user's existing shared libraries, download, and Plex Home settings, and reactivates the account. If the invite cannot be sent, the user remains deactivated and the error is shown—simply retry once Plex is reachable. Previously connected accounts are typically auto-accepted by Plex; otherwise the user must accept the invite from their Plex account.
+
+{% hint style="info" %}
+Detection only occurs on a confirmed removal from the shared users list. Temporary plex.tv outages or token issues never deactivate users.
+{% endhint %}
+
+---
+
 ## Password Reset
 
 Users can reset their password by:
@@ -219,7 +233,7 @@ Shown when sign-up is enabled **or** the user has sent or received invites:
 
 #### Trial Period
 
-When a trial period is active for the user, a dedicated card replaces the invite quota card showing the trial end date.
+When a trial period is active for the user, a dedicated card replaces the invite quota card showing the trial end date. If the account is deactivated—whether from a lapsed trial (**Account Expired**) or removal from Plex (**Account Deactivated**)—a status card is shown instead, with guidance for the user or admin.
 
 #### Seerr Request Quota
 

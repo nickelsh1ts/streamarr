@@ -29,18 +29,20 @@ Streamarr groups notification agents into two delivery models:
 
 Streamarr can send notifications for the following events:
 
-| Event                 | Description                                |
-| --------------------- | ------------------------------------------ |
-| **Test Notification** | Test message to verify agent configuration |
-| **Invite Redeemed**   | When an invite code is used                |
-| **Invite Expired**    | When an invite expires                     |
-| **User Created**      | When a new user account is created         |
-| **Local Message**     | Custom messages sent by admins             |
-| **New Event**         | Calendar event reminders                   |
-| **System**            | System alerts and warnings                 |
-| **Updates**           | Application update notifications           |
-| **Friend Watching**   | When a friend starts watching content      |
-| **New Invite**        | When a new invite is created               |
+| Event                          | Description                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| **Test Notification**          | Test message to verify agent configuration                                                 |
+| **Invite Redeemed**            | When an invite code is used                                                                |
+| **Invite Expired**             | When an invite expires                                                                     |
+| **User Created**               | When a new user account is created                                                         |
+| **Local Message**              | Custom messages sent by admins                                                             |
+| **New Event**                  | Calendar event reminders                                                                   |
+| **System**                     | System alerts and warnings                                                                 |
+| **Updates**                    | Application update notifications                                                           |
+| **Friend Watching**            | When a friend starts watching content                                                      |
+| **New Invite**                 | When a new invite is created                                                               |
+| **Access Extension Requested** | When a user requests an access extension (admins only)                                     |
+| **Plex Access Removed**        | When a user is removed from the Plex server and their account is deactivated (admins only) |
 
 ---
 

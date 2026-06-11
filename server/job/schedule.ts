@@ -8,6 +8,7 @@ import schedule from 'node-schedule';
 import expiredInvites from '@server/lib/expiredInvites';
 import cleanUpNotifications from '@server/lib/cleanUpNotifications';
 import trialExpiry from '@server/lib/trialExpiry';
+import { plexAccess } from '@server/lib/plexAccessLost';
 
 interface ScheduledJob {
   id: JobId;
@@ -122,6 +123,19 @@ export const startJobs = (): void => {
     }),
     running: () => trialExpiry.status().running,
     cancelFn: () => trialExpiry.cancel(),
+  });
+
+  scheduledJobs.push({
+    id: 'plex-membership-check',
+    name: 'Plex Membership Check',
+    type: 'process',
+    interval: 'minutes',
+    cronSchedule: jobs['plex-membership-check']?.schedule,
+    job: schedule.scheduleJob(jobs['plex-membership-check']?.schedule, () => {
+      plexAccess.run();
+    }),
+    running: () => plexAccess.status().running,
+    cancelFn: () => plexAccess.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

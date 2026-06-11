@@ -6,11 +6,13 @@
   "notifications.invite.new.subject": "New Invite: {icode}",
   "notifications.invite.redeemed.message": "Your invite has been redeemed by {displayName}.",
   "notifications.invite.redeemed.subject": "Invite Redeemed: {icode}",
+  "notifications.plexAccessLost.message": "This user was removed from the Plex server and their account has been deactivated.",
+  "notifications.plexAccessLost.subject": "Plex Access Removed: {displayName}",
   "notifications.test.failed": "Failed to send {type} notification.",
   "notifications.test.message": "Check check, 1, 2, 3. Are we coming in clear?",
   "notifications.test.subject": "Test Notification",
   "notifications.user.created.message": "Invited by {displayName}.",
   "notifications.user.created.subject": "New User Created: {displayName}",
   "notifications.userSettings.extensionRequested": "Access extension requested",
-  "notifications.userSettings.extensionRequestedMessage": "{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}"
+  "notifications.userSettings.extensionRequestedMessage": "{displayName} requested an access extension. {state, select, deactivated {Account Deactivated} ended {Trial Ended} other {Trial Ends}}: {accessEndDate}"
 }

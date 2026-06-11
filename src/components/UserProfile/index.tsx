@@ -21,6 +21,7 @@ import ProgressCircle from '@app/components/Common/ProgressCircle';
 import Slider from '@app/components/Common/Slider';
 import RecentInvite from '@app/components/Common/Slider/RecentInvite';
 import { FormattedMessage } from 'react-intl';
+import { useEffect } from 'react';
 import RecentNotification from '@app/components/Common/Slider/RecentNotification';
 import RecentlyWatched from '@app/components/Common/Slider/RecentlyWatched';
 import useSettings from '@app/hooks/useSettings';
@@ -40,10 +41,30 @@ const Placeholder = () => {
 const UserProfile = () => {
   const { currentSettings } = useSettings();
   const userQuery = useParams<{ userid: string }>();
-  const { user, error, hasPermission } = useUser({
+  const {
+    user,
+    error,
+    hasPermission,
+    revalidate: revalidateUser,
+  } = useUser({
     id: Number(userQuery.userid),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
+  const { data: plexShareCheck } = useSWR<{ existsInPlex?: boolean }>(
+    user?.userType === UserType.PLEX &&
+      user?.id !== 1 &&
+      currentHasPermission(Permission.MANAGE_USERS) &&
+      !hasPermission(Permission.MANAGE_USERS)
+      ? `/api/v1/user/${user?.id}/plex/libraries`
+      : null,
+    { revalidateOnFocus: false }
+  );
+
+  useEffect(() => {
+    if (plexShareCheck?.existsInPlex === false && user?.active) {
+      revalidateUser();
+    }
+  }, [plexShareCheck?.existsInPlex, user?.active, revalidateUser]);
   const { data: notificationSettings } =
     useSWR<UserSettingsNotificationsResponse>(
       currentUser
@@ -70,6 +91,8 @@ const UserProfile = () => {
       ? `/api/v1/user/${user.id}/quota`
       : null
   );
+
+  const isTrialExpiry = user?.accessRevokedReason !== 'plex_removed';
 
   const { data: notifications, error: notificationError } =
     useSWR<UserNotificationsResponse>(
@@ -205,7 +228,8 @@ const UserProfile = () => {
           {currentSettings.enableSignUp ? (
             quota ? (
               <>
-                {quota.invite.trialPeriodActive &&
+                {user.active &&
+                quota.invite.trialPeriodActive &&
                 quota.invite.trialPeriodEnabled ? (
                   <div className="overflow-hidden rounded-lg bg-yellow-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
                     <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
@@ -232,20 +256,67 @@ const UserProfile = () => {
                 ) : !user.active ? (
                   <div className="overflow-hidden xl:col-span-2 rounded-lg bg-red-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-red-500 sm:p-6">
                     <dt className="truncate text-sm font-bold text-red-300 flex items-center">
-                      <FormattedMessage
-                        id="common.accountExpired"
-                        defaultMessage="Account Expired"
-                      />
+                      {isTrialExpiry ? (
+                        <FormattedMessage
+                          id="common.accountExpired"
+                          defaultMessage="Account Expired"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.accountDeactivated"
+                          defaultMessage="Account Deactivated"
+                        />
+                      )}
                     </dt>
                     <dd className="mt-1 text-sm font-semibold text-red-200">
                       {user?.id !== currentUser?.id ? (
+                        isTrialExpiry ? (
+                          <FormattedMessage
+                            id="profile.accountExpiredMessageAdmin"
+                            defaultMessage="This user's account has expired. {trialPeriodEnabled, select, true {Extend by setting a new trial period {link}.} other {Enable trial periods again to extend access.}}"
+                            values={{
+                              link: (
+                                <Link
+                                  href={`/admin/users/${user.id}/settings`}
+                                  className="font-bold underline hover:text-red-300"
+                                >
+                                  <FormattedMessage
+                                    id="common.here"
+                                    defaultMessage="here"
+                                  />
+                                </Link>
+                              ),
+                              trialPeriodEnabled:
+                                quota.invite.trialPeriodEnabled ?? false,
+                            }}
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="profile.accountDeactivatedMessageAdmin"
+                            defaultMessage="This user's account has been deactivated. You can reactivate them from their settings {link}."
+                            values={{
+                              link: (
+                                <Link
+                                  href={`/admin/users/${user.id}/settings`}
+                                  className="font-bold underline hover:text-red-300"
+                                >
+                                  <FormattedMessage
+                                    id="common.here"
+                                    defaultMessage="here"
+                                  />
+                                </Link>
+                              ),
+                            }}
+                          />
+                        )
+                      ) : isTrialExpiry ? (
                         <FormattedMessage
-                          id="profile.accountExpiredMessageAdmin"
-                          defaultMessage="This user's account has expired. {trialPeriodEnabled, select, true {Extend by setting a new trial period {link}.} other {Enable trial periods again to extend access.}}"
+                          id="profile.accountExpiredMessage"
+                          defaultMessage="Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
                           values={{
                             link: (
                               <Link
-                                href={`/admin/users/${user.id}/settings`}
+                                href="/profile/settings"
                                 className="font-bold underline hover:text-red-300"
                               >
                                 <FormattedMessage
@@ -260,8 +331,8 @@ const UserProfile = () => {
                         />
                       ) : (
                         <FormattedMessage
-                          id="profile.accountExpiredMessage"
-                          defaultMessage="Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
+                          id="profile.accountDeactivatedMessage"
+                          defaultMessage="Your account has been deactivated. {trialPeriodEnabled, select, true {You can request an access extension {link}.} other {Contact an administrator to restore your access.}}"
                           values={{
                             link: (
                               <Link

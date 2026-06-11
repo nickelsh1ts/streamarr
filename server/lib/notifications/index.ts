@@ -44,6 +44,7 @@ export const getAdminPermission = (type: NotificationType): Permission[] => {
       return [Permission.MANAGE_INVITES, Permission.ADMIN];
     case NotificationType.USER_CREATED:
     case NotificationType.ACCESS_EXTENSION_REQUESTED:
+    case NotificationType.PLEX_ACCESS_LOST:
       return [Permission.MANAGE_USERS, Permission.ADMIN];
     case NotificationType.LOCAL_MESSAGE:
       return [Permission.MANAGE_NOTIFICATIONS, Permission.ADMIN];

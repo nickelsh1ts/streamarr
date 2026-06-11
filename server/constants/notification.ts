@@ -9,6 +9,7 @@ export enum NotificationType {
   // 2048, 4096, 8192 reserved (previously SYSTEM / UPDATES / FRIEND_WATCHING — unused)
   NEW_INVITE = 16384,
   ACCESS_EXTENSION_REQUESTED = 32768,
+  PLEX_ACCESS_LOST = 65536,
 }
 
 export enum NotificationSeverity {

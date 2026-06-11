@@ -63,6 +63,7 @@ class EmailAgent
       [NotificationType.INVITE_EXPIRED]: 'inviteexpired',
       [NotificationType.NEW_INVITE]: 'newinvite',
       [NotificationType.NEW_EVENT]: 'newevent',
+      [NotificationType.PLEX_ACCESS_LOST]: 'plexaccesslost',
     };
 
     const templateName = TEMPLATE_MAP[type];
@@ -149,7 +150,7 @@ class EmailAgent
               recipient: payload.notifyUser.displayName,
               type: NotificationType[type],
               subject: payload.subject,
-              errorMessage: e.message,
+              errorMessage: e instanceof Error ? e.message : String(e),
             });
 
             return false;
@@ -201,7 +202,7 @@ class EmailAgent
                 recipient: user.displayName,
                 type: NotificationType[type],
                 subject: payload.subject,
-                errorMessage: e.message,
+                errorMessage: e instanceof Error ? e.message : String(e),
               });
             }
           })

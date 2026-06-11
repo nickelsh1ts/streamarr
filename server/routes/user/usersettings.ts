@@ -8,7 +8,8 @@ import type {
 } from '@server/interfaces/api/userSettingsInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
-import { plexSync } from '@server/lib/plexSync';
+import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import {
   NotificationSeverity,
   NotificationType,
@@ -172,6 +173,13 @@ userSettingsRoutes.post<{ id: string }>(
         )
         .getMany();
 
+      const isDeactivated =
+        !user.active && user.accessRevokedReason === 'plex_removed';
+      const isExpired = !user.active && !isDeactivated;
+      const referenceDate = user.active
+        ? user.settings.trialPeriodEndsAt
+        : (user.accessRevokedAt ?? user.settings.trialPeriodEndsAt);
+
       await sendGroupNotification(
         NotificationType.ACCESS_EXTENSION_REQUESTED,
         admins,
@@ -184,17 +192,19 @@ userSettingsRoutes.post<{ id: string }>(
             {
               id: 'notifications.userSettings.extensionRequestedMessage',
               defaultMessage:
-                '{displayName} requested an access extension. {isPast, select, true {Trial Ended} other {Trial Ends}}: {accessEndDate}',
+                '{displayName} requested an access extension. {state, select, deactivated {Account Deactivated} ended {Trial Ended} other {Trial Ends}}: {accessEndDate}',
             },
             {
               displayName: user.displayName,
               accessEndDate:
-                moment(user.settings.trialPeriodEndsAt ?? user.accessRevokedAt)
+                moment(referenceDate)
                   .locale(intl.locale)
                   .format('MMM D, h:mm A') ?? 'Unknown',
-              isPast: moment(
-                user.settings.trialPeriodEndsAt ?? user.accessRevokedAt
-              ).isBefore(moment()),
+              state: isDeactivated
+                ? 'deactivated'
+                : isExpired
+                  ? 'ended'
+                  : 'active',
             }
           ),
           actionUrl: `/admin/users/${user.id}/settings`,
@@ -316,6 +326,7 @@ userSettingsRoutes.post<
         if (!user.active) {
           user.active = true;
           user.accessRevokedAt = null;
+          user.accessRevokedReason = null;
         }
       } else {
         const trialDate = new Date(req.body.trialPeriodEndsAt);
@@ -347,6 +358,7 @@ userSettingsRoutes.post<
         ) {
           user.active = true;
           user.accessRevokedAt = null;
+          user.accessRevokedReason = null;
         } else if (
           trialPeriodOutcome === 'deactivate' &&
           user.active &&
@@ -484,6 +496,8 @@ userSettingsRoutes.post<
       !plexHomeChanged &&
       user.active;
 
+    let plexSyncStatus: 'synced' | 'removed' | 'failed' | 'skipped' = 'skipped';
+
     if (
       req.user?.hasPermission(Permission.MANAGE_USERS) &&
       shouldSync &&
@@ -495,7 +509,15 @@ userSettingsRoutes.post<
         await plexSync.syncUserLibraries(user, newSharedLibraries, {
           allowSync: req.body.allowDownloads,
         });
+        plexSyncStatus = 'synced';
       } catch (e) {
+        if (e instanceof PlexUserNotFoundError) {
+          // The user was removed from Plex out-of-band
+          await handlePlexAccessLost(user);
+          plexSyncStatus = 'removed';
+        } else {
+          plexSyncStatus = 'failed';
+        }
         logger.error('Failed to sync user libraries with Plex', {
           label: 'Plex Sync',
           userId: user.id,
@@ -508,11 +530,126 @@ userSettingsRoutes.post<
     res.status(200).json({
       username: user.username,
       locale: user.settings.locale,
+      plexSync: plexSyncStatus,
     });
   } catch (e) {
     next({ status: 500, message: e.message });
   }
 });
+
+userSettingsRoutes.post<{ id: string }>(
+  '/reinvite',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      if (
+        !req.user?.hasPermission(Permission.MANAGE_USERS) ||
+        req.user.id === Number(req.params.id)
+      ) {
+        return next({
+          status: 403,
+          message: 'You do not have permission to reinvite this user.',
+        });
+      }
+
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .leftJoinAndSelect('user.settings', 'settings')
+        .where('user.id = :id', { id: Number(req.params.id) })
+        .getOne();
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.id === 1 || user.userType !== UserType.PLEX) {
+        return next({
+          status: 400,
+          message: 'This user cannot be reinvited.',
+        });
+      }
+
+      if (user.active) {
+        return next({ status: 400, message: 'User is already active.' });
+      }
+
+      try {
+        const librarySectionIds = resolveSharedLibraryKeys({
+          value: user.settings?.sharedLibraries ?? null,
+          adminDefault: getSettings().main.sharedLibraries,
+          enabledLibraries: getSettings().plex.libraries.filter(
+            (lib) => lib.enabled
+          ),
+        });
+
+        await plexSync.inviteUser(user, {
+          libraries: librarySectionIds,
+          allowSync: user.settings?.allowDownloads ?? false,
+          plexHome: user.settings?.allowPlexHome ?? false,
+        });
+      } catch (e) {
+        const plexInviteError = e instanceof Error ? e.message : String(e);
+        logger.error('Failed to reinvite user to plex', {
+          label: 'User Settings',
+          userId: user.id,
+          errorMessage: plexInviteError,
+        });
+
+        res.status(200).json({
+          active: user.active,
+          plexInvite: 'failed',
+          plexInviteError,
+        });
+        return;
+      }
+
+      if (
+        user.settings?.trialPeriodEndsAt &&
+        new Date(user.settings.trialPeriodEndsAt) <= new Date()
+      ) {
+        user.settings.trialPeriodEndsAt = null;
+        user.settings.trialPeriodOutcome = null;
+      }
+
+      if (user.settings) {
+        user.settings.trialExtensionRequested = false;
+        user.settings.trialExtensionRequestedAt = null;
+      }
+
+      user.active = true;
+      user.accessRevokedAt = null;
+      user.accessRevokedReason = null;
+      await userRepository.save(user);
+
+      const seerrSettings = getSettings().overseerr;
+      if (user.plexId && seerrSettings.enabled && seerrSettings.hostname) {
+        try {
+          const seerrApi = new SeerrAPI(seerrSettings);
+          await seerrApi.restoreDefaultPermissionsByPlexId(user.plexId);
+        } catch (e) {
+          const message = e instanceof Error ? e.message : String(e);
+          // A user that was never imported into Seerr is expected, not an error
+          !message.includes('not found') &&
+            logger.error('Failed to restore Seerr permissions', {
+              label: 'User Settings',
+              userId: user.id,
+              errorMessage: message,
+            });
+        }
+      }
+
+      res.status(200).json({
+        active: user.active,
+        plexInvite: 'invited',
+      });
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
 
 userSettingsRoutes.get<{ id: string }, { hasPassword: boolean }>(
   '/password',

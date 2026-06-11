@@ -16,7 +16,7 @@ import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import Toast, { dismissToast } from '@app/components/Toast';
@@ -26,6 +26,7 @@ import {
   CheckIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
+  PaperAirplaneIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
@@ -42,6 +43,7 @@ const UserSettingsGeneral = () => {
   const { resetOnboarding, data: onboardingData } = useOnboardingContext();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
+  const [isReactivating, setIsReactivating] = useState(false);
   const [isRequestingExtension, setIsRequestingExtension] = useState(false);
   const searchParams = useParams<{ userid: string }>();
   const {
@@ -67,6 +69,7 @@ const UserSettingsGeneral = () => {
   } = useSWR<{
     currentPlexLibraries: string | null;
     canFetchFromPlex: boolean;
+    existsInPlex?: boolean;
     permissions?: {
       allowSync: boolean;
       allowCameraUpload: boolean;
@@ -157,6 +160,67 @@ const UserSettingsGeneral = () => {
     };
   }, [data, plexLibrariesData, allLibrariesData]);
 
+  const userRemovedFromPlex = plexLibrariesData?.existsInPlex === false;
+
+  useEffect(() => {
+    if (userRemovedFromPlex && user?.active) {
+      revalidateUser();
+    }
+  }, [userRemovedFromPlex, user?.active, revalidateUser]);
+
+  const showReactivate =
+    user?.userType === UserType.PLEX &&
+    user?.id !== 1 &&
+    currentUser?.id !== user?.id &&
+    currentHasPermission(Permission.MANAGE_USERS) &&
+    (userRemovedFromPlex || user?.active === false);
+
+  const reactivateUser = async () => {
+    setIsReactivating(true);
+    try {
+      const response = await axios.post(
+        `/api/v1/user/${user?.id}/settings/reinvite`
+      );
+
+      if (response.data?.plexInvite === 'invited') {
+        Toast({
+          title: intl.formatMessage({
+            id: 'settings.reinviteSuccess',
+            defaultMessage: 'User reinvited successfully!',
+          }),
+          type: 'success',
+          icon: <CheckBadgeIcon className="size-7" />,
+        });
+      } else {
+        Toast({
+          title: intl.formatMessage({
+            id: 'settings.reinviteFailed',
+            defaultMessage:
+              'The Plex invite failed and the user remains deactivated.',
+          }),
+          message: response.data?.plexInviteError,
+          type: 'error',
+          icon: <ExclamationTriangleIcon className="size-7" />,
+        });
+      }
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'settings.reinviteError',
+          defaultMessage: 'Failed to reinvite user.',
+        }),
+        message: e.response?.data?.message || e.message,
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsReactivating(false);
+      revalidateUser();
+      revalidate();
+      revalidatePlexLibraries();
+    }
+  };
+
   if (!data && !error) {
     return <LoadingEllipsis />;
   }
@@ -207,21 +271,10 @@ const UserSettingsGeneral = () => {
         }}
         enableReinitialize
         onSubmit={async (values) => {
-          // Handle previous values correctly to detect changes
-          const previousSharedLibraries =
-            data?.sharedLibraries === null
-              ? 'server'
-              : data?.sharedLibraries && data?.sharedLibraries !== ''
-                ? data.sharedLibraries
-                : 'server';
-
           const newSharedLibraries =
             values.sharedLibraries === 'server' || values.sharedLibraries === ''
               ? 'server'
               : values.sharedLibraries;
-
-          const librariesChanged =
-            previousSharedLibraries !== (newSharedLibraries || 'server');
 
           const isPlexUser = user?.userType === UserType.PLEX;
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
@@ -280,7 +333,7 @@ const UserSettingsGeneral = () => {
               }
             }
 
-            await axios.post(
+            const response = await axios.post(
               `/api/v1/user/${user?.id}/settings/main`,
               submitData
             );
@@ -293,23 +346,53 @@ const UserSettingsGeneral = () => {
               );
             }
 
-            Toast({
-              title: intl.formatMessage({
-                id: 'common.saveSuccess',
-                defaultMessage: 'Settings saved successfully!',
-              }),
-              type: 'success',
-              icon: <CheckBadgeIcon className="size-7" />,
-              message:
-                isPlexUser &&
-                canManageUsers &&
-                (librariesChanged || shouldForceSync)
-                  ? intl.formatMessage({
-                      id: 'settings.librariesSynced',
-                      defaultMessage: 'Libraries have been synced with Plex.',
-                    })
-                  : undefined,
-            });
+            const plexSyncStatus = response.data?.plexSync;
+
+            if (plexSyncStatus === 'removed') {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'settings.savedUserRemovedFromPlex',
+                  defaultMessage: 'Settings saved, but user not found in Plex.',
+                }),
+                message: intl.formatMessage({
+                  id: 'settings.savedUserRemovedFromPlexMessage',
+                  defaultMessage:
+                    'This user was removed from the Plex server and their account has been deactivated.',
+                }),
+                type: 'warning',
+                icon: <ExclamationTriangleIcon className="size-7" />,
+              });
+            } else if (plexSyncStatus === 'failed') {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'settings.savedPlexSyncFailed',
+                  defaultMessage: 'Settings saved, but Plex sync failed.',
+                }),
+                message: intl.formatMessage({
+                  id: 'settings.savedPlexSyncFailedMessage',
+                  defaultMessage:
+                    'Your changes were saved, but they could not be synced with Plex.',
+                }),
+                type: 'warning',
+                icon: <ExclamationTriangleIcon className="size-7" />,
+              });
+            } else {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'common.saveSuccess',
+                  defaultMessage: 'Settings saved successfully!',
+                }),
+                type: 'success',
+                icon: <CheckBadgeIcon className="size-7" />,
+                message:
+                  plexSyncStatus === 'synced'
+                    ? intl.formatMessage({
+                        id: 'settings.librariesSynced',
+                        defaultMessage: 'Libraries have been synced with Plex.',
+                      })
+                    : undefined,
+              });
+            }
           } catch (e) {
             Toast({
               title: intl.formatMessage({
@@ -351,10 +434,17 @@ const UserSettingsGeneral = () => {
                     <div className="flex max-w-lg items-center">
                       {!user?.active ? (
                         <Badge badgeType="error">
-                          <FormattedMessage
-                            id="common.expired"
-                            defaultMessage="Expired"
-                          />
+                          {user?.accessRevokedReason === 'plex_removed' ? (
+                            <FormattedMessage
+                              id="common.deactivated"
+                              defaultMessage="Deactivated"
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="common.expired"
+                              defaultMessage="Expired"
+                            />
+                          )}
                         </Badge>
                       ) : user?.userType === UserType.PLEX ? (
                         <Badge badgeType="warning">
@@ -530,6 +620,15 @@ const UserSettingsGeneral = () => {
                                     />
                                   </div>
                                 )}
+                              {userRemovedFromPlex && (
+                                <div className="mt-2 text-sm text-warning">
+                                  <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
+                                  <FormattedMessage
+                                    id="settings.userRemovedFromPlexWarning"
+                                    defaultMessage="This user was removed from the Plex server and their account has been deactivated. You can reinvite them below."
+                                  />
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
@@ -728,6 +827,7 @@ const UserSettingsGeneral = () => {
                     </>
                   )}
                 {user?.userType === UserType.PLEX &&
+                  user?.active &&
                   (user?.id === currentUser.id ||
                     (currentHasPermission(Permission.MANAGE_USERS) &&
                       !hasPermission(Permission.MANAGE_USERS))) && (
@@ -1190,6 +1290,32 @@ const UserSettingsGeneral = () => {
               </div>
               <div className="divider divider-primary mb-0 col-span-full" />
               <div className="flex justify-end col-span-3 mt-4">
+                {showReactivate && (
+                  <span className="inline-flex rounded-md shadow-sm">
+                    <Button
+                      buttonType="accent"
+                      buttonSize="sm"
+                      type="button"
+                      disabled={isReactivating}
+                      onClick={() => reactivateUser()}
+                    >
+                      <PaperAirplaneIcon className="size-4 mr-2" />
+                      <span>
+                        {isReactivating ? (
+                          <FormattedMessage
+                            id="settings.reinviting"
+                            defaultMessage="Reinviting…"
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="settings.reinvite"
+                            defaultMessage="Reinvite"
+                          />
+                        )}
+                      </span>
+                    </Button>
+                  </span>
+                )}
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"

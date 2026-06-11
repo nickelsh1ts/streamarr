@@ -34,6 +34,7 @@ import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
 import { plexSync } from '@server/lib/plexSync';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
 
 const router = Router();
@@ -1093,10 +1094,22 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
     try {
       const plexData = await plexSync.getCurrentPlexLibraries(user);
 
+      if (!plexData.existsInPlex) {
+        await handlePlexAccessLost(user);
+
+        res.status(200).json({
+          currentPlexLibraries: null,
+          canFetchFromPlex: true,
+          existsInPlex: false,
+        });
+        return;
+      }
+
       res.status(200).json({
         currentPlexLibraries:
           plexData.libraries.length > 0 ? plexData.libraries.join('|') : '',
         canFetchFromPlex: true,
+        existsInPlex: true,
         permissions: plexData.permissions,
       });
     } catch (error) {

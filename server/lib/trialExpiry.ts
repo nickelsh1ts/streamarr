@@ -164,6 +164,7 @@ class TrialExpiry {
 
           user.active = false;
           user.accessRevokedAt = trialEndDateAtExpiry;
+          user.accessRevokedReason = 'trial_expired';
           if (user.settings) {
             user.settings.trialPeriodEndsAt = null;
             user.settings.trialExtensionRequested = false;
