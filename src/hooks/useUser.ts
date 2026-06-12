@@ -41,6 +41,7 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 
 export interface UserSettings {
   locale?: string;
+  sharedLibraries?: string | null;
   trialPeriodOutcome?: 'promote' | 'deactivate' | null;
   notificationTypes: Partial<NotificationAgentTypes>;
   discordEnabled?: boolean;

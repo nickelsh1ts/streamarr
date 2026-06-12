@@ -13,6 +13,17 @@ export interface UserResultsResponse extends PaginatedResponse {
   results: User[];
 }
 
+export interface UserBulkUpdatePlexSyncSummary {
+  synced: number;
+  failed: number;
+  removed: number;
+}
+
+export interface UserBulkUpdateResponse {
+  users: Partial<User>[];
+  plexSync?: UserBulkUpdatePlexSyncSummary;
+}
+
 export interface UserInvitesResponse extends PaginatedResponse {
   results: Invite[];
 }
