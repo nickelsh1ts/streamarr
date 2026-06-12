@@ -5304,6 +5304,8 @@ paths:
       description: |
         Update users with given IDs with the provided values. You cannot update users' Plex tokens through this request.
 
+        Provide any combination of `permissions`, `sharedLibraries`, `allowDownloads`, and `allowLiveTv`; omitted fields are left unchanged. When `sharedLibraries` or `allowDownloads` is provided, the new access is synced with Plex for all selected active Plex users and a sync summary is returned. `allowLiveTv` only gates Live TV within Streamarr and is not synced with Plex.
+
         Requires the `MANAGE_USERS` permission.
       tags:
         - users
@@ -5320,15 +5322,39 @@ paths:
                     type: integer
                 permissions:
                   type: integer
+                sharedLibraries:
+                  type: string
+                  description: A pipe-delimited list of library IDs, 'all', or 'server' for the server default
+                  example: '1|2|3'
+                allowDownloads:
+                  type: boolean
+                  description: Whether the users may download content (synced to Plex)
+                allowLiveTv:
+                  type: boolean
+                  description: Whether the users may access Live TV within Streamarr
       responses:
         '200':
           description: Successfully updated user details
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  plexSync:
+                    type: object
+                    nullable: true
+                    description: Plex sync summary, present when sharedLibraries or allowDownloads was updated
+                    properties:
+                      synced:
+                        type: integer
+                      failed:
+                        type: integer
+                      removed:
+                        type: integer
   /user/import-from-plex:
     post:
       summary: Import all users from Plex

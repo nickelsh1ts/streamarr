@@ -26,6 +26,8 @@ interface LibrarySelectorProps {
   setFieldValue: (property: string, value: string) => void;
   serverValue?: string;
   isUserSettings?: boolean;
+  /** Allows an empty selection, treated as 'unchanged' for bulk editing */
+  allowUnchanged?: boolean;
 }
 
 const LibrarySelector = ({
@@ -33,6 +35,7 @@ const LibrarySelector = ({
   setFieldValue,
   serverValue,
   isUserSettings = false,
+  allowUnchanged = false,
 }: LibrarySelectorProps) => {
   const { data: Libraries } = useSWR<Library[]>('/api/v1/libraries');
   const intl = useIntl();
@@ -68,10 +71,15 @@ const LibrarySelector = ({
             },
             { libraries: serverLibraryNames }
           )
-        : intl.formatMessage({
-            id: 'librarySelector.defaultLibrariesAll',
-            defaultMessage: 'Default Libraries (All)',
-          }),
+        : serverValue !== undefined
+          ? intl.formatMessage({
+              id: 'librarySelector.defaultLibrariesAll',
+              defaultMessage: 'Default Libraries (All)',
+            })
+          : intl.formatMessage({
+              id: 'librarySelector.defaultLibraries',
+              defaultMessage: 'Default Libraries',
+            }),
       isFixed: true,
     });
   }
@@ -109,7 +117,19 @@ const LibrarySelector = ({
       minMenuHeight={300}
       className="react-select-container"
       classNamePrefix="react-select"
+      placeholder={
+        allowUnchanged
+          ? intl.formatMessage({
+              id: 'librarySelector.noChange',
+              defaultMessage: 'No change',
+            })
+          : undefined
+      }
       value={(() => {
+        // An empty selection represents "no change" in bulk editing
+        if (allowUnchanged && value === 'unchanged') {
+          return [];
+        }
         // If 'all' is selected, only show 'all'
         if (
           (isUserSettings && value === 'all') ||
@@ -132,7 +152,7 @@ const LibrarySelector = ({
           ) as OptionType[];
       })()}
       onChange={(value, options) => {
-        // Remove 'all' or 'server' if another library is selected
+        // Remove other selections if 'all' or 'server' is selected
         if (
           options &&
           options.action === 'select-option' &&
@@ -148,9 +168,12 @@ const LibrarySelector = ({
                 : ''
           );
         }
-        // If all selected are 'server' or 'all', handle accordingly
+        // An empty selection means "no change" when bulk editing
         if (value.length === 0) {
-          return setFieldValue('sharedLibraries', '');
+          return setFieldValue(
+            'sharedLibraries',
+            allowUnchanged ? 'unchanged' : ''
+          );
         }
         if (value.every((v) => v.value === 'server')) {
           return setFieldValue('sharedLibraries', '');
@@ -158,7 +181,7 @@ const LibrarySelector = ({
         if (value.every((v) => v.value === 'all')) {
           return setFieldValue('sharedLibraries', isUserSettings ? 'all' : '');
         }
-        // Otherwise, set selected libraries (removing 'all' and 'server')
+        // Otherwise, set selected libraries (removing the special options)
         setFieldValue(
           'sharedLibraries',
           value

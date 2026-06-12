@@ -3677,11 +3677,17 @@
   "library.watchlist": {
     "defaultMessage": "Watch List"
   },
+  "librarySelector.defaultLibraries": {
+    "defaultMessage": "Default Libraries"
+  },
   "librarySelector.defaultLibrariesAll": {
     "defaultMessage": "Default Libraries (All)"
   },
   "librarySelector.defaultLibrariesWith": {
     "defaultMessage": "Default Libraries ({libraries})"
+  },
+  "librarySelector.noChange": {
+    "defaultMessage": "No change"
   },
   "linkedAccounts.deleteFailed": {
     "defaultMessage": "Failed to delete linked account"
@@ -5390,6 +5396,15 @@
   "systemSettings.uptime": {
     "defaultMessage": "Uptime"
   },
+  "toggle.disabled": {
+    "defaultMessage": "Disabled"
+  },
+  "toggle.enabled": {
+    "defaultMessage": "Enabled"
+  },
+  "toggle.noChange": {
+    "defaultMessage": "No change"
+  },
   "tutorial.ready.description": {
     "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."
   },
@@ -5422,6 +5437,27 @@
   },
   "userDropdown.startTutorial": {
     "defaultMessage": "Start Tutorial"
+  },
+  "userLibraries.error": {
+    "defaultMessage": "Something went wrong while saving Plex access settings."
+  },
+  "userLibraries.savedPlexSyncFailed": {
+    "defaultMessage": "Settings saved, but Plex sync failed."
+  },
+  "userLibraries.savedPlexSyncFailedMessage": {
+    "defaultMessage": "Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlex": {
+    "defaultMessage": "Settings saved, but some users were not found in Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlexMessage": {
+    "defaultMessage": "{count, plural, one {# user was} other {# users were}} removed from the Plex server and {count, plural, one {has} other {have}} been deactivated."
+  },
+  "userLibraries.success": {
+    "defaultMessage": "Plex access settings saved successfully!"
+  },
+  "userLibraries.syncedWithPlex": {
+    "defaultMessage": "Changes have been synced with Plex."
   },
   "userPermissions.admin.description": {
     "defaultMessage": "Full administrator access. Bypasses all other permission checks."
@@ -5482,9 +5518,6 @@
   },
   "userPermissions.success": {
     "defaultMessage": "User permissions saved successfully!"
-  },
-  "userPermissions.title": {
-    "defaultMessage": "Edit User Permissions"
   },
   "userPermissions.viewInvites.description": {
     "defaultMessage": "Grants permission to view invites from other users."
@@ -5719,6 +5752,12 @@
   },
   "users.bulkEdit": {
     "defaultMessage": "Bulk Edit"
+  },
+  "users.bulkEditLibrariesDescription": {
+    "defaultMessage": "Changes will be applied to all selected users and synced with Plex automatically on save. Fields left unchanged are not modified. Local users will be updated but not synced."
+  },
+  "users.bulkEditTitle": {
+    "defaultMessage": "Bulk Edit Users"
   },
   "users.configurePasswordGeneration": {
     "defaultMessage": "Configure an application URL and enable email notifications to allow automatic password generation."

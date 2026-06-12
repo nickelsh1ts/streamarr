@@ -75,6 +75,17 @@ If the user is a Plex Home member, library access is managed through Plex Home. 
 
 Pin selected libraries to the user's Plex sidebar so they appear prominently when the user opens Plex.
 
+### Bulk Editing Users
+
+Select multiple users in the user list and click **Bulk Edit** to apply changes to all selected users at once. The bulk edit dialog has two tabs:
+
+- **Permissions** — Replace the permissions of all selected users. See [Permissions](#permissions) below.
+- **Plex Access** — Set shared library access (Server Default, All Libraries, or specific libraries), **Allow Downloads**, and **Allow Live TV Access** for all selected users. Leave the library selection empty or a toggle in its middle "No change" position to keep the users' current values; chosen fields sync with Plex automatically on save.
+
+{% hint style="info" %}
+Plex access changes only sync for active Plex users. Local users have the settings saved but are not synced. Live TV access only controls the Live TV menu within Streamarr and is never synced with Plex. If a selected user can no longer be found on the Plex server, their account is deactivated automatically — see [Removed from Plex](#removed-from-plex).
+{% endhint %}
+
 ### Deleting Users
 
 Admins can delete users from the user list or user settings page.

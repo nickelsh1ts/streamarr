@@ -753,7 +753,7 @@ const InviteModal = ({
                             </span>
                           </span>
                         </span>
-                        <label htmlFor="plexHome" className="ml-2">
+                        <label htmlFor="plexHome">
                           <FormattedMessage
                             id="invite.inviteToPlexHome"
                             defaultMessage="Invite to Plex Home"
