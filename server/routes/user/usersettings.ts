@@ -9,6 +9,7 @@ import type {
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import {
   NotificationSeverity,
@@ -31,7 +32,10 @@ import {
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
-import { trialExtensionRequestLimiter } from '@server/lib/rateLimiters';
+import {
+  trialExtensionRequestLimiter,
+  plexPinLimiter,
+} from '@server/lib/rateLimiters';
 import moment from '@server/utils/momentWithLocale';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 
@@ -752,15 +756,30 @@ userSettingsRoutes.post<
   }
 });
 
-userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
+userSettingsRoutes.post<
+  { id: string },
+  unknown,
+  { authToken?: string; pinId?: string }
+>(
   '/linked-accounts/plex',
+  plexPinLimiter,
   isOwnProfile(),
   async (req, res, next) => {
     const userRepository = getRepository(User);
 
+    const authToken = resolvePlexAuthToken(req.body);
+    if (!authToken) {
+      return next({
+        status: 401,
+        message: req.body.pinId
+          ? 'Plex sign-in session is invalid or has expired. Please try again.'
+          : 'Authentication token required.',
+      });
+    }
+
     let account: Awaited<ReturnType<PlexTvAPI['getUser']>>;
     try {
-      const plextv = new PlexTvAPI(req.body.authToken);
+      const plextv = new PlexTvAPI(authToken);
       account = await plextv.getUser();
     } catch {
       return next({ status: 401, message: 'Invalid or expired Plex token.' });
@@ -888,7 +907,7 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
             libraries: librarySectionIds,
             allowSync: getSettings().main.downloads ?? false,
             plexHome: user.settings?.allowPlexHome ?? false,
-            userTokenOverride: req.body.authToken || user.plexToken,
+            userTokenOverride: authToken || user.plexToken,
           });
         } catch (e) {
           logger.warn('Plex account link invite failed', {

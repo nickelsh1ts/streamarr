@@ -7,6 +7,23 @@ export const arrAuthLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const plexPinLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // pin creation kicks off a sign-in popup; 10/min/IP is generous
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const plexPinStatusLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  // The client polls this endpoint roughly every 2s during an active
+  // sign-in (~30/min). 120/min/IP leaves ample headroom for legitimate
+  // polling while bounding abuse of this outbound-request-triggering route.
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const resetPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 requests per window
