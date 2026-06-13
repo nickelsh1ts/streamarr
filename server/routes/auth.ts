@@ -17,6 +17,8 @@ import plexPinAuth, {
   resolvePlexAuthToken,
   type PlexPinClientInfo,
 } from '@server/lib/plexAuth';
+import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { isAuthenticated } from '@server/middleware/auth';
 import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
@@ -122,10 +124,17 @@ authRoutes.post('/plex', plexPinLimiter, async (req, res, next) => {
       await userRepository.save(user);
     } else {
       const mainUser = await userRepository.findOneOrFail({
-        select: { id: true, plexToken: true, plexId: true, email: true },
+        select: {
+          id: true,
+          plexToken: true,
+          plexId: true,
+          email: true,
+          plexJwt: true,
+          plexJwtExpiresAt: true,
+        },
         where: { id: 1 },
       });
-      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+      const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
       if (!account.id) {
         logger.error('Plex ID was missing from Plex.tv response', {
@@ -259,6 +268,9 @@ authRoutes.post('/plex', plexPinLimiter, async (req, res, next) => {
       req.session.userId = user.id;
     }
 
+    // Silently provision a per-user Plex JWT device (experimental, non-fatal)
+    void maybeProvisionPlexJwt(user.id, authToken);
+
     res.status(200).json(user?.filter() ?? {});
   } catch (e) {
     logger.error('Something went wrong authenticating with Plex account', {
@@ -310,10 +322,16 @@ authRoutes.post('/local', async (req, res, next) => {
     }
 
     const mainUser = await userRepository.findOneOrFail({
-      select: { id: true, plexToken: true, plexId: true },
+      select: {
+        id: true,
+        plexToken: true,
+        plexId: true,
+        plexJwt: true,
+        plexJwtExpiresAt: true,
+      },
       where: { id: 1 },
     });
-    const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+    const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
     if (
       user.active &&

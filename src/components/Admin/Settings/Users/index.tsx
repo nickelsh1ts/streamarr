@@ -17,6 +17,7 @@ import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import useSWR, { mutate } from 'swr';
 import { useIntl, FormattedMessage } from 'react-intl';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const UserSettings = () => {
   const intl = useIntl();
@@ -48,6 +49,7 @@ const UserSettings = () => {
         initialValues={{
           localLogin: data?.localLogin,
           newPlexLogin: data?.newPlexLogin,
+          experimentalJwtAuth: data?.experimentalJwtAuth ?? false,
           inviteQuotaLimit: data?.defaultQuotas.invites.quotaLimit ?? 3,
           inviteQuotaDays: data?.defaultQuotas.invites.quotaDays ?? 0,
           defaultPermissions: data?.defaultPermissions ?? 0,
@@ -69,6 +71,7 @@ const UserSettings = () => {
             await axios.post('/api/v1/settings/main', {
               localLogin: values.localLogin,
               newPlexLogin: values.newPlexLogin,
+              experimentalJwtAuth: values.experimentalJwtAuth,
               defaultQuotas: {
                 invites: {
                   quotaLimit: values.inviteQuotaLimit,
@@ -157,6 +160,38 @@ const UserSettings = () => {
                     name="newPlexLogin"
                     onChange={() => {
                       setFieldValue('newPlexLogin', !values.newPlexLogin);
+                    }}
+                    className="checkbox checkbox-primary rounded-md"
+                  />
+                </div>
+                <label
+                  htmlFor="experimentalJwtAuth"
+                  className="font-bold block"
+                >
+                  <span className="mr-2">
+                    <FormattedMessage
+                      id="userSettings.experimentalJwtAuth"
+                      defaultMessage="Plex JWT Authentication"
+                    />
+                  </span>
+                  <SettingsBadge badgeType="experimental" />
+                  <span className="text-sm block font-light text-neutral">
+                    <FormattedMessage
+                      id="userSettings.experimentalJwtAuthDescription"
+                      defaultMessage="Provision short-lived Plex JWT credentials for users alongside their existing token when they sign in. Safe to enable or disable at any time; existing sign-ins are unaffected."
+                    />
+                  </span>
+                </label>
+                <div className="col-span-2">
+                  <Field
+                    type="checkbox"
+                    id="experimentalJwtAuth"
+                    name="experimentalJwtAuth"
+                    onChange={() => {
+                      setFieldValue(
+                        'experimentalJwtAuth',
+                        !values.experimentalJwtAuth
+                      );
                     }}
                     className="checkbox checkbox-primary rounded-md"
                   />

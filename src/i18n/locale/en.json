@@ -5579,6 +5579,12 @@
   "userSettings.engine": {
     "defaultMessage": "Engine"
   },
+  "userSettings.experimentalJwtAuth": {
+    "defaultMessage": "Plex JWT Authentication"
+  },
+  "userSettings.experimentalJwtAuthDescription": {
+    "defaultMessage": "Provision short-lived Plex JWT credentials for users alongside their existing token when they sign in. Safe to enable or disable at any time; existing sign-ins are unaffected."
+  },
   "userSettings.inviteLimit": {
     "defaultMessage": "Default Invite Limit"
   },
