@@ -6,24 +6,23 @@ import { FormattedMessage } from 'react-intl';
 const plexOAuth = new PlexOAuth();
 
 interface PlexLoginButtonProps {
-  onAuthToken: (authToken: string) => void;
+  onComplete: (pinId: string) => void;
   isProcessing?: boolean;
   onError?: (message: string) => void;
 }
 
 const PlexLoginButton = ({
-  onAuthToken,
+  onComplete,
   onError,
   isProcessing,
 }: PlexLoginButtonProps) => {
   const [loading, setLoading] = useState(false);
 
   const getPlexLogin = async () => {
-    setLoading(true);
     try {
-      const authToken = await plexOAuth.login();
+      const pinId = await plexOAuth.login();
       setLoading(false);
-      onAuthToken(authToken);
+      onComplete(pinId);
     } catch (e) {
       if (onError) {
         onError(e.message);
@@ -37,6 +36,10 @@ const PlexLoginButton = ({
         type="button"
         data-testid="plex-login-button"
         onClick={() => {
+          if (loading || isProcessing) {
+            return;
+          }
+          setLoading(true);
           plexOAuth.preparePopup();
           setTimeout(() => getPlexLogin(), 1500);
         }}

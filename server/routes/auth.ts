@@ -8,7 +8,16 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import logger from '@server/logger';
-import { resetPasswordLimiter } from '@server/lib/rateLimiters';
+import {
+  resetPasswordLimiter,
+  plexPinLimiter,
+  plexPinStatusLimiter,
+  plexAuthLimiter,
+} from '@server/lib/rateLimiters';
+import plexPinAuth, {
+  resolvePlexAuthToken,
+  type PlexPinClientInfo,
+} from '@server/lib/plexAuth';
 import { isAuthenticated } from '@server/middleware/auth';
 import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
@@ -50,18 +59,53 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   });
 });
 
-authRoutes.post('/plex', async (req, res, next) => {
+authRoutes.post('/plex/pin', plexPinLimiter, async (req, res, next) => {
+  try {
+    const body = req.body as { client?: PlexPinClientInfo } | undefined;
+    const pin = await plexPinAuth.createPin(body?.client);
+    res.status(200).json(pin);
+  } catch (e) {
+    logger.error('Failed to create Plex sign-in pin', {
+      label: 'API',
+      ip: req.ip,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    return next({ status: 500, message: 'Unable to begin Plex sign-in.' });
+  }
+});
+
+authRoutes.get<{ pinId: string }>(
+  '/plex/pin/:pinId',
+  plexPinStatusLimiter,
+  async (req, res) => {
+    const status = await plexPinAuth.getStatus(req.params.pinId);
+    res.status(200).json({ status });
+  }
+);
+
+authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
-  const body = req.body as { authToken?: string };
+  const body = req.body as { authToken?: string; pinId?: string };
+  const { token: authToken, commit: commitPlexAuth } =
+    resolvePlexAuthToken(body);
 
-  if (!body.authToken) {
-    return next({ status: 500, message: 'Authentication token required.' });
+  if (!authToken) {
+    return next({
+      status: body.pinId ? 401 : 400,
+      message: body.pinId
+        ? 'Plex sign-in session is invalid or has expired. Please try again.'
+        : 'Authentication token required.',
+    });
   }
   try {
     // First we need to use this auth token to get the user's email from plex.tv
-    const plextv = new PlexTvAPI(body.authToken);
+    const plextv = new PlexTvAPI(authToken);
     const account = await plextv.getUser();
+    // The token authenticated against plex.tv, so it's good. Consume the
+    // single-use pin session now; a transient failure above would have thrown
+    // before reaching here, leaving the session intact for a retry.
+    commitPlexAuth(true);
 
     // Next let's see if the user already exists
     let user = await userRepository
@@ -155,7 +199,7 @@ authRoutes.post('/plex', async (req, res, next) => {
           }
 
           const previousAvatar = user.avatar;
-          user.plexToken = body.authToken;
+          user.plexToken = authToken;
           user.plexId = account.id;
           user.avatar = account.thumb;
           user.email = account.email;
