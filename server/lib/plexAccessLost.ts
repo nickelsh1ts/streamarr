@@ -8,7 +8,7 @@ import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
-import { getAdminPlexToken } from '@server/lib/adminPlexToken';
+import { getAdminPlexTvCredential } from '@server/lib/plexAuth/credentials';
 import { userAcceptsNotificationType } from '@server/lib/notifications';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
@@ -195,7 +195,7 @@ const runMembershipValidation = async (
 ): Promise<void> => {
   const settings = getSettings();
   const machineId = settings.plex.machineId;
-  const adminToken = await getAdminPlexToken();
+  const adminToken = await getAdminPlexTvCredential();
 
   if (!adminToken || !machineId) {
     logger.warn(

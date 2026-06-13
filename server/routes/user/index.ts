@@ -3,6 +3,7 @@ import PlexAPI, {
   type PlexMetadata,
 } from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import SeerrAPI from '@server/api/seerr';
 import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
 import TheMovieDb from '@server/api/themoviedb';
@@ -846,10 +847,15 @@ router.post(
 
       // taken from auth.ts
       const mainUser = await userRepository.findOneOrFail({
-        select: { id: true, plexToken: true },
+        select: {
+          id: true,
+          plexToken: true,
+          plexJwt: true,
+          plexJwtExpiresAt: true,
+        },
         where: { id: 1 },
       });
-      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+      const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
       const plexUsersResponse = await mainPlexTv.getUsers();
       const createdUsers: User[] = [];

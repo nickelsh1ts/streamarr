@@ -8,6 +8,8 @@ import { UserSettings } from '@server/entity/UserSettings';
 import { Permission } from '@server/lib/permissions';
 import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { plexSync } from '@server/lib/plexSync';
+import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { plexAuthLimiter } from '@server/lib/rateLimiters';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -113,13 +115,13 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     // Check if user is already a member of Plex server
     const mainUser = await userRepository
       .createQueryBuilder('user')
-      .addSelect('user.plexToken')
+      .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
       .where('user.id = :id', { id: 1 })
       .getOne();
     let alreadyOnPlex = false;
     if (mainUser && mainUser.plexToken) {
       try {
-        const plexTvApi = new PlexTvAPI(mainUser.plexToken);
+        const plexTvApi = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
         alreadyOnPlex = await plexTvApi.checkUserAccess(plexUser.id);
       } catch (e) {
         {
@@ -240,7 +242,7 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     if (user.settings.sharedLibraries) {
       const mainUser = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
@@ -259,8 +261,8 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
         return;
       }
 
-      // Validate the admin token before proceeding
-      const plexTvApi = new PlexTvAPI(mainUser.plexToken);
+      // Validate the admin credential before proceeding
+      const plexTvApi = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
       try {
         await plexTvApi.pingToken();
       } catch (error) {
@@ -373,6 +375,9 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     if (req.session) {
       req.session.userId = user.id;
     }
+
+    // Silently provision a per-user Plex JWT device (experimental, non-fatal)
+    void maybeProvisionPlexJwt(user.id, authToken);
 
     res.status(200).json({
       success: true,

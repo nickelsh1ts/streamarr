@@ -1,4 +1,5 @@
 import PlexTvAPI from '@server/api/plextv';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import SeerrAPI from '@server/api/seerr';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
@@ -89,11 +90,11 @@ class TrialExpiry {
 
       const admin = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      const adminToken = admin?.plexToken;
+      const adminToken = preferPlexJwt(admin);
       const machineId = settings.plex.machineId;
 
       if (!adminToken || !machineId) {
