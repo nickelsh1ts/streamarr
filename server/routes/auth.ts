@@ -8,7 +8,17 @@ import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import logger from '@server/logger';
-import { resetPasswordLimiter } from '@server/lib/rateLimiters';
+import {
+  resetPasswordLimiter,
+  plexPinLimiter,
+  plexPinStatusLimiter,
+} from '@server/lib/rateLimiters';
+import plexPinAuth, {
+  resolvePlexAuthToken,
+  type PlexPinClientInfo,
+} from '@server/lib/plexAuth';
+import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { isAuthenticated } from '@server/middleware/auth';
 import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
@@ -50,17 +60,47 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   });
 });
 
-authRoutes.post('/plex', async (req, res, next) => {
+authRoutes.post('/plex/pin', plexPinLimiter, async (req, res, next) => {
+  try {
+    const body = req.body as { client?: PlexPinClientInfo } | undefined;
+    const pin = await plexPinAuth.createPin(body?.client);
+    res.status(200).json(pin);
+  } catch (e) {
+    logger.error('Failed to create Plex sign-in pin', {
+      label: 'API',
+      ip: req.ip,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    return next({ status: 500, message: 'Unable to begin Plex sign-in.' });
+  }
+});
+
+authRoutes.get<{ id: string }>(
+  '/plex/pin/:id',
+  plexPinStatusLimiter,
+  async (req, res) => {
+    const status = await plexPinAuth.getStatus(req.params.id);
+    res.status(200).json({ status });
+  }
+);
+
+authRoutes.post('/plex', plexPinLimiter, async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
-  const body = req.body as { authToken?: string };
+  const body = req.body as { authToken?: string; pinId?: string };
+  const authToken = resolvePlexAuthToken(body);
 
-  if (!body.authToken) {
-    return next({ status: 500, message: 'Authentication token required.' });
+  if (!authToken) {
+    return next({
+      status: body.pinId ? 401 : 500,
+      message: body.pinId
+        ? 'Plex sign-in session is invalid or has expired. Please try again.'
+        : 'Authentication token required.',
+    });
   }
   try {
     // First we need to use this auth token to get the user's email from plex.tv
-    const plextv = new PlexTvAPI(body.authToken);
+    const plextv = new PlexTvAPI(authToken);
     const account = await plextv.getUser();
 
     // Next let's see if the user already exists
@@ -84,10 +124,17 @@ authRoutes.post('/plex', async (req, res, next) => {
       await userRepository.save(user);
     } else {
       const mainUser = await userRepository.findOneOrFail({
-        select: { id: true, plexToken: true, plexId: true, email: true },
+        select: {
+          id: true,
+          plexToken: true,
+          plexId: true,
+          email: true,
+          plexJwt: true,
+          plexJwtExpiresAt: true,
+        },
         where: { id: 1 },
       });
-      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+      const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
       if (!account.id) {
         logger.error('Plex ID was missing from Plex.tv response', {
@@ -155,7 +202,7 @@ authRoutes.post('/plex', async (req, res, next) => {
           }
 
           const previousAvatar = user.avatar;
-          user.plexToken = body.authToken;
+          user.plexToken = authToken;
           user.plexId = account.id;
           user.avatar = account.thumb;
           user.email = account.email;
@@ -221,6 +268,9 @@ authRoutes.post('/plex', async (req, res, next) => {
       req.session.userId = user.id;
     }
 
+    // Silently provision a per-user Plex JWT device (experimental, non-fatal)
+    void maybeProvisionPlexJwt(user.id, authToken);
+
     res.status(200).json(user?.filter() ?? {});
   } catch (e) {
     logger.error('Something went wrong authenticating with Plex account', {
@@ -272,10 +322,16 @@ authRoutes.post('/local', async (req, res, next) => {
     }
 
     const mainUser = await userRepository.findOneOrFail({
-      select: { id: true, plexToken: true, plexId: true },
+      select: {
+        id: true,
+        plexToken: true,
+        plexId: true,
+        plexJwt: true,
+        plexJwtExpiresAt: true,
+      },
       where: { id: 1 },
     });
-    const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+    const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
     if (
       user.active &&
