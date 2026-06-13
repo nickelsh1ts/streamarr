@@ -1,3 +1,6 @@
+import PlexTvAPI from '@server/api/plextv';
+import { getRepository } from '@server/datasource';
+import { User } from '@server/entity/User';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { getAppVersion } from '@server/utils/appVersion';
@@ -125,7 +128,7 @@ class PlexPinAuth {
     }
 
     if (Date.now() >= session.expiresAt) {
-      this.sessions.delete(id);
+      this.expireSession(id, session);
       return 'expired';
     }
 
@@ -219,8 +222,67 @@ class PlexPinAuth {
     const now = Date.now();
     for (const [id, session] of this.sessions) {
       if (now >= session.expiresAt + CLEANUP_GRACE_MS) {
-        this.sessions.delete(id);
+        this.expireSession(id, session);
       }
+    }
+  }
+
+  private expireSession(id: string, session: PinSession): void {
+    this.sessions.delete(id);
+    void this.recoverOrphanedToken(session);
+  }
+
+  /**
+   * Plex keeps a single token per (account, client identifier): every
+   * completed pin authorization rotates the previous token out. If a user
+   * authorizes in the popup but the streamarr flow never claims the token
+   * (popup abandoned after authorizing, client stopped polling, browser
+   * closed before the login request), the freshly minted token is stranded
+   * — and the user's STORED token has already been invalidated by the
+   * rotation, breaking every server-side Plex call for them.
+   *
+   * On session expiry we persist the rotated token for the matching existing
+   * user so their stored credential stays valid.
+   *
+   * Deliberately conservative:
+   *   - Only acts on a token THIS session already captured via getStatus.
+   *     It never re-polls plex.tv from this background path, so an expired
+   *     session that was only ever `pending` does nothing.
+   *   - Only ever UPDATES an existing user matched by plexId. Never creates
+   *     users or sessions, never grants access, never touches permissions.
+   *   - A no-op for first-time sign-ins (no prior user row to repair).
+   */
+  private async recoverOrphanedToken(session: PinSession): Promise<void> {
+    const token = session.authToken;
+    if (!token) {
+      return;
+    }
+
+    try {
+      const account = await new PlexTvAPI(token).getUser();
+      const userRepository = getRepository(User);
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.plexToken')
+        .where('user.plexId = :plexId', { plexId: account.id })
+        .getOne();
+
+      if (!user || user.plexToken === token) {
+        return;
+      }
+
+      user.plexToken = token;
+      await userRepository.save(user);
+
+      logger.info(
+        'Recovered rotated Plex token from an abandoned sign-in attempt',
+        { label: 'Plex Pin Auth', userId: user.id }
+      );
+    } catch (e) {
+      logger.debug('Orphaned Plex token recovery skipped', {
+        label: 'Plex Pin Auth',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
     }
   }
 }
