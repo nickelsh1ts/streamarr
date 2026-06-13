@@ -169,6 +169,7 @@ export interface MainSettings {
   trialPeriodOutcome: 'promote' | 'deactivate';
   enableHelpCentre: boolean;
   theme: Theme;
+  experimentalJwtAuth: boolean;
 }
 
 interface PublicSettings {
@@ -429,6 +430,7 @@ class Settings {
         extendedHome: true,
         libraryCounts: true,
         enableTrialPeriod: false,
+        experimentalJwtAuth: false,
         trialPeriodDays: 30,
         trialPeriodOutcome: 'promote',
         enableHelpCentre: true,
