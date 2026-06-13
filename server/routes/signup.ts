@@ -9,6 +9,8 @@ import { InviteStatus } from '@server/constants/invite';
 import { UserType } from '@server/constants/user';
 import { Permission } from '@server/lib/permissions';
 import { plexSync } from '@server/lib/plexSync';
+import { resolvePlexAuthToken } from '@server/lib/plexAuth';
+import { plexPinLimiter } from '@server/lib/rateLimiters';
 import {
   isDefaultSentinel,
   materializeDefaultSnapshot,
@@ -50,13 +52,21 @@ signupRoutes.get('/validate/:icode', async (req, res, next) => {
 });
 
 // Step 2: Plex authentication and user creation
-signupRoutes.post('/plexauth', async (req, res) => {
+signupRoutes.post('/plexauth', plexPinLimiter, async (req, res) => {
   try {
-    const { authToken, icode } = req.body;
+    const { icode, pinId } = req.body as {
+      authToken?: string;
+      icode?: string;
+      pinId?: string;
+    };
+    const authToken = resolvePlexAuthToken(req.body);
     if (!authToken || !icode) {
-      res.status(400).json({
+      res.status(pinId && !authToken ? 401 : 400).json({
         success: false,
-        message: 'Auth token and invite code required.',
+        message:
+          pinId && !authToken
+            ? 'Plex sign-in session is invalid or has expired. Please try again.'
+            : 'Auth token and invite code required.',
       });
       return;
     }

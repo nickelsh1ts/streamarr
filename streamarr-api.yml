@@ -5050,8 +5050,8 @@ paths:
                 $ref: '#/components/schemas/User'
   /auth/plex:
     post:
-      summary: Sign in using a Plex token
-      description: Takes an `authToken` (Plex token) to log the user in. Generates a session cookie for use in further invites. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions.
+      summary: Sign in using a Plex pin session
+      description: Takes a `pinId` from a completed server-side Plex pin exchange (see `/auth/plex/pin`) and logs the user in. Generates a session cookie for use in further invites. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions. A raw `authToken` is still accepted for backward compatibility but is deprecated.
       security: []
       tags:
         - auth
@@ -5069,10 +5069,80 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-              required:
-                - authToken
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
+  /auth/plex/pin:
+    post:
+      summary: Begin a server-side Plex sign-in
+      description: Creates a Plex pin server-side and returns an opaque pin session id together with the `app.plex.tv` auth URL to open in a popup. The Plex auth token resulting from the authorization is held server-side and never returned to the browser; pass the `pinId` to `/auth/plex`, `/signup/plexauth`, or `/user/{userId}/settings/linked-accounts/plex` to complete the relevant flow.
+      security: []
+      tags:
+        - auth
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  type: object
+                  description: Optional browser hints used to label the device in the user's Plex device list.
+                  properties:
+                    platform:
+                      type: string
+                    platformVersion:
+                      type: string
+                    device:
+                      type: string
+                    screenResolution:
+                      type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Opaque pin session id (single-use).
+                  authUrl:
+                    type: string
+                    description: app.plex.tv URL to open in the sign-in popup.
+                  expiresAt:
+                    type: string
+                    format: date-time
+  /auth/plex/pin/{pinId}:
+    get:
+      summary: Poll a Plex pin session
+      description: Returns the authorization status of a pin session created via `/auth/plex/pin`. The Plex auth token is never included in the response.
+      security: []
+      tags:
+        - auth
+      parameters:
+        - in: path
+          name: pinId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [pending, authorized, expired]
   /auth/local:
     post:
       summary: Sign in using a local account
@@ -6086,7 +6156,7 @@ paths:
   /user/{userId}/settings/linked-accounts/plex:
     post:
       summary: Link a Plex account to the logged-in user
-      description: Links a Plex account to the logged-in user using a provided Plex token. Requires an active session.
+      description: Links a Plex account to the logged-in user. Pass a `pinId` from a completed server-side Plex pin exchange (see `/auth/plex/pin`); a raw `authToken` is also accepted but deprecated. Requires an active session.
       tags:
         - users
       parameters:
@@ -6102,10 +6172,13 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-              required:
-                - authToken
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
       responses:
         '204':
           description: Plex account successfully linked
@@ -7887,14 +7960,17 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-                  description: Plex authentication token
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
                 icode:
                   type: string
                   description: Invite code
               required:
-                - authToken
                 - icode
       responses:
         '200':

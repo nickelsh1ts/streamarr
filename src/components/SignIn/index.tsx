@@ -15,19 +15,20 @@ import { FormattedMessage } from 'react-intl';
 const SignIn = () => {
   const [error, setError] = useState('');
   const [isProcessing, setProcessing] = useState(false);
-  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const [pinId, setPinId] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const router = useRouter();
   const { currentSettings } = useSettings();
 
-  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
-  // We take the token and attempt to sign in. If we get a success message, we will
-  // ask swr to revalidate the user which _should_ come back with a valid user.
+  // Effect that is triggered when the pin session id comes back from the Plex
+  // OAuth popup. The server exchanges the pin for the Plex token internally.
+  // If we get a success message, we will ask swr to revalidate the user which
+  // _should_ come back with a valid user.
   useEffect(() => {
     const login = async () => {
       setProcessing(true);
       try {
-        const response = await axios.post('/api/v1/auth/plex', { authToken });
+        const response = await axios.post('/api/v1/auth/plex', { pinId });
 
         if (response.data?.id) {
           const { data: authenticatedUser } =
@@ -37,15 +38,17 @@ const SignIn = () => {
           );
         }
       } catch (e) {
-        setError(e.response.data.message);
-        setAuthToken(undefined);
+        setError(
+          e.response?.data?.message ?? 'Something went wrong. Please try again.'
+        );
+        setPinId(undefined);
         setProcessing(false);
       }
     };
-    if (authToken) {
+    if (pinId) {
       login();
     }
-  }, [authToken, revalidate, router]);
+  }, [pinId, revalidate, router]);
 
   // Effect that is triggered whenever `useUser`'s user changes. If we get a new
   // valid user, we redirect the user to the home page as the login was successful.
@@ -115,7 +118,7 @@ const SignIn = () => {
                   </div>
                   <PlexLoginButton
                     isProcessing={isProcessing}
-                    onAuthToken={(authToken) => setAuthToken(authToken)}
+                    onComplete={(pinId) => setPinId(pinId)}
                   />
                 </div>
               </AccordionContent>
