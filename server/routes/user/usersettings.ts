@@ -1,9 +1,11 @@
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import SeerrAPI from '@server/api/seerr';
+import Newsletter from '@server/entity/Newsletter';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
   UserSettingsGeneralResponse,
+  UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import { Permission } from '@server/lib/permissions';
@@ -1123,6 +1125,108 @@ userSettingsRoutes.post<{ id: string }, UserSettingsNotificationsResponse>(
     }
   }
 );
+
+userSettingsRoutes.get<{ id: string }, UserSettingsNewslettersResponse>(
+  '/newsletters',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      const newsletters = await getRepository(Newsletter).find({
+        order: { name: 'ASC' },
+      });
+
+      // Only surface newsletters the user could actually receive: those sent
+      // to all users, or custom newsletters that list this user.
+      const eligible = newsletters.filter(
+        (newsletter) =>
+          newsletter.recipientMode !== 'custom' ||
+          (newsletter.recipientIds ?? []).includes(user.id)
+      );
+
+      const unsubscribed = user.settings?.unsubscribedNewsletters ?? [];
+
+      res.status(200).json({
+        newsletters: eligible.map((newsletter) => ({
+          id: newsletter.id,
+          name: newsletter.name,
+          description: newsletter.description,
+          isImportant: newsletter.isImportant,
+          subscribed: !unsubscribed.includes(newsletter.id),
+        })),
+      });
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.post<
+  { id: string },
+  UserSettingsNewslettersResponse,
+  { unsubscribed?: number[] }
+>('/newsletters', isOwnProfileOrAdmin(), async (req, res, next) => {
+  try {
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    if (user.id === 1 && req.user?.id !== 1) {
+      return next({
+        status: 403,
+        message: "You do not have permission to modify this user's settings.",
+      });
+    }
+
+    if (!user.settings) {
+      user.settings = new UserSettings({ user });
+    }
+
+    const newsletters = await getRepository(Newsletter).find();
+    const validIds = new Set(newsletters.map((newsletter) => newsletter.id));
+
+    // Persist only IDs that correspond to real newsletters so the list does
+    // not accumulate stale entries.
+    user.settings.unsubscribedNewsletters = (
+      req.body.unsubscribed ?? []
+    ).filter((id) => validIds.has(id));
+
+    await userRepository.save(user);
+
+    const unsubscribed = user.settings.unsubscribedNewsletters;
+    const eligible = newsletters
+      .filter(
+        (newsletter) =>
+          newsletter.recipientMode !== 'custom' ||
+          (newsletter.recipientIds ?? []).includes(user.id)
+      )
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    res.status(200).json({
+      newsletters: eligible.map((newsletter) => ({
+        id: newsletter.id,
+        name: newsletter.name,
+        description: newsletter.description,
+        isImportant: newsletter.isImportant,
+        subscribed: !unsubscribed.includes(newsletter.id),
+      })),
+    });
+  } catch (e) {
+    next({ status: 500, message: e.message });
+  }
+});
 
 userSettingsRoutes.get<{ id: string }, { permissions?: number }>(
   '/permissions',

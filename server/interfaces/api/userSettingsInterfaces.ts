@@ -56,3 +56,15 @@ export interface UserSettingsNotificationsResponse {
   discordId?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
 }
+
+export interface UserNewsletterSubscription {
+  id: number;
+  name: string;
+  description?: string | null;
+  isImportant: boolean;
+  subscribed: boolean;
+}
+
+export interface UserSettingsNewslettersResponse {
+  newsletters: UserNewsletterSubscription[];
+}

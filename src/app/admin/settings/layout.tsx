@@ -77,6 +77,14 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/admin\/settings\/notifications/,
     },
     {
+      text: intl.formatMessage({
+        id: 'common.newsletters',
+        defaultMessage: 'Newsletters',
+      }),
+      route: '/admin/settings/newsletters',
+      regex: /^\/admin\/settings\/newsletters/,
+    },
+    {
       text: intl.formatMessage({ id: 'common.logs', defaultMessage: 'Logs' }),
       route: '/admin/settings/logs',
       regex: /^\/admin\/settings\/logs/,

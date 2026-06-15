@@ -91,6 +91,37 @@ export class UserSettings {
     type: 'text',
     nullable: true,
     transformer: {
+      // Stored as a JSON array of newsletter IDs the user has opted out of.
+      // Missing/empty means subscribed to all newsletters (opt-out model).
+      from: (value: string | null): number[] => {
+        if (!value) {
+          return [];
+        }
+
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed)
+            ? parsed.filter((id): id is number => typeof id === 'number')
+            : [];
+        } catch {
+          return [];
+        }
+      },
+      to: (value: number[] | null | undefined): string | null => {
+        if (!value || !Array.isArray(value) || value.length === 0) {
+          return null;
+        }
+
+        return JSON.stringify([...new Set(value)]);
+      },
+    },
+  })
+  public unsubscribedNewsletters: number[];
+
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: {
       from: (value: string | null): Partial<NotificationAgentTypes> => {
         // Return empty object if no value exists
         // Missing agents will be treated as "all enabled" by hasNotificationType

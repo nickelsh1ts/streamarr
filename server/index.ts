@@ -22,6 +22,7 @@ import { initializeOnboardingDefaults } from '@server/lib/onboarding';
 import { initI18n } from '@server/i18n';
 import restartManager from '@server/lib/restartManager';
 import logger from '@server/logger';
+import newsletterScheduler from '@server/lib/newsletters/scheduler';
 import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
 import routes from '@server/routes';
@@ -98,6 +99,8 @@ app
     ]);
     // Start Jobs
     startJobs();
+    // Schedule enabled newsletters
+    await newsletterScheduler.loadAll();
     const server = express();
     if (settings.network.trustProxy) {
       server.set('trust proxy', 1);

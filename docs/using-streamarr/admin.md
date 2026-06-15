@@ -135,6 +135,17 @@ Set up notification channels:
 - Web Push (browser notifications)
 - In-App (Socket.IO notifications)
 
+### Newsletters
+
+Compose, schedule, and send email newsletters to your users:
+
+- Build content from Recently Added (Plex), Top Streams (Tautulli), and By Tag (Plex labels / Radarr / Sonarr) blocks
+- Target all users or a custom recipient list, with per-user subscriptions
+- Schedule one-time or recurring sends, preview the rendered email, and send a test
+- Review per-newsletter send history
+
+See [Newsletters](newsletters/README.md) for full details.
+
 ### Jobs & Cache
 
 Manage scheduled tasks:

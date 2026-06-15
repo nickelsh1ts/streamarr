@@ -266,6 +266,9 @@
   "common.arrEdit4k": {
     "defaultMessage": "Edit 4K {arrApp} Server"
   },
+  "common.at": {
+    "defaultMessage": "at"
+  },
   "common.available": {
     "defaultMessage": "Available"
   },
@@ -322,6 +325,9 @@
   },
   "common.database": {
     "defaultMessage": "Database"
+  },
+  "common.date": {
+    "defaultMessage": "Date"
   },
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
@@ -509,6 +515,12 @@
   "common.newPassword": {
     "defaultMessage": "New Password"
   },
+  "common.newsletterManagement": {
+    "defaultMessage": "Newsletter Management"
+  },
+  "common.newsletters": {
+    "defaultMessage": "Newsletters"
+  },
   "common.next": {
     "defaultMessage": "Next"
   },
@@ -629,6 +641,9 @@
   "common.requests": {
     "defaultMessage": "Requests"
   },
+  "common.required": {
+    "defaultMessage": "Required"
+  },
   "common.reset": {
     "defaultMessage": "Reset"
   },
@@ -652,6 +667,9 @@
   },
   "common.role": {
     "defaultMessage": "Role"
+  },
+  "common.save": {
+    "defaultMessage": "Save"
   },
   "common.saveChanges": {
     "defaultMessage": "Save Changes"
@@ -3838,6 +3856,255 @@
   },
   "networkSettings.validation.requestTimeoutMin": {
     "defaultMessage": "Request timeout must be at least 1 second"
+  },
+  "newsletterSettings.saveError": {
+    "defaultMessage": "Newsletter preferences failed to save."
+  },
+  "newsletterSettings.saveSuccess": {
+    "defaultMessage": "Newsletter preferences saved successfully!"
+  },
+  "newsletterSettings.title": {
+    "defaultMessage": "Newsletter Subscriptions"
+  },
+  "newsletters.allSubscribers": {
+    "defaultMessage": "All subscribed users"
+  },
+  "newsletters.body": {
+    "defaultMessage": "Body"
+  },
+  "newsletters.bodyFormat": {
+    "defaultMessage": "Body Format"
+  },
+  "newsletters.byPlexLabel": {
+    "defaultMessage": "By Plex Label"
+  },
+  "newsletters.byServarrTag": {
+    "defaultMessage": "By Radarr/Sonarr Tag"
+  },
+  "newsletters.byTag": {
+    "defaultMessage": "By Tag"
+  },
+  "newsletters.create": {
+    "defaultMessage": "Create Newsletter"
+  },
+  "newsletters.createNewsletter": {
+    "defaultMessage": "Create Newsletter"
+  },
+  "newsletters.cronSchedule": {
+    "defaultMessage": "Cron Schedule"
+  },
+  "newsletters.customRecipients": {
+    "defaultMessage": "Specific users"
+  },
+  "newsletters.deleteError": {
+    "defaultMessage": "Failed to delete newsletter"
+  },
+  "newsletters.description": {
+    "defaultMessage": "Compose, schedule, and send newsletters to your users."
+  },
+  "newsletters.descriptionLabel": {
+    "defaultMessage": "Description"
+  },
+  "newsletters.descriptionTip": {
+    "defaultMessage": "Shown to users under this newsletter in their subscription settings."
+  },
+  "newsletters.editNewsletter": {
+    "defaultMessage": "Edit Newsletter"
+  },
+  "newsletters.empty": {
+    "defaultMessage": "No newsletters yet. Create one to get started."
+  },
+  "newsletters.failures": {
+    "defaultMessage": "Failures"
+  },
+  "newsletters.history": {
+    "defaultMessage": "History"
+  },
+  "newsletters.historyTitle": {
+    "defaultMessage": "Newsletter History"
+  },
+  "newsletters.important": {
+    "defaultMessage": "Important"
+  },
+  "newsletters.importantWarning": {
+    "defaultMessage": "Important newsletters are delivered to every selected recipient. They will not be able to opt-out. Use sparingly."
+  },
+  "newsletters.invalidCron": {
+    "defaultMessage": "Invalid schedule expression"
+  },
+  "newsletters.isImportant": {
+    "defaultMessage": "Important!"
+  },
+  "newsletters.isImportantTooltip": {
+    "defaultMessage": "No Opt-Out!"
+  },
+  "newsletters.lastSent": {
+    "defaultMessage": "Last Sent"
+  },
+  "newsletters.maxItems": {
+    "defaultMessage": "Max Items"
+  },
+  "newsletters.noLibraries": {
+    "defaultMessage": "No enabled Plex libraries were found."
+  },
+  "newsletters.noResults": {
+    "defaultMessage": "No newsletters match the current filter."
+  },
+  "newsletters.noSends": {
+    "defaultMessage": "This newsletter has not been sent yet."
+  },
+  "newsletters.notScheduled": {
+    "defaultMessage": "Not scheduled"
+  },
+  "newsletters.once": {
+    "defaultMessage": "Once"
+  },
+  "newsletters.pastDays": {
+    "defaultMessage": "Past Days"
+  },
+  "newsletters.plexLabel": {
+    "defaultMessage": "Plex Label"
+  },
+  "newsletters.plexLabelLibraries": {
+    "defaultMessage": "Plex Label Libraries"
+  },
+  "newsletters.preview": {
+    "defaultMessage": "Newsletter Preview"
+  },
+  "newsletters.previewError": {
+    "defaultMessage": "Unable to generate preview"
+  },
+  "newsletters.radarrTag": {
+    "defaultMessage": "Radarr Tag"
+  },
+  "newsletters.recentMovies": {
+    "defaultMessage": "Recently Added Movies"
+  },
+  "newsletters.recentMusic": {
+    "defaultMessage": "Recently Added Music"
+  },
+  "newsletters.recentOther": {
+    "defaultMessage": "Recently Added"
+  },
+  "newsletters.recentPhotos": {
+    "defaultMessage": "Recently Added Photos"
+  },
+  "newsletters.recentShows": {
+    "defaultMessage": "Recently Added TV Shows"
+  },
+  "newsletters.recentlyAdded": {
+    "defaultMessage": "Recently Added"
+  },
+  "newsletters.recipients": {
+    "defaultMessage": "Recipients"
+  },
+  "newsletters.recurring": {
+    "defaultMessage": "Recurring"
+  },
+  "newsletters.saveError": {
+    "defaultMessage": "There was an error saving the newsletter"
+  },
+  "newsletters.schedule": {
+    "defaultMessage": "Schedule"
+  },
+  "newsletters.scheduleEnabled": {
+    "defaultMessage": "Enable schedule"
+  },
+  "newsletters.scheduleType": {
+    "defaultMessage": "Schedule Type"
+  },
+  "newsletters.sectionHeader": {
+    "defaultMessage": "Section Header"
+  },
+  "newsletters.sendAt": {
+    "defaultMessage": "Send At"
+  },
+  "newsletters.sendError": {
+    "defaultMessage": "Failed to send newsletter"
+  },
+  "newsletters.sendNow": {
+    "defaultMessage": "Send Now"
+  },
+  "newsletters.sendOn": {
+    "defaultMessage": "Send On"
+  },
+  "newsletters.sent": {
+    "defaultMessage": "Newsletter sent"
+  },
+  "newsletters.sentSummary": {
+    "defaultMessage": "Delivered to {count} recipient(s){failures, plural, =0 {} other {, # failed}}."
+  },
+  "newsletters.sonarrTag": {
+    "defaultMessage": "Sonarr Tag"
+  },
+  "newsletters.sortLastModified": {
+    "defaultMessage": "Last Modified"
+  },
+  "newsletters.sortMostRecent": {
+    "defaultMessage": "Most Recent"
+  },
+  "newsletters.sortName": {
+    "defaultMessage": "Name"
+  },
+  "newsletters.statusDisabled": {
+    "defaultMessage": "Draft"
+  },
+  "newsletters.statusEnabled": {
+    "defaultMessage": "Scheduled"
+  },
+  "newsletters.subject": {
+    "defaultMessage": "Email Subject"
+  },
+  "newsletters.test": {
+    "defaultMessage": "Test"
+  },
+  "newsletters.testError": {
+    "defaultMessage": "Failed to send test newsletter"
+  },
+  "newsletters.testSent": {
+    "defaultMessage": "Test newsletter sent to your email"
+  },
+  "newsletters.topMovies": {
+    "defaultMessage": "Top Movies"
+  },
+  "newsletters.topMusic": {
+    "defaultMessage": "Top Music"
+  },
+  "newsletters.topShows": {
+    "defaultMessage": "Top TV Shows"
+  },
+  "newsletters.topStreams": {
+    "defaultMessage": "Top Streams"
+  },
+  "newsletters.trigger.manual": {
+    "defaultMessage": "Manual"
+  },
+  "newsletters.trigger.schedule": {
+    "defaultMessage": "Scheduled"
+  },
+  "newsletters.trigger.test": {
+    "defaultMessage": "Test"
+  },
+  "newsletters.triggeredBy": {
+    "defaultMessage": "Trigger"
+  },
+  "newsletters.validation.cronInvalid": {
+    "defaultMessage": "Enter a valid cron schedule (5 fields)."
+  },
+  "newsletters.validation.cronRequired": {
+    "defaultMessage": "A schedule is required for recurring newsletters"
+  },
+  "newsletters.validation.cronTooFrequent": {
+    "defaultMessage": "Newsletters can run at most once per hour."
+  },
+  "newsletters.validation.nameRequired": {
+    "defaultMessage": "Name is required"
+  },
+  "newsletters.validation.sendAtRequired": {
+    "defaultMessage": "A date is required for one-time newsletters"
+  },
+  "newsletters.validation.subjectRequired": {
+    "defaultMessage": "Subject is required"
   },
   "notFound.notFound": {
     "defaultMessage": "Not found"

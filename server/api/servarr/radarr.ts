@@ -17,6 +17,7 @@ export interface RadarrMovieOptions {
 export interface RadarrMovie {
   id: number;
   title: string;
+  year?: number;
   isAvailable: boolean;
   monitored: boolean;
   tmdbId: number;

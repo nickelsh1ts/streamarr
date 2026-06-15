@@ -101,6 +101,30 @@ interface TautulliInfoResponse {
   response: { result: string; message?: string; data: TautulliInfo };
 }
 
+export interface TautulliHomeStatsRow {
+  title: string;
+  year?: number;
+  total_plays: number;
+  users_watched?: number;
+  rating_key?: number;
+  grandparent_rating_key?: number;
+  section_id?: number;
+  media_type?: string;
+}
+
+export interface TautulliHomeStatsItem {
+  stat_id: string;
+  rows: TautulliHomeStatsRow[];
+}
+
+interface TautulliHomeStatsResponse {
+  response: {
+    result: string;
+    message?: string;
+    data: TautulliHomeStatsItem[];
+  };
+}
+
 class TautulliAPI {
   private axios: AxiosInstance;
 
@@ -127,6 +151,33 @@ class TautulliAPI {
       });
       throw new Error(
         `[Tautulli] Failed to fetch Tautulli server info: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
+  public async getHomeStats(
+    timeRange = 7,
+    count = 10
+  ): Promise<TautulliHomeStatsItem[]> {
+    try {
+      return (
+        await this.axios.get<TautulliHomeStatsResponse>('/api/v2', {
+          params: {
+            cmd: 'get_home_stats',
+            time_range: timeRange,
+            stats_count: count,
+            stats_type: 'plays',
+            grouping: 1,
+          },
+        })
+      ).data.response.data;
+    } catch (e) {
+      logger.error('Something went wrong fetching home stats from Tautulli', {
+        label: 'Tautulli API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error(
+        `[Tautulli] Failed to fetch home stats: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
