@@ -66,10 +66,13 @@ export const sendNewsletter = async (
       recipients =
         newsletter.recipientMode === 'custom'
           ? await userRepository.find({
-              where: { id: In(newsletter.recipientIds ?? []) },
+              where: { id: In(newsletter.recipientIds ?? []), active: true },
               relations: ['settings'],
             })
-          : await userRepository.find({ relations: ['settings'] });
+          : await userRepository.find({
+              where: { active: true },
+              relations: ['settings'],
+            });
 
       if (!newsletter.isImportant) {
         recipients = recipients.filter(
