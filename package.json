@@ -28,8 +28,8 @@
     "cypress:run": "cypress run",
     "cypress:prepare": "tsx --tsconfig server/tsconfig.json server/scripts/prepareTestDb.ts",
     "cypress:build": "pnpm build && pnpm cypress:prepare",
-    "css-build": "tailwindcss -i src/styles/globals.css -o public/tailwind.css && node bin/flatten-css.mjs public/tailwind.css",
-    "css-watch": "tailwindcss -i src/styles/globals.css -o public/tailwind.css --watch"
+    "css-build": "tailwindcss -i src/styles/watch.tailwind.css -o public/watch.base.css && node bin/flatten-css.mjs public/watch.base.css",
+    "css-watch": "tailwindcss -i src/styles/watch.tailwind.css -o public/watch.base.css --watch"
   },
   "repository": {
     "type": "git",

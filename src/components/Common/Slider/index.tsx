@@ -133,7 +133,7 @@ const Slider = ({
         <button
           className={`${
             scrollPos.isStart ? 'text-gray-800' : 'hover:text-white'
-          } focus:outline-none`}
+          } focus:outline-none cursor-pointer`}
           onClick={() => !scrollPos.isStart && slide(Direction.LEFT)}
           disabled={scrollPos.isStart}
           type="button"
@@ -144,7 +144,7 @@ const Slider = ({
         <button
           className={`${
             scrollPos.isEnd ? 'text-gray-800' : 'hover:text-white'
-          } focus:outline-none`}
+          } focus:outline-none cursor-pointer`}
           onClick={() => !scrollPos.isEnd && slide(Direction.RIGHT)}
           disabled={scrollPos.isEnd}
           type="button"
