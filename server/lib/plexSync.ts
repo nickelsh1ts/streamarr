@@ -6,7 +6,10 @@ import type {
   PlexSharePermissions,
   PlexUserIdentity,
 } from '@server/interfaces/api/plexInterfaces';
-import { getAdminPlexToken } from '@server/lib/adminPlexToken';
+import {
+  getAdminPlexTvCredential,
+  preferPlexJwt,
+} from '@server/lib/plexAuth/credentials';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
@@ -56,11 +59,11 @@ class PlexSync {
   private lock = new AsyncLock();
 
   private async getAdminApi(): Promise<PlexTvAPI> {
-    const plexToken = await getAdminPlexToken();
-    if (!plexToken) {
+    const credential = await getAdminPlexTvCredential();
+    if (!credential) {
       throw new Error('Admin Plex token is missing');
     }
-    return new PlexTvAPI(plexToken);
+    return new PlexTvAPI(credential);
   }
 
   private getIdentity(user: User): PlexUserIdentity {
@@ -310,7 +313,7 @@ class PlexSync {
   ): void {
     const settings = getSettings();
     const serverName = settings.plex.name || undefined;
-    const userToken = options.userTokenOverride || user.plexToken;
+    const userToken = options.userTokenOverride || preferPlexJwt(user);
 
     if (userToken) {
       logger.info('Attempting background auto-accept of Plex invite', {

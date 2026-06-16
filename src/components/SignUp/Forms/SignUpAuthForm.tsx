@@ -21,7 +21,7 @@ const SignUpAuthForm = ({
   inviteCode: string;
 }) => {
   const intl = useIntl();
-  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const [pinId, setPinId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const router = useRouter();
@@ -29,7 +29,7 @@ const SignUpAuthForm = ({
   const { currentSettings } = useSettings(); // Handle Plex authentication
   useEffect(() => {
     const doAuth = async () => {
-      if (!authToken || !inviteCode) return;
+      if (!pinId || !inviteCode) return;
       setLoading(true);
       try {
         const response = await axios.post<{
@@ -37,7 +37,7 @@ const SignUpAuthForm = ({
           message?: string;
           alreadyHasAccess?: boolean;
         }>('/api/v1/signup/plexauth', {
-          authToken,
+          pinId,
           icode: inviteCode,
         });
         if (response.status === 200 && response.data.user) {
@@ -69,7 +69,7 @@ const SignUpAuthForm = ({
       }
     };
     doAuth();
-  }, [authToken, inviteCode, onComplete, router, revalidate, intl]); // Handle local signup
+  }, [pinId, inviteCode, onComplete, router, revalidate, intl]); // Handle local signup
   const handleLocalSignup = async (values: {
     email: string;
     username: string;
@@ -128,12 +128,8 @@ const SignUpAuthForm = ({
               className={`p-3 place-content-center border border-secondary bg-secondary/50 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
             >
               <PlexLoginButton
-                onAuthToken={(token) => {
-                  if (
-                    !token ||
-                    typeof token !== 'string' ||
-                    token.length < 10
-                  ) {
+                onComplete={(pinId) => {
+                  if (!pinId || typeof pinId !== 'string') {
                     Toast({
                       title: intl.formatMessage({
                         id: 'signUp.plexLoginIncomplete',
@@ -149,7 +145,7 @@ const SignUpAuthForm = ({
                     });
                     return;
                   }
-                  setAuthToken(token);
+                  setPinId(pinId);
                 }}
                 onError={(msg) => {
                   Toast({

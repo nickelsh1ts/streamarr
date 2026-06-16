@@ -11,6 +11,9 @@ import type {
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import { resolvePlexAuthToken } from '@server/lib/plexAuth';
+import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import {
   NotificationSeverity,
@@ -33,7 +36,10 @@ import {
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
-import { trialExtensionRequestLimiter } from '@server/lib/rateLimiters';
+import {
+  trialExtensionRequestLimiter,
+  plexPinLimiter,
+} from '@server/lib/rateLimiters';
 import moment from '@server/utils/momentWithLocale';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 
@@ -385,7 +391,7 @@ userSettingsRoutes.post<
 
       const admin = await getRepository(User)
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
@@ -396,7 +402,7 @@ userSettingsRoutes.post<
         });
       } else {
         try {
-          const plexTvApi = new PlexTvAPI(admin.plexToken);
+          const plexTvApi = new PlexTvAPI(preferPlexJwt(admin) ?? '');
           if (previousState && !plexHomeChanged) {
             try {
               await plexTvApi.deprovisionUser(
@@ -754,15 +760,30 @@ userSettingsRoutes.post<
   }
 });
 
-userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
+userSettingsRoutes.post<
+  { id: string },
+  unknown,
+  { authToken?: string; pinId?: string }
+>(
   '/linked-accounts/plex',
+  plexPinLimiter,
   isOwnProfile(),
   async (req, res, next) => {
     const userRepository = getRepository(User);
 
+    const authToken = resolvePlexAuthToken(req.body);
+    if (!authToken) {
+      return next({
+        status: 401,
+        message: req.body.pinId
+          ? 'Plex sign-in session is invalid or has expired. Please try again.'
+          : 'Authentication token required.',
+      });
+    }
+
     let account: Awaited<ReturnType<PlexTvAPI['getUser']>>;
     try {
-      const plextv = new PlexTvAPI(req.body.authToken);
+      const plextv = new PlexTvAPI(authToken);
       account = await plextv.getUser();
     } catch {
       return next({ status: 401, message: 'Invalid or expired Plex token.' });
@@ -795,7 +816,7 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
 
       const adminUser = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
@@ -843,6 +864,9 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
 
       await userRepository.save(user);
 
+    // Silently provision a per-user Plex JWT device (experimental, non-fatal)
+    void maybeProvisionPlexJwt(user.id, authToken);
+
       if (!adminUser || !adminUser.plexToken) {
         logger.error(
           'Missing Plex admin token — skipping Plex invitation for linked account',
@@ -852,7 +876,7 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
       }
 
       // Check whether the user already has access to the Plex server.
-      const mainPlexTv = new PlexTvAPI(adminUser.plexToken);
+      const mainPlexTv = new PlexTvAPI(preferPlexJwt(adminUser) ?? '');
       let alreadyOnServer = false;
       try {
         alreadyOnServer = await mainPlexTv.checkUserAccess(account.id);
@@ -890,7 +914,7 @@ userSettingsRoutes.post<{ id: string }, unknown, { authToken: string }>(
             libraries: librarySectionIds,
             allowSync: getSettings().main.downloads ?? false,
             plexHome: user.settings?.allowPlexHome ?? false,
-            userTokenOverride: req.body.authToken || user.plexToken,
+            userTokenOverride: authToken || user.plexToken,
           });
         } catch (e) {
           logger.warn('Plex account link invite failed', {
@@ -1303,7 +1327,7 @@ userSettingsRoutes.post<{ id: string }>(
     try {
       const user = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: Number(req.params.id) })
         .leftJoinAndSelect('user.settings', 'settings')
         .getOne();
@@ -1328,7 +1352,7 @@ userSettingsRoutes.post<{ id: string }>(
 
       const adminUser = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
@@ -1362,7 +1386,7 @@ userSettingsRoutes.post<{ id: string }>(
           type: lib.type,
         }));
       } else {
-        const adminApi = new PlexTvAPI(adminUser.plexToken);
+        const adminApi = new PlexTvAPI(preferPlexJwt(adminUser) ?? '');
         const share = await adminApi.getUserShare(
           {
             plexId: user.plexId,
@@ -1415,7 +1439,7 @@ userSettingsRoutes.post<{ id: string }>(
         return;
       }
 
-      const userApi = new PlexTvAPI(user.plexToken);
+      const userApi = new PlexTvAPI(preferPlexJwt(user) ?? '');
       const result = await userApi.pinServerLibraries({
         machineId: plexSettings.machineId,
         serverName: plexSettings.name || 'Streamarr',
