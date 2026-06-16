@@ -161,7 +161,7 @@ const UserSelector = ({
             <span className="inline-block w-full relative rounded-md shadow-sm">
               <ListboxButton
                 ref={buttonRef}
-                className={`relative w-full cursor-default rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:outline ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
+                className={`relative w-full cursor-pointer rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:outline ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
               >
                 {!multiple && !Array.isArray(selectedUser) && selectedUser ? (
                   <span className="flex items-center">
@@ -230,7 +230,7 @@ const UserSelector = ({
                         <div
                           className={`${
                             focus ? 'bg-primary text-white' : 'text-gray-300'
-                          } relative cursor-default select-none py-2 pl-8 pr-4 rounded-md`}
+                          } relative cursor-pointer select-none py-2 pl-8 pr-4 rounded-md`}
                         >
                           <span
                             className={`${

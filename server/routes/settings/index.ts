@@ -52,6 +52,7 @@ import sonarrRoutes from './sonarr';
 import logoSettingsRoutes from './logos';
 import downloadsRoutes from './downloads';
 import onboardingRoutes from './onboarding';
+import newsletterRoutes from './newsletter';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
 
@@ -63,6 +64,7 @@ settingsRoutes.use('/sonarr', sonarrRoutes);
 settingsRoutes.use('/logos', logoSettingsRoutes);
 settingsRoutes.use('/downloads', downloadsRoutes);
 settingsRoutes.use('/onboarding', onboardingRoutes);
+settingsRoutes.use('/newsletter', newsletterRoutes);
 
 const filteredMainSettings = (
   user: User,

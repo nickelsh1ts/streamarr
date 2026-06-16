@@ -57,6 +57,10 @@ class PreparedEmail {
   send(options) {
     return this.email.send(options);
   }
+
+  render(view: string, locals?: Record<string, unknown>): Promise<string> {
+    return this.email.render(view, locals);
+  }
 }
 
 export default PreparedEmail;

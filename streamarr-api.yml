@@ -28,6 +28,8 @@ tags:
     description: Endpoints related to invite code management.
   - name: notification
     description: Endpoints related to notification management.
+  - name: newsletter
+    description: Endpoints related to newsletter creation, scheduling, and delivery.
   - name: tmdb
     description: Endpoints related to TMDB metadata.
   - name: service
@@ -1653,6 +1655,218 @@ components:
             - $ref: '#/components/schemas/User'
             - type: string
               nullable: true
+    Newsletter:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          readOnly: true
+        name:
+          type: string
+          example: 'Weekly Roundup'
+        subject:
+          type: string
+          example: "What's new this week on {{applicationTitle}}"
+        description:
+          type: string
+          nullable: true
+          example: 'A weekly roundup of new arrivals.'
+        body:
+          type: string
+        bodyFormat:
+          type: string
+          enum: [markdown, html]
+          example: 'markdown'
+        blocks:
+          $ref: '#/components/schemas/NewsletterBlocks'
+        recipientMode:
+          type: string
+          enum: [all, custom]
+          example: 'all'
+        recipientIds:
+          type: array
+          items:
+            type: number
+        isImportant:
+          type: boolean
+          example: false
+        enabled:
+          type: boolean
+          example: true
+        scheduleType:
+          type: string
+          enum: [once, recurring]
+          example: 'recurring'
+        cronSchedule:
+          type: string
+          nullable: true
+          example: '0 9 * * 1'
+        sendAt:
+          type: string
+          nullable: true
+          format: date-time
+        lastSentAt:
+          type: string
+          nullable: true
+          format: date-time
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    NewsletterBlocks:
+      type: object
+      properties:
+        recentlyAdded:
+          type: object
+          description: >-
+            Recently added configuration keyed by library type
+            (movie, show, artist, photo, other). Each value is a
+            RecentlyAddedTypeConfig.
+          additionalProperties:
+            $ref: '#/components/schemas/RecentlyAddedTypeConfig'
+        topStreams:
+          type: object
+          description: >-
+            Top streams configuration keyed by library type
+            (movie, show, artist). Each value is a RecentlyAddedTypeConfig.
+          additionalProperties:
+            $ref: '#/components/schemas/RecentlyAddedTypeConfig'
+        byTag:
+          type: object
+          properties:
+            header:
+              type: string
+            count:
+              type: number
+              example: 12
+            plex:
+              type: object
+              description: >-
+                Plex label source. Labels are applied per library, so this
+                carries an optional library selection.
+              properties:
+                enabled:
+                  type: boolean
+                label:
+                  type: string
+                  example: 'leaving'
+                libraries:
+                  type: array
+                  items:
+                    type: string
+            servarr:
+              type: object
+              description: Radarr/Sonarr tag source (instance-wide, not library-scoped).
+              properties:
+                enabled:
+                  type: boolean
+                radarrTag:
+                  type: string
+                sonarrTag:
+                  type: string
+    RecentlyAddedTypeConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        days:
+          type: number
+          example: 7
+        count:
+          type: number
+          example: 6
+        libraries:
+          type: array
+          items:
+            type: string
+        header:
+          type: string
+          description: >-
+            Optional admin-supplied section heading; falls back to a
+            localized default when empty.
+    NewsletterRequest:
+      type: object
+      required:
+        - name
+        - subject
+      properties:
+        name:
+          type: string
+          example: 'Weekly Roundup'
+        subject:
+          type: string
+          example: "What's new this week"
+        description:
+          type: string
+          nullable: true
+        body:
+          type: string
+        bodyFormat:
+          type: string
+          enum: [markdown, html]
+        blocks:
+          $ref: '#/components/schemas/NewsletterBlocks'
+        recipientMode:
+          type: string
+          enum: [all, custom]
+        recipientIds:
+          type: array
+          items:
+            type: number
+        isImportant:
+          type: boolean
+        enabled:
+          type: boolean
+        scheduleType:
+          type: string
+          enum: [once, recurring]
+        cronSchedule:
+          type: string
+          nullable: true
+        sendAt:
+          type: string
+          nullable: true
+          format: date-time
+    NewsletterHistory:
+      type: object
+      properties:
+        id:
+          type: number
+          readOnly: true
+        triggeredBy:
+          type: string
+          enum: [schedule, manual, test]
+        recipientCount:
+          type: number
+        failureCount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    NewsletterSendResult:
+      type: object
+      properties:
+        newsletterId:
+          type: number
+        recipientCount:
+          type: number
+        failureCount:
+          type: number
+    NewsletterVariable:
+      type: object
+      properties:
+        token:
+          type: string
+          example: '{{recipientName}}'
+        description:
+          type: string
     NotificationCreationResult:
       type: object
       required:
@@ -2203,6 +2417,25 @@ components:
           type: boolean
         inAppEnabled:
           type: boolean
+    UserSettingsNewsletters:
+      type: object
+      properties:
+        newsletters:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              description:
+                type: string
+                nullable: true
+              isImportant:
+                type: boolean
+              subscribed:
+                type: boolean
     NotificationAgentTypes:
       type: object
       properties:
@@ -6178,6 +6411,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserSettingsNotifications'
+  /user/{userId}/settings/newsletters:
+    get:
+      summary: Get newsletter subscriptions for a user
+      description: >-
+        Returns the newsletters a user is eligible to receive and whether they
+        are subscribed to each. Requires `MANAGE_USERS` permission if viewing
+        other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: User newsletter subscriptions returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsNewsletters'
+    post:
+      summary: Update newsletter subscriptions for a user
+      description: >-
+        Updates the user's newsletter subscriptions. The request body lists the
+        newsletter IDs the user has opted out of. Requires `MANAGE_USERS`
+        permission if editing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unsubscribed:
+                  type: array
+                  items:
+                    type: number
+      responses:
+        '200':
+          description: Updated user newsletter subscriptions returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsNewsletters'
   /user/{userId}/settings/notifications/pushover/sounds:
     get:
       summary: Get available Pushover sounds for a user
@@ -7453,6 +7740,282 @@ paths:
       responses:
         '204':
           description: Notification deleted
+  /settings/newsletter:
+    get:
+      summary: Get newsletters
+      description: Returns a paginated list of newsletters.
+      tags:
+        - newsletter
+      parameters:
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 10
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+        - in: query
+          name: filter
+          schema:
+            type: string
+            nullable: true
+            enum: [all, enabled, disabled, important]
+            default: all
+        - in: query
+          name: sort
+          schema:
+            type: string
+            nullable: true
+            enum: [created, modified, name]
+            default: modified
+      responses:
+        '200':
+          description: A list of newsletters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Newsletter'
+    post:
+      summary: Create a newsletter
+      description: Creates a new newsletter and schedules it if enabled.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '201':
+          description: Newsletter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: Bad request - validation error
+        '403':
+          description: Forbidden - insufficient permissions
+        '500':
+          description: Server error
+  /settings/newsletter/variables:
+    get:
+      summary: Get newsletter variables
+      description: Returns the catalog of tokens and content blocks available in newsletter bodies.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: The variable catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterVariable'
+                  blocks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterVariable'
+  /settings/newsletter/preview:
+    post:
+      summary: Preview a newsletter draft
+      description: >-
+        Renders a preview from an unsaved newsletter body without
+        persisting it, returning the rendered email HTML.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '200':
+          description: Rendered newsletter HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Server error
+  /settings/newsletter/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Get a newsletter
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: The requested newsletter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '404':
+          description: Newsletter not found
+    put:
+      summary: Update a newsletter
+      description: Updates an existing newsletter and reschedules it.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '200':
+          description: Newsletter updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: Bad request - validation error
+        '404':
+          description: Newsletter not found
+    delete:
+      summary: Delete a newsletter
+      description: Deletes a newsletter and cancels any scheduled send.
+      tags:
+        - newsletter
+      responses:
+        '204':
+          description: Newsletter deleted
+        '404':
+          description: Newsletter not found
+  /settings/newsletter/{id}/send:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    post:
+      summary: Send a newsletter now
+      description: Immediately sends the newsletter to its resolved recipients.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Send result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterSendResult'
+        '409':
+          description: The newsletter is already being sent
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/test:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    post:
+      summary: Send a test newsletter
+      description: Sends the newsletter to the requesting administrator only.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Send result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterSendResult'
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/preview:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Preview a newsletter
+      description: Returns the fully rendered newsletter email as HTML.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Rendered newsletter HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/history:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Get newsletter send history
+      tags:
+        - newsletter
+      parameters:
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 10
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+      responses:
+        '200':
+          description: A list of newsletter send history records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterHistory'
   /regions:
     get:
       summary: Regions supported by TMDB
