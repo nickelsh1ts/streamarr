@@ -13,14 +13,14 @@ interface LoginWithPlexProps {
 
 const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   const intl = useIntl();
-  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const [pinId, setPinId] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const { currentSettings } = useSettings();
 
   useEffect(() => {
     const login = async () => {
       try {
-        const response = await axios.post('/api/v1/auth/plex', { authToken });
+        const response = await axios.post('/api/v1/auth/plex', { pinId });
 
         if (response.data?.id) {
           const { data: authenticatedUser } =
@@ -38,13 +38,13 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
           type: 'error',
           icon: <XCircleIcon className="size-7" />,
         });
-        setAuthToken(undefined);
+        setPinId(undefined);
       }
     };
-    if (authToken) {
+    if (pinId) {
       login();
     }
-  }, [authToken, intl, onComplete, revalidate]);
+  }, [pinId, intl, onComplete, revalidate]);
 
   useEffect(() => {
     if (user) {
@@ -68,7 +68,7 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
         />
       </div>
       <div className="flex items-center justify-center">
-        <PlexLoginButton onAuthToken={(authToken) => setAuthToken(authToken)} />
+        <PlexLoginButton onComplete={(pinId) => setPinId(pinId)} />
       </div>
     </form>
   );

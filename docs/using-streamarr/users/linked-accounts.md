@@ -67,9 +67,9 @@ If you try to view another user's linked accounts without the **Manage Users** p
 
 ## API Reference
 
-| Endpoint                                          | Method | Description                                                  |
-| ------------------------------------------------- | ------ | ------------------------------------------------------------ |
-| `/api/v1/user/{id}/settings/linked-accounts/plex` | POST   | Link a Plex account (requires an auth token from Plex OAuth) |
-| `/api/v1/user/{id}/settings/linked-accounts/plex` | DELETE | Unlink the user's Plex account                               |
+| Endpoint                                          | Method | Description                                                                                                                  |
+| ------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/user/{id}/settings/linked-accounts/plex` | POST   | Link a Plex account (provide a `pinId` from the server-side Plex pin exchange; a raw `authToken` is accepted but deprecated) |
+| `/api/v1/user/{id}/settings/linked-accounts/plex` | DELETE | Unlink the user's Plex account                                                                                               |
 
 These endpoints act on the authenticated user's own account. Viewing another user's account information requires the **Manage Users** permission.
