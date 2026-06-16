@@ -49,11 +49,11 @@ const UserSettingsAccounts = () => {
   const linkPlexAccount = async () => {
     setError(null);
     try {
-      const authToken = await plexOAuth.login();
+      const pinId = await plexOAuth.login();
       await axios.post(
         `/api/v1/user/${user?.id}/settings/linked-accounts/plex`,
         {
-          authToken,
+          pinId,
         }
       );
       await revalidateUser();

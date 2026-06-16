@@ -85,6 +85,15 @@ export class User {
   @Column({ type: 'text', nullable: true, select: false })
   public plexToken?: string;
 
+  @Column({ type: 'text', nullable: true, select: false })
+  public plexJwt?: string | null;
+
+  @Column({ type: 'datetime', nullable: true })
+  public plexJwtExpiresAt?: Date | null;
+
+  @Column({ type: 'text', nullable: true, select: false })
+  public plexJwtDevice?: string | null;
+
   @Column({ type: 'integer', default: 32 })
   public permissions = 32;
 
