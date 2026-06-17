@@ -1,3 +1,11 @@
+## [1.9.1](https://github.com/nickelsh1ts/streamarr/compare/v1.9.0...v1.9.1) (2026-06-17)
+
+### 🐛 Bug Fixes
+
+* **newsletters:** handle empty grandparent_rating_key in top streams ([#437](https://github.com/nickelsh1ts/streamarr/issues/437)) ([9b5e435](https://github.com/nickelsh1ts/streamarr/commit/9b5e43533ed1250853aa3357e4a4fb2a12a63a19))
+* **notifications:** exclude inactive users from notification delivery ([#439](https://github.com/nickelsh1ts/streamarr/issues/439)) ([400e616](https://github.com/nickelsh1ts/streamarr/commit/400e616bd08f3eef82ab60acc5bfbc005f4b64c6))
+* **notifications:** log a single "Sending notification(s)" entry per dispatch ([#438](https://github.com/nickelsh1ts/streamarr/issues/438)) ([a067e95](https://github.com/nickelsh1ts/streamarr/commit/a067e95f8f0e27edff62b1da7ec0785afe151da2))
+
 ## [1.9.0](https://github.com/nickelsh1ts/streamarr/compare/v1.8.2...v1.9.0) (2026-06-17)
 
 ### ✨ Features
