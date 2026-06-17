@@ -1,3 +1,29 @@
+## [1.9.0](https://github.com/nickelsh1ts/streamarr/compare/v1.8.2...v1.9.0) (2026-06-17)
+
+### ✨ Features
+
+* **auth:** move Plex pin exchange server-side ([#406](https://github.com/nickelsh1ts/streamarr/issues/406)) ([f87acd2](https://github.com/nickelsh1ts/streamarr/commit/f87acd221bc9da2936e0dcad897e7f1afb7e8b54))
+* **newsletters:** add support for scheduled newsletters ([#413](https://github.com/nickelsh1ts/streamarr/issues/413)) ([0e5b415](https://github.com/nickelsh1ts/streamarr/commit/0e5b415a0248d81e07eda53d9362d8a2a062402e))
+* **plex:** replace Python service with native plex.tv integration ([#401](https://github.com/nickelsh1ts/streamarr/issues/401)) ([0c97416](https://github.com/nickelsh1ts/streamarr/commit/0c9741643e24f05cedeeb76d479bd4a76e54f925))
+* **users:** allow bulk editing of shared libraries ([#404](https://github.com/nickelsh1ts/streamarr/issues/404)) ([bc2e255](https://github.com/nickelsh1ts/streamarr/commit/bc2e255c7a44864a72f33599e8c6892d76073be7))
+
+### 🐛 Bug Fixes
+
+* **mobilemenu:** track active route via router, not window.location ([#395](https://github.com/nickelsh1ts/streamarr/issues/395)) ([1707fcf](https://github.com/nickelsh1ts/streamarr/commit/1707fcf44aaa435a811eab669cc3be4e31df405f))
+* **newsletters:** exclude expired and deactivated users from recipients ([#414](https://github.com/nickelsh1ts/streamarr/issues/414)) ([2f4f723](https://github.com/nickelsh1ts/streamarr/commit/2f4f7238dfc81216435544e346a11e11259f6c57))
+* **ui:** corrected inline fields and hidden admin menu ([#402](https://github.com/nickelsh1ts/streamarr/issues/402)) ([eceb695](https://github.com/nickelsh1ts/streamarr/commit/eceb695b6ff28c210e9d104a77d97b04214a569f))
+* **users:** handle users removed from Plex out-of-band ([#403](https://github.com/nickelsh1ts/streamarr/issues/403)) ([ac72f93](https://github.com/nickelsh1ts/streamarr/commit/ac72f93c076c5c561b86731a502a3784e46ee694))
+* **watch:** restore tablet sidebar drawer inside Plex iframe ([#415](https://github.com/nickelsh1ts/streamarr/issues/415)) ([e366781](https://github.com/nickelsh1ts/streamarr/commit/e3667817e24a4c434cff293c1623bd622c625b4b))
+* **watch:** scope injected CSS to portaled components ([#410](https://github.com/nickelsh1ts/streamarr/issues/410)) ([d25d0c5](https://github.com/nickelsh1ts/streamarr/commit/d25d0c569931b313814caaf1fe02c8a8140d4273))
+
+### 📦 Build System
+
+* **docker:** pin dependencies ([#331](https://github.com/nickelsh1ts/streamarr/issues/331)) ([6a534a1](https://github.com/nickelsh1ts/streamarr/commit/6a534a12cce1be058021e53f6dcc4b8db358d0e5))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#430](https://github.com/nickelsh1ts/streamarr/issues/430)) ([91c188c](https://github.com/nickelsh1ts/streamarr/commit/91c188c6351564b0698d657c78b97ea6a846e94b))
+
 ## [1.8.2](https://github.com/nickelsh1ts/streamarr/compare/v1.8.1...v1.8.2) (2026-06-06)
 
 ### 🐛 Bug Fixes
