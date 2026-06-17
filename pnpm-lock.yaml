@@ -97,7 +97,7 @@ importers:
         version: 2.4.9(@types/react@19.2.15)(react@19.2.6)
       http-proxy-middleware:
         specifier: ^4.0.0
-        version: 4.0.0
+        version: 4.1.0
       ical:
         specifier: ^0.8.0
         version: 0.8.0
@@ -5302,8 +5302,8 @@ packages:
     resolution: {integrity: sha512-2NxoveTT58mjYT4n3RPTEfCZGLMbidoO8XEieXfpSYxu+PQJ1qpx4ypwH6N+uF9twBPIvRRgvkvW5HUTYWENig==}
     engines: {node: '>= 20'}
 
-  http-proxy-middleware@4.0.0:
-    resolution: {integrity: sha512-wuHwaUtmC0XzJNHqRp41zXtt5ojpHbusXGhq6781VvnjWUYPu7opmOF3eomGNujT07kEOnHWZyV9UZzKimVCKA==}
+  http-proxy-middleware@4.1.0:
+    resolution: {integrity: sha512-XUOAjKncPZjsrgDTTem+CUED6A+piUAKTOwBM8g1gAublBX/GdxTHP8mO+og1EW1evYP8wd0G2c111tExwo/jw==}
     engines: {node: ^22.15.0 || ^24.0.0 || >=26.0.0}
 
   http-signature@1.4.0:
@@ -5326,8 +5326,8 @@ packages:
     resolution: {integrity: sha512-ag87y7cJJ9/3+GxFr8Oy4O5faDsGRGnBGsJj/YjOSsSx/5eadKLYTMPlzuR6obgoCDDm0abAAZitXXQkMOPSpA==}
     engines: {node: '>= 20'}
 
-  httpxy@0.5.1:
-    resolution: {integrity: sha512-JPhqYiixe1A1I+MXDewWDZqeudBGU8Q9jCHYN8ML+779RQzLjTi78HBvWz4jMxUD6h2/vUL12g4q/mFM0OUw1A==}
+  httpxy@0.5.3:
+    resolution: {integrity: sha512-SMS9V6Sn7VWaS11lYhoAr0ceoaiolTWf4jYdJn0NJhCdKMu9R2H9Fh0LBDWBHQF6HRLI1PmaePYsjanSpE5PEw==}
 
   human-signals@1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
@@ -14460,10 +14460,10 @@ snapshots:
       - kerberos
       - supports-color
 
-  http-proxy-middleware@4.0.0:
+  http-proxy-middleware@4.1.0:
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
-      httpxy: 0.5.1
+      httpxy: 0.5.3
       is-glob: 4.0.3
       is-plain-obj: 4.1.0
       micromatch: 4.0.8
@@ -14501,7 +14501,7 @@ snapshots:
       - kerberos
       - supports-color
 
-  httpxy@0.5.1: {}
+  httpxy@0.5.3: {}
 
   human-signals@1.1.1: {}
 
