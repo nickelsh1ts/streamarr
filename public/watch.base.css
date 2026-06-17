@@ -27,86 +27,6 @@
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .drawer-side {
-    :where(&) {
-              overflow-x: hidden;
-        overflow-y: hidden;
-          }
-          pointer-events: none;
-      visibility: hidden;
-      position: fixed;
-      inset-inline-start: calc(0.25rem * 0);
-      top: calc(0.25rem * 0);
-      z-index: 10;
-      grid-column-start: 1;
-      grid-row-start: 1;
-      display: grid;
-      width: 100%;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-      grid-template-rows: repeat(1, minmax(0, 1fr));
-      align-items: flex-start;
-      justify-items: start;
-      overscroll-behavior: contain;
-      background-color: transparent;
-      opacity: 0%;
-      transition: opacity 0.2s ease-out 0.1s allow-discrete, visibility 0.3s ease-out 0.1s allow-discrete;
-      height: 100vh;
-      height: 100dvh;
-      > .drawer-overlay {
-        position: sticky;
-        top: calc(0.25rem * 0);
-        cursor: pointer;
-        place-self: stretch;
-        background-color: oklch(0% 0 0 / 40%);
-      }
-      > * {
-        grid-column-start: 1;
-        grid-row-start: 1;
-      }
-      > :not(.drawer-overlay) {
-        will-change: transform;
-        transition: translate 0.3s ease-out, width 0.2s ease-out;
-        translate: -100%;
-        [dir="rtl"] & {
-          translate: 100%;
-        }
-      }
-      }
-  .drawer-toggle {
-          position: fixed;
-      height: calc(0.25rem * 0);
-      width: calc(0.25rem * 0);
-      appearance: none;
-      opacity: 0%;
-      :where(&:checked ~ .drawer-side) {
-        scrollbar-color: currentColor oklch(0 0 0 / calc(var(--page-has-backdrop, 0) * 0.4));
-        @supports (color: color-mix(in lab, red, red)) {
-          scrollbar-color: color-mix(in oklch, currentColor 35%, #0000) oklch(0 0 0 / calc(var(--page-has-backdrop, 0) * 0.4));
-        }
-      }
-      :where(:root:has(&:checked)) {
-        --page-has-backdrop: 1;
-        --page-overflow: hidden;
-        --page-scroll-bg: var(--page-scroll-bg-on);
-        --page-scroll-gutter: stable;
-        --page-scroll-transition: var(--page-scroll-transition-on);
-        animation: set-page-has-scroll forwards;
-        animation-timeline: scroll();
-      }
-              :where(&:checked ~ .drawer-side) {
-        pointer-events: auto;
-        visibility: visible;
-        overflow-y: auto;
-        opacity: 100%;
-        > :not(.drawer-overlay) {
-          translate: 0%;
-        }
-      }
-      &:focus-visible ~ .drawer-content label.drawer-button {
-        outline: 2px solid;
-        outline-offset: 2px;
-      }
-      }
   .tooltip {
           position: relative;
       display: inline-block;
@@ -645,12 +565,6 @@
         translate: var(--indicator-x, 50%) var(--indicator-y, -50%);
       }
       }
-  .drawer {
-          position: relative;
-      display: grid;
-      width: 100%;
-      grid-auto-columns: max-content auto;
-      }
   .absolute {
     position: absolute;
   }
@@ -659,6 +573,9 @@
   }
   .relative {
     position: relative;
+  }
+  .inset-0 {
+    inset: calc(var(--spacing) * 0);
   }
   .top-0 {
     top: calc(var(--spacing) * 0);
@@ -672,11 +589,11 @@
   .top-2 {
     top: calc(var(--spacing) * 2);
   }
+  .top-16 {
+    top: calc(var(--spacing) * 16);
+  }
   .top-\[0\.6rem\] {
     top: 0.6rem;
-  }
-  .top-\[4rem\] {
-    top: 4rem;
   }
   .top-auto {
     top: auto;
@@ -713,6 +630,9 @@
   }
   .z-1000 {
     z-index: 1000;
+  }
+  .z-1005 {
+    z-index: 1005;
   }
   .z-1006 {
     z-index: 1006;
@@ -813,9 +733,6 @@
   }
   .-mb-2 {
     margin-bottom: calc(var(--spacing) * -2);
-  }
-  .mb-0 {
-    margin-bottom: calc(var(--spacing) * 0);
   }
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
@@ -974,9 +891,6 @@
   .w-64 {
     width: calc(var(--spacing) * 64);
   }
-  .w-fit {
-    width: fit-content;
-  }
   .w-full {
     width: 100%;
   }
@@ -1108,6 +1022,9 @@
   .overflow-hidden {
     overflow: hidden;
   }
+  .overflow-y-auto {
+    overflow-y: auto;
+  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -1173,6 +1090,12 @@
   }
   .bg-base-300 {
     background-color: var(--color-base-300);
+  }
+  .bg-base-300\/30 {
+    background-color: var(--color-base-300);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-base-300) 30%, transparent);
+    }
   }
   .bg-base-content\/20 {
     background-color: var(--color-base-content);
@@ -1433,6 +1356,11 @@
   }
   .transition {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-opacity {
+    transition-property: opacity;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -1699,6 +1627,12 @@
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-white) 15%, transparent) !important;
       }
+    }
+  }
+  .data-closed\:-translate-x-full {
+    &[data-closed] {
+      --tw-translate-x: -100%;
+      translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .data-closed\:-translate-y-2 {
@@ -2073,12 +2007,6 @@ input[type='checkbox']:not(.drawer-toggle) {
 button {
   --tw-leading: calc(var(--spacing) * 5);
   line-height: calc(var(--spacing) * 5);
-}
-:where(.drawer-toggle:checked~.drawer-side) {
-  pointer-events: auto;
-  visibility: visible;
-  opacity: 1;
-  overflow-y: auto;
 }
   :where(:root),:root:has(input.theme-controller[value=light]:checked),[data-theme=light] {
     color-scheme: light;

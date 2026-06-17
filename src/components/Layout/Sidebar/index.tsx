@@ -1,6 +1,7 @@
 'use client';
 import LibraryMenu, { SingleItem } from '@app/components/Layout/LibraryMenu';
 import DropDownMenu from '@app/components/Common/DropDownMenu';
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import {
   HomeIcon,
   CalendarDateRangeIcon,
@@ -47,49 +48,48 @@ const Sidebar = () => {
 
   return (
     <>
-      <header
+      <div
         id="sidebar"
         data-tutorial="sidebar-nav"
-        className="w-fit transition duration-500 drawer font-bold z-1006 max-sm:hidden lg:hidden"
+        className={`flex-none relative z-1006 print:hidden max-sm:hidden lg:hidden pointer-events-auto ${currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
       >
-        <input
-          id="my-drawer-3"
-          type="checkbox"
-          className="drawer-toggle pointer-events-auto"
-          checked={isOpen}
-          onClick={() => setIsOpen(!isOpen)}
-          onChange={() => setIsOpen(!isOpen)}
-        />
-        <div
-          className={`flex-none print:hidden lg:hidden pointer-events-auto ${currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label="open sidebar"
+          className="inline-flex h-10 min-h-10 shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:text-primary! cursor-pointer"
         >
-          <label
-            htmlFor="my-drawer-3"
-            aria-label="open sidebar"
-            className="inline-flex h-10 min-h-10 shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:text-primary! cursor-pointer"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="inline-block h-7 w-7 stroke-current"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block h-7 w-7 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </label>
-        </div>
-        <div className="drawer-side lg:hidden">
-          <label
-            htmlFor="my-drawer-3"
-            aria-label="close sidebar"
-            className={`drawer-overlay mb-0 ${isOpen && 'backdrop-blur-sm'}`}
-          />
-          <ul className="menu bg-primary/30 backdrop-blur-md min-h-full w-full max-w-64 p-2 border-r border-primary">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <Dialog
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        className="relative z-1006 lg:hidden"
+      >
+        <DialogBackdrop
+          transition
+          data-testid="sidebar-overlay"
+          className="fixed inset-0 z-1005 bg-base-300/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
+        />
+        <div className="fixed inset-0 z-1006 flex">
+          <DialogPanel
+            transition
+            data-testid="mobile-drawer"
+            className="menu bg-primary/30 backdrop-blur-md min-h-full w-full max-w-64 p-2 border-r border-primary font-bold overflow-y-auto transition duration-300 ease-out data-closed:-translate-x-full"
+          >
             <div className="flex flex-row place-items-center place-content-between mb-2">
               <Image
                 src={logoSrc}
@@ -100,16 +100,16 @@ const Sidebar = () => {
                 className="my-2 mx-4 h-auto w-44"
               />
               <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(false)}
                 aria-label="close sidebar"
                 className="text-zinc-300 hover:text-white hover:cursor-pointer"
               >
                 <XMarkIcon className="w-7 h-7" />
               </button>
             </div>
-            <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(false)} />
             <div className="mt-auto w-full">
-              <VersionStatus onClick={() => setIsOpen(!isOpen)} />
+              <VersionStatus onClick={() => setIsOpen(false)} />
               {currentUrl.includes('/watch/web/index.html') && (
                 <>
                   <div className="bg-zinc-300/40 h-0.5 my-4"></div>
@@ -131,7 +131,7 @@ const Sidebar = () => {
                       }
                     >
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/web/general"
                       >
                         <FormattedMessage
@@ -140,7 +140,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/web/quality"
                       >
                         <FormattedMessage
@@ -149,7 +149,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/web/player"
                       >
                         <FormattedMessage
@@ -158,7 +158,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/privacy"
                       >
                         <FormattedMessage
@@ -167,7 +167,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/online-media-sources"
                         divide="before"
                       >
@@ -177,7 +177,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/devices/all"
                       >
                         <FormattedMessage
@@ -186,7 +186,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/streaming-services"
                       >
                         <FormattedMessage
@@ -195,7 +195,7 @@ const Sidebar = () => {
                         />
                       </DropDownMenu.Item>
                       <DropDownMenu.Item
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(false)}
                         href="/watch/web/index.html#!/settings/manage-library-access"
                       >
                         <FormattedMessage
@@ -208,9 +208,9 @@ const Sidebar = () => {
                 </>
               )}
             </div>
-          </ul>
+          </DialogPanel>
         </div>
-      </header>
+      </Dialog>
       {currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && (
         <div className="fixed top-0 right-0 mt-2 me-2 z-1000 lg:flex lg:shrink-0 flex-nowrap pointer-events-none">
           <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
@@ -293,7 +293,7 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu w-56 p-2 max-lg:hidden fixed top-[4rem] bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral font-base`}
+        className={`menu w-56 p-2 max-lg:hidden fixed top-16 bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral font-base`}
       >
         <SidebarMenu />
         {hasPermission([Permission.ADMIN]) && (

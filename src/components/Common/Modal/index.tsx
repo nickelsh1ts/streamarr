@@ -61,7 +61,7 @@ export default function Modal({
     <Dialog onClose={onCancel} open={show}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
+        className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
       />
       <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-1 text-center sm:items-center sm:p-0">
