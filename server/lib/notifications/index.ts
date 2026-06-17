@@ -61,6 +61,7 @@ export const shouldSendAdminNotification = (
   payload: NotificationPayload
 ): boolean => {
   return (
+    user.active &&
     user.id !== payload.notifyUser?.id &&
     user.hasPermission(getAdminPermission(type), { type: 'or' })
   );
@@ -81,8 +82,9 @@ export const PER_RECIPIENT_AGENT_KEYS: NotificationAgentKey[] = [
 ];
 
 /**
- * Returns true if the user has at least one notification agent enabled for
- * the given type. Users without saved settings are treated as fully opted-in.
+ * Returns true if the user is active and has at least one notification agent
+ * enabled for the given type. Active users without saved
+ * settings are treated as fully opted-in.
  *
  * By default only per-recipient agents are considered, because shared-channel
  * agents (Discord, Slack, Gotify, ntfy, webhook) cannot deliver to a single
@@ -94,6 +96,10 @@ export const userAcceptsNotificationType = (
   type: NotificationType,
   scope: NotificationDeliveryScope = NotificationDeliveryScope.Individual
 ): boolean => {
+  if (!user.active) {
+    return false;
+  }
+
   if (!user.settings) {
     return true;
   }
@@ -121,10 +127,9 @@ class NotificationManager {
     payload: NotificationPayload,
     scope: NotificationDeliveryScope = NotificationDeliveryScope.All
   ): Promise<boolean> {
-    logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
-      label: 'Notifications',
-      subject: payload.subject,
-    });
+    if (payload.notifyUser?.active === false) {
+      payload = { ...payload, notifyUser: undefined };
+    }
 
     const activeAgents = this.activeAgents.filter(
       (agent) =>
@@ -143,6 +148,13 @@ class NotificationManager {
         return false;
       }
       return true;
+    }
+
+    if (scope === NotificationDeliveryScope.All) {
+      logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
+        label: 'Notifications',
+        subject: payload.subject,
+      });
     }
 
     const results = await Promise.all(

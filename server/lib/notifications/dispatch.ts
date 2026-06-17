@@ -29,6 +29,11 @@ export const sendGroupNotification = async (
   recipients: User[],
   buildContent: (intl: IntlShape) => GroupNotificationContent
 ): Promise<void> => {
+  logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
+    label: 'Notifications',
+    recipients: recipients.length,
+  });
+
   try {
     await notificationManager.sendNotification(
       type,

@@ -74,6 +74,15 @@ const mapWithConcurrency = async <T, R>(
   return results;
 };
 
+const normalizeRatingKey = (value?: number | string): string | undefined => {
+  if (value == null) {
+    return undefined;
+  }
+
+  const str = String(value).trim();
+  return str === '' || str === '0' ? undefined : str;
+};
+
 // Library types that can contribute a "recently added" section, in the order
 // their sections should appear in the email.
 export const RECENTLY_ADDED_TYPES: NewsletterMediaType[] = [
@@ -373,8 +382,10 @@ const collectTopStreamsForType = async (
       break;
     }
 
-    const ratingKey = row.grandparent_rating_key ?? row.rating_key;
-    const key = ratingKey != null ? String(ratingKey) : row.title;
+    const ratingKey =
+      normalizeRatingKey(row.grandparent_rating_key) ??
+      normalizeRatingKey(row.rating_key);
+    const key = ratingKey ?? row.title;
 
     if (seen.has(key)) {
       continue;
@@ -386,10 +397,10 @@ const collectTopStreamsForType = async (
         title: row.title,
         year: row.year,
         mediaType: type,
-        ratingKey: ratingKey != null ? String(ratingKey) : undefined,
+        ratingKey,
         subtitle: `${row.total_plays} play${row.total_plays === 1 ? '' : 's'}`,
       },
-      ratingKey: ratingKey != null ? String(ratingKey) : undefined,
+      ratingKey,
     });
   }
 
