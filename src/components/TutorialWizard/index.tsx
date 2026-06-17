@@ -180,7 +180,7 @@ const TutorialWizard: React.FC = () => {
       <Dialog onClose={handleClose} open={showPrompt}>
         <DialogBackdrop
           transition
-          className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
+          className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
         />
         <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-2 sm:p-0">
@@ -258,7 +258,7 @@ const TutorialWizard: React.FC = () => {
                 </span>
               </button>
             )}
-            <div className="min-h-[400px] sm:min-h-[450px] flex flex-col">
+            <div className="min-h-100 sm:min-h-112.5 flex flex-col">
               {isFullWizardMode ? (
                 <Carousel
                   ref={carouselRef}

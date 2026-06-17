@@ -30,7 +30,7 @@ describe('Responsive Design', () => {
         if (width >= 1024) {
           cy.get('#sidebarMenu').should('be.visible');
         } else if (width >= 640) {
-          cy.get('label[aria-label="open sidebar"]').should('be.visible');
+          cy.get('[aria-label="open sidebar"]').should('be.visible');
         }
       });
     });

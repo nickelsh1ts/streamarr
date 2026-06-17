@@ -48,16 +48,16 @@ describe('Navigation', () => {
 
     it('should toggle mobile drawer', () => {
       cy.visit('/invites');
-      cy.get('label[aria-label="open sidebar"]').should('be.visible').click();
-      cy.get('.drawer-side').should('be.visible');
+      cy.get('[aria-label="open sidebar"]').should('be.visible').click();
+      cy.get('[data-testid="mobile-drawer"]').should('be.visible');
     });
 
     it('should close mobile drawer via overlay', () => {
       cy.visit('/invites');
-      cy.get('label[aria-label="open sidebar"]').should('be.visible').click();
-      cy.get('.drawer-side').should('be.visible');
-      cy.get('.drawer-overlay').click({ force: true });
-      cy.get('.drawer-side').should('not.be.visible');
+      cy.get('[aria-label="open sidebar"]').should('be.visible').click();
+      cy.get('[data-testid="mobile-drawer"]').should('be.visible');
+      cy.get('[data-testid="sidebar-overlay"]').click({ force: true });
+      cy.get('[data-testid="mobile-drawer"]').should('not.exist');
     });
   });
 });

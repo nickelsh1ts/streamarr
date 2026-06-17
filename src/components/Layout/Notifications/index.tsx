@@ -196,7 +196,7 @@ const Notifications = () => {
       <TransitionChild>
         <div
           ref={ref}
-          className={`fixed flex flex-col top-0 bottom-0 max-sm:pb-14 right-0 z-50 bg-primary/30 backdrop-blur-md sm:border-l border-primary w-full sm:max-w-[30rem] max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-closed:max-sm:translate-y-full data-closed:sm:translate-x-full overflow-hidden text-primary-content`}
+          className={`fixed flex flex-col top-0 bottom-0 max-sm:pb-14 right-0 z-50 bg-primary/30 backdrop-blur-md sm:border-l border-primary w-full sm:max-w-120 max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-closed:max-sm:translate-y-full data-closed:sm:translate-x-full overflow-hidden text-primary-content`}
         >
           <div className="w-full h-20 content-center p-4 flex flex-wrap justify-between items-center gap-2">
             <span>
