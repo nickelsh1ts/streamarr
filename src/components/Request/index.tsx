@@ -1,275 +1,53 @@
 'use client';
-import Button from '@app/components/Common/Button';
+import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import {
-  ServiceError,
-  ServiceNotConfigured,
-} from '@app/components/Common/ServiceError';
 import useRouteGuard from '@app/hooks/useRouteGuard';
-import { useServiceProxy } from '@app/hooks/useServiceProxy';
-import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
-import { parseColorToHex, setIframeTheme } from '@app/utils/themeUtils';
-import {
-  ArrowTopRightOnSquareIcon,
-  LockClosedIcon,
-} from '@heroicons/react/24/outline';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { FormattedMessage } from 'react-intl';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
     type: 'or',
   });
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const query = searchParams.toString();
-  const url = pathname.replace('/request', '') + (query ? `?${query}` : '');
-  const router = useRouter();
-  const { currentSettings } = useSettings();
-  const { hasPermission, user } = useUser();
+  const { user, hasPermission } = useUser();
   const isAdmin = hasPermission(Permission.ADMIN);
-  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+  const [hostname] = useState(() =>
+    typeof window !== 'undefined'
+      ? `${window?.location?.protocol}//${window?.location?.host}`
+      : ''
+  );
+
+  const { data: userSettings, isLoading } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
 
-  const isConfigured =
-    !!userSettings?.requestUrl && !!userSettings?.requestEnabled;
-  const {
-    status: proxyStatus,
-    error: proxyError,
-    retry,
-  } = useServiceProxy({
-    proxyPath: userSettings?.requestUrl,
-    enabled: isConfigured,
-  });
-
-  const [contentRef, setContentRef] = useState(null);
-  const [loadingIframe, setLoadingIframe] = useState(
-    () => !userSettings?.requestUrl
-  );
-
-  const isLocalhost =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      /^(127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(
-        window.location.hostname
-      ));
-
-  const mountNode = contentRef?.contentWindow?.document?.body;
-  const innerFrame = contentRef?.contentWindow;
-
-  const hostname =
-    typeof window !== 'undefined' && userSettings?.requestUrl
-      ? `${window?.location?.protocol}//${window?.location?.host}${userSettings?.requestUrl}`
-      : '';
-
-  useEffect(() => {
-    if (!userSettings?.requestUrl || !innerFrame?.navigation) {
-      return;
-    }
-
-    const handleNavigate = () => {
-      setLoadingIframe(true);
-      setTimeout(() => {
-        const urlPath = pathname.replace('/request', '');
-        const iframePath = innerFrame?.location?.pathname.replace(
-          userSettings?.requestUrl,
-          ''
-        );
-        if (
-          urlPath !== iframePath &&
-          !innerFrame?.location?.pathname.includes('/search')
-        ) {
-          const iframeSearch = innerFrame?.location?.search ?? '';
-          router.push(
-            innerFrame?.location?.pathname.replace(
-              userSettings?.requestUrl,
-              '/request'
-            ) + iframeSearch
-          );
-        } else {
-          setTimeout(() => setLoadingIframe(false), 600);
-        }
-      }, 600);
-    };
-
-    innerFrame.navigation.addEventListener('navigate', handleNavigate);
-
-    return () => {
-      innerFrame.navigation?.removeEventListener('navigate', handleNavigate);
-    };
-  }, [
-    userSettings?.requestUrl,
-    innerFrame?.location?.pathname,
-    innerFrame?.navigation,
-    innerFrame,
-    router,
-    pathname,
-    url,
-  ]);
-
-  useEffect(() => {
-    if (!mountNode || !currentSettings.theme) {
-      return;
-    }
-
-    const hexToRgb = (hex: string) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result
-        ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-        : '0,0,0';
-    };
-    const theme = currentSettings.theme;
-    const primaryHex = parseColorToHex(theme.primary) ?? theme.primary;
-    const base300Hex = parseColorToHex(theme['base-300']) ?? theme['base-300'];
-    const primaryChannels = hexToRgb(primaryHex);
-
-    // Seerr's base CSS consumes --accent-color exclusively as raw RGB channels
-    // (e.g. rgb(var(--accent-color))), so it must be comma-separated channels,
-    // never a whole color value.
-    const seerrVars: Record<string, string> = {
-      '--color-background-accent': theme.primary,
-      '--accent-color': primaryChannels,
-      '--color-brand-accent': theme.secondary,
-      '--bs-primary': theme.primary,
-      '--color-background-accent-focus': theme.secondary,
-      '--color-text-accent': theme.secondary,
-      '--main-bg-color': theme['base-300'],
-      '--modal-bg-color': theme['base-100'],
-      '--drop-down-menu-bg': theme.neutral,
-      '--text': theme['base-content'],
-      '--text-hover': theme['base-content'],
-      '--color-text-on-accent': theme['base-content'],
-      '--link-color': theme.primary,
-      '--button-color': theme.primary,
-      '--button-color-hover': theme.secondary,
-      '--plex-poster-unwatched': theme['base-content'],
-      '--transparency-light-15': `rgba(${primaryChannels}, 0.15)`,
-      '--overseerr-gradient': `linear-gradient(180deg, rgba(${primaryChannels}, 0.47) 0%, rgba(${hexToRgb(base300Hex)}, 1) 100%)`,
-      '--label-text-color': theme['base-content'],
-      '--tw-ring-color': theme.primary,
-    };
-
-    // Seerr declares these vars on :root and on the .react-chroma-dark wrapper,
-    // but request.css makes the wrapper inherit them from :root. Setting them on
-    // the document root therefore cascades everywhere (including content Seerr's
-    // SPA adds later); body is also set so the portal-injected nav picks them up.
-    const targets: HTMLElement[] = [
-      innerFrame?.document?.documentElement as HTMLElement,
-      mountNode,
-    ].filter(Boolean) as HTMLElement[];
-
-    targets.forEach((target) => {
-      Object.entries(seerrVars).forEach(([name, value]) => {
-        target.style.setProperty(name, value, 'important');
-      });
-    });
-
-    // Set DaisyUI CSS variables for injected components
-    if (innerFrame) {
-      setIframeTheme(innerFrame, currentSettings.theme);
-    }
-  }, [mountNode, currentSettings.theme, innerFrame]);
-
-  if (isLocalhost && userSettings?.requestHostname) {
-    const overseerrUrl = `http://${userSettings?.requestHostname}${url && url.replace('null', '')}`;
-    return (
-      <div className="bg-base-300 flex h-[calc(100dvh-4rem)] flex-col items-center justify-center px-4">
-        <div className="max-w-md text-center">
-          <LockClosedIcon className="text-primary mx-auto mb-4 h-16 w-16" />
-          <h2 className="text-base-content mb-2 text-xl font-semibold">
-            <FormattedMessage
-              id="settings.crossOriginAccess"
-              defaultMessage="Cross-Origin Access"
-            />
-          </h2>
-          <p className="text-base-content/70 mb-6">
-            <FormattedMessage
-              id="settings.overseerr.localhostDescription"
-              defaultMessage="Seerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
-            />
-          </p>
-          <Button
-            buttonSize="sm"
-            buttonType="primary"
-            as="a"
-            target="_blank"
-            href={overseerrUrl}
-          >
-            <FormattedMessage
-              id="settings.openOverseerr"
-              defaultMessage="Open Seerr"
-            />
-            <ArrowTopRightOnSquareIcon className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    );
+  if (isLoading) {
+    return <LoadingEllipsis />;
   }
 
-  if (!isConfigured) {
-    return (
-      <ServiceNotConfigured
+  const isConfigured =
+    !!userSettings?.requestUrl && !!userSettings?.requestEnabled;
+
+  return (
+    <div className="relative">
+      <DynamicFrame
+        {...props}
+        title="Seerr"
+        domainURL={hostname}
+        basePath={userSettings?.requestUrl}
+        newBase="/request"
         serviceName="Seerr"
         settingsPath={
           isAdmin ? '/admin/settings/services/overseerr' : undefined
         }
-        isAdmin={isAdmin}
-        isAdminRoute={false}
-      />
-    );
-  }
-
-  if (proxyStatus === 'loading') {
-    return (
-      <div className="bg-base-300 flex h-[calc(100dvh-4rem)] items-center justify-center">
-        <LoadingEllipsis />
-      </div>
-    );
-  }
-
-  if (proxyStatus === 'error') {
-    return (
-      <ServiceError
-        serviceName="Seerr"
-        error={proxyError}
-        isAdmin={isAdmin}
-        onRetry={retry}
-        isAdminRoute={false}
-      />
-    );
-  }
-
-  return (
-    <>
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-      <iframe
-        {...props}
-        loading="eager"
-        onLoad={() => {
-          setTimeout(() => {
-            setLoadingIframe(false);
-          }, 1000);
-        }}
-        ref={setContentRef}
-        className={`relative h-[calc(100dvh-4rem)] w-full sm:h-[calc(100dvh-4rem)] ${loadingIframe && 'invisible'}`}
-        src={`${hostname}${url && url.replace('null', '')}`}
-        allowFullScreen
-        title="Seerr"
+        isConfigured={isConfigured}
+        injectTheme
       >
-        {mountNode && createPortal(children, mountNode)}
-      </iframe>
-      {loadingIframe ? (
-        <div className="bg-base-300 absolute inset-0 flex items-center justify-center">
-          <LoadingEllipsis />
-        </div>
-      ) : null}
-    </>
+        {children}
+      </DynamicFrame>
+    </div>
   );
 };
 export default Request;

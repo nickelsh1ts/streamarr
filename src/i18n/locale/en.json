@@ -4790,6 +4790,9 @@
   "season.specials": {
     "defaultMessage": "Specials"
   },
+  "seerrSettings.urlBase.noTrailingSlash": {
+    "defaultMessage": "URL Base must not end in a trailing slash or whitespace"
+  },
   "selectUsers": {
     "defaultMessage": "Select Users"
   },
@@ -4866,16 +4869,13 @@
     "defaultMessage": "Lidarr Settings"
   },
   "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "To complete the Seerr integration, you must configure a reverse proxy and serve Seerr at a specified url base. Seerr does not currently support url bases natively and must be re-written by a reverse proxy. An Nginx example is provided for reference."
+    "defaultMessage": "Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
   },
   "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Warning: Seerr Integration requires additional setup"
+    "defaultMessage": "Remove any external Seerr reverse proxy"
   },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Optionally configure the settings for your Seerr server."
-  },
-  "servicesSettings.overseerr.reverseProxyExample": {
-    "defaultMessage": "Nginx Reverse Proxy Example"
   },
   "servicesSettings.overseerr.title": {
     "defaultMessage": "Seerr Settings"
@@ -4921,6 +4921,9 @@
   },
   "servicesSettings.urlBase.required": {
     "defaultMessage": "You must provide a valid URL Base"
+  },
+  "servicesSettings.validation.apiKey": {
+    "defaultMessage": "You must provide a valid API key"
   },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "You must provide an API key"
@@ -4984,9 +4987,6 @@
   },
   "settings.allowPlexHome": {
     "defaultMessage": "Plex Home Member"
-  },
-  "settings.crossOriginAccess": {
-    "defaultMessage": "Cross-Origin Access"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Enable Trial Period"
@@ -5216,20 +5216,8 @@
   "settings.onboarding.welcomeEnabledTip": {
     "defaultMessage": "Show a welcome carousel to new users on first login."
   },
-  "settings.openOverseerr": {
-    "defaultMessage": "Open Seerr"
-  },
-  "settings.openOverseerrSettings": {
-    "defaultMessage": "Open Seerr Settings"
-  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Override Global Limit"
-  },
-  "settings.overseerr.localhostDescription": {
-    "defaultMessage": "Seerr cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
-  },
-  "settings.overseerr.localhostDescriptionSettings": {
-    "defaultMessage": "Seerr settings cannot be embedded when accessing locally due to browser security restrictions. Please open it in a new tab to continue or access streamarr from a secure hostname."
   },
   "settings.permissions": {
     "defaultMessage": "Permissions"

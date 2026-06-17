@@ -46,6 +46,7 @@ Streamarr tracks changes to settings that affect the internal proxy system and s
 | Bazarr connection      | Bazarr          |
 | Tdarr hostname/enabled | Tdarr           |
 | Tautulli hostname/URL  | Tautulli        |
+| Seerr connection       | Seerr           |
 | Proxy support toggle   | Proxy Support   |
 | CSRF protection toggle | CSRF Protection |
 

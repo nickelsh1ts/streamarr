@@ -497,7 +497,7 @@ class Settings {
       },
       overseerr: {
         enabled: false,
-        urlBase: '/overseerr',
+        urlBase: '/seerr',
       },
       public: { initialized: false },
       notifications: {
