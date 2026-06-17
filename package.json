@@ -108,7 +108,7 @@
     "sqlite3": "^6.0.1",
     "swagger-ui-express": "^5.0.1",
     "swr": "^2.4.1",
-    "theme-change": "^2.5.0",
+    "theme-change": "^3.0.0",
     "typeorm": "^0.3.28",
     "ua-parser-js": "^2.0.9",
     "validator": "^13.15.35",

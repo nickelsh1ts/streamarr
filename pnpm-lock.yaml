@@ -225,8 +225,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1(react@19.2.7)
       theme-change:
-        specifier: ^2.5.0
-        version: 2.5.2
+        specifier: ^3.0.0
+        version: 3.0.4
       typeorm:
         specifier: ^0.3.28
         version: 0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3))
@@ -8248,8 +8248,8 @@ packages:
   text-hex@1.0.0:
     resolution: {integrity: sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg==}
 
-  theme-change@2.5.2:
-    resolution: {integrity: sha512-UOLweDXAKIKDio6XVElNSlhDCRM8XtOk3rih/NImOldhiOkjZqrAmmEBjiWBVipfXt0WOETVNY7ym4W+UwjcxQ==}
+  theme-change@3.0.4:
+    resolution: {integrity: sha512-tPknw142u0yX7M63rXOU1gc2N3cw61iLUtuvh5OKxXTA4/B5SOXxOeS+JT8Ig14SCjs5T2rY41aLFDeTRclV5w==}
 
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
@@ -18012,7 +18012,7 @@ snapshots:
 
   text-hex@1.0.0: {}
 
-  theme-change@2.5.2: {}
+  theme-change@3.0.4: {}
 
   thenify-all@1.6.0:
     dependencies:
