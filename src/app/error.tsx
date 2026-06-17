@@ -40,17 +40,17 @@ export default function Error({
   };
 
   return (
-    <main className="w-full h-full place-items-center my-auto">
-      <div className="flex flex-col items-center w-full">
-        <ExclamationCircleIcon className="size-14 text-warning" />
-        <h3 className="text-3xl font-bold mb-8 text-center">
+    <main className="my-auto h-full w-full place-items-center">
+      <div className="flex w-full flex-col items-center">
+        <ExclamationCircleIcon className="text-warning size-14" />
+        <h3 className="mb-8 text-center text-3xl font-bold">
           {statusCode
             ? statusCode + ' - ' + getErrorMessage(statusCode)
             : getErrorMessage(statusCode)}
         </h3>
         <Alert type="error">
-          <div className="flex flex-col w-full">
-            <h2 className="text-xl -mt-1 mb-2 ml-2">{error.name}</h2>
+          <div className="flex w-full flex-col">
+            <h2 className="-mt-1 mb-2 ml-2 text-xl">{error.name}</h2>
             <code className="whitespace-normal">{error.message}</code>
           </div>
         </Alert>

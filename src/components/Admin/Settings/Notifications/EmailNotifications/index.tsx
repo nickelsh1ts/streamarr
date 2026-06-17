@@ -4,6 +4,7 @@ import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 import { BeakerIcon } from '@heroicons/react/24/outline';
 import {
   ArrowDownTrayIcon,
@@ -13,11 +14,10 @@ import {
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import validator from 'validator';
 import * as Yup from 'yup';
-import { useIntl, FormattedMessage } from 'react-intl';
-import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 
 const EmailNotifications = () => {
   const intl = useIntl();
@@ -243,15 +243,15 @@ const EmailNotifications = () => {
         };
         return (
           <Form className="mt-5">
-            <div className="space-y-4 max-w-5xl">
-              <div className="sm:grid sm:grid-cols-3 sm:items-center space-y-4">
+            <div className="max-w-5xl space-y-4">
+              <div className="space-y-4 sm:grid sm:grid-cols-3 sm:items-center">
                 <label htmlFor="enabled">
                   <FormattedMessage
                     id="notifications.enableAgent"
                     defaultMessage="Enable Agent"
                   />
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
                       id="enabled"
@@ -267,10 +267,10 @@ const EmailNotifications = () => {
                     defaultMessage="Sender Name"
                   />
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                       id="senderName"
                       name="senderName"
                       type="text"
@@ -282,9 +282,9 @@ const EmailNotifications = () => {
                     id="emailNotifications.senderAddress"
                     defaultMessage="Sender Address"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
                       id="emailFrom"
@@ -295,7 +295,7 @@ const EmailNotifications = () => {
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                   {errors.emailFrom &&
@@ -309,9 +309,9 @@ const EmailNotifications = () => {
                     id="emailNotifications.smtpHost"
                     defaultMessage="SMTP Host"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
                       id="smtpHost"
@@ -322,7 +322,7 @@ const EmailNotifications = () => {
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                   {errors.smtpHost &&
@@ -336,9 +336,9 @@ const EmailNotifications = () => {
                     id="emailNotifications.smtpPort"
                     defaultMessage="SMTP Port"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <Field
                     id="smtpPort"
                     name="smtpPort"
@@ -348,7 +348,7 @@ const EmailNotifications = () => {
                     data-1pignore="true"
                     data-lpignore="true"
                     data-bwignore="true"
-                    className="input input-sm input-primary rounded-md w-1/6"
+                    className="input input-sm input-primary w-1/6 rounded-md"
                   />
                   {errors.smtpPort &&
                     touched.smtpPort &&
@@ -361,21 +361,21 @@ const EmailNotifications = () => {
                     id="emailNotifications.encryptionMethod"
                     defaultMessage="Encryption Method"
                   />
-                  <span className="ml-1 text-error">*</span>
-                  <span className="block text-sm text-neutral">
+                  <span className="text-error ml-1">*</span>
+                  <span className="text-neutral block text-sm">
                     <FormattedMessage
                       id="emailNotifications.encryptionMethodDescription"
                       defaultMessage="In most cases, Implicit TLS uses port 465 and STARTTLS uses port 587"
                     />
                   </span>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
                       as="select"
                       id="encryption"
                       name="encryption"
-                      className="select select-sm select-primary rounded-md w-full"
+                      className="select select-sm select-primary w-full rounded-md"
                     >
                       <option value="none">
                         {intl.formatMessage({
@@ -410,7 +410,7 @@ const EmailNotifications = () => {
                     defaultMessage="Allow Self-Signed Certificates"
                   />
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <Field
                     type="checkbox"
                     id="allowSelfSigned"
@@ -424,13 +424,13 @@ const EmailNotifications = () => {
                     defaultMessage="SMTP Username"
                   />
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <Field
                       type="text"
                       id="authUser"
                       name="authUser"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                 </div>
@@ -440,14 +440,14 @@ const EmailNotifications = () => {
                     defaultMessage="SMTP Password"
                   />
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <SensitiveInput
                       as="field"
                       id="authPass"
                       name="authPass"
                       buttonSize="sm"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                 </div>
@@ -459,7 +459,7 @@ const EmailNotifications = () => {
                     />
                   </span>
                   <SettingsBadge badgeType="advanced" />
-                  <span className="block text-sm text-neutral">
+                  <span className="text-neutral block text-sm">
                     <FormattedMessage
                       id="emailNotifications.pgpPasswordDescription"
                       defaultMessage="Sign encrypted email messages using {link}"
@@ -477,7 +477,7 @@ const EmailNotifications = () => {
                     />
                   </span>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <SensitiveInput
                       as="field"
@@ -485,7 +485,7 @@ const EmailNotifications = () => {
                       name="pgpPrivateKey"
                       type="textarea"
                       buttonSize="sm"
-                      className="textarea textarea-sm textarea-primary rounded-md w-full"
+                      className="textarea textarea-sm textarea-primary w-full rounded-md"
                     />
                   </div>
                   {errors.pgpPrivateKey &&
@@ -502,7 +502,7 @@ const EmailNotifications = () => {
                     />
                   </span>
                   <SettingsBadge badgeType="advanced" />
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="emailNotifications.pgpPasswordDescription"
                       defaultMessage="Sign encrypted email messages using {link}"
@@ -520,14 +520,14 @@ const EmailNotifications = () => {
                     />
                   </p>
                 </label>
-                <div className="sm:col-span-2 mt-2 sm:mt-0">
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
                   <div className="flex">
                     <SensitiveInput
                       as="field"
                       id="pgpPassword"
                       name="pgpPassword"
                       buttonSize="sm"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                   {errors.pgpPassword &&
@@ -538,8 +538,8 @@ const EmailNotifications = () => {
                 </div>
               </div>
             </div>
-            <div className="divider divider-primary mb-0 col-span-full" />
-            <div className="flex justify-end col-span-full mt-4">
+            <div className="divider divider-primary col-span-full mb-0" />
+            <div className="col-span-full mt-4 flex justify-end">
               <span className="ml-3 inline-flex rounded-md shadow-sm">
                 <Button
                   buttonSize="sm"
@@ -551,7 +551,7 @@ const EmailNotifications = () => {
                   }}
                   className="disabled:bg-warning/30"
                 >
-                  <BeakerIcon className="size-5 mr-2" />
+                  <BeakerIcon className="mr-2 size-5" />
                   <span>
                     {isTesting ? (
                       <FormattedMessage
@@ -574,7 +574,7 @@ const EmailNotifications = () => {
                   type="submit"
                   disabled={isSubmitting || !isValid || isTesting}
                 >
-                  <ArrowDownTrayIcon className="size-5 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-5" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

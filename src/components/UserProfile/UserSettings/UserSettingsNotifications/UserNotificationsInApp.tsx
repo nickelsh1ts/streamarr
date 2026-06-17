@@ -15,8 +15,7 @@ import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/u
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
-import { FormattedMessage } from 'react-intl';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 const UserInAppSettings = () => {
@@ -96,8 +95,8 @@ const UserInAppSettings = () => {
                   : undefined
               }
             />
-            <div className="divider divider-primary mb-0 col-span-full" />
-            <div className="flex justify-end col-span-3 mt-4">
+            <div className="divider divider-primary col-span-full mb-0" />
+            <div className="col-span-3 mt-4 flex justify-end">
               <span className="ml-3 inline-flex rounded-md shadow-sm">
                 <Button
                   buttonType="primary"
@@ -105,7 +104,7 @@ const UserInAppSettings = () => {
                   buttonSize="sm"
                   disabled={isSubmitting || !isValid}
                 >
-                  <ArrowDownTrayIcon className="size-4 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-4" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

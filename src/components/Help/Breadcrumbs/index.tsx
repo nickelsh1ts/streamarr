@@ -1,11 +1,11 @@
 'use client';
-import type { ReactNode } from 'react';
-import React from 'react';
-import { ChevronRightIcon, PrinterIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
-import { FormattedMessage } from 'react-intl';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import { useUser } from '@app/hooks/useUser';
+import { ChevronRightIcon, PrinterIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+import React from 'react';
+import { FormattedMessage } from 'react-intl';
 
 type TBreadCrumbProps = {
   homeElement: ReactNode;
@@ -21,7 +21,7 @@ type TBreadCrumbProps = {
 
 const Breadcrumbs = ({
   homeElement = 'Help Centre',
-  separator = <ChevronRightIcon className="w-5 h-5 mx-3" />,
+  separator = <ChevronRightIcon className="mx-3 h-5 w-5" />,
   containerClasses = 'flex flex-wrap mx-4 md:mx-16 place-items-center print:hidden relative',
   listClasses = 'inline-flex items-center gap-2 link-primary',
   activeClasses = 'text-neutral hover:text-neutral pointer-events-none',
@@ -70,9 +70,9 @@ const Breadcrumbs = ({
               window.print();
               return false;
             }}
-            className="btn rounded-none bg-zinc-200 border-zinc-600 border-2 text-zinc-600 hover:bg-zinc-500 hover:text-white hover:border-zinc-500 btn-sm min-h-10 uppercase"
+            className="btn btn-sm min-h-10 rounded-none border-2 border-zinc-600 bg-zinc-200 text-zinc-600 uppercase hover:border-zinc-500 hover:bg-zinc-500 hover:text-white"
           >
-            <PrinterIcon className="w-5 h-5" />{' '}
+            <PrinterIcon className="h-5 w-5" />{' '}
             <FormattedMessage id="common.print" defaultMessage="Print" />
           </button>
         )}

@@ -1,13 +1,13 @@
+import type { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import type { Permission } from '@server/lib/permissions';
-import { Router } from 'express';
-import path from 'path';
-import fs from 'fs';
-import { writeFile, mkdir, unlink } from 'fs/promises';
 import crypto from 'crypto';
-import sharp from 'sharp';
+import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
+import fs from 'fs';
+import { mkdir, unlink, writeFile } from 'fs/promises';
+import path from 'path';
+import sharp from 'sharp';
 
 export interface ImageFile {
   buffer: Buffer;

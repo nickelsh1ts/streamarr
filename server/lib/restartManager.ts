@@ -1,13 +1,13 @@
-import type { Server } from 'http';
-import type { Server as SocketIOServer } from 'socket.io';
+import dataSource from '@server/datasource';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
-import { getSettings } from './settings';
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
-import dataSource from '@server/datasource';
-import { existsSync, utimesSync } from 'fs';
 import { spawn } from 'child_process';
+import { existsSync, utimesSync } from 'fs';
+import type { Server } from 'http';
 import path from 'path';
+import type { Server as SocketIOServer } from 'socket.io';
+import { getSettings } from './settings';
 
 interface ProxyAffectingSettings {
   plex: { ip: string };

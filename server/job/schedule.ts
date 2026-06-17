@@ -1,14 +1,14 @@
+import cleanUpNotifications from '@server/lib/cleanUpNotifications';
+import expiredInvites from '@server/lib/expiredInvites';
 import ImageProxy from '@server/lib/imageproxy';
+import { plexAccess } from '@server/lib/plexAccessLost';
 import refreshToken from '@server/lib/refreshToken';
 import { plexFullScanner } from '@server/lib/scanners/plex';
 import type { JobId } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import trialExpiry from '@server/lib/trialExpiry';
 import logger from '@server/logger';
 import schedule from 'node-schedule';
-import expiredInvites from '@server/lib/expiredInvites';
-import cleanUpNotifications from '@server/lib/cleanUpNotifications';
-import trialExpiry from '@server/lib/trialExpiry';
-import { plexAccess } from '@server/lib/plexAccessLost';
 
 interface ScheduledJob {
   id: JobId;

@@ -1,16 +1,16 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Accordion from '@app/components/Common/Accordion';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
 import LocalSignupForm from '@app/components/SignUp/Forms/LocalSignupForm';
 import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
+import { XCircleIcon } from '@heroicons/react/24/solid';
 import type { User } from '@server/entity/User';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { XCircleIcon } from '@heroicons/react/24/solid';
-import PlexLogo from '@app/assets/services/plex.svg';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@app/hooks/useUser';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const SignUpAuthForm = ({
@@ -107,9 +107,9 @@ const SignUpAuthForm = ({
   return (
     <Accordion single atLeastOne>
       {({ openIndexes, handleClick, AccordionContent }) => (
-        <div className="my-4 backdrop-blur-md text-primary-content">
+        <div className="text-primary-content my-4 backdrop-blur-md">
           <button
-            className={`collapse-title text-start mb-px border border-primary bg-primary/40 rounded-t-lg w-full ${
+            className={`collapse-title border-primary bg-primary/40 mb-px w-full rounded-t-lg border text-start ${
               openIndexes.includes(0) &&
               'text-primary-content cursor-not-allowed'
             }`}
@@ -125,7 +125,7 @@ const SignUpAuthForm = ({
           </button>
           <AccordionContent isOpen={openIndexes.includes(0)}>
             <div
-              className={`p-3 place-content-center border border-secondary bg-secondary/50 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
+              className={`border-secondary bg-secondary/50 place-content-center border p-3 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
             >
               <PlexLoginButton
                 onComplete={(pinId) => {
@@ -165,7 +165,7 @@ const SignUpAuthForm = ({
           {currentSettings.localLogin && (
             <>
               <button
-                className={`collapse-title text-start border border-primary bg-primary/40 w-full ${
+                className={`collapse-title border-primary bg-primary/40 w-full border text-start ${
                   openIndexes.includes(1)
                     ? 'text-primary-content cursor-not-allowed'
                     : 'rounded-b-lg'

@@ -8,9 +8,9 @@ export default function LegalLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-100">
+    <div className="flex min-h-screen flex-col bg-zinc-100">
       <Header />
-      <div className="flex-grow">{children}</div>
+      <div className="grow">{children}</div>
       <Footer />
     </div>
   );

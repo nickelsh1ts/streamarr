@@ -1,7 +1,7 @@
 'use client';
 import { useIsTouch } from '@app/hooks/useIsTouch';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 let activeCard: { id: string | number; close: () => void } | null = null;
 

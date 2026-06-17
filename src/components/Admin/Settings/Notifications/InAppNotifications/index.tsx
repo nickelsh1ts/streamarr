@@ -100,14 +100,14 @@ const InAppNotifications = () => {
           }
         };
         return (
-          <Form className="mt-5 ">
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
+          <Form className="mt-5">
+            <div className="max-w-5xl max-sm:space-y-4 max-sm:space-y-reverse sm:grid sm:grid-cols-3 sm:items-center sm:gap-4">
               <label htmlFor="preset">
                 <FormattedMessage
                   id="notifications.enableAgent"
                   defaultMessage="Enable Agent"
                 />
-                <span className="ml-1 text-error">*</span>
+                <span className="text-error ml-1">*</span>
               </label>
               <div className="sm:col-span-2">
                 <div className="flex">
@@ -120,8 +120,8 @@ const InAppNotifications = () => {
                 </div>
               </div>
             </div>
-            <div className="divider divider-primary mb-0 col-span-full" />
-            <div className="flex justify-end col-span-full mt-4">
+            <div className="divider divider-primary col-span-full mb-0" />
+            <div className="col-span-full mt-4 flex justify-end">
               <span className="ml-3 inline-flex rounded-md shadow-sm">
                 <Button
                   buttonSize="sm"
@@ -133,7 +133,7 @@ const InAppNotifications = () => {
                   }}
                   className="disabled:bg-warning/30"
                 >
-                  <BeakerIcon className="size-5 mr-2" />
+                  <BeakerIcon className="mr-2 size-5" />
                   <span>
                     <FormattedMessage id="common.test" defaultMessage="Test" />
                   </span>
@@ -146,7 +146,7 @@ const InAppNotifications = () => {
                   type="submit"
                   disabled={isSubmitting || isTesting}
                 >
-                  <ArrowDownTrayIcon className="size-5 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-5" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

@@ -39,9 +39,9 @@ const PopularTopics = () => {
   ];
 
   return (
-    <div className="bg-zinc-100 text-black p-4">
-      <div className="container max-w-screen-xl mx-auto border-b-2 border-gray-200">
-        <h4 className="text-2xl font-extrabold mb-1">
+    <div className="bg-zinc-100 p-4 text-black">
+      <div className="container mx-auto max-w-screen-xl border-b-2 border-gray-200">
+        <h4 className="mb-1 text-2xl font-extrabold">
           <FormattedMessage
             id="help.popularTopics"
             defaultMessage="Popular topics"
@@ -54,7 +54,7 @@ const PopularTopics = () => {
               <Link
                 key={idx}
                 href={topic.href}
-                className="btn rounded-none bg-zinc-50 border-0 text-black hover:bg-zinc-50 hover:brightness-95 max-md:btn-block lg:w-1/4 shadow-xl justify-start md:justify-center min-h-16"
+                className="btn max-md:btn-block min-h-16 justify-start rounded-none border-0 bg-zinc-50 text-black shadow-xl hover:bg-zinc-50 hover:brightness-95 md:justify-center lg:w-1/4"
               >
                 <DocumentTextIcon className="w-5" />
                 {topic.label}
@@ -70,7 +70,7 @@ const PopularTopics = () => {
                 statusLink: (
                   <Link
                     href={currentSettings.statusUrl}
-                    className="link-primary font-extrabold mb-4"
+                    className="link-primary mb-4 font-extrabold"
                   >
                     <FormattedMessage
                       id="help.statusPage"

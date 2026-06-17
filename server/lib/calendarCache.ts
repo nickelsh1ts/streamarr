@@ -1,8 +1,8 @@
-import ical from 'ical';
-import axios from 'axios';
+import type { RadarrSettings, SonarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
-import type { SonarrSettings, RadarrSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import axios from 'axios';
+import ical from 'ical';
 
 export interface CalendarEvent {
   type: 'VEVENT';

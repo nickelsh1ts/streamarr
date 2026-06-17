@@ -4,10 +4,10 @@ import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import {
-  StarIcon,
-  ClockIcon,
   BellIcon,
+  ClockIcon,
   DevicePhoneMobileIcon,
+  StarIcon,
 } from '@heroicons/react/24/outline';
 import type { SeerrQuotaResponse } from '@server/interfaces/api/seerrInterfaces';
 import Image from 'next/image';
@@ -82,7 +82,7 @@ const HelpContent = () => {
           defaultMessage="Requesting new media"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li className="">
           <FormattedMessage
             id="help.requesting.step1"
@@ -91,7 +91,7 @@ const HelpContent = () => {
               appTitle: currentSettings.applicationTitle,
               seerrLogo: (
                 <Image
-                  className="h-auto w-20 inline-flex self-center mx-1"
+                  className="mx-1 inline-flex h-auto w-20 self-center"
                   src="/external/seerr-logo_full_dark.svg"
                   alt="Seerr"
                   width={112}
@@ -126,13 +126,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4" id="importantinfo">
+      <p className="my-4 text-sm italic" id="importantinfo">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.requesting.info1"
@@ -226,7 +226,7 @@ const anchors = [
 
 const Heading = () => {
   return (
-    <span className="flex flex-wrap place-items-center border-b-2 gap-x-2 border-zinc-500 pb-4">
+    <span className="flex flex-wrap place-items-center gap-x-2 border-b-2 border-zinc-500 pb-4">
       <FormattedMessage
         id="help.requesting.headingText"
         defaultMessage="Request new media with"
@@ -244,13 +244,13 @@ const Heading = () => {
 
 const Benefits = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-      <div className="flex align-items-start">
-        <span className="rounded me-3 relative p-2 text-white print:text-black bg-primary h-fit">
-          <StarIcon className="w-8 h-8" />
+    <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="align-items-start flex">
+        <span className="bg-primary relative me-3 h-fit rounded p-2 text-white print:text-black">
+          <StarIcon className="h-8 w-8" />
         </span>
         <div>
-          <p className="font-extrabold text-lg">
+          <p className="text-lg font-extrabold">
             <FormattedMessage
               id="help.requesting.discoverTitle"
               defaultMessage="The best way to discover media"
@@ -264,12 +264,12 @@ const Benefits = () => {
           </p>
         </div>
       </div>
-      <div className="flex align-items-start">
-        <span className="rounded me-3 relative p-2 text-white print:text-black  bg-primary h-fit">
-          <ClockIcon className="w-8 h-8" />
+      <div className="align-items-start flex">
+        <span className="bg-primary relative me-3 h-fit rounded p-2 text-white print:text-black">
+          <ClockIcon className="h-8 w-8" />
         </span>
         <div>
-          <p className="font-extrabold text-lg">
+          <p className="text-lg font-extrabold">
             <FormattedMessage
               id="help.requesting.easyTitle"
               defaultMessage="Requesting has never been so easy"
@@ -283,12 +283,12 @@ const Benefits = () => {
           </p>
         </div>
       </div>
-      <div className="flex align-items-start">
-        <span className="rounded me-3 relative p-2 text-white print:text-black  bg-primary h-fit">
-          <BellIcon className="w-8 h-8" />
+      <div className="align-items-start flex">
+        <span className="bg-primary relative me-3 h-fit rounded p-2 text-white print:text-black">
+          <BellIcon className="h-8 w-8" />
         </span>
         <div>
-          <p className="font-extrabold text-lg">
+          <p className="text-lg font-extrabold">
             <FormattedMessage
               id="help.requesting.notificationsTitle"
               defaultMessage="Notifications"
@@ -302,12 +302,12 @@ const Benefits = () => {
           </p>
         </div>
       </div>
-      <div className="flex align-items-start">
-        <span className="rounded me-3 relative p-2 text-white print:text-black  bg-primary h-fit">
-          <DevicePhoneMobileIcon className="w-8 h-8" />
+      <div className="align-items-start flex">
+        <span className="bg-primary relative me-3 h-fit rounded p-2 text-white print:text-black">
+          <DevicePhoneMobileIcon className="h-8 w-8" />
         </span>
         <div>
-          <p className="font-extrabold text-lg">
+          <p className="text-lg font-extrabold">
             <FormattedMessage
               id="help.requesting.mobileTitle"
               defaultMessage="Mobile-Friendly Experience"

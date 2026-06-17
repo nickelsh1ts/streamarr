@@ -1,6 +1,6 @@
-import { createRequire } from 'node:module';
-import moment from 'moment';
 import { availableLocales } from '@server/types/languages';
+import moment from 'moment';
+import { createRequire } from 'node:module';
 
 const requireModule = createRequire(__filename);
 

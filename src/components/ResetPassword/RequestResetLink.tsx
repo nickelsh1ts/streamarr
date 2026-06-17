@@ -1,15 +1,15 @@
 'use client';
-import Button from '@app/components/Common/Button';
 import PlexLogo from '@app/assets/services/plex.svg';
+import Button from '@app/components/Common/Button';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import useSettings from '@app/hooks/useSettings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useState } from 'react';
-import * as Yup from 'yup';
-import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
+import validator from 'validator';
+import * as Yup from 'yup';
 
 const ResetPassword = () => {
   const intl = useIntl();
@@ -39,9 +39,9 @@ const ResetPassword = () => {
       <div className="absolute top-4 right-4">
         <LanguagePicker />
       </div>
-      <div className="container max-w-lg mx-auto py-14 px-4">
-        <div className="text-start px-2 mb-4 relative">
-          <h2 className="text-2xl font-extrabold mb-2">
+      <div className="container mx-auto max-w-lg px-4 py-14">
+        <div className="relative mb-4 px-2 text-start">
+          <h2 className="mb-2 text-2xl font-extrabold">
             <FormattedMessage
               id="resetPassword.title"
               defaultMessage="Identify your account"
@@ -63,11 +63,11 @@ const ResetPassword = () => {
             />
           </p>
         </div>
-        <div className="bg-secondary/50 backdrop-blur-md shadow rounded-lg border border-secondary">
+        <div className="bg-secondary/50 border-secondary rounded-lg border shadow backdrop-blur-md">
           <div className="p-4">
             {hasSubmitted ? (
               <>
-                <h2 className="text-2xl font-extrabold mb-2">
+                <h2 className="mb-2 text-2xl font-extrabold">
                   <FormattedMessage
                     id="resetPassword.email.sent"
                     defaultMessage="Check your email"
@@ -137,12 +137,12 @@ const ResetPassword = () => {
                     <Form>
                       <div>
                         <div className="mt-4 mb-2 sm:col-span-2">
-                          <div className="input input-primary flex items-center mb-2">
+                          <div className="input input-primary mb-2 flex items-center">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
                               fill="currentColor"
-                              className="h-4 w-4 opacity-70 me-2"
+                              className="me-2 h-4 w-4 opacity-70"
                             >
                               <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
                               <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
@@ -167,7 +167,7 @@ const ResetPassword = () => {
                             )}
                         </div>
                       </div>
-                      <div className="mt-4 border-t border-primary pt-5 mb-4">
+                      <div className="border-primary mt-4 mb-4 border-t pt-5">
                         <Button
                           buttonType="primary"
                           className="btn-block"

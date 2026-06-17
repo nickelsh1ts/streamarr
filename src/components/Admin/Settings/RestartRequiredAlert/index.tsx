@@ -48,7 +48,7 @@ const RestartRequiredAlert = ({
         />
       }
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-sm">
           <FormattedMessage
             id="settings.restartRequired.message"
@@ -58,7 +58,7 @@ const RestartRequiredAlert = ({
         </span>
         <div className="flex shrink-0">
           {isRestarting || isReconnecting ? (
-            <div className="flex items-center gap-2 text-warning-content">
+            <div className="text-warning-content flex items-center gap-2">
               <ArrowPathIcon className="size-5 animate-spin" />
               <span>
                 {isReconnecting ? (
@@ -84,7 +84,7 @@ const RestartRequiredAlert = ({
               buttonSize="sm"
               className="max-sm:btn-block"
             >
-              <ArrowPathIcon className="size-4 mr-1" />
+              <ArrowPathIcon className="mr-1 size-4" />
               <FormattedMessage
                 id="system.restartNow"
                 defaultMessage="Restart Now"

@@ -1,6 +1,6 @@
 import dataSource, { getRepository } from '@server/datasource';
-import type { NewsletterTrigger } from '@server/entity/NewsletterHistory';
 import type Newsletter from '@server/entity/Newsletter';
+import type { NewsletterTrigger } from '@server/entity/NewsletterHistory';
 import NewsletterHistory from '@server/entity/NewsletterHistory';
 import { User } from '@server/entity/User';
 import { getIntl } from '@server/i18n';

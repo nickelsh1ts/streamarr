@@ -1,18 +1,18 @@
 'use client';
-import DynamicFrame from '@app/components/Common/DynamicFrame';
 import Button from '@app/components/Common/Button';
-import { withVersion } from '@app/utils/assetVersion';
-import type { ServiceSettings } from '@server/lib/settings';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import { useState } from 'react';
-import useSWR from 'swr';
+import DynamicFrame from '@app/components/Common/DynamicFrame';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useUser } from '@app/hooks/useUser';
+import { withVersion } from '@app/utils/assetVersion';
 import {
   ArrowTopRightOnSquareIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type { ServiceSettings } from '@server/lib/settings';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import useSWR from 'swr';
 
 const AdminOverseerr = () => {
   const { user } = useUser();
@@ -36,10 +36,10 @@ const AdminOverseerr = () => {
   if (isLocalhost && userSettings?.requestHostname) {
     const overseerrUrl = `http://${userSettings.requestHostname}/settings`;
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100dvh-12rem)] bg-base-300 px-4 mt-2 -mx-4 rounded-lg">
-        <div className="text-center max-w-md">
-          <LockClosedIcon className="w-16 h-16 mx-auto mb-4 text-primary" />
-          <h2 className="text-xl font-semibold text-base-content mb-2">
+      <div className="bg-base-300 -mx-4 mt-2 flex h-[calc(100dvh-12rem)] flex-col items-center justify-center rounded-lg px-4">
+        <div className="max-w-md text-center">
+          <LockClosedIcon className="text-primary mx-auto mb-4 h-16 w-16" />
+          <h2 className="text-base-content mb-2 text-xl font-semibold">
             <FormattedMessage
               id="settings.crossOriginAccess"
               defaultMessage="Cross-Origin Access"
@@ -62,7 +62,7 @@ const AdminOverseerr = () => {
               id="settings.openOverseerrSettings"
               defaultMessage="Open Seerr Settings"
             />
-            <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
+            <ArrowTopRightOnSquareIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -76,7 +76,7 @@ const AdminOverseerr = () => {
   const isConfigured = !!(data?.enabled && data?.hostname && data?.urlBase);
 
   return (
-    <div className="relative mt-2 -mx-4">
+    <div className="relative -mx-4 mt-2">
       <DynamicFrame
         title="seerr"
         domainURL={hostname}

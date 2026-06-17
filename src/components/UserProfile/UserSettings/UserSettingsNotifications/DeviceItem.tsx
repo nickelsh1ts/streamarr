@@ -1,16 +1,16 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
+import useLocale from '@app/hooks/useLocale';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
   ComputerDesktopIcon,
   DevicePhoneMobileIcon,
   LockClosedIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { UAParser } from 'ua-parser-js';
 import { FormattedMessage } from 'react-intl';
-import useLocale from '@app/hooks/useLocale';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { UAParser } from 'ua-parser-js';
 
 interface DeviceItemProps {
   deletePushSubscriptionFromBackend: (endpoint: string) => void;
@@ -33,9 +33,9 @@ const DeviceItem = ({
   const parsedUserAgent = UAParser(device.userAgent);
 
   return (
-    <div className="relative flex w-full flex-col justify-between overflow-hidden rounded-xl bg-[#161616] py-4 shadow-md ring-1 ring-primary xl:h-28 xl:flex-row">
+    <div className="ring-primary relative flex w-full flex-col justify-between overflow-hidden rounded-xl bg-[#161616] py-4 shadow-md ring-1 xl:h-28 xl:flex-row">
       <div className="relative flex w-full flex-col justify-between overflow-hidden sm:flex-row">
-        <div className="relative z-10 flex w-full items-center overflow-hidden pl-4 pr-4 sm:pr-0 xl:w-7/12 2xl:w-2/3">
+        <div className="relative z-10 flex w-full items-center overflow-hidden pr-4 pl-4 sm:pr-0 xl:w-7/12 2xl:w-2/3">
           <div className="relative h-auto w-12 shrink-0 scale-100 transform-gpu overflow-hidden rounded-md transition duration-300 hover:scale-105">
             {parsedUserAgent.device.type === 'mobile' ? (
               <DevicePhoneMobileIcon />
@@ -61,9 +61,9 @@ const DeviceItem = ({
             </div>
           </div>
         </div>
-        <div className="z-10 mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:ml-2 sm:mt-0 xl:flex-1 xl:pr-0">
-          <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">
+        <div className="z-10 mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:mt-0 sm:ml-2 xl:flex-1 xl:pr-0">
+          <div className="align-items-center my-1 flex overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="mr-2">
               <FormattedMessage
                 id="userSettings.operatingSystem"
                 defaultMessage="Operating System"
@@ -73,8 +73,8 @@ const DeviceItem = ({
               {device.userAgent ? parsedUserAgent.os.name : 'N/A'}
             </span>
           </div>
-          <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">
+          <div className="align-items-center my-1 flex overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="mr-2">
               <FormattedMessage
                 id="userSettings.browser"
                 defaultMessage="Browser"
@@ -84,8 +84,8 @@ const DeviceItem = ({
               {device.userAgent ? parsedUserAgent.browser.name : 'N/A'}
             </span>
           </div>
-          <div className="my-1 flex align-items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2 ">
+          <div className="align-items-center my-1 flex overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="mr-2">
               <FormattedMessage
                 id="userSettings.engine"
                 defaultMessage="Engine"
@@ -97,7 +97,7 @@ const DeviceItem = ({
           </div>
         </div>
       </div>
-      <div className="z-10 mt-4 flex w-full flex-col justify-center space-y-2 pl-4 pr-4 xl:mt-0 xl:w-96 xl:items-end xl:pl-0">
+      <div className="z-10 mt-4 flex w-full flex-col justify-center space-y-2 pr-4 pl-4 xl:mt-0 xl:w-96 xl:items-end xl:pl-0">
         {subEndpoint === device.endpoint ? (
           <Button
             buttonType="primary"
@@ -105,7 +105,7 @@ const DeviceItem = ({
             className="w-full"
             disabled
           >
-            <LockClosedIcon className="size-5 mr-2" />{' '}
+            <LockClosedIcon className="mr-2 size-5" />{' '}
             <span>
               <FormattedMessage
                 id="userSettings.notifications.subscriptionActive"
@@ -125,7 +125,7 @@ const DeviceItem = ({
             }
             className="w-full"
           >
-            <TrashIcon className="size-5 mr-2" />
+            <TrashIcon className="mr-2 size-5" />
             <span>
               <FormattedMessage
                 id="userSettings.notifications.deleteSubscription"

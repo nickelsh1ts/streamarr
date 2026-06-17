@@ -1,14 +1,14 @@
 import { getRepository } from '@server/datasource';
+import { TutorialStep } from '@server/entity/TutorialStep';
 import { UserOnboarding } from '@server/entity/UserOnboarding';
 import {
   WelcomeContent,
   WelcomeContentType,
 } from '@server/entity/WelcomeContent';
-import { TutorialStep } from '@server/entity/TutorialStep';
 import type {
-  UserOnboardingStatusResponse,
-  UserOnboardingDataResponse,
   TutorialProgressRequest,
+  UserOnboardingDataResponse,
+  UserOnboardingStatusResponse,
 } from '@server/interfaces/api/onboardingInterfaces';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';

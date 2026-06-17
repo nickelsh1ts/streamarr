@@ -1,7 +1,6 @@
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import type {
   DownloadClientSettings,
@@ -9,8 +8,9 @@ import type {
 } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
-import * as Yup from 'yup';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import * as Yup from 'yup';
 
 interface DownloadClientModalProps {
   downloadClient: DownloadClientSettings | null;
@@ -332,7 +332,7 @@ const DownloadClientModal = ({
             }
           >
             <div className="mb-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="client">
                   <FormattedMessage
                     id="servicesSettings.downloads.clientType"
@@ -365,7 +365,7 @@ const DownloadClientModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="name">
                   <FormattedMessage
                     id="common.servername"
@@ -380,7 +380,7 @@ const DownloadClientModal = ({
                       name="name"
                       type="text"
                       placeholder={CLIENT_NAMES[values.client]}
-                      className="input input-primary input-sm rounded-md w-full"
+                      className="input input-primary input-sm w-full rounded-md"
                     />
                   </div>
                   {errors.name &&
@@ -390,7 +390,7 @@ const DownloadClientModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="hostname">
                   <FormattedMessage
                     id="common.hostname"
@@ -400,7 +400,7 @@ const DownloadClientModal = ({
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       {values.useSsl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -408,7 +408,7 @@ const DownloadClientModal = ({
                       name="hostname"
                       type="text"
                       inputMode="url"
-                      className="input input-primary input-sm rounded-md rounded-l-none w-full"
+                      className="input input-primary input-sm w-full rounded-md rounded-l-none"
                     />
                   </div>
                   {errors.hostname &&
@@ -418,7 +418,7 @@ const DownloadClientModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="port">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="text-error ml-2">*</span>
@@ -442,7 +442,7 @@ const DownloadClientModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="useSsl">
                   <FormattedMessage
                     id="common.useSsl"
@@ -459,7 +459,7 @@ const DownloadClientModal = ({
                 </div>
               </div>
               {values.client !== 'deluge' && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="username">
                     <FormattedMessage
                       id="common.username"
@@ -472,7 +472,7 @@ const DownloadClientModal = ({
                       id="username"
                       name="username"
                       type="text"
-                      className="input input-primary input-sm rounded-md w-full"
+                      className="input input-primary input-sm w-full rounded-md"
                       autoComplete="off"
                       data-1pignore="true"
                       data-lpignore="true"
@@ -481,7 +481,7 @@ const DownloadClientModal = ({
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="password">
                   <FormattedMessage
                     id="common.password"
@@ -496,7 +496,7 @@ const DownloadClientModal = ({
                       id="password"
                       name="password"
                       buttonSize="sm"
-                      className="input input-primary input-sm rounded-md w-full"
+                      className="input input-primary input-sm w-full rounded-md"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setIsValidated(false);
                         setFieldValue('password', e.target.value);
@@ -510,7 +510,7 @@ const DownloadClientModal = ({
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="externalUrl">
                   <FormattedMessage
                     id="common.externalUrl"
@@ -528,7 +528,7 @@ const DownloadClientModal = ({
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                   {errors.externalUrl && touched.externalUrl && (

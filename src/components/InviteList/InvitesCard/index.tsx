@@ -1,25 +1,25 @@
 import Badge from '@app/components/Common/Badge';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
-import Link from 'next/link';
-import { InviteStatus } from '@server/constants/invite';
-import type Invite from '@server/entity/Invite';
 import CachedImage from '@app/components/Common/CachedImage';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import Toast from '@app/components/Toast';
+import { Permission, useUser } from '@app/hooks/useUser';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import {
   CheckCircleIcon,
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
-import { Permission, useUser } from '@app/hooks/useUser';
+import { InviteStatus } from '@server/constants/invite';
+import type Invite from '@server/entity/Invite';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import { useParams } from 'next/navigation';
-import useSWR from 'swr';
 import type { Library } from '@server/lib/settings';
-import ConfirmButton from '@app/components/Common/ConfirmButton';
-import Toast from '@app/components/Toast';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-import useClipboard from 'react-use-clipboard';
-import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useClipboard from 'react-use-clipboard';
+import useSWR from 'swr';
 
 interface InviteCardProps {
   invite: Invite;
@@ -64,11 +64,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
 
   return (
     <li className="mb-2">
-      <div className="flex w-full flex-col justify-between xl:flex-row border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
-        <div className="flex flex-col justify-between items-center space-x-0 md:space-x-3 sm:flex-row w-full">
+      <div className="border-primary bg-base-100 flex w-full flex-col justify-between overflow-hidden rounded-xl border p-4 xl:flex-row">
+        <div className="flex w-full flex-col items-center justify-between space-x-0 sm:flex-row md:space-x-3">
           <div className="flex w-full items-start overflow-hidden">
             <div className="pt-2">
-              <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60 text-primary-content">
+              <div className="bg-primary/60 text-primary-content flex aspect-square h-full items-center justify-center rounded p-5">
                 {(Array.isArray(invite?.redeemedBy) &&
                   invite.redeemedBy.length > 0) ||
                 invite?.status === InviteStatus.REDEEMED ? (
@@ -95,10 +95,10 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
               </div>
             </div>
             <div className="flex flex-col justify-center overflow-hidden pl-2 lg:pl-4">
-              <div className="flex flex-col items-start justify-between w-full overflow-hidden truncate space-y-1">
+              <div className="flex w-full flex-col items-start justify-between space-y-1 truncate overflow-hidden">
                 <button
                   type="button"
-                  className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 align-top"
+                  className="m-0 cursor-pointer border-none bg-transparent p-0 align-top text-lg font-bold select-all"
                   title={intl.formatMessage({
                     id: 'invite.clickToCopy',
                     defaultMessage: 'Click to copy invite code',
@@ -120,7 +120,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       ? ` (${invite?.usageLimit})`
                       : ''}
                 </button>
-                <p className="text-xs truncate w-full text-warning">
+                <p className="text-warning w-full truncate text-xs">
                   {invite?.expiresAt != null &&
                   (invite?.status !== InviteStatus.REDEEMED ||
                     moment(invite?.expiresAt).isAfter(moment())) ? (
@@ -144,7 +144,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 {data?.globalEnableTrialPeriod &&
                   (invite?.trialPeriodOutcome ||
                     data?.globalTrialPeriodOutcome) && (
-                    <p className="whitespace-normal wrap-break-word ">
+                    <p className="wrap-break-word whitespace-normal">
                       <span className="text-xs whitespace-nowrap">
                         <FormattedMessage
                           id="invite.trialPeriodOutcome"
@@ -161,50 +161,50 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       </span>
                     </p>
                   )}
-                <div className="flex flex-wrap w-full items-center gap-x-2 gap-y-1">
-                  <p className="text-xs flex items-center">
+                <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-1">
+                  <p className="flex items-center text-xs">
                     <FormattedMessage
                       id="common.downloads"
                       defaultMessage="Downloads"
                     />{' '}
                     {invite?.downloads ? (
-                      <CheckCircleIcon className="inline-block size-5 text-success ml-1" />
+                      <CheckCircleIcon className="text-success ml-1 inline-block size-5" />
                     ) : (
-                      <XCircleIcon className="inline-block size-5 text-error ml-1" />
+                      <XCircleIcon className="text-error ml-1 inline-block size-5" />
                     )}
                   </p>
-                  <p className="text-xs flex items-center">
+                  <p className="flex items-center text-xs">
                     <FormattedMessage
                       id="library.liveTV"
                       defaultMessage="Live TV"
                     />{' '}
                     {invite?.liveTv ? (
-                      <CheckCircleIcon className="inline-block size-5 text-success ml-1" />
+                      <CheckCircleIcon className="text-success ml-1 inline-block size-5" />
                     ) : (
-                      <XCircleIcon className="inline-block size-5 text-error ml-1" />
+                      <XCircleIcon className="text-error ml-1 inline-block size-5" />
                     )}
                   </p>
-                  <p className="text-xs flex items-center">
+                  <p className="flex items-center text-xs">
                     <FormattedMessage
                       id="invite.plexHome"
                       defaultMessage="Plex Home"
                     />{' '}
                     {invite?.plexHome ? (
-                      <CheckCircleIcon className="inline-block size-5 text-success ml-1" />
+                      <CheckCircleIcon className="text-success ml-1 inline-block size-5" />
                     ) : (
-                      <XCircleIcon className="inline-block size-5 text-error ml-1" />
+                      <XCircleIcon className="text-error ml-1 inline-block size-5" />
                     )}
                   </p>
                 </div>
                 <div className="text-sm">
-                  <p className="whitespace-normal wrap-break-word">
+                  <p className="wrap-break-word whitespace-normal">
                     <span className="font-bold whitespace-nowrap">
                       <FormattedMessage
                         id="invite.sharedLibraries"
                         defaultMessage="Shared Libraries:"
                       />{' '}
                     </span>
-                    <span className="whitespace-normal wrap-break-word align-baseline text-neutral">
+                    <span className="text-neutral align-baseline wrap-break-word whitespace-normal">
                       {(() => {
                         if (!Libraries) return null;
                         const allIds = Libraries.map((lib) => lib.id).sort();
@@ -269,9 +269,9 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
               </div>
             </div>
           </div>
-          <div className="mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:ml-2 sm:mt-0 xl:pr-0">
-            <div className="py-1 flex items-center truncate leading-5">
-              <span className="font-extrabold mr-2">
+          <div className="mt-4 ml-4 flex w-full flex-col justify-center overflow-hidden pr-4 text-sm sm:mt-0 sm:ml-2 xl:pr-0">
+            <div className="flex items-center truncate py-1 leading-5">
+              <span className="mr-2 font-extrabold">
                 <FormattedMessage id="common.status" defaultMessage="Status" />
               </span>
               {invite?.status === InviteStatus.ACTIVE ? (
@@ -304,8 +304,8 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 </Badge>
               )}
             </div>
-            <div className="flex overflow-hidden items-center py-1 truncate whitespace-nowrap leading-5">
-              <span className="font-extrabold mr-2">
+            <div className="flex items-center truncate overflow-hidden py-1 leading-5 whitespace-nowrap">
+              <span className="mr-2 font-extrabold">
                 <FormattedMessage
                   id="invite.created"
                   defaultMessage="Created"
@@ -317,7 +317,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   {' '}
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                   <Link
-                    className="link-hover font-extrabold flex items-center truncate"
+                    className="link-hover flex items-center truncate font-extrabold"
                     href={`/admin/users/${invite?.createdBy?.id}`}
                   >
                     <CachedImage
@@ -327,7 +327,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           : undefined
                       }
                       alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                      className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                       width={20}
                       height={20}
                     />
@@ -341,7 +341,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   {' '}
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                   <Link
-                    className="link-hover font-extrabold flex items-center truncate"
+                    className="link-hover flex items-center truncate font-extrabold"
                     href={`/profile`}
                   >
                     <CachedImage
@@ -351,7 +351,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           : undefined
                       }
                       alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                      className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                       width={20}
                       height={20}
                     />
@@ -365,7 +365,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   <>
                     {' '}
                     <FormattedMessage id="common.by" defaultMessage="by" />{' '}
-                    <span className="font-extrabold flex items-center truncate">
+                    <span className="flex items-center truncate font-extrabold">
                       <CachedImage
                         src={
                           invite?.createdBy?.id
@@ -373,7 +373,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                             : undefined
                         }
                         alt=""
-                        className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                        className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                         width={20}
                         height={20}
                       />
@@ -385,8 +385,8 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 )
               )}
             </div>
-            <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
-              <span className="font-extrabold mr-2">
+            <div className="flex items-center truncate py-1 leading-5 whitespace-nowrap">
+              <span className="mr-2 font-extrabold">
                 <FormattedMessage
                   id="invite.modified"
                   defaultMessage="Modified"
@@ -398,7 +398,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   {' '}
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                   <Link
-                    className="link-hover font-extrabold flex items-center truncate"
+                    className="link-hover flex items-center truncate font-extrabold"
                     href={`/admin/users/${invite?.updatedBy?.id}`}
                   >
                     <CachedImage
@@ -408,7 +408,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           : undefined
                       }
                       alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                      className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                       width={20}
                       height={20}
                     />
@@ -421,7 +421,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 <>
                   <FormattedMessage id="common.by" defaultMessage="by" />{' '}
                   <Link
-                    className="link-hover font-extrabold flex items-center truncate"
+                    className="link-hover flex items-center truncate font-extrabold"
                     href={`/profile`}
                   >
                     <CachedImage
@@ -431,7 +431,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           : undefined
                       }
                       alt=""
-                      className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                      className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                       width={20}
                       height={20}
                     />
@@ -445,7 +445,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   <>
                     {' '}
                     <FormattedMessage id="common.by" defaultMessage="by" />{' '}
-                    <span className="font-extrabold flex items-center truncate">
+                    <span className="flex items-center truncate font-extrabold">
                       <CachedImage
                         src={
                           invite?.updatedBy?.id
@@ -453,7 +453,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                             : undefined
                         }
                         alt=""
-                        className="size-5 mr-1 ml-1.5 object-cover rounded-full"
+                        className="mr-1 ml-1.5 size-5 rounded-full object-cover"
                         width={20}
                         height={20}
                       />
@@ -465,11 +465,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                 )
               )}
             </div>
-            <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
+            <div className="flex items-center truncate py-1 leading-5 whitespace-nowrap">
               {Array.isArray(invite?.redeemedBy) &&
               invite.redeemedBy.length > 0 ? (
                 <div className="inline-flex items-center">
-                  <span className="font-extrabold mr-2">
+                  <span className="mr-2 font-extrabold">
                     <FormattedMessage
                       id="common.redeemed"
                       defaultMessage="Redeemed"
@@ -490,7 +490,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                               user?.id ? `/avatarproxy/${user.id}` : undefined
                             }
                             alt=""
-                            className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
+                            className="border-base-100 group-hover:border-primary size-6 rounded-full border-2"
                             width={24}
                             height={24}
                           />
@@ -502,7 +502,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                               user?.id ? `/avatarproxy/${user.id}` : undefined
                             }
                             alt=""
-                            className="size-6 rounded-full border-2 border-base-100"
+                            className="border-base-100 size-6 rounded-full border-2"
                             width={24}
                             height={24}
                           />
@@ -515,8 +515,8 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col items-center mt-4 xl:mt-0 xl:w-1/3 xl:max-w-xs">
-          <div className="w-full flex flex-col gap-2">
+        <div className="mt-4 flex w-full flex-col items-center xl:mt-0 xl:w-1/3 xl:max-w-xs">
+          <div className="flex w-full flex-col gap-2">
             {(moment(invite?.expiresAt).isAfter(moment()) ||
               invite?.expiresAt === null) &&
               invite?.status === InviteStatus.ACTIVE &&
@@ -585,7 +585,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                   })}
                   className="w-full"
                 >
-                  <TrashIcon className="size-5 mr-2" />
+                  <TrashIcon className="mr-2 size-5" />
                   <span>
                     <FormattedMessage
                       id="invite.deleteInvite"

@@ -1,11 +1,15 @@
 'use client';
-import Badge from '@app/components/Common/Badge';
-import Button from '@app/components/Common/Button';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Table from '@app/components/Common/Table';
 import NewsletterHistoryModal from '@app/components/Admin/Settings/Newsletters/NewsletterHistoryModal';
 import NewsletterModal from '@app/components/Admin/Settings/Newsletters/NewsletterModal';
+import Badge from '@app/components/Common/Badge';
+import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Table from '@app/components/Common/Table';
+import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   BarsArrowDownIcon,
   BeakerIcon,
@@ -18,18 +22,14 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import type { NewsletterResultsResponse } from '@server/interfaces/api/newsletterInterfaces';
 import type Newsletter from '@server/entity/Newsletter';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import type { NewsletterResultsResponse } from '@server/interfaces/api/newsletterInterfaces';
 import axios from 'axios';
 import cronstrue from 'cronstrue';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import ConfirmButton from '@app/components/Common/ConfirmButton';
-import Tooltip from '@app/components/Common/ToolTip';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 enum Filter {
   ALL = 'all',
@@ -235,10 +235,10 @@ const Newsletters = () => {
   };
 
   return (
-    <div className="w-full my-6">
-      <div className="flex flex-col justify-between md:flex-row md:items-start gap-4">
+    <div className="my-6 w-full">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
         <div className="">
-          <h1 className="text-2xl font-extrabold flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-extrabold">
             <FormattedMessage
               id="common.newsletterManagement"
               defaultMessage="Newsletter Management"
@@ -252,8 +252,8 @@ const Newsletters = () => {
           </p>
         </div>
         <div className="mt-2 flex grow flex-col sm:flex-row md:grow-0">
-          <div className="mb-2 flex grow sm:mb-0 sm:mr-2 md:grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+          <div className="mb-2 flex grow sm:mr-2 sm:mb-0 md:grow-0">
+            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
               <FunnelIcon className="h-6 w-6" />
             </span>
             <select
@@ -264,7 +264,7 @@ const Newsletters = () => {
                 setCurrentFilter(e.target.value as Filter);
                 updateQueryParams('page', '1');
               }}
-              className="select select-sm select-primary rounded-l-none w-full flex-1"
+              className="select select-sm select-primary w-full flex-1 rounded-l-none"
             >
               <option value="all">
                 {intl.formatMessage({
@@ -292,8 +292,8 @@ const Newsletters = () => {
               </option>
             </select>
           </div>
-          <div className="mb-2 flex grow sm:mb-0 sm:mr-2 md:grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+          <div className="mb-2 flex grow sm:mr-2 sm:mb-0 md:grow-0">
+            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
               <BarsArrowDownIcon className="h-6 w-6" />
             </span>
             <select
@@ -304,7 +304,7 @@ const Newsletters = () => {
                 setCurrentSort(e.target.value as Sort);
                 updateQueryParams('page', '1');
               }}
-              className="select select-sm select-primary rounded-l-none w-full flex-1"
+              className="select select-sm select-primary w-full flex-1 rounded-l-none"
             >
               <option value="modified">
                 {intl.formatMessage({
@@ -331,7 +331,7 @@ const Newsletters = () => {
             buttonSize="sm"
             onClick={() => setEditState({ open: true, newsletter: null })}
           >
-            <PlusIcon className="size-5 mr-1" />
+            <PlusIcon className="mr-1 size-5" />
             <FormattedMessage
               id="newsletters.create"
               defaultMessage="Create Newsletter"
@@ -343,7 +343,7 @@ const Newsletters = () => {
       {!data && !error && <LoadingEllipsis />}
 
       {data && data.results.length === 0 && (
-        <div className="flex flex-col items-center justify-center p-6 md:w-full my-6">
+        <div className="my-6 flex flex-col items-center justify-center p-6 md:w-full">
           <span className="text-neutral">
             {currentFilter === Filter.ALL ? (
               <FormattedMessage
@@ -401,7 +401,7 @@ const Newsletters = () => {
                     onClick={() => sendNow(newsletter)}
                     className="max-xl:grow"
                   >
-                    <PaperAirplaneIcon className="size-5 mr-1" />
+                    <PaperAirplaneIcon className="mr-1 size-5" />
                     <FormattedMessage
                       id="newsletters.sendNow"
                       defaultMessage="Send Now"
@@ -414,7 +414,7 @@ const Newsletters = () => {
                     onClick={() => sendTest(newsletter)}
                     className="max-xl:grow"
                   >
-                    <BeakerIcon className="size-5 mr-1" />
+                    <BeakerIcon className="mr-1 size-5" />
                     <FormattedMessage
                       id="newsletters.test"
                       defaultMessage="Test"
@@ -426,7 +426,7 @@ const Newsletters = () => {
                     onClick={() => setEditState({ open: true, newsletter })}
                     className="max-xl:grow"
                   >
-                    <PencilIcon className="size-5 mr-1" />
+                    <PencilIcon className="mr-1 size-5" />
                     <FormattedMessage id="common.edit" defaultMessage="Edit" />
                   </Button>
                   <Button
@@ -435,7 +435,7 @@ const Newsletters = () => {
                     onClick={() => setHistoryId(newsletter.id)}
                     className="max-xl:grow"
                   >
-                    <ClockIcon className="size-5 mr-1" />
+                    <ClockIcon className="mr-1 size-5" />
                     <FormattedMessage
                       id="newsletters.history"
                       defaultMessage="History"
@@ -450,7 +450,7 @@ const Newsletters = () => {
                     onClick={() => remove(newsletter)}
                     className="max-xl:grow"
                   >
-                    <TrashIcon className="size-5 mr-1" />
+                    <TrashIcon className="mr-1 size-5" />
                     <FormattedMessage
                       id="common.delete"
                       defaultMessage="Delete"
@@ -463,7 +463,7 @@ const Newsletters = () => {
                 <Fragment key={`newsletter-${newsletter.id}`}>
                   <tr className={isLast ? 'border-b-0' : 'max-md:border-b-0'}>
                     <Table.TD>
-                      <div className="inline-flex items-center gap-2 text-sm font-medium leading-5">
+                      <div className="inline-flex items-center gap-2 text-sm leading-5 font-medium">
                         {newsletter.name}
                         {newsletter.isImportant && (
                           <Tooltip
@@ -472,7 +472,7 @@ const Newsletters = () => {
                               defaultMessage: 'Important',
                             })}
                           >
-                            <ExclamationTriangleIcon className="size-5 text-error shrink-0" />
+                            <ExclamationTriangleIcon className="text-error size-5 shrink-0" />
                           </Tooltip>
                         )}
                       </div>
@@ -517,8 +517,8 @@ const Newsletters = () => {
                     </Table.TD>
                   </tr>
                   <tr className="md:hidden">
-                    <td colSpan={5} className="px-4 pb-4 pt-1">
-                      <div className="flex flex-wrap gap-2 items-center">
+                    <td colSpan={5} className="px-4 pt-1 pb-4">
+                      <div className="flex flex-wrap items-center gap-2">
                         {actions}
                       </div>
                     </td>

@@ -4,8 +4,8 @@ import Toast from '@app/components/Toast';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
-import useClipboard from 'react-use-clipboard';
 import { useIntl } from 'react-intl';
+import useClipboard from 'react-use-clipboard';
 
 const CopyButton = ({
   textToCopy,
@@ -62,7 +62,7 @@ const CopyButton = ({
             onCopy();
           }
         }}
-        className={`btn btn-primary btn-${size} ${grouped && 'rounded-none only:rounded-md last:rounded-r-md'}`}
+        className={`btn btn-primary btn-${size} ${grouped && 'rounded-none last:rounded-r-md only:rounded-md'}`}
       >
         <ClipboardDocumentIcon className="size-5" />
       </button>

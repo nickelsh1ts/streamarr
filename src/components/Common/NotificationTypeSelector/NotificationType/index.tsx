@@ -55,7 +55,7 @@ const NotificationType = ({
           <label htmlFor={agentId} className="block">
             <div className="flex flex-col">
               <span className="font-bold">{option.name}</span>
-              <span className="font-thin text-neutral">
+              <span className="text-neutral font-thin">
                 {option.description ?? ''}
               </span>
             </div>

@@ -1,20 +1,20 @@
 'use client';
+import PermissionEdit from '@app/components/Admin/PermissionEdit';
 import Modal from '@app/components/Common/Modal';
 import Toggle from '@app/components/Common/Toggle';
 import LibrarySelector from '@app/components/LibrarySelector';
-import PermissionEdit from '@app/components/Admin/PermissionEdit';
+import Toast from '@app/components/Toast';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
-import type { UserBulkUpdatePlexSyncSummary } from '@server/interfaces/api/userInterfaces';
-import type { MainSettings } from '@server/lib/settings';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import Toast from '@app/components/Toast';
 import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import type { UserBulkUpdatePlexSyncSummary } from '@server/interfaces/api/userInterfaces';
+import type { MainSettings } from '@server/lib/settings';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
@@ -292,7 +292,7 @@ const BulkEditModal = ({
             aria-selected={activeTab === tab.id}
             aria-controls="bulk-edit-tabpanel"
             tabIndex={activeTab === tab.id ? 0 : -1}
-            className={`tab [--tab-color:black] h-fit w-fit py-2 font-bold${activeTab === tab.id ? ' tab-active border-primary! text-primary' : ''}`}
+            className={`tab h-fit w-fit py-2 font-bold [--tab-color:black] ${activeTab === tab.id ? 'tab-active border-primary! text-primary' : ''}`}
           >
             {tab.title}
           </button>
@@ -327,7 +327,7 @@ const BulkEditModal = ({
                 setCurrentSharedLibraries(value)
               }
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Toggle
                 triState
                 id="bulkAllowDownloads"

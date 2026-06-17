@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import type { TorrentFile } from '@server/interfaces/api/downloadsInterfaces';
-import { formatBytes } from '@app/utils/numberHelper';
 import ProgressBar from '@app/components/Common/ProgressBar';
+import { formatBytes } from '@app/utils/numberHelper';
+import type { TorrentFile } from '@server/interfaces/api/downloadsInterfaces';
+import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface TorrentFileListProps {
@@ -83,7 +83,7 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
 
   if (files.length === 0) {
     return (
-      <div className="text-center text-neutral py-4">
+      <div className="text-neutral py-4 text-center">
         <FormattedMessage
           id="downloads.noFilesFound"
           defaultMessage="No files found"
@@ -93,23 +93,23 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
   }
 
   return (
-    <div className="overflow-auto max-h-96">
-      <table className="table table-xs">
-        <thead className="sticky top-0 bg-base-100 z-10">
+    <div className="max-h-96 overflow-auto">
+      <table className="table-xs table">
+        <thead className="bg-base-100 sticky top-0 z-10">
           <tr>
-            <th className="min-w-[200px] max-w-xs">
+            <th className="max-w-xs min-w-50">
               <FormattedMessage id="common.name" defaultMessage="Name" />
             </th>
-            <th className="min-w-[80px]">
+            <th className="min-w-20">
               <FormattedMessage id="common.size" defaultMessage="Size" />
             </th>
-            <th className="min-w-[120px]">
+            <th className="min-w-30">
               <FormattedMessage
                 id="common.progress"
                 defaultMessage="Progress"
               />
             </th>
-            <th className="min-w-[140px]">
+            <th className="min-w-35">
               <FormattedMessage
                 id="common.priority"
                 defaultMessage="Priority"
@@ -120,21 +120,21 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
         <tbody>
           {files.map((file) => (
             <tr key={file.index} className="hover">
-              <td className="min-w-[200px] max-w-xs">
-                <span className="text-xs truncate block" title={file.name}>
+              <td className="max-w-xs min-w-50">
+                <span className="block truncate text-xs" title={file.name}>
                   {file.name}
                 </span>
               </td>
-              <td className="text-xs whitespace-nowrap min-w-[80px]">
+              <td className="min-w-20 text-xs whitespace-nowrap">
                 {formatBytes(file.size)}
               </td>
-              <td className="min-w-[120px]">
+              <td className="min-w-30">
                 <ProgressBar progress={file.progress * 100} />
               </td>
-              <td className="min-w-[140px]">
+              <td className="min-w-35">
                 <div className="flex items-center gap-1">
                   <select
-                    className="select select-xs select-primary min-w-[120px]"
+                    className="select select-xs select-primary min-w-30"
                     value={file.priority}
                     onChange={(e) =>
                       handlePriorityChange(file.index, parseInt(e.target.value))

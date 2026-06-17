@@ -2,8 +2,8 @@
 import Button from '@app/components/Common/Button';
 import PathName from '@app/components/Common/PathName';
 import Footer from '@app/components/Layout/Footer';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FormattedMessage } from 'react-intl';
 
 export default function NotFound() {
@@ -11,8 +11,8 @@ export default function NotFound() {
 
   return (
     <>
-      <div className="text-center min-h-[calc(100dvh-4rem)] grid place-items-center relative">
-        <div className="absolute top-0 bottom-0 left-0 right-0">
+      <div className="relative grid min-h-[calc(100dvh-4rem)] place-items-center text-center">
+        <div className="absolute top-0 right-0 bottom-0 left-0">
           <Image
             alt=""
             style={{ objectFit: 'cover' }}
@@ -21,10 +21,10 @@ export default function NotFound() {
             width={1920}
             height={1080}
           />
-          <div className="absolute inset-0 bg-brand-dark/60" />
+          <div className="bg-brand-dark/60 absolute inset-0" />
         </div>
-        <div className="w-full max-w-4xl relative px-4 overflow-hidden">
-          <div className="h-full w-full justify-items-center mb-4">
+        <div className="relative w-full max-w-4xl overflow-hidden px-4">
+          <div className="mb-4 h-full w-full justify-items-center">
             <Image
               alt=""
               src="/img/404-chair.png"
@@ -33,8 +33,8 @@ export default function NotFound() {
               className=""
             />
           </div>
-          <div className="px-4 mb-10">
-            <p className="uppercase text-4xl mr-2 py-0.5 overflow-hidden text-ellipsis font-extralight">
+          <div className="mb-10 px-4">
+            <p className="mr-2 overflow-hidden py-0.5 text-4xl font-extralight text-ellipsis uppercase">
               <FormattedMessage id="notFound.page" defaultMessage="Page" />{' '}
               <s className="text-primary">
                 <span className="text-primary-content font-bold">
@@ -45,7 +45,7 @@ export default function NotFound() {
                 </span>
               </s>{' '}
             </p>
-            <p className="lowercase text-3xl overflow-hidden text-ellipsis">
+            <p className="overflow-hidden text-3xl text-ellipsis lowercase">
               {PathName()}
             </p>
           </div>
@@ -56,10 +56,10 @@ export default function NotFound() {
             />
           </p>
           <p> (Nathan Drake - Uncharted, 2022)</p>
-          <div className="mt-4 flex flex-wrap gap-x-8 gap-y-4 justify-center items-center">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             <div className="flex h-auto justify-center">
               <Button
-                className="uppercase text-xl tracking-wider"
+                className="text-xl tracking-wider uppercase"
                 onClick={() => router.back()}
               >
                 <span className="mx-4">
@@ -72,7 +72,7 @@ export default function NotFound() {
             </div>
             <div className="flex h-auto justify-center">
               <Button
-                className="uppercase text-xl tracking-wider"
+                className="text-xl tracking-wider uppercase"
                 onClick={() => router.push('/')}
               >
                 <span className="mx-4">

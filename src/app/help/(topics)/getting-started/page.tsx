@@ -66,7 +66,7 @@ const GettingStarted = () => {
   ];
 
   return (
-    <section className="bg-zinc-100 text-black py-5">
+    <section className="bg-zinc-100 py-5 text-black">
       <Breadcrumbs
         paths="/getting-started"
         homeElement={intl.formatMessage({

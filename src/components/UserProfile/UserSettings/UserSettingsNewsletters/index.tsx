@@ -112,7 +112,7 @@ const UserNewsletterSettings = () => {
                         )}
                       </div>
                       {newsletter.description && (
-                        <p className="mt-0.5 max-w-prose text-sm text-neutral">
+                        <p className="text-neutral mt-0.5 max-w-prose text-sm">
                           {newsletter.description}
                         </p>
                       )}
@@ -125,7 +125,7 @@ const UserNewsletterSettings = () => {
                         aria-checked={true}
                         className={`${
                           true ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
+                        } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-not-allowed rounded-full border-2 border-transparent opacity-60 transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                         aria-disabled={true}
                       >
                         <span
@@ -141,7 +141,7 @@ const UserNewsletterSettings = () => {
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral" />
+                            <XMarkIcon className="text-neutral h-3 w-3" />
                           </span>
                           <span
                             className={`${
@@ -150,7 +150,7 @@ const UserNewsletterSettings = () => {
                                 : 'opacity-0 duration-100 ease-out'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <CheckIcon className="h-3 w-3 text-primary" />
+                            <CheckIcon className="text-primary h-3 w-3" />
                           </span>
                         </span>
                       </span>
@@ -172,7 +172,7 @@ const UserNewsletterSettings = () => {
                 ))}
             </div>
             <div className="divider divider-primary mb-0" />
-            <div className="flex justify-end mt-4">
+            <div className="mt-4 flex justify-end">
               <span className="ml-3 inline-flex rounded-md shadow-sm">
                 <Button
                   buttonType="primary"
@@ -180,7 +180,7 @@ const UserNewsletterSettings = () => {
                   buttonSize="sm"
                   disabled={isSubmitting}
                 >
-                  <ArrowDownTrayIcon className="size-4 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-4" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

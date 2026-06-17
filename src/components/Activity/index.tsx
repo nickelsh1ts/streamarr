@@ -2,7 +2,7 @@
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ServiceNotConfigured } from '@app/components/Common/ServiceError';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import { withVersion } from '@app/utils/assetVersion';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useState } from 'react';

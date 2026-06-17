@@ -1,7 +1,6 @@
 'use client';
-import { Permission } from '@server/lib/permissions';
 import type { User } from '@app/hooks/useUser';
-import { hasPermission } from '@server/lib/permissions';
+import { hasPermission, Permission } from '@server/lib/permissions';
 
 export interface PermissionItem {
   id: string;
@@ -100,7 +99,7 @@ const PermissionOption = ({
             <span className="sr-only">option: {option.name}</span>
             <div className="flex flex-col">
               <span className="font-bold">{option.name}</span>
-              <span className="font-thin text-neutral">
+              <span className="text-neutral font-thin">
                 {option.description}
               </span>
             </div>

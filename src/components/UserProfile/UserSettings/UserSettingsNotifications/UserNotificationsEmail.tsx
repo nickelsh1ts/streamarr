@@ -1,25 +1,25 @@
 'use client';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Button from '@app/components/Common/Button';
-import SensitiveInput from '@app/components/Common/SensitiveInput';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import NotificationTypeSelector, {
   ALL_NOTIFICATIONS,
 } from '@app/components/Common/NotificationTypeSelector';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
-import { useUser } from '@app/hooks/useUser';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import axios from 'axios';
-import { Form, Formik } from 'formik';
-import useSWR from 'swr';
-import * as Yup from 'yup';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
+import { useUser } from '@app/hooks/useUser';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
-import { FormattedMessage, useIntl } from 'react-intl';
+import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import axios from 'axios';
+import { Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import * as Yup from 'yup';
 
 const UserEmailSettings = () => {
   const intl = useIntl();
@@ -97,7 +97,7 @@ const UserEmailSettings = () => {
         return (
           <Form className="mt-5">
             <div className="max-w-6xl space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="pgpKey" className="col-span-1">
                   <span className="mr-2">
                     <FormattedMessage
@@ -106,7 +106,7 @@ const UserEmailSettings = () => {
                     />
                   </span>
                   <SettingsBadge badgeType="advanced" />
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="userSettings.pgpPublicKeyDescription"
                       defaultMessage="Encrypt email messages using {openPGP}."
@@ -132,7 +132,7 @@ const UserEmailSettings = () => {
                       buttonSize="sm"
                       name="pgpKey"
                       type="textarea"
-                      className="font-mono text-xs textarea textarea-sm textarea-primary w-full"
+                      className="textarea textarea-sm textarea-primary w-full font-mono text-xs"
                     />
                   </div>
                   {errors.pgpKey &&
@@ -156,8 +156,8 @@ const UserEmailSettings = () => {
                 }
               />
             </div>
-            <div className="divider divider-primary mb-0 col-span-full" />
-            <div className="flex justify-end col-span-3 mt-4">
+            <div className="divider divider-primary col-span-full mb-0" />
+            <div className="col-span-3 mt-4 flex justify-end">
               <span className="ml-3 inline-flex rounded-md shadow-sm">
                 <Button
                   buttonType="primary"
@@ -165,7 +165,7 @@ const UserEmailSettings = () => {
                   buttonSize="sm"
                   disabled={isSubmitting || !isValid}
                 >
-                  <ArrowDownTrayIcon className="size-4 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-4" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

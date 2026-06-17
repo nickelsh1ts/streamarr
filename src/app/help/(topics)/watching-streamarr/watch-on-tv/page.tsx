@@ -1,9 +1,9 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
 import { FormattedMessage, useIntl } from 'react-intl';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 
 const HelpContent = () => {
   const { currentSettings } = useSettings();
@@ -16,7 +16,7 @@ const HelpContent = () => {
           defaultMessage="How to Chromecast:"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.watchOnTv.chromecastStep1"
@@ -62,13 +62,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.watchOnTv.chromecastTroubleshooting"
           defaultMessage="Chromecast troubleshooting:"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.watchOnTv.chromecastTip1"
@@ -107,7 +107,7 @@ const HelpContent = () => {
           defaultMessage="How to use Apple AirPlay"
         />
       </div>
-      <ul className="list list-decimal ms-10 my-4">
+      <ul className="list my-4 ms-10 list-decimal">
         <li>
           <FormattedMessage
             id="help.watchOnTv.airplayStep1"
@@ -153,13 +153,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.watchOnTv.airplayTroubleshooting"
           defaultMessage="Apple AirPlay troubleshooting:"
         />
       </p>
-      <ul className="list list-disc ms-10 my-4">
+      <ul className="list my-4 ms-10 list-disc">
         <li>
           <FormattedMessage
             id="help.watchOnTv.airplayTip1"
@@ -195,7 +195,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-decimal ms-10 my-4">
+      <ul className="list my-4 ms-10 list-decimal">
         <li>
           <FormattedMessage
             id="help.watchOnTv.plexStep1"
@@ -224,7 +224,7 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.watchOnTv.plexTroubleshooting"
           defaultMessage="{plexLogo} Troubleshooting:"
@@ -233,7 +233,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-10 my-4">
+      <ul className="list my-4 ms-10 list-disc">
         <li>
           <FormattedMessage
             id="help.watchOnTv.plexTip1"

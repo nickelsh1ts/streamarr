@@ -1,11 +1,11 @@
 'use client';
+import Error from '@app/app/error';
 import ImageFader from '@app/components/Common/ImageFader';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProfileHeader from '@app/components/UserProfile/ProfileHeader';
 import { UserType, useUser } from '@app/hooks/useUser';
 import type { UserWatchDataResponse } from '@server/interfaces/api/userInterfaces';
 import { useParams, usePathname } from 'next/navigation';
-import Error from '@app/app/error';
 import useSWR from 'swr';
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
@@ -58,9 +58,9 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="max-sm:mb-16 px-4">
+    <div className="px-4 max-sm:mb-16">
       {pathname.match(/\/(profile|admin\/users\/(\d)*?)\/?$/) && (
-        <div className="absolute left-0 right-0 -top-18 z-0 h-96">
+        <div className="absolute -top-18 right-0 left-0 z-0 h-96">
           <ImageFader
             rotationSpeed={6000}
             gradient="bg-gradient-to-t from-base-300 from-0% to-secondary/85 to-75%"

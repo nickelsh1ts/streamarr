@@ -35,23 +35,23 @@ const UserCard = ({
       .length ?? 0;
 
   return (
-    <div className="pointer-events-auto w-64 relative text-base-content">
+    <div className="text-base-content pointer-events-auto relative w-64">
       <Link
         href="/profile"
-        className="flex flex-col items-center place-content-center gap-2 p-4 bg-neutral/20 hover:bg-neutral/30"
+        className="bg-neutral/20 hover:bg-neutral/30 flex flex-col place-content-center items-center gap-2 p-4"
       >
         <CachedImage
-          className="inline-block h-16 w-16 rounded-full ring-1 ring-primary-content shadow-3xl"
+          className="ring-primary-content shadow-3xl inline-block h-16 w-16 rounded-full ring-1"
           src={user?.id ? `/avatarproxy/${user.id}` : undefined}
           alt="user"
           width={64}
           height={64}
         />
-        <div className="flex flex-col w-full place-content-start">
-          <p className="text-lg text-center leading-tight truncate capitalize">
+        <div className="flex w-full flex-col place-content-start">
+          <p className="truncate text-center text-lg leading-tight capitalize">
             {user?.displayName}
           </p>
-          <p className="text-xs text-center leading-tight truncate lowercase">
+          <p className="truncate text-center text-xs leading-tight lowercase">
             {user?.email}
           </p>
         </div>
@@ -63,21 +63,21 @@ const UserCard = ({
             className="indicator hover:cursor-pointer"
           >
             {unRead > 0 && (
-              <span className="indicator-item indicator-top indicator-end top-2 right-2 badge badge-xs py-2 text-xs font-thin badge-error">
+              <span className="indicator-item indicator-top indicator-end badge badge-xs badge-error top-2 right-2 py-2 text-xs font-thin">
                 {unRead}
               </span>
             )}
             {unRead > 0 ? (
-              <BellAlertIcon className="size-8 m-1" />
+              <BellAlertIcon className="m-1 size-8" />
             ) : (
-              <BellIcon className="size-8 m-1" />
+              <BellIcon className="m-1 size-8" />
             )}
           </button>
         </div>
       )}
       {path.match(/^\/(help\/?(.*)?|\/?$)/) && (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start btn-ghost hover:bg-neutral/20`}
+          className={`btn btn-sm btn-ghost hover:bg-neutral/20 inline-flex w-full justify-start rounded-none`}
           href={'/watch'}
         >
           <HomeIcon className="size-5" />
@@ -86,10 +86,10 @@ const UserCard = ({
       )}
       {hasPermission(Permission.ADMIN) ? (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
+          className={`btn btn-sm inline-flex w-full justify-start rounded-none ${path.match(/^\/admin\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
           href="/admin"
         >
-          <LockClosedIcon className="size-5 inline-flex" />
+          <LockClosedIcon className="inline-flex size-5" />
           <FormattedMessage
             id="common.adminCentre"
             defaultMessage="Admin Centre"
@@ -97,10 +97,10 @@ const UserCard = ({
         </Link>
       ) : hasPermission(Permission.MANAGE_USERS) ? (
         <Link
-          className={`btn btn-sm rounded-none w-full inline-flex justify-start ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
+          className={`btn btn-sm inline-flex w-full justify-start rounded-none ${path.match(/^\/admin\/users\/?(.*)?$/) ? 'btn-primary' : 'btn-ghost hover:bg-neutral/20'}`}
           href="/admin/users"
         >
-          <LockClosedIcon className="size-5 inline-flex" />
+          <LockClosedIcon className="inline-flex size-5" />
           <FormattedMessage
             id="common.manageUsers"
             defaultMessage="Manage Users"

@@ -1,7 +1,7 @@
-import type { User } from '@server/entity/User';
 import type Invite from '@server/entity/Invite';
-import type { PaginatedResponse } from './common';
 import type { Notification } from '@server/entity/Notification';
+import type { User } from '@server/entity/User';
+import type { PaginatedResponse } from './common';
 
 export interface UserSummary {
   id: number;

@@ -1,5 +1,5 @@
-import { colord } from 'colord';
 import type { Theme } from '@server/lib/settings';
+import { colord } from 'colord';
 import colors from 'tailwindcss/colors';
 
 export const srgbToLinear = (c: number) => {

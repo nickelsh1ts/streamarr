@@ -53,17 +53,17 @@ const Spotlight: React.FC<SpotlightProps> = ({
     <>
       {blockClicks && (
         <div
-          className="fixed inset-0 cursor-default animate-fade-in"
+          className="animate-fade-in fixed inset-0 cursor-default"
           style={{ zIndex: zIndex - 1 }}
           onClick={(e) => e.stopPropagation()}
         />
       )}
       <div
-        className={`fixed inset-0 pointer-events-none transition-all duration-300 animate-fade-in bg-black/30 backdrop-blur-sm ${className}`}
+        className={`animate-fade-in pointer-events-none fixed inset-0 bg-black/30 backdrop-blur-sm transition-all duration-300 ${className}`}
         style={spotlightStyle}
       />
       {blockClicks && (
-        <div className="fixed pointer-events-none" style={holeStyle} />
+        <div className="pointer-events-none fixed" style={holeStyle} />
       )}
     </>
   );

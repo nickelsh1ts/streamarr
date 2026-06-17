@@ -1,7 +1,7 @@
 import { NotificationType } from '@server/constants/notification';
 import type { User } from '@server/entity/User';
-import { getIntl } from '@server/i18n';
 import type { IntlShape } from '@server/i18n';
+import { getIntl } from '@server/i18n';
 import logger from '@server/logger';
 import notificationManager from '.';
 import type { NotificationPayload } from './agents/agent';

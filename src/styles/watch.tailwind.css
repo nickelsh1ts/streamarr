@@ -3,7 +3,7 @@
 
 @plugin 'daisyui';
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
   name: 'streamarr';
   default: true;
   prefersdark: true;
@@ -64,7 +64,7 @@
 }
 
 select {
-  @apply select select-sm select-primary cursor-pointer w-auto;
+  @apply select select-sm select-primary w-auto cursor-pointer;
 }
 
 input[type='checkbox']:not(.drawer-toggle) {

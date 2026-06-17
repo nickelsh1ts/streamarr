@@ -1,8 +1,8 @@
 'use client';
-import type React from 'react';
-import { useState, useEffect, useCallback, createContext } from 'react';
-import { IntlProvider } from 'react-intl';
 import { setMomentLocale } from '@app/utils/momentLocale';
+import type React from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
+import { IntlProvider } from 'react-intl';
 
 export type AvailableLocale = 'en' | 'es';
 
@@ -108,9 +108,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   if (isLoading) {
     return (
       <LanguageContext.Provider value={contextValue}>
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex min-h-screen items-center justify-center">
           <div
-            className={`fixed inset-0 flex items-center justify-center text-primary-content text-lg gap-1`}
+            className={`text-primary-content fixed inset-0 flex items-center justify-center gap-1 text-lg`}
           >
             Loading
             <span className="loading loading-dots loading-md text-primary mt-2"></span>

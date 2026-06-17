@@ -1,45 +1,45 @@
-import { getRepository } from '@server/datasource';
-import { User } from '@server/entity/User';
+import PlexTvAPI from '@server/api/plextv';
+import PushoverAPI from '@server/api/pushover';
 import SeerrAPI from '@server/api/seerr';
+import {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
+import { UserType } from '@server/constants/user';
+import { getRepository } from '@server/datasource';
 import Newsletter from '@server/entity/Newsletter';
+import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
   UserSettingsGeneralResponse,
   UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
+import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
-import { getSettings } from '@server/lib/settings';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
-import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
+import { resolvePlexAuthToken } from '@server/lib/plexAuth';
+import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
 import {
-  NotificationSeverity,
-  NotificationType,
-} from '@server/constants/notification';
+  plexAuthLimiter,
+  trialExtensionRequestLimiter,
+} from '@server/lib/rateLimiters';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import { Router } from 'express';
 import { canMakePermissionsChange } from '@server/routes/user';
-import { UserType } from '@server/constants/user';
+import moment from '@server/utils/momentWithLocale';
+import {
+  isOwnProfile,
+  isOwnProfileOrAdmin,
+} from '@server/utils/profileMiddleware';
 import {
   isDefaultSentinel,
   materializeDefaultSnapshot,
   normalizeSharedLibrariesValue,
   resolveSharedLibraryKeys,
 } from '@server/utils/sharedLibraries';
-import PlexTvAPI from '@server/api/plextv';
-import PushoverAPI from '@server/api/pushover';
-import {
-  isOwnProfile,
-  isOwnProfileOrAdmin,
-} from '@server/utils/profileMiddleware';
-import {
-  trialExtensionRequestLimiter,
-  plexAuthLimiter,
-} from '@server/lib/rateLimiters';
-import moment from '@server/utils/momentWithLocale';
-import { sendGroupNotification } from '@server/lib/notifications/dispatch';
+import { Router } from 'express';
 
 const userSettingsRoutes = Router({ mergeParams: true });
 

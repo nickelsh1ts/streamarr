@@ -57,7 +57,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <span className="font-bold">
             <FormattedMessage
@@ -130,7 +130,7 @@ const HelpContent = () => {
               defaultMessage="When you make media requests through Seerr, you can receive notifications about the status of your requests — such as when they are approved, declined, or when the media becomes available."
             />
           </p>
-          <ul className="list list-disc ms-14 my-4">
+          <ul className="list my-4 ms-14 list-disc">
             {enabledAgents.includes('email') && (
               <li>
                 <span className="font-bold">
@@ -286,7 +286,7 @@ const HelpContent = () => {
         />
       </p>
       {currentSettings.enablePushRegistration && (
-        <p className="italic text-sm my-4">
+        <p className="my-4 text-sm italic">
           <span className="text-info font-bold">
             <FormattedMessage id="help.common.tip" defaultMessage="Tip" />
           </span>

@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from 'react';
-import axios from 'axios';
-import useSWR from 'swr';
 import type {
-  DownloadsResponse,
-  TorrentActionRequest,
   AddTorrentRequest,
+  DownloadsResponse,
   TagManagementRequest,
+  TorrentActionRequest,
   TorrentFile,
 } from '@server/interfaces/api/downloadsInterfaces';
+import axios from 'axios';
+import { useCallback, useMemo } from 'react';
+import useSWR from 'swr';
 
 interface UseDownloadsOptions {
   page: number;

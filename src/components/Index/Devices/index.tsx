@@ -64,13 +64,13 @@ function Devices() {
   return (
     <section id="devices" className="min-h-lvh place-content-center py-16">
       <div className="container mx-auto text-center">
-        <p className="text-3xl font-extrabold pb-10 px-5">
+        <p className="px-5 pb-10 text-3xl font-extrabold">
           <FormattedMessage
             id="devices.availableOnDevices"
             defaultMessage="Available on all your favourite devices"
           />
         </p>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5">
+        <div className="grid grid-cols-2 gap-4 px-5 lg:grid-cols-4">
           {deviceCategories.map((category) => (
             <div key={category.alt}>
               <CachedImage

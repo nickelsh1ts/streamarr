@@ -1,6 +1,6 @@
-import { User } from '@server/entity/User';
 import type { NotificationType } from '@server/constants/notification';
 import { NotificationSeverity } from '@server/constants/notification';
+import { User } from '@server/entity/User';
 import {
   Column,
   CreateDateColumn,

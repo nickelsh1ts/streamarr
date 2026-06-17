@@ -26,9 +26,9 @@ export default function ServiceNotFound({
 
   return (
     <div
-      className={`${heightClass} flex flex-col items-center justify-center bg-base-300 px-4 rounded-lg relative overflow-hidden`}
+      className={`${heightClass} bg-base-300 relative flex flex-col items-center justify-center overflow-hidden rounded-lg px-4`}
     >
-      <div className="text-center max-w-md relative z-10">
+      <div className="relative z-10 max-w-md text-center">
         <div className="mb-4">
           <Image
             alt=""
@@ -38,7 +38,7 @@ export default function ServiceNotFound({
             className="mx-auto"
           />
         </div>
-        <h2 className="uppercase text-2xl font-semibold text-base-content mb-2">
+        <h2 className="text-base-content mb-2 text-2xl font-semibold uppercase">
           <FormattedMessage id="common.service" defaultMessage="Service" />{' '}
           <s className="text-primary">
             <span className="text-primary-content font-bold">
@@ -57,13 +57,13 @@ export default function ServiceNotFound({
           />
         </p>
         {isAdmin && error?.details && (
-          <p className="text-sm text-base-content/50 mb-6 font-mono bg-base-200 px-3 py-2 rounded">
+          <p className="text-base-content/50 bg-base-200 mb-6 rounded px-3 py-2 font-mono text-sm">
             {error.details}
           </p>
         )}
         {onRetry && (
           <Button buttonType="primary" buttonSize="sm" onClick={onRetry}>
-            <ArrowPathIcon className="w-4 h-4 mr-2" />
+            <ArrowPathIcon className="mr-2 h-4 w-4" />
             <FormattedMessage id="common.retry" defaultMessage="Retry" />
           </Button>
         )}

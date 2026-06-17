@@ -1,11 +1,4 @@
 'use client';
-import AdminTabs from '@app/components/Common/AdminTabs';
-import {
-  BoltIcon,
-  EnvelopeIcon,
-  CloudIcon,
-  BellAlertIcon,
-} from '@heroicons/react/24/solid';
 import DiscordIcon from '@app/assets/extlogos/discord.svg';
 import GotifyIcon from '@app/assets/extlogos/gotify.svg';
 import NtfyIcon from '@app/assets/extlogos/ntfy.svg';
@@ -13,6 +6,13 @@ import PushbulletIcon from '@app/assets/extlogos/pushbullet.svg';
 import PushoverIcon from '@app/assets/extlogos/pushover.svg';
 import SlackIcon from '@app/assets/extlogos/slack.svg';
 import TelegramIcon from '@app/assets/extlogos/telegram.svg';
+import AdminTabs from '@app/components/Common/AdminTabs';
+import {
+  BellAlertIcon,
+  BoltIcon,
+  CloudIcon,
+  EnvelopeIcon,
+} from '@heroicons/react/24/solid';
 import { FormattedMessage } from 'react-intl';
 
 type NotificationsLayoutProps = {
@@ -25,7 +25,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Email',
       content: (
         <>
-          <EnvelopeIcon className="size-4 inline-flex mb-0.5 mr-1" />{' '}
+          <EnvelopeIcon className="mr-1 mb-0.5 inline-flex size-4" />{' '}
           <FormattedMessage id="common.email" defaultMessage="Email" />
         </>
       ),
@@ -36,7 +36,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Web Push',
       content: (
         <>
-          <CloudIcon className="size-4 inline-flex mb-0.5 mr-1" />{' '}
+          <CloudIcon className="mr-1 mb-0.5 inline-flex size-4" />{' '}
           <FormattedMessage id="common.webPush" defaultMessage="Web Push" />
         </>
       ),
@@ -47,7 +47,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'In-App',
       content: (
         <>
-          <BellAlertIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <BellAlertIcon className="mr-1 mb-0.5 inline-flex size-4" />
           <FormattedMessage id="common.inApp" defaultMessage="In-App" />
         </>
       ),
@@ -58,7 +58,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Discord',
       content: (
         <>
-          <DiscordIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <DiscordIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Discord
         </>
       ),
@@ -69,7 +69,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Gotify',
       content: (
         <>
-          <GotifyIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <GotifyIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Gotify
         </>
       ),
@@ -80,7 +80,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'ntfy',
       content: (
         <>
-          <NtfyIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <NtfyIcon className="mr-1 mb-0.5 inline-flex size-4" />
           ntfy
         </>
       ),
@@ -91,7 +91,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Pushbullet',
       content: (
         <>
-          <PushbulletIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <PushbulletIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Pushbullet
         </>
       ),
@@ -102,7 +102,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Pushover',
       content: (
         <>
-          <PushoverIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <PushoverIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Pushover
         </>
       ),
@@ -113,7 +113,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Slack',
       content: (
         <>
-          <SlackIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <SlackIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Slack
         </>
       ),
@@ -124,7 +124,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Telegram',
       content: (
         <>
-          <TelegramIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <TelegramIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Telegram
         </>
       ),
@@ -135,7 +135,7 @@ const NotificationsLayout = ({ children }: NotificationsLayoutProps) => {
       text: 'Webhook',
       content: (
         <>
-          <BoltIcon className="size-4 inline-flex mb-0.5 mr-1" />
+          <BoltIcon className="mr-1 mb-0.5 inline-flex size-4" />
           Webhook
         </>
       ),

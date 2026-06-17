@@ -1,5 +1,5 @@
-import logger from '@server/logger';
 import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import axios from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';

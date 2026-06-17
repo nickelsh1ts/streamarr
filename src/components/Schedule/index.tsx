@@ -1,11 +1,11 @@
 'use client';
 import BigCalendar from '@app/components/Common/BigCalendar';
 import Header from '@app/components/Common/Header';
-import { FunnelIcon } from '@heroicons/react/24/solid';
-import { useState, useEffect, useMemo } from 'react';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
-import useSWR from 'swr';
+import { FunnelIcon } from '@heroicons/react/24/solid';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -111,8 +111,8 @@ const Schedule = () => {
   }, [currentFilter]);
 
   return (
-    <div className="relative max-sm:mb-16 flex flex-col">
-      <div className="flex flex-col justify-between sm:flex-row sm:items-end px-4">
+    <div className="relative flex flex-col max-sm:mb-16">
+      <div className="flex flex-col justify-between px-4 sm:flex-row sm:items-end">
         <Header>
           <span className="flex items-center gap-2">
             <FormattedMessage
@@ -126,7 +126,7 @@ const Schedule = () => {
         </Header>
         <div className="mt-2 flex grow flex-col sm:grow-0 sm:flex-row">
           <div className="flex grow sm:grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
               <FunnelIcon className="h-6 w-6" />
             </span>
             <select
@@ -137,7 +137,7 @@ const Schedule = () => {
                 setCurrentFilter(e.target.value as Filter);
               }}
               value={currentFilter}
-              className="select select-sm select-primary rounded-md rounded-l-none flex-1"
+              className="select select-sm select-primary flex-1 rounded-md rounded-l-none"
             >
               <option value="all">
                 <FormattedMessage id="common.all" defaultMessage="All" />

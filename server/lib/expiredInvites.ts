@@ -1,11 +1,11 @@
+import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
-import { InviteStatus } from '@server/constants/invite';
-import { In, LessThanOrEqual } from 'typeorm';
-import logger from '@server/logger';
-import { getSettings } from '@server/lib/settings';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import fs from 'fs/promises';
+import { In, LessThanOrEqual } from 'typeorm';
 
 class ExpiredInvites {
   private isRunning = false;

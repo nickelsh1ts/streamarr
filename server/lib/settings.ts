@@ -1,9 +1,9 @@
+import { runMigrations } from '@server/lib/migrator';
 import { randomBytes, randomUUID } from 'crypto';
 import fs from 'fs';
 import { mergeWith } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
-import { runMigrations } from '@server/lib/migrator';
 import { Permission } from './permissions';
 
 const mergeSettings = <T>(current: T, incoming: Partial<T>): T =>

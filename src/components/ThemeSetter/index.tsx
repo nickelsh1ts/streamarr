@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useContext } from 'react';
 import { SettingsContext } from '@app/context/SettingsContext';
 import { daisyUIMapping, parseColorToHex } from '@app/utils/themeUtils';
+import { useContext, useEffect } from 'react';
 
 const ThemeSetter: React.FC = () => {
   const { currentSettings } = useContext(SettingsContext);

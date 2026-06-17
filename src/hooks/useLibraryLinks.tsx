@@ -1,6 +1,6 @@
 'use client';
-import useSWR from 'swr';
 import type { PivotOption } from '@server/lib/settings';
+import useSWR from 'swr';
 
 interface LibraryLink {
   id: string;

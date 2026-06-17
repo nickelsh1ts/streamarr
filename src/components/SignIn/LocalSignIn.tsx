@@ -1,15 +1,15 @@
 import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import useSettings from '@app/hooks/useSettings';
+import type { UserHookResponse } from '@app/hooks/useUser';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import * as Yup from 'yup';
-import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { UserHookResponse } from '@app/hooks/useUser';
+import validator from 'validator';
+import * as Yup from 'yup';
 
 interface LocalLoginProps {
   revalidate: UserHookResponse['revalidate'];
@@ -86,15 +86,15 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
           values.password !== values.password.trim();
 
         return (
-          <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
+          <div className="bg-secondary/50 border-secondary place-content-center rounded-b-lg border p-4">
             <Form className="mt-4">
               <div>
-                <div className="input input-primary flex items-center mb-2 w-full">
+                <div className="input input-primary mb-2 flex w-full items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
                     <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
@@ -115,16 +115,16 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                 {errors.email &&
                   touched.email &&
                   typeof errors.email === 'string' && (
-                    <div className="text-center text-error my-2">
+                    <div className="text-error my-2 text-center">
                       {errors.email}
                     </div>
                   )}
-                <div className="input input-primary flex items-center pr-0 w-full">
+                <div className="input input-primary flex w-full items-center pr-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path
                       fillRule="evenodd"
@@ -134,7 +134,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                   </svg>
                   <SensitiveInput
                     as="field"
-                    className="grow w-full"
+                    className="w-full grow"
                     id="password"
                     name="password"
                     placeholder={intl.formatMessage({
@@ -146,19 +146,19 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                 {errors.password &&
                   touched.password &&
                   typeof errors.password === 'string' && (
-                    <div className="text-center text-error my-2">
+                    <div className="text-error my-2 text-center">
                       {errors.password}
                     </div>
                   )}
                 {hasBoundaryWhitespace && (
-                  <div className="text-center text-warning text-sm my-2">
+                  <div className="text-warning my-2 text-center text-sm">
                     <FormattedMessage
                       id="signIn.whitespaceWarning"
                       defaultMessage="Leading or trailing spaces in your email or password can cause issues signing in."
                     />
                   </div>
                 )}
-                <div className="flex flex-col my-4">
+                <div className="my-4 flex flex-col">
                   <label className="flex cursor-pointer place-items-center">
                     <input
                       type="checkbox"
@@ -174,7 +174,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
                   </label>
                 </div>
                 {loginError && (
-                  <div className="text-sm text-center mb-2 text-error">
+                  <div className="text-error mb-2 text-center text-sm">
                     {loginError}
                   </div>
                 )}

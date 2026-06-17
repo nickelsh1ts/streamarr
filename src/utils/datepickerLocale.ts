@@ -1,9 +1,9 @@
-import { registerLocale } from 'react-datepicker';
-import type { Locale } from 'date-fns';
 import {
   availableLanguages,
   type AvailableLocale,
 } from '@app/context/LanguageContext';
+import type { Locale } from 'date-fns';
+import { registerLocale } from 'react-datepicker';
 
 const registeredLocales = new Set<AvailableLocale>(['en']);
 

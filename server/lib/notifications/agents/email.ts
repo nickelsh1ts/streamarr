@@ -1,3 +1,4 @@
+import { NotificationType } from '@server/constants/notification';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import PreparedEmail from '@server/lib/email';
@@ -14,7 +15,6 @@ import {
 } from '..';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
-import { NotificationType } from '@server/constants/notification';
 
 class EmailAgent
   extends BaseAgent<NotificationAgentEmail>

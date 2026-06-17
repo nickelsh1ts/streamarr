@@ -133,7 +133,7 @@ const UserNotificationsTelegram = () => {
       }) => (
         <Form className="section">
           <div className="max-w-6xl space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="telegramChatId" className="col-span-1">
                 <FormattedMessage
                   id="userSettings.notifications.telegramChatId"
@@ -144,14 +144,14 @@ const UserNotificationsTelegram = () => {
                 <Field
                   id="telegramChatId"
                   name="telegramChatId"
-                  className="input input-sm input-primary rounded-md w-full"
+                  className="input input-sm input-primary w-full rounded-md"
                 />
                 {errors.telegramChatId && touched.telegramChatId && (
                   <div className="text-error">{errors.telegramChatId}</div>
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="telegramMessageThreadId" className="col-span-1">
                 <FormattedMessage
                   id="userSettings.notifications.telegramMessageThreadId"
@@ -162,11 +162,11 @@ const UserNotificationsTelegram = () => {
                 <Field
                   id="telegramMessageThreadId"
                   name="telegramMessageThreadId"
-                  className="input input-sm input-primary rounded-md w-full"
+                  className="input input-sm input-primary w-full rounded-md"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="telegramSendSilently" className="col-span-1">
                 <FormattedMessage
                   id="userSettings.notifications.telegramSendSilently"
@@ -191,8 +191,8 @@ const UserNotificationsTelegram = () => {
               }}
             />
           </div>
-          <div className="divider divider-primary mb-0 col-span-full" />
-          <div className="flex justify-end col-span-3 mt-4">
+          <div className="divider divider-primary col-span-full mb-0" />
+          <div className="col-span-3 mt-4 flex justify-end">
             <span className="ml-3 inline-flex rounded-md shadow-sm">
               <Button
                 buttonType="primary"
@@ -200,7 +200,7 @@ const UserNotificationsTelegram = () => {
                 buttonSize="sm"
                 disabled={isSubmitting || !isValid}
               >
-                <ArrowDownTrayIcon className="size-4 mr-2" />
+                <ArrowDownTrayIcon className="mr-2 size-4" />
                 <span>
                   {isSubmitting ? (
                     <FormattedMessage

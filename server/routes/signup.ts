@@ -1,24 +1,24 @@
-import { Router } from 'express';
-import { getRepository } from '@server/datasource';
-import { Invite } from '@server/entity/Invite';
 import PlexTvAPI from '@server/api/plextv';
-import { User } from '@server/entity/User';
-import { UserSettings } from '@server/entity/UserSettings';
-import { getSettings } from '@server/lib/settings';
 import { InviteStatus } from '@server/constants/invite';
 import { UserType } from '@server/constants/user';
+import { getRepository } from '@server/datasource';
+import { Invite } from '@server/entity/Invite';
+import { User } from '@server/entity/User';
+import { UserSettings } from '@server/entity/UserSettings';
 import { Permission } from '@server/lib/permissions';
-import { plexSync } from '@server/lib/plexSync';
 import { resolvePlexAuthToken } from '@server/lib/plexAuth';
+import { plexSync } from '@server/lib/plexSync';
 import { plexAuthLimiter } from '@server/lib/rateLimiters';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import {
   isDefaultSentinel,
   materializeDefaultSnapshot,
   normalizeSharedLibrariesValue,
   resolveSharedLibraryKeys,
 } from '@server/utils/sharedLibraries';
-import logger from '@server/logger';
 import crypto from 'crypto';
+import { Router } from 'express';
 
 const signupRoutes = Router();
 

@@ -6,7 +6,7 @@ export const generateMetadata = () => generatePageMetadata('Invite a friend');
 
 const InvitePage: NextPage = () => {
   return (
-    <div className="max-sm:mb-14 px-4">
+    <div className="px-4 max-sm:mb-14">
       <InviteList />
     </div>
   );

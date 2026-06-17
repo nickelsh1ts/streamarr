@@ -1,18 +1,18 @@
 'use client';
+import type { AdminRoute } from '@app/components/Common/AdminTabs';
+import AdminTabs from '@app/components/Common/AdminTabs';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { ServiceNotConfigured } from '@app/components/Common/ServiceError';
-import type { AdminRoute } from '@app/components/Common/AdminTabs';
-import AdminTabs from '@app/components/Common/AdminTabs';
 import { useServiceFrame } from '@app/hooks/useServiceFrame';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import type {
   RadarrSettings,
   ServiceSettings,
   SonarrSettings,
 } from '@server/lib/settings';
-import { useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 interface Props {
   services: ServiceSettings[];

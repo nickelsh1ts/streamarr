@@ -1,10 +1,10 @@
-import type { ServiceSettings } from '@server/lib/settings';
 import type {
-  SeerrQuotaResponse,
   SeerrNotificationsResponse,
+  SeerrQuotaResponse,
   SeerrRequestItem,
   SeerrRequestsResponse,
 } from '@server/interfaces/api/seerrInterfaces';
+import type { ServiceSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';

@@ -4,8 +4,10 @@ import {
   ALL_NOTIFICATIONS,
   hasNotificationType,
 } from '@server/lib/notifications';
-import type { NotificationAgentConfig } from '@server/lib/settings';
-import type { NotificationAgentKey } from '@server/lib/settings';
+import type {
+  NotificationAgentConfig,
+  NotificationAgentKey,
+} from '@server/lib/settings';
 import logger from '@server/logger';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent, NotificationDeliveryScope } from './agent';

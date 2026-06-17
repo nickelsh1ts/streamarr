@@ -1,6 +1,6 @@
 'use client';
-import ProviderNotificationsForm from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
 import type { NotificationSelectOption } from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
+import ProviderNotificationsForm from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
 import type { NotificationAgentPushover } from '@server/lib/settings';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';

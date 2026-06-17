@@ -12,7 +12,7 @@ export const SmallLoadingEllipsis = ({
 }: LoadingProps) => {
   return (
     <div
-      className={`${fixed && 'fixed '}inset-0 flex items-center justify-center text-primary-content gap-1 text-sm`}
+      className={`${fixed && 'fixed'} text-primary-content inset-0 flex items-center justify-center gap-1 text-sm`}
     >
       {text}
       <span className="loading loading-dots loading-xs text-primary mt-2"></span>
@@ -26,7 +26,7 @@ const LoadingEllipsis = ({
 }: LoadingProps) => {
   return (
     <div
-      className={`${fixed ? 'fixed ' : ''}inset-0 flex items-center justify-center text-primary-content text-lg gap-1`}
+      className={`${fixed ? 'fixed' : ''} text-primary-content inset-0 flex items-center justify-center gap-1 text-lg`}
     >
       {text}
       <span className="loading loading-dots loading-md text-primary mt-2"></span>

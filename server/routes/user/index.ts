@@ -11,39 +11,39 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type {
-  UserNotificationsResponse,
   QuotaResponse,
+  UserBulkUpdateResponse,
   UserInvitesResponse,
+  UserNotificationsResponse,
   UserResultsResponse,
   UserSummary,
-  UserBulkUpdateResponse,
 } from '@server/interfaces/api/userInterfaces';
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
+import ImageProxy from '@server/lib/imageproxy';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
-import { In, Not } from 'typeorm';
-import userSettingsRoutes from './usersettings';
-import userOnboardingRoutes from './onboarding';
-import PreparedEmail from '@server/lib/email';
-import path from 'path';
-import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
-import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
-import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
 import { UserSettings } from '@server/entity/UserSettings';
+import PreparedEmail from '@server/lib/email';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
+import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
 import {
   isDefaultSentinel,
   materializeDefaultSnapshot,
   normalizeSharedLibrariesValue,
   resolveSharedLibraryKeys,
 } from '@server/utils/sharedLibraries';
+import crypto from 'crypto';
+import path from 'path';
+import { In, Not } from 'typeorm';
+import userOnboardingRoutes from './onboarding';
+import userSettingsRoutes from './usersettings';
 
 const router = Router();
 

@@ -45,11 +45,11 @@ export default function ServiceUnavailable({
 
   return (
     <div
-      className={`${heightClass} flex flex-col items-center justify-center bg-base-300`}
+      className={`${heightClass} bg-base-300 flex flex-col items-center justify-center`}
     >
-      <div className="text-center max-w-md">
-        <ExclamationTriangleIcon className="w-16 h-16 mx-auto text-warning" />
-        <h2 className="text-2xl font-semibold text-base-content mb-2">
+      <div className="max-w-md text-center">
+        <ExclamationTriangleIcon className="text-warning mx-auto h-16 w-16" />
+        <h2 className="text-base-content mb-2 text-2xl font-semibold">
           <FormattedMessage
             id="serviceUnavailable.title"
             defaultMessage="{serviceName} Unavailable"
@@ -74,7 +74,7 @@ export default function ServiceUnavailable({
               )}
         </p>
         {isAdmin && errorDetails.length > 0 && (
-          <div className="text-sm text-base-content/60 mb-6 font-mono bg-base-200 px-4 py-3 rounded-lg text-left">
+          <div className="text-base-content/60 bg-base-200 mb-6 rounded-lg px-4 py-3 text-left font-mono text-sm">
             {errorDetails.map((detail, idx) => (
               <div key={idx} className="mb-1 last:mb-0">
                 {detail}
@@ -84,7 +84,7 @@ export default function ServiceUnavailable({
         )}
         {onRetry && (
           <Button buttonType="primary" buttonSize="sm" onClick={onRetry}>
-            <ArrowPathIcon className="w-4 h-4 mr-2" />
+            <ArrowPathIcon className="mr-2 h-4 w-4" />
             <FormattedMessage id="common.retry" defaultMessage="Retry" />
           </Button>
         )}

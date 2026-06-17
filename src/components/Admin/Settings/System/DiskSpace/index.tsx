@@ -42,7 +42,7 @@ const ExpandButton = ({
   return (
     <button
       type="button"
-      className="rounded p-0.5 text-neutral transition hover:text-base-content hover:cursor-pointer"
+      className="text-neutral hover:text-base-content rounded p-0.5 transition hover:cursor-pointer"
       onClick={onToggle}
       aria-label={
         isExpanded
@@ -77,8 +77,8 @@ const DiskMetrics = ({
   totalBytes,
 }: DiskMetricsProps) => (
   <div className="grid grid-cols-3 gap-2 text-sm md:col-span-6 md:text-right">
-    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
-      <span className="text-xs text-neutral md:hidden">
+    <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
+      <span className="text-neutral text-xs md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.freeSpace"
           defaultMessage="Free Space"
@@ -86,8 +86,8 @@ const DiskMetrics = ({
       </span>
       <span className="text-base-content">{formatBytes(freeBytes)}</span>
     </div>
-    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
-      <span className="text-xs text-neutral md:hidden">
+    <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
+      <span className="text-neutral text-xs md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.usedSpace"
           defaultMessage="Used Space"
@@ -95,8 +95,8 @@ const DiskMetrics = ({
       </span>
       <span className="text-base-content">{formatBytes(usedBytes)}</span>
     </div>
-    <div className="flex flex-wrap max-sm:flex-col items-center gap-x-4 md:block">
-      <span className="text-xs text-neutral md:hidden">
+    <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
+      <span className="text-neutral text-xs md:hidden">
         <FormattedMessage
           id="systemSettings.diskSpace.totalSpace"
           defaultMessage="Total Space"
@@ -210,8 +210,8 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
 
   return (
     <div className="mt-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-extrabold gap-2 flex items-center">
+      <div className="flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-2xl font-extrabold">
           <FormattedMessage
             id="systemSettings.diskSpace.title"
             defaultMessage="Disk Space"
@@ -234,8 +234,8 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
           </span>
         </Alert>
       )}
-      <div className="mt-4 overflow-hidden rounded-lg border border-base-content/10">
-        <div className="hidden md:grid md:grid-cols-12 gap-3 border-b border-base-content/10 px-3 py-2 text-sm font-semibold text-base-content bg-base-200/50">
+      <div className="border-base-content/10 mt-4 overflow-hidden rounded-lg border">
+        <div className="border-base-content/10 text-base-content bg-base-200/50 hidden gap-3 border-b px-3 py-2 text-sm font-semibold md:grid md:grid-cols-12">
           <span className="col-span-4">
             <FormattedMessage
               id="systemSettings.diskSpace.location"
@@ -264,9 +264,9 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
         </div>
         <div>
           {rootDiskItem && (
-            <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center bg-base-200/50 hover:bg-base-200/30">
+            <div className="bg-base-200/50 hover:bg-base-200/30 grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
               <div className="min-w-0 md:col-span-4">
-                <span className="flex items-center gap-2 text-sm text-base-content">
+                <span className="text-base-content flex items-center gap-2 text-sm">
                   <ExpandButton
                     hasChildren={childCountByParent.has(ROOT_NODE_KEY)}
                     isExpanded={expandedRows.has(ROOT_NODE_KEY)}
@@ -299,16 +299,16 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
             return (
               <div
                 key={`${row.disk.deviceId}-${row.disk.path}`}
-                className={`overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none bg-base-200/50 hover:bg-base-200/30 ${
+                className={`bg-base-200/50 hover:bg-base-200/30 overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
                   isVisible
-                    ? 'max-h-40 border-t border-base-content/10 opacity-100 translate-y-0'
-                    : 'max-h-0 opacity-0 -translate-y-1 pointer-events-none'
+                    ? 'border-base-content/10 max-h-40 translate-y-0 border-t opacity-100'
+                    : 'pointer-events-none max-h-0 -translate-y-1 opacity-0'
                 }`}
               >
                 <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
                   <div className="min-w-0 md:col-span-4">
                     <span
-                      className={`flex items-center gap-2 text-sm text-base-content ${
+                      className={`text-base-content flex items-center gap-2 text-sm ${
                         !row.isChild
                           ? ''
                           : row.parentKey === ROOT_NODE_KEY
@@ -322,7 +322,7 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
                         onToggle={() => toggleRow(row.rowKey)}
                       />
                       {row.isChild && (
-                        <ArrowTurnDownRightIcon className="size-5 shrink-0 text-neutral" />
+                        <ArrowTurnDownRightIcon className="text-neutral size-5 shrink-0" />
                       )}
                       <span className="min-w-0 truncate font-mono">
                         {row.displayPath}

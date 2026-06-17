@@ -1,16 +1,16 @@
 import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
-import { In, LessThanOrEqual } from 'typeorm';
 import Invite from '@server/entity/Invite';
 import type { User } from '@server/entity/User';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import { Permission } from '@server/lib/permissions';
+import QRCodeProxy from '@server/lib/qrcodeproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import { isAuthenticated } from '@server/middleware/auth';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import { Router } from 'express';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { In, LessThanOrEqual } from 'typeorm';
 
 function generateIcode(): string {
   // Generates a random 8-character alphanumeric invite code

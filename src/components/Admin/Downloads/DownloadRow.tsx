@@ -1,34 +1,34 @@
-import React, { useState, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
-import type {
-  NormalizedDownloadItem,
-  DownloadClientStats,
-} from '@server/interfaces/api/downloadsInterfaces';
-import type { DownloadClientSettings } from '@server/lib/settings';
+import Button from '@app/components/Common/Button';
 import ProgressBar from '@app/components/Common/ProgressBar';
+import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
-import TorrentDetailsModal from './TorrentDetailsModal';
-import RemoveTorrentModal from './RemoveTorrentModal';
 import { useDownloadActions } from '@app/hooks/useDownloads';
 import { useIsClient } from '@app/hooks/useIsClient';
+import { formatBytes, formatEta, formatSpeed } from '@app/utils/numberHelper';
 import {
-  PlayIcon,
-  PauseIcon,
-  TrashIcon,
   ArrowPathIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  ChevronDoubleUpIcon,
-  ChevronDoubleDownIcon,
-  InformationCircleIcon,
-  XCircleIcon,
   ArrowTopRightOnSquareIcon,
+  ChevronDoubleDownIcon,
+  ChevronDoubleUpIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   ExclamationTriangleIcon,
+  InformationCircleIcon,
+  PauseIcon,
+  PlayIcon,
+  TrashIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
+import type {
+  DownloadClientStats,
+  NormalizedDownloadItem,
+} from '@server/interfaces/api/downloadsInterfaces';
+import type { DownloadClientSettings } from '@server/lib/settings';
+import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
-import Button from '@app/components/Common/Button';
-import Tooltip from '@app/components/Common/ToolTip';
+import RemoveTorrentModal from './RemoveTorrentModal';
+import TorrentDetailsModal from './TorrentDetailsModal';
 
 interface DownloadRowProps {
   torrent: NormalizedDownloadItem;
@@ -232,7 +232,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           />
         </td>
         <td
-          className="cursor-pointer group"
+          className="group cursor-pointer"
           onClick={() => setShowDetailsModal(true)}
           title={intl.formatMessage({
             id: 'common.viewDetails',
@@ -242,10 +242,10 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <span
-                className="font-medium truncate w-fit max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl"
+                className="w-fit max-w-sm truncate font-medium md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl"
                 title={torrent.name}
               >
-                <InformationCircleIcon className="inline text-primary w-5 opacity-50 sm:w-0 h-5 mr-1 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50 sm:group-hover:mr-1 transition-all duration-150 overflow-visible" />
+                <InformationCircleIcon className="text-primary mr-1 inline h-5 w-5 overflow-visible opacity-50 transition-all duration-150 sm:w-0 sm:opacity-0 sm:group-hover:mr-1 sm:group-hover:w-5 sm:group-hover:opacity-50" />
                 {torrent.name}
               </span>
               {isStale && (
@@ -264,21 +264,21 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                       id: 'downloads.clientUnreachable',
                       defaultMessage: 'Client Unreachable.',
                     })}
-                    className="size-5 text-warning shrink-0"
+                    className="text-warning size-5 shrink-0"
                   />
                 </Tooltip>
               )}
             </div>
-            <div className="flex flex-wrap gap-1 mt-1 items-center">
+            <div className="mt-1 flex flex-wrap items-center gap-1">
               {torrent.category && (
-                <span className="text-xs text-neutral items-center mr-1">
+                <span className="text-neutral mr-1 items-center text-xs">
                   {torrent.category}
                 </span>
               )}
               {torrent.tags?.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-1.5 pb-0.5 text-xs font-medium text-primary"
+                  className="bg-primary/15 text-primary inline-flex items-center gap-1 rounded-full px-1.5 pb-0.5 text-xs font-medium"
                 >
                   {tag}
                 </span>
@@ -320,7 +320,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
         </td>
         <td>{getStatusBadge(torrent.status)}</td>
         <td
-          className="cursor-pointer group"
+          className="group cursor-pointer"
           onClick={() => {
             const client = clients.find((c) => c.id === torrent.clientId);
             if (client) {
@@ -338,21 +338,21 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
             { clientName: torrent.clientName }
           )}
         >
-          <span className="font-medium flex gap-1">
+          <span className="flex gap-1 font-medium">
             {torrent.clientName}
-            <ArrowTopRightOnSquareIcon className="inline text-primary w-5 opacity-50 sm:w-0 h-5 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50 transition-all duration-150 overflow-visible" />
+            <ArrowTopRightOnSquareIcon className="text-primary inline h-5 w-5 overflow-visible opacity-50 transition-all duration-150 sm:w-0 sm:opacity-0 sm:group-hover:w-5 sm:group-hover:opacity-50" />
           </span>
         </td>
         <td>
           <div className="flex items-center">
             {torrent.priority !== undefined && torrent.priority > 0 && (
-              <span className="text-xs font-mono min-w-[2rem]">
+              <span className="min-w-8 font-mono text-xs">
                 #{torrent.priority}
               </span>
             )}
             {torrent.priority !== undefined &&
               (torrent.priority === -1 || torrent.priority === 0) && (
-                <span className="text-xs text-neutral">
+                <span className="text-neutral text-xs">
                   {torrent.priority === -1 ? (
                     <FormattedMessage
                       id="downloads.queueingDisabled"
@@ -427,7 +427,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                     })}
                   </option>
                 </select>
-                <div className="hidden sm:flex gap-1 ">
+                <div className="hidden gap-1 sm:flex">
                   <Button
                     buttonSize="xs"
                     buttonType="ghost"
@@ -500,7 +500,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
         <td>
           <>
             <select
-              className="select select-xs select-primary sm:hidden w-auto min-w-32"
+              className="select select-xs select-primary w-auto min-w-32 sm:hidden"
               disabled={isActing || isSelected}
               defaultValue=""
               onChange={(e) => {
@@ -559,7 +559,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
                 })}
               </option>
             </select>
-            <div className="hidden sm:flex gap-1">
+            <div className="hidden gap-1 sm:flex">
               {canResume && (
                 <Button
                   buttonSize="xs"

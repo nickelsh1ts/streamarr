@@ -10,18 +10,18 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Table from '@app/components/Common/Table';
+import ToolTip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
 import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
-  PencilIcon,
+  BarsArrowDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  BarsArrowDownIcon,
   InboxArrowDownIcon,
+  PencilIcon,
   UserPlusIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -32,14 +32,14 @@ import {
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import validator from 'validator';
 import * as Yup from 'yup';
-import ToolTip from '@app/components/Common/ToolTip';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
 
@@ -356,7 +356,7 @@ const AdminUsers = () => {
                   />
                 )}
               <Form className="mt-5 max-w-6xl space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="displayName">
                     <FormattedMessage
                       id="common.displayName"
@@ -369,18 +369,18 @@ const AdminUsers = () => {
                         id="displayName"
                         name="displayName"
                         type="text"
-                        className="input input-sm input-primary rounded-md w-full"
+                        className="input input-sm input-primary w-full rounded-md"
                       />
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="email">
                     <FormattedMessage
                       id="common.emailAddress"
                       defaultMessage="Email Address"
                     />
-                    <span className="ml-1 text-error">*</span>
+                    <span className="text-error ml-1">*</span>
                   </label>
                   <div className="sm:col-span-2">
                     <div className="flex">
@@ -393,7 +393,7 @@ const AdminUsers = () => {
                         data-1pignore="true"
                         data-lpignore="true"
                         data-bwignore="true"
-                        className="input input-sm input-primary rounded-md w-full"
+                        className="input input-sm input-primary w-full rounded-md"
                       />
                     </div>
                     {errors.email &&
@@ -404,7 +404,7 @@ const AdminUsers = () => {
                   </div>
                 </div>
                 <div
-                  className={`grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 ${
+                  className={`grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2 ${
                     passwordGenerationEnabled ? '' : 'opacity-50'
                   }`}
                 >
@@ -413,7 +413,7 @@ const AdminUsers = () => {
                       id="users.automaticallyGeneratePassword"
                       defaultMessage="Automatically Generate Password"
                     />
-                    <span className="block text-sm text-neutral">
+                    <span className="text-neutral block text-sm">
                       <FormattedMessage
                         id="users.emailGeneratedPassword"
                         defaultMessage="Email a server-generated password to the user"
@@ -432,7 +432,7 @@ const AdminUsers = () => {
                   </div>
                 </div>
                 <div
-                  className={`grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 ${
+                  className={`grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2 ${
                     values.genpassword ? 'opacity-50' : ''
                   }`}
                 >
@@ -442,7 +442,7 @@ const AdminUsers = () => {
                       defaultMessage="Password"
                     />
                     {!values.genpassword && (
-                      <span className="ml-1 text-error">*</span>
+                      <span className="text-error ml-1">*</span>
                     )}
                   </label>
                   <div className="sm:col-span-2">
@@ -494,12 +494,12 @@ const AdminUsers = () => {
           <div className="mb-2 flex grow flex-col justify-between sm:flex-row lg:mb-0 lg:grow-0">
             <Button
               buttonSize="sm"
-              className="mb-2 grow sm:mb-0 sm:mr-2"
+              className="mb-2 grow sm:mr-2 sm:mb-0"
               buttonType="primary"
               data-testid="create-user-button"
               onClick={() => setCreateModal({ isOpen: true })}
             >
-              <UserPlusIcon className="size-7 mr-2" />
+              <UserPlusIcon className="mr-2 size-7" />
               <span>
                 <FormattedMessage
                   id="users.createLocalUser"
@@ -515,7 +515,7 @@ const AdminUsers = () => {
                 data-testid="import-plex-button"
                 onClick={() => setShowImportModal(true)}
               >
-                <InboxArrowDownIcon className="size-7 mr-2" />
+                <InboxArrowDownIcon className="mr-2 size-7" />
                 <span>
                   <FormattedMessage
                     id="plexImport.title"
@@ -526,7 +526,7 @@ const AdminUsers = () => {
             )}
           </div>
           <div className="mb-2 flex grow lg:mb-0 lg:grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
               <BarsArrowDownIcon className="size-7" />
             </span>
             <select
@@ -538,7 +538,7 @@ const AdminUsers = () => {
                 router.push(pathname);
               }}
               value={currentSort as string}
-              className="select select-sm select-primary rounded-md rounded-l-none w-full disabled:border disabled:border-primary"
+              className="select select-sm select-primary disabled:border-primary w-full rounded-md rounded-l-none disabled:border"
             >
               <option value="created">
                 <FormattedMessage
@@ -610,7 +610,7 @@ const AdminUsers = () => {
                   onClick={() => setShowBulkEditModal(true)}
                   disabled={selectedUsers.length === 0}
                 >
-                  <PencilIcon className="size-4 mr-2" />
+                  <PencilIcon className="mr-2 size-4" />
                   <span>
                     <FormattedMessage
                       id="users.bulkEdit"
@@ -656,13 +656,13 @@ const AdminUsers = () => {
                   <div className="ml-4">
                     <Link
                       href={`/admin/users/${user.id}`}
-                      className="text-base font-bold leading-5 transition duration-300 hover:underline"
+                      className="text-base leading-5 font-bold transition duration-300 hover:underline"
                       data-testid="user-list-username-link"
                     >
                       {user.displayName}
                     </Link>
                     {user.displayName.toLowerCase() !== user.email && (
-                      <div className="text-sm leading-5 text-neutral">
+                      <div className="text-neutral text-sm leading-5">
                         {user.email}
                       </div>
                     )}
@@ -782,7 +782,7 @@ const AdminUsers = () => {
                   buttonType="warning"
                   disabled={user.id === 1 && currentUser?.id !== 1}
                   data-testid={`edit-user-button-${user.id}`}
-                  className="mr-2 disabled:bg-warning/50 max-xl:btn-block"
+                  className="disabled:bg-warning/50 max-xl:btn-block mr-2"
                   onClick={() =>
                     router.push(`/admin/users/${user.id}/settings`)
                   }
@@ -793,7 +793,7 @@ const AdminUsers = () => {
                   buttonType="error"
                   buttonSize="sm"
                   data-testid={`delete-user-button-${user.id}`}
-                  className="disabled:bg-error/50 disabled:pointer-events-auto disabled:hover:cursor-not-allowed disabled:hover:bg-error/40 max-xl:btn-block"
+                  className="disabled:bg-error/50 disabled:hover:bg-error/40 max-xl:btn-block disabled:pointer-events-auto disabled:hover:cursor-not-allowed"
                   disabled={
                     user.id === 1 ||
                     (currentUser?.id !== 1 &&
@@ -812,7 +812,7 @@ const AdminUsers = () => {
           <tr className="bg-base-100">
             <Table.TD colSpan={8} noPadding>
               <nav
-                className="flex w-screen flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 lg:w-full"
+                className="flex w-screen flex-col items-center space-y-3 space-x-4 px-6 py-3 sm:flex-row sm:space-y-0 lg:w-full"
                 aria-label="Pagination"
               >
                 <div className="hidden lg:flex lg:flex-1">
@@ -837,7 +837,7 @@ const AdminUsers = () => {
                   </p>
                 </div>
                 <div className="flex justify-center sm:flex-1 sm:justify-start lg:justify-center">
-                  <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 lg:ml-0">
+                  <span className="-mt-3 items-center text-sm sm:mt-0 sm:-ml-4 lg:ml-0">
                     <FormattedMessage
                       id="common.resultsDisplay"
                       defaultMessage="Display {select} results per page"

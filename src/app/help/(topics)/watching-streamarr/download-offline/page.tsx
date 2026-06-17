@@ -1,10 +1,10 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
 import { ArrowDownCircleIcon } from '@heroicons/react/24/solid';
 import { FormattedMessage, useIntl } from 'react-intl';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 
 const HelpContent = () => {
   const { currentSettings } = useSettings();
@@ -20,7 +20,7 @@ const HelpContent = () => {
           }}
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.downloadOffline.downloadPlexStep1"
@@ -57,13 +57,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.downloadOffline.downloadPlexTip1"
@@ -127,7 +127,7 @@ const HelpContent = () => {
           defaultMessage="How to download media:"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.downloadOffline.downloadMediaStep1"
@@ -153,7 +153,7 @@ const HelpContent = () => {
           <FormattedMessage
             id="help.downloadOffline.downloadMediaStep4"
             defaultMessage="On most devices you will see an {icon} icon"
-            values={{ icon: <ArrowDownCircleIcon className="w-5 h-5 mx-1" /> }}
+            values={{ icon: <ArrowDownCircleIcon className="mx-1 h-5 w-5" /> }}
           />
         </li>
         <li>
@@ -163,13 +163,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.downloadOffline.downloadMediaTip1"
@@ -219,7 +219,7 @@ const HelpContent = () => {
           defaultMessage="How to watch offline:"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.downloadOffline.watchOfflineStep1"
@@ -248,13 +248,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.downloadOffline.watchOfflineTip1"

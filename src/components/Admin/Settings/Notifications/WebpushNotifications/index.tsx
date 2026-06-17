@@ -3,14 +3,14 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast, { dismissToast } from '@app/components/Toast';
-import { BeakerIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { useClientValue } from '@app/hooks/useIsClient';
+import { ArrowDownTrayIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { useClientValue } from '@app/hooks/useIsClient';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 const WebpushNotifications = () => {
   const intl = useIntl();
@@ -124,13 +124,13 @@ const WebpushNotifications = () => {
 
           return (
             <Form className="mt-5">
-              <div className=" sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center max-sm:space-y-4 max-sm:space-y-reverse max-w-5xl">
+              <div className="max-w-5xl max-sm:space-y-4 max-sm:space-y-reverse sm:grid sm:grid-cols-3 sm:items-center sm:gap-4">
                 <label htmlFor="preset">
                   <FormattedMessage
                     id="notifications.enableAgent"
                     defaultMessage="Enable Agent"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -143,8 +143,8 @@ const WebpushNotifications = () => {
                   </div>
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-full mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-full mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonSize="sm"
@@ -156,7 +156,7 @@ const WebpushNotifications = () => {
                     }}
                     className="disabled:bg-warning/30"
                   >
-                    <BeakerIcon className="size-5 mr-2" />
+                    <BeakerIcon className="mr-2 size-5" />
                     <span>
                       <FormattedMessage
                         id="common.test"
@@ -172,7 +172,7 @@ const WebpushNotifications = () => {
                     type="submit"
                     disabled={isSubmitting || isTesting}
                   >
-                    <ArrowDownTrayIcon className="size-5 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-5" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

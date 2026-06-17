@@ -1,38 +1,38 @@
 'use client';
-import type { User } from '@server/entity/User';
-import { Form, Formik, Field } from 'formik';
-import Button from '@app/components/Common/Button';
-import Toast from '@app/components/Toast';
-import {
-  CloudArrowDownIcon,
-  CloudArrowUpIcon,
-  InformationCircleIcon,
-  XCircleIcon,
-  CheckBadgeIcon,
-} from '@heroicons/react/24/solid';
+import type { NotificationSelectOption } from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
+import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
-import { Permission, UserType, useUser } from '@app/hooks/useUser';
-import { availableLanguages } from '@app/context/LanguageContext';
-import { useState } from 'react';
-import axios from 'axios';
-import useSWR from 'swr';
-import SensitiveInput from '@app/components/Common/SensitiveInput';
-import * as Yup from 'yup';
+import Button from '@app/components/Common/Button';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import NotificationTypeSelector, {
   ALL_NOTIFICATIONS,
 } from '@app/components/Common/NotificationTypeSelector';
-import Alert from '@app/components/Common/Alert';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
+import Tabs from '@app/components/Common/Tabs';
+import Toggle from '@app/components/Common/Toggle';
+import Toast from '@app/components/Toast';
+import { availableLanguages } from '@app/context/LanguageContext';
+import useSettings from '@app/hooks/useSettings';
+import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import {
   subscribeToPushNotifications,
   unsubscribeToPushNotifications,
 } from '@app/utils/pushSubscriptionHelpers';
-import useSettings from '@app/hooks/useSettings';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { FormattedMessage, useIntl } from 'react-intl';
-import Tabs from '@app/components/Common/Tabs';
-import Toggle from '@app/components/Common/Toggle';
+import {
+  CheckBadgeIcon,
+  CloudArrowDownIcon,
+  CloudArrowUpIcon,
+  InformationCircleIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import type { User } from '@server/entity/User';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import type { NotificationSelectOption } from '@app/components/Admin/Settings/Notifications/ProviderNotificationsForm';
+import axios from 'axios';
+import { Field, Form, Formik } from 'formik';
+import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import * as Yup from 'yup';
 
 type SignupNotificationTab = {
   id: string;
@@ -339,14 +339,14 @@ const ConfirmAccountForm = ({
       }) => (
         <Form>
           <div className="max-w-6xl space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <div className="col-span-1">
                 <FormattedMessage
                   id="settings.accountType"
                   defaultMessage="Account Type"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
+              <div className="mb-1 text-sm leading-5 font-medium text-gray-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {user?.userType === UserType.PLEX ? (
                     <Badge badgeType="warning">
@@ -366,11 +366,11 @@ const ConfirmAccountForm = ({
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <div className="col-span-1">
                 <FormattedMessage id="common.role" defaultMessage="Role" />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 text-gray-400 sm:mt-2">
+              <div className="mb-1 text-sm leading-5 font-medium text-gray-400 sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {user?.id === 1
                     ? intl.formatMessage({
@@ -389,7 +389,7 @@ const ConfirmAccountForm = ({
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="displayName" className="col-span-1">
                 <FormattedMessage
                   id="common.displayName"
@@ -413,7 +413,7 @@ const ConfirmAccountForm = ({
                   )}
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="locale" className="col-span-1">
                 <FormattedMessage
                   id="common.displayLanguage"
@@ -447,7 +447,7 @@ const ConfirmAccountForm = ({
               </div>
             </div>
             {user?.userType === UserType.PLEX && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="autoPinLibraries" className="col-span-1">
                   <FormattedMessage
                     id="settings.pinLibraries"
@@ -474,7 +474,7 @@ const ConfirmAccountForm = ({
                     </span>
                   </Badge>
                 </div>
-                <div className="text-xs text-gray-400 ml-0!">
+                <div className="ml-0! text-xs text-gray-400">
                   <FormattedMessage
                     id="signUp.autoPinLibrariesHelp"
                     defaultMessage="Automatically pin shared libraries to your Plex home screen"
@@ -483,8 +483,8 @@ const ConfirmAccountForm = ({
               </div>
             )}
             {currentSettings?.localLogin && (
-              <div className="mb-6 mt-3">
-                <h3 className="text-2xl font-extrabold mb-2">
+              <div className="mt-3 mb-6">
+                <h3 className="mb-2 text-2xl font-extrabold">
                   <FormattedMessage
                     id="common.password"
                     defaultMessage="Password"
@@ -502,7 +502,7 @@ const ConfirmAccountForm = ({
                 )}
                 <div className="max-w-6xl space-y-5">
                   {passwordData.hasPassword && user?.id === currentUser?.id && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 pb-6">
+                    <div className="grid grid-cols-1 space-y-2 pb-6 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <label htmlFor="currentPassword" className="col-span-1">
                         <FormattedMessage
                           id="common.currentPassword"
@@ -529,7 +529,7 @@ const ConfirmAccountForm = ({
                       </div>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                     <label htmlFor="newPassword" className="col-span-1">
                       <FormattedMessage
                         id="common.newPassword"
@@ -553,7 +553,7 @@ const ConfirmAccountForm = ({
                         )}
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                     <label htmlFor="confirmPassword" className="col-span-1">
                       <FormattedMessage
                         id="common.confirmPassword"
@@ -582,8 +582,8 @@ const ConfirmAccountForm = ({
                 </div>
               </div>
             )}
-            <div className="mb-6 mt-3">
-              <h3 className="text-2xl font-extrabold mb-2">
+            <div className="mt-3 mb-6">
+              <h3 className="mb-2 text-2xl font-extrabold">
                 <FormattedMessage
                   id="notification.settings"
                   defaultMessage="Notification Settings"
@@ -626,7 +626,7 @@ const ConfirmAccountForm = ({
                     hidden: !notificationsData?.webPushEnabled,
                     content: (
                       <div className="max-w-6xl space-y-2">
-                        <div className="flex col-span-3 mt-4 mb-4">
+                        <div className="col-span-3 mt-4 mb-4 flex">
                           <span className="inline-flex rounded-md shadow-sm">
                             <Button
                               buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
@@ -639,9 +639,9 @@ const ConfirmAccountForm = ({
                               }
                             >
                               {webPushEnabled ? (
-                                <CloudArrowDownIcon className="size-4 mr-2" />
+                                <CloudArrowDownIcon className="mr-2 size-4" />
                               ) : (
-                                <CloudArrowUpIcon className="size-4 mr-2" />
+                                <CloudArrowUpIcon className="mr-2 size-4" />
                               )}
                               <span>
                                 {webPushEnabled
@@ -709,7 +709,7 @@ const ConfirmAccountForm = ({
                     hidden: !notificationsData?.discordEnabled,
                     content: (
                       <div className="max-w-6xl space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label htmlFor="discordId" className="col-span-1">
                             <FormattedMessage
                               id="userSettings.notifications.discordId"
@@ -751,7 +751,7 @@ const ConfirmAccountForm = ({
                     hidden: !notificationsData?.pushbulletEnabled,
                     content: (
                       <div className="max-w-6xl space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="pushbulletAccessToken"
                             className="col-span-1"
@@ -799,7 +799,7 @@ const ConfirmAccountForm = ({
                     hidden: !notificationsData?.pushoverEnabled,
                     content: (
                       <div className="max-w-6xl space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="pushoverApplicationToken"
                             className="col-span-1"
@@ -821,7 +821,7 @@ const ConfirmAccountForm = ({
                             </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="pushoverUserKey"
                             className="col-span-1"
@@ -843,7 +843,7 @@ const ConfirmAccountForm = ({
                             </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label htmlFor="pushoverSound" className="col-span-1">
                             <FormattedMessage
                               id="userSettings.notifications.pushoverSound"
@@ -855,7 +855,7 @@ const ConfirmAccountForm = ({
                               id="pushoverSound"
                               name="pushoverSound"
                               as="select"
-                              className="select select-sm select-primary rounded-md w-auto min-w-36 shrink-0"
+                              className="select select-sm select-primary w-auto min-w-36 shrink-0 rounded-md"
                               value={values.pushoverSound}
                               onChange={(e) => {
                                 setFieldValue('pushoverSound', e.target.value);
@@ -895,7 +895,7 @@ const ConfirmAccountForm = ({
                     hidden: !notificationsData?.telegramEnabled,
                     content: (
                       <div className="max-w-6xl space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="telegramChatId"
                             className="col-span-1"
@@ -914,7 +914,7 @@ const ConfirmAccountForm = ({
                             />
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="telegramMessageThreadId"
                             className="col-span-1"
@@ -933,7 +933,7 @@ const ConfirmAccountForm = ({
                             />
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                           <label
                             htmlFor="telegramSendSilently"
                             className="col-span-1"
@@ -985,7 +985,7 @@ const ConfirmAccountForm = ({
           <Button
             type="submit"
             buttonType="primary"
-            className="w-full mt-4"
+            className="mt-4 w-full"
             disabled={isSubmitting}
           >
             {isSubmitting

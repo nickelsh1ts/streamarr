@@ -4,23 +4,23 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import { useOnboardingContext } from '@app/context/OnboardingContext';
+import { EyeIcon, PlayIcon } from '@heroicons/react/24/outline';
 import {
-  CheckBadgeIcon,
-  XCircleIcon,
-  ArrowPathIcon,
   ArrowDownTrayIcon,
+  ArrowPathIcon,
+  CheckBadgeIcon,
   UsersIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
-import { PlayIcon, EyeIcon } from '@heroicons/react/24/outline';
 import type { OnboardingSettingsResponse } from '@server/interfaces/api/onboardingInterfaces';
 import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import WelcomeContentManager from './WelcomeContentManager';
 import TutorialStepManager from './TutorialStepManager';
+import WelcomeContentManager from './WelcomeContentManager';
 
 const OnboardingSettings = () => {
   const intl = useIntl();
@@ -234,13 +234,13 @@ const OnboardingSettings = () => {
         >
           {({ isSubmitting, values }) => (
             <Form className="mt-5 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+              <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="welcomeEnabled" className="col-span-1">
                   <FormattedMessage
                     id="settings.onboarding.welcomeEnabled"
                     defaultMessage="Enable Welcome Modal"
                   />
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="settings.onboarding.welcomeEnabledTip"
                       defaultMessage="Show a welcome carousel to new users on first login."
@@ -257,7 +257,7 @@ const OnboardingSettings = () => {
                 </div>
               </div>
               {values.welcomeEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+                <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="allowSkipWelcome" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -265,7 +265,7 @@ const OnboardingSettings = () => {
                         defaultMessage="Allow Skip"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="settings.onboarding.allowSkipWelcomeTip"
                         defaultMessage="Allow users to skip or dismiss the welcome modal."
@@ -282,7 +282,7 @@ const OnboardingSettings = () => {
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+              <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tutorialEnabled" className="col-span-1">
                   <span className="mr-2">
                     <FormattedMessage
@@ -290,7 +290,7 @@ const OnboardingSettings = () => {
                       defaultMessage="Enable Tutorial"
                     />
                   </span>
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="settings.onboarding.tutorialEnabledTip"
                       defaultMessage="Guide users through key features with an interactive tutorial."
@@ -307,7 +307,7 @@ const OnboardingSettings = () => {
                 </div>
               </div>
               {values.tutorialEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+                <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="allowSkipTutorial" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -315,7 +315,7 @@ const OnboardingSettings = () => {
                         defaultMessage="Allow Skip"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="settings.onboarding.allowSkipTutorialTip"
                         defaultMessage="Allow users to skip the tutorial."
@@ -333,13 +333,13 @@ const OnboardingSettings = () => {
                 </div>
               )}
               {values.tutorialEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+                <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="tutorialMode" className="col-span-1">
                     <FormattedMessage
                       id="settings.onboarding.tutorialMode"
                       defaultMessage="Tutorial Mode"
                     />
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="settings.onboarding.tutorialModeTip"
                         defaultMessage="Choose how the tutorial guides users through features."
@@ -377,7 +377,7 @@ const OnboardingSettings = () => {
               )}
               {values.tutorialEnabled && (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+                  <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                     <label htmlFor="tutorialAutostart" className="col-span-1">
                       <span className="mr-2">
                         <FormattedMessage
@@ -385,7 +385,7 @@ const OnboardingSettings = () => {
                           defaultMessage="Auto-Start Tutorial"
                         />
                       </span>
-                      <p className="text-sm text-neutral">
+                      <p className="text-neutral text-sm">
                         <FormattedMessage
                           id="settings.onboarding.tutorialAutostartTip"
                           defaultMessage="Automatically start the tutorial after the welcome modal or on first login."
@@ -402,7 +402,7 @@ const OnboardingSettings = () => {
                     </div>
                   </div>
                   {values.tutorialAutostart && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0 col-span-2 sm:col-span-1">
+                    <div className="col-span-2 grid grid-cols-1 space-y-2 sm:col-span-1 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <label
                         htmlFor="tutorialAutostartDelay"
                         className="col-span-1"
@@ -411,7 +411,7 @@ const OnboardingSettings = () => {
                           id="settings.onboarding.tutorialAutostartDelay"
                           defaultMessage="Auto-Start Delay (ms)"
                         />
-                        <p className="text-sm text-neutral">
+                        <p className="text-neutral text-sm">
                           <FormattedMessage
                             id="settings.onboarding.tutorialAutostartDelayTip"
                             defaultMessage="Delay in milliseconds before auto-starting the tutorial."
@@ -432,8 +432,8 @@ const OnboardingSettings = () => {
                   )}
                 </>
               )}
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -441,7 +441,7 @@ const OnboardingSettings = () => {
                     buttonSize="sm"
                     disabled={isSubmitting}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     {isSubmitting ? (
                       <FormattedMessage
                         id="common.saving"
@@ -467,13 +467,13 @@ const OnboardingSettings = () => {
             defaultMessage="Preview & Test"
           />
         </h4>
-        <p className="mb-4 description">
+        <p className="description mb-4">
           <FormattedMessage
             id="settings.onboarding.previewDescription"
             defaultMessage="Test the welcome modal and tutorial without affecting user data. Preview mode does not save progress."
           />
         </p>
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex flex-wrap gap-3">
           <Button
             buttonType="primary"
             buttonSize="sm"
@@ -482,7 +482,7 @@ const OnboardingSettings = () => {
               startWelcomePreview();
             }}
           >
-            <EyeIcon className="size-5 mr-2" />
+            <EyeIcon className="mr-2 size-5" />
             <FormattedMessage
               id="settings.onboarding.previewWelcome"
               defaultMessage="Preview Welcome"
@@ -496,7 +496,7 @@ const OnboardingSettings = () => {
               startTutorialPreview();
             }}
           >
-            <PlayIcon className="size-5 mr-2" />
+            <PlayIcon className="mr-2 size-5" />
             <FormattedMessage
               id="settings.onboarding.previewTutorial"
               defaultMessage="Preview Tutorial"
@@ -511,7 +511,7 @@ const OnboardingSettings = () => {
             defaultMessage="Welcome Content"
           />
         </h4>
-        <p className="mb-4 description">
+        <p className="description mb-4">
           <FormattedMessage
             id="settings.onboarding.welcomeContentDescription"
             defaultMessage="Configure the slides shown in the welcome modal carousel."
@@ -526,7 +526,7 @@ const OnboardingSettings = () => {
             defaultMessage="Tutorial Steps"
           />
         </h4>
-        <p className="mb-4 description">
+        <p className="description mb-4">
           <FormattedMessage
             id="settings.onboarding.tutorialStepsDescription"
             defaultMessage="Configure the interactive tutorial steps."
@@ -541,7 +541,7 @@ const OnboardingSettings = () => {
             defaultMessage="Reset to Defaults"
           />
         </h4>
-        <p className="mb-4 description">
+        <p className="description mb-4">
           <FormattedMessage
             id="settings.onboarding.resetSectionDescription"
             defaultMessage="Reset all welcome content and tutorial steps to their default values. This will delete any customizations."
@@ -553,7 +553,7 @@ const OnboardingSettings = () => {
             buttonSize="sm"
             onClick={() => setShowResetModal(true)}
           >
-            <ArrowPathIcon className="size-5 mr-2" />
+            <ArrowPathIcon className="mr-2 size-5" />
             <FormattedMessage
               id="settings.onboarding.resetTitle"
               defaultMessage="Reset to Defaults"
@@ -564,7 +564,7 @@ const OnboardingSettings = () => {
             buttonSize="sm"
             onClick={() => setShowResetAllUsersModal(true)}
           >
-            <UsersIcon className="size-5 mr-2" />
+            <UsersIcon className="mr-2 size-5" />
             <FormattedMessage
               id="settings.onboarding.resetAllUsersButton"
               defaultMessage="Reset All Users"

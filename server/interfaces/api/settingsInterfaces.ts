@@ -1,5 +1,5 @@
-import type { PaginatedResponse } from './common';
 import type { Theme } from '@server/lib/settings';
+import type { PaginatedResponse } from './common';
 
 export type LogMessage = {
   timestamp: string;

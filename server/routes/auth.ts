@@ -4,22 +4,22 @@ import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import type { UserSummary } from '@server/interfaces/api/userInterfaces';
+import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
-import { getSettings } from '@server/lib/settings';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
-import logger from '@server/logger';
-import {
-  resetPasswordLimiter,
-  plexPinLimiter,
-  plexPinStatusLimiter,
-  plexAuthLimiter,
-} from '@server/lib/rateLimiters';
 import plexPinAuth, {
   resolvePlexAuthToken,
   type PlexPinClientInfo,
 } from '@server/lib/plexAuth';
+import {
+  plexAuthLimiter,
+  plexPinLimiter,
+  plexPinStatusLimiter,
+  resetPasswordLimiter,
+} from '@server/lib/rateLimiters';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
 const authRoutes = Router();

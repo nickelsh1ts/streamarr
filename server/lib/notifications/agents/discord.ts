@@ -1,15 +1,15 @@
+import { NotificationType } from '@server/constants/notification';
 import {
   getSettings,
   NotificationAgentKey,
   type NotificationAgentDiscord,
 } from '@server/lib/settings';
 import logger from '@server/logger';
+import { truncate } from '@server/utils/textHelpers';
 import axios from 'axios';
-import { NotificationType } from '@server/constants/notification';
 import type { NotificationPayload } from './agent';
 import type { BroadcastContext } from './broadcastAgent';
 import { BroadcastAgent } from './broadcastAgent';
-import { truncate } from '@server/utils/textHelpers';
 
 class DiscordAgent extends BroadcastAgent<NotificationAgentDiscord> {
   protected readonly agentKey = NotificationAgentKey.DISCORD;

@@ -13,7 +13,7 @@ const WatchPage: NextPage = () => {
     <Watch>
       <link rel="stylesheet" href={withVersion('/watch.base.css')} />
       <link rel="stylesheet" href={withVersion('/watch.css')} />
-      <div className="fixed top-[0.6rem] left-2 sm:max-lg:left-[3.2rem] pointer-events-none pwa-only z-1006">
+      <div className="pwa-only pointer-events-none fixed top-[0.6rem] left-2 z-1006 sm:max-lg:left-[3.2rem]">
         <BackButton />
       </div>
       <Sidebar />

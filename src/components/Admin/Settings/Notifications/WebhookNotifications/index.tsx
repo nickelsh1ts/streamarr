@@ -4,6 +4,7 @@ import JSONEditor from '@app/components/Common/JSONEditor';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import NotificationTypeSelector from '@app/components/Common/NotificationTypeSelector';
 import Toast from '@app/components/Toast';
+import { isValidHttpUrl } from '@app/utils/networkValidation';
 import {
   ArrowDownTrayIcon,
   BeakerIcon,
@@ -29,7 +30,6 @@ import { type ReactNode, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import { isValidHttpUrl } from '@app/utils/networkValidation';
 
 const DEFAULT_PAYLOAD = JSON.stringify(
   {
@@ -163,7 +163,7 @@ const TemplateVarsPanel = () => {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
+        className="flex items-center gap-1 text-sm font-medium opacity-70 transition-opacity hover:opacity-100"
       >
         <ChevronRightIcon
           className={`size-4 transition-transform duration-300 ${open ? 'rotate-90' : ''}`}
@@ -177,17 +177,17 @@ const TemplateVarsPanel = () => {
         className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
       >
         <div className="overflow-hidden">
-          <div className="mt-3 rounded-lg border border-base-content/10 bg-base-200 p-4 space-y-4 text-xs">
+          <div className="border-base-content/10 bg-base-200 mt-3 space-y-4 rounded-lg border p-4 text-xs">
             {TEMPLATE_VARS.map((group, i) => (
               <div key={i}>
-                <p className="font-semibold mb-2 opacity-80">
+                <p className="mb-2 font-semibold opacity-80">
                   {group.groupLabel}
                 </p>
                 <table className="w-full">
                   <tbody>
                     {group.vars.map((v) => (
                       <tr key={v.name} className="align-top">
-                        <td className="pr-4 pb-1 font-mono whitespace-nowrap text-primary">
+                        <td className="text-primary pr-4 pb-1 font-mono whitespace-nowrap">
                           {v.name}
                         </td>
                         <td className="pb-1 opacity-70">{v.desc}</td>
@@ -209,7 +209,7 @@ const ResetPayloadButton = () => {
   const intl = useIntl();
 
   return (
-    <div className="flex justify-end mb-1">
+    <div className="mb-1 flex justify-end">
       <Button
         type="button"
         buttonSize="xs"
@@ -220,7 +220,7 @@ const ResetPayloadButton = () => {
           defaultMessage: 'Reset to Default',
         })}
       >
-        <ArrowPathIcon className="size-4 mr-1" />
+        <ArrowPathIcon className="mr-1 size-4" />
         <FormattedMessage
           id="notifications.webhook.resetPayload"
           defaultMessage="Reset to Default"
@@ -468,15 +468,15 @@ const WebhookNotifications = () => {
         return (
           <Form>
             <div className="mt-5">
-              <div className="space-y-4 max-w-5xl">
-                <div className="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 max-sm:space-y-4 max-sm:space-y-reverse">
+              <div className="max-w-5xl space-y-4">
+                <div className="max-sm:space-y-4 max-sm:space-y-reverse sm:grid sm:grid-cols-3 sm:items-center sm:gap-4">
                   <label htmlFor="enabled">
                     <FormattedMessage
                       id="notifications.enableAgent"
                       defaultMessage="Enable Agent"
                     />
                   </label>
-                  <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <Field
                       id="enabled"
                       name="enabled"
@@ -491,19 +491,19 @@ const WebhookNotifications = () => {
                       id="notifications.fields.webhookUrl"
                       defaultMessage="Webhook URL"
                     />
-                    <span className="ml-1 text-error">*</span>
+                    <span className="text-error ml-1">*</span>
                   </label>
-                  <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <Field
                       id="webhookUrl"
                       name="webhookUrl"
                       type="text"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                     {errors.webhookUrl &&
                       touched.webhookUrl &&
                       typeof errors.webhookUrl === 'string' && (
-                        <div className="text-error text-sm mt-1">
+                        <div className="text-error mt-1 text-sm">
                           {errors.webhookUrl}
                         </div>
                       )}
@@ -516,15 +516,15 @@ const WebhookNotifications = () => {
                       defaultMessage="Authorization Header"
                     />
                   </label>
-                  <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <Field
                       id="authHeader"
                       name="authHeader"
                       type="text"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                     {hasAuthHeaderConflict && (
-                      <p className="mt-1 text-xs text-warning">
+                      <p className="text-warning mt-1 text-xs">
                         <FormattedMessage
                           id="notifications.webhook.authHeaderConflict"
                           defaultMessage="You cannot use both the Authorization Header field and an 'Authorization' custom header. Remove one."
@@ -540,13 +540,13 @@ const WebhookNotifications = () => {
                       defaultMessage="Custom Headers"
                     />
                   </label>
-                  <div className="sm:col-span-2 space-y-2">
+                  <div className="space-y-2 sm:col-span-2">
                     <FieldArray name="customHeaders">
                       {({ push, remove }) => (
                         <>
                           {values.customHeaders.map((_, idx) => (
                             <div key={idx} className="space-y-2">
-                              <div className="grid grid-cols-1 gap-y-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:gap-x-2 sm:items-start">
+                              <div className="grid grid-cols-1 gap-y-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-start sm:gap-x-2">
                                 <div>
                                   <Field
                                     name={`customHeaders.${idx}.key`}
@@ -555,9 +555,9 @@ const WebhookNotifications = () => {
                                       id: 'notifications.webhook.headerName',
                                       defaultMessage: 'Header Name',
                                     })}
-                                    className="input input-sm input-primary rounded-md w-full"
+                                    className="input input-sm input-primary w-full rounded-md"
                                   />
-                                  <div className="text-xs text-error mt-1">
+                                  <div className="text-error mt-1 text-xs">
                                     {getIn(
                                       touched,
                                       `customHeaders.${idx}.key`
@@ -577,9 +577,9 @@ const WebhookNotifications = () => {
                                       id: 'notifications.webhook.headerValue',
                                       defaultMessage: 'Value',
                                     })}
-                                    className="input input-sm input-primary rounded-md w-full"
+                                    className="input input-sm input-primary w-full rounded-md"
                                   />
-                                  <div className="text-xs text-error mt-1">
+                                  <div className="text-error mt-1 text-xs">
                                     {getIn(
                                       touched,
                                       `customHeaders.${idx}.value`
@@ -594,7 +594,7 @@ const WebhookNotifications = () => {
                                       )}
                                   </div>
                                 </div>
-                                <div className="justify-self-stretch sm:justify-self-end sm:row-span-2 sm:self-start">
+                                <div className="justify-self-stretch sm:row-span-2 sm:self-start sm:justify-self-end">
                                   <Button
                                     type="button"
                                     buttonSize="sm"
@@ -607,7 +607,7 @@ const WebhookNotifications = () => {
                                     })}
                                   >
                                     <TrashIcon className="size-4" />
-                                    <span className="sm:hidden ml-1">
+                                    <span className="ml-1 sm:hidden">
                                       <FormattedMessage
                                         id="common.removeHeader"
                                         defaultMessage="Remove"
@@ -625,7 +625,7 @@ const WebhookNotifications = () => {
                             className="max-sm:w-full"
                             onClick={() => push({ key: '', value: '' })}
                           >
-                            <PlusIcon className="size-4 mr-1" />
+                            <PlusIcon className="mr-1 size-4" />
                             <FormattedMessage
                               id="notifications.webhook.addHeader"
                               defaultMessage="Add Header"
@@ -642,9 +642,9 @@ const WebhookNotifications = () => {
                       id="notifications.fields.jsonPayload"
                       defaultMessage="JSON Payload"
                     />
-                    <span className="ml-1 text-error">*</span>
+                    <span className="text-error ml-1">*</span>
                   </label>
-                  <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <ResetPayloadButton />
                     <JSONEditor
                       value={values.jsonPayload}
@@ -656,7 +656,7 @@ const WebhookNotifications = () => {
                     />
                     {getIn(touched, 'jsonPayload') &&
                       typeof getIn(errors, 'jsonPayload') === 'string' && (
-                        <div className="text-error text-sm mt-1">
+                        <div className="text-error mt-1 text-sm">
                           {getIn(errors, 'jsonPayload')}
                         </div>
                       )}
@@ -704,7 +704,7 @@ const WebhookNotifications = () => {
                     testSettings();
                   }}
                 >
-                  <BeakerIcon className="size-5 mr-2" />
+                  <BeakerIcon className="mr-2 size-5" />
                   <FormattedMessage id="common.test" defaultMessage="Test" />
                 </Button>
                 <Button
@@ -719,7 +719,7 @@ const WebhookNotifications = () => {
                     (values.enabled && !values.types)
                   }
                 >
-                  <ArrowDownTrayIcon className="size-5 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-5" />
                   <FormattedMessage
                     id="common.saveChanges"
                     defaultMessage="Save Changes"

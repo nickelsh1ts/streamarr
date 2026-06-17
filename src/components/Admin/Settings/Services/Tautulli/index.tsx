@@ -1,23 +1,23 @@
 'use client';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Button from '@app/components/Common/Button';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
+import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
-import SensitiveInput from '@app/components/Common/SensitiveInput';
-import { FormattedMessage, useIntl } from 'react-intl';
-import * as Yup from 'yup';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Toast from '@app/components/Toast';
 import type { TautulliSettings } from '@server/lib/settings';
 import axios from 'axios';
-import { Formik, Field } from 'formik';
+import { Field, Formik } from 'formik';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
-import RestartRequiredAlert, {
-  RESTART_REQUIRED_SWR_KEY,
-} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import * as Yup from 'yup';
 
 const ServicesTautulli = () => {
   const intl = useIntl();
@@ -128,7 +128,7 @@ const ServicesTautulli = () => {
   }
 
   return (
-    <div className="max-w-6xl mb-10">
+    <div className="mb-10 max-w-6xl">
       <div className="mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
@@ -207,7 +207,7 @@ const ServicesTautulli = () => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliEnabled">
                   <FormattedMessage
                     id="common.settingsEnable"
@@ -231,17 +231,17 @@ const ServicesTautulli = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliHostname">
                   <FormattedMessage
                     id="common.hostname"
                     defaultMessage="Hostname or IP Address"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       {values.tautulliUseSsl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -249,7 +249,7 @@ const ServicesTautulli = () => {
                       inputMode="url"
                       id="tautulliHostname"
                       name="tautulliHostname"
-                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
+                      className="input input-sm input-primary w-full rounded-md rounded-l-none"
                     />
                   </div>
                   {errors.tautulliHostname &&
@@ -261,10 +261,10 @@ const ServicesTautulli = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliPort">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -285,7 +285,7 @@ const ServicesTautulli = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliUseSsl">
                   <FormattedMessage
                     id="common.useSsl"
@@ -304,7 +304,7 @@ const ServicesTautulli = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliUrlBase">
                   <FormattedMessage
                     id="common.urlBase"
@@ -312,7 +312,7 @@ const ServicesTautulli = () => {
                   />
                   <span className="text-error mx-1">*</span>
                   <SettingsBadge badgeType="restartRequired" />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="servicesSettings.urlBase.description"
                       defaultMessage="Url Base is required for streamarr to register a proxy route."
@@ -322,7 +322,7 @@ const ServicesTautulli = () => {
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                       id="tautulliUrlBase"
                       name="tautulliUrlBase"
                       inputMode="url"
@@ -334,16 +334,16 @@ const ServicesTautulli = () => {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="tautulliApiKey" className="text-label">
                   <FormattedMessage
                     id="common.apiKey"
                     defaultMessage="API Key"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
-                  <div className="flex col-span-2">
+                  <div className="col-span-2 flex">
                     <SensitiveInput
                       as="field"
                       id="tautulliApiKey"
@@ -359,8 +359,8 @@ const ServicesTautulli = () => {
                     )}
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -368,7 +368,7 @@ const ServicesTautulli = () => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting
                         ? intl.formatMessage({

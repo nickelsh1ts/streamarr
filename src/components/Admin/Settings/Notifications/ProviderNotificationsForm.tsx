@@ -252,8 +252,8 @@ const ProviderNotificationsForm = ({
 
         return (
           <Form>
-            <div className="mt-5 ">
-              <div className="space-y-4 max-w-5xl">
+            <div className="mt-5">
+              <div className="max-w-5xl space-y-4">
                 <div className="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4">
                   <label htmlFor="enabled">
                     <FormattedMessage
@@ -261,7 +261,7 @@ const ProviderNotificationsForm = ({
                       defaultMessage="Enable Agent"
                     />
                   </label>
-                  <div className="sm:col-span-2 mt-2 sm:mt-0">
+                  <div className="mt-2 sm:col-span-2 sm:mt-0">
                     <Field
                       id="enabled"
                       name="enabled"
@@ -279,10 +279,10 @@ const ProviderNotificationsForm = ({
                       <label htmlFor={field.name}>
                         {field.label}
                         {field.required && (
-                          <span className="ml-1 text-error">*</span>
+                          <span className="text-error ml-1">*</span>
                         )}
                       </label>
-                      <div className="sm:col-span-2 mt-2 sm:mt-0">
+                      <div className="mt-2 sm:col-span-2 sm:mt-0">
                         {field.type === 'checkbox' ? (
                           <Field
                             id={field.name}
@@ -296,7 +296,7 @@ const ProviderNotificationsForm = ({
                             name={field.name}
                             as="textarea"
                             rows={4}
-                            className="textarea textarea-sm textarea-primary rounded-md w-full"
+                            className="textarea textarea-sm textarea-primary w-full rounded-md"
                             placeholder={field.placeholder}
                           />
                         ) : field.type === 'password' ? (
@@ -306,7 +306,7 @@ const ProviderNotificationsForm = ({
                               id={field.name}
                               name={field.name}
                               buttonSize="sm"
-                              className="input input-sm input-primary rounded-md w-full"
+                              className="input input-sm input-primary w-full rounded-md"
                               placeholder={field.placeholder}
                             />
                           </div>
@@ -315,7 +315,7 @@ const ProviderNotificationsForm = ({
                             id={field.name}
                             name={field.name}
                             as="select"
-                            className="select select-sm select-primary rounded-md w-auto min-w-36 shrink-0"
+                            className="select select-sm select-primary w-auto min-w-36 shrink-0 rounded-md"
                             disabled={field.disabled}
                           >
                             {field.options?.map((opt) => (
@@ -336,7 +336,7 @@ const ProviderNotificationsForm = ({
                         {errors[field.name] &&
                           touched[field.name] &&
                           typeof errors[field.name] === 'string' && (
-                            <div className="text-error text-sm mt-1">
+                            <div className="text-error mt-1 text-sm">
                               {errors[field.name] as string}
                             </div>
                           )}
@@ -374,7 +374,7 @@ const ProviderNotificationsForm = ({
                     testSettings();
                   }}
                 >
-                  <BeakerIcon className="size-5 mr-2" />
+                  <BeakerIcon className="mr-2 size-5" />
                   <FormattedMessage id="common.test" defaultMessage="Test" />
                 </Button>
                 <Button
@@ -388,7 +388,7 @@ const ProviderNotificationsForm = ({
                     (!user && values.enabled && !values.types)
                   }
                 >
-                  <ArrowDownTrayIcon className="size-5 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-5" />
                   <FormattedMessage
                     id="common.saveChanges"
                     defaultMessage="Save Changes"

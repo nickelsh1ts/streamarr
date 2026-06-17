@@ -1,5 +1,5 @@
-import type { PaginatedResponse } from './common';
 import type { DownloadClientType } from '@server/lib/settings';
+import type { PaginatedResponse } from './common';
 
 export interface NormalizedDownloadItem {
   id: string;

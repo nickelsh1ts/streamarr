@@ -130,7 +130,7 @@ const Toggle = ({
                 : 'bg-neutral'
           } ${
             triState ? 'w-16' : 'w-11'
-          } relative inline-flex h-6 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+          } ring-primary relative inline-flex h-6 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
         >
           <span
             aria-hidden="true"
@@ -151,7 +151,7 @@ const Toggle = ({
                   : 'opacity-0 duration-100 ease-out'
               } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
             >
-              <XMarkIcon className="h-3 w-3 text-neutral" />
+              <XMarkIcon className="text-neutral h-3 w-3" />
             </span>
             {triState && (
               <span
@@ -161,7 +161,7 @@ const Toggle = ({
                     : 'opacity-0 duration-100 ease-out'
                 } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
               >
-                <MinusIcon className="h-3 w-3 text-neutral" />
+                <MinusIcon className="text-neutral h-3 w-3" />
               </span>
             )}
             <span
@@ -171,12 +171,12 @@ const Toggle = ({
                   : 'opacity-0 duration-100 ease-out'
               } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
             >
-              <CheckIcon className="h-3 w-3 text-primary" />
+              <CheckIcon className="text-primary h-3 w-3" />
             </span>
           </span>
         </span>
         {triState && (
-          <span aria-hidden="true" className="text-xs text-neutral">
+          <span aria-hidden="true" className="text-neutral text-xs">
             ({stateLabel})
           </span>
         )}

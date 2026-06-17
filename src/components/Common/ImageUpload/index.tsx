@@ -5,7 +5,7 @@ import Toast from '@app/components/Toast';
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
-import { useRef, useState, useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface ImageUploadProps {
@@ -137,8 +137,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       />
 
       {value ? (
-        <div className="relative rounded-lg border border-primary/30 overflow-hidden">
-          <div className="relative w-full h-32">
+        <div className="border-primary/30 relative overflow-hidden rounded-lg border">
+          <div className="relative h-32 w-full">
             <CachedImage
               src={value}
               alt="Uploaded image"
@@ -153,7 +153,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             buttonType="error"
             onClick={handleClear}
             disabled={disabled}
-            className="absolute top-2 right-2 btn-circle"
+            className="btn-circle absolute top-2 right-2"
             aria-label={intl.formatMessage({
               id: 'common.remove',
               defaultMessage: 'Remove',
@@ -167,7 +167,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             buttonType="ghost"
             onClick={handleClick}
             disabled={disabled || isUploading}
-            className="absolute bottom-2 right-2"
+            className="absolute right-2 bottom-2"
           >
             <FormattedMessage id="common.change" defaultMessage="Change" />
           </Button>
@@ -179,17 +179,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={handleClick}
-          className={`
-            flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed cursor-pointer
-            transition-colors
-            ${dragActive ? 'border-primary bg-primary/10' : 'border-base-content/20 hover:border-primary/50'}
-            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors ${dragActive ? 'border-primary bg-primary/10' : 'border-base-content/20 hover:border-primary/50'} ${disabled ? 'cursor-not-allowed opacity-50' : ''} `}
         >
           {isUploading ? (
             <div className="flex flex-col items-center gap-2">
               <span className="loading loading-spinner loading-md text-primary" />
-              <span className="text-sm text-neutral">
+              <span className="text-neutral text-sm">
                 <FormattedMessage
                   id="imageUpload.uploading"
                   defaultMessage="Uploading…"
@@ -198,14 +193,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
           ) : (
             <>
-              <PhotoIcon className="size-8 text-neutral mb-2" />
-              <span className="text-sm text-neutral text-center">
+              <PhotoIcon className="text-neutral mb-2 size-8" />
+              <span className="text-neutral text-center text-sm">
                 <FormattedMessage
                   id="imageUpload.dropOrClick"
                   defaultMessage="Drop an image or click to upload"
                 />
               </span>
-              <span className="text-xs text-neutral/70 mt-1">
+              <span className="text-neutral/70 mt-1 text-xs">
                 <FormattedMessage
                   id="imageUpload.formats"
                   defaultMessage="JPG, PNG, WebP, GIF (max 10MB)"

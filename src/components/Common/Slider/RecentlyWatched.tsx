@@ -1,16 +1,16 @@
-import { withProperties } from '@app/utils/typeHelpers';
-import type { WatchHistoryItem } from '@server/interfaces/api/userInterfaces';
-import { FilmIcon, TvIcon } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import Badge from '@app/components/Common/Badge';
+import CachedImage from '@app/components/Common/CachedImage';
+import useClickOutside from '@app/hooks/useClickOutside';
 import { useInView } from '@app/hooks/useElementInView';
 import { useIsTouch } from '@app/hooks/useIsTouch';
-import useClickOutside from '@app/hooks/useClickOutside';
-import CachedImage from '@app/components/Common/CachedImage';
-import Badge from '@app/components/Common/Badge';
+import { withProperties } from '@app/utils/typeHelpers';
+import { FilmIcon, TvIcon } from '@heroicons/react/24/solid';
+import type { WatchHistoryItem } from '@server/interfaces/api/userInterfaces';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const WatchCardPlaceholder = () => (
-  <div className="w-36 sm:w-44 animate-pulse rounded-xl bg-base-200 aspect-2/3 shrink-0" />
+  <div className="bg-base-200 aspect-2/3 w-36 shrink-0 animate-pulse rounded-xl sm:w-44" />
 );
 
 const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
@@ -65,11 +65,11 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           onError={() => setPosterIdx((i) => i + 1)}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-base-300">
+        <div className="bg-base-300 absolute inset-0 flex items-center justify-center">
           {isEpisode ? (
-            <TvIcon className="size-10 text-base-content/20" />
+            <TvIcon className="text-base-content/20 size-10" />
           ) : (
-            <FilmIcon className="size-10 text-base-content/20" />
+            <FilmIcon className="text-base-content/20 size-10" />
           )}
         </div>
       )}
@@ -83,16 +83,16 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           </Badge>
         </div>
       )}
-      <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent px-2 pb-2 pt-8">
+      <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent px-2 pt-8 pb-2">
         <p
-          className="text-xs font-bold leading-tight text-white truncate"
+          className="truncate text-xs leading-tight font-bold text-white"
           title={displayTitle}
         >
           {displayTitle}
         </p>
         {subtitle && (
           <p
-            className="text-[10px] text-white/60 leading-tight truncate mt-0.5"
+            className="mt-0.5 truncate text-[10px] leading-tight text-white/60"
             title={subtitle}
           >
             {subtitle}
@@ -103,7 +103,7 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
             className={`overflow-hidden transition-[max-height] duration-300 ease-out ${showDetail ? 'max-h-32' : 'max-h-0'}`}
           >
             <p
-              className="text-[10px] leading-snug text-white/85 mt-1"
+              className="mt-1 text-[10px] leading-snug text-white/85"
               style={{
                 display: '-webkit-box',
                 WebkitBoxOrient: 'vertical',
@@ -120,9 +120,9 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
           item.percentComplete > 0 &&
           item.percentComplete < 85 && (
             <div className="mt-1.5">
-              <div className="h-0.5 w-full rounded-full bg-white/20 overflow-hidden">
+              <div className="h-0.5 w-full overflow-hidden rounded-full bg-white/20">
                 <div
-                  className="h-full rounded-full bg-primary"
+                  className="bg-primary h-full rounded-full"
                   style={{ width: `${item.percentComplete}%` }}
                 />
               </div>
@@ -135,14 +135,14 @@ const RecentlyWatched = ({ item }: { item?: WatchHistoryItem }) => {
   return (
     <div
       ref={ref}
-      className={`relative w-36 sm:w-44 aspect-2/3 shrink-0 transition-transform duration-200 hover:scale-[1.06] hover:z-10 ${showDetail ? 'scale-[1.06] z-10' : ''}`}
+      className={`relative aspect-2/3 w-36 shrink-0 transition-transform duration-200 hover:z-10 hover:scale-[1.06] sm:w-44 ${showDetail ? 'z-10 scale-[1.06]' : ''}`}
       onMouseEnter={() => {
         if (!isTouch) setShowDetail(true);
       }}
       onMouseLeave={() => setShowDetail(false)}
     >
       {!isInView ? (
-        <div className="absolute inset-0 rounded-xl bg-base-200 animate-pulse" />
+        <div className="bg-base-200 absolute inset-0 animate-pulse rounded-xl" />
       ) : isTouch ? (
         <div
           className={containerClass}

@@ -1,8 +1,10 @@
 'use client';
-import { createContext, useCallback, useEffect, useRef } from 'react';
 import { socket } from '@app/utils/webSocket';
-import type { NotificationType } from '@server/constants/notification';
-import type { NotificationSeverity } from '@server/constants/notification';
+import type {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
+import { createContext, useCallback, useEffect, useRef } from 'react';
 
 export interface SocketNotificationPayload {
   type?: NotificationType;
