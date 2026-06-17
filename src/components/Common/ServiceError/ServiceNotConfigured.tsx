@@ -23,11 +23,11 @@ export default function ServiceNotConfigured({
 
   return (
     <div
-      className={`${heightClass} flex flex-col items-center justify-center bg-base-300 px-4 rounded-lg`}
+      className={`${heightClass} bg-base-300 flex flex-col items-center justify-center rounded-lg px-4`}
     >
-      <div className="text-center max-w-md">
-        <Cog6ToothIcon className="w-16 h-16 mx-auto mb-4 text-base-content/40" />
-        <h2 className="text-2xl font-semibold text-base-content mb-2">
+      <div className="max-w-md text-center">
+        <Cog6ToothIcon className="text-base-content/40 mx-auto mb-4 h-16 w-16" />
+        <h2 className="text-base-content mb-2 text-2xl font-semibold">
           <FormattedMessage
             id="ServiceNotConfigured.title"
             defaultMessage="{serviceName} Not Enabled"
@@ -52,7 +52,7 @@ export default function ServiceNotConfigured({
         {isAdmin && settingsPath && (
           <Link href={settingsPath}>
             <Button buttonType="primary" buttonSize="sm">
-              <Cog6ToothIcon className="w-4 h-4 mr-2" />
+              <Cog6ToothIcon className="mr-2 h-4 w-4" />
               <FormattedMessage
                 id="ServiceNotConfigured.setUp"
                 defaultMessage="Set Up {serviceName}"

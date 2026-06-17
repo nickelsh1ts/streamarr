@@ -1,8 +1,10 @@
 'use client';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -11,10 +13,8 @@ import {
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import RestartRequiredAlert, {
-  RESTART_REQUIRED_SWR_KEY,
-} from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const ServicesTdarr = () => {
   const intl = useIntl();
@@ -27,7 +27,7 @@ const ServicesTdarr = () => {
   }
 
   return (
-    <div className="max-w-6xl mb-10">
+    <div className="mb-10 max-w-6xl">
       <div className="mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
@@ -99,7 +99,7 @@ const ServicesTdarr = () => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
@@ -125,17 +125,17 @@ const ServicesTdarr = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="hostname">
                   <FormattedMessage
                     id="common.hostname"
                     defaultMessage="Hostname or IP Address"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       http://
                     </span>
                     <Field
@@ -143,7 +143,7 @@ const ServicesTdarr = () => {
                       inputMode="url"
                       id="hostname"
                       name="hostname"
-                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
+                      className="input input-sm input-primary w-full rounded-md rounded-l-none"
                     />
                   </div>
                   {errors.hostname &&
@@ -153,10 +153,10 @@ const ServicesTdarr = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="port">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -177,8 +177,8 @@ const ServicesTdarr = () => {
                     )}
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -186,7 +186,7 @@ const ServicesTdarr = () => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

@@ -1,14 +1,13 @@
-import type { Server } from 'http';
-import type { Server as SocketIOServer } from 'socket.io';
+import dataSource from '@server/datasource';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
-import { getSettings } from './settings';
-import pythonService from '@server/lib/pythonService';
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
-import dataSource from '@server/datasource';
-import { existsSync, utimesSync } from 'fs';
 import { spawn } from 'child_process';
+import { existsSync, utimesSync } from 'fs';
+import type { Server } from 'http';
 import path from 'path';
+import type { Server as SocketIOServer } from 'socket.io';
+import { getSettings } from './settings';
 
 interface ProxyAffectingSettings {
   plex: { ip: string };
@@ -195,7 +194,6 @@ class RestartManager {
   }
 
   private devRestart(): void {
-    pythonService.prepareForServerRestart();
     const touchFile = path.join(__dirname, '../index.ts');
 
     if (existsSync(touchFile)) {
@@ -243,7 +241,6 @@ class RestartManager {
         process.exit(0);
       }
 
-      pythonService.prepareForServerRestart();
       process.removeAllListeners('SIGINT');
       process.removeAllListeners('SIGTERM');
       process.removeAllListeners('exit');

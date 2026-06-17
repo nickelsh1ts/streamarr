@@ -97,13 +97,13 @@ const Toast = (
       <div
         className={`${
           t.visible ? 'animate-slide-in' : 'animate-leave'
-        } max-w-sm w-full relative shadow-lg rounded-lg pointer-events-auto flex ring-1 backdrop-blur-md ${toastStyle.join(' ')}`}
+        } pointer-events-auto relative flex w-full max-w-sm rounded-lg shadow-lg ring-1 backdrop-blur-md ${toastStyle.join(' ')}`}
       >
-        <div className="flex-1 w-0 p-4">
+        <div className="w-0 flex-1 p-4">
           <div className="flex">
-            {icon && <div className="shrink-0 -mt-1">{icon}</div>}
+            {icon && <div className="-mt-1 shrink-0">{icon}</div>}
             {(title || message) && (
-              <div className="ml-3 mr-2 flex-1">
+              <div className="mr-2 ml-3 flex-1">
                 {title && <p className="text-sm font-bold">{title}</p>}
                 {message && <p className="mt-1 text-sm">{message}</p>}
               </div>
@@ -113,7 +113,7 @@ const Toast = (
         <div className="flex">
           <button
             onClick={() => toast.dismiss(t.id)}
-            className={`absolute top-0 right-0 p-1 m-1 rounded-md focus:outline-none focus:ring-2 ${ringStyle} hover:opacity-70 hover:cursor-pointer`}
+            className={`absolute top-0 right-0 m-1 rounded-md p-1 focus:ring-2 focus:outline-none ${ringStyle} hover:cursor-pointer hover:opacity-70`}
           >
             <XMarkIcon className="size-5" />
           </button>

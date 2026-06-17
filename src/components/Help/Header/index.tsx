@@ -17,7 +17,7 @@ const HelpHeader = () => {
   return (
     <>
       <Header />
-      <div id="top" className="flex shadow-sm relative">
+      <div id="top" className="relative flex shadow-sm">
         <ImageFader
           rotationSpeed={6000}
           gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
@@ -32,8 +32,8 @@ const HelpHeader = () => {
             <LanguagePicker />
           </div>
         )}
-        <div className="container max-w-screen-xl mx-auto h-44 content-center z-0">
-          <h2 className="text-center font-extrabold text-3xl my-4 text-white">
+        <div className="z-0 container mx-auto h-44 max-w-screen-xl content-center">
+          <h2 className="my-4 text-center text-3xl font-extrabold text-white">
             <FormattedMessage
               id="help.helpCentre"
               defaultMessage="Help Centre"

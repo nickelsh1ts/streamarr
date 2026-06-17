@@ -1,3 +1,4 @@
+import { testConnection } from '@server/api/downloads/base';
 import type {
   DownloadClientSettings,
   DownloadClientType,
@@ -5,7 +6,6 @@ import type {
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { Router } from 'express';
-import { testConnection } from '@server/api/downloads/base';
 
 const downloadsRoutes = Router();
 

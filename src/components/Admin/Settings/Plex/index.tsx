@@ -3,11 +3,11 @@ import LibraryItem from '@app/components/Admin/Settings/LibraryItem';
 import RestartRequiredAlert, {
   RESTART_REQUIRED_SWR_KEY,
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
-import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast, { dismissToast } from '@app/components/Toast';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 import {
   ArrowPathIcon,
   ExclamationTriangleIcon,
@@ -23,10 +23,9 @@ import axios from 'axios';
 import { Field, Formik } from 'formik';
 import orderBy from 'lodash/orderBy';
 import { useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
-import { useIntl, FormattedMessage } from 'react-intl';
-import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 interface PresetServerDisplay {
   name: string;
   ssl: boolean;
@@ -289,7 +288,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         </p>
         {!!onComplete && (
           <Alert type="primary">
-            <p className="text-sm leading-5 flex-1">
+            <p className="flex-1 text-sm leading-5">
               <FormattedMessage
                 id="plexSettings.setupInstructions"
                 defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
@@ -297,7 +296,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   plexLink: (
                     <a
                       href="https://plex.tv"
-                      className="text-white transition duration-300 hover:underline inline-flex"
+                      className="inline-flex text-white transition duration-300 hover:underline"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -402,21 +401,20 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <RestartRequiredAlert filterServices={['Plex']} />
-              <PythonServiceAlert />
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="preset">
                   <FormattedMessage
                     id="plexSettings.server"
                     defaultMessage="Server"
                   />
                 </label>
-                <div className="flex col-span-2">
+                <div className="col-span-2 flex">
                   <select
                     id="preset"
                     name="preset"
                     value={values.selectedPreset}
                     disabled={!availableServers || isRefreshingPresets}
-                    className="select select-sm select-primary rounded-md rounded-r-none w-full disabled:border disabled:border-primary"
+                    className="select select-sm select-primary disabled:border-primary w-full rounded-md rounded-r-none disabled:border"
                     onChange={async (e) => {
                       const targPreset =
                         availablePresets[Number(e.target.value)];
@@ -499,17 +497,17 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="hostname">
                   <FormattedMessage
                     id="common.hostname"
                     defaultMessage="Hostname or IP Address"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       {values.useSsl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -517,7 +515,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                       inputMode="url"
                       id="hostname"
                       name="hostname"
-                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
+                      className="input input-sm input-primary w-full rounded-md rounded-l-none"
                     />
                   </div>
                   {errors.hostname &&
@@ -527,10 +525,10 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="port">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -547,7 +545,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="ssl">
                   <FormattedMessage
                     id="common.useSsl"
@@ -566,13 +564,13 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="enablePlaylists">
                   <FormattedMessage
                     id="plexSettings.enablePlaylists"
                     defaultMessage="Enable Playlists"
                   />
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="plexSettings.enablePlaylistsTip"
                       defaultMessage="Show a Playlists menu item and library view option"
@@ -591,13 +589,13 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="defaultPivot">
                   <FormattedMessage
                     id="plexSettings.defaultPivot"
                     defaultMessage="Default Library View"
                   />
-                  <p className="text-sm text-neutral">
+                  <p className="text-neutral text-sm">
                     <FormattedMessage
                       id="plexSettings.defaultPivotTip"
                       defaultMessage="The default view when a library is selected"
@@ -609,7 +607,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     as="select"
                     id="defaultPivot"
                     name="defaultPivot"
-                    className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0"
+                    className="select select-sm select-primary w-auto min-w-32 shrink-0 rounded-md"
                   >
                     <option value="library">
                       {intl.formatMessage({
@@ -632,11 +630,11 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                   </Field>
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex flex-wrap gap-2 justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex flex-wrap justify-end gap-2">
                 {plexHealth && plexHealth.status !== 'healthy' && (
-                  <div className="flex items-center text-sm gap-2">
-                    <span className="flex flex-wrap gap-1 text-warning mt-1">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-warning mt-1 flex flex-wrap gap-1">
                       <ExclamationTriangleIcon className="size-6" />
                       <FormattedMessage
                         id="plexSettings.plexUnreachable"
@@ -652,7 +650,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                         onClick={handleRetry}
                       >
                         <ArrowPathIcon
-                          className={`size-4 mr-2 ${isRetrying ? 'animate-spin' : ''}`}
+                          className={`mr-2 size-4 ${isRetrying ? 'animate-spin' : ''}`}
                         />
                         <span>
                           {isRetrying ? (
@@ -678,7 +676,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage
@@ -713,7 +711,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
           />
         </p>
       </div>
-      <div className="max-w-6xl mb-10">
+      <div className="mb-10 max-w-6xl">
         <div className="">
           <Button
             buttonSize="sm"
@@ -722,7 +720,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
             disabled={isSyncing || !data?.ip || !data?.port}
           >
             <ArrowPathIcon
-              className={`size-5 mr-2 ${isSyncing ? 'animate-spin' : ''}`}
+              className={`mr-2 size-5 ${isSyncing ? 'animate-spin' : ''}`}
               style={{ animationDirection: 'reverse' }}
             />
             <span>

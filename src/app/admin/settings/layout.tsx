@@ -77,6 +77,14 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
       regex: /^\/admin\/settings\/notifications/,
     },
     {
+      text: intl.formatMessage({
+        id: 'common.newsletters',
+        defaultMessage: 'Newsletters',
+      }),
+      route: '/admin/settings/newsletters',
+      regex: /^\/admin\/settings\/newsletters/,
+    },
+    {
       text: intl.formatMessage({ id: 'common.logs', defaultMessage: 'Logs' }),
       route: '/admin/settings/logs',
       regex: /^\/admin\/settings\/logs/,
@@ -100,7 +108,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   ];
 
   return (
-    <div className="mt-4 mx-4">
+    <div className="mx-4 mt-4">
       <AdminTabs
         tabType="button"
         AdminRoutes={AdminRoutes}

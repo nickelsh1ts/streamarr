@@ -54,14 +54,14 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
 
   return (
     <div
-      className="mt-6 pt-4 mb-12 lg:flex lg:items-end lg:justify-between lg:space-x-5 relative"
+      className="relative mt-6 mb-12 pt-4 lg:flex lg:items-end lg:justify-between lg:space-x-5"
       data-testid="profile-header"
     >
       <div className="flex items-end justify-items-end space-x-5">
         <div className="shrink-0">
           <div className="relative">
             <CachedImage
-              className="h-24 w-24 rounded-full bg-primary-content object-cover ring-1 ring-primary-content"
+              className="bg-primary-content ring-primary-content h-24 w-24 rounded-full object-cover ring-1"
               src={`/avatarproxy/${user.id}`}
               alt=""
               width={96}
@@ -89,7 +89,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               <span className="text-sm sm:ml-2 sm:text-lg">({user.email})</span>
             )}
           </h1>
-          <p className="text-sm font-medium text-neutral">
+          <p className="text-neutral text-sm font-medium">
             {subtextItems.map((item, idx) => (
               <span key={idx}>
                 {idx > 0 && ' | '}
@@ -99,7 +99,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
           </p>
         </div>
       </div>
-      <div className="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse lg:flex-row lg:justify-end lg:space-y-0 lg:space-x-3 lg:space-x-reverse">
+      <div className="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse lg:flex-row lg:justify-end lg:space-y-0 lg:space-x-3 lg:space-x-reverse">
         {(loggedInUser?.id === user.id || loggedInUser?.id === 1) &&
         !isSettingsPage ? (
           <Link
@@ -116,7 +116,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
               data-testid="profile-edit-settings-button"
               className="max-lg:w-full"
             >
-              <CogIcon className="size-5 mr-2" />
+              <CogIcon className="mr-2 size-5" />
               <span>
                 <FormattedMessage
                   id="profile.editSettings"
@@ -140,7 +140,7 @@ const ProfileHeader = ({ user, isSettingsPage }: ProfileHeaderProps) => {
                 buttonType="primary"
                 className="max-lg:w-full"
               >
-                <UserIcon className="size-5 mr-2" />
+                <UserIcon className="mr-2 size-5" />
                 <span>
                   <FormattedMessage
                     id="profile.viewProfile"

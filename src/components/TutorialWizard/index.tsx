@@ -23,16 +23,16 @@ interface TutorialStepSlideProps {
 
 const TutorialStepSlide: React.FC<TutorialStepSlideProps> = ({ step }) => {
   return (
-    <div className="flex flex-col h-full p-6 sm:p-8">
-      <h2 className="text-2xl sm:text-3xl font-bold text-base-content mb-4">
+    <div className="flex h-full flex-col p-6 sm:p-8">
+      <h2 className="text-base-content mb-4 text-2xl font-bold sm:text-3xl">
         {step.title}
       </h2>
-      <p className="text-base-content/70 sm:text-lg mb-6 leading-relaxed">
+      <p className="text-base-content/70 mb-6 leading-relaxed sm:text-lg">
         {step.description}
       </p>
-      <div className="flex-1 flex flex-col gap-4 items-center justify-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-4">
         {!!step.imageUrl && (
-          <div className="relative w-full max-w-lg mx-auto h-48">
+          <div className="relative mx-auto h-48 w-full max-w-lg">
             <CachedImage
               src={step.imageUrl}
               alt={step.title}
@@ -47,13 +47,13 @@ const TutorialStepSlide: React.FC<TutorialStepSlideProps> = ({ step }) => {
             url={step.videoUrl}
             title={step.title}
             autoplay={step.videoAutoplay}
-            className="max-w-lg mx-auto"
+            className="mx-auto max-w-lg"
           />
         )}
         {!!step.customHtml && <ContentRenderer html={step.customHtml} />}
       </div>
       {step.route && (
-        <div className="mt-4 px-3 py-2 bg-base-300 rounded-md text-sm text-base-content/70">
+        <div className="bg-base-300 text-base-content/70 mt-4 rounded-md px-3 py-2 text-sm">
           <FormattedMessage
             id="tutorial.wizard.routeHint"
             defaultMessage="This feature is available at: {route}"
@@ -180,16 +180,16 @@ const TutorialWizard: React.FC = () => {
       <Dialog onClose={handleClose} open={showPrompt}>
         <DialogBackdrop
           transition
-          className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
+          className="bg-base-300/30 fixed inset-0 z-1050 w-full backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
         />
         <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-2 sm:p-0">
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-md border border-primary/30 bg-base-200 transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0"
+              className="border-primary/30 bg-base-200 relative w-full transform overflow-hidden rounded-xl border text-left shadow-2xl transition duration-300 ease-out data-closed:scale-0 data-closed:opacity-0 sm:my-8 sm:max-w-md"
             >
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-base-content mb-3">
+                <h3 className="text-base-content mb-3 text-xl font-bold">
                   <FormattedMessage
                     id="tutorial.ready.title"
                     defaultMessage="Interactive Tutorial"
@@ -202,7 +202,7 @@ const TutorialWizard: React.FC = () => {
                     values={{ applicationTitle }}
                   />
                 </p>
-                <div className="flex gap-3 justify-end">
+                <div className="flex justify-end gap-3">
                   {canDismiss && (
                     <Button
                       buttonType="ghost"
@@ -244,21 +244,21 @@ const TutorialWizard: React.FC = () => {
         <div className="flex min-h-full items-center justify-center p-1 sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-2xl border border-primary/30 bg-base-200 transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0"
+            className="border-primary/30 bg-base-200 relative w-full transform overflow-hidden rounded-xl border text-left shadow-2xl transition duration-300 ease-out data-closed:scale-0 data-closed:opacity-0 sm:my-8 sm:max-w-2xl"
           >
             {canDismiss && (
               <button
                 type="button"
                 onClick={handleClose}
-                className="absolute top-1 right-1 z-10 btn hover:bg-zinc-700 p-1 btn-sm rounded-md"
+                className="btn btn-sm absolute top-1 right-1 z-10 rounded-md p-1 hover:bg-zinc-700"
               >
-                <XMarkIcon className="h-5 w-5 text-base-content/70" />
+                <XMarkIcon className="text-base-content/70 h-5 w-5" />
                 <span className="sr-only">
                   <FormattedMessage id="common.close" defaultMessage="Close" />
                 </span>
               </button>
             )}
-            <div className="min-h-[400px] sm:min-h-[450px] flex flex-col">
+            <div className="flex min-h-100 flex-col sm:min-h-112.5">
               {isFullWizardMode ? (
                 <Carousel
                   ref={carouselRef}
@@ -278,7 +278,7 @@ const TutorialWizard: React.FC = () => {
             </div>
             <div className="px-6 pb-4 sm:px-8 sm:pb-6">
               {!isFullWizardMode && (
-                <div className="text-center text-sm text-base-content/50 mb-4">
+                <div className="text-base-content/50 mb-4 text-center text-sm">
                   <FormattedMessage
                     id="tutorial.stepProgress"
                     defaultMessage="Step {current} of {total}"
@@ -289,7 +289,7 @@ const TutorialWizard: React.FC = () => {
                   />
                 </div>
               )}
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 {!isFirstStep ? (
                   <Button
                     buttonType="ghost"
@@ -297,7 +297,7 @@ const TutorialWizard: React.FC = () => {
                     onClick={handlePrev}
                     className="gap-1"
                   >
-                    <ChevronLeftIcon className="w-4 h-4 mr-2" />
+                    <ChevronLeftIcon className="mr-2 h-4 w-4" />
                     <FormattedMessage
                       id="common.previous"
                       defaultMessage="Previous"
@@ -335,7 +335,7 @@ const TutorialWizard: React.FC = () => {
                           id="common.next"
                           defaultMessage="Next"
                         />
-                        <ChevronRightIcon className="w-4 h-4 ml-1" />
+                        <ChevronRightIcon className="ml-1 h-4 w-4" />
                       </>
                     )}
                   </Button>
@@ -347,7 +347,7 @@ const TutorialWizard: React.FC = () => {
         {isPreviewMode && (
           <Badge
             badgeType="warning"
-            className="fixed top-4 left-4 z-1051 px-3 py-1.5 border border-warning bg-warning/30"
+            className="border-warning bg-warning/30 fixed top-4 left-4 z-1051 border px-3 py-1.5"
           >
             <FormattedMessage
               id="settings.onboarding.previewMode"

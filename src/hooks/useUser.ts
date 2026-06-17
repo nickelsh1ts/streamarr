@@ -21,6 +21,7 @@ export interface User {
   updatedAt: Date;
   active?: boolean;
   accessRevokedAt?: Date | null;
+  accessRevokedReason?: 'trial_expired' | 'plex_removed' | null;
   inviteQuotaLimit?: number;
   inviteQuotaDays?: number;
   inviteCount?: number;
@@ -40,6 +41,7 @@ type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 
 export interface UserSettings {
   locale?: string;
+  sharedLibraries?: string | null;
   trialPeriodOutcome?: 'promote' | 'deactivate' | null;
   notificationTypes: Partial<NotificationAgentTypes>;
   discordEnabled?: boolean;

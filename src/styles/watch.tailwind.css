@@ -1,0 +1,81 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+
+@plugin 'daisyui';
+
+@plugin 'daisyui/theme' {
+  name: 'streamarr';
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-primary: #974ede;
+  --color-primary-content: #fff;
+  --color-secondary: #2b0b53;
+  --color-secondary-content: #cfcbdc;
+  --color-accent: #e5a00d;
+  --color-accent-content: #fff;
+  --color-neutral: #6c757d;
+  --color-neutral-content: #e0e2e4;
+  --color-base-100: #121212;
+  --color-base-200: #121418;
+  --color-base-300: #0d1013;
+  --color-base-content: #fff;
+  --color-info: #2563eb;
+  --color-info-content: #d2e2ff;
+  --color-success: #84cc16;
+  --color-success-content: #fff;
+  --color-warning: #ffc107;
+  --color-warning-content: #fff;
+  --color-error: #b91c1c;
+  --color-error-content: #fff;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-field: 0.3rem;
+}
+
+@theme {
+  --color-brand-dark: #080011;
+  --color-brand-light: #2b0b53;
+  --shadow-3xl: 0rem 0.25rem 1rem 0rem #00000033;
+  --transition-property-max-height: max-height;
+  --transition-property-width: width;
+}
+
+/* Only the files whose markup is rendered inside the Plex iframe. */
+@source '../app/watch';
+@source '../components/Watch';
+@source '../components/Layout/Sidebar';
+@source '../components/Layout/MobileMenu';
+@source '../components/Layout/BackButton';
+@source '../components/Layout/LibraryMenu';
+@source '../components/Layout/VersionStatus';
+@source '../components/Layout/UserDropdown';
+@source '../components/Layout/UserCard';
+@source '../components/Common/DropDownMenu';
+@source '../components/Common/Accordion';
+@source '../components/Common/ToolTip';
+@source '../components/Common/CachedImage';
+
+/* Hide PWA-only chrome when running in a normal browser tab. */
+@media all and (display-mode: browser) {
+  .pwa-only {
+    @apply hidden;
+  }
+}
+
+select {
+  @apply select select-sm select-primary w-auto cursor-pointer;
+}
+
+input[type='checkbox']:not(.drawer-toggle) {
+  @apply checkbox checkbox-sm checkbox-primary m-0;
+}
+
+.checkbox label,
+label:has(input[type='checkbox']):not(.card label) {
+  @apply flex items-center gap-1;
+}
+
+button {
+  @apply leading-5;
+}

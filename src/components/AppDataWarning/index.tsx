@@ -1,6 +1,6 @@
 import Alert from '@app/components/Common/Alert';
-import useSWR from 'swr';
 import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
 
 const AppDataWarning = () => {
   const { data, error } = useSWR<{ appData: boolean; appDataPath: string }>(

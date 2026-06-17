@@ -15,8 +15,8 @@ import {
 import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 const UserSettings = () => {
   const intl = useIntl();
@@ -114,13 +114,13 @@ const UserSettings = () => {
         {({ isSubmitting, values, setFieldValue }) => {
           return (
             <Form className="mt-5 max-w-6xl">
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-y-5">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-5">
                 <label htmlFor="localLogin" className="font-bold">
                   <FormattedMessage
                     id="userSettings.localLogin"
                     defaultMessage="Enable Local Sign-in"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.localLoginDescription"
                       defaultMessage="Allow users to sign in using their email address and password, instead of Plex OAuth"
@@ -138,12 +138,12 @@ const UserSettings = () => {
                     className="checkbox checkbox-primary rounded-md"
                   />
                 </div>
-                <label htmlFor="plexLogin" className="font-bold block">
+                <label htmlFor="plexLogin" className="block font-bold">
                   <FormattedMessage
                     id="userSettings.plexLogin"
                     defaultMessage="Enable New Plex Sign-in"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.plexLoginDescription"
                       defaultMessage="Allow Plex users to sign in without first being imported"
@@ -161,12 +161,12 @@ const UserSettings = () => {
                     className="checkbox checkbox-primary rounded-md"
                   />
                 </div>
-                <label htmlFor="inviteLimit" className="font-bold block">
+                <label htmlFor="inviteLimit" className="block font-bold">
                   <FormattedMessage
                     id="userSettings.inviteLimit"
                     defaultMessage="Default Invite Limit"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.inviteLimitDescription"
                       defaultMessage="Set the default invite limit for new users."
@@ -188,7 +188,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteUsageLimit"
                     id="inviteUsageLimit"
-                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                    className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                     onChange={(e) =>
                       setFieldValue('inviteUsageLimit', Number(e.target.value))
                     }
@@ -233,7 +233,7 @@ const UserSettings = () => {
                     as="select"
                     name="inviteExpiryLimit"
                     id="inviteExpiryLimit"
-                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                    className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                     onChange={(e) =>
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
@@ -255,7 +255,7 @@ const UserSettings = () => {
                       as="select"
                       name="inviteExpiryTime"
                       id="inviteExpiryTime"
-                      className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                      className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                       onChange={(e) =>
                         setFieldValue('inviteExpiryTime', e.target.value)
                       }
@@ -284,12 +284,12 @@ const UserSettings = () => {
                     </Field>
                   )}
                 </div>
-                <label htmlFor="enableTrialPeriod" className="font-bold block">
+                <label htmlFor="enableTrialPeriod" className="block font-bold">
                   <FormattedMessage
                     id="settings.enableTrialPeriod"
                     defaultMessage="Enable Trial Period"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     {values.trialPeriodOutcome === 'promote' ? (
                       <FormattedMessage
                         id="userSettings.trialPeriodDescriptionPromote"
@@ -303,7 +303,7 @@ const UserSettings = () => {
                     )}
                   </span>
                 </label>
-                <div className="col-span-2 gap-4 inline-flex items-center">
+                <div className="col-span-2 inline-flex items-center gap-4">
                   <Field
                     type="checkbox"
                     id="enableTrialPeriod"
@@ -322,7 +322,7 @@ const UserSettings = () => {
                         as="select"
                         name="trialPeriodOutcome"
                         id="trialPeriodOutcome"
-                        className="select select-sm select-primary rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 w-auto min-w-20 shrink-0"
+                        className="select select-sm select-primary disabled:border-primary/40 w-auto min-w-20 shrink-0 rounded-md disabled:border disabled:opacity-40"
                       >
                         <option value="promote">
                           {intl.formatMessage({
@@ -347,7 +347,7 @@ const UserSettings = () => {
                         as="select"
                         name="trialPeriodDays"
                         id="trialPeriodDays"
-                        className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                        className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                         onChange={(e) =>
                           setFieldValue(
                             'trialPeriodDays',
@@ -373,14 +373,14 @@ const UserSettings = () => {
                     id="userSettings.InviteSettings"
                     defaultMessage="Default Invite Settings"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.InviteSettingsDescription"
                       defaultMessage="Initial settings associated to new invites"
                     />
                   </span>
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 col-span-2 gap-2">
+                <div className="col-span-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="inline-flex items-center space-x-2">
                     <span
                       id="downloads"
@@ -398,7 +398,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.downloads ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                     >
                       <span
                         aria-hidden="true"
@@ -413,7 +413,7 @@ const UserSettings = () => {
                               : 'opacity-100 duration-200 ease-in'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <XMarkIcon className="h-3 w-3 text-neutral" />
+                          <XMarkIcon className="text-neutral h-3 w-3" />
                         </span>
                         <span
                           className={`${
@@ -422,7 +422,7 @@ const UserSettings = () => {
                               : 'opacity-0 duration-100 ease-out'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <CheckIcon className="h-3 w-3 text-primary" />
+                          <CheckIcon className="text-primary h-3 w-3" />
                         </span>
                       </span>
                     </span>
@@ -448,7 +448,7 @@ const UserSettings = () => {
                       }}
                       className={`${
                         values.liveTv ? 'bg-primary' : 'bg-neutral'
-                      } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                      } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                     >
                       <span
                         aria-hidden="true"
@@ -463,7 +463,7 @@ const UserSettings = () => {
                               : 'opacity-100 duration-200 ease-in'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <XMarkIcon className="h-3 w-3 text-neutral" />
+                          <XMarkIcon className="text-neutral h-3 w-3" />
                         </span>
                         <span
                           className={`${
@@ -472,7 +472,7 @@ const UserSettings = () => {
                               : 'opacity-0 duration-100 ease-out'
                           } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                         >
-                          <CheckIcon className="h-3 w-3 text-primary" />
+                          <CheckIcon className="text-primary h-3 w-3" />
                         </span>
                       </span>
                     </span>
@@ -494,7 +494,7 @@ const UserSettings = () => {
                         onKeyDown={() => undefined}
                         className={`${
                           values.plexHome ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring opacity-60 cursor-not-allowed`}
+                        } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-not-allowed rounded-full border-2 border-transparent opacity-60 transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                         aria-disabled={true}
                       >
                         <span
@@ -510,7 +510,7 @@ const UserSettings = () => {
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral" />
+                            <XMarkIcon className="text-neutral h-3 w-3" />
                           </span>
                           <span
                             className={`${
@@ -519,7 +519,7 @@ const UserSettings = () => {
                                 : 'opacity-0 duration-100 ease-out'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <CheckIcon className="h-3 w-3 text-primary" />
+                            <CheckIcon className="text-primary h-3 w-3" />
                           </span>
                         </span>
                       </span>
@@ -537,7 +537,7 @@ const UserSettings = () => {
                     id="userSettings.defaultSharedLibraries"
                     defaultMessage="Default Shared Libraries"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.defaultSharedLibrariesDescription"
                       defaultMessage="Initial libraries shared with new users"
@@ -555,7 +555,7 @@ const UserSettings = () => {
                     id="userSettings.defaultPermissions"
                     defaultMessage="Default Permissions"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.defaultPermissionsDescription"
                       defaultMessage="Initial permissions assigned to new users"
@@ -573,15 +573,15 @@ const UserSettings = () => {
                   </div>
                 </div>
               </div>
-              <div className="divider divider-primary mb-4 col-span-full" />
-              <div className="flex justify-end col-span-3">
+              <div className="divider divider-primary col-span-full mb-4" />
+              <div className="col-span-3 flex justify-end">
                 <Button
                   buttonType="primary"
                   buttonSize="sm"
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  <ArrowDownTrayIcon className="size-4 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-4" />
                   <span>
                     {isSubmitting ? (
                       <FormattedMessage

@@ -16,7 +16,7 @@ const HelpContent = () => {
           defaultMessage="Reporting an issue:"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.reportingIssues.step1"
@@ -41,7 +41,7 @@ const HelpContent = () => {
             id="help.reportingIssues.step3"
             defaultMessage="On the Movie or TV Shows discovery page, locate the {icon} icon"
             values={{
-              icon: <ExclamationTriangleIcon className="w-6 h-6 mx-1" />,
+              icon: <ExclamationTriangleIcon className="mx-1 h-6 w-6" />,
             }}
           />
         </li>
@@ -58,13 +58,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.reportingIssues.tip1"
@@ -96,7 +96,7 @@ const HelpContent = () => {
           defaultMessage="Issue Tracking:"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.reportingIssues.trackStep1"
@@ -129,13 +129,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.reportingIssues.trackTip1"

@@ -1,7 +1,7 @@
-import type { User } from '@server/entity/User';
 import type Invite from '@server/entity/Invite';
-import type { PaginatedResponse } from './common';
 import type { Notification } from '@server/entity/Notification';
+import type { User } from '@server/entity/User';
+import type { PaginatedResponse } from './common';
 
 export interface UserSummary {
   id: number;
@@ -11,6 +11,17 @@ export interface UserSummary {
 
 export interface UserResultsResponse extends PaginatedResponse {
   results: User[];
+}
+
+export interface UserBulkUpdatePlexSyncSummary {
+  synced: number;
+  failed: number;
+  removed: number;
+}
+
+export interface UserBulkUpdateResponse {
+  users: Partial<User>[];
+  plexSync?: UserBulkUpdatePlexSyncSummary;
 }
 
 export interface UserInvitesResponse extends PaginatedResponse {

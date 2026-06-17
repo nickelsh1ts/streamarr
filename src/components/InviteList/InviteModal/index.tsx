@@ -1,6 +1,8 @@
 'use client';
+import CachedImage from '@app/components/Common/CachedImage';
 import Modal from '@app/components/Common/Modal';
 import LibrarySelector from '@app/components/LibrarySelector';
+import Toast from '@app/components/Toast';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
@@ -12,26 +14,23 @@ import {
   Portal,
 } from '@headlessui/react';
 import {
-  ChevronDownIcon,
-  CheckIcon,
-  XMarkIcon,
   CheckBadgeIcon,
+  CheckIcon,
+  ChevronDownIcon,
   XCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { InviteStatus } from '@server/constants/invite';
+import type Invite from '@server/entity/Invite';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
-import { hasPermission } from '@server/lib/permissions';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { hasPermission } from '@server/lib/permissions';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
-import { useState, useEffect, Fragment, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import CachedImage from '@app/components/Common/CachedImage';
-import axios from 'axios';
-import Toast from '@app/components/Toast';
-import type Invite from '@server/entity/Invite';
-import { InviteStatus } from '@server/constants/invite';
-import { useIntl } from 'react-intl';
-import { FormattedMessage } from 'react-intl';
 import * as Yup from 'yup';
 
 interface InviteModalProps {
@@ -411,10 +410,10 @@ const InviteModal = ({
             }
           >
             <Form className="space-y-4">
-              <div className="border-t border-primary pt-4">
+              <div className="border-primary border-t pt-4">
                 <label
                   htmlFor="icode"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="invite.code"
@@ -438,11 +437,11 @@ const InviteModal = ({
                     type="text"
                     placeholder="STRMRR"
                     disabled={invite}
-                    className="input input-primary w-full py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset ring-primary"
+                    className="input input-primary ring-primary w-full py-1.5 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset"
                   />
                 </div>
                 {errors.icode && touched.icode && (
-                  <div className="text-start text-error my-2">
+                  <div className="text-error my-2 text-start">
                     {errors.icode}
                   </div>
                 )}
@@ -450,7 +449,7 @@ const InviteModal = ({
               <div>
                 <label
                   htmlFor="inviteExpiryLimit"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="invite.expiration"
@@ -483,7 +482,7 @@ const InviteModal = ({
                         { type: 'or' }
                       ) || !!invite
                     }
-                    className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                    className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                     onChange={(e) =>
                       setFieldValue('inviteExpiryLimit', Number(e.target.value))
                     }
@@ -514,7 +513,7 @@ const InviteModal = ({
                           { type: 'or' }
                         ) || !!invite
                       }
-                      className="select select-sm select-primary rounded-md w-auto min-w-24 shrink-0"
+                      className="select select-sm select-primary w-auto min-w-24 shrink-0 rounded-md"
                       onChange={(e) =>
                         setFieldValue('inviteExpiryTime', e.target.value)
                       }
@@ -549,17 +548,17 @@ const InviteModal = ({
                 { type: 'or' }
               ) && (
                 <>
-                  <div className="text-sm font-medium leading-6">
+                  <div className="text-sm leading-6 font-medium">
                     <FormattedMessage
                       id="invite.advancedSettings"
                       defaultMessage="Advanced Settings"
                     />
-                    <div className="divider divider-primary my-0 col-span-full" />
+                    <div className="divider divider-primary col-span-full my-0" />
                   </div>
                   <div className="space-y-2">
                     <label
                       htmlFor="inviteUsageLimit"
-                      className="block text-sm font-medium leading-6 text-left"
+                      className="block text-left text-sm leading-6 font-medium"
                     >
                       <FormattedMessage
                         id="invite.usageLimit"
@@ -570,7 +569,7 @@ const InviteModal = ({
                       as="select"
                       name="inviteUsageLimit"
                       id="inviteUsageLimit"
-                      className="select select-sm select-primary rounded-md w-auto min-w-20 shrink-0"
+                      className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
                       onChange={(e) =>
                         setFieldValue(
                           'inviteUsageLimit',
@@ -602,7 +601,7 @@ const InviteModal = ({
                       />
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 col-span-2 gap-2">
+                  <div className="col-span-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <div className="inline-flex items-center space-x-2">
                       <span
                         id="downloads"
@@ -620,7 +619,7 @@ const InviteModal = ({
                         }}
                         className={`${
                           values.downloads ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                        } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                       >
                         <span
                           aria-hidden="true"
@@ -635,7 +634,7 @@ const InviteModal = ({
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral" />
+                            <XMarkIcon className="text-neutral h-3 w-3" />
                           </span>
                           <span
                             className={`${
@@ -644,7 +643,7 @@ const InviteModal = ({
                                 : 'opacity-0 duration-100 ease-out'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <CheckIcon className="h-3 w-3 text-primary" />
+                            <CheckIcon className="text-primary h-3 w-3" />
                           </span>
                         </span>
                       </span>
@@ -670,7 +669,7 @@ const InviteModal = ({
                         }}
                         className={`${
                           values.liveTv ? 'bg-primary' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                        } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                       >
                         <span
                           aria-hidden="true"
@@ -685,7 +684,7 @@ const InviteModal = ({
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral" />
+                            <XMarkIcon className="text-neutral h-3 w-3" />
                           </span>
                           <span
                             className={`${
@@ -694,7 +693,7 @@ const InviteModal = ({
                                 : 'opacity-0 duration-100 ease-out'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <CheckIcon className="h-3 w-3 text-primary" />
+                            <CheckIcon className="text-primary h-3 w-3" />
                           </span>
                         </span>
                       </span>
@@ -723,7 +722,7 @@ const InviteModal = ({
                           }}
                           className={`${
                             values.plexHome ? 'bg-primary' : 'bg-neutral'
-                          } relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                          } ring-primary relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                         >
                           <span
                             aria-hidden="true"
@@ -740,7 +739,7 @@ const InviteModal = ({
                                   : 'opacity-100 duration-200 ease-in'
                               } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                             >
-                              <XMarkIcon className="h-3 w-3 text-neutral" />
+                              <XMarkIcon className="text-neutral h-3 w-3" />
                             </span>
                             <span
                               className={`${
@@ -749,11 +748,11 @@ const InviteModal = ({
                                   : 'opacity-0 duration-100 ease-out'
                               } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                             >
-                              <CheckIcon className="h-3 w-3 text-primary" />
+                              <CheckIcon className="text-primary h-3 w-3" />
                             </span>
                           </span>
                         </span>
-                        <label htmlFor="plexHome" className="ml-2">
+                        <label htmlFor="plexHome">
                           <FormattedMessage
                             id="invite.inviteToPlexHome"
                             defaultMessage="Invite to Plex Home"
@@ -765,7 +764,7 @@ const InviteModal = ({
                   <div>
                     <label
                       htmlFor="sharedLibraries"
-                      className="block text-sm my-0 font-medium leading-6 text-left"
+                      className="my-0 block text-left text-sm leading-6 font-medium"
                     >
                       <FormattedMessage
                         id="invite.sharedLibraries"
@@ -785,7 +784,7 @@ const InviteModal = ({
                     <div className="space-y-2">
                       <label
                         htmlFor="trialPeriod"
-                        className="block text-sm my-0 font-medium leading-6 text-left"
+                        className="my-0 block text-left text-sm leading-6 font-medium"
                       >
                         <FormattedMessage
                           id="invite.trialPeriod"
@@ -797,7 +796,7 @@ const InviteModal = ({
                           as="select"
                           name="trialPeriodOutcome"
                           id="trialPeriodOutcome"
-                          className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0"
+                          className="select select-sm select-primary w-auto min-w-32 shrink-0 rounded-md"
                           onChange={(e) =>
                             setFieldValue('trialPeriodOutcome', e.target.value)
                           }
@@ -826,7 +825,7 @@ const InviteModal = ({
                           as="select"
                           name="trialPeriodDays"
                           id="trialPeriodDays"
-                          className="select select-sm select-primary rounded-md w-auto min-w-24 shrink-0"
+                          className="select select-sm select-primary w-auto min-w-24 shrink-0 rounded-md"
                           onChange={(e) =>
                             setFieldValue(
                               'trialPeriodDays',
@@ -870,17 +869,17 @@ const InviteModal = ({
                           }
                           return (
                             <>
-                              <Label className="block text-sm font-medium leading-6 text-left">
+                              <Label className="block text-left text-sm leading-6 font-medium">
                                 <FormattedMessage
                                   id="invite.inviteAs"
                                   defaultMessage="Invite As"
                                 />
                               </Label>
                               <div className="relative">
-                                <span className="inline-block w-full relative rounded-md shadow-sm">
+                                <span className="relative inline-block w-full rounded-md shadow-sm">
                                   <ListboxButton
                                     ref={buttonRef}
-                                    className="focus:shadow-outline-primary relative w-full cursor-default rounded-md border border-primary bg-base-100 py-2 pl-3 pr-10 text-left transition duration-150 ease-in-out focus:border-primary-content focus:outline-none sm:text-sm sm:leading-5"
+                                    className="focus:shadow-outline-primary border-primary bg-base-100 focus:border-primary-content relative w-full cursor-default rounded-md border py-2 pr-10 pl-3 text-left transition duration-150 ease-in-out focus:outline-none sm:text-sm sm:leading-5"
                                   >
                                     <span className="flex items-center">
                                       <CachedImage
@@ -895,7 +894,7 @@ const InviteModal = ({
                                       </span>
                                       {selectedUser.displayName.toLowerCase() !==
                                         selectedUser.email && (
-                                        <span className="ml-1 truncate text-neutral">
+                                        <span className="text-neutral ml-1 truncate">
                                           ({selectedUser.email})
                                         </span>
                                       )}
@@ -909,7 +908,7 @@ const InviteModal = ({
                                   {listboxOpen && (
                                     <ListboxOptions
                                       ref={optionsRef}
-                                      className="z-9999 px-1 max-h-60 overflow-auto rounded-md bg-base-100 border border-primary py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5"
+                                      className="bg-base-100 border-primary z-9999 max-h-60 overflow-auto rounded-md border px-1 py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5"
                                       style={{
                                         position: 'absolute',
                                         top: dropdownMeasured
@@ -941,7 +940,7 @@ const InviteModal = ({
                                                 focus
                                                   ? 'bg-primary text-primary-content'
                                                   : ''
-                                              } relative cursor-default select-none py-2 pl-8 pr-4 rounded-md`}
+                                              } relative cursor-default rounded-md py-2 pr-4 pl-8 select-none`}
                                             >
                                               <span
                                                 className={`${
@@ -962,7 +961,7 @@ const InviteModal = ({
                                                 </span>
                                                 {user.displayName.toLowerCase() !==
                                                   user.email && (
-                                                  <span className="ml-1 truncate text-neutral">
+                                                  <span className="text-neutral ml-1 truncate">
                                                     ({user.email})
                                                   </span>
                                                 )}

@@ -1,36 +1,36 @@
 import { getRepository } from '@server/datasource';
 import {
+  TooltipPosition,
+  TutorialMode,
+  TutorialStep,
+} from '@server/entity/TutorialStep';
+import { UserOnboarding } from '@server/entity/UserOnboarding';
+import {
   WelcomeContent,
   WelcomeContentType,
 } from '@server/entity/WelcomeContent';
-import {
-  TutorialStep,
-  TutorialMode,
-  TooltipPosition,
-} from '@server/entity/TutorialStep';
-import { UserOnboarding } from '@server/entity/UserOnboarding';
 import type {
-  WelcomeContentResponse,
-  WelcomeContentCreateRequest,
-  WelcomeContentUpdateRequest,
-  WelcomeContentReorderRequest,
-  TutorialStepResponse,
-  TutorialStepCreateRequest,
-  TutorialStepUpdateRequest,
-  TutorialStepReorderRequest,
   OnboardingSettingsResponse,
+  TutorialStepCreateRequest,
+  TutorialStepReorderRequest,
+  TutorialStepResponse,
+  TutorialStepUpdateRequest,
+  WelcomeContentCreateRequest,
+  WelcomeContentReorderRequest,
+  WelcomeContentResponse,
+  WelcomeContentUpdateRequest,
 } from '@server/interfaces/api/onboardingInterfaces';
+import {
+  onboardingImageService,
+  resetOnboardingDefaults,
+} from '@server/lib/onboarding';
 import { Permission, hasPermission } from '@server/lib/permissions';
 import {
   sanitizeHtml,
-  sanitizeYouTubeUrl,
   sanitizeImageUrl,
+  sanitizeYouTubeUrl,
 } from '@server/lib/sanitize';
 import { getSettings } from '@server/lib/settings';
-import {
-  resetOnboardingDefaults,
-  onboardingImageService,
-} from '@server/lib/onboarding';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';

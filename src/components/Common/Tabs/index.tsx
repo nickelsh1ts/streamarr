@@ -11,7 +11,7 @@ const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
   const [activeTab, setActive] = useState(`${tabs[0]?.id}`);
   return (
     <div className="grid">
-      <div role="tablist" className="tabs-border border-zinc-400 border-b">
+      <div role="tablist" className="tabs-border border-b border-zinc-400">
         {tabs?.map((tab) => {
           return (
             <button
@@ -22,7 +22,7 @@ const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
               }}
               id={tab.id}
               role="tab"
-              className={`tab [--tab-color:black] h-fit w-fit py-2 font-bold${activeTab === tab.id ? ' tab-active border-primary! text-primary' : ''}`}
+              className={`tab h-fit w-fit py-2 font-bold [--tab-color:black] ${activeTab === tab.id ? 'tab-active border-primary! text-primary' : ''}`}
             >
               {tab.title}
             </button>
@@ -34,7 +34,7 @@ const Tabs = ({ tabs }: { tabs: TabsProps[] }) => {
           <div
             key={tab.id}
             id={tab.id}
-            className={`w-full mt-7 mx-auto${activeTab === tab.id ? '' : ' hidden'}`}
+            className={`mx-auto mt-7 w-full ${activeTab === tab.id ? '' : 'hidden'}`}
           >
             {tab.content}
           </div>

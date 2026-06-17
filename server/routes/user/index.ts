@@ -11,30 +11,39 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type {
-  UserNotificationsResponse,
   QuotaResponse,
+  UserBulkUpdateResponse,
   UserInvitesResponse,
+  UserNotificationsResponse,
   UserResultsResponse,
   UserSummary,
 } from '@server/interfaces/api/userInterfaces';
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
+import ImageProxy from '@server/lib/imageproxy';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
-import { In, Not } from 'typeorm';
-import userSettingsRoutes from './usersettings';
-import userOnboardingRoutes from './onboarding';
-import PreparedEmail from '@server/lib/email';
-import path from 'path';
-import crypto from 'crypto';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
-import { plexSync } from '@server/lib/plexSync';
+import { UserSettings } from '@server/entity/UserSettings';
+import PreparedEmail from '@server/lib/email';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
+import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
 import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
+import {
+  isDefaultSentinel,
+  materializeDefaultSnapshot,
+  normalizeSharedLibrariesValue,
+  resolveSharedLibraryKeys,
+} from '@server/utils/sharedLibraries';
+import crypto from 'crypto';
+import path from 'path';
+import { In, Not } from 'typeorm';
+import userOnboardingRoutes from './onboarding';
+import userSettingsRoutes from './usersettings';
 
 const router = Router();
 
@@ -524,17 +533,77 @@ export const canMakePermissionsChange = (
 
 router.put<
   Record<string, never>,
-  Partial<User>[],
-  { ids: string[]; permissions: number }
+  UserBulkUpdateResponse,
+  {
+    ids: string[];
+    permissions?: number;
+    sharedLibraries?: string;
+    allowDownloads?: boolean;
+    allowLiveTv?: boolean;
+  }
 >('/', isAuthenticated(Permission.MANAGE_USERS), async (req, res, next) => {
   try {
     const isOwner = req.user?.id === 1;
+    const { permissions, sharedLibraries, allowDownloads, allowLiveTv } =
+      req.body;
 
-    if (!canMakePermissionsChange(req.body.permissions, req.user)) {
+    if (!Array.isArray(req.body.ids) || req.body.ids.length === 0) {
+      return next({
+        status: 400,
+        message: 'You must provide at least one user id.',
+      });
+    }
+
+    if (
+      permissions === undefined &&
+      sharedLibraries === undefined &&
+      allowDownloads === undefined &&
+      allowLiveTv === undefined
+    ) {
+      return next({
+        status: 400,
+        message:
+          'You must provide permissions, sharedLibraries, allowDownloads, or allowLiveTv to update.',
+      });
+    }
+
+    if (
+      permissions !== undefined &&
+      !canMakePermissionsChange(permissions, req.user)
+    ) {
       return next({
         status: 403,
         message: 'You do not have permission to grant this level of access',
       });
+    }
+
+    const settings = getSettings();
+    const enabledLibraries = settings.plex.libraries.filter(
+      (lib) => lib.enabled
+    );
+
+    let newSharedLibraries: string | null = null;
+    if (sharedLibraries !== undefined) {
+      newSharedLibraries = isDefaultSentinel(sharedLibraries)
+        ? materializeDefaultSnapshot({
+            adminDefault: settings.main.sharedLibraries,
+            enabledLibraries,
+          })
+        : normalizeSharedLibrariesValue(sharedLibraries);
+
+      if (
+        resolveSharedLibraryKeys({
+          value: newSharedLibraries,
+          adminDefault: settings.main.sharedLibraries,
+          enabledLibraries,
+        }).length === 0
+      ) {
+        return next({
+          status: 400,
+          message:
+            'The provided sharedLibraries value does not resolve to any enabled libraries.',
+        });
+      }
     }
 
     const userRepository = getRepository(User);
@@ -547,16 +616,119 @@ router.put<
       },
     });
 
-    const updatedUsers = await Promise.all(
+    const saveResults = await Promise.allSettled(
       users.map(async (user) => {
-        return userRepository.save(<User>{
-          ...user,
-          ...{ permissions: req.body.permissions },
-        });
+        if (permissions !== undefined) {
+          user.permissions = permissions;
+        }
+
+        if (sharedLibraries !== undefined) {
+          if (!user.settings) {
+            user.settings = new UserSettings({
+              user: { id: user.id } as User,
+              sharedLibraries: newSharedLibraries,
+            });
+          } else {
+            user.settings.sharedLibraries = newSharedLibraries;
+          }
+        }
+
+        if (allowDownloads !== undefined || allowLiveTv !== undefined) {
+          if (!user.settings) {
+            user.settings = new UserSettings({
+              // Reference by id to keep the response JSON-serializable
+              user: { id: user.id } as User,
+            });
+          }
+          if (allowDownloads !== undefined) {
+            user.settings.allowDownloads = allowDownloads;
+          }
+          if (allowLiveTv !== undefined) {
+            user.settings.allowLiveTv = allowLiveTv;
+          }
+        }
+
+        return userRepository.save(user);
       })
     );
 
-    res.status(200).json(updatedUsers);
+    saveResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        logger.error('Failed to save bulk user update', {
+          label: 'API',
+          userId: users[index].id,
+          error:
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason),
+        });
+      }
+    });
+
+    const updatedUsers = saveResults
+      .filter(
+        (result): result is PromiseFulfilledResult<User> =>
+          result.status === 'fulfilled'
+      )
+      .map((result) => result.value);
+
+    if (updatedUsers.length === 0) {
+      return next({
+        status: 500,
+        message: 'Failed to save changes for the selected users.',
+      });
+    }
+
+    // Sync the new library access with Plex, a few users at a time to
+    // avoid hammering plex.tv under the single admin token
+    let plexSyncSummary: UserBulkUpdateResponse['plexSync'];
+    if (sharedLibraries !== undefined || allowDownloads !== undefined) {
+      const summary = { synced: 0, failed: 0, removed: 0 };
+      const queue = updatedUsers.filter(
+        (user) => user.userType === UserType.PLEX && user.active && user.email
+      );
+
+      const BULK_PLEX_SYNC_CONCURRENCY = 3;
+      await Promise.all(
+        Array.from(
+          { length: Math.min(BULK_PLEX_SYNC_CONCURRENCY, queue.length) },
+          async () => {
+            let user: User | undefined;
+            while ((user = queue.shift())) {
+              try {
+                // When libraries weren't part of this edit, re-apply the
+                // user's current value; omitted values stay unchanged on Plex
+                await plexSync.syncUserLibraries(
+                  user,
+                  sharedLibraries !== undefined
+                    ? newSharedLibraries
+                    : (user.settings?.sharedLibraries ?? null),
+                  { allowSync: allowDownloads }
+                );
+                summary.synced++;
+              } catch (e) {
+                if (e instanceof PlexUserNotFoundError) {
+                  // The user was removed from Plex out-of-band
+                  await handlePlexAccessLost(user);
+                  summary.removed++;
+                } else {
+                  summary.failed++;
+                }
+                logger.error('Failed to sync user libraries with Plex', {
+                  label: 'Plex Sync',
+                  userId: user.id,
+                  email: user.email,
+                  error: e instanceof Error ? e.message : String(e),
+                });
+              }
+            }
+          }
+        )
+      );
+      plexSyncSummary = summary;
+    }
+
+    res.status(200).json({ users: updatedUsers, plexSync: plexSyncSummary });
   } catch (e) {
     next({ status: 500, message: e.message });
   }
@@ -1093,10 +1265,22 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
     try {
       const plexData = await plexSync.getCurrentPlexLibraries(user);
 
+      if (!plexData.existsInPlex) {
+        await handlePlexAccessLost(user);
+
+        res.status(200).json({
+          currentPlexLibraries: null,
+          canFetchFromPlex: true,
+          existsInPlex: false,
+        });
+        return;
+      }
+
       res.status(200).json({
         currentPlexLibraries:
           plexData.libraries.length > 0 ? plexData.libraries.join('|') : '',
         canFetchFromPlex: true,
+        existsInPlex: true,
         permissions: plexData.permissions,
       });
     } catch (error) {

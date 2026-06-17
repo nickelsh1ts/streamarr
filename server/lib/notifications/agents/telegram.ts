@@ -1,3 +1,4 @@
+import { NotificationType } from '@server/constants/notification';
 import type { User } from '@server/entity/User';
 import {
   getSettings,
@@ -5,11 +6,10 @@ import {
   type NotificationAgentTelegram,
 } from '@server/lib/settings';
 import logger from '@server/logger';
+import { truncate } from '@server/utils/textHelpers';
 import axios from 'axios';
-import { NotificationType } from '@server/constants/notification';
 import type { NotificationPayload } from './agent';
 import { PerRecipientAgent } from './perRecipientAgent';
-import { truncate } from '@server/utils/textHelpers';
 
 interface TelegramRecipient {
   chatId: string;

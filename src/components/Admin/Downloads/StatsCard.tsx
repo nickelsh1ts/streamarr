@@ -1,5 +1,5 @@
-import React from 'react';
 import { formatBytes, formatSpeed } from '@app/utils/numberHelper';
+import React from 'react';
 
 interface StatsCardProps {
   title: string;
@@ -34,10 +34,10 @@ const StatsCard: React.FC<StatsCardProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-neutral">{title}</p>
+              <p className="text-neutral text-sm">{title}</p>
               {badge}
             </div>
-            <p className="text-2xl font-bold mt-1">{formatValue(value)}</p>
+            <p className="mt-1 text-2xl font-bold">{formatValue(value)}</p>
           </div>
           {icon && <div className="text-primary opacity-50">{icon}</div>}
         </div>

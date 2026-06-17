@@ -10,8 +10,8 @@ import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 interface InviteShareModalProps {
   show: boolean;
@@ -208,12 +208,12 @@ const InviteShareModal = ({
         defaultMessage: 'Share this invite link or QR code with your friends!',
       })}
     >
-      <div className="gap-y-4 border-t border-primary pt-4">
-        <div className="text-center gap-y-4">
+      <div className="border-primary gap-y-4 border-t pt-4">
+        <div className="gap-y-4 text-center">
           {isNew && !isCopied ? (
             <>
-              <CheckIcon className="inline-block size-12 text-success" />
-              <p className="text-lg mb-2">
+              <CheckIcon className="text-success inline-block size-12" />
+              <p className="mb-2 text-lg">
                 <FormattedMessage
                   id="inviteShare.successMessage"
                   defaultMessage="Successfully generated a new invite!"

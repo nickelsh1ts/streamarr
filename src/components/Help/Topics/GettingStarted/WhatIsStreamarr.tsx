@@ -1,8 +1,8 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Link from 'next/link';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -73,7 +73,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <Link
             href="https://streamarr.dev"
@@ -111,7 +111,7 @@ const HelpContent = () => {
           defaultMessage="Key Features"
         />
       </div>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.whatIsStreamarr.featureStreaming"
@@ -179,7 +179,7 @@ const HelpContent = () => {
           defaultMessage="Ready to dive in? Here are some helpful resources to get you going:"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <Link
             href="/help/getting-started/become-a-member"

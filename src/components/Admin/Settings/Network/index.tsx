@@ -1,8 +1,8 @@
 'use client';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import RestartRequiredAlert, {
   RESTART_REQUIRED_SWR_KEY,
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Tooltip from '@app/components/Common/ToolTip';
@@ -70,7 +70,7 @@ const NetworkSettings = () => {
   }
 
   return (
-    <div className="max-w-6xl mb-10">
+    <div className="mb-10 max-w-6xl">
       <div className="mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
@@ -136,7 +136,7 @@ const NetworkSettings = () => {
           values,
         }) => (
           <Form className="mt-5 max-w-6xl space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="trustProxy" className="col-span-1">
                 <span className="mr-2">
                   <FormattedMessage
@@ -145,7 +145,7 @@ const NetworkSettings = () => {
                   />
                 </span>
                 <SettingsBadge badgeType="restartRequired" />
-                <p className="text-sm block font-light text-neutral">
+                <p className="text-neutral block text-sm font-light">
                   <FormattedMessage
                     id="generalSettings.trustProxy.description"
                     defaultMessage="Allow Streamarr to correctly register client IP addresses behind a proxy"
@@ -164,7 +164,7 @@ const NetworkSettings = () => {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="csrfProtection" className="col-span-1">
                 <span className="mr-2">
                   <FormattedMessage
@@ -174,7 +174,7 @@ const NetworkSettings = () => {
                 </span>
                 <SettingsBadge badgeType="advanced" className="mr-2" />
                 <SettingsBadge badgeType="restartRequired" />
-                <p className="text-sm block font-light text-neutral">
+                <p className="text-neutral block text-sm font-light">
                   <FormattedMessage
                     id="generalSettings.csrfProtection.description"
                     defaultMessage="Set external API access to read-only (requires HTTPS)"
@@ -199,13 +199,13 @@ const NetworkSettings = () => {
                 />
               </Tooltip>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="requestTimeout" className="col-span-1">
                 <FormattedMessage
                   id="networkSettings.requestTimeout"
                   defaultMessage="API Request Timeout"
                 />
-                <span className="text-sm block font-light text-neutral">
+                <span className="text-neutral block text-sm font-light">
                   <FormattedMessage
                     id="networkSettings.requestTimeout.description"
                     defaultMessage="Maximum time (in seconds) to wait for responses from external services."
@@ -221,7 +221,7 @@ const NetworkSettings = () => {
                   min="1"
                   max="300"
                   step="1"
-                  className="input input-primary input-sm rounded-md w-1/6"
+                  className="input input-primary input-sm w-1/6 rounded-md"
                 />
                 {errors.requestTimeout &&
                   touched.requestTimeout &&
@@ -230,8 +230,8 @@ const NetworkSettings = () => {
                   )}
               </div>
             </div>
-            <div className="divider divider-primary mb-0 col-span-full" />
-            <div className="flex justify-end col-span-3 mt-4">
+            <div className="divider divider-primary col-span-full mb-0" />
+            <div className="col-span-3 mt-4 flex justify-end">
               <div className="flex gap-2">
                 <Button
                   buttonType="primary"
@@ -239,7 +239,7 @@ const NetworkSettings = () => {
                   type="submit"
                   disabled={isSubmitting || !isValid}
                 >
-                  <ArrowDownTrayIcon className="size-4 mr-2" />
+                  <ArrowDownTrayIcon className="mr-2 size-4" />
                   <span>
                     {isSubmitting
                       ? intl.formatMessage({

@@ -1,6 +1,6 @@
+import logger from '@server/logger';
 import type { Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import logger from '@server/logger';
 
 export interface TautulliProxyConfig {
   hostname: string;

@@ -215,6 +215,9 @@
   "common.about": {
     "defaultMessage": "About"
   },
+  "common.accountDeactivated": {
+    "defaultMessage": "Account Deactivated"
+  },
   "common.accountExpired": {
     "defaultMessage": "Account Expired"
   },
@@ -262,6 +265,9 @@
   },
   "common.arrEdit4k": {
     "defaultMessage": "Edit 4K {arrApp} Server"
+  },
+  "common.at": {
+    "defaultMessage": "at"
   },
   "common.available": {
     "defaultMessage": "Available"
@@ -320,11 +326,17 @@
   "common.database": {
     "defaultMessage": "Database"
   },
+  "common.date": {
+    "defaultMessage": "Date"
+  },
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
   },
   "common.deactivate": {
     "defaultMessage": "Deactivate"
+  },
+  "common.deactivated": {
+    "defaultMessage": "Deactivated"
   },
   "common.declined": {
     "defaultMessage": "Declined"
@@ -503,6 +515,12 @@
   "common.newPassword": {
     "defaultMessage": "New Password"
   },
+  "common.newsletterManagement": {
+    "defaultMessage": "Newsletter Management"
+  },
+  "common.newsletters": {
+    "defaultMessage": "Newsletters"
+  },
   "common.next": {
     "defaultMessage": "Next"
   },
@@ -623,6 +641,9 @@
   "common.requests": {
     "defaultMessage": "Requests"
   },
+  "common.required": {
+    "defaultMessage": "Required"
+  },
   "common.reset": {
     "defaultMessage": "Reset"
   },
@@ -646,6 +667,9 @@
   },
   "common.role": {
     "defaultMessage": "Role"
+  },
+  "common.save": {
+    "defaultMessage": "Save"
   },
   "common.saveChanges": {
     "defaultMessage": "Save Changes"
@@ -1256,8 +1280,11 @@
   "expiredAccess.accountSettings": {
     "defaultMessage": "Account Settings"
   },
+  "expiredAccess.deactivatedTitle": {
+    "defaultMessage": "Account Deactivated"
+  },
   "expiredAccess.message": {
-    "defaultMessage": "Your account is currently expired. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}"
+    "defaultMessage": "Your account is currently {state, select, true {expired} other {deactivated}}. You can still access your profile and settings{isTrialEnabled, select, true { including trial extension request options.} other {. Please contact an administrator to reactivate your access.}}"
   },
   "expiredAccess.signOut": {
     "defaultMessage": "Sign Out"
@@ -3668,11 +3695,17 @@
   "library.watchlist": {
     "defaultMessage": "Watch List"
   },
+  "librarySelector.defaultLibraries": {
+    "defaultMessage": "Default Libraries"
+  },
   "librarySelector.defaultLibrariesAll": {
     "defaultMessage": "Default Libraries (All)"
   },
   "librarySelector.defaultLibrariesWith": {
     "defaultMessage": "Default Libraries ({libraries})"
+  },
+  "librarySelector.noChange": {
+    "defaultMessage": "No change"
   },
   "linkedAccounts.deleteFailed": {
     "defaultMessage": "Failed to delete linked account"
@@ -3824,6 +3857,255 @@
   "networkSettings.validation.requestTimeoutMin": {
     "defaultMessage": "Request timeout must be at least 1 second"
   },
+  "newsletterSettings.saveError": {
+    "defaultMessage": "Newsletter preferences failed to save."
+  },
+  "newsletterSettings.saveSuccess": {
+    "defaultMessage": "Newsletter preferences saved successfully!"
+  },
+  "newsletterSettings.title": {
+    "defaultMessage": "Newsletter Subscriptions"
+  },
+  "newsletters.allSubscribers": {
+    "defaultMessage": "All subscribed users"
+  },
+  "newsletters.body": {
+    "defaultMessage": "Body"
+  },
+  "newsletters.bodyFormat": {
+    "defaultMessage": "Body Format"
+  },
+  "newsletters.byPlexLabel": {
+    "defaultMessage": "By Plex Label"
+  },
+  "newsletters.byServarrTag": {
+    "defaultMessage": "By Radarr/Sonarr Tag"
+  },
+  "newsletters.byTag": {
+    "defaultMessage": "By Tag"
+  },
+  "newsletters.create": {
+    "defaultMessage": "Create Newsletter"
+  },
+  "newsletters.createNewsletter": {
+    "defaultMessage": "Create Newsletter"
+  },
+  "newsletters.cronSchedule": {
+    "defaultMessage": "Cron Schedule"
+  },
+  "newsletters.customRecipients": {
+    "defaultMessage": "Specific users"
+  },
+  "newsletters.deleteError": {
+    "defaultMessage": "Failed to delete newsletter"
+  },
+  "newsletters.description": {
+    "defaultMessage": "Compose, schedule, and send newsletters to your users."
+  },
+  "newsletters.descriptionLabel": {
+    "defaultMessage": "Description"
+  },
+  "newsletters.descriptionTip": {
+    "defaultMessage": "Shown to users under this newsletter in their subscription settings."
+  },
+  "newsletters.editNewsletter": {
+    "defaultMessage": "Edit Newsletter"
+  },
+  "newsletters.empty": {
+    "defaultMessage": "No newsletters yet. Create one to get started."
+  },
+  "newsletters.failures": {
+    "defaultMessage": "Failures"
+  },
+  "newsletters.history": {
+    "defaultMessage": "History"
+  },
+  "newsletters.historyTitle": {
+    "defaultMessage": "Newsletter History"
+  },
+  "newsletters.important": {
+    "defaultMessage": "Important"
+  },
+  "newsletters.importantWarning": {
+    "defaultMessage": "Important newsletters are delivered to every selected recipient. They will not be able to opt-out. Use sparingly."
+  },
+  "newsletters.invalidCron": {
+    "defaultMessage": "Invalid schedule expression"
+  },
+  "newsletters.isImportant": {
+    "defaultMessage": "Important!"
+  },
+  "newsletters.isImportantTooltip": {
+    "defaultMessage": "No Opt-Out!"
+  },
+  "newsletters.lastSent": {
+    "defaultMessage": "Last Sent"
+  },
+  "newsletters.maxItems": {
+    "defaultMessage": "Max Items"
+  },
+  "newsletters.noLibraries": {
+    "defaultMessage": "No enabled Plex libraries were found."
+  },
+  "newsletters.noResults": {
+    "defaultMessage": "No newsletters match the current filter."
+  },
+  "newsletters.noSends": {
+    "defaultMessage": "This newsletter has not been sent yet."
+  },
+  "newsletters.notScheduled": {
+    "defaultMessage": "Not scheduled"
+  },
+  "newsletters.once": {
+    "defaultMessage": "Once"
+  },
+  "newsletters.pastDays": {
+    "defaultMessage": "Past Days"
+  },
+  "newsletters.plexLabel": {
+    "defaultMessage": "Plex Label"
+  },
+  "newsletters.plexLabelLibraries": {
+    "defaultMessage": "Plex Label Libraries"
+  },
+  "newsletters.preview": {
+    "defaultMessage": "Newsletter Preview"
+  },
+  "newsletters.previewError": {
+    "defaultMessage": "Unable to generate preview"
+  },
+  "newsletters.radarrTag": {
+    "defaultMessage": "Radarr Tag"
+  },
+  "newsletters.recentMovies": {
+    "defaultMessage": "Recently Added Movies"
+  },
+  "newsletters.recentMusic": {
+    "defaultMessage": "Recently Added Music"
+  },
+  "newsletters.recentOther": {
+    "defaultMessage": "Recently Added"
+  },
+  "newsletters.recentPhotos": {
+    "defaultMessage": "Recently Added Photos"
+  },
+  "newsletters.recentShows": {
+    "defaultMessage": "Recently Added TV Shows"
+  },
+  "newsletters.recentlyAdded": {
+    "defaultMessage": "Recently Added"
+  },
+  "newsletters.recipients": {
+    "defaultMessage": "Recipients"
+  },
+  "newsletters.recurring": {
+    "defaultMessage": "Recurring"
+  },
+  "newsletters.saveError": {
+    "defaultMessage": "There was an error saving the newsletter"
+  },
+  "newsletters.schedule": {
+    "defaultMessage": "Schedule"
+  },
+  "newsletters.scheduleEnabled": {
+    "defaultMessage": "Enable schedule"
+  },
+  "newsletters.scheduleType": {
+    "defaultMessage": "Schedule Type"
+  },
+  "newsletters.sectionHeader": {
+    "defaultMessage": "Section Header"
+  },
+  "newsletters.sendAt": {
+    "defaultMessage": "Send At"
+  },
+  "newsletters.sendError": {
+    "defaultMessage": "Failed to send newsletter"
+  },
+  "newsletters.sendNow": {
+    "defaultMessage": "Send Now"
+  },
+  "newsletters.sendOn": {
+    "defaultMessage": "Send On"
+  },
+  "newsletters.sent": {
+    "defaultMessage": "Newsletter sent"
+  },
+  "newsletters.sentSummary": {
+    "defaultMessage": "Delivered to {count} recipient(s){failures, plural, =0 {} other {, # failed}}."
+  },
+  "newsletters.sonarrTag": {
+    "defaultMessage": "Sonarr Tag"
+  },
+  "newsletters.sortLastModified": {
+    "defaultMessage": "Last Modified"
+  },
+  "newsletters.sortMostRecent": {
+    "defaultMessage": "Most Recent"
+  },
+  "newsletters.sortName": {
+    "defaultMessage": "Name"
+  },
+  "newsletters.statusDisabled": {
+    "defaultMessage": "Draft"
+  },
+  "newsletters.statusEnabled": {
+    "defaultMessage": "Scheduled"
+  },
+  "newsletters.subject": {
+    "defaultMessage": "Email Subject"
+  },
+  "newsletters.test": {
+    "defaultMessage": "Test"
+  },
+  "newsletters.testError": {
+    "defaultMessage": "Failed to send test newsletter"
+  },
+  "newsletters.testSent": {
+    "defaultMessage": "Test newsletter sent to your email"
+  },
+  "newsletters.topMovies": {
+    "defaultMessage": "Top Movies"
+  },
+  "newsletters.topMusic": {
+    "defaultMessage": "Top Music"
+  },
+  "newsletters.topShows": {
+    "defaultMessage": "Top TV Shows"
+  },
+  "newsletters.topStreams": {
+    "defaultMessage": "Top Streams"
+  },
+  "newsletters.trigger.manual": {
+    "defaultMessage": "Manual"
+  },
+  "newsletters.trigger.schedule": {
+    "defaultMessage": "Scheduled"
+  },
+  "newsletters.trigger.test": {
+    "defaultMessage": "Test"
+  },
+  "newsletters.triggeredBy": {
+    "defaultMessage": "Trigger"
+  },
+  "newsletters.validation.cronInvalid": {
+    "defaultMessage": "Enter a valid cron schedule (5 fields)."
+  },
+  "newsletters.validation.cronRequired": {
+    "defaultMessage": "A schedule is required for recurring newsletters"
+  },
+  "newsletters.validation.cronTooFrequent": {
+    "defaultMessage": "Newsletters can run at most once per hour."
+  },
+  "newsletters.validation.nameRequired": {
+    "defaultMessage": "Name is required"
+  },
+  "newsletters.validation.sendAtRequired": {
+    "defaultMessage": "A date is required for one-time newsletters"
+  },
+  "newsletters.validation.subjectRequired": {
+    "defaultMessage": "Subject is required"
+  },
   "notFound.notFound": {
     "defaultMessage": "Not found"
   },
@@ -3895,6 +4177,12 @@
   },
   "notification.open": {
     "defaultMessage": "Open Notifications"
+  },
+  "notification.plexAccessLost": {
+    "defaultMessage": "Plex Access Removed"
+  },
+  "notification.plexAccessLost.description": {
+    "defaultMessage": "Get notified when a user is removed from the Plex server and deactivated"
   },
   "notification.readAllError": {
     "defaultMessage": "Error marking all notifications as read"
@@ -4364,6 +4652,12 @@
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
   },
+  "profile.accountDeactivatedMessage": {
+    "defaultMessage": "Your account has been deactivated. {trialPeriodEnabled, select, true {You can request an access extension {link}.} other {Contact an administrator to restore your access.}}"
+  },
+  "profile.accountDeactivatedMessageAdmin": {
+    "defaultMessage": "This user's account has been deactivated. You can reactivate them from their settings {link}."
+  },
   "profile.accountExpiredMessage": {
     "defaultMessage": "Your account access has expired. {trialPeriodEnabled, select, true {You can request an extension {link}.} other {Contact an administrator to extend your access.}}"
   },
@@ -4665,7 +4959,7 @@
     "defaultMessage": "Request Pending"
   },
   "settings.accessExtensionRequest.submitting": {
-    "defaultMessage": "Sending Request..."
+    "defaultMessage": "Sending Request…"
   },
   "settings.accessExtensionRequest.success": {
     "defaultMessage": "Access extension request sent successfully."
@@ -4985,6 +5279,21 @@
   "settings.plexAccessDescription": {
     "defaultMessage": "Changes will sync with Plex automatically on save."
   },
+  "settings.reinvite": {
+    "defaultMessage": "Reinvite"
+  },
+  "settings.reinviteError": {
+    "defaultMessage": "Failed to reinvite user."
+  },
+  "settings.reinviteFailed": {
+    "defaultMessage": "The Plex invite failed and the user remains deactivated."
+  },
+  "settings.reinviteSuccess": {
+    "defaultMessage": "User reinvited successfully!"
+  },
+  "settings.reinviting": {
+    "defaultMessage": "Reinviting…"
+  },
   "settings.restartRequired.failed": {
     "defaultMessage": "Restart failed. Please restart the server manually."
   },
@@ -4996,6 +5305,18 @@
   },
   "settings.saveError": {
     "defaultMessage": "Something went wrong while saving settings."
+  },
+  "settings.savedPlexSyncFailed": {
+    "defaultMessage": "Settings saved, but Plex sync failed."
+  },
+  "settings.savedPlexSyncFailedMessage": {
+    "defaultMessage": "Your changes were saved, but they could not be synced with Plex."
+  },
+  "settings.savedUserRemovedFromPlex": {
+    "defaultMessage": "Settings saved, but user not found in Plex."
+  },
+  "settings.savedUserRemovedFromPlexMessage": {
+    "defaultMessage": "This user was removed from the Plex server and their account has been deactivated."
   },
   "settings.trialPeriod": {
     "defaultMessage": "Trial Period"
@@ -5014,6 +5335,9 @@
   },
   "settings.user.resetOnboarding": {
     "defaultMessage": "Reset Onboarding"
+  },
+  "settings.userRemovedFromPlexWarning": {
+    "defaultMessage": "This user was removed from the Plex server and their account has been deactivated. You can reinvite them below."
   },
   "settingsBadge.advanced.tooltip": {
     "defaultMessage": "Incorrectly configuring this setting may result in broken functionality"
@@ -5228,27 +5552,6 @@
   "system.health.title": {
     "defaultMessage": "Health"
   },
-  "system.python.alertMessage": {
-    "defaultMessage": "The Plex Sync service is unreachable. Plex invites and library sync are currently unavailable."
-  },
-  "system.python.alertTitle": {
-    "defaultMessage": "Plex Sync Service Down"
-  },
-  "system.python.description": {
-    "defaultMessage": "Handles Plex invites and library synchronization."
-  },
-  "system.python.restart": {
-    "defaultMessage": "Restart Service"
-  },
-  "system.python.restartFailed": {
-    "defaultMessage": "Failed to restart Plex Sync service"
-  },
-  "system.python.restartSuccess": {
-    "defaultMessage": "Plex Sync service restarted successfully"
-  },
-  "system.python.title": {
-    "defaultMessage": "Plex Sync Service"
-  },
   "system.reconnecting": {
     "defaultMessage": "Reconnecting…"
   },
@@ -5345,9 +5648,6 @@
   "systemSettings.preferred": {
     "defaultMessage": "Preferred"
   },
-  "systemSettings.pythonVersion": {
-    "defaultMessage": "Python"
-  },
   "systemSettings.source": {
     "defaultMessage": "Source"
   },
@@ -5362,6 +5662,15 @@
   },
   "systemSettings.uptime": {
     "defaultMessage": "Uptime"
+  },
+  "toggle.disabled": {
+    "defaultMessage": "Disabled"
+  },
+  "toggle.enabled": {
+    "defaultMessage": "Enabled"
+  },
+  "toggle.noChange": {
+    "defaultMessage": "No change"
   },
   "tutorial.ready.description": {
     "defaultMessage": "We'll guide you through key features of {applicationTitle} with a quick tour."
@@ -5395,6 +5704,27 @@
   },
   "userDropdown.startTutorial": {
     "defaultMessage": "Start Tutorial"
+  },
+  "userLibraries.error": {
+    "defaultMessage": "Something went wrong while saving Plex access settings."
+  },
+  "userLibraries.savedPlexSyncFailed": {
+    "defaultMessage": "Settings saved, but Plex sync failed."
+  },
+  "userLibraries.savedPlexSyncFailedMessage": {
+    "defaultMessage": "Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlex": {
+    "defaultMessage": "Settings saved, but some users were not found in Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlexMessage": {
+    "defaultMessage": "{count, plural, one {# user was} other {# users were}} removed from the Plex server and {count, plural, one {has} other {have}} been deactivated."
+  },
+  "userLibraries.success": {
+    "defaultMessage": "Plex access settings saved successfully!"
+  },
+  "userLibraries.syncedWithPlex": {
+    "defaultMessage": "Changes have been synced with Plex."
   },
   "userPermissions.admin.description": {
     "defaultMessage": "Full administrator access. Bypasses all other permission checks."
@@ -5455,9 +5785,6 @@
   },
   "userPermissions.success": {
     "defaultMessage": "User permissions saved successfully!"
-  },
-  "userPermissions.title": {
-    "defaultMessage": "Edit User Permissions"
   },
   "userPermissions.viewInvites.description": {
     "defaultMessage": "Grants permission to view invites from other users."
@@ -5692,6 +6019,12 @@
   },
   "users.bulkEdit": {
     "defaultMessage": "Bulk Edit"
+  },
+  "users.bulkEditLibrariesDescription": {
+    "defaultMessage": "Changes will be applied to all selected users and synced with Plex automatically on save. Fields left unchanged are not modified. Local users will be updated but not synced."
+  },
+  "users.bulkEditTitle": {
+    "defaultMessage": "Bulk Edit Users"
   },
   "users.configurePasswordGeneration": {
     "defaultMessage": "Configure an application URL and enable email notifications to allow automatic password generation."

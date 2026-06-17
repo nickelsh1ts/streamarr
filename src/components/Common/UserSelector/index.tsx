@@ -4,11 +4,11 @@ import { useUser } from '@app/hooks/useUser';
 import {
   Listbox,
   ListboxButton,
-  Portal,
-  ListboxOptions,
   ListboxOption,
+  ListboxOptions,
+  Portal,
 } from '@headlessui/react';
-import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -158,10 +158,10 @@ const UserSelector = ({
         }
         return (
           <div className="relative">
-            <span className="inline-block w-full relative rounded-md shadow-sm">
+            <span className="relative inline-block w-full rounded-md shadow-sm">
               <ListboxButton
                 ref={buttonRef}
-                className={`relative w-full cursor-default rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pl-3 pr-10 text-left text-white transition duration-150 ease-in-out focus:outline ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
+                className={`relative w-full cursor-pointer rounded-md border ${valid ? 'border-primary' : 'border-error'} bg-base-100 py-2 pr-10 pl-3 text-left text-white transition duration-150 ease-in-out focus:outline ${valid ? 'focus:outline-primary' : 'focus:outline-error'} focus:outline-offset-2 sm:text-sm sm:leading-5`}
               >
                 {!multiple && !Array.isArray(selectedUser) && selectedUser ? (
                   <span className="flex items-center">
@@ -214,7 +214,7 @@ const UserSelector = ({
               {listboxOpen && (
                 <ListboxOptions
                   ref={optionsRef}
-                  className={`z-9999 px-1 max-h-60 overflow-auto rounded-md bg-base-100 border ${valid ? 'border-primary' : 'border-error'} py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5`}
+                  className={`bg-base-100 z-9999 max-h-60 overflow-auto rounded-md border px-1 ${valid ? 'border-primary' : 'border-error'} py-2 text-base leading-6 shadow-lg focus:outline-none sm:text-sm sm:leading-5`}
                   style={{
                     position: 'absolute',
                     top: dropdownMeasured ? dropdownPos.top : 0,
@@ -230,7 +230,7 @@ const UserSelector = ({
                         <div
                           className={`${
                             focus ? 'bg-primary text-white' : 'text-gray-300'
-                          } relative cursor-default select-none py-2 pl-8 pr-4 rounded-md`}
+                          } relative cursor-pointer rounded-md py-2 pr-4 pl-8 select-none`}
                         >
                           <span
                             className={`${

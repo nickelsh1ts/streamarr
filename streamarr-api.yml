@@ -28,6 +28,8 @@ tags:
     description: Endpoints related to invite code management.
   - name: notification
     description: Endpoints related to notification management.
+  - name: newsletter
+    description: Endpoints related to newsletter creation, scheduling, and delivery.
   - name: tmdb
     description: Endpoints related to TMDB metadata.
   - name: service
@@ -1653,6 +1655,218 @@ components:
             - $ref: '#/components/schemas/User'
             - type: string
               nullable: true
+    Newsletter:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          readOnly: true
+        name:
+          type: string
+          example: 'Weekly Roundup'
+        subject:
+          type: string
+          example: "What's new this week on {{applicationTitle}}"
+        description:
+          type: string
+          nullable: true
+          example: 'A weekly roundup of new arrivals.'
+        body:
+          type: string
+        bodyFormat:
+          type: string
+          enum: [markdown, html]
+          example: 'markdown'
+        blocks:
+          $ref: '#/components/schemas/NewsletterBlocks'
+        recipientMode:
+          type: string
+          enum: [all, custom]
+          example: 'all'
+        recipientIds:
+          type: array
+          items:
+            type: number
+        isImportant:
+          type: boolean
+          example: false
+        enabled:
+          type: boolean
+          example: true
+        scheduleType:
+          type: string
+          enum: [once, recurring]
+          example: 'recurring'
+        cronSchedule:
+          type: string
+          nullable: true
+          example: '0 9 * * 1'
+        sendAt:
+          type: string
+          nullable: true
+          format: date-time
+        lastSentAt:
+          type: string
+          nullable: true
+          format: date-time
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    NewsletterBlocks:
+      type: object
+      properties:
+        recentlyAdded:
+          type: object
+          description: >-
+            Recently added configuration keyed by library type
+            (movie, show, artist, photo, other). Each value is a
+            RecentlyAddedTypeConfig.
+          additionalProperties:
+            $ref: '#/components/schemas/RecentlyAddedTypeConfig'
+        topStreams:
+          type: object
+          description: >-
+            Top streams configuration keyed by library type
+            (movie, show, artist). Each value is a RecentlyAddedTypeConfig.
+          additionalProperties:
+            $ref: '#/components/schemas/RecentlyAddedTypeConfig'
+        byTag:
+          type: object
+          properties:
+            header:
+              type: string
+            count:
+              type: number
+              example: 12
+            plex:
+              type: object
+              description: >-
+                Plex label source. Labels are applied per library, so this
+                carries an optional library selection.
+              properties:
+                enabled:
+                  type: boolean
+                label:
+                  type: string
+                  example: 'leaving'
+                libraries:
+                  type: array
+                  items:
+                    type: string
+            servarr:
+              type: object
+              description: Radarr/Sonarr tag source (instance-wide, not library-scoped).
+              properties:
+                enabled:
+                  type: boolean
+                radarrTag:
+                  type: string
+                sonarrTag:
+                  type: string
+    RecentlyAddedTypeConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        days:
+          type: number
+          example: 7
+        count:
+          type: number
+          example: 6
+        libraries:
+          type: array
+          items:
+            type: string
+        header:
+          type: string
+          description: >-
+            Optional admin-supplied section heading; falls back to a
+            localized default when empty.
+    NewsletterRequest:
+      type: object
+      required:
+        - name
+        - subject
+      properties:
+        name:
+          type: string
+          example: 'Weekly Roundup'
+        subject:
+          type: string
+          example: "What's new this week"
+        description:
+          type: string
+          nullable: true
+        body:
+          type: string
+        bodyFormat:
+          type: string
+          enum: [markdown, html]
+        blocks:
+          $ref: '#/components/schemas/NewsletterBlocks'
+        recipientMode:
+          type: string
+          enum: [all, custom]
+        recipientIds:
+          type: array
+          items:
+            type: number
+        isImportant:
+          type: boolean
+        enabled:
+          type: boolean
+        scheduleType:
+          type: string
+          enum: [once, recurring]
+        cronSchedule:
+          type: string
+          nullable: true
+        sendAt:
+          type: string
+          nullable: true
+          format: date-time
+    NewsletterHistory:
+      type: object
+      properties:
+        id:
+          type: number
+          readOnly: true
+        triggeredBy:
+          type: string
+          enum: [schedule, manual, test]
+        recipientCount:
+          type: number
+        failureCount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    NewsletterSendResult:
+      type: object
+      properties:
+        newsletterId:
+          type: number
+        recipientCount:
+          type: number
+        failureCount:
+          type: number
+    NewsletterVariable:
+      type: object
+      properties:
+        token:
+          type: string
+          example: '{{recipientName}}'
+        description:
+          type: string
     NotificationCreationResult:
       type: object
       required:
@@ -1754,31 +1968,6 @@ components:
         message:
           type: string
           example: 'Restarting server...'
-    PythonServiceStatus:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-            - healthy
-            - unhealthy
-            - unknown
-          description: Current health status of the Python service
-          example: healthy
-        lastChecked:
-          type: string
-          nullable: true
-          description: ISO timestamp of last health check
-          example: '2026-02-17T12:00:00.000Z'
-        lastHealthy:
-          type: string
-          nullable: true
-          description: ISO timestamp of last successful health check
-          example: '2026-02-17T12:00:00.000Z'
-        consecutiveFailures:
-          type: number
-          description: Number of consecutive failed health checks
-          example: 0
     NotificationEmailSettings:
       type: object
       properties:
@@ -2228,6 +2417,25 @@ components:
           type: boolean
         inAppEnabled:
           type: boolean
+    UserSettingsNewsletters:
+      type: object
+      properties:
+        newsletters:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              description:
+                type: string
+                nullable: true
+              isImportant:
+                type: boolean
+              subscribed:
+                type: boolean
     NotificationAgentTypes:
       type: object
       properties:
@@ -4925,9 +5133,6 @@ paths:
                   nodeVersion:
                     type: string
                     example: '20.19.2'
-                  pythonVersion:
-                    type: string
-                    example: '3.11.9'
                   appDataPath:
                     type: string
                     example: /app/config
@@ -5062,38 +5267,6 @@ paths:
                 $ref: '#/components/schemas/RestartResponse'
         '500':
           description: Failed to trigger restart
-  /settings/python/status:
-    get:
-      summary: Get Python service health status
-      description: Returns the current health status of the Python (Plex Sync) service.
-      tags:
-        - settings
-      responses:
-        '200':
-          description: Python service status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PythonServiceStatus'
-  /settings/python/restart:
-    post:
-      summary: Restart Python service
-      description: Restarts the Python (Plex Sync) service without restarting the main Streamarr server.
-      tags:
-        - settings
-      responses:
-        '200':
-          description: Python service restarted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestartResponse'
-        '500':
-          description: Failed to restart Python service
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestartResponse'
   /auth/me:
     get:
       summary: Get logged-in user
@@ -5110,8 +5283,8 @@ paths:
                 $ref: '#/components/schemas/User'
   /auth/plex:
     post:
-      summary: Sign in using a Plex token
-      description: Takes an `authToken` (Plex token) to log the user in. Generates a session cookie for use in further invites. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions.
+      summary: Sign in using a Plex pin session
+      description: Takes a `pinId` from a completed server-side Plex pin exchange (see `/auth/plex/pin`) and logs the user in. Generates a session cookie for use in further invites. If the user does not exist, and there are no other users, then a user will be created with full admin privileges. If a user logs in with access to the main Plex server, they will also have an account created, but without any permissions. A raw `authToken` is still accepted for backward compatibility but is deprecated.
       security: []
       tags:
         - auth
@@ -5129,10 +5302,80 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-              required:
-                - authToken
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
+  /auth/plex/pin:
+    post:
+      summary: Begin a server-side Plex sign-in
+      description: Creates a Plex pin server-side and returns an opaque pin session id together with the `app.plex.tv` auth URL to open in a popup. The Plex auth token resulting from the authorization is held server-side and never returned to the browser; pass the `pinId` to `/auth/plex`, `/signup/plexauth`, or `/user/{userId}/settings/linked-accounts/plex` to complete the relevant flow.
+      security: []
+      tags:
+        - auth
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  type: object
+                  description: Optional browser hints used to label the device in the user's Plex device list.
+                  properties:
+                    platform:
+                      type: string
+                    platformVersion:
+                      type: string
+                    device:
+                      type: string
+                    screenResolution:
+                      type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Opaque pin session id (single-use).
+                  authUrl:
+                    type: string
+                    description: app.plex.tv URL to open in the sign-in popup.
+                  expiresAt:
+                    type: string
+                    format: date-time
+  /auth/plex/pin/{pinId}:
+    get:
+      summary: Poll a Plex pin session
+      description: Returns the authorization status of a pin session created via `/auth/plex/pin`. The Plex auth token is never included in the response.
+      security: []
+      tags:
+        - auth
+      parameters:
+        - in: path
+          name: pinId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [pending, authorized, expired]
   /auth/local:
     post:
       summary: Sign in using a local account
@@ -5364,6 +5607,8 @@ paths:
       description: |
         Update users with given IDs with the provided values. You cannot update users' Plex tokens through this request.
 
+        Provide any combination of `permissions`, `sharedLibraries`, `allowDownloads`, and `allowLiveTv`; omitted fields are left unchanged. When `sharedLibraries` or `allowDownloads` is provided, the new access is synced with Plex for all selected active Plex users and a sync summary is returned. `allowLiveTv` only gates Live TV within Streamarr and is not synced with Plex.
+
         Requires the `MANAGE_USERS` permission.
       tags:
         - users
@@ -5380,15 +5625,39 @@ paths:
                     type: integer
                 permissions:
                   type: integer
+                sharedLibraries:
+                  type: string
+                  description: A pipe-delimited list of library IDs, 'all', or 'server' for the server default
+                  example: '1|2|3'
+                allowDownloads:
+                  type: boolean
+                  description: Whether the users may download content (synced to Plex)
+                allowLiveTv:
+                  type: boolean
+                  description: Whether the users may access Live TV within Streamarr
       responses:
         '200':
           description: Successfully updated user details
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  plexSync:
+                    type: object
+                    nullable: true
+                    description: Plex sync summary, present when sharedLibraries or allowDownloads was updated
+                    properties:
+                      synced:
+                        type: integer
+                      failed:
+                        type: integer
+                      removed:
+                        type: integer
   /user/import-from-plex:
     post:
       summary: Import all users from Plex
@@ -5992,6 +6261,10 @@ paths:
                   username:
                     type: string
                     example: 'Mr User'
+                  plexSync:
+                    type: string
+                    enum: [synced, removed, failed, skipped]
+                    description: Outcome of the Plex library sync attempted during save. `removed` means the user was not found in Plex and has been deactivated.
   /user/{userId}/settings/extension:
     post:
       summary: Request access extension
@@ -6041,6 +6314,10 @@ paths:
                   canFetchFromPlex:
                     type: boolean
                     description: Whether the system can fetch from Plex (false for non-Plex users)
+                  existsInPlex:
+                    type: boolean
+                    nullable: true
+                    description: False when the user is definitively absent from the Plex server's shared users list (omitted when verification was not possible)
                   permissions:
                     type: object
                     nullable: true
@@ -6112,7 +6389,7 @@ paths:
   /user/{userId}/settings/linked-accounts/plex:
     post:
       summary: Link a Plex account to the logged-in user
-      description: Links a Plex account to the logged-in user using a provided Plex token. Requires an active session.
+      description: Links a Plex account to the logged-in user. Pass a `pinId` from a completed server-side Plex pin exchange (see `/auth/plex/pin`); a raw `authToken` is also accepted but deprecated. Requires an active session.
       tags:
         - users
       parameters:
@@ -6128,15 +6405,20 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-              required:
-                - authToken
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
       responses:
         '204':
           description: Plex account successfully linked
+        '400':
+          description: Request body is missing both `pinId` and `authToken`
         '401':
-          description: Invalid or expired Plex token
+          description: Plex sign-in session is invalid or expired, or the Plex token is invalid or expired
         '422':
           description: Plex account already linked to another user, or email mismatch
         '500':
@@ -6204,6 +6486,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserSettingsNotifications'
+  /user/{userId}/settings/newsletters:
+    get:
+      summary: Get newsletter subscriptions for a user
+      description: >-
+        Returns the newsletters a user is eligible to receive and whether they
+        are subscribed to each. Requires `MANAGE_USERS` permission if viewing
+        other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: User newsletter subscriptions returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsNewsletters'
+    post:
+      summary: Update newsletter subscriptions for a user
+      description: >-
+        Updates the user's newsletter subscriptions. The request body lists the
+        newsletter IDs the user has opted out of. Requires `MANAGE_USERS`
+        permission if editing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unsubscribed:
+                  type: array
+                  items:
+                    type: number
+      responses:
+        '200':
+          description: Updated user newsletter subscriptions returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingsNewsletters'
   /user/{userId}/settings/notifications/pushover/sounds:
     get:
       summary: Get available Pushover sounds for a user
@@ -6292,6 +6628,61 @@ paths:
                   permissions:
                     type: number
                     example: 2
+  /user/{userId}/settings/reinvite:
+    post:
+      summary: Reactivate a deactivated user and re-invite them to Plex
+      description: |
+        Reactivates a deactivated Plex user and sends a new Plex invite using
+        their existing settings (shared libraries, downloads, and Plex Home).
+
+        The Plex invite is attempted first; if it fails, the user is left
+        unchanged (deactivated) and the response reports `plexInvite: failed`.
+        On success this endpoint:
+        - Sets the user back to active and clears their access revocation
+          date and reason
+        - Clears an already-expired trial period so the trial expiry job does
+          not immediately re-deactivate the user (a future trial is left untouched)
+        - Clears any pending access extension request
+        - Restores default Seerr permissions when Seerr is configured
+
+        Requires `MANAGE_USERS` permission. Cannot be used on yourself, the
+        owner, or non-Plex users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+          description: User ID to reactivate
+      responses:
+        '200':
+          description: User reactivated; includes the Plex invite outcome
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                    example: true
+                  plexInvite:
+                    type: string
+                    enum: [invited, failed]
+                    description: Whether the Plex invite was sent successfully. When `failed`, the user remains deactivated.
+                  plexInviteError:
+                    type: string
+                    nullable: true
+                    description: Error message when the Plex invite failed
+        '400':
+          description: Bad request (already active, owner, or non-Plex user)
+        '403':
+          description: Forbidden - user lacks permission
+        '404':
+          description: User not found
+        '500':
+          description: Server error during reactivation
   /user/{userId}/settings/pin-libraries:
     post:
       summary: Pin libraries to user's Plex home screen
@@ -7424,6 +7815,282 @@ paths:
       responses:
         '204':
           description: Notification deleted
+  /settings/newsletter:
+    get:
+      summary: Get newsletters
+      description: Returns a paginated list of newsletters.
+      tags:
+        - newsletter
+      parameters:
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 10
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+        - in: query
+          name: filter
+          schema:
+            type: string
+            nullable: true
+            enum: [all, enabled, disabled, important]
+            default: all
+        - in: query
+          name: sort
+          schema:
+            type: string
+            nullable: true
+            enum: [created, modified, name]
+            default: modified
+      responses:
+        '200':
+          description: A list of newsletters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Newsletter'
+    post:
+      summary: Create a newsletter
+      description: Creates a new newsletter and schedules it if enabled.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '201':
+          description: Newsletter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: Bad request - validation error
+        '403':
+          description: Forbidden - insufficient permissions
+        '500':
+          description: Server error
+  /settings/newsletter/variables:
+    get:
+      summary: Get newsletter variables
+      description: Returns the catalog of tokens and content blocks available in newsletter bodies.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: The variable catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterVariable'
+                  blocks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterVariable'
+  /settings/newsletter/preview:
+    post:
+      summary: Preview a newsletter draft
+      description: >-
+        Renders a preview from an unsaved newsletter body without
+        persisting it, returning the rendered email HTML.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '200':
+          description: Rendered newsletter HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Server error
+  /settings/newsletter/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Get a newsletter
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: The requested newsletter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '404':
+          description: Newsletter not found
+    put:
+      summary: Update a newsletter
+      description: Updates an existing newsletter and reschedules it.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterRequest'
+      responses:
+        '200':
+          description: Newsletter updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: Bad request - validation error
+        '404':
+          description: Newsletter not found
+    delete:
+      summary: Delete a newsletter
+      description: Deletes a newsletter and cancels any scheduled send.
+      tags:
+        - newsletter
+      responses:
+        '204':
+          description: Newsletter deleted
+        '404':
+          description: Newsletter not found
+  /settings/newsletter/{id}/send:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    post:
+      summary: Send a newsletter now
+      description: Immediately sends the newsletter to its resolved recipients.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Send result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterSendResult'
+        '409':
+          description: The newsletter is already being sent
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/test:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    post:
+      summary: Send a test newsletter
+      description: Sends the newsletter to the requesting administrator only.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Send result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterSendResult'
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/preview:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Preview a newsletter
+      description: Returns the fully rendered newsletter email as HTML.
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: Rendered newsletter HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Server error
+  /settings/newsletter/{id}/history:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: Get newsletter send history
+      tags:
+        - newsletter
+      parameters:
+        - in: query
+          name: take
+          schema:
+            type: number
+            nullable: true
+            example: 10
+        - in: query
+          name: skip
+          schema:
+            type: number
+            nullable: true
+            example: 0
+      responses:
+        '200':
+          description: A list of newsletter send history records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NewsletterHistory'
   /regions:
     get:
       summary: Regions supported by TMDB
@@ -7858,14 +8525,17 @@ paths:
             schema:
               type: object
               properties:
+                pinId:
+                  type: string
+                  description: Pin session id from `/auth/plex/pin` once its status is `authorized`.
                 authToken:
                   type: string
-                  description: Plex authentication token
+                  deprecated: true
+                  description: Raw Plex auth token (legacy client-side flow). Prefer `pinId`.
                 icode:
                   type: string
                   description: Invite code
               required:
-                - authToken
                 - icode
       responses:
         '200':

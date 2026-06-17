@@ -1,9 +1,9 @@
+import { runMigrations } from '@server/lib/migrator';
 import { randomBytes, randomUUID } from 'crypto';
 import fs from 'fs';
 import { mergeWith } from 'lodash';
 import path from 'path';
 import webpush from 'web-push';
-import { runMigrations } from '@server/lib/migrator';
 import { Permission } from './permissions';
 
 const mergeSettings = <T>(current: T, incoming: Partial<T>): T =>
@@ -358,7 +358,8 @@ export type JobId =
   | 'invites-qrcode-cleanup'
   | 'image-cache-cleanup'
   | 'notification-cleanup'
-  | 'trial-expiry';
+  | 'trial-expiry'
+  | 'plex-membership-check';
 
 export interface AllSettings {
   clientId: string;
@@ -414,7 +415,7 @@ class Settings {
             quotaExpiryTime: 'days' as const,
           },
         },
-        sharedLibraries: '',
+        sharedLibraries: 'all',
         downloads: true,
         liveTv: false,
         plexHome: false,
@@ -588,6 +589,7 @@ class Settings {
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
         'trial-expiry': { schedule: '0 0 0 * * *' },
+        'plex-membership-check': { schedule: '0 */15 * * * *' },
       },
       onboarding: {
         initialized: false,
@@ -862,6 +864,12 @@ class Settings {
         SETTINGS_PATH
       );
       this.data = mergeSettings(this.data, migratedSettings);
+      if (
+        !this.data.main.sharedLibraries ||
+        this.data.main.sharedLibraries === 'server'
+      ) {
+        this.data.main.sharedLibraries = 'all';
+      }
       this.save();
     }
 

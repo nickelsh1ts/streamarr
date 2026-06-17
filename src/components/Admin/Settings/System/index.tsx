@@ -1,5 +1,7 @@
 'use client';
 import Error from '@app/app/error';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import DiskSpace from '@app/components/Admin/Settings/System/DiskSpace';
 import Releases from '@app/components/Admin/Settings/System/Releases';
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
@@ -7,20 +9,17 @@ import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import List from '@app/components/Common/List';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { usePythonRestart } from '@app/hooks/usePythonRestart';
 import { useServerRestart } from '@app/hooks/useServerRestart';
+import { formatUptime } from '@app/utils/numberHelper';
 import { ArrowPathIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import type {
   RestartStatusResponse,
   SettingsAboutResponse,
   StatusResponse,
 } from '@server/interfaces/api/settingsInterfaces';
-import useSWR from 'swr';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffect, useState } from 'react';
-import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
-import DiskSpace from '@app/components/Admin/Settings/System/DiskSpace';
-import { formatUptime } from '@app/utils/numberHelper';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 const SystemSettings = () => {
   const intl = useIntl();
@@ -30,11 +29,6 @@ const SystemSettings = () => {
     restart: handleRestartServer,
   } = useServerRestart();
 
-  const {
-    status: pythonStatus,
-    isRestarting: isRestartingPython,
-    restart: handleRestartPython,
-  } = usePythonRestart({ refreshInterval: 15_000 });
   const { data: restartData, error: restartError } =
     useSWR<RestartStatusResponse>(RESTART_REQUIRED_SWR_KEY, {
       revalidateOnFocus: true,
@@ -85,23 +79,23 @@ const SystemSettings = () => {
         <span className="ml-7">
           <a
             href="https://github.com/nickelsh1ts/streamarr"
-            className="whitespace-nowrap font-medium transition duration-150 ease-in-out hover:text-white"
+            className="font-medium whitespace-nowrap transition duration-150 ease-in-out hover:text-white"
             target="_blank"
             rel="noreferrer"
           >
-            GitHub <ArrowRightIcon className="size-4 inline-flex" />
+            GitHub <ArrowRightIcon className="inline-flex size-4" />
           </a>
         </span>
       </Alert>
-      <div className="mt-6 flex justify-between items-center">
-        <h3 className="text-2xl font-extrabold gap-2 flex items-center">
+      <div className="mt-6 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-2xl font-extrabold">
           <FormattedMessage id="system.health.title" defaultMessage="Health" />
         </h3>
       </div>
       <div className="mt-4">
         {data.version.startsWith('develop-') && (
           <Alert>
-            <p className="text-sm leading-5 flex-1">
+            <p className="flex-1 text-sm leading-5">
               <FormattedMessage
                 id="systemSettings.developWarning"
                 defaultMessage="You are running the <code>develop</code> branch of Streamarr, which is only recommended for those contributing to development or assisting with bleeding-edge testing."
@@ -134,19 +128,6 @@ const SystemSettings = () => {
           status={restartData?.required ? 'Restart Required' : 'healthy'}
           isRestarting={isRestartingServer || isReconnecting}
           onRestart={handleRestartServer}
-        />
-        <HealthCard
-          title={intl.formatMessage({
-            id: 'system.python.title',
-            defaultMessage: 'Plex Sync Service',
-          })}
-          description={intl.formatMessage({
-            id: 'system.python.description',
-            defaultMessage: 'Handles Plex invites and library synchronization.',
-          })}
-          status={pythonStatus?.status}
-          isRestarting={isRestartingPython}
-          onRestart={handleRestartPython}
         />
       </div>
       <DiskSpace data={data} />
@@ -225,14 +206,6 @@ const SystemSettings = () => {
             })}
           >
             <code>{data.nodeVersion}</code>
-          </List.Item>
-          <List.Item
-            title={intl.formatMessage({
-              id: 'systemSettings.pythonVersion',
-              defaultMessage: 'Python',
-            })}
-          >
-            <code>{data.pythonVersion}</code>
           </List.Item>
           <List.Item
             title={intl.formatMessage({
@@ -452,18 +425,18 @@ const HealthCard = ({
   };
 
   return (
-    <div className="rounded-lg border border-base-content/10 bg-base-200/50 hover:bg-base-200/30 py-2 px-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="border-base-content/10 bg-base-200/50 hover:bg-base-200/30 rounded-lg border px-4 py-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h4 className="text-lg font-bold flex gap-2">
+          <h4 className="flex gap-2 text-lg font-bold">
             {title} {status && <span>{getStatusBadge()}</span>}
           </h4>
-          <p className="text-sm text-neutral">{description}</p>
+          <p className="text-neutral text-sm">{description}</p>
         </div>
         <div className="flex items-center gap-3">
           {isRestarting ? (
             <Button buttonSize="sm" buttonType="error" disabled>
-              <ArrowPathIcon className="size-4 mr-1 animate-spin" />
+              <ArrowPathIcon className="mr-1 size-4 animate-spin" />
               <FormattedMessage
                 id="system.restarting"
                 defaultMessage="Restarting…"
@@ -479,7 +452,7 @@ const HealthCard = ({
               buttonSize="sm"
               className="max-sm:btn-block"
             >
-              <ArrowPathIcon className="size-4 mr-1" />
+              <ArrowPathIcon className="mr-1 size-4" />
               <FormattedMessage id="common.restart" defaultMessage="Restart" />
             </ConfirmButton>
           )}

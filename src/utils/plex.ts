@@ -1,114 +1,46 @@
-import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import Bowser from 'bowser';
 
-interface PlexHeaders extends Record<string, string> {
-  Accept: string;
-  'X-Plex-Product': string;
-  'X-Plex-Version': string;
-  'X-Plex-Client-Identifier': string;
-  'X-Plex-Model': string;
-  'X-Plex-Platform': string;
-  'X-Plex-Platform-Version': string;
-  'X-Plex-Device': string;
-  'X-Plex-Device-Name': string;
-  'X-Plex-Device-Screen-Resolution': string;
-  'X-Plex-Language': string;
+export type PlexPinStatus = 'pending' | 'authorized' | 'expired';
+
+interface PlexPinSession {
+  id: string;
+  authUrl: string;
+  expiresAt: string;
 }
 
-export interface PlexPin {
-  id: number;
-  code: string;
-}
-
+/**
+ * Client side of the server-driven Plex sign-in flow.
+ *
+ * The server owns the entire pin lifecycle (creation, plex.tv polling, token
+ * exchange); this class only manages the popup and polls streamarr for the
+ * pin status. `login()` resolves with an opaque pin session id, which the
+ * caller passes to the relevant endpoint (`/auth/plex`, `/signup/plexauth`,
+ * `/user/:id/settings/linked-accounts/plex`) as `pinId`. The Plex auth token
+ * itself never reaches the browser.
+ */
 class PlexOAuth {
-  private plexHeaders?: PlexHeaders;
-  private pin?: PlexPin;
+  private pin?: PlexPinSession;
   private popup?: Window;
-  private authToken?: string;
-
-  public initializeHeaders(
-    applicationTitle: string,
-    plexClientIdentifier: string
-  ): void {
-    if (typeof window === 'undefined') {
-      throw new Error(
-        'Window is not defined. Are you calling this in the browser?'
-      );
-    }
-
-    if (!plexClientIdentifier) {
-      throw new Error(
-        'Plex client identifier missing. Reload the page and try again.'
-      );
-    }
-
-    const browser = Bowser.getParser(window.navigator.userAgent);
-    this.plexHeaders = {
-      Accept: 'application/json',
-      'X-Plex-Product': applicationTitle,
-      'X-Plex-Version': '0.00.1',
-      'X-Plex-Client-Identifier': plexClientIdentifier,
-      'X-Plex-Model': 'Plex OAuth',
-      'X-Plex-Platform': browser.getBrowserName(),
-      'X-Plex-Platform-Version': browser.getBrowserVersion(),
-      'X-Plex-Device': browser.getOSName(),
-      'X-Plex-Device-Name': `${browser.getBrowserName()} (${applicationTitle})`,
-      'X-Plex-Device-Screen-Resolution':
-        window.screen.width + 'x' + window.screen.height,
-      'X-Plex-Language': 'en',
-    };
-  }
-
-  public async getPin(): Promise<PlexPin> {
-    if (!this.plexHeaders) {
-      throw new Error(
-        'You must initialize the plex headers client side to login'
-      );
-    }
-    const response = await axios.post(
-      'https://plex.tv/api/v2/pins?strong=true',
-      undefined,
-      { headers: this.plexHeaders }
-    );
-
-    this.pin = { id: response.data.id, code: response.data.code };
-
-    return this.pin;
-  }
 
   public preparePopup(): void {
+    // Close any popup left over from a previous attempt before opening a new
+    // one, so repeated sign-ins on the shared instance don't leak a window.
+    this.closePopup();
     this.openPopup({ title: 'Plex Auth', w: 600, h: 700 });
   }
 
   public async login(): Promise<string> {
-    const res = await fetch(`/api/v1/settings/public`, { cache: 'no-store' });
-    const currentSettings: PublicSettingsResponse = await res.json();
-    this.initializeHeaders(
-      currentSettings.applicationTitle,
-      currentSettings.plexClientIdentifier
-    );
-    await this.getPin();
-
-    if (!this.plexHeaders || !this.pin) {
-      throw new Error('Unable to call login if class is not initialized.');
-    }
-
-    const params = {
-      clientID: this.plexHeaders['X-Plex-Client-Identifier'],
-      'context[device][product]': this.plexHeaders['X-Plex-Product'],
-      'context[device][version]': this.plexHeaders['X-Plex-Version'],
-      'context[device][platform]': this.plexHeaders['X-Plex-Platform'],
-      'context[device][platformVersion]':
-        this.plexHeaders['X-Plex-Platform-Version'],
-      'context[device][device]': this.plexHeaders['X-Plex-Device'],
-      'context[device][deviceName]': this.plexHeaders['X-Plex-Device-Name'],
-      'context[device][model]': this.plexHeaders['X-Plex-Model'],
-      'context[device][screenResolution]':
-        this.plexHeaders['X-Plex-Device-Screen-Resolution'],
-      'context[device][layout]': 'desktop',
-      code: this.pin.code,
-    };
+    const browser = Bowser.getParser(window.navigator.userAgent);
+    const response = await axios.post<PlexPinSession>('/api/v1/auth/plex/pin', {
+      client: {
+        platform: browser.getBrowserName(),
+        platformVersion: browser.getBrowserVersion(),
+        device: browser.getOSName(),
+        screenResolution: window.screen.width + 'x' + window.screen.height,
+      },
+    });
+    this.pin = response.data;
 
     if (!this.popup || this.popup.closed) {
       throw new Error(
@@ -116,9 +48,7 @@ class PlexOAuth {
       );
     }
 
-    this.popup.location.href = `https://app.plex.tv/auth/#!?${this.encodeData(
-      params
-    )}`;
+    this.popup.location.href = this.pin.authUrl;
 
     return this.pinPoll();
   }
@@ -129,44 +59,48 @@ class PlexOAuth {
     const deadline = Date.now() + 15 * 60 * 1000;
 
     const executePoll = async (
-      resolve: (authToken: string) => void,
+      resolve: (pinId: string) => void,
       reject: (e: Error) => void
     ) => {
-      try {
-        if (!this.pin) {
-          throw new Error('Unable to poll when pin is not initialized.');
-        }
-
-        // Check if popup was manually closed by user (before any cross-origin navigation)
-        if (this.popup?.closed) {
-          reject(new Error('Popup closed without completing login'));
-          return;
-        }
-
-        const response = await axios.get(
-          `https://plex.tv/api/v2/pins/${this.pin.id}`,
-          { headers: this.plexHeaders }
-        );
-
-        if (response.data?.authToken) {
-          this.authToken = response.data.authToken as string;
-          this.closePopup();
-          resolve(this.authToken);
-        } else {
-          const expiresAt = response.data?.expiresAt
-            ? Date.parse(response.data.expiresAt as string)
-            : deadline;
-          if (Date.now() >= Math.min(expiresAt, deadline)) {
-            this.closePopup();
-            reject(new Error('Plex PIN expired before login completed.'));
-            return;
-          }
-          setTimeout(executePoll, 1000, resolve, reject);
-        }
-      } catch (e) {
+      if (!this.pin) {
         this.closePopup();
-        reject(e);
+        reject(new Error('Unable to poll when pin is not initialized.'));
+        return;
       }
+      const pinId = this.pin.id;
+
+      let status: PlexPinStatus | undefined;
+      try {
+        const response = await axios.get<{ status: PlexPinStatus }>(
+          `/api/v1/auth/plex/pin/${pinId}`
+        );
+        status = response.data.status;
+      } catch {
+        // A transient status-endpoint failure (network blip, rate limit, brief
+        // 5xx) shouldn't abort the whole sign-in. Leave `status` undefined and
+        // fall through; the popup-closed and deadline checks below still bound
+        // the loop, and the next tick will retry.
+      }
+
+      if (status === 'authorized') {
+        this.closePopup();
+        resolve(pinId);
+        return;
+      }
+
+      if (this.popup?.closed) {
+        this.closePopup();
+        reject(new Error('Popup closed without completing login'));
+        return;
+      }
+
+      if (status === 'expired' || Date.now() >= deadline) {
+        this.closePopup();
+        reject(new Error('Plex sign-in expired before login completed.'));
+        return;
+      }
+
+      setTimeout(executePoll, 2000, resolve, reject);
     };
 
     return new Promise(executePoll);
@@ -227,14 +161,6 @@ class PlexOAuth {
       this.popup = newWindow;
       return this.popup;
     }
-  }
-
-  private encodeData(data: Record<string, string>): string {
-    return Object.keys(data)
-      .map(function (key) {
-        return [key, data[key]].map(encodeURIComponent).join('=');
-      })
-      .join('&');
   }
 }
 

@@ -3,9 +3,9 @@ import Button from '@app/components/Common/Button';
 import CachedImage from '@app/components/Common/CachedImage';
 import ContentRenderer from '@app/components/Common/ContentRenderer';
 import YouTubeEmbed from '@app/components/Common/YouTubeEmbed';
-import { useBreakpoint, getMobileNavHeight } from '@app/hooks/useBreakpoint';
-import type { TutorialStepResponse } from '@server/interfaces/api/onboardingInterfaces';
+import { getMobileNavHeight, useBreakpoint } from '@app/hooks/useBreakpoint';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import type { TutorialStepResponse } from '@server/interfaces/api/onboardingInterfaces';
 import React, {
   useCallback,
   useEffect,
@@ -382,21 +382,21 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
   return (
     <div
       ref={tooltipRef}
-      className="z-1150 bg-base-200 rounded-xl shadow-2xl border border-primary/30 p-5 max-w-sm animate-scale-in"
+      className="bg-base-200 border-primary/30 animate-scale-in z-1150 max-w-sm rounded-xl border p-5 shadow-2xl"
       style={tooltipStyle}
     >
       <div className="bg-base-200" style={arrowStyle} />
-      <div className="text-xs text-base-content/50 mb-2">
+      <div className="text-base-content/50 mb-2 text-xs">
         <FormattedMessage
           id="tutorial.stepProgress"
           defaultMessage="Step {current} of {total}"
           values={{ current: currentIndex + 1, total: totalSteps }}
         />
       </div>
-      <h4 className="text-lg font-semibold text-base-content mb-2">
+      <h4 className="text-base-content mb-2 text-lg font-semibold">
         {step.title}
       </h4>
-      <p className="text-base-content/70 text-sm mb-4 leading-relaxed">
+      <p className="text-base-content/70 mb-4 text-sm leading-relaxed">
         {step.description}
       </p>
       {step.imageUrl && (
@@ -425,7 +425,7 @@ const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
           <ContentRenderer html={step.customHtml} className="text-sm" />
         </div>
       )}
-      <div className="flex justify-between items-center gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
           {!isFirst && (
             <Button

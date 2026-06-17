@@ -1,8 +1,8 @@
-import { Permission } from '@server/lib/permissions';
 import PlexTvAPI from '@server/api/plextv';
 import SeerrAPI from '@server/api/seerr';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -164,6 +164,7 @@ class TrialExpiry {
 
           user.active = false;
           user.accessRevokedAt = trialEndDateAtExpiry;
+          user.accessRevokedReason = 'trial_expired';
           if (user.settings) {
             user.settings.trialPeriodEndsAt = null;
             user.settings.trialExtensionRequested = false;

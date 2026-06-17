@@ -1,11 +1,11 @@
 'use client';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, {
+  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-  forwardRef,
 } from 'react';
 
 export interface CarouselHandle {
@@ -156,7 +156,7 @@ const Carousel = forwardRef<CarouselHandle, CarouselProps>(
 
     return (
       <div
-        className={`relative ${fillHeight ? 'h-full flex flex-col' : ''} ${className}`}
+        className={`relative ${fillHeight ? 'flex h-full flex-col' : ''} ${className}`}
       >
         <div
           className={`overflow-hidden ${fillHeight ? 'flex-1' : ''}`}
@@ -183,25 +183,25 @@ const Carousel = forwardRef<CarouselHandle, CarouselProps>(
             <button
               onClick={prevSlide}
               disabled={currentIndex === 0}
-              className={`group absolute left-0 top-1/2 -translate-y-1/2 px-4 h-full disabled:cursor-not-allowed ${arrowClassName}`}
+              className={`group absolute top-1/2 left-0 h-full -translate-y-1/2 px-4 disabled:cursor-not-allowed ${arrowClassName}`}
               aria-label="Previous slide"
             >
-              <span className="absolute inset-0 bg-linear-to-l to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:opacity-0! transition-opacity duration-200" />
-              <ChevronLeftIcon className="relative w-5 h-5" />
+              <span className="to-base-300 absolute inset-0 bg-linear-to-l from-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-disabled:opacity-0!" />
+              <ChevronLeftIcon className="relative h-5 w-5" />
             </button>
             <button
               onClick={nextSlide}
               disabled={currentIndex === totalSlides - 1}
-              className={`group absolute right-0 top-1/2 -translate-y-1/2 px-4 h-full disabled:cursor-not-allowed ${arrowClassName}`}
+              className={`group absolute top-1/2 right-0 h-full -translate-y-1/2 px-4 disabled:cursor-not-allowed ${arrowClassName}`}
               aria-label="Next slide"
             >
-              <span className="absolute inset-0 bg-linear-to-r to-base-300 from-transparent opacity-0 group-hover:opacity-100 group-disabled:opacity-0! transition-opacity duration-200" />
-              <ChevronRightIcon className="relative w-5 h-5" />
+              <span className="to-base-300 absolute inset-0 bg-linear-to-r from-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-disabled:opacity-0!" />
+              <ChevronRightIcon className="relative h-5 w-5" />
             </button>
           </>
         )}
         {showDots && totalSlides > 1 && (
-          <div className={`flex justify-center gap-2 mt-4 ${dotClassName}`}>
+          <div className={`mt-4 flex justify-center gap-2 ${dotClassName}`}>
             {childArray.map((_, index) => {
               const dotClasses = `transition-all duration-200 rounded-full ${
                 index === currentIndex

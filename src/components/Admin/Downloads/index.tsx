@@ -1,41 +1,40 @@
 'use client';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import type { DownloadClientSettings } from '@server/lib/settings';
-import {
-  ArrowDownTrayIcon,
-  Cog6ToothIcon,
-  FunnelIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  PlusIcon,
-  PauseIcon,
-  PlayIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  ArrowUpTrayIcon,
-  ArrowsUpDownIcon,
-  TrashIcon,
-  ArrowPathIcon,
-  ChevronDoubleUpIcon,
-  ChevronDoubleDownIcon,
-  XCircleIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/solid';
-import useSWR from 'swr';
 import Button from '@app/components/Common/Button';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import { useDownloads, useDownloadActions } from '@app/hooks/useDownloads';
-import DownloadRow from './DownloadRow';
-import StatsCard from './StatsCard';
-import AddTorrentModal from './AddTorrentModal';
-import RemoveTorrentModal from './RemoveTorrentModal';
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
+import { useDownloadActions, useDownloads } from '@app/hooks/useDownloads';
 import { momentWithLocale } from '@app/utils/momentLocale';
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownTrayIcon,
+  ArrowPathIcon,
+  ArrowUpTrayIcon,
+  ArrowsUpDownIcon,
+  ChevronDoubleDownIcon,
+  ChevronDoubleUpIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  Cog6ToothIcon,
+  ExclamationTriangleIcon,
+  FunnelIcon,
+  PauseIcon,
+  PlayIcon,
+  PlusIcon,
+  TrashIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import type { DownloadClientSettings } from '@server/lib/settings';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
+import AddTorrentModal from './AddTorrentModal';
+import DownloadRow from './DownloadRow';
+import RemoveTorrentModal from './RemoveTorrentModal';
+import StatsCard from './StatsCard';
 
 enum Filter {
   ALL = 'all',
@@ -393,11 +392,11 @@ const AdminDownloads = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 mx-4 mt-2">
+      <div className="mx-4 mt-2 flex flex-col gap-4">
         <div className="flex flex-col justify-between">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+              <h1 className="flex items-center gap-2 text-2xl font-bold">
                 <FormattedMessage
                   id="downloads.downloadManagement"
                   defaultMessage="Download Management"
@@ -409,8 +408,8 @@ const AdminDownloads = () => {
             </div>
           </div>
           <div className="mt-2 flex grow flex-col md:flex-row xl:grow-0">
-            <div className="mb-2 flex grow md:mb-0 md:mr-2 lg:grow-0">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+            <div className="mb-2 flex grow md:mr-2 md:mb-0 lg:grow-0">
+              <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
                 <ArrowDownTrayIcon className="h-6 w-6" />
               </span>
               <select
@@ -420,7 +419,7 @@ const AdminDownloads = () => {
                 onChange={(e) => {
                   setCurrentClient(e.target.value as Client);
                 }}
-                className="select select-sm select-primary rounded-l-none w-full flex-1"
+                className="select select-sm select-primary w-full flex-1 rounded-l-none"
               >
                 <option value="all">
                   <FormattedMessage
@@ -435,8 +434,8 @@ const AdminDownloads = () => {
                 ))}
               </select>
             </div>
-            <div className="mb-2 flex grow md:mb-0 md:mr-2 lg:grow-0">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+            <div className="mb-2 flex grow md:mr-2 md:mb-0 lg:grow-0">
+              <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
                 <FunnelIcon className="h-6 w-6" />
               </span>
               <select
@@ -446,7 +445,7 @@ const AdminDownloads = () => {
                 onChange={(e) => {
                   setCurrentFilter(e.target.value as Filter);
                 }}
-                className="select select-sm select-primary rounded-l-none w-full flex-1"
+                className="select select-sm select-primary w-full flex-1 rounded-l-none"
               >
                 <option value="all">
                   <FormattedMessage id="common.all" defaultMessage="All" />
@@ -504,7 +503,7 @@ const AdminDownloads = () => {
                 </option>
               </select>
             </div>
-            <div className="mb-2 flex grow gap-2 md:mb-0 md:mr-2">
+            <div className="mb-2 flex grow gap-2 md:mr-2 md:mb-0">
               <div className="flex items-center">
                 <Tooltip
                   content={intl.formatMessage({
@@ -559,7 +558,7 @@ const AdminDownloads = () => {
                 onClick={() => setIsAddModalOpen(true)}
                 className="max-md:grow"
               >
-                <PlusIcon className="w-4 h-4 mr-2" />
+                <PlusIcon className="mr-2 h-4 w-4" />
                 <FormattedMessage
                   id="downloads.addTorrent"
                   defaultMessage="Add Torrent"
@@ -571,7 +570,7 @@ const AdminDownloads = () => {
                 buttonType="ghost"
                 href="/admin/settings/services/downloads"
               >
-                <Cog6ToothIcon className="w-4 h-4 mr-2" />
+                <Cog6ToothIcon className="mr-2 h-4 w-4" />
                 <FormattedMessage
                   id="common.settings"
                   defaultMessage="Settings"
@@ -593,14 +592,14 @@ const AdminDownloads = () => {
               { totalTorrents: 0, downloadSpeed: 0, uploadSpeed: 0 }
             );
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatsCard
                   title={intl.formatMessage({
                     id: 'downloads.totalDownloads',
                     defaultMessage: 'Total Downloads',
                   })}
                   value={totalStats.totalTorrents}
-                  icon={<ArrowsUpDownIcon className="w-6 h-6" />}
+                  icon={<ArrowsUpDownIcon className="h-6 w-6" />}
                 />
                 <StatsCard
                   title={intl.formatMessage({
@@ -609,7 +608,7 @@ const AdminDownloads = () => {
                   })}
                   value={totalStats.downloadSpeed}
                   format="speed"
-                  icon={<ArrowDownTrayIcon className="w-6 h-6" />}
+                  icon={<ArrowDownTrayIcon className="h-6 w-6" />}
                 />
                 <StatsCard
                   title={intl.formatMessage({
@@ -618,7 +617,7 @@ const AdminDownloads = () => {
                   })}
                   value={totalStats.uploadSpeed}
                   format="speed"
-                  icon={<ArrowUpTrayIcon className="w-6 h-6" />}
+                  icon={<ArrowUpTrayIcon className="h-6 w-6" />}
                 />
                 <StatsCard
                   title={intl.formatMessage({
@@ -629,12 +628,12 @@ const AdminDownloads = () => {
                   icon={<GlobeAltIcon className="size-7" />}
                   badge={
                     hasUnhealthyClients ? (
-                      <div className="flex items-center gap-1 group">
+                      <div className="group flex items-center gap-1">
                         <Tooltip
                           className="normal-case"
                           content={
                             <div className="text-sm">
-                              <div className="font-semibold mb-1">
+                              <div className="mb-1 font-semibold">
                                 <FormattedMessage
                                   id="downloads.clientsUnhealthy"
                                   defaultMessage="{count} {count, plural, one {client} other {clients}} unreachable"
@@ -669,7 +668,7 @@ const AdminDownloads = () => {
                             disabled={isRetrying}
                             buttonSize="xs"
                             buttonType="ghost"
-                            className="btn-circle rounded-full! text-warning hover:text-warning-content"
+                            className="btn-circle text-warning hover:text-warning-content rounded-full!"
                             aria-label="Retry unhealthy clients"
                           >
                             {isRetrying ? (
@@ -680,7 +679,7 @@ const AdminDownloads = () => {
                           </Button>
                         </Tooltip>
                         {!isRetrying && (
-                          <span className="text-xs mb-1 w-full opacity-100 underline underline-offset-4 group-hover:underline-offset-2 sm:w-0 sm:group-hover:w-full sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-150 overflow-visible">
+                          <span className="mb-1 w-full overflow-visible text-xs underline underline-offset-4 opacity-100 transition-all duration-150 group-hover:underline-offset-2 sm:w-0 sm:opacity-0 sm:group-hover:w-full sm:group-hover:opacity-100">
                             <FormattedMessage
                               id="downloads.retry"
                               defaultMessage="Retry"
@@ -696,8 +695,8 @@ const AdminDownloads = () => {
           })()}
         {!hasClients ? (
           <div className="card bg-base-200">
-            <div className="card-body items-center text-center py-12">
-              <ArrowDownTrayIcon className="w-16 h-16 text-neutral mb-4" />
+            <div className="card-body items-center py-12 text-center">
+              <ArrowDownTrayIcon className="text-neutral mb-4 h-16 w-16" />
               <h2 className="card-title">
                 <FormattedMessage
                   id="downloads.noClientsConfigured"
@@ -717,7 +716,7 @@ const AdminDownloads = () => {
                   buttonType="primary"
                   href="/admin/settings/services/downloads"
                 >
-                  <Cog6ToothIcon className="w-4 h-4 mr-2" />
+                  <Cog6ToothIcon className="mr-2 h-4 w-4" />
                   <FormattedMessage
                     id="downloads.configureClients"
                     defaultMessage="Configure Clients"
@@ -728,7 +727,7 @@ const AdminDownloads = () => {
           </div>
         ) : data?.results && data.results.length > 0 ? (
           <div className="card bg-base-200">
-            <div className="px-4 pt-4 mb-2 flex justify-between items-end min-h-10">
+            <div className="mb-2 flex min-h-10 items-end justify-between px-4 pt-4">
               {selectedHashes.size > 0 && (
                 <>
                   <span className="text-sm font-semibold whitespace-nowrap">
@@ -751,7 +750,7 @@ const AdminDownloads = () => {
                         hasValidPriority && (
                           <>
                             <select
-                              className="select select-xs pr-1 select-primary block sm:hidden w-auto min-w-16"
+                              className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
                               disabled={isBulkActing}
                               defaultValue=""
                               onChange={(e) => {
@@ -804,7 +803,7 @@ const AdminDownloads = () => {
                                 })}
                               </option>
                             </select>
-                            <div className="hidden sm:flex gap-1">
+                            <div className="hidden gap-1 sm:flex">
                               <Button
                                 buttonSize="xs"
                                 buttonType="ghost"
@@ -862,7 +861,7 @@ const AdminDownloads = () => {
                     })()}
                     <>
                       <select
-                        className="select select-xs pr-1 select-primary block sm:hidden w-auto min-w-16"
+                        className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
                         disabled={isBulkActing}
                         defaultValue=""
                         onChange={(e) => {
@@ -915,7 +914,7 @@ const AdminDownloads = () => {
                           })}
                         </option>
                       </select>
-                      <div className="hidden sm:flex gap-1">
+                      <div className="hidden gap-1 sm:flex">
                         <Button
                           buttonSize="xs"
                           buttonType="success"
@@ -983,7 +982,7 @@ const AdminDownloads = () => {
                       />
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('name')}
                     >
                       <div className="flex items-center gap-1">
@@ -995,14 +994,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'name' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('progress')}
                     >
                       <div className="flex items-center gap-1">
@@ -1014,14 +1013,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'progress' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('size')}
                     >
                       <div className="flex items-center gap-1">
@@ -1033,14 +1032,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'size' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('speed')}
                     >
                       <div className="flex items-center gap-1">
@@ -1052,14 +1051,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'speed' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('eta')}
                     >
                       <div className="flex items-center gap-1">
@@ -1071,14 +1070,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'eta' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('ratio')}
                     >
                       <div className="flex items-center gap-1">
@@ -1090,14 +1089,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'ratio' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('status')}
                     >
                       <div className="flex items-center gap-1">
@@ -1109,14 +1108,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'status' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('client')}
                     >
                       <div className="flex items-center gap-1">
@@ -1128,14 +1127,14 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'client' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
                     <th
-                      className="cursor-pointer select-none hover:bg-base-300 transition-colors"
+                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
                       onClick={() => handleSort('priority')}
                     >
                       <div className="flex items-center gap-1">
@@ -1147,9 +1146,9 @@ const AdminDownloads = () => {
                         </span>
                         {currentSort === 'priority' &&
                           (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="w-4 h-4" />
+                            <ChevronUpIcon className="h-4 w-4" />
                           ) : (
-                            <ChevronDownIcon className="w-4 h-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           ))}
                       </div>
                     </th>
@@ -1179,8 +1178,8 @@ const AdminDownloads = () => {
           </div>
         ) : (
           <div className="card bg-base-200">
-            <div className="card-body items-center text-center py-12">
-              <ArrowsUpDownIcon className="size-12 text-neutral mb-4" />
+            <div className="card-body items-center py-12 text-center">
+              <ArrowsUpDownIcon className="text-neutral mb-4 size-12" />
               <h2 className="card-title">
                 <FormattedMessage
                   id="common.noDownloadsFound"
@@ -1206,7 +1205,7 @@ const AdminDownloads = () => {
                   buttonType="primary"
                   onClick={() => setIsAddModalOpen(true)}
                 >
-                  <PlusIcon className="w-4 h-4 mr-2" />
+                  <PlusIcon className="mr-2 h-4 w-4" />
                   <FormattedMessage
                     id="downloads.addTorrent"
                     defaultMessage="Add Torrent"
@@ -1237,9 +1236,9 @@ const AdminDownloads = () => {
           isProcessing={isBulkActing}
         />
       </div>
-      <div className="mt-8 mb-4 border-t border-primary pt-5 mx-4">
+      <div className="border-primary mx-4 mt-8 mb-4 border-t pt-5">
         <nav
-          className="flex flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
+          className="flex flex-col items-center space-y-3 space-x-4 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
           aria-label="Pagination"
         >
           <div className="hidden lg:flex lg:flex-1">
@@ -1262,7 +1261,7 @@ const AdminDownloads = () => {
             </p>
           </div>
           <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
-            <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
+            <span className="-mt-3 items-center text-sm sm:mt-0 sm:-ml-4 md:ml-0">
               <FormattedMessage
                 id="common.resultsDisplay"
                 defaultMessage="Display {select} results per page"

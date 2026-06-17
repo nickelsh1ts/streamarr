@@ -1,35 +1,35 @@
 'use client';
+import SettingsPlex from '@app/components/Admin/Settings/Plex';
+import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import ServicesBazarr from '@app/components/Admin/Settings/Services/Bazarr';
+import ServicesDownloads from '@app/components/Admin/Settings/Services/Downloads';
+import ServicesLidarr from '@app/components/Admin/Settings/Services/Lidarr';
+import ServicesProwlarr from '@app/components/Admin/Settings/Services/Prowlarr';
+import SettingsServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
+import SettingsServicesSonarr from '@app/components/Admin/Settings/Services/Sonarr';
+import ServicesTautulli from '@app/components/Admin/Settings/Services/Tautulli';
+import ServicesTdarr from '@app/components/Admin/Settings/Services/Tdarr';
+import ServicesUptime from '@app/components/Admin/Settings/Services/Uptime';
 import AppDataWarning from '@app/components/AppDataWarning';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import ImageFader from '@app/components/Common/ImageFader';
+import Tabs from '@app/components/Common/Tabs';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
-import SettingsPlex from '@app/components/Admin/Settings/Plex';
-import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
 import RestartModal from '@app/components/Setup/RestartModal';
-import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import SetupSteps from '@app/components/Setup/SetupSteps';
+import LoginWithPlex from '@app/components/Setup/SigninWithPlex';
+import Toast from '@app/components/Toast';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
-import axios from 'axios';
-import { useState } from 'react';
-import useSWR, { mutate } from 'swr';
-import Image from 'next/image';
-import SettingsServicesRadarr from '@app/components/Admin/Settings/Services/Radarr';
-import SettingsServicesSonarr from '@app/components/Admin/Settings/Services/Sonarr';
 import { useUser } from '@app/hooks/useUser';
-import { FormattedMessage, useIntl } from 'react-intl';
-import Toast from '@app/components/Toast';
 import { XCircleIcon } from '@heroicons/react/24/solid';
-import ServicesLidarr from '@app/components/Admin/Settings/Services/Lidarr';
-import ServicesProwlarr from '@app/components/Admin/Settings/Services/Prowlarr';
-import ServicesBazarr from '@app/components/Admin/Settings/Services/Bazarr';
-import ServicesTdarr from '@app/components/Admin/Settings/Services/Tdarr';
-import ServicesTautulli from '@app/components/Admin/Settings/Services/Tautulli';
-import ServicesDownloads from '@app/components/Admin/Settings/Services/Downloads';
-import ServicesUptime from '@app/components/Admin/Settings/Services/Uptime';
-import Tabs from '@app/components/Common/Tabs';
-import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
+import axios from 'axios';
+import Image from 'next/image';
+import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR, { mutate } from 'swr';
 
 const Setup = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -108,10 +108,10 @@ const Setup = () => {
       <div className="absolute top-4 right-4 z-50">
         <LanguagePicker />
       </div>
-      <div className="relative z-40 px-4 sm:mx-auto sm:w-full sm:max-w-4xl xl:max-w-6xl mt-4">
+      <div className="relative z-40 mt-4 px-4 sm:mx-auto sm:w-full sm:max-w-4xl xl:max-w-6xl">
         <Image
           src={logoSrc}
-          className="mb-10 max-w-full mx-auto sm:max-w-md"
+          className="mx-auto mb-10 max-w-full sm:max-w-md"
           alt="Logo"
           width={448}
           height={196}
@@ -120,7 +120,7 @@ const Setup = () => {
         <AppDataWarning />
         <nav className="relative z-50">
           <ul
-            className="divide-y divide-primary rounded-md border border-primary bg-primary/50 md:flex md:divide-y-0"
+            className="divide-primary border-primary bg-primary/50 divide-y rounded-md border md:flex md:divide-y-0"
             style={{ backdropFilter: 'blur(5px)' }}
           >
             <SetupSteps
@@ -152,14 +152,14 @@ const Setup = () => {
             />
           </ul>
         </nav>
-        <div className="mt-10 w-full rounded-md border border-secondary bg-secondary/50 backdrop-blur p-4 text-white">
+        <div className="border-secondary bg-secondary/50 mt-10 w-full rounded-md border p-4 text-white backdrop-blur">
           {currentStep === 1 && (
             <LoginWithPlex onComplete={() => setCurrentStep(2)} />
           )}
           {currentStep === 2 && (
             <div>
               <SettingsPlex onComplete={() => setPlexSettingsComplete(true)} />
-              <div className="mt-4 text-sm text-neutral">
+              <div className="text-neutral mt-4 text-sm">
                 <span className="mr-2">
                   <Badge>
                     <FormattedMessage id="setup.tip" defaultMessage="Tip" />
@@ -240,7 +240,7 @@ const Setup = () => {
                       defaultMessage: 'Downloads',
                     }),
                     content: (
-                      <div className="flex flex-col gap-4 mb-4">
+                      <div className="mb-4 flex flex-col gap-4">
                         <ServicesDownloads />
                       </div>
                     ),

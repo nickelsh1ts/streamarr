@@ -1,6 +1,6 @@
 'use client';
 import type { RefObject } from 'react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * Custom Hook to determine if an element is in the viewport.

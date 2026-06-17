@@ -1,20 +1,20 @@
+import {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
+import { getRepository } from '@server/datasource';
+import Event from '@server/entity/Event';
+import { User } from '@server/entity/User';
+import { userAcceptsNotificationType } from '@server/lib/notifications';
+import { sendGroupNotification } from '@server/lib/notifications/dispatch';
+import { Permission } from '@server/lib/permissions';
+import moment from '@server/utils/momentWithLocale';
 import type {
   EntitySubscriberInterface,
   InsertEvent,
   UpdateEvent,
 } from 'typeorm';
-import {
-  NotificationSeverity,
-  NotificationType,
-} from '@server/constants/notification';
-import { userAcceptsNotificationType } from '@server/lib/notifications';
-import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { EventSubscriber } from 'typeorm';
-import Event from '@server/entity/Event';
-import { getRepository } from '@server/datasource';
-import { User } from '@server/entity/User';
-import moment from '@server/utils/momentWithLocale';
-import { Permission } from '@server/lib/permissions';
 
 @EventSubscriber()
 export class CalEventSubscriber implements EntitySubscriberInterface<Event> {

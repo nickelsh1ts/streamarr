@@ -1,15 +1,14 @@
-FROM node:26-alpine@sha256:e71ac5e964b9201072425d59d2e876359efa25dc96bb1768cb73295728d6e4ea AS base
+FROM node:26-alpine@sha256:9c0e1e52125d6b67d505cf75b4880fcf1290ccea5c480849910e1d57b2cf72b5 AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production
 
-RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini python3 && rm -rf /tmp/* \
+RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini && rm -rf /tmp/* \
   && addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
 FROM base AS builder
 
-RUN apk add --no-cache py3-pip \
-  && npm install -g corepack --force && corepack enable
+RUN npm install -g corepack --force && corepack enable
 
 WORKDIR /app
 
@@ -24,13 +23,6 @@ COPY src ./src
 COPY public ./public
 COPY next.config.mjs tsconfig.json postcss.config.js streamarr-api.yml ./
 COPY server ./server
-
-RUN if [ -f server/python/requirements.txt ]; then \
-  python3 -m venv /app/venv && \
-  . /app/venv/bin/activate && \
-  pip install --no-cache-dir -r server/python/requirements.txt && \
-  pip install --no-cache-dir gunicorn; \
-  fi
 
 RUN pnpm build \
   && rm -rf /app/.next/cache /app/src
@@ -56,8 +48,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nextjs:nodejs /app/venv ./venv
-COPY --from=builder --chown=nextjs:nodejs /app/server/python ./python
 COPY --from=builder --chown=nextjs:nodejs \
   /app/package.json \
   /app/committag.json \

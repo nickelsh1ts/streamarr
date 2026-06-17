@@ -1,7 +1,7 @@
-import ImageProxy from '@server/lib/imageproxy';
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
-import logger from '@server/logger';
+import ImageProxy from '@server/lib/imageproxy';
 import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { Router } from 'express';
 

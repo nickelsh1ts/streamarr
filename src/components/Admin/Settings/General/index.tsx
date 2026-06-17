@@ -1,4 +1,5 @@
 'use client';
+import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
 import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Button from '@app/components/Common/Button';
 import CopyButton from '@app/components/Common/CopyButton';
@@ -8,28 +9,27 @@ import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
+import { SettingsContext } from '@app/context/SettingsContext';
 import useLocale from '@app/hooks/useLocale';
 import { useUser } from '@app/hooks/useUser';
+import { isValidHttpUrl } from '@app/utils/networkValidation';
 import {
-  CheckBadgeIcon,
-  XCircleIcon,
-  ArrowPathIcon,
   ArrowDownTrayIcon,
+  ArrowPathIcon,
+  CheckBadgeIcon,
   ExclamationTriangleIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { Permission } from '@server/lib/permissions';
 import type { MainSettings } from '@server/lib/settings';
 import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import Image from 'next/image';
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
-import { useIntl, FormattedMessage } from 'react-intl';
-import ColorPickerModal from '@app/components/Admin/Settings/ColorPickerModal';
-import { SettingsContext } from '@app/context/SettingsContext';
-import { isValidHttpUrl } from '@app/utils/networkValidation';
 
 const GeneralSettings = () => {
   const intl = useIntl();
@@ -242,14 +242,14 @@ const GeneralSettings = () => {
             <Form className="">
               <div className="mt-5 max-w-6xl space-y-5">
                 {userHasPermission(Permission.ADMIN) && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                  <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                     <label htmlFor="apiKey" className="col-span-1">
                       <FormattedMessage
                         id="common.apiKey"
                         defaultMessage="API Key"
                       />
                     </label>
-                    <div className="flex col-span-2">
+                    <div className="col-span-2 flex">
                       <SensitiveInput
                         type="text"
                         id="apiKey"
@@ -284,7 +284,7 @@ const GeneralSettings = () => {
                           }}
                           buttonSize="sm"
                           buttonType="warning"
-                          className="rounded-none only:rounded-md last:rounded-r-md"
+                          className="rounded-none last:rounded-r-md only:rounded-md"
                         >
                           <ArrowPathIcon
                             className={`size-5 transition-transform duration-500 ${
@@ -296,7 +296,7 @@ const GeneralSettings = () => {
                     </div>
                   </div>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="applicationTitle" className="col-span-1">
                     <FormattedMessage
                       id="generalSettings.applicationTitle.label"
@@ -319,7 +319,7 @@ const GeneralSettings = () => {
                       )}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="applicationUrl" className="col-span-1">
                     <FormattedMessage
                       id="generalSettings.applicationUrl.label"
@@ -343,7 +343,7 @@ const GeneralSettings = () => {
                       )}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="customLogo" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -351,7 +351,7 @@ const GeneralSettings = () => {
                         defaultMessage="Custom Logo"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.customLogo.description"
                         defaultMessage="Upload a custom logo (recommended: 190x55px)"
@@ -370,7 +370,7 @@ const GeneralSettings = () => {
                           width={96}
                           height={48}
                           unoptimized
-                          className="h-12 w-auto border border-gray-300 rounded"
+                          className="h-12 w-auto rounded border border-gray-300"
                         />
                         <Button
                           buttonSize="sm"
@@ -486,7 +486,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="customLogoSmall" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -494,7 +494,7 @@ const GeneralSettings = () => {
                         defaultMessage="Custom Logo (mobile)"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.customLogoSmall.description"
                         defaultMessage="Upload a custom logo for mobile screens (recommended: square aspect ratio, 45x45px)"
@@ -513,7 +513,7 @@ const GeneralSettings = () => {
                           width={48}
                           height={48}
                           unoptimized
-                          className="h-12 w-12 border border-gray-300 rounded object-cover"
+                          className="h-12 w-12 rounded border border-gray-300 object-cover"
                         />
                         <Button
                           buttonSize="sm"
@@ -631,7 +631,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="enableHelpCentre" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -639,7 +639,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Help Centre"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.enableHelpCentre.description"
                         defaultMessage="Show the Help Centre and related links to users."
@@ -661,7 +661,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="enableSignUp" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -669,7 +669,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Signup"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.enableSignUp.description"
                         defaultMessage="Allow new users to signup. This will also enable invite management."
@@ -688,7 +688,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="releaseSched" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -709,7 +709,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="cacheImages" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -717,7 +717,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Image Caching"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.cacheImages.description"
                         defaultMessage="Cache externally sourced images (requires extra disk space)"
@@ -734,7 +734,7 @@ const GeneralSettings = () => {
                     className="checkbox-primary checkbox"
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="locale" className="col-span-1">
                     <FormattedMessage
                       id="common.displayLanguage"
@@ -762,7 +762,7 @@ const GeneralSettings = () => {
                     ))}
                   </Field>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="supportUrl" className="col-span-1">
                     <FormattedMessage
                       id="generalSettings.supportUrl.label"
@@ -784,7 +784,7 @@ const GeneralSettings = () => {
                       )}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="supportEmail" className="col-span-1">
                     <FormattedMessage
                       id="generalSettings.supportEmail.label"
@@ -801,7 +801,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="extendedHome" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -809,7 +809,7 @@ const GeneralSettings = () => {
                         defaultMessage="Enable Extended Homepage"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.extendedHome.description"
                         defaultMessage="Enable the extended homepage with FAQs"
@@ -826,7 +826,7 @@ const GeneralSettings = () => {
                     className="checkbox-primary checkbox"
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="libraryCounts" className="col-span-1">
                     <span className="mr-2">
                       <FormattedMessage
@@ -834,7 +834,7 @@ const GeneralSettings = () => {
                         defaultMessage="Show Library Counts"
                       />
                     </span>
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="generalSettings.libraryCounts.description"
                         defaultMessage="Display the number of items in each library on the homepage"
@@ -851,10 +851,10 @@ const GeneralSettings = () => {
                     className="checkbox-primary checkbox"
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label
                     htmlFor="theme"
-                    className="font-medium col-span-1 mb-4"
+                    className="col-span-1 mb-4 font-medium"
                   >
                     <span>
                       <FormattedMessage
@@ -862,7 +862,7 @@ const GeneralSettings = () => {
                         defaultMessage="Theme Customization"
                       />
                     </span>
-                    <p className="text-sm text-neutral mb-2">
+                    <p className="text-neutral mb-2 text-sm">
                       <FormattedMessage
                         id="generalSettings.theme.description"
                         defaultMessage="Customize the colors of Streamarr."
@@ -902,7 +902,7 @@ const GeneralSettings = () => {
                       />
                     </Button>
                   </label>
-                  <div className="col-span-2 place-items-start grid grid-cols-4 lg:grid-cols-10 gap-2">
+                  <div className="col-span-2 grid grid-cols-4 place-items-start gap-2 lg:grid-cols-10">
                     {[
                       'base-100',
                       'base-200',
@@ -927,7 +927,7 @@ const GeneralSettings = () => {
                     ].map((colorKey) => (
                       <div
                         key={colorKey}
-                        className="flex flex-col items-start space-y-1 mb-2"
+                        className="mb-2 flex flex-col items-start space-y-1"
                       >
                         <button
                           type="button"
@@ -973,7 +973,7 @@ const GeneralSettings = () => {
                             )
                           )}
                         </button>
-                        <span className="text-xs text-center tracking-wider">
+                        <span className="text-center text-xs tracking-wider">
                           {!colorKey.includes('-content') &&
                             !colorKey.includes('base') &&
                             colorKey?.replace('-', ' ')}
@@ -1003,8 +1003,8 @@ const GeneralSettings = () => {
                     }
                   />
                 </div>
-                <div className="divider divider-primary mb-0 col-span-full" />
-                <div className="flex justify-end col-span-3 mt-4">
+                <div className="divider divider-primary col-span-full mb-0" />
+                <div className="col-span-3 mt-4 flex justify-end">
                   <span className="ml-3 inline-flex rounded-md shadow-sm">
                     <Button
                       buttonType="primary"
@@ -1012,7 +1012,7 @@ const GeneralSettings = () => {
                       type="submit"
                       disabled={isSubmitting || !isValid}
                     >
-                      <ArrowDownTrayIcon className="size-4 mr-2" />
+                      <ArrowDownTrayIcon className="mr-2 size-4" />
                       <span>
                         {isSubmitting ? (
                           <FormattedMessage

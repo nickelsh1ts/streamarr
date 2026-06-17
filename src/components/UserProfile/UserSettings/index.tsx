@@ -5,7 +5,10 @@ import Alert from '@app/components/Common/Alert';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
-import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import type {
+  UserSettingsNewslettersResponse,
+  UserSettingsNotificationsResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 import { hasPermission } from '@server/lib/permissions';
 import { useParams, usePathname } from 'next/navigation';
 import { useIntl } from 'react-intl';
@@ -20,6 +23,9 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { data } = useSWR<UserSettingsNotificationsResponse>(
     user ? `/api/v1/user/${user?.id}/settings/notifications` : null
+  );
+  const { data: newsletterData } = useSWR<UserSettingsNewslettersResponse>(
+    user ? `/api/v1/user/${user?.id}/settings/newsletters` : null
   );
 
   if (!user && !error) {
@@ -72,6 +78,15 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
         ? '/settings/notifications/email'
         : '/settings/notifications/webpush',
       regex: /\/settings\/notifications/,
+    },
+    {
+      text: intl.formatMessage({
+        id: 'common.newsletters',
+        defaultMessage: 'Newsletters',
+      }),
+      route: '/settings/newsletters',
+      regex: /\/settings\/newsletters/,
+      hidden: !newsletterData || newsletterData.newsletters.length === 0,
     },
     {
       text: intl.formatMessage({

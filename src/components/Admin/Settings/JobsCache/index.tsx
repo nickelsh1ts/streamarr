@@ -7,23 +7,23 @@ import LoadingEllipsis, {
 import Modal from '@app/components/Common/Modal';
 import Table from '@app/components/Common/Table';
 import Toast from '@app/components/Toast';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { formatBytes } from '@app/utils/numberHelper';
 import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   CheckBadgeIcon,
-  XCircleIcon,
   StopIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type {
-  CacheResponse,
   CacheItem,
+  CacheResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import cronstrue from 'cronstrue';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { useEffect, useReducer, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 interface Job {
   id: string;
@@ -252,7 +252,7 @@ const JobsCacheSettings = () => {
       >
         <div className="mt-5 max-w-6xl space-y-5">
           <form className="mb-6 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="frequency">
                 <FormattedMessage
                   id="jobs.currentFrequency"
@@ -267,7 +267,7 @@ const JobsCacheSettings = () => {
                 <div className="text-sm">{jobModalState.job?.cronSchedule}</div>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="jobSchedule">
                 <FormattedMessage
                   id="jobs.newFrequency"
@@ -382,7 +382,7 @@ const JobsCacheSettings = () => {
             {data?.map((job) => (
               <tr key={`job-list-${job.id}`}>
                 <Table.TD>
-                  <div className="flex items-center text-sm leading-5 gap-2">
+                  <div className="flex items-center gap-2 text-sm leading-5">
                     <span>
                       {job.name ??
                         intl.formatMessage({
@@ -421,11 +421,11 @@ const JobsCacheSettings = () => {
                     <Button
                       type="button"
                       buttonSize="sm"
-                      className="mr-2 max-sm:btn-block"
+                      className="max-sm:btn-block mr-2"
                       buttonType="warning"
                       onClick={() => dispatch({ type: 'open', job })}
                     >
-                      <PencilIcon className="size-5 mr-2" />
+                      <PencilIcon className="mr-2 size-5" />
                       <FormattedMessage
                         id="common.edit"
                         defaultMessage="Edit"
@@ -437,10 +437,10 @@ const JobsCacheSettings = () => {
                       type="button"
                       buttonSize="sm"
                       buttonType="error"
-                      className="whitespace-nowrap max-sm:btn-block"
+                      className="max-sm:btn-block whitespace-nowrap"
                       onClick={() => cancelJob(job)}
                     >
-                      <StopIcon className="size-5 mr-2" />
+                      <StopIcon className="mr-2 size-5" />
                       <FormattedMessage
                         id="jobs.cancelJob"
                         defaultMessage="Cancel Job"
@@ -451,10 +451,10 @@ const JobsCacheSettings = () => {
                       type="button"
                       buttonType="primary"
                       buttonSize="sm"
-                      className="whitespace-nowrap max-sm:btn-block"
+                      className="max-sm:btn-block whitespace-nowrap"
                       onClick={() => runJob(job)}
                     >
-                      <PlayIcon className="size-5 mr-2" />
+                      <PlayIcon className="mr-2 size-5" />
                       <FormattedMessage
                         id="jobs.runNow"
                         defaultMessage="Run Now"
@@ -530,10 +530,10 @@ const JobsCacheSettings = () => {
                     <Button
                       buttonSize="sm"
                       buttonType="error"
-                      className="overflow-hidden truncate"
+                      className="truncate overflow-hidden"
                       onClick={() => flushCache(cache)}
                     >
-                      <TrashIcon className="size-5 mr-2" />
+                      <TrashIcon className="mr-2 size-5" />
                       <FormattedMessage
                         id="cache.flushCache"
                         defaultMessage="Flush Cache"
@@ -559,14 +559,14 @@ const JobsCacheSettings = () => {
             defaultMessage="Image Cache"
           />
         </h3>
-        <p className="mb-5 overflow-hidden w-full">
+        <p className="mb-5 w-full overflow-hidden">
           <FormattedMessage
             id="imageCache.description"
             defaultMessage="Streamarr will proxy and cache images from pre-configured external sources. Cached images are saved into your config folder. You can find the files in <code>{cachePath}</code>"
             values={{
               cachePath: `${appData ? appData.appDataPath : '/app/config'}/cache/images`,
               code: (chunks: React.ReactNode) => (
-                <code className="max-sm:block overflow-hidden text-ellipsis">
+                <code className="overflow-hidden text-ellipsis max-sm:block">
                   {chunks}
                 </code>
               ),

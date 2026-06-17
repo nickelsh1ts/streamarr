@@ -1,8 +1,8 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { Permission, PermissionCheckOptions } from './useUser';
 import { useUser } from './useUser';
-import { useRouter } from 'next/navigation';
 
 const useRouteGuard = (
   permission: Permission | Permission[],

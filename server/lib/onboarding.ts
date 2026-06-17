@@ -1,16 +1,16 @@
 import { getRepository } from '@server/datasource';
 import {
+  TooltipPosition,
+  TutorialMode,
+  TutorialStep,
+} from '@server/entity/TutorialStep';
+import {
   WelcomeContent,
   WelcomeContentType,
 } from '@server/entity/WelcomeContent';
-import {
-  TutorialStep,
-  TutorialMode,
-  TooltipPosition,
-} from '@server/entity/TutorialStep';
-import logger from '@server/logger';
-import { getSettings } from '@server/lib/settings';
 import ImageUploadService from '@server/lib/imageUpload';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 
 interface DefaultWelcomeContent {
   type: WelcomeContentType;

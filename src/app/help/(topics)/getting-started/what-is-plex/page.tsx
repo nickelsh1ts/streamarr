@@ -1,8 +1,8 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Link from 'next/link';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -48,7 +48,7 @@ const HelpContent = () => {
           values={{
             link: (
               <Link
-                className="link-accent underline font-bold"
+                className="link-accent font-bold underline"
                 target="_blank"
                 href={'https://plex.tv/'}
               >

@@ -1,7 +1,7 @@
 'use client';
 import BackToTopBtn from '@app/components/Common/BackToTopBtn';
 import useSettings from '@app/hooks/useSettings';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -15,13 +15,13 @@ function Footer() {
   return (
     <footer
       id="footer"
-      className="footer grid-flow-row gap-2 py-6 px-10 print:hidden bg-secondary backdrop-brightness-50 max-sm:pb-16"
+      className="footer bg-secondary grid-flow-row gap-2 px-10 py-6 backdrop-brightness-50 max-sm:pb-16 print:hidden"
     >
-      <div className="place-self-center mb-4">
+      <div className="mb-4 place-self-center">
         <BackToTopBtn full />
       </div>
-      <div className="md:grid-flow-col grid-flow-row mb-4 container md:px-20 mx-auto">
-        <div className="grid grid-flow-row me-3 gap-2">
+      <div className="container mx-auto mb-4 grid-flow-row md:grid-flow-col md:px-20">
+        <div className="me-3 grid grid-flow-row gap-2">
           <div className="flex place-items-center gap-4">
             <a
               className="link-neutral"
@@ -106,7 +106,7 @@ function Footer() {
             </a>
           </div>
         </div>
-        <nav className="grid grid-flow-col grid-rows-4 gap-y-5 gap-x-20 mt-10 md:ms-auto">
+        <nav className="mt-10 grid grid-flow-col grid-rows-4 gap-x-20 gap-y-5 md:ms-auto">
           {currentSettings.enableHelpCentre && (
             <>
               <Link
@@ -175,7 +175,7 @@ function Footer() {
         </nav>
       </div>
       <p
-        className="place-self-start container md:px-20 mx-auto text-base-content"
+        className="text-base-content container mx-auto place-self-start md:px-20"
         style={{ fontSize: '0.8rem' }}
       >
         © {currentYear} Streamarr

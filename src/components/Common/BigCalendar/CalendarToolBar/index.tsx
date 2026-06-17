@@ -1,19 +1,19 @@
 'use client';
+import useLocale from '@app/hooks/useLocale';
+import { Permission, useUser } from '@app/hooks/useUser';
+import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
   CalendarDateRangeIcon,
   CalendarDaysIcon,
   CalendarIcon,
   QueueListIcon,
 } from '@heroicons/react/24/solid';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { useCallback, useEffect } from 'react';
 import { Views } from 'react-big-calendar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FormattedMessage } from 'react-intl';
-import useLocale from '@app/hooks/useLocale';
-import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
-import { Permission, useUser } from '@app/hooks/useUser';
 
 function convertUTCToLocalDate(date) {
   if (!date) {
@@ -90,10 +90,10 @@ const CalendarToolBar = ({
   }, [date, setDate, view]);
 
   return (
-    <div className="flex grow flex-col-reverse sm:flex-row lg:grow-0 gap-2 p-4 justify-between">
+    <div className="flex grow flex-col-reverse justify-between gap-2 p-4 sm:flex-row lg:grow-0">
       <div
         id="datePicker"
-        className="flex grow flex-col sm:flex-row lg:grow-0 gap-2"
+        className="flex grow flex-col gap-2 sm:flex-row lg:grow-0"
       >
         {view != Views.WEEK ? (
           <DatePicker
@@ -116,7 +116,7 @@ const CalendarToolBar = ({
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className=""
+                className="z-1"
               >
                 <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
                 <path
@@ -184,13 +184,13 @@ const CalendarToolBar = ({
       </div>
       <div
         id="view"
-        className="flex grow flex-col-reverse sm:flex-row lg:grow-0 gap-2"
+        className="flex grow flex-col-reverse gap-2 sm:flex-row lg:grow-0"
       >
         <div className="flex grow sm:mb-0 lg:grow-0">
           <button
             id="previous"
             onClick={onPrev}
-            className="btn btn-sm btn-primary rounded-r-none flex-1 basis-1/5"
+            className="btn btn-sm btn-primary flex-1 basis-1/5 rounded-r-none"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -208,14 +208,14 @@ const CalendarToolBar = ({
           <button
             id="today"
             onClick={() => setDate(moment().toDate())}
-            className="btn btn-sm btn-primary rounded-none flex-1 basis-1/2"
+            className="btn btn-sm btn-primary flex-1 basis-1/2 rounded-none"
           >
             <FormattedMessage id="calendar.today" defaultMessage="Today" />
           </button>
           <button
             id="next"
             onClick={onNext}
-            className="btn btn-sm btn-primary rounded-s-none flex-1 basis-1/5"
+            className="btn btn-sm btn-primary flex-1 basis-1/5 rounded-s-none"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +232,7 @@ const CalendarToolBar = ({
           </button>
         </div>
         <div className="flex grow sm:mb-0 lg:grow-0">
-          <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+          <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
             {view === 'month' ? (
               <CalendarIcon className="size-6" />
             ) : view === 'week' ? (
@@ -247,7 +247,7 @@ const CalendarToolBar = ({
             id="view"
             onChange={(view) => setView(view.target.value)}
             value={view}
-            className="select select-sm select-primary rounded-md rounded-l-none flex-1"
+            className="select select-sm select-primary flex-1 rounded-md rounded-l-none"
           >
             <option value="month">
               <FormattedMessage id="calendar.month" defaultMessage="Month" />

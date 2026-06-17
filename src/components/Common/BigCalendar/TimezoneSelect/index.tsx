@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import 'moment-timezone';
+import PropTypes from 'prop-types';
 
 const allZones = moment.tz.names();
 
@@ -15,7 +15,7 @@ export default function TimezoneSelect({
 
   return (
     <div>
-      <div className="my-3 px-4 flex justify-end">
+      <div className="my-3 flex justify-end px-4">
         {title ? <strong style={{ marginBottom: 10 }}>{title}</strong> : null}
         <select
           className="select select-primary select-sm bg-base-200 text-ellipsis max-sm:flex-1"

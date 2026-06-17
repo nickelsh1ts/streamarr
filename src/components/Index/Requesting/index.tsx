@@ -1,6 +1,6 @@
 import useSettings from '@app/hooks/useSettings';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
 
 function Requesting() {
@@ -8,15 +8,15 @@ function Requesting() {
 
   return (
     <section id="requesting" className="min-h-lvh place-content-center py-16">
-      <div className="container p-2 lg:flex lg:flex-row-reverse place-items-center mx-auto">
+      <div className="container mx-auto place-items-center p-2 lg:flex lg:flex-row-reverse">
         <div className="text-center lg:text-start">
-          <p className="font-bold place-content-center lg:place-content-start text-3xl mb-3 mt-2 flex flex-wrap">
+          <p className="mt-2 mb-3 flex flex-wrap place-content-center text-3xl font-bold lg:place-content-start">
             <FormattedMessage
               id="index.requesting.introducing"
               defaultMessage="Introducing"
             />
             <Image
-              className="h-auto w-40 ms-3"
+              className="ms-3 h-auto w-40"
               src="/external/seerr-logo_full.svg"
               alt="Seerr"
               width={160}
@@ -68,7 +68,7 @@ function Requesting() {
         <div className="w-4/5">
           <Image
             src="/request-promo.png"
-            className="h-auto w-4/5 mx-auto"
+            className="mx-auto h-auto w-4/5"
             alt="Seerr promo"
             loading="lazy"
             width={600}

@@ -19,7 +19,7 @@ function Favourites() {
 
   return (
     <section id="favs" className="min-h-lvh place-content-center py-16">
-      <div className="mx-auto px-5 text-center text-light">
+      <div className="text-light mx-auto px-5 text-center">
         <p className="p-2 text-4xl font-extrabold">
           <FormattedMessage
             id="index.favourites.title"
@@ -33,13 +33,13 @@ function Favourites() {
             }}
           />
         </p>
-        <p className="text-lg py-4">
+        <p className="py-4 text-lg">
           <FormattedMessage
             id="index.favourites.subtitle"
             defaultMessage="An ever evolving collection of the world's most beloved movies and TV shows."
           />
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-4 lg:mx-5">
+        <div className="flex flex-wrap items-center justify-center gap-4 lg:mx-5">
           {providers.map((provider) => (
             <Image
               key={provider.src}

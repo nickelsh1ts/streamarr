@@ -28,20 +28,6 @@ The main server process that handles the web interface, API, and all integration
 
 When the status shows **Restart Required**, a restart button is available directly on the health card.
 
-### Plex Sync Service
-
-The Python microservice that handles Plex invites and library synchronization. This service runs on port 5005 internally and is managed automatically by Streamarr.
-
-| Status        | Description                                                |
-| ------------- | ---------------------------------------------------------- |
-| **Healthy**   | Service is running and responding to health checks         |
-| **Unhealthy** | Service is unreachable (after 2 consecutive failed checks) |
-| **Unknown**   | Service status has not been determined yet                 |
-
-**Health polling**: Streamarr checks the Plex Sync service every 30 seconds. If the service fails to respond within 3 seconds for 2 consecutive checks, it is marked as unhealthy.
-
-When the service is unhealthy, a restart button is available on the health card. You will also see a **"Plex Sync Service Down"** alert banner on the **Plex Settings** and **User Settings General** pages.
-
 ---
 
 ## Restart System
@@ -93,23 +79,9 @@ During a production restart:
 2. The HTTP server is closed (with a 3-second drain timeout)
 3. The database connection is destroyed
 4. **Docker**: The process exits — the container restart policy handles the rest
-5. **Bare Metal**: The Plex Sync service is preserved (kept running across the restart), signal handlers are reset, and a new server process is spawned
+5. **Bare Metal**: Signal handlers are reset and a new server process is spawned
 
 The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it waits for the server to come back online (up to 45 seconds).
-
-### Plex Sync Service Restart
-
-The Plex Sync (Python) service can be restarted independently from the main server:
-
-- Click the restart button on the Plex Sync Service health card
-- Or click **"Restart Service"** on the alert banner when the service is down
-
-The service restart process:
-
-1. Existing Python processes are terminated gracefully (SIGTERM, then SIGKILL after 5 seconds)
-2. The system waits for port 5005 to become available (up to 10 seconds)
-3. A new instance is spawned (Gunicorn in production, Flask directly in development)
-4. Health polling confirms the service is back online
 
 ---
 
@@ -157,17 +129,16 @@ Disk statistics are gathered using the system `df` utility, with an internal fil
 
 The System page displays key information about your installation:
 
-| Field               | Description                                                 |
-| ------------------- | ----------------------------------------------------------- |
-| **Version**         | Current version with update status badge                    |
-| **Uptime**          | How long the current server process has been running        |
-| **Total Users**     | Number of registered users                                  |
-| **Total Invites**   | Number of invites created                                   |
-| **Data Directory**  | Path to the configuration directory                         |
-| **Time Zone**       | Server timezone (if configured via `TZ` environment)        |
-| **Node.js Version** | Node.js runtime version the server is running on            |
-| **Python Version**  | Version of the Python runtime used by the Plex Sync service |
-| **Database**        | Database type and version (e.g. SQLite/PostgreSQL)          |
+| Field               | Description                                          |
+| ------------------- | ---------------------------------------------------- |
+| **Version**         | Current version with update status badge             |
+| **Uptime**          | How long the current server process has been running |
+| **Total Users**     | Number of registered users                           |
+| **Total Invites**   | Number of invites created                            |
+| **Data Directory**  | Path to the configuration directory                  |
+| **Time Zone**       | Server timezone (if configured via `TZ` environment) |
+| **Node.js Version** | Node.js runtime version the server is running on     |
+| **Database**        | Database type and version (e.g. SQLite/PostgreSQL)   |
 
 ### Update Status
 
@@ -210,8 +181,6 @@ This helps you see what has changed between versions and what is included in ava
 | ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
 | `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                                                    |
 | `/api/v1/settings/restart`          | POST   | Trigger a server restart                                                                          |
-| `/api/v1/settings/python/status`    | GET    | Get Plex Sync service health status                                                               |
-| `/api/v1/settings/python/restart`   | POST   | Restart the Plex Sync service                                                                     |
 | `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users)                                    |
 | `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                     |
 | `/api/v1/status`                    | GET    | Get version, update availability                                                                  |
@@ -248,7 +217,6 @@ This helps you see what has changed between versions and what is included in ava
   "tz": "America/New_York",
   "appDataPath": "/app/config",
   "nodeVersion": "v24.0.0",
-  "pythonVersion": "3.12.0",
   "database": { "type": "sqlite", "version": "3.45.0" },
   "diskSpace": {
     "items": [
@@ -294,14 +262,6 @@ This helps you see what has changed between versions and what is included in ava
 2. Verify your container has a restart policy (`--restart unless-stopped`)
 3. If running bare metal, check that the process has permission to spawn child processes
 4. Try restarting the container manually: `docker restart streamarr`
-
-### "Plex Sync Service won't start"
-
-1. Check that Python 3 is installed and accessible
-2. Verify port 5005 is not in use by another process
-3. Check logs in `config/logs/` for Python service errors
-4. Ensure the `server/python/plex_invite.py` file exists and is not corrupted
-5. Try restarting the entire Streamarr container
 
 ### "Health status shows Unknown"
 

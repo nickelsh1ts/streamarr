@@ -1,25 +1,12 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import ImageUpload from '@app/components/Common/ImageUpload';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import {
-  PlusIcon,
-  PhotoIcon,
-  VideoCameraIcon,
-  CodeBracketIcon,
-} from '@heroicons/react/24/outline';
-import {
-  CheckBadgeIcon,
-  PencilIcon,
-  TrashIcon,
-  XCircleIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/solid';
-import type { WelcomeContentResponse } from '@server/interfaces/api/onboardingInterfaces';
-import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   TouchSensor,
@@ -35,13 +22,26 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  CodeBracketIcon,
+  PhotoIcon,
+  PlusIcon,
+  VideoCameraIcon,
+} from '@heroicons/react/24/outline';
+import {
+  Bars3Icon,
+  CheckBadgeIcon,
+  PencilIcon,
+  TrashIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import type { WelcomeContentResponse } from '@server/interfaces/api/onboardingInterfaces';
 import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
-import { useState, useCallback } from 'react';
+import { Field, Form, Formik } from 'formik';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 interface SortableItemProps {
   item: WelcomeContentResponse;
@@ -69,34 +69,34 @@ const SortableItem = ({ item, onEdit, onDelete }: SortableItemProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 p-3 bg-base-200 rounded-lg ${
-        isDragging ? 'shadow-lg ring-2 ring-primary' : ''
+      className={`bg-base-200 flex items-center gap-3 rounded-lg p-3 ${
+        isDragging ? 'ring-primary shadow-lg ring-2' : ''
       }`}
     >
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-neutral hover:text-base-content touch-none"
+        className="text-neutral hover:text-base-content cursor-grab touch-none active:cursor-grabbing"
         aria-label="Drag to reorder"
       >
         <Bars3Icon className="size-5" />
       </button>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium truncate">{item.title}</p>
-        <p className="text-xs text-neutral truncate">
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{item.title}</p>
+        <p className="text-neutral truncate text-xs">
           {item.description || 'No description'}
         </p>
       </div>
       {(item.imageUrl || item.videoUrl || item.customHtml) && (
-        <div className="shrink-0 flex items-center gap-1 text-neutral">
-          {item.imageUrl && <PhotoIcon className="size-4 text-primary" />}
+        <div className="text-neutral flex shrink-0 items-center gap-1">
+          {item.imageUrl && <PhotoIcon className="text-primary size-4" />}
           {item.imageUrl && item.videoUrl && <span>/</span>}
-          {item.videoUrl && <VideoCameraIcon className="size-4 text-primary" />}
+          {item.videoUrl && <VideoCameraIcon className="text-primary size-4" />}
           {(item.imageUrl || item.videoUrl) && item.customHtml && (
             <span>/</span>
           )}
           {item.customHtml && (
-            <CodeBracketIcon className="size-4 text-accent" />
+            <CodeBracketIcon className="text-accent size-4" />
           )}
         </div>
       )}
@@ -343,7 +343,7 @@ const WelcomeContentManager = () => {
 
   return (
     <div>
-      <div className="space-y-2 mb-4">
+      <div className="mb-4 space-y-2">
         {data && data.length > 0 ? (
           <DndContext
             sensors={sensors}
@@ -365,7 +365,7 @@ const WelcomeContentManager = () => {
             </SortableContext>
           </DndContext>
         ) : (
-          <div className="text-center py-8 text-neutral">
+          <div className="text-neutral py-8 text-center">
             <FormattedMessage
               id="settings.onboarding.noWelcomeContent"
               defaultMessage="No welcome content configured. Add your first slide to get started."
@@ -374,7 +374,7 @@ const WelcomeContentManager = () => {
         )}
       </div>
       <Button buttonSize="sm" buttonType="primary" onClick={handleCreate}>
-        <PlusIcon className="size-4 mr-2" />
+        <PlusIcon className="mr-2 size-4" />
         <FormattedMessage
           id="settings.onboarding.addSlide"
           defaultMessage="Add Slide"
@@ -484,10 +484,10 @@ const WelcomeContentManager = () => {
             secondaryDisabled={isSubmitting || !isValid}
           >
             <Form className="space-y-2">
-              <div className="border-t border-primary pt-4">
+              <div className="border-primary border-t pt-4">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage id="common.title" defaultMessage="Title" />
                   <span className="text-error ml-1">*</span>
@@ -507,7 +507,7 @@ const WelcomeContentManager = () => {
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -522,7 +522,7 @@ const WelcomeContentManager = () => {
                   id="description"
                   name="description"
                   rows={3}
-                  className={`textarea textarea-primary w-full h-32 leading-normal ${
+                  className={`textarea textarea-primary h-32 w-full leading-normal ${
                     errors.description && touched.description
                       ? 'textarea-error'
                       : ''
@@ -537,7 +537,7 @@ const WelcomeContentManager = () => {
               <div>
                 <label
                   htmlFor="imageUrl"
-                  className="block text-sm font-medium leading-6 text-left mb-2"
+                  className="mb-2 block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage id="common.image" defaultMessage="Image" />
                   <span className="text-neutral ml-1">
@@ -556,8 +556,8 @@ const WelcomeContentManager = () => {
                     uploadEndpoint={`/api/v1/settings/onboarding/welcome/${editingItem.id}/image`}
                   />
                 ) : (
-                  <div className="flex items-center gap-2 p-3 rounded-lg border border-dashed border-base-content/20 bg-base-300/30">
-                    <span className="text-sm text-neutral">
+                  <div className="border-base-content/20 bg-base-300/30 flex items-center gap-2 rounded-lg border border-dashed p-3">
+                    <span className="text-neutral text-sm">
                       <FormattedMessage
                         id="settings.onboarding.imageAvailableAfterSave"
                         defaultMessage="Image upload will be available after saving."
@@ -569,7 +569,7 @@ const WelcomeContentManager = () => {
               <div>
                 <label
                   htmlFor="videoUrl"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -593,7 +593,7 @@ const WelcomeContentManager = () => {
                   placeholder="https://www.youtube.com/watch?v=..."
                   className="input input-sm input-primary w-full"
                 />
-                <span className="text-xs text-neutral mt-1">
+                <span className="text-neutral mt-1 text-xs">
                   <FormattedMessage
                     id="settings.onboarding.videoUrlTip"
                     defaultMessage="YouTube video URL (will be embedded securely)."
@@ -603,7 +603,7 @@ const WelcomeContentManager = () => {
               <div>
                 <label
                   htmlFor="videoAutoplay"
-                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                  className="flex items-center gap-2 text-left text-sm leading-6 font-medium"
                 >
                   <Field
                     type="checkbox"
@@ -628,7 +628,7 @@ const WelcomeContentManager = () => {
               <div className="space-y-0">
                 <label
                   htmlFor="customHtml"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -650,9 +650,9 @@ const WelcomeContentManager = () => {
                   id="customHtml"
                   name="customHtml"
                   rows={4}
-                  className="textarea textarea-primary w-full font-mono text-sm h-32 leading-normal"
+                  className="textarea textarea-primary h-32 w-full font-mono text-sm leading-normal"
                 />
-                <span className="text-xs text-neutral">
+                <span className="text-neutral text-xs">
                   <FormattedMessage
                     id="settings.onboarding.customHtmlTip"
                     defaultMessage="Custom HTML content."

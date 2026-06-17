@@ -1,19 +1,19 @@
 'use client';
-import Alert from '@app/components/Common/Alert';
-import Button from '@app/components/Common/Button';
-import Modal from '@app/components/Common/Modal';
-import SonarrModal from '@app/components/Admin/Settings/Services/Sonarr/SonarrModal';
 import RestartRequiredAlert, {
   RESTART_REQUIRED_SWR_KEY,
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import { ServerInstance } from '@app/components/Admin/Settings/Services/Radarr';
+import SonarrModal from '@app/components/Admin/Settings/Services/Sonarr/SonarrModal';
+import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Modal from '@app/components/Common/Modal';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import type { SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { ServerInstance } from '@app/components/Admin/Settings/Services/Radarr';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 const SettingsServicesSonarr = () => {
   const intl = useIntl();
@@ -166,7 +166,7 @@ const SettingsServicesSonarr = () => {
                   }
                 />
               ))}
-              <li className="col-span-1 h-32 rounded-lg border-2 border-dashed border-primary shadow sm:h-44">
+              <li className="border-primary col-span-1 h-32 rounded-lg border-2 border-dashed shadow sm:h-44">
                 <div className="flex h-full w-full items-center justify-center">
                   <Button
                     buttonType="ghost"
@@ -174,7 +174,7 @@ const SettingsServicesSonarr = () => {
                       setEditSonarrModal({ open: true, sonarr: null })
                     }
                   >
-                    <PlusIcon className="size-7 mr-2" />
+                    <PlusIcon className="mr-2 size-7" />
                     <FormattedMessage
                       id="sonarrSettings.addServer"
                       defaultMessage="Add Sonarr Server"

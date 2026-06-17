@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // Use dynamic imports for ESM-only packages to support CommonJS output
 import type { AllClientData, NormalizedTorrent } from '@ctrl/shared-torrent';
-import type { DownloadClientSettings } from '@server/lib/settings';
 import type {
-  NormalizedDownloadItem,
   AddTorrentRequest,
   CategoryManagementRequest,
+  NormalizedDownloadItem,
+  SetFilePriorityRequest,
   TagManagementRequest,
   TorrentFile,
   UpdateTorrentRequest,
-  SetFilePriorityRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
-import logger from '@server/logger';
 import {
-  isClientInCooldown,
   getCachedClientData,
+  getClientHealth,
+  isClientInCooldown,
   markClientFailed,
   markClientHealthy,
   setRetryTimeout,
-  getClientHealth,
 } from '@server/lib/healthCheck';
+import type { DownloadClientSettings } from '@server/lib/settings';
+import logger from '@server/logger';
 
 // Type imports for client classes
 type QBittorrent = import('@ctrl/qbittorrent').QBittorrent;

@@ -1,15 +1,16 @@
 import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
-import { In, LessThanOrEqual } from 'typeorm';
 import Invite from '@server/entity/Invite';
 import type { User } from '@server/entity/User';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import { Permission } from '@server/lib/permissions';
+import QRCodeProxy from '@server/lib/qrcodeproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import { Router } from 'express';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { In, LessThanOrEqual } from 'typeorm';
 
 function generateIcode(): string {
   // Generates a random 8-character alphanumeric invite code
@@ -292,7 +293,9 @@ inviteRoutes.post<
         downloads: req.body.downloads ?? true,
         liveTv: req.body.liveTv ?? false,
         plexHome: req.user?.id === 1 ? (req.body.plexHome ?? false) : false,
-        sharedLibraries: req.body.sharedLibraries ?? '',
+        sharedLibraries: normalizeSharedLibrariesValue(
+          req.body.sharedLibraries
+        ),
         expiryLimit: req.body.expiryLimit ?? 1,
         expiryTime: req.body.expiryTime ?? 'days',
         trialPeriodOutcome: req.body.trialPeriodOutcome,
@@ -374,6 +377,11 @@ inviteRoutes.put<
       });
 
       const previousPlexHome = invite.plexHome;
+      if (req.body.sharedLibraries !== undefined) {
+        req.body.sharedLibraries = normalizeSharedLibrariesValue(
+          req.body.sharedLibraries
+        );
+      }
       inviteRepository.merge(invite, req.body);
       invite.updatedBy = req.user;
       if (req.user?.id !== 1) {

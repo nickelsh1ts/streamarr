@@ -49,11 +49,11 @@ const UserSettingsAccounts = () => {
   const linkPlexAccount = async () => {
     setError(null);
     try {
-      const authToken = await plexOAuth.login();
+      const pinId = await plexOAuth.login();
       await axios.post(
         `/api/v1/user/${user?.id}/settings/linked-accounts/plex`,
         {
-          authToken,
+          pinId,
         }
       );
       await revalidateUser();
@@ -126,7 +126,7 @@ const UserSettingsAccounts = () => {
 
   return (
     <>
-      <div className="mb-6 flex items-end justify-between mt-5">
+      <div className="mt-5 mb-6 flex items-end justify-between">
         <div>
           <h3 className="text-2xl font-extrabold">
             <FormattedMessage
@@ -142,7 +142,7 @@ const UserSettingsAccounts = () => {
           {linkable.map(({ name, action }) => (
             <li
               key={name}
-              className="flex flex-wrap items-center gap-4 overflow-hidden rounded-lg bg-base-200/50 px-4 py-5 shadow ring-1 ring-neutral sm:p-6"
+              className="bg-base-200/50 ring-neutral flex flex-wrap items-center gap-4 overflow-hidden rounded-lg px-4 py-5 shadow ring-1 sm:p-6"
             >
               <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                 <PlexLogo className="w-9" />
@@ -162,7 +162,7 @@ const UserSettingsAccounts = () => {
               <div className="grow" />
               <button
                 onClick={action}
-                className="max-sm:btn-block rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="max-sm:btn-block bg-primary hover:bg-primary/80 focus-visible:outline-primary rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-offset-2"
               >
                 <FormattedMessage
                   id="linkedAccounts.linkButton"
@@ -179,7 +179,7 @@ const UserSettingsAccounts = () => {
           {accounts.map((acct, i) => (
             <li
               key={i}
-              className="flex flex-wrap items-center gap-4 overflow-hidden rounded-lg bg-base-200/50 px-4 py-5 shadow ring-1 ring-neutral sm:p-6"
+              className="bg-base-200/50 ring-neutral flex flex-wrap items-center gap-4 overflow-hidden rounded-lg px-4 py-5 shadow ring-1 sm:p-6"
             >
               <div className="w-12">
                 {acct.type === LinkedAccountType.Plex && (
@@ -211,7 +211,7 @@ const UserSettingsAccounts = () => {
                   }
                   className="max-sm:btn-block"
                 >
-                  <TrashIcon className="size-5 mr-2" />
+                  <TrashIcon className="mr-2 size-5" />
                   <span>
                     <FormattedMessage
                       id="common.unlinkAccount"
@@ -225,7 +225,7 @@ const UserSettingsAccounts = () => {
         </ul>
       ) : (
         <div className="mt-4 text-center md:py-12">
-          <h3 className="text-lg font-semibold text-neutral">
+          <h3 className="text-neutral text-lg font-semibold">
             {user?.id === currentUser?.id ? (
               <FormattedMessage
                 id="linkedAccounts.noLinkedAccounts"

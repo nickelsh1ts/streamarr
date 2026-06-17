@@ -32,6 +32,7 @@ export interface UserSettingsGeneralResponse {
   requestHostname?: string;
   requestEnabled?: boolean;
   releaseSched?: boolean;
+  plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }
 
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;
@@ -54,4 +55,16 @@ export interface UserSettingsNotificationsResponse {
   inAppEnabled?: boolean;
   discordId?: string;
   notificationTypes: Partial<NotificationAgentTypes>;
+}
+
+export interface UserNewsletterSubscription {
+  id: number;
+  name: string;
+  description?: string | null;
+  isImportant: boolean;
+  subscribed: boolean;
+}
+
+export interface UserSettingsNewslettersResponse {
+  newsletters: UserNewsletterSubscription[];
 }

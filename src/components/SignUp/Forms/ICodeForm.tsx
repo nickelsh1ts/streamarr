@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { FormikHelpers, FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
@@ -86,12 +86,12 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
                 (errors.icode &&
                   touched.icode &&
                   typeof errors.icode === 'string')) && (
-                <div className="mb-2 text-error font-semibold text-sm md:text-base uppercase">
+                <div className="text-error mb-2 text-sm font-semibold uppercase md:text-base">
                   {error || errors.icode}
                 </div>
               )}
-              <div className="input input-primary flex w-full items-center mb-2 uppercase text-lg ">
-                <TicketIcon className="size-7 mr-2" />
+              <div className="input input-primary mb-2 flex w-full items-center text-lg uppercase">
+                <TicketIcon className="mr-2 size-7" />
                 <Field
                   id="icode"
                   name="icode"
@@ -115,7 +115,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
               </div>
             </div>
           </div>
-          <div className="mt-4 border-t border-primary pt-5 mb-4">
+          <div className="border-primary mt-4 mb-4 border-t pt-5">
             <Button
               type="submit"
               buttonType="primary"

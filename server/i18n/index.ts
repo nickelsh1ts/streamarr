@@ -1,7 +1,7 @@
 import { createIntl, createIntlCache } from '@formatjs/intl';
 import logger from '@server/logger';
-import { availableLocales } from '@server/types/languages';
 import type { AvailableLocale } from '@server/types/languages';
+import { availableLocales } from '@server/types/languages';
 import fs from 'fs';
 import path from 'path';
 

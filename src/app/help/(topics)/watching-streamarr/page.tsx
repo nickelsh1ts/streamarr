@@ -91,7 +91,7 @@ const WatchingStreamarr = () => {
   ];
 
   return (
-    <section className="bg-zinc-100 text-black py-5">
+    <section className="bg-zinc-100 py-5 text-black">
       <Breadcrumbs
         paths="/watching-streamarr"
         homeElement={intl.formatMessage({

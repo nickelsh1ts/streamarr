@@ -1,21 +1,21 @@
 import Badge from '@app/components/Common/Badge';
 import CachedImage from '@app/components/Common/CachedImage';
 import Toast from '@app/components/Toast';
+import { useInView } from '@app/hooks/useElementInView';
 import { Permission, useUser } from '@app/hooks/useUser';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { withProperties } from '@app/utils/typeHelpers';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/solid';
 import { InviteStatus } from '@server/constants/invite';
 import type Invite from '@server/entity/Invite';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import useClipboard from 'react-use-clipboard';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useInView } from '@app/hooks/useElementInView';
+import useClipboard from 'react-use-clipboard';
 
 const InviteCardPlaceholder = () => {
   return (
-    <div className="relative w-72 sm:w-96 animate-pulse rounded-xl bg-base-200 p-4">
+    <div className="bg-base-200 relative w-72 animate-pulse rounded-xl p-4 sm:w-96">
       <div className="w-20 sm:w-28">
         <div className="w-full" style={{ paddingBottom: '150%' }} />
       </div>
@@ -62,11 +62,11 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
   }
 
   return (
-    <div className="flex w-72 sm:w-96 justify-between flex-col border border-primary bg-base-100 p-4 rounded-xl overflow-hidden">
-      <div className="flex justify-around items-center flex-row w-full">
+    <div className="border-primary bg-base-100 flex w-72 flex-col justify-between overflow-hidden rounded-xl border p-4 sm:w-96">
+      <div className="flex w-full flex-row items-center justify-around">
         <div className="flex w-full items-start overflow-hidden">
-          <div className="flex flex-col items-start w-full overflow-hidden truncate gap-1">
-            <p className="text-xs truncate w-full text-warning">
+          <div className="flex w-full flex-col items-start gap-1 truncate overflow-hidden">
+            <p className="text-warning w-full truncate text-xs">
               {invite?.expiresAt != null
                 ? `${moment(invite?.expiresAt).isAfter(moment()) ? intl.formatMessage({ id: 'common.expires', defaultMessage: 'Expires' }) : intl.formatMessage({ id: 'common.expired', defaultMessage: 'Expired' })} ${moment(invite?.expiresAt).fromNow()}`
                 : intl.formatMessage({
@@ -76,7 +76,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
             </p>
             <button
               type="button"
-              className="font-bold text-lg cursor-pointer select-all bg-transparent border-none p-0 m-0 align-top"
+              className="m-0 cursor-pointer border-none bg-transparent p-0 align-top text-lg font-bold select-all"
               title={intl.formatMessage({
                 id: 'invite.clickToCopy',
                 defaultMessage: 'Click to copy invite code',
@@ -98,7 +98,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                   ? ` (${invite?.usageLimit})`
                   : ''}
             </button>
-            <span className="font-extrabold flex items-center truncate gap-2">
+            <span className="flex items-center gap-2 truncate font-extrabold">
               <CachedImage
                 src={
                   invite?.createdBy?.id
@@ -106,7 +106,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                     : undefined
                 }
                 alt=""
-                className="object-cover rounded-full"
+                className="rounded-full object-cover"
                 width={20}
                 height={20}
               />
@@ -119,8 +119,8 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                   })}
               </span>
             </span>
-            <div className="py-1 flex items-center truncate leading-5">
-              <span className="font-bold mr-2 hidden sm:block">
+            <div className="flex items-center truncate py-1 leading-5">
+              <span className="mr-2 hidden font-bold sm:block">
                 <FormattedMessage id="common.status" defaultMessage="Status" />
               </span>
               {invite?.status === InviteStatus.ACTIVE ? (
@@ -156,7 +156,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
         <div className="">
-          <div className="aspect-square p-5 h-full rounded flex items-center justify-center bg-primary/60 text-primary-content">
+          <div className="bg-primary/60 text-primary-content flex aspect-square h-full items-center justify-center rounded p-5">
             {(Array.isArray(invite?.redeemedBy) &&
               invite.redeemedBy.length > 0) ||
             invite?.status === InviteStatus.REDEEMED ? (
@@ -183,12 +183,12 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center py-1 truncate whitespace-nowrap leading-5">
-        <div className="hidden sm:flex items-center min-h-10">
+      <div className="flex items-center truncate py-1 leading-5 whitespace-nowrap">
+        <div className="hidden min-h-10 items-center sm:flex">
           {Array.isArray(invite?.redeemedBy) &&
             invite.redeemedBy.length > 0 && (
               <>
-                <span className="font-extrabold mr-2">
+                <span className="mr-2 font-extrabold">
                   <FormattedMessage
                     id="common.redeemed"
                     defaultMessage="Redeemed"
@@ -214,7 +214,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                         <CachedImage
                           src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                           alt=""
-                          className="size-6 rounded-full border-2 border-base-100 group-hover:border-primary"
+                          className="border-base-100 group-hover:border-primary size-6 rounded-full border-2"
                           width={24}
                           height={24}
                         />
@@ -234,7 +234,7 @@ const RecentInvite = ({ invite }: RecentInviteProps) => {
                         <CachedImage
                           src={user?.id ? `/avatarproxy/${user.id}` : undefined}
                           alt=""
-                          className="size-6 rounded-full border-2 border-base-100"
+                          className="border-base-100 size-6 rounded-full border-2"
                           width={24}
                           height={24}
                         />

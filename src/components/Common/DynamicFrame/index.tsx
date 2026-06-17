@@ -6,11 +6,11 @@ import {
 } from '@app/components/Common/ServiceError';
 import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
+import { parseColorToHex, setIframeTheme } from '@app/utils/themeUtils';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
 
 interface DynamicFrameProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

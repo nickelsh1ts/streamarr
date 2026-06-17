@@ -1,26 +1,26 @@
 'use client';
-import QbtLogo from '@app/assets/services/qBittorrent.svg';
 import DelugeLogo from '@app/assets/services/deluge.svg';
+import QbtLogo from '@app/assets/services/qBittorrent.svg';
 import TransmissionLogo from '@app/assets/services/transmission.png';
-import Image from 'next/image';
+import DownloadClientModal from '@app/components/Admin/Settings/Services/Downloads/DownloadClientModal';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
-import Modal from '@app/components/Common/Modal';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import DownloadClientModal from '@app/components/Admin/Settings/Services/Downloads/DownloadClientModal';
+import Modal from '@app/components/Common/Modal';
 import {
   ArrowDownTrayIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { FormattedMessage, useIntl } from 'react-intl';
 import type {
   DownloadClientSettings,
   DownloadClientType,
 } from '@server/lib/settings';
 import axios from 'axios';
+import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 
 const CLIENT_NAMES: Record<DownloadClientType, string> = {
@@ -115,11 +115,11 @@ const DownloadClientInstance = ({
     (isSSL ? 'https://' : 'http://') + hostname + ':' + String(port);
 
   return (
-    <li className="col-span-1 rounded-lg bg-base-200 shadow">
+    <li className="bg-base-200 col-span-1 rounded-lg shadow">
       <div className="flex w-full items-center justify-between space-x-6 p-6">
         <div className="flex-1 truncate">
           <div className="mb-2 flex items-center space-x-2">
-            <h3 className="truncate font-medium leading-5">
+            <h3 className="truncate leading-5 font-medium">
               <a
                 href={internalUrl}
                 target="_blank"
@@ -152,7 +152,7 @@ const DownloadClientInstance = ({
               {internalUrl}
             </a>
           </p>
-          <p className="mt-1 truncate text-sm leading-5 flex gap-2 items-center">
+          <p className="mt-1 flex items-center gap-2 truncate text-sm leading-5">
             <span className="font-bold">
               <FormattedMessage id="common.status" defaultMessage="Status" />
             </span>
@@ -222,12 +222,12 @@ const DownloadClientInstance = ({
           <ClientLogo client={client} className="h-10 w-10" />
         </a>
       </div>
-      <div className="border-t border-primary">
+      <div className="border-primary border-t">
         <div className="-mt-px flex">
-          <div className="flex w-0 flex-1 border-r border-primary">
+          <div className="border-primary flex w-0 flex-1 border-r">
             <button
               onClick={() => onEdit()}
-              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none hover:cursor-pointer"
+              className="focus:ring-primary bg-primary/45 text-primary-content hover:bg-primary/70 focus:border-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm leading-5 font-medium transition duration-150 ease-in-out hover:cursor-pointer focus:z-10 focus:outline-none"
             >
               <PencilIcon className="mr-2 h-5 w-5" />
               <span>
@@ -238,7 +238,7 @@ const DownloadClientInstance = ({
           <div className="-ml-px flex w-0 flex-1">
             <button
               onClick={() => onDelete()}
-              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none hover:cursor-pointer"
+              className="focus:ring-primary bg-primary/45 text-primary-content hover:bg-primary/70 focus:border-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm leading-5 font-medium transition duration-150 ease-in-out hover:cursor-pointer focus:z-10 focus:outline-none"
             >
               <TrashIcon className="mr-2 h-5 w-5" />
               <span>
@@ -360,14 +360,14 @@ const ServicesDownloads = () => {
                 }
               />
             ))}
-            <li className="col-span-1 h-32 rounded-lg border-2 border-dashed border-primary shadow sm:h-44">
+            <li className="border-primary col-span-1 h-32 rounded-lg border-2 border-dashed shadow sm:h-44">
               <div className="flex h-full w-full items-center justify-center">
                 <Button
                   buttonType="ghost"
                   className="mt-3 mb-3"
                   onClick={() => setEditModal({ open: true, client: null })}
                 >
-                  <PlusIcon className="size-7 mr-2" />
+                  <PlusIcon className="mr-2 size-7" />
                   <span>
                     <FormattedMessage
                       id="servicesSettings.downloads.addClient"

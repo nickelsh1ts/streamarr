@@ -2,7 +2,7 @@
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { isValidHttpUrl } from '@app/utils/networkValidation';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
@@ -11,9 +11,9 @@ import {
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import { isValidHttpUrl } from '@app/utils/networkValidation';
 
 const ServicesUptime = () => {
   const intl = useIntl();
@@ -45,7 +45,7 @@ const ServicesUptime = () => {
   }
 
   return (
-    <div className="max-w-6xl mb-10">
+    <div className="mb-10 max-w-6xl">
       <div className="mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
@@ -113,7 +113,7 @@ const ServicesUptime = () => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
@@ -139,13 +139,13 @@ const ServicesUptime = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="externalUrl">
                   <FormattedMessage
                     id="common.externalUrl"
                     defaultMessage="External URL"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
@@ -158,7 +158,7 @@ const ServicesUptime = () => {
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                     />
                   </div>
                   {errors.externalUrl && touched.externalUrl && (
@@ -166,8 +166,8 @@ const ServicesUptime = () => {
                   )}
                 </div>
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -175,7 +175,7 @@ const ServicesUptime = () => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

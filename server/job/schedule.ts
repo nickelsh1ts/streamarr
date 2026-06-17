@@ -1,13 +1,14 @@
+import cleanUpNotifications from '@server/lib/cleanUpNotifications';
+import expiredInvites from '@server/lib/expiredInvites';
 import ImageProxy from '@server/lib/imageproxy';
+import { plexAccess } from '@server/lib/plexAccessLost';
 import refreshToken from '@server/lib/refreshToken';
 import { plexFullScanner } from '@server/lib/scanners/plex';
 import type { JobId } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import trialExpiry from '@server/lib/trialExpiry';
 import logger from '@server/logger';
 import schedule from 'node-schedule';
-import expiredInvites from '@server/lib/expiredInvites';
-import cleanUpNotifications from '@server/lib/cleanUpNotifications';
-import trialExpiry from '@server/lib/trialExpiry';
 
 interface ScheduledJob {
   id: JobId;
@@ -122,6 +123,19 @@ export const startJobs = (): void => {
     }),
     running: () => trialExpiry.status().running,
     cancelFn: () => trialExpiry.cancel(),
+  });
+
+  scheduledJobs.push({
+    id: 'plex-membership-check',
+    name: 'Plex Membership Check',
+    type: 'process',
+    interval: 'minutes',
+    cronSchedule: jobs['plex-membership-check']?.schedule,
+    job: schedule.scheduleJob(jobs['plex-membership-check']?.schedule, () => {
+      plexAccess.run();
+    }),
+    running: () => plexAccess.status().running,
+    cancelFn: () => plexAccess.cancel(),
   });
 
   logger.info('Scheduled jobs loaded', { label: 'Jobs' });

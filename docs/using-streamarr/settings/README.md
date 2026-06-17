@@ -539,19 +539,22 @@ Streamarr performs maintenance tasks as scheduled jobs. You can also run them on
 
 ### Scheduled Jobs
 
-| Job                          | Default Schedule  | Description                                                                           |
-| ---------------------------- | ----------------- | ------------------------------------------------------------------------------------- |
-| **Plex Full Library Scan**   | Daily at 3:00 AM  | Full sync of Plex library metadata                                                    |
-| **Plex Refresh Token**       | Daily at 5:00 AM  | Refresh admin Plex token                                                              |
-| **Image Cache Cleanup**      | Daily at 5:00 AM  | Clean stale cached images                                                             |
-| **Invite & QR Code Cleanup** | Daily at 1:00 AM  | Mark expired invites and clean QR codes                                               |
-| **Notification Cleanup**     | Daily at 1:30 AM  | Clean old notifications                                                               |
-| **Account Expiry Check**     | Daily at 12:00 AM | Check for expired trials and account access, and process trial outcomes / expirations |
+| Job                          | Default Schedule  | Description                                                                                                                                   |
+| ---------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Plex Full Library Scan**   | Daily at 3:00 AM  | Full sync of Plex library metadata                                                                                                            |
+| **Plex Refresh Token**       | Daily at 5:00 AM  | Refresh admin Plex token                                                                                                                      |
+| **Image Cache Cleanup**      | Daily at 5:00 AM  | Clean stale cached images                                                                                                                     |
+| **Invite & QR Code Cleanup** | Daily at 1:00 AM  | Mark expired invites and clean QR codes                                                                                                       |
+| **Notification Cleanup**     | Daily at 1:30 AM  | Clean old notifications                                                                                                                       |
+| **Account Expiry Check**     | Daily at 12:00 AM | Check for expired trials and account access, and process trial outcomes / expirations                                                         |
+| **Plex Membership Check**    | Every 15 minutes  | Validate that active Plex users still exist in the Plex server's shared list; users removed from Plex are deactivated and admins are notified |
 
 Each job row shows the job name, a type badge, the next scheduled execution time, and the available actions.
 
 {% hint style="info" %}
 The **Account Expiry Check** job underpins the [Trial Period](README.md#trial-period) feature—it evaluates trial end dates and account access windows each day. See [Trial Outcome & Extension Requests](README.md#trial-outcome--extension-requests).
+
+The **Plex Membership Check** job detects users who have been removed from the Plex server outside of Streamarr. It uses a single plex.tv API call per run regardless of user count, and only acts on a definitive removal—API outages never deactivate anyone. See [Removed from Plex](../users/README.md#removed-from-plex).
 {% endhint %}
 
 ### Job Status

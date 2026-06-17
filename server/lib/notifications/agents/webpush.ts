@@ -1,18 +1,18 @@
+import { NotificationType } from '@server/constants/notification';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
-import type { NotificationAgentConfig } from '@server/lib/settings';
-import { getSettings, NotificationAgentKey } from '@server/lib/settings';
-import logger from '@server/logger';
-import webpush from 'web-push';
-import { NotificationType } from '@server/constants/notification';
-import type { NotificationAgent, NotificationPayload } from './agent';
-import { BaseAgent } from './agent';
 import {
   ALL_NOTIFICATIONS,
   hasNotificationType,
   shouldSendAdminNotification,
 } from '@server/lib/notifications';
+import type { NotificationAgentConfig } from '@server/lib/settings';
+import { getSettings, NotificationAgentKey } from '@server/lib/settings';
+import logger from '@server/logger';
+import webpush from 'web-push';
+import type { NotificationAgent, NotificationPayload } from './agent';
+import { BaseAgent } from './agent';
 
 interface PushNotificationPayload {
   notificationType: string;

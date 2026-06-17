@@ -1,14 +1,14 @@
-import { User } from '@server/entity/User';
-import { Permission } from '@server/lib/permissions';
-import type { EntitySubscriberInterface, InsertEvent } from 'typeorm';
-import { EventSubscriber } from 'typeorm';
-import { getRepository } from '@server/datasource';
 import {
   NotificationSeverity,
   NotificationType,
 } from '@server/constants/notification';
+import { getRepository } from '@server/datasource';
+import { User } from '@server/entity/User';
 import { userAcceptsNotificationType } from '@server/lib/notifications';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
+import { Permission } from '@server/lib/permissions';
+import type { EntitySubscriberInterface, InsertEvent } from 'typeorm';
+import { EventSubscriber } from 'typeorm';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {

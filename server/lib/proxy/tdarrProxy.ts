@@ -1,9 +1,9 @@
-import type { IncomingMessage } from 'http';
-import type { Socket } from 'net';
-import type { Request, RequestHandler, Response } from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
+import type { Request, RequestHandler, Response } from 'express';
+import type { IncomingMessage } from 'http';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import type { Socket } from 'net';
 
 /** Hardcoded proxy paths for Tdarr (no custom base URL support) */
 export const TDARR_PROXY_PATH = '/tdarr';

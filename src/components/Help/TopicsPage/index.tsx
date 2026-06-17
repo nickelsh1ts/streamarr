@@ -16,11 +16,11 @@ type TopicsPageProps = {
 
 const TopicsPage = ({ heading, subheading, links }: TopicsPageProps) => {
   return (
-    <div className="container mx-auto max-w-screen-md mt-10 text-black px-4">
-      <div className="text-4xl font-extrabold my-7">{heading}</div>
+    <div className="container mx-auto mt-10 max-w-screen-md px-4 text-black">
+      <div className="my-7 text-4xl font-extrabold">{heading}</div>
       <div className="text-neutral">{subheading}</div>
-      <div className="grid grid-cols-1 my-6 gap-2 border rounded-md border-zinc-300 p-4 border-t-8 border-t-primary">
-        <p className="font-extrabold mb-2">
+      <div className="border-t-primary my-6 grid grid-cols-1 gap-2 rounded-md border border-t-8 border-zinc-300 p-4">
+        <p className="mb-2 font-extrabold">
           <FormattedMessage
             id="help.relatedArticles"
             defaultMessage="Related Articles"
@@ -31,9 +31,9 @@ const TopicsPage = ({ heading, subheading, links }: TopicsPageProps) => {
             <Link
               key={i}
               href={link.href}
-              className="flex gap-2 place-items-center hover:brightness-75 hover:text-primary hover:underline border border-zinc-300 p-2 rounded-md"
+              className="hover:text-primary flex place-items-center gap-2 rounded-md border border-zinc-300 p-2 hover:underline hover:brightness-75"
             >
-              <DocumentTextIcon className="w-5 h-5 shrink-0" />
+              <DocumentTextIcon className="h-5 w-5 shrink-0" />
               {link.text}
             </Link>
           );

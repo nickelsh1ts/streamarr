@@ -61,21 +61,21 @@ export default function Modal({
     <Dialog onClose={onCancel} open={show}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity data-closed:opacity-0"
+        className="bg-base-300/30 fixed inset-0 z-1050 w-full backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
       />
       <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-1 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className={`relative transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 w-full ${size === 'sm' ? 'sm:max-w-xl' : size === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-7xl'} border border-primary transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0 data-closed:max-sm:translate-y-full`}
+            className={`relative w-full transform overflow-hidden rounded-lg text-left shadow-md sm:my-8 ${size === 'sm' ? 'sm:max-w-xl' : size === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-7xl'} border-primary border transition duration-300 ease-out data-closed:scale-0 data-closed:opacity-0 data-closed:max-sm:translate-y-full`}
           >
-            <div className="absolute pt-1 pr-1 top-0 right-0 z-10">
+            <div className="absolute top-0 right-0 z-10 pt-1 pr-1">
               <button
                 type="button"
-                className="btn hover:bg-zinc-700 btn-square btn-sm rounded-md"
+                className="btn btn-square btn-sm rounded-md hover:bg-zinc-700"
                 onClick={onCancel}
               >
-                <span className="absolute w-1 h-1 p-0 -m-1 whitespace-nowrap border-0 sr-only">
+                <span className="sr-only absolute -m-1 h-1 w-1 border-0 p-0 whitespace-nowrap">
                   <FormattedMessage id="common.close" defaultMessage="Close" />
                 </span>
                 <svg
@@ -85,7 +85,7 @@ export default function Modal({
                   strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true"
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                 >
                   <path
                     strokeLinecap="round"
@@ -95,18 +95,18 @@ export default function Modal({
                 </svg>
               </button>
             </div>
-            <div className="bg-base-100 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="bg-base-100 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               {loading ? (
                 <div className="my-8">
                   <LoadingEllipsis />
                 </div>
               ) : (
                 <div className="flex items-start">
-                  <div className="mt-3 sm:mt-0 w-full">
+                  <div className="mt-3 w-full sm:mt-0">
                     {title && (
                       <DialogTitle
                         as="h3"
-                        className="text-lg font-semibold leading-6 text-primary"
+                        className="text-primary text-lg leading-6 font-semibold"
                       >
                         {title}
                       </DialogTitle>
@@ -120,7 +120,7 @@ export default function Modal({
                       </div>
                     )}
                     {(onCancel || onOk || onSecondary || onTertiary) && (
-                      <div className="relative mt-5 flex flex-row-reverse sm:mt-4 justify-start">
+                      <div className="relative mt-5 flex flex-row-reverse justify-start sm:mt-4">
                         {typeof onOk === 'function' && okText && (
                           <Button
                             buttonSize="sm"

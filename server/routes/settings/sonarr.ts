@@ -1,9 +1,9 @@
 import SonarrAPI from '@server/api/servarr/sonarr';
+import { arrAuthLimiter } from '@server/lib/rateLimiters';
 import type { SonarrSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
-import { arrAuthLimiter } from '@server/lib/rateLimiters';
 import { Router } from 'express';
 
 const sonarrRoutes = Router();

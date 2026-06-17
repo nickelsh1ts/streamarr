@@ -1,7 +1,7 @@
 @reference '../../../styles/globals.css';
 @import 'react-big-calendar/lib/css/react-big-calendar.css';
 .rbc-header {
-  @apply text-secondary-content bg-secondary items-center justify-center h-9 text-sm;
+  @apply text-secondary-content bg-secondary h-9 items-center justify-center text-sm;
 }
 
 :not(th).rbc-header {
@@ -17,11 +17,11 @@
 }
 
 .react-datepicker__calendar-icon {
-  @apply h-5! w-5! p-1.5! text-primary;
+  @apply text-primary h-5! w-5! p-1.5!;
 }
 
 .react-datepicker__view-calendar-icon input {
-  @apply pt-1.5! pe-7! pb-1.5! ps-2.5!;
+  @apply ps-2.5! pe-7! pt-1.5! pb-1.5!;
 }
 
 h2.react-datepicker__current-month {
@@ -33,7 +33,7 @@ h2.react-datepicker__current-month {
   background-image: none;
 }
 .react-datepicker-popper {
-  @apply max-xl:mx-1.5 z-20!;
+  @apply z-20! max-xl:mx-1.5;
 }
 .rbc-agenda-view {
   @apply overflow-visible;
@@ -77,17 +77,17 @@ h2.react-datepicker__current-month {
   @apply backdrop-blur-md;
 }
 .rbc-show-more {
-  @apply text-primary-content bg-primary/30 backdrop-blur-md hover:text-neutral-content p-0.5 rounded active:text-primary focus:text-primary;
+  @apply text-primary-content bg-primary/30 hover:text-neutral-content active:text-primary focus:text-primary rounded p-0.5 backdrop-blur-md;
 }
 .rbc-overlay {
-  @apply bg-secondary/30 backdrop-blur-md border-secondary rounded-lg;
+  @apply bg-secondary/30 border-secondary rounded-lg backdrop-blur-md;
 }
 
 .rbc-overlay-header {
-  @apply border-0 text-primary-content;
+  @apply text-primary-content border-0;
 }
 .rbc-overlay > .rbc-event-continues-after {
-  @apply rounded-md my-0.5;
+  @apply my-0.5 rounded-md;
 }
 
 @media (hover: none) {
@@ -101,7 +101,7 @@ h2.react-datepicker__current-month {
 }
 .rbc-agenda-date-cell,
 .rbc-agenda-time-cell {
-  @apply max-sm:whitespace-break-spaces max-sm:min-w-20;
+  @apply max-sm:min-w-20 max-sm:whitespace-break-spaces;
 }
 .rbc-agenda-view table.rbc-agenda-table thead > tr > th {
   @apply max-sm:min-w-20 max-sm:whitespace-break-spaces;

@@ -2,40 +2,40 @@
 import Error from '@app/app/error';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LoadingEllipsis, {
   SmallLoadingEllipsis,
 } from '@app/components/Common/LoadingEllipsis';
-import QuotaSelector from '@app/components/QuotaSelector';
 import Toggle from '@app/components/Common/Toggle';
+import LibrarySelector from '@app/components/LibrarySelector';
+import QuotaSelector from '@app/components/QuotaSelector';
+import Toast, { dismissToast } from '@app/components/Toast';
 import type { AvailableLocale } from '@app/context/LanguageContext';
 import { availableLanguages } from '@app/context/LanguageContext';
+import { useOnboardingContext } from '@app/context/OnboardingContext';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
+import { momentWithLocale } from '@app/utils/momentLocale';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import axios from 'axios';
-import { Field, Form, Formik } from 'formik';
-import { useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import useSWR from 'swr';
-import Toast, { dismissToast } from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
   CheckIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
+  PaperAirplaneIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import axios from 'axios';
+import { Field, Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
-import LibrarySelector from '@app/components/LibrarySelector';
-import { momentWithLocale } from '@app/utils/momentLocale';
+import { useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { useOnboardingContext } from '@app/context/OnboardingContext';
 import 'react-datepicker/dist/react-datepicker.css';
-import ConfirmButton from '@app/components/Common/ConfirmButton';
-import PythonServiceAlert from '@app/components/Admin/Settings/PythonServiceAlert';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 const UserSettingsGeneral = () => {
   const intl = useIntl();
@@ -43,6 +43,7 @@ const UserSettingsGeneral = () => {
   const { resetOnboarding, data: onboardingData } = useOnboardingContext();
   const [inviteQuotaEnabled, setInviteQuotaEnabled] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
+  const [isReactivating, setIsReactivating] = useState(false);
   const [isRequestingExtension, setIsRequestingExtension] = useState(false);
   const searchParams = useParams<{ userid: string }>();
   const {
@@ -68,6 +69,7 @@ const UserSettingsGeneral = () => {
   } = useSWR<{
     currentPlexLibraries: string | null;
     canFetchFromPlex: boolean;
+    existsInPlex?: boolean;
     permissions?: {
       allowSync: boolean;
       allowCameraUpload: boolean;
@@ -158,6 +160,67 @@ const UserSettingsGeneral = () => {
     };
   }, [data, plexLibrariesData, allLibrariesData]);
 
+  const userRemovedFromPlex = plexLibrariesData?.existsInPlex === false;
+
+  useEffect(() => {
+    if (userRemovedFromPlex && user?.active) {
+      revalidateUser();
+    }
+  }, [userRemovedFromPlex, user?.active, revalidateUser]);
+
+  const showReactivate =
+    user?.userType === UserType.PLEX &&
+    user?.id !== 1 &&
+    currentUser?.id !== user?.id &&
+    currentHasPermission(Permission.MANAGE_USERS) &&
+    (userRemovedFromPlex || user?.active === false);
+
+  const reactivateUser = async () => {
+    setIsReactivating(true);
+    try {
+      const response = await axios.post(
+        `/api/v1/user/${user?.id}/settings/reinvite`
+      );
+
+      if (response.data?.plexInvite === 'invited') {
+        Toast({
+          title: intl.formatMessage({
+            id: 'settings.reinviteSuccess',
+            defaultMessage: 'User reinvited successfully!',
+          }),
+          type: 'success',
+          icon: <CheckBadgeIcon className="size-7" />,
+        });
+      } else {
+        Toast({
+          title: intl.formatMessage({
+            id: 'settings.reinviteFailed',
+            defaultMessage:
+              'The Plex invite failed and the user remains deactivated.',
+          }),
+          message: response.data?.plexInviteError,
+          type: 'error',
+          icon: <ExclamationTriangleIcon className="size-7" />,
+        });
+      }
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'settings.reinviteError',
+          defaultMessage: 'Failed to reinvite user.',
+        }),
+        message: e.response?.data?.message || e.message,
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsReactivating(false);
+      revalidateUser();
+      revalidate();
+      revalidatePlexLibraries();
+    }
+  };
+
   if (!data && !error) {
     return <LoadingEllipsis />;
   }
@@ -173,7 +236,7 @@ const UserSettingsGeneral = () => {
   }
 
   return (
-    <div className="mb-6 mt-3">
+    <div className="mt-3 mb-6">
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage
           id="generalSettings.title"
@@ -208,21 +271,10 @@ const UserSettingsGeneral = () => {
         }}
         enableReinitialize
         onSubmit={async (values) => {
-          // Handle previous values correctly to detect changes
-          const previousSharedLibraries =
-            data?.sharedLibraries === null
-              ? 'server'
-              : data?.sharedLibraries && data?.sharedLibraries !== ''
-                ? data.sharedLibraries
-                : 'server';
-
           const newSharedLibraries =
             values.sharedLibraries === 'server' || values.sharedLibraries === ''
               ? 'server'
               : values.sharedLibraries;
-
-          const librariesChanged =
-            previousSharedLibraries !== (newSharedLibraries || 'server');
 
           const isPlexUser = user?.userType === UserType.PLEX;
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
@@ -281,7 +333,7 @@ const UserSettingsGeneral = () => {
               }
             }
 
-            await axios.post(
+            const response = await axios.post(
               `/api/v1/user/${user?.id}/settings/main`,
               submitData
             );
@@ -294,23 +346,53 @@ const UserSettingsGeneral = () => {
               );
             }
 
-            Toast({
-              title: intl.formatMessage({
-                id: 'common.saveSuccess',
-                defaultMessage: 'Settings saved successfully!',
-              }),
-              type: 'success',
-              icon: <CheckBadgeIcon className="size-7" />,
-              message:
-                isPlexUser &&
-                canManageUsers &&
-                (librariesChanged || shouldForceSync)
-                  ? intl.formatMessage({
-                      id: 'settings.librariesSynced',
-                      defaultMessage: 'Libraries have been synced with Plex.',
-                    })
-                  : undefined,
-            });
+            const plexSyncStatus = response.data?.plexSync;
+
+            if (plexSyncStatus === 'removed') {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'settings.savedUserRemovedFromPlex',
+                  defaultMessage: 'Settings saved, but user not found in Plex.',
+                }),
+                message: intl.formatMessage({
+                  id: 'settings.savedUserRemovedFromPlexMessage',
+                  defaultMessage:
+                    'This user was removed from the Plex server and their account has been deactivated.',
+                }),
+                type: 'warning',
+                icon: <ExclamationTriangleIcon className="size-7" />,
+              });
+            } else if (plexSyncStatus === 'failed') {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'settings.savedPlexSyncFailed',
+                  defaultMessage: 'Settings saved, but Plex sync failed.',
+                }),
+                message: intl.formatMessage({
+                  id: 'settings.savedPlexSyncFailedMessage',
+                  defaultMessage:
+                    'Your changes were saved, but they could not be synced with Plex.',
+                }),
+                type: 'warning',
+                icon: <ExclamationTriangleIcon className="size-7" />,
+              });
+            } else {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'common.saveSuccess',
+                  defaultMessage: 'Settings saved successfully!',
+                }),
+                type: 'success',
+                icon: <CheckBadgeIcon className="size-7" />,
+                message:
+                  plexSyncStatus === 'synced'
+                    ? intl.formatMessage({
+                        id: 'settings.librariesSynced',
+                        defaultMessage: 'Libraries have been synced with Plex.',
+                      })
+                    : undefined,
+              });
+            }
           } catch (e) {
             Toast({
               title: intl.formatMessage({
@@ -341,22 +423,28 @@ const UserSettingsGeneral = () => {
           return (
             <Form className="mt-5">
               <div className="max-w-6xl space-y-5">
-                <PythonServiceAlert />
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <div className="col-span-1">
                     <FormattedMessage
                       id="settings.accountType"
                       defaultMessage="Account Type"
                     />
                   </div>
-                  <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
+                  <div className="mb-1 text-sm leading-5 font-medium sm:mt-2">
                     <div className="flex max-w-lg items-center">
                       {!user?.active ? (
                         <Badge badgeType="error">
-                          <FormattedMessage
-                            id="common.expired"
-                            defaultMessage="Expired"
-                          />
+                          {user?.accessRevokedReason === 'plex_removed' ? (
+                            <FormattedMessage
+                              id="common.deactivated"
+                              defaultMessage="Deactivated"
+                            />
+                          ) : (
+                            <FormattedMessage
+                              id="common.expired"
+                              defaultMessage="Expired"
+                            />
+                          )}
                         </Badge>
                       ) : user?.userType === UserType.PLEX ? (
                         <Badge badgeType="warning">
@@ -376,11 +464,11 @@ const UserSettingsGeneral = () => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <div className="col-span-1">
                     <FormattedMessage id="common.role" defaultMessage="Role" />
                   </div>
-                  <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
+                  <div className="mb-1 text-sm leading-5 font-medium sm:mt-2">
                     <div className="flex max-w-lg items-center">
                       {user?.id === 1 ? (
                         <FormattedMessage
@@ -401,7 +489,7 @@ const UserSettingsGeneral = () => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="displayName" className="col-span-1">
                     <FormattedMessage
                       id="common.displayName"
@@ -425,7 +513,7 @@ const UserSettingsGeneral = () => {
                       )}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="locale" className="col-span-1">
                     <FormattedMessage
                       id="common.displayLanguage"
@@ -466,13 +554,13 @@ const UserSettingsGeneral = () => {
                   currentHasPermission(Permission.MANAGE_USERS) &&
                   !hasPermission(Permission.MANAGE_USERS) && (
                     <>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                      <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                         <label htmlFor="plexAccess" className="col-span-1">
                           <FormattedMessage
                             id="settings.plexAccess"
                             defaultMessage="Plex Access"
                           />
-                          <span className="block text-xs text-neutral mt-1">
+                          <span className="text-neutral mt-1 block text-xs">
                             <FormattedMessage
                               id="settings.plexAccessDescription"
                               defaultMessage="Changes will sync with Plex automatically on save."
@@ -482,7 +570,7 @@ const UserSettingsGeneral = () => {
                         <div className="col-span-2">
                           {plexLibrariesLoading ? (
                             <div className="animate-pulse">
-                              <div className="h-10 bg-neutral/20 rounded-md"></div>
+                              <div className="bg-neutral/20 h-10 rounded-md"></div>
                             </div>
                           ) : (
                             <>
@@ -495,13 +583,13 @@ const UserSettingsGeneral = () => {
                               {plexLibrariesDiffer &&
                                 plexLibrariesData?.currentPlexLibraries !==
                                   null && (
-                                  <div className="mt-2 text-sm text-warning">
-                                    <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
+                                  <div className="text-warning mt-2 text-sm">
+                                    <ExclamationTriangleIcon className="mr-1 inline h-5 w-5" />
                                     <FormattedMessage
                                       id="settings.librariesDifferWarning"
                                       defaultMessage="Plex access differs from current settings:"
                                     />
-                                    <span className="font-bold mx-1">
+                                    <span className="mx-1 font-bold">
                                       {plexLibrariesData.currentPlexLibraries ===
                                       '' ? (
                                         <FormattedMessage
@@ -532,13 +620,22 @@ const UserSettingsGeneral = () => {
                                     />
                                   </div>
                                 )}
+                              {userRemovedFromPlex && (
+                                <div className="text-warning mt-2 text-sm">
+                                  <ExclamationTriangleIcon className="mr-1 inline h-5 w-5" />
+                                  <FormattedMessage
+                                    id="settings.userRemovedFromPlexWarning"
+                                    defaultMessage="This user was removed from the Plex server and their account has been deactivated. You can reinvite them below."
+                                  />
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 sm:space-x-2">
                         <div className="col-span-1"></div>
-                        <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-2">
+                        <div className="col-span-2 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {!plexLibrariesLoading ? (
                             <>
                               <Toggle
@@ -594,13 +691,13 @@ const UserSettingsGeneral = () => {
                             </>
                           ) : (
                             <>
-                              <div className="inline-flex items-center space-x-2 animate-pulse">
+                              <div className="inline-flex animate-pulse items-center space-x-2">
                                 <span
                                   className={`${
                                     values.allowDownloads
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } ring-primary relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -617,7 +714,7 @@ const UserSettingsGeneral = () => {
                                           : 'opacity-100 duration-200 ease-in'
                                       } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                                     >
-                                      <XMarkIcon className="h-3 w-3 text-neutral" />
+                                      <XMarkIcon className="text-neutral h-3 w-3" />
                                     </span>
                                     <span
                                       className={`${
@@ -626,7 +723,7 @@ const UserSettingsGeneral = () => {
                                           : 'opacity-0 duration-100 ease-out'
                                       } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                                     >
-                                      <CheckIcon className="h-3 w-3 text-neutral" />
+                                      <CheckIcon className="text-neutral h-3 w-3" />
                                     </span>
                                   </span>
                                 </span>
@@ -637,13 +734,13 @@ const UserSettingsGeneral = () => {
                                   />
                                 </span>
                               </div>
-                              <div className="inline-flex items-center space-x-2 animate-pulse">
+                              <div className="inline-flex animate-pulse items-center space-x-2">
                                 <span
                                   className={`${
                                     values.allowLiveTv
                                       ? 'bg-primary/70'
                                       : 'bg-neutral/70'
-                                  } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-primary focus:ring`}
+                                  } ring-primary relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring focus:outline-none`}
                                 >
                                   <span
                                     aria-hidden="true"
@@ -660,7 +757,7 @@ const UserSettingsGeneral = () => {
                                           : 'opacity-100 duration-200 ease-in'
                                       } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                                     >
-                                      <XMarkIcon className="h-3 w-3 text-neutral" />
+                                      <XMarkIcon className="text-neutral h-3 w-3" />
                                     </span>
                                     <span
                                       className={`${
@@ -669,7 +766,7 @@ const UserSettingsGeneral = () => {
                                           : 'opacity-0 duration-100 ease-out'
                                       } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                                     >
-                                      <CheckIcon className="h-3 w-3 text-neutral" />
+                                      <CheckIcon className="text-neutral h-3 w-3" />
                                     </span>
                                   </span>
                                 </span>
@@ -687,23 +784,23 @@ const UserSettingsGeneral = () => {
                         <div className="col-span-2">
                           {plexPermissionsDiffer.allowDownloads && (
                             <>
-                              <div className="text-sm text-warning">
-                                <ExclamationTriangleIcon className="inline h-5 w-5 mr-1" />
+                              <div className="text-warning text-sm">
+                                <ExclamationTriangleIcon className="mr-1 inline h-5 w-5" />
                                 <FormattedMessage
                                   id="settings.permissionsDifferWarning"
                                   defaultMessage="Plex permissions differ from current settings:"
                                 />
                                 {plexPermissionsDiffer.allowDownloads && (
-                                  <span className="font-bold ml-1">
+                                  <span className="ml-1 font-bold">
                                     <FormattedMessage
                                       id="settings.allowDownloads"
                                       defaultMessage="Allow Downloads"
                                     />
                                     {plexLibrariesData?.permissions
                                       ?.allowSync ? (
-                                      <CheckCircleIcon className="inline h-5 w-5 ml-1 text-success mb-0.5" />
+                                      <CheckCircleIcon className="text-success mb-0.5 ml-1 inline h-5 w-5" />
                                     ) : (
-                                      <XCircleIcon className="inline h-5 w-5 ml-1 text-error mb-0.5" />
+                                      <XCircleIcon className="text-error mb-0.5 ml-1 inline h-5 w-5" />
                                     )}
                                   </span>
                                 )}
@@ -717,8 +814,8 @@ const UserSettingsGeneral = () => {
                           {plexLibrariesData?.permissions &&
                             values.allowDownloads !==
                               plexLibrariesData.permissions.allowSync && (
-                              <div className="text-sm text-error">
-                                <ExclamationCircleIcon className="inline h-5 w-5 mr-1" />
+                              <div className="text-error text-sm">
+                                <ExclamationCircleIcon className="mr-1 inline h-5 w-5" />
                                 <FormattedMessage
                                   id="settings.permissionsWillSyncWarning"
                                   defaultMessage="Changing these permissions will briefly remove and re-add the user's Plex server access to apply the changes."
@@ -730,16 +827,17 @@ const UserSettingsGeneral = () => {
                     </>
                   )}
                 {user?.userType === UserType.PLEX &&
+                  user?.active &&
                   (user?.id === currentUser.id ||
                     (currentHasPermission(Permission.MANAGE_USERS) &&
                       !hasPermission(Permission.MANAGE_USERS))) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <div className="col-span-1">
                         <FormattedMessage
                           id="settings.pinLibraries"
                           defaultMessage="Pin Libraries"
                         />
-                        <span className="block text-xs text-neutral mt-1">
+                        <span className="text-neutral mt-1 block text-xs">
                           <FormattedMessage
                             id="settings.pinLibrariesHelp"
                             defaultMessage="Pin all your shared libraries to the Plex home screen"
@@ -839,7 +937,7 @@ const UserSettingsGeneral = () => {
                   )}
                 {currentHasPermission(Permission.MANAGE_USERS) &&
                   !hasPermission(Permission.MANAGE_USERS) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <div className="col-span-1">
                         <span>
                           <FormattedMessage
@@ -890,13 +988,13 @@ const UserSettingsGeneral = () => {
                   user?.id !== 1 &&
                   !hasPermission(Permission.MANAGE_USERS) &&
                   data?.globalEnableTrialPeriod && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <div className="col-span-1">
                         <FormattedMessage
                           id="settings.trialPeriod"
                           defaultMessage="Trial Period"
                         />
-                        <span className="block text-xs text-neutral mt-1">
+                        <span className="text-neutral mt-1 block text-xs">
                           {values.trialPeriodOutcome === 'promote' ? (
                             <FormattedMessage
                               id="settings.ExpiredTrialPeriodDescriptionPromote"
@@ -916,7 +1014,7 @@ const UserSettingsGeneral = () => {
                           )}
                           {data?.trialExtensionRequested && (
                             <div className="my-2 flex flex-wrap items-center gap-1">
-                              <ExclamationTriangleIcon className="h-5 w-5 text-warning mt-1" />
+                              <ExclamationTriangleIcon className="text-warning mt-1 h-5 w-5" />
                               <Badge badgeType="warning">
                                 <FormattedMessage
                                   id="settings.accessExtensionRequested"
@@ -955,12 +1053,12 @@ const UserSettingsGeneral = () => {
                             />
                           </label>
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 mb-2">
+                        <div className="mb-2 flex flex-wrap items-center gap-4">
                           <Field
                             as="select"
                             id="trialPeriodOutcome"
                             name="trialPeriodOutcome"
-                            className="select select-sm select-primary rounded-md w-auto min-w-32 shrink-0 disabled:border disabled:border-primary/40 disabled:opacity-40"
+                            className="select select-sm select-primary disabled:border-primary/40 w-auto min-w-32 shrink-0 rounded-md disabled:border disabled:opacity-40"
                             disabled={!values.trialPeriodEnabled}
                           >
                             <option value="promote">
@@ -1008,9 +1106,7 @@ const UserSettingsGeneral = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
-                                className={`absolute right-0 w-5! h-5! p-1.5! text-primary
-                                  ${values.trialPeriodEnabled ? '' : 'opacity-50'}
-                                `}
+                                className={`text-primary absolute right-0 h-5! w-5! p-1.5! ${values.trialPeriodEnabled ? '' : 'opacity-50'} `}
                               >
                                 <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
                                 <path
@@ -1020,7 +1116,7 @@ const UserSettingsGeneral = () => {
                                 />
                               </svg>
                             }
-                            className={`input input-sm input-primary pl-2! rounded-md disabled:border disabled:border-primary/40 disabled:opacity-40 ${
+                            className={`input input-sm input-primary disabled:border-primary/40 rounded-md pl-2! disabled:border disabled:opacity-40 ${
                               errors.trialPeriodEndsAt &&
                               touched.trialPeriodEndsAt
                                 ? 'input-error'
@@ -1030,7 +1126,7 @@ const UserSettingsGeneral = () => {
                         </div>
                         {errors.trialPeriodEndsAt &&
                           touched.trialPeriodEndsAt && (
-                            <div className="text-sm text-error mt-1">
+                            <div className="text-error mt-1 text-sm">
                               {errors.trialPeriodEndsAt}
                             </div>
                           )}
@@ -1043,13 +1139,13 @@ const UserSettingsGeneral = () => {
                       !!data?.trialPeriodEndsAt &&
                       user?.settings?.trialPeriodOutcome !== 'promote')) &&
                   !currentHasPermission(Permission.MANAGE_USERS) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <div className="col-span-1">
                         <FormattedMessage
                           id="settings.accessExtensionRequest.title"
                           defaultMessage="Access Extension"
                         />
-                        <span className="block text-xs text-neutral mt-1">
+                        <span className="text-neutral mt-1 block text-xs">
                           <FormattedMessage
                             id="settings.accessExtensionRequest.description"
                             defaultMessage="Request an access extension from administrators."
@@ -1106,7 +1202,7 @@ const UserSettingsGeneral = () => {
                           ) : isRequestingExtension ? (
                             <FormattedMessage
                               id="settings.accessExtensionRequest.submitting"
-                              defaultMessage="Sending Request..."
+                              defaultMessage="Sending Request…"
                             />
                           ) : (
                             <FormattedMessage
@@ -1128,13 +1224,13 @@ const UserSettingsGeneral = () => {
                     onboardingData?.status?.tutorialCompleted ||
                     (onboardingData?.status?.tutorialProgress?.length ?? 0) >
                       0) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                    <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                       <div className="col-span-1">
                         <FormattedMessage
                           id="common.onboarding"
                           defaultMessage="Onboarding"
                         />
-                        <span className="block text-xs text-neutral mt-1">
+                        <span className="text-neutral mt-1 block text-xs">
                           <FormattedMessage
                             id="settings.user.onboardingDescription"
                             defaultMessage="Reset the welcome modal and tutorial {ownProfile, select, true {} other {for this user}}"
@@ -1190,8 +1286,34 @@ const UserSettingsGeneral = () => {
                     </div>
                   )}
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
+                {showReactivate && (
+                  <span className="inline-flex rounded-md shadow-sm">
+                    <Button
+                      buttonType="accent"
+                      buttonSize="sm"
+                      type="button"
+                      disabled={isReactivating}
+                      onClick={() => reactivateUser()}
+                    >
+                      <PaperAirplaneIcon className="mr-2 size-4" />
+                      <span>
+                        {isReactivating ? (
+                          <FormattedMessage
+                            id="settings.reinviting"
+                            defaultMessage="Reinviting…"
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="settings.reinvite"
+                            defaultMessage="Reinvite"
+                          />
+                        )}
+                      </span>
+                    </Button>
+                  </span>
+                )}
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -1199,7 +1321,7 @@ const UserSettingsGeneral = () => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

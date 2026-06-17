@@ -33,6 +33,7 @@
   - [Gotify](using-streamarr/notifications/gotify.md)
   - [ntfy](using-streamarr/notifications/ntfy.md)
   - [Webhook](using-streamarr/notifications/webhook.md)
+- [Newsletters](using-streamarr/newsletters/README.md)
 - [Progressive Web App (PWA)](using-streamarr/pwa.md)
 - [Help Centre](using-streamarr/help.md)
 

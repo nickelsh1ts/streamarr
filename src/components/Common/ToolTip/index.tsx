@@ -61,7 +61,7 @@ const Tooltip = ({
             >
               {!tooltipConfig?.followCursor && (
                 <svg
-                  className="fill-base-300 block w-4 h-2"
+                  className="fill-base-300 block h-2 w-4"
                   viewBox="0 0 30 10"
                   preserveAspectRatio="none"
                 >

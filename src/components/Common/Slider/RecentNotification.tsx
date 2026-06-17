@@ -1,6 +1,6 @@
-import { withProperties } from '@app/utils/typeHelpers';
-import type Notification from '@server/entity/Notification';
+import { useInView } from '@app/hooks/useElementInView';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
+import { withProperties } from '@app/utils/typeHelpers';
 import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
@@ -8,12 +8,12 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import { NotificationSeverity } from '@server/constants/notification';
+import type Notification from '@server/entity/Notification';
 import { useRef } from 'react';
-import { useInView } from '@app/hooks/useElementInView';
 
 const NotificationCardPlaceholder = () => {
   return (
-    <div className="relative w-72 sm:w-96 animate-pulse rounded-xl bg-base-200 p-4">
+    <div className="bg-base-200 relative w-72 animate-pulse rounded-xl p-4 sm:w-96">
       <div className="w-24 sm:w-24">
         <div className="w-full" style={{ paddingBottom: '100%' }} />
       </div>
@@ -63,19 +63,19 @@ const RecentNotification = ({ notification }: RecentNotificationProps) => {
 
   return (
     <div
-      className={`w-72 sm:w-96 h-32 border border-primary bg-base-100 p-4 rounded-xl content-center relative`}
+      className={`border-primary bg-base-100 relative h-32 w-72 content-center rounded-xl border p-4 sm:w-96`}
     >
       <div className="absolute top-0 right-0 m-2 size-7">{icon}</div>
       <div>
-        <p className="truncate text-sm font-semibold me-6">
+        <p className="me-6 truncate text-sm font-semibold">
           {notification?.subject}
         </p>
-        <div className="w-full h-full">
-          <p className="py-1 leading-5 whitespace-normal line-clamp-3">
+        <div className="h-full w-full">
+          <p className="line-clamp-3 py-1 leading-5 whitespace-normal">
             {notification?.message}
           </p>
         </div>
-        <p className="text-xs text-end truncate w-full text-neutral">
+        <p className="text-neutral w-full truncate text-end text-xs">
           {moment(notification?.createdAt).fromNow()}
         </p>
       </div>

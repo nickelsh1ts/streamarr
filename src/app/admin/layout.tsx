@@ -1,15 +1,15 @@
 'use client';
+import ServiceFrameContainer from '@app/components/Admin/ServiceFrameContainer';
 import type { AdminRoute } from '@app/components/Common/AdminTabs';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import ServiceFrameContainer from '@app/components/Admin/ServiceFrameContainer';
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { useUser } from '@app/hooks/useUser';
 import { Permission } from '@server/lib/permissions';
 import type {
   RadarrSettings,
-  SonarrSettings,
   ServiceSettings,
+  SonarrSettings,
 } from '@server/lib/settings';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -178,7 +178,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="max-sm:mb-14">
-      <div className="mt-2 px-4">
+      <div className="relative z-10 mt-2 px-4">
         <AdminTabs AdminRoutes={visibleRoutes} dataTutorial="admin-tabs" />
       </div>
       <div>

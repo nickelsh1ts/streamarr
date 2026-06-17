@@ -16,14 +16,16 @@ export interface PlexLibraryItem {
   parentRatingKey?: string;
   grandparentRatingKey?: string;
   title: string;
+  parentTitle?: string;
   grandparentTitle?: string;
   guid: string;
   parentGuid?: string;
   grandparentGuid?: string;
   addedAt: number;
   updatedAt: number;
+  year?: number;
   Guid?: { id: string }[];
-  type: 'movie' | 'show' | 'season' | 'episode';
+  type: 'movie' | 'show' | 'season' | 'episode' | 'artist' | 'album' | 'track';
   Media: Media[];
 }
 
@@ -38,6 +40,12 @@ export class PlexNotFoundError extends Error {
 
 interface PlexLibraryResponse {
   MediaContainer: { totalSize: number; Metadata: PlexLibraryItem[] };
+}
+
+interface PlexLibraryLabelsResponse {
+  MediaContainer: {
+    Directory?: { key: string; title: string }[];
+  };
 }
 
 export interface PlexLibrary {
@@ -264,13 +272,27 @@ class PlexAPI extends ExternalAPI {
   public async getRecentlyAdded(
     id: string,
     options: { addedAt: number } = { addedAt: Date.now() - 1000 * 60 * 60 },
-    mediaType: 'movie' | 'show'
+    libraryType: 'movie' | 'show' | 'artist' | 'photo' | 'other' = 'movie'
   ): Promise<PlexLibraryItem[]> {
     try {
+      // Map a Streamarr library type to the Plex metadata type to query.
+      // Shows return their recently added episodes (type 4); music returns
+      // albums (type 9). Types without a meaningful "recently added" unit
+      // fall back to the library's default listing.
+      const plexType: Record<string, number | undefined> = {
+        movie: 1,
+        show: 4,
+        artist: 9,
+        photo: 13,
+        other: undefined,
+      };
+      const type = plexType[libraryType];
+      const typeQuery = type !== undefined ? `type=${type}&` : '';
+
       const response = await this.get<PlexLibraryResponse>(
-        `/library/sections/${id}/all?type=${
-          mediaType === 'show' ? '4' : '1'
-        }&sort=addedAt%3Adesc&addedAt>>=${Math.floor(options.addedAt / 1000)}`,
+        `/library/sections/${id}/all?${typeQuery}sort=addedAt%3Adesc&addedAt>>=${Math.floor(
+          options.addedAt / 1000
+        )}&includeGuids=1`,
         {
           headers: {
             'X-Plex-Container-Start': '0',
@@ -278,13 +300,71 @@ class PlexAPI extends ExternalAPI {
           },
         }
       );
-      return response.MediaContainer.Metadata;
+      return response.MediaContainer.Metadata ?? [];
     } catch (e) {
       logger.error('Failed to fetch Plex recently added', {
         label: 'Plex API',
         errorMessage: e instanceof Error ? e.message : String(e),
       });
       throw new Error('Failed to fetch Plex recently added');
+    }
+  }
+
+  public async getLibraryLabels(
+    sectionId: string
+  ): Promise<{ key: string; title: string }[]> {
+    try {
+      const response = await this.get<PlexLibraryLabelsResponse>(
+        `/library/sections/${sectionId}/label`,
+        undefined,
+        300
+      );
+      return (response.MediaContainer.Directory ?? []).map((directory) => ({
+        key: directory.key,
+        title: directory.title,
+      }));
+    } catch (e) {
+      logger.error('Failed to fetch Plex library labels', {
+        label: 'Plex API',
+        sectionId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex library labels');
+    }
+  }
+
+  public async getLabeledItems(
+    sectionId: string,
+    label: string
+  ): Promise<PlexLibraryItem[]> {
+    try {
+      const labels = await this.getLibraryLabels(sectionId);
+      const match = labels.find(
+        (libraryLabel) =>
+          libraryLabel.title.toLowerCase() === label.toLowerCase()
+      );
+
+      if (!match) {
+        return [];
+      }
+
+      const response = await this.get<PlexLibraryResponse>(
+        `/library/sections/${sectionId}/all?label=${match.key}&includeGuids=1`,
+        {
+          headers: {
+            'X-Plex-Container-Start': '0',
+            'X-Plex-Container-Size': '100',
+          },
+        }
+      );
+      return response.MediaContainer.Metadata ?? [];
+    } catch (e) {
+      logger.error('Failed to fetch Plex labeled items', {
+        label: 'Plex API',
+        sectionId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error('Failed to fetch Plex labeled items');
     }
   }
 

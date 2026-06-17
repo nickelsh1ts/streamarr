@@ -1,18 +1,18 @@
 'use client';
-import type {
-  TutorialStepResponse,
-  WelcomeContentResponse,
-} from '@server/interfaces/api/onboardingInterfaces';
-import { WelcomeContentType } from '@server/entity/WelcomeContent';
-import { TutorialMode, TooltipPosition } from '@server/entity/TutorialStep';
 import {
   BellAlertIcon,
   Cog6ToothIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/solid';
-import type { IntlShape } from 'react-intl';
-import React from 'react';
+import { TooltipPosition, TutorialMode } from '@server/entity/TutorialStep';
+import { WelcomeContentType } from '@server/entity/WelcomeContent';
+import type {
+  TutorialStepResponse,
+  WelcomeContentResponse,
+} from '@server/interfaces/api/onboardingInterfaces';
 import Image from 'next/image';
+import React from 'react';
+import type { IntlShape } from 'react-intl';
 
 export interface AdminWelcomeSlide extends WelcomeContentResponse {
   icon?: React.ReactNode;
@@ -47,7 +47,7 @@ export function getAdminWelcomeSlides(intl: IntlShape): AdminWelcomeSlide[] {
             width={96}
             height={96}
             unoptimized
-            className="w-24 h-24 object-contain"
+            className="h-24 w-24 object-contain"
           />
         </span>
       ),
@@ -69,7 +69,7 @@ export function getAdminWelcomeSlides(intl: IntlShape): AdminWelcomeSlide[] {
       videoAutoplay: false,
       createdAt: now,
       updatedAt: now,
-      icon: <UserGroupIcon className="h-24 w-24 text-primary mx-auto" />,
+      icon: <UserGroupIcon className="text-primary mx-auto h-24 w-24" />,
     },
     {
       id: -3,
@@ -88,7 +88,7 @@ export function getAdminWelcomeSlides(intl: IntlShape): AdminWelcomeSlide[] {
       videoAutoplay: false,
       createdAt: now,
       updatedAt: now,
-      icon: <Cog6ToothIcon className="h-24 w-24 text-primary mx-auto" />,
+      icon: <Cog6ToothIcon className="text-primary mx-auto h-24 w-24" />,
     },
     {
       id: -4,
@@ -107,7 +107,7 @@ export function getAdminWelcomeSlides(intl: IntlShape): AdminWelcomeSlide[] {
       videoAutoplay: false,
       createdAt: now,
       updatedAt: now,
-      icon: <BellAlertIcon className="h-24 w-24 text-primary mx-auto" />,
+      icon: <BellAlertIcon className="text-primary mx-auto h-24 w-24" />,
     },
   ];
 }

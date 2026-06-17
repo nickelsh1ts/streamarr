@@ -1,13 +1,30 @@
 'use client';
-import Header from 'components/Common/Header';
+import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import ProgressCircle from '@app/components/Common/ProgressCircle';
+import InviteModal from '@app/components/InviteList/InviteModal';
+import InviteCard from '@app/components/InviteList/InvitesCard';
+import InviteShareModal from '@app/components/InviteList/InviteShareModal';
+import Toast from '@app/components/Toast';
+import useRouteGuard from '@app/hooks/useRouteGuard';
+import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
+import { momentWithLocale } from '@app/utils/momentLocale';
 import {
-  FunnelIcon,
   BarsArrowDownIcon,
+  CheckBadgeIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  FunnelIcon,
   XCircleIcon,
-  CheckBadgeIcon,
 } from '@heroicons/react/24/solid';
+import type Invite from '@server/entity/Invite';
+import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
+import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
+import { Permission } from '@server/lib/permissions';
+import axios from 'axios';
+import Header from 'components/Common/Header';
 import {
   useParams,
   usePathname,
@@ -15,25 +32,8 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import useRouteGuard from '@app/hooks/useRouteGuard';
-import { Permission } from '@server/lib/permissions';
-import { useUser } from '@app/hooks/useUser';
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import useSWR from 'swr';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Button from '@app/components/Common/Button';
-import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
-import InviteCard from '@app/components/InviteList/InvitesCard';
-import ProgressCircle from '@app/components/Common/ProgressCircle';
-import InviteModal from '@app/components/InviteList/InviteModal';
-import axios from 'axios';
-import type Invite from '@server/entity/Invite';
-import Toast from '@app/components/Toast';
-import InviteShareModal from '@app/components/InviteList/InviteShareModal';
-import useSettings from '@app/hooks/useSettings';
-import Alert from '@app/components/Common/Alert';
-import { momentWithLocale } from '@app/utils/momentLocale';
 
 enum Filter {
   ALL = 'all',
@@ -297,7 +297,7 @@ const InviteList = () => {
 
   return (
     <>
-      <div className="w-full self-center mb-4">
+      <div className="mb-4 w-full self-center">
         <div className="flex flex-col justify-between lg:flex-row lg:items-end">
           <Header
             subtext={subtextItems?.reduce((prev, curr) => (
@@ -312,8 +312,8 @@ const InviteList = () => {
             />
           </Header>
           <div className="mt-2 flex grow flex-col sm:flex-row lg:grow-0">
-            <div className="mb-2 flex grow sm:mb-0 sm:mr-2 lg:grow-0">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm">
+            <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
+              <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
                 <FunnelIcon className="h-6 w-6" />
               </span>
               <select
@@ -324,7 +324,7 @@ const InviteList = () => {
                 onChange={(e) => {
                   setCurrentFilter(e.target.value as Filter);
                 }}
-                className="select select-sm select-primary rounded-l-none w-full flex-1"
+                className="select select-sm select-primary w-full flex-1 rounded-l-none"
               >
                 <option value="all">
                   <FormattedMessage id="common.all" defaultMessage="All" />
@@ -355,8 +355,8 @@ const InviteList = () => {
                 </option>
               </select>
             </div>
-            <div className="mb-2 flex grow sm:mb-0 lg:grow-0 sm:mr-2">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+            <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
+              <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                 <BarsArrowDownIcon className="h-6 w-6" />
               </span>
               <select
@@ -367,7 +367,7 @@ const InviteList = () => {
                   setCurrentSort(e.target.value as Sort);
                 }}
                 value={currentSort}
-                className="select select-sm select-primary rounded-l-none w-full flex-1"
+                className="select select-sm select-primary w-full flex-1 rounded-l-none"
               >
                 <option value="created">
                   <FormattedMessage
@@ -536,9 +536,9 @@ const InviteList = () => {
           )}
         </div>
       )}
-      <div className="mt-8 mb-4 border-t border-primary pt-5">
+      <div className="border-primary mt-8 mb-4 border-t pt-5">
         <nav
-          className="flex flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
+          className="flex flex-col items-center space-y-3 space-x-4 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
           aria-label="Pagination"
         >
           <div className="hidden lg:flex lg:flex-1">
@@ -561,7 +561,7 @@ const InviteList = () => {
             </p>
           </div>
           <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
-            <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
+            <span className="-mt-3 items-center text-sm sm:mt-0 sm:-ml-4 md:ml-0">
               <FormattedMessage
                 id="common.resultsDisplay"
                 defaultMessage="Display {select} results per page"

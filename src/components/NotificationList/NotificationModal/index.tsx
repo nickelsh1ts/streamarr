@@ -1,6 +1,7 @@
 'use client';
 import Modal from '@app/components/Common/Modal';
 import UserSelector from '@app/components/Common/UserSelector';
+import { getToastType } from '@app/components/Layout/Notifications';
 import type { ToastType } from '@app/components/Toast';
 import Toast from '@app/components/Toast';
 import type { User } from '@app/hooks/useUser';
@@ -21,9 +22,8 @@ import { Permission } from '@server/lib/permissions';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
-import * as Yup from 'yup';
 import useSWR from 'swr';
-import { getToastType } from '@app/components/Layout/Notifications';
+import * as Yup from 'yup';
 
 interface NotificationModalProps {
   onClose: () => void;
@@ -325,10 +325,10 @@ const NotificationModal = ({
             show={show}
           >
             <Form className="space-y-2">
-              <div className="border-t border-primary pt-4">
+              <div className="border-primary border-t pt-4">
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="notificationModal.subject"
@@ -341,7 +341,7 @@ const NotificationModal = ({
                     id="subject"
                     name="subject"
                     type="text"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.subject && touched.subject ? 'input-error' : ''
                     }`}
                   />
@@ -353,7 +353,7 @@ const NotificationModal = ({
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="common.message"
@@ -366,7 +366,7 @@ const NotificationModal = ({
                     id="message"
                     name="message"
                     rows={3}
-                    className={`input input-sm input-primary rounded-md w-full h-16 leading-normal ${
+                    className={`input input-sm input-primary h-16 w-full rounded-md leading-normal ${
                       errors.message && touched.message ? 'input-error' : ''
                     }`}
                   />
@@ -378,7 +378,7 @@ const NotificationModal = ({
               <div>
                 <label
                   htmlFor="actionUrlTitle"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="notificationModal.actionUrlTitle"
@@ -398,7 +398,7 @@ const NotificationModal = ({
                     as="input"
                     id="actionUrlTitle"
                     name="actionUrlTitle"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.actionUrlTitle && touched.actionUrlTitle
                         ? 'input-error'
                         : ''
@@ -412,7 +412,7 @@ const NotificationModal = ({
               <div>
                 <label
                   htmlFor="actionUrl"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="notificationModal.actionUrl"
@@ -436,7 +436,7 @@ const NotificationModal = ({
                     as="input"
                     id="actionUrl"
                     name="actionUrl"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.actionUrl && touched.actionUrl ? 'input-error' : ''
                     }`}
                   />
@@ -448,7 +448,7 @@ const NotificationModal = ({
               <div className="">
                 <label
                   htmlFor="severity"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="common.severity"
@@ -473,7 +473,7 @@ const NotificationModal = ({
               <div>
                 <label
                   htmlFor="notifyUsers"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="notificationModal.notifyUsers"

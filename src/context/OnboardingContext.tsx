@@ -1,7 +1,14 @@
 'use client';
-import type { UserOnboardingDataResponse } from '@server/interfaces/api/onboardingInterfaces';
+import { useOnboarding } from '@app/hooks/useOnboarding';
+import useSettings from '@app/hooks/useSettings';
+import { useUser } from '@app/hooks/useUser';
+import {
+  getAdminTutorialSteps,
+  getAdminWelcomeSlides,
+} from '@app/utils/adminOnboarding';
 import type {
   TutorialStepResponse,
+  UserOnboardingDataResponse,
   WelcomeContentResponse,
 } from '@server/interfaces/api/onboardingInterfaces';
 import { Permission } from '@server/lib/permissions';
@@ -16,13 +23,6 @@ import React, {
   useState,
 } from 'react';
 import { useIntl } from 'react-intl';
-import { useOnboarding } from '@app/hooks/useOnboarding';
-import { useUser } from '@app/hooks/useUser';
-import useSettings from '@app/hooks/useSettings';
-import {
-  getAdminWelcomeSlides,
-  getAdminTutorialSteps,
-} from '@app/utils/adminOnboarding';
 
 interface OnboardingContextType {
   data?: UserOnboardingDataResponse;

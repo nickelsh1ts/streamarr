@@ -1,3 +1,4 @@
+import { NotificationType } from '@server/constants/notification';
 import {
   getSettings,
   NotificationAgentKey,
@@ -6,7 +7,6 @@ import {
 import logger from '@server/logger';
 import axios from 'axios';
 import { get } from 'lodash';
-import { NotificationType } from '@server/constants/notification';
 import type { NotificationPayload } from './agent';
 import { BroadcastAgent } from './broadcastAgent';
 

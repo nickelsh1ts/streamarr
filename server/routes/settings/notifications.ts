@@ -1,23 +1,23 @@
-import { getSettings } from '@server/lib/settings';
-import type { User } from '@server/entity/User';
+import PushoverAPI from '@server/api/pushover';
 import { NotificationType } from '@server/constants/notification';
-import type { NotificationAgent } from '@server/lib/notifications/agents/agent';
-import { getIntl } from '@server/i18n';
+import type { User } from '@server/entity/User';
 import type { IntlShape } from '@server/i18n';
-import type { NotificationAgents } from '@server/lib/settings';
-import WebPushAgent from '@server/lib/notifications/agents/webpush';
-import { Router } from 'express';
-import EmailAgent from '@server/lib/notifications/agents/email';
-import InAppAgent from '@server/lib/notifications/agents/inApp';
+import { getIntl } from '@server/i18n';
+import type { NotificationAgent } from '@server/lib/notifications/agents/agent';
 import DiscordAgent from '@server/lib/notifications/agents/discord';
+import EmailAgent from '@server/lib/notifications/agents/email';
+import GotifyAgent from '@server/lib/notifications/agents/gotify';
+import InAppAgent from '@server/lib/notifications/agents/inApp';
+import NtfyAgent from '@server/lib/notifications/agents/ntfy';
+import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
+import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
 import TelegramAgent from '@server/lib/notifications/agents/telegram';
 import WebhookAgent from '@server/lib/notifications/agents/webhook';
-import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
-import PushoverAgent from '@server/lib/notifications/agents/pushover';
-import GotifyAgent from '@server/lib/notifications/agents/gotify';
-import NtfyAgent from '@server/lib/notifications/agents/ntfy';
-import PushoverAPI from '@server/api/pushover';
+import WebPushAgent from '@server/lib/notifications/agents/webpush';
+import type { NotificationAgents } from '@server/lib/settings';
+import { getSettings } from '@server/lib/settings';
+import { Router } from 'express';
 
 const notificationRoutes = Router();
 

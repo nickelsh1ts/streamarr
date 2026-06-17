@@ -79,8 +79,8 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
     >
       <div className="flex flex-col gap-4">
         {isProcessing ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <ArrowPathIcon className="size-12 text-primary animate-spin" />
+          <div className="flex flex-col items-center justify-center gap-4 py-8">
+            <ArrowPathIcon className="text-primary size-12 animate-spin" />
             <p className="text-lg">
               {isReconnecting ? (
                 <FormattedMessage
@@ -111,8 +111,8 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
               />
             </p>
             {services.length > 0 && (
-              <div className="rounded-md bg-base-300 p-3">
-                <p className="text-sm text-neutral mb-2">
+              <div className="bg-base-300 rounded-md p-3">
+                <p className="text-neutral mb-2 text-sm">
                   <FormattedMessage
                     id="setup.restartRequired.servicesConfigured"
                     defaultMessage="The following services need proxy routes registered via restart:"
@@ -122,9 +122,9 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
                   {services.map((service) => (
                     <span
                       key={service}
-                      className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-sm text-primary-content"
+                      className="bg-primary/20 text-primary-content inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm"
                     >
-                      <CheckCircleIcon className="size-4 text-primary" />
+                      <CheckCircleIcon className="text-primary size-4" />
                       {service}
                     </span>
                   ))}

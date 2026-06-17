@@ -1,4 +1,5 @@
 'use client';
+import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import {
   ServiceError,
@@ -7,19 +8,18 @@ import {
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
-import { useUser, Permission } from '@app/hooks/useUser';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
+import { Permission, useUser } from '@app/hooks/useUser';
+import { parseColorToHex, setIframeTheme } from '@app/utils/themeUtils';
 import {
   ArrowTopRightOnSquareIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
-import Button from '@app/components/Common/Button';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const Request = ({ children, ...props }) => {
   useRouteGuard([Permission.REQUEST, Permission.STREAMARR], {
@@ -179,10 +179,10 @@ const Request = ({ children, ...props }) => {
   if (isLocalhost && userSettings?.requestHostname) {
     const overseerrUrl = `http://${userSettings?.requestHostname}${url && url.replace('null', '')}`;
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100dvh-4rem)] bg-base-300 px-4">
-        <div className="text-center max-w-md">
-          <LockClosedIcon className="w-16 h-16 mx-auto mb-4 text-primary" />
-          <h2 className="text-xl font-semibold text-base-content mb-2">
+      <div className="bg-base-300 flex h-[calc(100dvh-4rem)] flex-col items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          <LockClosedIcon className="text-primary mx-auto mb-4 h-16 w-16" />
+          <h2 className="text-base-content mb-2 text-xl font-semibold">
             <FormattedMessage
               id="settings.crossOriginAccess"
               defaultMessage="Cross-Origin Access"
@@ -205,7 +205,7 @@ const Request = ({ children, ...props }) => {
               id="settings.openOverseerr"
               defaultMessage="Open Seerr"
             />
-            <ArrowTopRightOnSquareIcon className="w-4 h-4 ml-2" />
+            <ArrowTopRightOnSquareIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -227,7 +227,7 @@ const Request = ({ children, ...props }) => {
 
   if (proxyStatus === 'loading') {
     return (
-      <div className="h-[calc(100dvh-4rem)] flex items-center justify-center bg-base-300">
+      <div className="bg-base-300 flex h-[calc(100dvh-4rem)] items-center justify-center">
         <LoadingEllipsis />
       </div>
     );
@@ -257,7 +257,7 @@ const Request = ({ children, ...props }) => {
           }, 1000);
         }}
         ref={setContentRef}
-        className={`w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-4rem)] relative ${loadingIframe && 'invisible'}`}
+        className={`relative h-[calc(100dvh-4rem)] w-full sm:h-[calc(100dvh-4rem)] ${loadingIframe && 'invisible'}`}
         src={`${hostname}${url && url.replace('null', '')}`}
         allowFullScreen
         title="Seerr"
@@ -265,7 +265,7 @@ const Request = ({ children, ...props }) => {
         {mountNode && createPortal(children, mountNode)}
       </iframe>
       {loadingIframe ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-base-300">
+        <div className="bg-base-300 absolute inset-0 flex items-center justify-center">
           <LoadingEllipsis />
         </div>
       ) : null}

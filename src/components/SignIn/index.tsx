@@ -1,10 +1,10 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
 import LocalLogin from '@app/components/SignIn/LocalSignIn';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex.svg';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
@@ -15,19 +15,20 @@ import { FormattedMessage } from 'react-intl';
 const SignIn = () => {
   const [error, setError] = useState('');
   const [isProcessing, setProcessing] = useState(false);
-  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const [pinId, setPinId] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const router = useRouter();
   const { currentSettings } = useSettings();
 
-  // Effect that is triggered when the `authToken` comes back from the Plex OAuth
-  // We take the token and attempt to sign in. If we get a success message, we will
-  // ask swr to revalidate the user which _should_ come back with a valid user.
+  // Effect that is triggered when the pin session id comes back from the Plex
+  // OAuth popup. The server exchanges the pin for the Plex token internally.
+  // If we get a success message, we will ask swr to revalidate the user which
+  // _should_ come back with a valid user.
   useEffect(() => {
     const login = async () => {
       setProcessing(true);
       try {
-        const response = await axios.post('/api/v1/auth/plex', { authToken });
+        const response = await axios.post('/api/v1/auth/plex', { pinId });
 
         if (response.data?.id) {
           const { data: authenticatedUser } =
@@ -37,15 +38,17 @@ const SignIn = () => {
           );
         }
       } catch (e) {
-        setError(e.response.data.message);
-        setAuthToken(undefined);
+        setError(
+          e.response?.data?.message ?? 'Something went wrong. Please try again.'
+        );
+        setPinId(undefined);
         setProcessing(false);
       }
     };
-    if (authToken) {
+    if (pinId) {
       login();
     }
-  }, [authToken, revalidate, router]);
+  }, [pinId, revalidate, router]);
 
   // Effect that is triggered whenever `useUser`'s user changes. If we get a new
   // valid user, we redirect the user to the home page as the login was successful.
@@ -60,9 +63,9 @@ const SignIn = () => {
       <div className="absolute top-4 right-4">
         <LanguagePicker />
       </div>
-      <div className="container max-w-lg mx-auto py-14 px-4">
-        <div className="text-start px-2 mb-4 relative">
-          <p className="text-2xl font-extrabold mb-2">
+      <div className="container mx-auto max-w-lg px-4 py-14">
+        <div className="relative mb-4 px-2 text-start">
+          <p className="mb-2 text-2xl font-extrabold">
             <FormattedMessage
               id="signIn.title"
               defaultMessage="Sign in to continue"
@@ -84,9 +87,9 @@ const SignIn = () => {
         </div>
         <Accordion single atLeastOne>
           {({ openIndexes, handleClick, AccordionContent }) => (
-            <div className="my-4 backdrop-blur-md text-primary-content">
+            <div className="text-primary-content my-4 backdrop-blur-md">
               <button
-                className={`collapse-title text-start mb-px border border-primary bg-primary/40 rounded-t-lg w-full ${
+                className={`collapse-title border-primary bg-primary/40 mb-px w-full rounded-t-lg border text-start ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -103,10 +106,10 @@ const SignIn = () => {
               </button>
               <AccordionContent isOpen={openIndexes.includes(0)}>
                 <div
-                  className={`p-3 place-content-center border border-secondary bg-secondary/50 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
+                  className={`border-secondary bg-secondary/50 place-content-center border p-3 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
                 >
                   <div
-                    className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
+                    className={`text-error my-2 text-center ${error ? 'block' : 'hidden'}`}
                   >
                     <FormattedMessage
                       id="signIn.loginFailed"
@@ -115,14 +118,14 @@ const SignIn = () => {
                   </div>
                   <PlexLoginButton
                     isProcessing={isProcessing}
-                    onAuthToken={(authToken) => setAuthToken(authToken)}
+                    onComplete={(pinId) => setPinId(pinId)}
                   />
                 </div>
               </AccordionContent>
               {currentSettings.localLogin && (
                 <>
                   <button
-                    className={`collapse-title text-start border border-primary bg-primary/40 w-full ${
+                    className={`collapse-title border-primary bg-primary/40 w-full border text-start ${
                       openIndexes.includes(1)
                         ? 'text-primary-content cursor-not-allowed'
                         : 'rounded-b-lg'
@@ -147,7 +150,7 @@ const SignIn = () => {
           )}
         </Accordion>
         {currentSettings.enableSignUp && (
-          <p className="mt-4 text-start text-sm px-2 relative">
+          <p className="relative mt-4 px-2 text-start text-sm">
             <FormattedMessage
               id="signIn.newUser"
               defaultMessage="New to {applicationTitle}? {signUpLink}"
@@ -160,7 +163,7 @@ const SignIn = () => {
                 signUpLink: (
                   <Link
                     href="/signup"
-                    className="font-bold hover:brightness-75 ms-1"
+                    className="ms-1 font-bold hover:brightness-75"
                   >
                     <FormattedMessage
                       id="signIn.signUp"

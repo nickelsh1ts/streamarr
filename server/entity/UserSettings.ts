@@ -1,3 +1,4 @@
+import type { NotificationType } from '@server/constants/notification';
 import type { NotificationAgentTypes } from '@server/interfaces/api/userSettingsInterfaces';
 import {
   ALL_NOTIFICATIONS,
@@ -12,7 +13,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
-import type { NotificationType } from '@server/constants/notification';
 
 @Entity()
 export class UserSettings {
@@ -86,6 +86,37 @@ export class UserSettings {
 
   @Column({ type: 'datetime', nullable: true })
   public trialExtensionRequestedAt?: Date | null;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: {
+      // Stored as a JSON array of newsletter IDs the user has opted out of.
+      // Missing/empty means subscribed to all newsletters (opt-out model).
+      from: (value: string | null): number[] => {
+        if (!value) {
+          return [];
+        }
+
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed)
+            ? parsed.filter((id): id is number => typeof id === 'number')
+            : [];
+        } catch {
+          return [];
+        }
+      },
+      to: (value: number[] | null | undefined): string | null => {
+        if (!value || !Array.isArray(value) || value.length === 0) {
+          return null;
+        }
+
+        return JSON.stringify([...new Set(value)]);
+      },
+    },
+  })
+  public unsubscribedNewsletters: number[];
 
   @Column({
     type: 'text',

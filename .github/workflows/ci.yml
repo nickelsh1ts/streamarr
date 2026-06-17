@@ -75,7 +75,7 @@ jobs:
     name: Prepare & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    container: node:26-alpine@sha256:144769ec3f32e8ee36b3cfde91e82bee25d9367b20f31a151f3f7eea3a2a8541
+    container: node:26-alpine@sha256:9c0e1e52125d6b67d505cf75b4880fcf1290ccea5c480849910e1d57b2cf72b5
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6

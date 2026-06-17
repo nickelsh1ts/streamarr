@@ -1,10 +1,10 @@
+import { NotificationType } from '@server/constants/notification';
+import type { User } from '@server/entity/User';
 import { Permission } from '@server/lib/permissions';
 import { NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { NotificationAgent, NotificationPayload } from './agents/agent';
 import { NotificationDeliveryScope } from './agents/agent';
-import type { User } from '@server/entity/User';
-import { NotificationType } from '@server/constants/notification';
 
 export const ALL_NOTIFICATIONS = Object.values(NotificationType)
   .filter((v) => !isNaN(Number(v)))
@@ -44,6 +44,7 @@ export const getAdminPermission = (type: NotificationType): Permission[] => {
       return [Permission.MANAGE_INVITES, Permission.ADMIN];
     case NotificationType.USER_CREATED:
     case NotificationType.ACCESS_EXTENSION_REQUESTED:
+    case NotificationType.PLEX_ACCESS_LOST:
       return [Permission.MANAGE_USERS, Permission.ADMIN];
     case NotificationType.LOCAL_MESSAGE:
       return [Permission.MANAGE_NOTIFICATIONS, Permission.ADMIN];

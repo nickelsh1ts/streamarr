@@ -1,21 +1,21 @@
+import Badge from '@app/components/Common/Badge';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import { SmallLoadingEllipsis } from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import ConfirmButton from '@app/components/Common/ConfirmButton';
-import Badge from '@app/components/Common/Badge';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 import {
   CheckBadgeIcon,
-  XCircleIcon,
   ShieldExclamationIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type { SonarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as Yup from 'yup';
-import { SmallLoadingEllipsis } from '@app/components/Common/LoadingEllipsis';
-import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 
 interface TestResponse {
   urlBase?: string;
@@ -420,7 +420,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
             }
           >
             <div className="mb-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="isDefault">
                   {values.is4k ? (
                     <FormattedMessage
@@ -443,7 +443,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="is4k">
                   <FormattedMessage
                     id="common.4kserver"
@@ -459,7 +459,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="name">
                   <FormattedMessage
                     id="common.servername"
@@ -473,7 +473,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                       id="name"
                       name="name"
                       type="text"
-                      className="input input-primary input-sm rounded-r-md w-full"
+                      className="input input-primary input-sm w-full rounded-r-md"
                       autoComplete="off"
                       data-1pignore="true"
                       data-lpignore="true"
@@ -491,7 +491,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="hostname">
                   <FormattedMessage
                     id="common.hostname"
@@ -501,7 +501,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       {values.ssl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -513,7 +513,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                         setIsValidated(false);
                         setFieldValue('hostname', e.target.value);
                       }}
-                      className="input input-primary input-sm rounded-none rounded-r-md w-full"
+                      className="input input-primary input-sm w-full rounded-none rounded-r-md"
                     />
                   </div>
                   {errors.hostname &&
@@ -523,7 +523,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="port">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
                   <span className="text-error">*</span>
@@ -534,7 +534,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     name="port"
                     type="text"
                     inputMode="numeric"
-                    className="input input-primary input-sm rounded-md w-1/4"
+                    className="input input-primary input-sm w-1/4 rounded-md"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setIsValidated(false);
                       setFieldValue('port', e.target.value);
@@ -547,7 +547,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="ssl">
                   <FormattedMessage
                     id="common.useSsl"
@@ -567,7 +567,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="apiKey">
                   <FormattedMessage
                     id="common.apiKey"
@@ -580,7 +580,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     <SensitiveInput
                       as="field"
                       buttonSize="sm"
-                      className="input input-primary input-sm rounded-r-md w-full"
+                      className="input input-primary input-sm w-full rounded-r-md"
                       id="apiKey"
                       name="apiKey"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -596,14 +596,14 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="baseUrl">
                   <FormattedMessage
                     id="common.urlBase"
                     defaultMessage="URL Base"
                   />
                   <span className="text-error mx-1">*</span>
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="arrSettings.urlBase.description"
                       defaultMessage="Url Base is required for streamarr to register a proxy route. A restart is required to take effect."
@@ -617,7 +617,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                       name="baseUrl"
                       type="text"
                       inputMode="url"
-                      className="input input-primary input-sm rounded-r-md w-full"
+                      className="input input-primary input-sm w-full rounded-r-md"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setIsValidated(false);
                         setFieldValue('baseUrl', e.target.value);
@@ -631,13 +631,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="syncEnabled">
                   <FormattedMessage
                     id="common.calendarSync"
                     defaultMessage="Enable Calendar Sync"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="common.calendarSync.description"
                       defaultMessage="Automatically sync {arrApp} events to the calendar"
@@ -654,13 +654,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="pastDays">
                   <FormattedMessage
                     id="common.pastdays"
                     defaultMessage="Past Days"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="common.pastdays.description"
                       defaultMessage="Sync events from the past X days"
@@ -670,7 +670,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 <div className="sm:col-span-2">
                   <Field
                     type="number"
-                    className="input input-primary input-sm rounded-r-md w-full"
+                    className="input input-primary input-sm w-full rounded-r-md"
                     id="pastDays"
                     name="pastDays"
                     disabled={!values.syncEnabled}
@@ -678,13 +678,13 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="futureDays">
                   <FormattedMessage
                     id="common.futuredays"
                     defaultMessage="Future Days"
                   />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="common.futuredays.description"
                       defaultMessage="Sync events for the next X days"
@@ -694,7 +694,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 <div className="sm:col-span-2">
                   <Field
                     type="number"
-                    className="input input-primary input-sm rounded-r-md w-full"
+                    className="input input-primary input-sm w-full rounded-r-md"
                     id="futureDays"
                     name="futureDays"
                     disabled={!values.syncEnabled}
@@ -703,7 +703,7 @@ const SonarrModal = ({ onClose, sonarr, onSave, show }: SonarrModalProps) => {
                 </div>
               </div>
               {sonarr && isValidated && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="authStatus" className="text-label">
                     <FormattedMessage
                       id="servicesSettings.disableAuth"

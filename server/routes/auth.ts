@@ -4,12 +4,22 @@ import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import type { UserSummary } from '@server/interfaces/api/userInterfaces';
+import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
+import plexPinAuth, {
+  resolvePlexAuthToken,
+  type PlexPinClientInfo,
+} from '@server/lib/plexAuth';
+import {
+  plexAuthLimiter,
+  plexPinLimiter,
+  plexPinStatusLimiter,
+  resetPasswordLimiter,
+} from '@server/lib/rateLimiters';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import { resetPasswordLimiter } from '@server/lib/rateLimiters';
 import { isAuthenticated } from '@server/middleware/auth';
-import ImageProxy from '@server/lib/imageproxy';
 import { Router } from 'express';
 
 const authRoutes = Router();
@@ -49,18 +59,53 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   });
 });
 
-authRoutes.post('/plex', async (req, res, next) => {
+authRoutes.post('/plex/pin', plexPinLimiter, async (req, res, next) => {
+  try {
+    const body = req.body as { client?: PlexPinClientInfo } | undefined;
+    const pin = await plexPinAuth.createPin(body?.client);
+    res.status(200).json(pin);
+  } catch (e) {
+    logger.error('Failed to create Plex sign-in pin', {
+      label: 'API',
+      ip: req.ip,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    return next({ status: 500, message: 'Unable to begin Plex sign-in.' });
+  }
+});
+
+authRoutes.get<{ pinId: string }>(
+  '/plex/pin/:pinId',
+  plexPinStatusLimiter,
+  async (req, res) => {
+    const status = await plexPinAuth.getStatus(req.params.pinId);
+    res.status(200).json({ status });
+  }
+);
+
+authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
   const settings = getSettings();
   const userRepository = getRepository(User);
-  const body = req.body as { authToken?: string };
+  const body = req.body as { authToken?: string; pinId?: string };
+  const { token: authToken, commit: commitPlexAuth } =
+    resolvePlexAuthToken(body);
 
-  if (!body.authToken) {
-    return next({ status: 500, message: 'Authentication token required.' });
+  if (!authToken) {
+    return next({
+      status: body.pinId ? 401 : 400,
+      message: body.pinId
+        ? 'Plex sign-in session is invalid or has expired. Please try again.'
+        : 'Authentication token required.',
+    });
   }
   try {
     // First we need to use this auth token to get the user's email from plex.tv
-    const plextv = new PlexTvAPI(body.authToken);
+    const plextv = new PlexTvAPI(authToken);
     const account = await plextv.getUser();
+    // The token authenticated against plex.tv, so it's good. Consume the
+    // single-use pin session now; a transient failure above would have thrown
+    // before reaching here, leaving the session intact for a retry.
+    commitPlexAuth(true);
 
     // Next let's see if the user already exists
     let user = await userRepository
@@ -102,12 +147,42 @@ authRoutes.post('/plex', async (req, res, next) => {
         });
       }
 
-      if (
+      const hasPlexAccess =
         account.id === mainUser.plexId ||
         (account.email === mainUser.email && !mainUser.plexId) ||
-        (await mainPlexTv.checkUserAccess(account.id)) ||
-        (user && !user.active)
+        (await mainPlexTv.checkUserAccess(account.id));
+
+      if (
+        !hasPlexAccess &&
+        user &&
+        user.active &&
+        user.userType === UserType.PLEX
       ) {
+        try {
+          const share = await mainPlexTv.getUserShare(
+            {
+              plexId: account.id,
+              email: account.email,
+              username: account.username,
+            },
+            settings.plex.machineId
+          );
+          if (share === null) {
+            await handlePlexAccessLost(user);
+          }
+        } catch (e) {
+          logger.debug(
+            'Unable to verify Plex share state during sign-in; leaving user active',
+            {
+              label: 'API',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
+        }
+      }
+
+      if (hasPlexAccess || (user && !user.active)) {
         if (user) {
           if (!user.plexId) {
             logger.info(
@@ -124,7 +199,7 @@ authRoutes.post('/plex', async (req, res, next) => {
           }
 
           const previousAvatar = user.avatar;
-          user.plexToken = body.authToken;
+          user.plexToken = authToken;
           user.plexId = account.id;
           user.avatar = account.thumb;
           user.email = account.email;
@@ -218,7 +293,15 @@ authRoutes.post('/local', async (req, res, next) => {
   try {
     const user = await userRepository
       .createQueryBuilder('user')
-      .select(['user.id', 'user.email', 'user.password', 'user.plexId'])
+      .select([
+        'user.id',
+        'user.email',
+        'user.password',
+        'user.plexId',
+        'user.plexUsername',
+        'user.userType',
+        'user.active',
+      ])
       .where('user.email = :email', { email: normalizedEmail })
       .getOne();
 
@@ -239,23 +322,52 @@ authRoutes.post('/local', async (req, res, next) => {
     const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
 
     if (
+      user.active &&
       user.plexId &&
       user.plexId !== mainUser.plexId &&
       !(await mainPlexTv.checkUserAccess(user.plexId))
     ) {
-      logger.warn(
-        'Failed sign-in attempt from Plex user without access to the media app',
-        {
-          label: 'API',
-          account: {
-            ip: req.ip,
-            email: normalizedEmail,
-            userId: user.id,
-            plexId: user.plexId,
-          },
+      let removedFromPlex = false;
+      if (user.userType === UserType.PLEX) {
+        try {
+          const share = await mainPlexTv.getUserShare(
+            {
+              plexId: user.plexId,
+              email: user.email,
+              username: user.plexUsername,
+            },
+            settings.plex.machineId
+          );
+          removedFromPlex = share === null;
+        } catch (e) {
+          logger.debug(
+            'Unable to verify Plex share state during sign-in; leaving user active',
+            {
+              label: 'API',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            }
+          );
         }
-      );
-      return next({ status: 403, message: 'Access denied.' });
+      }
+
+      if (removedFromPlex) {
+        await handlePlexAccessLost(user);
+      } else {
+        logger.warn(
+          'Failed sign-in attempt from Plex user without access to the media app',
+          {
+            label: 'API',
+            account: {
+              ip: req.ip,
+              email: normalizedEmail,
+              userId: user.id,
+              plexId: user.plexId,
+            },
+          }
+        );
+        return next({ status: 403, message: 'Access denied.' });
+      }
     }
 
     // Set logged in session

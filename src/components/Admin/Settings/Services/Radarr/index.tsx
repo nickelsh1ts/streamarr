@@ -1,21 +1,21 @@
 'use client';
 import RadarrLogo from '@app/assets/services/radarr.svg';
 import SonarrLogo from '@app/assets/services/sonarr.svg';
-import Alert from '@app/components/Common/Alert';
-import Badge from '@app/components/Common/Badge';
-import Button from '@app/components/Common/Button';
-import Modal from '@app/components/Common/Modal';
-import RadarrModal from '@app/components/Admin/Settings/Services/Radarr/RadarrModal';
 import RestartRequiredAlert, {
   RESTART_REQUIRED_SWR_KEY,
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
+import RadarrModal from '@app/components/Admin/Settings/Services/Radarr/RadarrModal';
+import Alert from '@app/components/Common/Alert';
+import Badge from '@app/components/Common/Badge';
+import Button from '@app/components/Common/Button';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Modal from '@app/components/Common/Modal';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { FormattedMessage, useIntl } from 'react-intl';
 import type { RadarrSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 interface ServerInstanceProps {
   name: string;
@@ -48,11 +48,11 @@ export const ServerInstance = ({
   const serviceUrl = internalUrl;
 
   return (
-    <li className="col-span-1 rounded-lg bg-base-200 shadow">
+    <li className="bg-base-200 col-span-1 rounded-lg shadow">
       <div className="flex w-full items-center justify-between space-x-6 p-6">
         <div className="flex-1 truncate">
           <div className="mb-2 flex items-center space-x-2">
-            <h3 className="truncate font-medium leading-5">
+            <h3 className="truncate leading-5 font-medium">
               <a
                 href={serviceUrl}
                 target="_blank"
@@ -125,12 +125,12 @@ export const ServerInstance = ({
           )}
         </a>
       </div>
-      <div className="border-t border-primary">
+      <div className="border-primary border-t">
         <div className="-mt-px flex">
-          <div className="flex w-0 flex-1 border-r border-primary">
+          <div className="border-primary flex w-0 flex-1 border-r">
             <button
               onClick={() => onEdit()}
-              className="focus:ring-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none hover:cursor-pointer"
+              className="focus:ring-primary bg-primary/45 text-primary-content hover:bg-primary/70 focus:border-primary relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm leading-5 font-medium transition duration-150 ease-in-out hover:cursor-pointer focus:z-10 focus:outline-none"
             >
               <PencilIcon className="mr-2 h-5 w-5" />
               <span>
@@ -141,7 +141,7 @@ export const ServerInstance = ({
           <div className="-ml-px flex w-0 flex-1">
             <button
               onClick={() => onDelete()}
-              className="focus:ring-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium leading-5 transition duration-150 ease-in-out bg-primary/45 text-primary-content hover:bg-primary/70 focus:z-10 focus:border-primary focus:outline-none hover:cursor-pointer"
+              className="focus:ring-primary bg-primary/45 text-primary-content hover:bg-primary/70 focus:border-primary relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm leading-5 font-medium transition duration-150 ease-in-out hover:cursor-pointer focus:z-10 focus:outline-none"
             >
               <TrashIcon className="mr-2 h-5 w-5" />
               <span>
@@ -302,7 +302,7 @@ const SettingsServicesRadarr = () => {
                   }
                 />
               ))}
-              <li className="col-span-1 h-32 rounded-lg border-2 border-dashed border-primary shadow sm:h-44">
+              <li className="border-primary col-span-1 h-32 rounded-lg border-2 border-dashed shadow sm:h-44">
                 <div className="flex h-full w-full items-center justify-center">
                   <Button
                     buttonType="ghost"
@@ -311,7 +311,7 @@ const SettingsServicesRadarr = () => {
                       setEditRadarrModal({ open: true, radarr: null })
                     }
                   >
-                    <PlusIcon className="size-7 mr-2" />
+                    <PlusIcon className="mr-2 size-7" />
                     <span>
                       <FormattedMessage
                         id="radarrSettings.addserver"

@@ -47,8 +47,8 @@ export class Invite {
   @Column({ type: 'text', default: '' })
   public expiryTime: '' | 'days' | 'weeks' | 'months';
 
-  @Column({ type: 'text', default: '' })
-  public sharedLibraries: string;
+  @Column({ type: 'text', nullable: true })
+  public sharedLibraries?: string | null;
 
   @Column({ type: 'text', nullable: true })
   public trialPeriodOutcome?: 'promote' | 'deactivate' | null;

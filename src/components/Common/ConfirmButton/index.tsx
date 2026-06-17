@@ -1,3 +1,4 @@
+import type { ButtonType } from '@app/components/Common/Button';
 import Button from '@app/components/Common/Button';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -5,7 +6,9 @@ import { forwardRef, useEffect, useRef, useState } from 'react';
 interface ConfirmButtonProps {
   onClick: () => void | Promise<void>;
   confirmText: React.ReactNode;
+  buttonType?: ButtonType;
   buttonSize?: 'sm' | 'md' | 'lg' | 'default';
+  disabled?: boolean;
   className?: string;
   children: React.ReactNode;
   'data-testid'?: string;
@@ -18,7 +21,9 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
       children,
       confirmText,
       className,
+      buttonType = 'error',
       buttonSize = 'default',
+      disabled = false,
       'data-testid': dataTestId,
     },
     parentRef
@@ -37,11 +42,11 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
     return (
       <Button
         ref={parentRef}
-        buttonType="error"
+        buttonType={buttonType}
         buttonSize={buttonSize}
         className={`relative overflow-hidden ${className}`}
         data-testid={dataTestId}
-        disabled={isLoading}
+        disabled={disabled || isLoading}
         onClick={async (e) => {
           e.preventDefault();
 

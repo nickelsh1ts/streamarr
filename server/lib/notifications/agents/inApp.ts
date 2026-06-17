@@ -1,24 +1,26 @@
-import type { Server as SocketIOServer } from 'socket.io';
+import {
+  NotificationSeverity,
+  NotificationType,
+} from '@server/constants/notification';
+import { getRepository } from '@server/datasource';
+import Notification from '@server/entity/Notification';
+import type { User } from '@server/entity/User';
+import {
+  ALL_NOTIFICATIONS,
+  hasNotificationType,
+} from '@server/lib/notifications';
 import type {
   NotificationAgent,
   NotificationPayload,
 } from '@server/lib/notifications/agents/agent';
 import { BaseAgent } from '@server/lib/notifications/agents/agent';
-import { NotificationType } from '@server/constants/notification';
 import {
   getSettings,
   NotificationAgentKey,
   type NotificationAgentConfig,
 } from '@server/lib/settings';
 import logger from '@server/logger';
-import { getRepository } from '@server/datasource';
-import type { User } from '@server/entity/User';
-import { NotificationSeverity } from '@server/constants/notification';
-import Notification from '@server/entity/Notification';
-import {
-  ALL_NOTIFICATIONS,
-  hasNotificationType,
-} from '@server/lib/notifications';
+import type { Server as SocketIOServer } from 'socket.io';
 
 interface InAppNotificationPayload extends NotificationPayload {
   notifyUser: User;

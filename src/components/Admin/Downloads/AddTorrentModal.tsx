@@ -1,11 +1,10 @@
-import React, { useState, useRef } from 'react';
+import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import { useDownloadActions } from '@app/hooks/useDownloads';
 import type { DownloadClientSettings } from '@server/lib/settings';
-import { FormattedMessage } from 'react-intl';
-import { useIntl } from 'react-intl';
-import Alert from '@app/components/Common/Alert';
-import Button from '@app/components/Common/Button';
+import React, { useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface AddTorrentModalProps {
   isOpen: boolean;
@@ -145,7 +144,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
     >
       <form
         onSubmit={handleSubmit}
-        className="gap-7 flex flex-col border-t border-primary pt-4"
+        className="border-primary flex flex-col gap-7 border-t pt-4"
       >
         {errorMessage && (
           <Alert type="error">
@@ -172,7 +171,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
             <div className="flex flex-col">
               <label
                 htmlFor="client"
-                className="block text-sm font-medium leading-6 text-left"
+                className="block text-left text-sm leading-6 font-medium"
               >
                 <span className="text-sm">
                   <FormattedMessage
@@ -195,11 +194,11 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                 ))}
               </select>
             </div>
-            <div className="gap-1 flex flex-col">
+            <div className="flex flex-col gap-1">
               <div className="flex flex-col">
                 <label
                   htmlFor="magnetOrUrl"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -223,13 +222,13 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                   disabled={!!file}
                 />
               </div>
-              <div className="divider mb-0 mt-2 uppercase">
+              <div className="divider mt-2 mb-0 uppercase">
                 <FormattedMessage id="common.or" defaultMessage="or" />
               </div>
-              <div className="flex flex-col -mt-1">
+              <div className="-mt-1 flex flex-col">
                 <label
                   htmlFor="torrentFile"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -278,11 +277,11 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
               if (!supportsCategory) return null;
 
               return (
-                <div className="gap-2 flex flex-col">
+                <div className="flex flex-col gap-2">
                   <div className="flex flex-col">
                     <label
                       htmlFor="category"
-                      className="block text-sm font-medium leading-6 text-left"
+                      className="block text-left text-sm leading-6 font-medium"
                     >
                       <span className="text-sm">
                         {client?.client === 'deluge' ? (
