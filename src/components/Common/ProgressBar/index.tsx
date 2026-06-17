@@ -50,7 +50,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         <div className="mb-1 flex items-center justify-between text-xs">
           {label && <span className="text-neutral">{label}</span>}
           {showPercentage && (
-            <span className="font-medium text-neutral">
+            <span className="text-neutral font-medium">
               {clampedProgress.toFixed(1)}%
             </span>
           )}

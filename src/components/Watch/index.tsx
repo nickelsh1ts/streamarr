@@ -4,11 +4,11 @@ import {
   ServiceError,
   ServiceNotConfigured,
 } from '@app/components/Common/ServiceError';
-import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import { useClientValue } from '@app/hooks/useIsClient';
+import { useServiceProxy } from '@app/hooks/useServiceProxy';
 import useSettings from '@app/hooks/useSettings';
-import { useUser, Permission } from '@app/hooks/useUser';
-import { setIframeTheme, parseColorToHex } from '@app/utils/themeUtils';
+import { Permission, useUser } from '@app/hooks/useUser';
+import { parseColorToHex, setIframeTheme } from '@app/utils/themeUtils';
 import { colord } from 'colord';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -292,7 +292,7 @@ const Watch = ({ children, ...props }) => {
           }, 1000);
         }}
         ref={setContentRef}
-        className={`w-full h-dvh ${loadingIframe && 'invisible'}`}
+        className={`h-dvh w-full ${loadingIframe && 'invisible'}`}
         src={`${hostname}${iframeUrl && iframeUrl.replace('null', '')}`}
         allowFullScreen
         title="Plex"

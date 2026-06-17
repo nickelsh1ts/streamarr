@@ -1,7 +1,14 @@
 'use client';
+import Button from '@app/components/Common/Button';
+import DropDownMenu from '@app/components/Common/DropDownMenu';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
+import Toast, { type ToastType } from '@app/components/Toast';
 import { useNotificationSidebar } from '@app/context/NotificationSidebarContext';
-import { useNotifications } from '@app/hooks/useNotifications';
 import useClickOutside from '@app/hooks/useClickOutside';
+import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
+import { useNotifications } from '@app/hooks/useNotifications';
+import { useUser } from '@app/hooks/useUser';
 import { Transition, TransitionChild } from '@headlessui/react';
 import { Cog8ToothIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import {
@@ -11,19 +18,12 @@ import {
   QueueListIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
-import { useMemo, useRef, useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
-import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
-import { useUser } from '@app/hooks/useUser';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import axios from 'axios';
-import Toast, { type ToastType } from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
-import Button from '@app/components/Common/Button';
-import DropDownMenu from '@app/components/Common/DropDownMenu';
-import { useLockBodyScroll } from '@app/hooks/useLockBodyScroll';
 import { NotificationSeverity } from '@server/constants/notification';
+import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
+import axios from 'axios';
+import { useMemo, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR, { useSWRConfig } from 'swr';
 
 export const getToastType = (severity: NotificationSeverity): ToastType => {
   switch (severity) {
@@ -189,16 +189,16 @@ const Notifications = () => {
         leaveTo="opacity-0"
       >
         <button
-          className="fixed inset-0 bg-[#0006] backdrop-blur-sm z-49"
+          className="fixed inset-0 z-49 bg-[#0006] backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       </TransitionChild>
       <TransitionChild>
         <div
           ref={ref}
-          className={`fixed flex flex-col top-0 bottom-0 max-sm:pb-14 right-0 z-50 bg-primary/30 backdrop-blur-md sm:border-l border-primary w-full sm:max-w-120 max-sm:translate-y-0 sm:translate-x-0 transition-all duration-300 ease-in data-closed:max-sm:translate-y-full data-closed:sm:translate-x-full overflow-hidden text-primary-content`}
+          className={`bg-primary/30 border-primary text-primary-content fixed top-0 right-0 bottom-0 z-50 flex w-full flex-col overflow-hidden backdrop-blur-md transition-all duration-300 ease-in max-sm:translate-y-0 max-sm:pb-14 data-closed:max-sm:translate-y-full sm:max-w-120 sm:translate-x-0 sm:border-l data-closed:sm:translate-x-full`}
         >
-          <div className="w-full h-20 content-center p-4 flex flex-wrap justify-between items-center gap-2">
+          <div className="flex h-20 w-full flex-wrap content-center items-center justify-between gap-2 p-4">
             <span>
               <h3 className="text-2xl font-bold">
                 <FormattedMessage
@@ -206,7 +206,7 @@ const Notifications = () => {
                   defaultMessage="Notifications"
                 />
               </h3>
-              <p className="text-sm font-thin text-neutral">
+              <p className="text-neutral text-sm font-thin">
                 <Button
                   className={filter === 'all' ? 'btn-active' : ''}
                   buttonSize="sm"
@@ -232,7 +232,7 @@ const Notifications = () => {
               <DropDownMenu
                 chevron={false}
                 dropdownIcon={<EllipsisHorizontalIcon className="size-8" />}
-                className="text-neutral hover:text-primary-content transition duration-200 p-1 rounded-full hover:cursor-pointer"
+                className="text-neutral hover:text-primary-content rounded-full p-1 transition duration-200 hover:cursor-pointer"
               >
                 <DropDownMenu.Item
                   onClick={() => readAllNotifications(String(user.id))}
@@ -267,16 +267,16 @@ const Notifications = () => {
                 </DropDownMenu.Item>
               </DropDownMenu>
               <button
-                className="text-neutral hover:text-primary-content p-2 rounded-full transition duration-200 hover:cursor-pointer"
+                className="text-neutral hover:text-primary-content rounded-full p-2 transition duration-200 hover:cursor-pointer"
                 onClick={() => setIsOpen(false)}
               >
                 <XMarkIcon className="size-6" />
               </button>
             </span>
           </div>
-          <div className="m-1 sm:pb-0 flex flex-col h-full overflow-y-auto">
-            <div className="mx-3 flex flex-row justify-between mb-2 text-neutral">
-              <span className="font-bold text-xl text-primary-content">
+          <div className="m-1 flex h-full flex-col overflow-y-auto sm:pb-0">
+            <div className="text-neutral mx-3 mb-2 flex flex-row justify-between">
+              <span className="text-primary-content text-xl font-bold">
                 {filter === 'unread' ? '' : 'New'}
               </span>
               <Button
@@ -289,11 +289,11 @@ const Notifications = () => {
                 <FormattedMessage id="common.seeAll" defaultMessage="See all" />
               </Button>
             </div>
-            <ul className="flex flex-col gap-2 mb-2">
+            <ul className="mb-2 flex flex-col gap-2">
               {!data && !error ? (
                 <LoadingEllipsis />
               ) : unreadNotifications.length === 0 ? (
-                <span className="text-center w-full text-neutral">
+                <span className="text-neutral w-full text-center">
                   {intl.formatMessage({
                     id: 'notification.noUnread',
                     defaultMessage: 'No unread notifications',
@@ -317,7 +317,7 @@ const Notifications = () => {
               )}
               {unreadNotifications.length > newLimit && (
                 <button
-                  className="text-center w-full text-neutral-400 hover:text-white hover:bg-primary-content/10 rounded-lg p-2 hover:cursor-pointer"
+                  className="hover:bg-primary-content/10 w-full rounded-lg p-2 text-center text-neutral-400 hover:cursor-pointer hover:text-white"
                   onClick={() => setNewPageSize(newPageSize + 5)}
                 >
                   {intl.formatMessage({
@@ -329,8 +329,8 @@ const Notifications = () => {
             </ul>
             {filter === 'all' && readNotifications.length > 0 && (
               <div className="flex flex-col">
-                <div className="mb-2 mx-3">
-                  <span className="font-bold text-xl">
+                <div className="mx-3 mb-2">
+                  <span className="text-xl font-bold">
                     <FormattedMessage
                       id="notification.earlier"
                       defaultMessage="Earlier"
@@ -360,7 +360,7 @@ const Notifications = () => {
                     })}
                   {readNotifications.length > earlierPageSize && (
                     <button
-                      className="text-center w-full text-neutral-400 hover:text-white hover:bg-primary-content/10 rounded-lg p-2 hover:cursor-pointer"
+                      className="hover:bg-primary-content/10 w-full rounded-lg p-2 text-center text-neutral-400 hover:cursor-pointer hover:text-white"
                       onClick={() => setEarlierPageSize(earlierPageSize + 5)}
                     >
                       {intl.formatMessage({

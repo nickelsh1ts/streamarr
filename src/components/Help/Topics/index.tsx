@@ -1,13 +1,13 @@
 'use client';
-import useSettings from '@app/hooks/useSettings';
-import { ArrowLongRightIcon } from '@heroicons/react/24/solid';
 import PlexLogo from '@app/assets/services/plex_dark.svg';
-import Link from 'next/link';
-import { FormattedMessage } from 'react-intl';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import useSWR from 'swr';
+import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
+import { ArrowLongRightIcon } from '@heroicons/react/24/solid';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
 
 const Topics = () => {
   const { currentSettings } = useSettings();
@@ -420,20 +420,20 @@ const Topics = () => {
   ];
 
   return (
-    <div className="pb-10 px-5">
-      <div className="container max-w-screen-xl mx-auto py-7">
-        <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
+    <div className="px-5 pb-10">
+      <div className="container mx-auto max-w-screen-xl py-7">
+        <div className="grid grid-flow-row grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-4">
           {topicSections.map((section, sIdx) => (
             <div key={sIdx} className="flex flex-col gap-4">
               {section.href ? (
                 <Link
                   href={section.href}
-                  className="font-extrabold text-xl hover:text-neutral w-fit"
+                  className="hover:text-neutral w-fit text-xl font-extrabold"
                 >
                   {section.heading}
                 </Link>
               ) : (
-                <p className="font-extrabold text-xl">{section.heading}</p>
+                <p className="text-xl font-extrabold">{section.heading}</p>
               )}
               {section.links
                 .filter((link) => !link.hidden)
@@ -449,7 +449,7 @@ const Topics = () => {
             </div>
           ))}
           <div className="flex flex-col gap-4">
-            <p className="font-extrabold text-xl">
+            <p className="text-xl font-extrabold">
               <FormattedMessage
                 id="help.quickLinks"
                 defaultMessage="Quick Links"
@@ -462,10 +462,10 @@ const Topics = () => {
                   <button
                     key={idx}
                     onClick={() => link.onClick && link.onClick()}
-                    className="hover:text-neutral text-start group"
+                    className="hover:text-neutral group text-start"
                   >
                     {link.label}
-                    <ArrowLongRightIcon className="link-accent w-6 float-end -translate-x-2 group-hover:translate-x-0" />
+                    <ArrowLongRightIcon className="link-accent float-end w-6 -translate-x-2 group-hover:translate-x-0" />
                   </button>
                 ) : (
                   <Link
@@ -474,12 +474,12 @@ const Topics = () => {
                     rel={
                       link.href?.startsWith('http') ? 'noreferrer' : undefined
                     }
-                    className="hover:text-neutral text-start group"
+                    className="hover:text-neutral group text-start"
                     href={link.href ? link.href : ''}
                   >
                     {link.label}
                     <ArrowLongRightIcon
-                      className={`${link.href?.startsWith('http') ? 'link-accent' : 'link-primary'} w-6 float-end -translate-x-2 group-hover:translate-x-0`}
+                      className={`${link.href?.startsWith('http') ? 'link-accent' : 'link-primary'} float-end w-6 -translate-x-2 group-hover:translate-x-0`}
                     />
                   </Link>
                 )

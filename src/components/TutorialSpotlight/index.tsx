@@ -344,9 +344,9 @@ const TutorialSpotlight: React.FC = () => {
     }
 
     return createPortal(
-      <div className="fixed inset-0 z-1100 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
-        <div className="bg-base-200 rounded-xl p-4 sm:p-6 max-w-md mx-1 shadow-2xl border border-primary/30 animate-scale-in">
-          <h3 className="text-xl font-bold text-base-content mb-3">
+      <div className="animate-fade-in fixed inset-0 z-1100 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+        <div className="bg-base-200 border-primary/30 animate-scale-in mx-1 max-w-md rounded-xl border p-4 shadow-2xl sm:p-6">
+          <h3 className="text-base-content mb-3 text-xl font-bold">
             <FormattedMessage
               id="tutorial.ready.title"
               defaultMessage="Interactive Tutorial"
@@ -359,7 +359,7 @@ const TutorialSpotlight: React.FC = () => {
               values={{ applicationTitle }}
             />
           </p>
-          <div className="flex gap-3 justify-end">
+          <div className="flex justify-end gap-3">
             {canDismiss && (
               <Button buttonType="ghost" buttonSize="sm" onClick={skipTutorial}>
                 <FormattedMessage
@@ -394,12 +394,12 @@ const TutorialSpotlight: React.FC = () => {
       {targetRect ? (
         <Spotlight targetRect={targetRect} />
       ) : (
-        <div className="fixed inset-0 z-1100 bg-black/30 backdrop-blur-sm animate-fade-in" />
+        <div className="animate-fade-in fixed inset-0 z-1100 bg-black/30 backdrop-blur-sm" />
       )}
       {isPreviewMode && (
         <Badge
           badgeType="warning"
-          className="fixed top-4 left-4 z-1200 px-3 py-1.5 border border-warning backdrop-blur-sm bg-warning/30 animate-fade-in"
+          className="border-warning bg-warning/30 animate-fade-in fixed top-4 left-4 z-1200 border px-3 py-1.5 backdrop-blur-sm"
         >
           <FormattedMessage
             id="settings.onboarding.previewMode"

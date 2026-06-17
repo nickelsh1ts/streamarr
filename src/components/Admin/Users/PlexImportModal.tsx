@@ -5,12 +5,12 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
+import { Permission, useUser } from '@app/hooks/useUser';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import { useUser, Permission } from '@app/hooks/useUser';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 interface PlexImportProps {
   onCancel?: () => void;
@@ -142,7 +142,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
         <>
           {settings.currentSettings.newPlexLogin && (
             <Alert type="info">
-              <p className="text-sm font-medium text-info-content flex-1">
+              <p className="text-info-content flex-1 text-sm font-medium">
                 <FormattedMessage
                   id="plexImport.newSignIn.warning"
                   defaultMessage="The <strong>Enable New Plex Sign-In</strong> setting is currently enabled. Plex users with library access do not need to be imported in order to sign in."
@@ -162,7 +162,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th className="w-16 bg-neutral px-4 py-3">
+                        <th className="bg-neutral w-16 px-4 py-3">
                           <span
                             role="checkbox"
                             tabIndex={0}
@@ -185,11 +185,11 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                               aria-hidden="true"
                               className={`${
                                 isAllUsers() ? 'translate-x-5' : 'translate-x-0'
-                              } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
+                              } border-neutral group-focus:border-primary absolute left-0 inline-block h-5 w-5 rounded-full border bg-white shadow transition-transform duration-200 ease-in-out group-focus:ring`}
                             ></span>
                           </span>
                         </th>
-                        <th className="bg-neutral px-1 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-neutral-content md:px-6">
+                        <th className="bg-neutral text-neutral-content px-1 py-3 text-left text-xs leading-4 font-medium tracking-wider uppercase md:px-6">
                           <FormattedMessage
                             id="common.user"
                             defaultMessage="User"
@@ -197,10 +197,10 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral bg-base-300">
+                    <tbody className="divide-neutral bg-base-300 divide-y">
                       {data?.map((user) => (
                         <tr key={`user-${user.id}`}>
-                          <td className="whitespace-nowrap px-4 py-4 text-sm font-medium leading-5 text-neutral-content">
+                          <td className="text-neutral-content px-4 py-4 text-sm leading-5 font-medium whitespace-nowrap">
                             <span
                               role="checkbox"
                               tabIndex={0}
@@ -227,11 +227,11 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                   isSelectedUser(user.id)
                                     ? 'translate-x-5'
                                     : 'translate-x-0'
-                                } absolute left-0 inline-block h-5 w-5 rounded-full border border-neutral bg-white shadow transition-transform duration-200 ease-in-out group-focus:border-primary group-focus:ring`}
+                                } border-neutral group-focus:border-primary absolute left-0 inline-block h-5 w-5 rounded-full border bg-white shadow transition-transform duration-200 ease-in-out group-focus:ring`}
                               ></span>
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-1 py-4 text-sm font-medium leading-5 text-neutral-content md:px-6">
+                          <td className="text-neutral-content px-1 py-4 text-sm leading-5 font-medium whitespace-nowrap md:px-6">
                             <div className="flex items-center">
                               <CachedImage
                                 className="h-10 w-10 shrink-0 rounded-full"
@@ -241,13 +241,13 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
                                 height={24}
                               />
                               <div className="ml-4">
-                                <div className="text-base-content font-bold leading-5">
+                                <div className="text-base-content leading-5 font-bold">
                                   {user.username}
                                 </div>
                                 {user.username &&
                                   user.username.toLowerCase() !==
                                     user.email && (
-                                    <div className="text-sm leading-5 text-neutral">
+                                    <div className="text-neutral text-sm leading-5">
                                       {user.email}
                                     </div>
                                   )}

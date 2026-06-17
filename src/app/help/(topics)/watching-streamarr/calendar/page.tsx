@@ -28,7 +28,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.calendar.viewUpcoming"
@@ -67,7 +67,7 @@ const HelpContent = () => {
           defaultMessage="Access the calendar from the navigation menu. You can browse through different dates to see what content is coming up."
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.calendar.navigateMonths"
@@ -87,7 +87,7 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <span className="text-info font-bold">
           <FormattedMessage id="help.common.tip" defaultMessage="Tip" />
         </span>

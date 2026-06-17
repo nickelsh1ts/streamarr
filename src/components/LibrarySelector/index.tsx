@@ -1,10 +1,10 @@
 import type { Library } from '@server/lib/settings';
 import sortBy from 'lodash/sortBy';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import type { CSSObjectWithLabel } from 'react-select';
 import Select from 'react-select';
 import useSWR from 'swr';
-import { useIntl } from 'react-intl';
 
 export type OptionType = {
   value: string;

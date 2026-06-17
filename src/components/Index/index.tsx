@@ -17,7 +17,7 @@ function Index() {
   const { currentSettings } = useSettings();
 
   return (
-    <main className="bg-linear-to-b from-secondary from-20% via-primary/75 via-50% to-secondary to-80%">
+    <main className="from-secondary via-primary/75 to-secondary bg-linear-to-b from-20% via-50% to-80%">
       <Header isInView={!isInView} />
       <div ref={targetRef}>
         <Hero />

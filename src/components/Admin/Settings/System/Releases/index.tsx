@@ -3,17 +3,17 @@ import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
+import type { GitHubRelease } from '@server/interfaces/api/settingsInterfaces';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
-import { useIntl, FormattedMessage } from 'react-intl';
 
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false,
 });
-import type { GitHubRelease } from '@server/interfaces/api/settingsInterfaces';
 
 interface ReleaseProps {
   release: GitHubRelease;
@@ -26,7 +26,7 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className="flex w-full flex-col space-y-3 rounded-lg bg-base-200/50 hover:bg-base-200/30 px-4 py-2 shadow-md ring-1 ring-base-content/10 sm:flex-row sm:space-y-0 sm:space-x-3">
+    <div className="bg-base-200/50 hover:bg-base-200/30 ring-base-content/10 flex w-full flex-col space-y-3 rounded-lg px-4 py-2 shadow-md ring-1 sm:flex-row sm:space-y-0 sm:space-x-3">
       <Modal
         onCancel={() => setModalOpen(false)}
         title={intl.formatMessage(
@@ -51,7 +51,7 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
       </Modal>
       <div className="flex w-full grow items-center justify-center space-x-2 truncate sm:justify-start">
         <span className="truncate text-lg font-bold">
-          <span className="mr-2 whitespace-nowrap text-xs font-normal align-center">
+          <span className="align-center mr-2 text-xs font-normal whitespace-nowrap">
             {moment(release.created_at)?.fromNow()}
           </span>
           {release.tag_name}
@@ -73,7 +73,7 @@ const Release = ({ currentVersion, release, isLatest }: ReleaseProps) => {
         buttonType="primary"
         onClick={() => setModalOpen(true)}
       >
-        <DocumentTextIcon className="size-6 mr-2" />
+        <DocumentTextIcon className="mr-2 size-6" />
         <FormattedMessage
           id="aboutReleases.viewChangelog"
           defaultMessage="View Changelog"

@@ -1,32 +1,32 @@
-import React, { useState, useMemo } from 'react';
-import { formatBytes, formatSpeed, formatEta } from '@app/utils/numberHelper';
-import Modal from '@app/components/Common/Modal';
-import Alert from '@app/components/Common/Alert';
-import type {
-  NormalizedDownloadItem,
-  DownloadClientStats,
-} from '@server/interfaces/api/downloadsInterfaces';
-import { FormattedMessage, useIntl } from 'react-intl';
-import ProgressBar from '@app/components/Common/ProgressBar';
-import { momentWithLocale } from '@app/utils/momentLocale';
-import {
-  useDownloadActions,
-  useTorrentFiles,
-  useClientTags,
-} from '@app/hooks/useDownloads';
-import EditableField from './EditableField';
-import TorrentFileList from './TorrentFileList';
-import RemoveTorrentModal from './RemoveTorrentModal';
 import Accordion from '@app/components/Common/Accordion';
+import Alert from '@app/components/Common/Alert';
+import Modal from '@app/components/Common/Modal';
+import ProgressBar from '@app/components/Common/ProgressBar';
 import Toast from '@app/components/Toast';
 import {
+  useClientTags,
+  useDownloadActions,
+  useTorrentFiles,
+} from '@app/hooks/useDownloads';
+import { momentWithLocale } from '@app/utils/momentLocale';
+import { formatBytes, formatEta, formatSpeed } from '@app/utils/numberHelper';
+import {
   CheckBadgeIcon,
-  ChevronDownIcon,
-  XCircleIcon,
-  PlusIcon,
-  XMarkIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
+  PlusIcon,
+  XCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid';
+import type {
+  DownloadClientStats,
+  NormalizedDownloadItem,
+} from '@server/interfaces/api/downloadsInterfaces';
+import React, { useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import EditableField from './EditableField';
+import RemoveTorrentModal from './RemoveTorrentModal';
+import TorrentFileList from './TorrentFileList';
 
 interface TorrentDetailsModalProps {
   isOpen: boolean;
@@ -389,9 +389,9 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
         show={isOpen}
         size="md"
       >
-        <div className="space-y-6 border-t border-primary pt-4">
+        <div className="border-primary space-y-6 border-t pt-4">
           <div>
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="mb-3 text-lg font-semibold">
               <FormattedMessage
                 id="downloads.generalInfo"
                 defaultMessage="General Information"
@@ -417,7 +417,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                 <span className="text-neutral">
                   <FormattedMessage id="common.name" defaultMessage="Name" />:
                 </span>
-                <span className="font-medium break-all ml-4">
+                <span className="ml-4 font-medium break-all">
                   {torrent.name}
                 </span>
               </div>
@@ -426,7 +426,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   <FormattedMessage id="downloads.hash" defaultMessage="Hash" />
                   :
                 </span>
-                <span className="font-mono text-xs break-all ml-4">
+                <span className="ml-4 font-mono text-xs break-all">
                   {torrent.hash}
                 </span>
               </div>
@@ -489,11 +489,11 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                     />
                     :
                   </span>
-                  <div className="flex flex-wrap items-center gap-1.5 ml-4 justify-end">
+                  <div className="ml-4 flex flex-wrap items-center justify-end gap-1.5">
                     {torrent.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-sm font-medium text-primary"
+                        className="bg-primary/15 text-primary inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium"
                       >
                         {tag}
                         <button
@@ -558,7 +558,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                           }}
                           className="btn btn-xs btn-ghost btn-circle"
                         >
-                          <CheckCircleIcon className="size-4 text-success" />
+                          <CheckCircleIcon className="text-success size-4" />
                         </button>
                         <button
                           onClick={() => {
@@ -590,7 +590,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="mb-3 text-lg font-semibold">
               <FormattedMessage
                 id="downloads.progressStats"
                 defaultMessage="Progress & Statistics"
@@ -598,7 +598,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
             </h3>
             <div className="space-y-3">
               <div>
-                <div className="flex justify-between text-sm mb-1">
+                <div className="mb-1 flex justify-between text-sm">
                   <span className="text-neutral">
                     <FormattedMessage
                       id="common.progress"
@@ -646,7 +646,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   <span className="text-neutral">
                     <FormattedMessage id="common.size" defaultMessage="Size" />:
                   </span>
-                  <span className="font-medium ml-2">
+                  <span className="ml-2 font-medium">
                     {formatBytes(torrent.size)}
                   </span>
                 </div>
@@ -658,7 +658,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                     />
                     :
                   </span>
-                  <span className="font-medium ml-2">
+                  <span className="ml-2 font-medium">
                     {torrent.ratio?.toFixed(2) ?? '-'}
                   </span>
                 </div>
@@ -670,7 +670,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                     />
                     :
                   </span>
-                  <span className="font-medium ml-2 text-success">
+                  <span className="text-success ml-2 font-medium">
                     {formatSpeed(torrent.downloadSpeed)}
                   </span>
                 </div>
@@ -682,7 +682,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                     />
                     :
                   </span>
-                  <span className="font-medium ml-2 text-info">
+                  <span className="text-info ml-2 font-medium">
                     {formatSpeed(torrent.uploadSpeed)}
                   </span>
                 </div>
@@ -690,11 +690,11 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                   <span className="text-neutral">
                     <FormattedMessage id="common.eta" defaultMessage="ETA" />:
                   </span>
-                  <span className="font-medium ml-2">
+                  <span className="ml-2 font-medium">
                     {formatEta(torrent.eta)}
                   </span>
                 </div>
-                <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
+                <div className="col-span-2 flex items-center gap-2 sm:col-span-1">
                   <span className="text-neutral">
                     <FormattedMessage
                       id="downloads.savePath"
@@ -722,7 +722,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                         setShouldLoadFiles(true);
                       }
                     }}
-                    className={`flex items-center justify-between w-full text-lg font-semibold mb-1 bg-base-200 hover:text-primary hover:bg-base-300 transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} py-1 px-2`}
+                    className={`bg-base-200 hover:text-primary hover:bg-base-300 mb-1 flex w-full items-center justify-between text-lg font-semibold transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} px-2 py-1`}
                   >
                     <FormattedMessage
                       id="downloads.content"
@@ -746,7 +746,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                         onSetPriority={handleSetFilePriority}
                       />
                     ) : (
-                      <div className="text-center text-neutral py-4">
+                      <div className="text-neutral py-4 text-center">
                         <FormattedMessage
                           id="downloads.noFilesAvailable"
                           defaultMessage="No Files Available"
@@ -759,7 +759,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
             </Accordion>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="mb-3 text-lg font-semibold">
               <FormattedMessage
                 id="downloads.peersSeeds"
                 defaultMessage="Peers & Seeds"
@@ -793,7 +793,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="mb-3 text-lg font-semibold">
               <FormattedMessage id="downloads.dates" defaultMessage="Dates" />
             </h3>
             <div className="space-y-2 text-sm">

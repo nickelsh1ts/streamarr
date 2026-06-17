@@ -1,14 +1,14 @@
 'use client';
-import type React from 'react';
-import { useState } from 'react';
+import PlexLogo from '@app/assets/services/plex.svg';
 import ImageFader from '@app/components/Common/ImageFader';
+import useSettings from '@app/hooks/useSettings';
 import { ComputerDesktopIcon, TvIcon } from '@heroicons/react/24/outline';
 import { DevicePhoneMobileIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
-import useSWR from 'swr';
-import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex.svg';
+import type React from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 interface imageArrayProps {
   src: string;
@@ -36,7 +36,7 @@ const DeviceTabs = () => {
       }),
       icon: (
         <svg
-          className="w-7 h-7 text-primary group-hover:text-secondary"
+          className="text-primary group-hover:text-secondary h-7 w-7"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -80,7 +80,7 @@ const DeviceTabs = () => {
         defaultMessage: 'Smart TVs',
       }),
       icon: (
-        <TvIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
+        <TvIcon className="text-primary group-hover:text-secondary h-7 w-7" />
       ),
       heading: intl.formatMessage({
         id: 'help.devices.builtInApp',
@@ -115,7 +115,7 @@ const DeviceTabs = () => {
       }),
       icon: (
         <svg
-          className="w-7 h-7 text-primary group-hover:text-secondary"
+          className="text-primary group-hover:text-secondary h-7 w-7"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 245.037 245.037"
         >
@@ -167,7 +167,7 @@ const DeviceTabs = () => {
         defaultMessage: 'Smart Phones & Tablets',
       }),
       icon: (
-        <DevicePhoneMobileIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
+        <DevicePhoneMobileIcon className="text-primary group-hover:text-secondary h-7 w-7" />
       ),
       heading: (
         <>
@@ -209,7 +209,7 @@ const DeviceTabs = () => {
         defaultMessage: 'PCs & Laptops',
       }),
       icon: (
-        <ComputerDesktopIcon className="w-7 h-7 text-primary group-hover:text-secondary" />
+        <ComputerDesktopIcon className="text-primary group-hover:text-secondary h-7 w-7" />
       ),
       heading: intl.formatMessage({
         id: 'help.devices.watchOnWhatYouHave',
@@ -250,7 +250,7 @@ const DeviceTabs = () => {
               }}
               id={`tab-${i}`}
               role="tab"
-              className={`tab group flex flex-col flex-nowrap grow h-fit py-5 text-black rounded-none! ${activeTab === `tab-${i}` ? 'bg-zinc-100 border-x border-zinc-300' : ''} `}
+              className={`tab group flex h-fit grow flex-col flex-nowrap rounded-none! py-5 text-black ${activeTab === `tab-${i}` ? 'border-x border-zinc-300 bg-zinc-100' : ''} `}
             >
               {tab.icon}
               {tab.link}
@@ -258,7 +258,7 @@ const DeviceTabs = () => {
           );
         })}
       </div>
-      <div className="bg-zinc-200 relative min-h-[47.5vh]">
+      <div className="relative min-h-[47.5vh] bg-zinc-200">
         <ImageFader
           rotationSpeed={6000}
           gradient="backdrop-blur-xl bg-black/70"
@@ -272,24 +272,24 @@ const DeviceTabs = () => {
           return (
             <div
               key={i}
-              className={`flex flex-wrap relative max-w-screen-xl mx-auto px-5 text-white ${activeTab === `tab-${i}` ? 'block' : 'hidden'}`}
+              className={`relative mx-auto flex max-w-screen-xl flex-wrap px-5 text-white ${activeTab === `tab-${i}` ? 'block' : 'hidden'}`}
             >
-              <div className="container mx-auto max-w-screen-sm md:max-lg:w-1/2 mt-6 px-4 md:grow">
-                <p className="text-2xl leading-6 text-white uppercase border-s-2 border-primary ps-6 py-2">
+              <div className="container mx-auto mt-6 max-w-screen-sm px-4 md:grow md:max-lg:w-1/2">
+                <p className="border-primary border-s-2 py-2 ps-6 text-2xl leading-6 text-white uppercase">
                   {tab.heading}
                 </p>
                 <p className="mt-6">{tab.paragraph}</p>
               </div>
-              <div className="container max-w-80 mx-auto flex-none max-md:my-5">
-                <div className="grid grid-cols-2 w-full gap-0">
+              <div className="container mx-auto max-w-80 flex-none max-md:my-5">
+                <div className="grid w-full grid-cols-2 gap-0">
                   {tab.imageArray?.map((image, i) => {
                     return (
                       <div
                         key={i}
-                        className="border border-neutral bg-zinc-200 w-full h-36 p-4 place-content-center"
+                        className="border-neutral h-36 w-full place-content-center border bg-zinc-200 p-4"
                       >
                         <Image
-                          className="w-auto h-auto"
+                          className="h-auto w-auto"
                           src={image.src}
                           alt={image.alt}
                           width={128}
@@ -304,7 +304,7 @@ const DeviceTabs = () => {
           );
         })}
       </div>
-      <div className="container mx-auto text-center py-10 px-5 text-black">
+      <div className="container mx-auto px-5 py-10 text-center text-black">
         <FormattedMessage
           id="help.devices.membershipRequired"
           defaultMessage="{appTitle} membership and internet connection required."

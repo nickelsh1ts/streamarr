@@ -1,12 +1,17 @@
-import { UserType } from '@server/constants/user';
+import { InviteStatus } from '@server/constants/invite';
 import type { AccessRevokedReason } from '@server/constants/user';
+import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
+import Event from '@server/entity/Event';
+import Invite from '@server/entity/Invite';
+import { Notification } from '@server/entity/Notification';
+import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
 import PreparedEmail from '@server/lib/email';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
-import { Permission } from '@server/lib/permissions';
-import { hasPermission } from '@server/lib/permissions';
+import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { AfterDate } from '@server/utils/dateHelpers';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import path from 'path';
@@ -25,15 +30,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserOnboarding } from './UserOnboarding';
 import { UserPushSubscription } from './UserPushSubscription';
 import { UserSettings } from './UserSettings';
-import Invite from '@server/entity/Invite';
-import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
-import { AfterDate } from '@server/utils/dateHelpers';
-import { InviteStatus } from '@server/constants/invite';
-import Event from '@server/entity/Event';
-import { Notification } from '@server/entity/Notification';
-import { UserOnboarding } from './UserOnboarding';
 
 @Entity()
 export class User {

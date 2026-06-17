@@ -130,7 +130,7 @@ const UserNotificationsPushbullet = () => {
       }) => (
         <Form className="mt-5">
           <div className="max-w-6xl space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="pushbulletAccessToken" className="col-span-1">
                 <FormattedMessage
                   id="userSettings.notifications.pushbulletAccessToken"
@@ -144,7 +144,7 @@ const UserNotificationsPushbullet = () => {
                     id="pushbulletAccessToken"
                     name="pushbulletAccessToken"
                     buttonSize="sm"
-                    className="input input-sm input-primary rounded-md w-full"
+                    className="input input-sm input-primary w-full rounded-md"
                   />
                 </div>
                 {errors.pushbulletAccessToken &&
@@ -164,8 +164,8 @@ const UserNotificationsPushbullet = () => {
               }}
             />
           </div>
-          <div className="divider divider-primary mb-0 col-span-full" />
-          <div className="flex justify-end col-span-3 mt-4">
+          <div className="divider divider-primary col-span-full mb-0" />
+          <div className="col-span-3 mt-4 flex justify-end">
             <span className="ml-3 inline-flex rounded-md shadow-sm">
               <Button
                 buttonType="primary"
@@ -173,7 +173,7 @@ const UserNotificationsPushbullet = () => {
                 buttonSize="sm"
                 disabled={isSubmitting || !isValid}
               >
-                <ArrowDownTrayIcon className="size-4 mr-2" />
+                <ArrowDownTrayIcon className="mr-2 size-4" />
                 <span>
                   {isSubmitting ? (
                     <FormattedMessage

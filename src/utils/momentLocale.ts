@@ -1,8 +1,8 @@
-import moment from 'moment';
 import {
   availableLanguages,
   type AvailableLocale,
 } from '@app/context/LanguageContext';
+import moment from 'moment';
 
 // Global moment locale state
 let currentMomentLocale: AvailableLocale = 'en';

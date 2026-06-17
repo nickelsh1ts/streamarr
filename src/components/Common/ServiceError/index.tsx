@@ -3,10 +3,10 @@ import type {
   ServiceProxyError,
   ServiceProxyErrorType,
 } from '@app/hooks/useServiceProxy';
-import ServiceNotConfigured from './ServiceNotConfigured';
-import ServiceUnavailable from './ServiceUnavailable';
-import ServiceNotFound from './ServiceNotFound';
 import ServiceErrorGeneric from './ServiceErrorGeneric';
+import ServiceNotConfigured from './ServiceNotConfigured';
+import ServiceNotFound from './ServiceNotFound';
+import ServiceUnavailable from './ServiceUnavailable';
 
 export interface ServiceErrorProps {
   serviceName: string;
@@ -74,9 +74,9 @@ export function ServiceError({
 }
 
 export {
-  ServiceNotConfigured,
-  ServiceUnavailable,
-  ServiceNotFound,
   ServiceErrorGeneric,
+  ServiceNotConfigured,
+  ServiceNotFound,
+  ServiceUnavailable,
 };
 export default ServiceError;

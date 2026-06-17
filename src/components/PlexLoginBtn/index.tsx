@@ -44,9 +44,9 @@ const PlexLoginButton = ({
           setTimeout(() => getPlexLogin(), 1500);
         }}
         disabled={loading || isProcessing}
-        className="btn btn-accent btn-block font-extrabold disabled:bg-accent/40 disabled:cursor-progress disabled:pointer-events-auto disabled:hover:bg-accent/40 disabled:no-animation"
+        className="btn btn-accent btn-block disabled:bg-accent/40 disabled:hover:bg-accent/40 disabled:no-animation font-extrabold disabled:pointer-events-auto disabled:cursor-progress"
       >
-        <span className="font-extrabold text-lg">
+        <span className="text-lg font-extrabold">
           {loading ? (
             <FormattedMessage id="common.loading" defaultMessage="Loading" />
           ) : isProcessing ? (
@@ -60,7 +60,7 @@ const PlexLoginButton = ({
                 id="plex.login.button"
                 defaultMessage="Sign in with"
               />
-              <PlexLogo className="inline-flex size-10 ml-2" />
+              <PlexLogo className="ml-2 inline-flex size-10" />
             </>
           )}
         </span>

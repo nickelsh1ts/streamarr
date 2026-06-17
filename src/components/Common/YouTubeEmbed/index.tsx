@@ -31,7 +31,7 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
 
   return (
     <div
-      className={`relative w-full aspect-video max-w-full overflow-hidden rounded-lg shadow-lg ${className}`}
+      className={`relative aspect-video w-full max-w-full overflow-hidden rounded-lg shadow-lg ${className}`}
     >
       <iframe
         src={iframeSrc}
@@ -39,7 +39,7 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         loading="lazy"
-        className="absolute inset-0 w-full h-full border-0"
+        className="absolute inset-0 h-full w-full border-0"
       />
     </div>
   );

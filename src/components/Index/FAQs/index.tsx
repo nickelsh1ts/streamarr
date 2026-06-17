@@ -1,9 +1,9 @@
-import useSettings from '@app/hooks/useSettings';
 import PlexLogo from '@app/assets/services/plex.svg';
-import Link from 'next/link';
-import { FormattedMessage } from 'react-intl';
+import useSettings from '@app/hooks/useSettings';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
 import { type ReactNode, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 function FAQs() {
   const { currentSettings } = useSettings();
@@ -382,7 +382,7 @@ function FAQs() {
     <section id="faqs" className="min-h-lvh place-content-center py-16">
       <div className="container mx-auto">
         <div className="pb-10">
-          <p className="text-2xl md:text-4xl text-center font-extrabold">
+          <p className="text-center text-2xl font-extrabold md:text-4xl">
             <FormattedMessage
               id="index.faqs.title"
               defaultMessage="Frequently Asked Questions"
@@ -415,7 +415,7 @@ function FAQs() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <div className="border-t border-base-300 px-4 pb-4 pt-4">
+                    <div className="border-base-300 border-t px-4 pt-4 pb-4">
                       {faq.answer}
                     </div>
                   </div>

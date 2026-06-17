@@ -2,6 +2,7 @@ import { getRepository } from '@server/datasource';
 import Newsletter from '@server/entity/Newsletter';
 import NewsletterHistory from '@server/entity/NewsletterHistory';
 import { User } from '@server/entity/User';
+import { getIntl } from '@server/i18n';
 import type {
   NewsletterBody,
   NewsletterHistoryResultsResponse,
@@ -9,9 +10,9 @@ import type {
   NewsletterSendResult,
   NewsletterVariablesResponse,
 } from '@server/interfaces/api/newsletterInterfaces';
-import { getIntl } from '@server/i18n';
-import { resolveBlockData } from '@server/lib/newsletters/dataProviders';
+import PreparedEmail from '@server/lib/email';
 import type { NewsletterBlockData } from '@server/lib/newsletters/dataProviders';
+import { resolveBlockData } from '@server/lib/newsletters/dataProviders';
 import {
   getNewsletterEmailStrings,
   renderForRecipient,
@@ -22,7 +23,6 @@ import {
   isNewsletterSending,
   sendNewsletter,
 } from '@server/lib/newsletters/send';
-import PreparedEmail from '@server/lib/email';
 import {
   newsletterPreviewLimiter,
   newsletterTestLimiter,

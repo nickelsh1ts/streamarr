@@ -71,7 +71,7 @@ const HelpContent = () => {
               defaultMessage="Install a web app"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.openComputer"
@@ -79,7 +79,7 @@ const HelpContent = () => {
                 values={{
                   chromeIcon: (
                     <CachedImage
-                      className="w-5 h-5 inline-flex"
+                      className="inline-flex h-5 w-5"
                       src="/img/chrome.svg"
                       alt="Chrome"
                       width={20}
@@ -108,9 +108,9 @@ const HelpContent = () => {
                 defaultMessage="At the top right, select More {moreIcon} {chevron} {saveAndShare} {chevron} {installPageAsApp}"
                 values={{
                   moreIcon: (
-                    <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />
+                    <EllipsisVerticalIcon className="inline-flex h-5 w-5" />
                   ),
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                   saveAndShare: (
                     <span className="font-bold">
                       <FormattedMessage
@@ -130,7 +130,7 @@ const HelpContent = () => {
                 }}
               />
             </li>
-            <ul className="list list-disc ms-6">
+            <ul className="list ms-6 list-disc">
               <li className="place-items-center">
                 <FormattedMessage
                   id="help.downloadStreamarr.chrome.alsoInstall"
@@ -138,7 +138,7 @@ const HelpContent = () => {
                   values={{
                     installIcon: (
                       <CachedImage
-                        className="w-5 h-5 inline-flex"
+                        className="inline-flex h-5 w-5"
                         src="https://storage.googleapis.com/support-kms-prod/IXP8s7ymZF6tqtGlIECQYtQfOkZX6X9pHMsX"
                         alt="download"
                         width={20}
@@ -156,7 +156,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.appShortcutsTip"
               defaultMessage="Our app includes shortcuts to different features. To find a list of app shortcuts, right-click the web app on the taskbar."
@@ -168,7 +168,7 @@ const HelpContent = () => {
               defaultMessage="Uninstall a web app"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.openComputerUninstall"
@@ -176,7 +176,7 @@ const HelpContent = () => {
                 values={{
                   chromeIcon: (
                     <CachedImage
-                      className="w-5 h-5 inline-flex"
+                      className="inline-flex h-5 w-5"
                       src="/img/chrome.svg"
                       alt="Chrome"
                       width={20}
@@ -205,9 +205,9 @@ const HelpContent = () => {
                 defaultMessage="At the top right, select More {moreIcon} {chevron} {uninstallApp} {chevron} {remove}"
                 values={{
                   moreIcon: (
-                    <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />
+                    <EllipsisVerticalIcon className="inline-flex h-5 w-5" />
                   ),
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                   uninstallApp: (
                     <span className="font-bold">
                       <FormattedMessage
@@ -234,7 +234,7 @@ const HelpContent = () => {
                 }}
               />
             </li>
-            <ul className="list list-disc ms-6">
+            <ul className="list ms-6 list-disc">
               <li className="place-items-center">
                 <FormattedMessage
                   id="help.downloadStreamarr.chrome.deleteData"
@@ -243,7 +243,7 @@ const HelpContent = () => {
               </li>
             </ul>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.chromeApps"
               defaultMessage="You can also manage web apps through {code}"
@@ -270,7 +270,7 @@ const HelpContent = () => {
               defaultMessage="Install a web app"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.openAndroid"
@@ -278,7 +278,7 @@ const HelpContent = () => {
                 values={{
                   chromeIcon: (
                     <CachedImage
-                      className="w-5 h-5 inline-flex"
+                      className="inline-flex h-5 w-5"
                       src="/img/chrome.svg"
                       alt="Chrome"
                       width={20}
@@ -307,9 +307,9 @@ const HelpContent = () => {
                 defaultMessage="On the right of the address bar, tap More {moreIcon} {chevron} {addToHome} {chevron} {install}"
                 values={{
                   moreIcon: (
-                    <EllipsisVerticalIcon className="w-5 h-5 inline-flex" />
+                    <EllipsisVerticalIcon className="inline-flex h-5 w-5" />
                   ),
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                   addToHome: (
                     <span className="font-bold">
                       <FormattedMessage
@@ -336,7 +336,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.appShortcutsTipAndroid"
               defaultMessage="Our app includes shortcuts to different features. To find a list of app shortcuts, right-click the web app on the taskbar."
@@ -348,7 +348,7 @@ const HelpContent = () => {
               defaultMessage="Uninstall a web app"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.androidSettings"
@@ -362,7 +362,7 @@ const HelpContent = () => {
                       />
                     </span>
                   ),
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                   apps: (
                     <span className="font-bold">
                       <FormattedMessage
@@ -412,7 +412,7 @@ const HelpContent = () => {
               defaultMessage="Add to home screen"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.openIos"
@@ -420,7 +420,7 @@ const HelpContent = () => {
                 values={{
                   chromeIcon: (
                     <CachedImage
-                      className="w-5 h-5 inline-flex"
+                      className="inline-flex h-5 w-5"
                       src="/img/chrome.svg"
                       alt="Chrome"
                       width={20}
@@ -449,7 +449,7 @@ const HelpContent = () => {
                 defaultMessage="On the right of the address bar, tap Share {shareIcon}."
                 values={{
                   shareIcon: (
-                    <ArrowUpOnSquareIcon className="w-4 h-4 inline-flex" />
+                    <ArrowUpOnSquareIcon className="inline-flex h-4 w-4" />
                   ),
                 }}
               />
@@ -487,7 +487,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.appShortcutsTipIos"
               defaultMessage="Our app includes shortcuts to different features. To find a list of app shortcuts, right-click the web app on the taskbar."
@@ -499,7 +499,7 @@ const HelpContent = () => {
               defaultMessage="Delete from home screen"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.chrome.goToHomeScreen"
@@ -555,7 +555,7 @@ const HelpContent = () => {
               defaultMessage="Install an app in Microsoft Edge"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.edge.openEdge"
@@ -575,7 +575,7 @@ const HelpContent = () => {
                 }}
               />
             </li>
-            <ul className="list list-disc ms-6">
+            <ul className="list ms-6 list-disc">
               <li>
                 <FormattedMessage
                   id="help.downloadStreamarr.edge.promptInstall"
@@ -594,7 +594,7 @@ const HelpContent = () => {
                           defaultMessage="Settings and more … {chevron} Apps {chevron} Install this site as an app."
                           values={{
                             chevron: (
-                              <ChevronRightIcon className="w-3 h-3 inline-flex" />
+                              <ChevronRightIcon className="inline-flex h-3 w-3" />
                             ),
                           }}
                         />
@@ -605,7 +605,7 @@ const HelpContent = () => {
               </li>
             </ul>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.edge.installedApps"
               defaultMessage="Once the application is installed, it will appear under {edgeApps}"
@@ -622,7 +622,7 @@ const HelpContent = () => {
               defaultMessage="Uninstall an app in Microsoft Edge"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.edge.openEdgeApps"
@@ -700,7 +700,7 @@ const HelpContent = () => {
               defaultMessage="Install an app in Microsoft Edge on Android"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.edge.tapMenuAndroid"
@@ -724,7 +724,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.edge.defaultBrowserNote"
               defaultMessage="If you set Microsoft Edge as your default browser on your Android device, it will launch on Edge; otherwise, it will launch on the other browser that is set as the default browser, which would most probably be Google Chrome on an Android device."
@@ -747,7 +747,7 @@ const HelpContent = () => {
               defaultMessage="How to Add a Web App to Your Home Screen"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.edge.openEdgeIos"
@@ -772,7 +772,7 @@ const HelpContent = () => {
                 id="help.downloadStreamarr.edge.tapHamburger"
                 defaultMessage="Tap the Hamburger menu {menuIcon}."
                 values={{
-                  menuIcon: <Bars3Icon className="w-5 h-5 inline-flex" />,
+                  menuIcon: <Bars3Icon className="inline-flex h-5 w-5" />,
                 }}
               />
             </li>
@@ -805,7 +805,7 @@ const HelpContent = () => {
               defaultMessage="How to Remove a Web App from Your Home Screen"
             />
           </p>
-          <ul className="list list-decimal ms-4 my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.edge.touchAndHoldIos"
@@ -845,7 +845,7 @@ const HelpContent = () => {
               defaultMessage="How to create a web app"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.safari.openWebpage"
@@ -857,9 +857,9 @@ const HelpContent = () => {
                 id="help.downloadStreamarr.safari.chooseFile"
                 defaultMessage="From the menu bar, choose File {chevron} Add to Dock. Or click the Share button {shareIcon} in the Safari toolbar, then choose Add to Dock."
                 values={{
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                   shareIcon: (
-                    <ArrowUpOnSquareIcon className="w-5 h-5 inline-flex align-baseline" />
+                    <ArrowUpOnSquareIcon className="inline-flex h-5 w-5 align-baseline" />
                   ),
                 }}
               />
@@ -871,7 +871,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.safari.requiresSonoma"
               defaultMessage="Requires macOS Sonoma or later"
@@ -889,7 +889,7 @@ const HelpContent = () => {
                 id="help.downloadStreamarr.safari.deleteInstructions"
                 defaultMessage="Web apps are saved to the Applications folder of your home folder. To delete a web app, open your home folder, such as by choosing Go {chevron} Home from the menu bar in the Finder. Then open the Applications folder and drag the web app to the Trash."
                 values={{
-                  chevron: <ChevronRightIcon className="w-3 h-3 inline-flex" />,
+                  chevron: <ChevronRightIcon className="inline-flex h-3 w-3" />,
                 }}
               />
             </li>
@@ -911,7 +911,7 @@ const HelpContent = () => {
               defaultMessage="How to Add a Web App to Your Home Screen"
             />
           </p>
-          <ul className="list ms-4 list-decimal my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.safari.openSafariIos"
@@ -950,7 +950,7 @@ const HelpContent = () => {
               />
             </li>
           </ul>
-          <p className="italic text-sm my-4">
+          <p className="my-4 text-sm italic">
             <FormattedMessage
               id="help.downloadStreamarr.safari.webAppTip"
               defaultMessage="Your new web app will appear in the next available space on your device's home screen. If you tap it and you're kicked back to the standard website, force quit Safari, then launch the web app again."
@@ -962,7 +962,7 @@ const HelpContent = () => {
               defaultMessage="How to Remove a Web App from Your Home Screen"
             />
           </p>
-          <ul className="list list-decimal ms-4 my-4">
+          <ul className="list my-4 ms-4 list-decimal">
             <li>
               <FormattedMessage
                 id="help.downloadStreamarr.safari.touchAndHoldIos"

@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useMutationObserver = (
   ref: RefObject<Element>,

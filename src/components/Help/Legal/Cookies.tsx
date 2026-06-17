@@ -1,17 +1,17 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import useSettings from '@app/hooks/useSettings';
 import { FormattedMessage } from 'react-intl';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 
 const Cookies = () => {
   const { currentSettings } = useSettings();
 
   return (
     <div
-      className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4 "
+      className="container mx-auto my-5 max-w-screen-md p-4 text-black lg:max-w-screen-lg xl:max-w-screen-xl"
       id="cookies"
     >
-      <p className="text-4xl mb-6 font-extrabold">
+      <p className="mb-6 text-4xl font-extrabold">
         <FormattedMessage
           id="help.cookies.title"
           defaultMessage="Cookie Policy"
@@ -30,7 +30,7 @@ const Cookies = () => {
           }}
         />
       </p>
-      <p className="font-extrabold mt-10 text-xl mb-2">
+      <p className="mt-10 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.cookies.whatTitle"
           defaultMessage="What Are Cookies?"
@@ -42,7 +42,7 @@ const Cookies = () => {
           defaultMessage="Cookies are small text files that are stored on your device when you visit a website. They are widely used to make websites work more efficiently and to provide information to the site operators."
         />
       </p>
-      <p className="font-extrabold mt-7 text-xl mb-2">
+      <p className="mt-7 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.cookies.howTitle"
           defaultMessage="How We Use Cookies"
@@ -61,7 +61,7 @@ const Cookies = () => {
           }}
         />
       </p>
-      <ul className="list-disc mx-10 my-3">
+      <ul className="mx-10 my-3 list-disc">
         <li className="my-3">
           <span className="font-extrabold">
             <FormattedMessage
@@ -87,7 +87,7 @@ const Cookies = () => {
           />
         </li>
       </ul>
-      <p className="font-extrabold mt-7 text-xl mb-2">
+      <p className="mt-7 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.cookies.thirdPartyTitle"
           defaultMessage="Third-Party Cookies"
@@ -107,7 +107,7 @@ const Cookies = () => {
           }}
         />
       </p>
-      <p className="font-extrabold mt-7 text-xl mb-2">
+      <p className="mt-7 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.cookies.managingTitle"
           defaultMessage="Managing Cookies"

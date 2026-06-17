@@ -11,8 +11,8 @@ const Privacy = () => {
   );
 
   return (
-    <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">
-      <p className="text-4xl mb-6 font-extrabold">
+    <div className="container mx-auto my-5 max-w-screen-md p-4 text-black lg:max-w-screen-lg xl:max-w-screen-xl">
+      <p className="mb-6 text-4xl font-extrabold">
         <FormattedMessage
           id="help.privacy.title"
           defaultMessage="Privacy Statement"
@@ -31,7 +31,7 @@ const Privacy = () => {
           }}
         />
       </p>
-      <p className="font-extrabold mt-10 text-xl mb-2">
+      <p className="mt-10 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.privacy.contactTitle"
           defaultMessage="Contacting Us"
@@ -66,7 +66,7 @@ const Privacy = () => {
           }}
         />
       </p>
-      <p className="font-extrabold mt-7 text-xl mb-2">
+      <p className="mt-7 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.privacy.collectTitle"
           defaultMessage="What We Collect"
@@ -78,7 +78,7 @@ const Privacy = () => {
           defaultMessage="We receive and store information about you such as:"
         />
       </p>
-      <ul className="list-disc mx-10 my-3">
+      <ul className="mx-10 my-3 list-disc">
         <li>
           <span className="font-extrabold">
             <FormattedMessage
@@ -104,7 +104,7 @@ const Privacy = () => {
           />
         </li>
       </ul>
-      <p className="font-extrabold mt-7 text-xl mb-2">
+      <p className="mt-7 mb-2 text-xl font-extrabold">
         <FormattedMessage
           id="help.privacy.useTitle"
           defaultMessage="How We Use It"
@@ -116,7 +116,7 @@ const Privacy = () => {
           defaultMessage="We use your information to provide and improve the service. Specifically:"
         />
       </p>
-      <ul className="list-disc mx-10 my-3">
+      <ul className="mx-10 my-3 list-disc">
         <li className="my-3">
           <FormattedMessage
             id="help.privacy.use1"
@@ -142,7 +142,7 @@ const Privacy = () => {
           />
         </li>
       </ul>
-      <p className="font-extrabold mt-7 text-xl mb-2" id="cookies">
+      <p className="mt-7 mb-2 text-xl font-extrabold" id="cookies">
         <FormattedMessage
           id="help.privacy.cookiesTitle"
           defaultMessage="Cookies"

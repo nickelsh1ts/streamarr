@@ -1,11 +1,7 @@
-import type { RequestHandler } from 'express';
-import { Router } from 'express';
-import { checkUser, isAuthenticated } from '@server/middleware/auth';
 import { Permission } from '@server/lib/permissions';
-import { getSettings } from '@server/lib/settings';
-import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
-import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
+import { createPlexProxy } from '@server/lib/proxy/plexProxy';
+import { createTautulliProxy } from '@server/lib/proxy/tautulliProxy';
 import {
   createTdarrProxy,
   createTdarrStaticProxy,
@@ -13,8 +9,12 @@ import {
   TDARR_PROXY_PATH,
   TDARR_STATIC_PATH,
 } from '@server/lib/proxy/tdarrProxy';
-import { createTautulliProxy } from '@server/lib/proxy/tautulliProxy';
+import { getSettings } from '@server/lib/settings';
+import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
+import { checkUser, isAuthenticated } from '@server/middleware/auth';
+import type { RequestHandler } from 'express';
+import { Router } from 'express';
 
 /**
  * Returns active proxy paths for OpenAPI validator to ignore.

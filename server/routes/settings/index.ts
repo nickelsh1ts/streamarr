@@ -1,10 +1,11 @@
+import GithubAPI from '@server/api/github';
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
-import TautulliAPI from '@server/api/tautulli';
-import GithubAPI from '@server/api/github';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
+import TautulliAPI from '@server/api/tautulli';
 import dataSource, { getRepository } from '@server/datasource';
+import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
 import type {
@@ -17,44 +18,42 @@ import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
 import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
-import { plexFullScanner } from '@server/lib/scanners/plex';
 import {
   markPlexHealthy,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
+import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
+import restartManager from '@server/lib/restartManager';
+import { plexFullScanner } from '@server/lib/scanners/plex';
 import type {
   JobId,
   MainSettings,
   NetworkSettings,
   ServiceSettings,
 } from '@server/lib/settings';
-import restartManager from '@server/lib/restartManager';
 import { getSettings } from '@server/lib/settings';
+import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { appDataPath } from '@server/utils/appDataVolume';
-import { getConfigDiskSpace } from '@server/utils/diskSpace';
 import { getAppVersion } from '@server/utils/appVersion';
+import { getConfigDiskSpace } from '@server/utils/diskSpace';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
-import path from 'path';
-import fs from 'fs';
-import { promises as fsPromises } from 'fs';
+import fs, { promises as fsPromises } from 'fs';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
 import { rescheduleJob } from 'node-schedule';
+import path from 'path';
 import semver from 'semver';
 import { URL } from 'url';
+import downloadsRoutes from './downloads';
+import logoSettingsRoutes from './logos';
+import newsletterRoutes from './newsletter';
 import notificationRoutes from './notifications';
-import Invite from '@server/entity/Invite';
+import onboardingRoutes from './onboarding';
 import radarrRoutes from './radarr';
 import sonarrRoutes from './sonarr';
-import logoSettingsRoutes from './logos';
-import downloadsRoutes from './downloads';
-import onboardingRoutes from './onboarding';
-import newsletterRoutes from './newsletter';
-import { validateBaseUrl } from '@server/lib/validation/baseUrl';
-import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
 
 const settingsRoutes = Router();
 

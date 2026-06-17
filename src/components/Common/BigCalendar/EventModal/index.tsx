@@ -4,16 +4,15 @@ import ConfirmButton from '@app/components/Common/ConfirmButton';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import useLocale from '@app/hooks/useLocale';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
 import { ClockIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Field, Form, Formik, useFormikContext } from 'formik';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { useIntl } from 'react-intl';
-import { FormattedMessage } from 'react-intl';
-import moment from 'moment';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as Yup from 'yup';
 
 interface EventModalProps {
@@ -111,7 +110,7 @@ const DatePickerField = ({ values, ...props }) => {
               </svg>
             }
           />
-          <div className="flex flex-row gap-2 mt-2">
+          <div className="mt-2 flex flex-row gap-2">
             <DatePicker
               {...props}
               selected={values.start ? new Date(values.start) : null}
@@ -132,7 +131,7 @@ const DatePickerField = ({ values, ...props }) => {
               })}
               icon={<ClockIcon className="text-primary-content z-1" />}
             />
-            <span className="text-primary text-xl font-bold mx-2"> - </span>
+            <span className="text-primary mx-2 text-xl font-bold"> - </span>
             <DatePicker
               {...props}
               selected={values.end ? new Date(values.end) : null}
@@ -151,7 +150,7 @@ const DatePickerField = ({ values, ...props }) => {
                 id: 'common.endTime',
                 defaultMessage: 'End Time',
               })}
-              icon={<ClockIcon className="z-1 text-primary-content" />}
+              icon={<ClockIcon className="text-primary-content z-1" />}
             />
           </div>
         </>
@@ -247,7 +246,7 @@ const EventModal = ({
       >
         <div className="space-y-2">
           {selectedEvent.categories && selectedEvent.categories.length > 0 && (
-            <div className="flex items-center text-neutral">
+            <div className="text-neutral flex items-center">
               <span>
                 {Array.isArray(selectedEvent.categories)
                   ? selectedEvent.categories.join(', ')
@@ -287,7 +286,7 @@ const EventModal = ({
                 {(hasPermission(Permission.MANAGE_EVENTS) ||
                   (hasPermission(Permission.CREATE_EVENTS) &&
                     selectedEvent?.createdBy.id === user?.id)) && (
-                  <div className="flex place-content-end mt-2 gap-2">
+                  <div className="mt-2 flex place-content-end gap-2">
                     <button
                       onClick={() => setEdit(true)}
                       className="btn btn-sm btn-primary"
@@ -305,7 +304,7 @@ const EventModal = ({
                         defaultMessage: 'Are you sure?',
                       })}
                     >
-                      <TrashIcon className="size-5 mr-2" />
+                      <TrashIcon className="mr-2 size-5" />
                       <span>
                         <FormattedMessage
                           id="calendar.deleteEvent"
@@ -319,7 +318,7 @@ const EventModal = ({
             )}
           {selectedEvent.uid &&
             hasPermission([Permission.ADMIN], { type: 'or' }) && (
-              <div className="flex items-center place-content-end text-xs mt-2 text-neutral">
+              <div className="text-neutral mt-2 flex place-content-end items-center text-xs">
                 <span className="font-semibold">
                   <FormattedMessage id="calendar.uid" defaultMessage="UID:" />
                 </span>
@@ -466,10 +465,10 @@ const EventModal = ({
             show={open}
           >
             <Form className="space-y-2">
-              <div className="border-t border-primary pt-4">
+              <div className="border-primary border-t pt-4">
                 <label
                   htmlFor="summary"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="calendar.eventSummary"
@@ -482,7 +481,7 @@ const EventModal = ({
                     id="summary"
                     name="summary"
                     type="text"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.summary && touched.summary ? 'input-error' : ''
                     }`}
                   />
@@ -496,7 +495,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="allDay"
-                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                  className="flex items-center gap-2 text-left text-sm leading-6 font-medium"
                 >
                   <Field
                     name="allDay"
@@ -513,7 +512,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="dates"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   {!values.allDay ? (
                     <FormattedMessage
@@ -550,7 +549,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="categories"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="calendar.eventCategories"
@@ -562,7 +561,7 @@ const EventModal = ({
                   <Field
                     id="categories"
                     name="categories"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.categories && touched.categories
                         ? 'input-error'
                         : ''
@@ -578,7 +577,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="calendar.eventDescription"
@@ -592,7 +591,7 @@ const EventModal = ({
                     id="description"
                     name="description"
                     rows={6}
-                    className={`input input-sm input-primary rounded-md w-full h-32 leading-normal ${
+                    className={`input input-sm input-primary h-32 w-full rounded-md leading-normal ${
                       errors.description && touched.description
                         ? 'input-error'
                         : ''
@@ -608,7 +607,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="sendNotification"
-                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                  className="flex items-center gap-2 text-left text-sm leading-6 font-medium"
                 >
                   <Field
                     name="sendNotification"
@@ -627,7 +626,7 @@ const EventModal = ({
                   />
                 </label>
                 {errors.sendNotification && touched.sendNotification && (
-                  <div className="text-error text-sm mt-1">
+                  <div className="text-error mt-1 text-sm">
                     {errors.sendNotification}
                   </div>
                 )}
@@ -635,7 +634,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="status"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="common.status"
@@ -673,7 +672,7 @@ const EventModal = ({
               <div>
                 <label
                   htmlFor="uid"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="calendar.eventId"
@@ -692,7 +691,7 @@ const EventModal = ({
                   <Field
                     id="uid"
                     name="uid"
-                    className="input input-sm input-primary rounded-md w-full"
+                    className="input input-sm input-primary w-full rounded-md"
                   />
                 </div>
               </div>

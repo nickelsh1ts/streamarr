@@ -3,7 +3,7 @@
 @plugin '@tailwindcss/typography';
 @plugin 'daisyui';
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
   name: 'streamarr';
   default: true;
   prefersdark: true;
@@ -80,7 +80,7 @@
     list-style-type: circle;
   }
   code {
-    @apply truncate bg-base-100/75 py-1 px-1.5 rounded-md;
+    @apply bg-base-100/75 truncate rounded-md px-1.5 py-1;
   }
 }
 
@@ -277,7 +277,7 @@
 }
 
 .react-select-container .react-select__control {
-  @apply bg-base-100 border border-primary rounded-md text-primary-content hover:border-primary shadow-none;
+  @apply bg-base-100 border-primary text-primary-content hover:border-primary rounded-md border shadow-none;
 }
 
 .react-select-container .react-select__input {
@@ -285,27 +285,27 @@
 }
 
 .react-select__value-container {
-  @apply p-2 gap-2;
+  @apply gap-2 p-2;
 }
 
 .react-select-container .react-select__multi-value {
-  @apply border border-primary rounded-md bg-primary;
+  @apply border-primary bg-primary rounded-md border;
 }
 
 .react-select__multi-value__label {
-  @apply text-primary-content! text-sm px-2 py-1;
+  @apply text-primary-content! px-2 py-1 text-sm;
 }
 
 .react-select__multi-value__remove {
-  @apply hover:bg-secondary/70! hover:text-error! px-1 rounded-r-md;
+  @apply hover:bg-secondary/70! hover:text-error! rounded-r-md px-1;
 }
 
 .react-select-container .react-select__indicator-separator {
-  @apply bg-neutral my-2 mx-2;
+  @apply bg-neutral mx-2 my-2;
 }
 
 .react-select-container .react-select__indicator {
-  @apply mx-2 text-base-content hover:text-base-content/60 hover:cursor-pointer;
+  @apply text-base-content hover:text-base-content/60 mx-2 hover:cursor-pointer;
 }
 
 .react-select-container .react-select__menu {
@@ -313,7 +313,7 @@
 }
 
 .react-select__menu-list {
-  @apply bg-base-100 border border-primary px-1 rounded-md mt-2 py-2 text-sm;
+  @apply bg-base-100 border-primary mt-2 rounded-md border px-1 py-2 text-sm;
 }
 
 .react-select__option {
@@ -321,7 +321,7 @@
 }
 
 .react-select__option--is-focused {
-  @apply bg-primary! rounded-md text-primary-content;
+  @apply bg-primary! text-primary-content rounded-md;
 }
 
 .react-select__option--is-selected {

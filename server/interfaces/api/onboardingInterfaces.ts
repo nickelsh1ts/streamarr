@@ -1,6 +1,6 @@
 import type {
-  TutorialMode,
   TooltipPosition,
+  TutorialMode,
 } from '@server/entity/TutorialStep';
 import type { WelcomeContentType } from '@server/entity/WelcomeContent';
 import type { OnboardingSettings } from '@server/lib/settings';

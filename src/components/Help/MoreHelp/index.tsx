@@ -1,4 +1,6 @@
 'use client';
+import PlexLogoWhite from '@app/assets/services/plex.svg';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import useSettings from '@app/hooks/useSettings';
 import {
   BookOpenIcon,
@@ -7,37 +9,35 @@ import {
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
-import PlexLogoWhite from '@app/assets/services/plex.svg';
 
 const MoreHelp = () => {
   const { currentSettings } = useSettings();
 
   return (
-    <div className="bg-zinc-200 text-black py-20 print:hidden">
-      <div className="container max-w-screen-xl mx-auto px-4">
-        <h1 className="text-neutral font-extrabold text-center text-4xl">
+    <div className="bg-zinc-200 py-20 text-black print:hidden">
+      <div className="container mx-auto max-w-7xl px-4">
+        <h1 className="text-neutral text-center text-4xl font-extrabold">
           <FormattedMessage
             id="moreHelp.needMoreHelp"
             defaultMessage="Need more help?"
           />
         </h1>
-        <p className="text-center text-neutral text-lg my-4">
+        <p className="text-neutral my-4 text-center text-lg">
           <FormattedMessage
             id="moreHelp.checkHelpSection"
             defaultMessage="Check out the help section on {plexLogo} or reach out below!"
             values={{
-              plexLogo: <PlexLogo className="inline-flex size-8 mt-0.5" />,
+              plexLogo: <PlexLogo className="mt-0.5 inline-flex size-8" />,
             }}
           />
         </p>
       </div>
-      <div className="container max-w-screen-xl mx-auto py-4 place-content-center flex flex-wrap gap-5 px-5">
+      <div className="container mx-auto flex max-w-7xl flex-wrap place-content-center gap-5 px-5 py-4">
         {(currentSettings.supportEmail || currentSettings.supportUrl) && (
-          <div className="card bg-white rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
-            <div className="card-body py-4 px-4 md:px-7">
+          <div className="card flex-1 basis-1/2 rounded-sm bg-white py-7 shadow-xl lg:basis-1/3">
+            <div className="card-body px-4 py-4 md:px-7">
               <div className="flex place-items-center">
-                <ChatBubbleLeftRightIcon className="w-20 h-20 flex-none" />
+                <ChatBubbleLeftRightIcon className="h-20 w-20 flex-none" />
                 <div className="my-auto ms-4">
                   <h5 className="card-title">
                     <FormattedMessage
@@ -51,13 +51,13 @@ const MoreHelp = () => {
                       defaultMessage="Need to chat with us?"
                     />
                   </p>
-                  <div className="flex flex-wrap mt-4">
+                  <div className="mt-4 flex flex-wrap">
                     {currentSettings.supportUrl && (
                       <Link
                         target="_blank"
                         href={currentSettings.supportUrl}
                         type="button"
-                        className="btn btn-sm btn-primary me-1 mb-2 rounded-md text-base min-h-9"
+                        className="btn btn-sm btn-primary me-1 mb-2 min-h-9 rounded-md text-base"
                         rel="noreferrer"
                       >
                         <FormattedMessage
@@ -81,7 +81,7 @@ const MoreHelp = () => {
                         target="_blank"
                         href={`mailto:${currentSettings.supportEmail.toLowerCase()}`}
                         type="button"
-                        className="btn btn-sm btn-outline btn-primary mx-1 mb-2 rounded-md text-base min-h-9"
+                        className="btn btn-sm btn-outline btn-primary mx-1 mb-2 min-h-9 rounded-md text-base"
                         rel="noreferrer"
                       >
                         <FormattedMessage
@@ -97,10 +97,10 @@ const MoreHelp = () => {
             </div>
           </div>
         )}
-        <div className="card bg-white rounded-sm shadow-xl py-7 basis-1/2 lg:basis-1/3 flex-1">
-          <div className="card-body py-4 px-4 md:px-7">
+        <div className="card flex-1 basis-1/2 rounded-sm bg-white py-7 shadow-xl lg:basis-1/3">
+          <div className="card-body px-4 py-4 md:px-7">
             <div className="flex place-items-center">
-              <BookOpenIcon className="w-20 h-20 flex-none" />
+              <BookOpenIcon className="h-20 w-20 flex-none" />
               <div className="my-auto ms-4">
                 <h5 className="card-title">
                   <FormattedMessage
@@ -108,7 +108,7 @@ const MoreHelp = () => {
                     defaultMessage="Visit {plexLogo}"
                     values={{
                       plexLogo: (
-                        <PlexLogo className="inline-flex size-10 mt-0.5" />
+                        <PlexLogo className="mt-0.5 inline-flex size-10" />
                       ),
                     }}
                   />
@@ -126,7 +126,7 @@ const MoreHelp = () => {
                   target="_blank"
                   href="https://support.plex.tv/"
                   type="button"
-                  className="btn btn-sm btn-accent rounded-md text-base min-h-9"
+                  className="btn btn-sm btn-accent min-h-9 rounded-md text-base"
                   rel="noreferrer"
                 >
                   <FormattedMessage
@@ -134,7 +134,7 @@ const MoreHelp = () => {
                     defaultMessage="{plexLogo} Support"
                     values={{
                       plexLogo: (
-                        <PlexLogoWhite className="inline-flex size-8 mt-0.5" />
+                        <PlexLogoWhite className="mt-0.5 inline-flex size-8" />
                       ),
                     }}
                   />

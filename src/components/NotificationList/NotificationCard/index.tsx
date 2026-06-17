@@ -21,8 +21,8 @@ import { NotificationSeverity } from '@server/constants/notification';
 import type Notification from '@server/entity/Notification';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
-import { useCallback, useRef } from 'react';
 import type React from 'react';
+import { useCallback, useRef } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const REVEAL_WIDTH = 112;
@@ -156,14 +156,14 @@ export const NotificationCard = ({
     >
       {isTouch && !isDismissing && (
         <div
-          className="absolute right-0 top-0 bottom-0 flex items-stretch"
+          className="absolute top-0 right-0 bottom-0 flex items-stretch"
           style={{
             transform: `translateX(${REVEAL_WIDTH + offsetX}px)`,
             transition: !isSwiping ? 'transform 200ms ease-out' : undefined,
           }}
         >
           <button
-            className={`w-14 flex items-center justify-center ${notification.isRead ? 'bg-warning/40' : 'bg-info/40'}`}
+            className={`flex w-14 items-center justify-center ${notification.isRead ? 'bg-warning/40' : 'bg-info/40'}`}
             onClick={(e) => {
               e.stopPropagation();
               close();
@@ -181,7 +181,7 @@ export const NotificationCard = ({
             )}
           </button>
           <button
-            className="w-14 flex items-center justify-center bg-error/40"
+            className="bg-error/40 flex w-14 items-center justify-center"
             onClick={(e) => {
               e.stopPropagation();
               pendingAction.current = () => onDelete?.();
@@ -209,10 +209,10 @@ export const NotificationCard = ({
               }
             : undefined
         }
-        className={`flex gap-3 p-2 text-primary-content w-full ${isTouch ? '' : 'rounded-lg'} relative text-start ${!notification.isRead ? 'bg-primary/20 ring-1 ring-inset ring-primary/20' : ''} hover:bg-primary-content/10 group/item hover:cursor-pointer`}
+        className={`text-primary-content flex w-full gap-3 p-2 ${isTouch ? '' : 'rounded-lg'} relative text-start ${!notification.isRead ? 'bg-primary/20 ring-primary/20 ring-1 ring-inset' : ''} hover:bg-primary-content/10 group/item hover:cursor-pointer`}
         {...(isTouch ? handlers : {})}
       >
-        <div className="relative inline-flex size-16 shrink-0 items-center justify-center rounded-full border border-primary-content shadow-md mb-2">
+        <div className="border-primary-content relative mb-2 inline-flex size-16 shrink-0 items-center justify-center rounded-full border shadow-md">
           <div>
             <CachedImage
               src={
@@ -227,13 +227,13 @@ export const NotificationCard = ({
             />
           </div>
           <div
-            className={`absolute rounded-full size-7 right-0 bottom-0 -me-1 -mb-1 p-1 ${bgColor}`}
+            className={`absolute right-0 bottom-0 -me-1 -mb-1 size-7 rounded-full p-1 ${bgColor}`}
           >
             {icon}
           </div>
         </div>
-        <div className="flex flex-col items-start w-full place-content-center">
-          <span className="font-bold w-full pr-2">{notification.subject}</span>
+        <div className="flex w-full flex-col place-content-center items-start">
+          <span className="w-full pr-2 font-bold">{notification.subject}</span>
           <span>{notification.message}</span>
           <span
             className={`${!notification.isRead ? 'text-primary' : ''} text-xs font-bold`}
@@ -241,7 +241,7 @@ export const NotificationCard = ({
             {moment(notification.createdAt).fromNow()}
           </span>
           {notification.actionUrlTitle && notification.actionUrl && (
-            <div className="flex gap-2 mt-2 w-full max-w-md">
+            <div className="mt-2 flex w-full max-w-md gap-2">
               <Button
                 buttonSize="sm"
                 buttonType="primary"
@@ -257,12 +257,12 @@ export const NotificationCard = ({
           )}
         </div>
         <div className="flex flex-row items-center">
-          <div className="p-2 content-center -ml-6">
+          <div className="-ml-6 content-center p-2">
             <div className="relative size-4">
               {!notification.isRead && (
                 <>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex size-4 rounded-full bg-primary mb-1"></span>
+                  <span className="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                  <span className="bg-primary relative mb-1 inline-flex size-4 rounded-full"></span>
                 </>
               )}
             </div>
@@ -273,7 +273,7 @@ export const NotificationCard = ({
                 chevron={false}
                 size="md"
                 dropdownIcon={<EllipsisHorizontalIcon className="size-7" />}
-                className="p-1 rounded-full hover:bg-base-200 actions text-neutral hover:text-base-content hover:cursor-pointer"
+                className="hover:bg-base-200 actions text-neutral hover:text-base-content rounded-full p-1 hover:cursor-pointer"
               >
                 <DropDownMenu.Item
                   onClick={(e) => {
@@ -281,7 +281,7 @@ export const NotificationCard = ({
                     e.stopPropagation();
                   }}
                 >
-                  <ClipboardDocumentListIcon className="size-5 mr-1" />
+                  <ClipboardDocumentListIcon className="mr-1 size-5" />
                   <FormattedMessage
                     id="notification.markAsRead"
                     defaultMessage="Mark as {isRead}"
@@ -304,7 +304,7 @@ export const NotificationCard = ({
                     await onDelete?.();
                   }}
                 >
-                  <TrashIcon className="size-5 text-error mr-1" />
+                  <TrashIcon className="text-error mr-1 size-5" />
                   <FormattedMessage
                     id="notification.deleteThis"
                     defaultMessage="Delete this notification"

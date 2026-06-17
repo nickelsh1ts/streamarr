@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { isAuthenticated } from '@server/middleware/auth';
-import { Permission } from '@server/lib/permissions';
 import LogoUpload from '@server/lib/logoUpload';
+import { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
-import path from 'path';
+import { isAuthenticated } from '@server/middleware/auth';
+import { Router } from 'express';
 import multer from 'multer';
+import path from 'path';
 
 const logoSettingsRoutes = Router();
 const logoUpload = new LogoUpload();

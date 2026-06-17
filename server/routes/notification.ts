@@ -1,17 +1,17 @@
-import { getRepository } from '@server/datasource';
-import Notification from '@server/entity/Notification';
-import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
-import { Permission } from '@server/lib/permissions';
-import { isAuthenticated } from '@server/middleware/auth';
-import { Router } from 'express';
 import type { NotificationSeverity } from '@server/constants/notification';
 import { NotificationType } from '@server/constants/notification';
+import { getRepository } from '@server/datasource';
+import Notification from '@server/entity/Notification';
 import { User } from '@server/entity/User';
-import logger from '@server/logger';
+import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
 import notificationManager, {
   userAcceptsNotificationType,
 } from '@server/lib/notifications';
 import { NotificationDeliveryScope } from '@server/lib/notifications/agents/agent';
+import { Permission } from '@server/lib/permissions';
+import logger from '@server/logger';
+import { isAuthenticated } from '@server/middleware/auth';
+import { Router } from 'express';
 
 const notificationRoutes = Router();
 

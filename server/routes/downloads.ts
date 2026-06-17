@@ -1,35 +1,35 @@
-import { Router } from 'express';
-import { getSettings } from '@server/lib/settings';
-import logger from '@server/logger';
 import {
-  fetchClientData,
-  performTorrentAction,
   addTorrent,
+  fetchClientData,
+  getTags,
+  getTorrentFiles,
   manageCategory,
   manageTag,
-  getTags,
   normalizeTorrent,
-  getTorrentFiles,
-  updateTorrentMetadata,
+  performTorrentAction,
   setTorrentFilePriority,
+  updateTorrentMetadata,
 } from '@server/api/downloads/base';
-import {
-  getClientHealth,
-  getAllClientsHealth,
-  resetClientHealth,
-  isClientInCooldown,
-} from '@server/lib/healthCheck';
 import type {
-  DownloadsResponse,
-  NormalizedDownloadItem,
-  DownloadClientStats,
-  TorrentActionRequest,
   AddTorrentRequest,
   CategoryManagementRequest,
-  TagManagementRequest,
-  UpdateTorrentRequest,
+  DownloadClientStats,
+  DownloadsResponse,
+  NormalizedDownloadItem,
   SetFilePriorityRequest,
+  TagManagementRequest,
+  TorrentActionRequest,
+  UpdateTorrentRequest,
 } from '@server/interfaces/api/downloadsInterfaces';
+import {
+  getAllClientsHealth,
+  getClientHealth,
+  isClientInCooldown,
+  resetClientHealth,
+} from '@server/lib/healthCheck';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
+import { Router } from 'express';
 
 function getHealthStatus(
   clientId: number

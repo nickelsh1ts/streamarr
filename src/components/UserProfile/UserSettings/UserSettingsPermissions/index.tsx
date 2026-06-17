@@ -1,17 +1,17 @@
 'use client';
+import Error from '@app/app/error';
+import PermissionEdit from '@app/components/Admin/PermissionEdit';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
-import PermissionEdit from '@app/components/Admin/PermissionEdit';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Toast from '@app/components/Toast';
 import { useUser } from '@app/hooks/useUser';
+import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
-import useSWR from 'swr';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import Error from '@app/app/error';
-import Toast from '@app/components/Toast';
-import { ArrowDownTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { useParams } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 const UserPermissions = () => {
   const searchParams = useParams<{ userid: string }>();
@@ -45,7 +45,7 @@ const UserPermissions = () => {
   if (currentUser?.id !== 1 && currentUser?.id === user?.id) {
     return (
       <>
-        <div className="mb-6 mt-3">
+        <div className="mt-3 mb-6">
           <h3 className="text-2xl font-extrabold">
             <FormattedMessage
               id="settings.permissions"
@@ -67,7 +67,7 @@ const UserPermissions = () => {
   }
 
   return (
-    <div className="mb-6 mt-3">
+    <div className="mt-3 mb-6">
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage
           id="settings.permissions"
@@ -121,8 +121,8 @@ const UserPermissions = () => {
                   }
                 />
               </div>
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -130,7 +130,7 @@ const UserPermissions = () => {
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage

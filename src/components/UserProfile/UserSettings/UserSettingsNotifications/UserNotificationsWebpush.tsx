@@ -23,12 +23,12 @@ import {
   InformationCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
-import { FormattedMessage, useIntl } from 'react-intl';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 
 const UserWebPushSettings = () => {
@@ -292,8 +292,8 @@ const UserWebPushSettings = () => {
                     : undefined
                 }
               />
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
@@ -306,9 +306,9 @@ const UserWebPushSettings = () => {
                     }
                   >
                     {webPushEnabled ? (
-                      <CloudArrowDownIcon className="size-5 mr-2" />
+                      <CloudArrowDownIcon className="mr-2 size-5" />
                     ) : (
-                      <CloudArrowUpIcon className="size-5 mr-2" />
+                      <CloudArrowUpIcon className="mr-2 size-5" />
                     )}
                     <span>
                       {webPushEnabled ? (
@@ -332,7 +332,7 @@ const UserWebPushSettings = () => {
                     buttonSize="sm"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-5 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-5" />
                     <span>
                       {isSubmitting ? (
                         <FormattedMessage
@@ -354,7 +354,7 @@ const UserWebPushSettings = () => {
         }}
       </Formik>
       <div className="mt-10 mb-6">
-        <h3 className="text-2xl font-extrabold mb-2">
+        <h3 className="mb-2 text-2xl font-extrabold">
           <FormattedMessage
             id="userSettings.manageDevices"
             defaultMessage="Manage Devices"

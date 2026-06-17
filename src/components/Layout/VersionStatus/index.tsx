@@ -41,10 +41,10 @@ const VersionStatus = ({ onClick }: VersionStatusProps) => {
       role="button"
       tabIndex={0}
       data-testid="version-status-link"
-      className={`flex items-center rounded-lg p-2 pl-5 text-xs transition duration-300 pointer-events-auto ${
+      className={`pointer-events-auto flex items-center rounded-lg p-2 pl-5 text-xs transition duration-300 ${
         data.updateAvailable
-          ? 'bg-warning/60 backdrop-blur text-white hover:bg-warning/50'
-          : 'bg-primary/30 backdrop-blur text-primary-content hover:bg-primary/20'
+          ? 'bg-warning/60 hover:bg-warning/50 text-white backdrop-blur'
+          : 'bg-primary/30 text-primary-content hover:bg-primary/20 backdrop-blur'
       }`}
     >
       {data.commitTag === 'local' ? (

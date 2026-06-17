@@ -1,56 +1,57 @@
-import type { IncomingMessage } from 'http';
-import type { Session as ExpressSession } from 'express-session';
+import csurf from '@dr.pogodin/csurf';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
+import { initI18n } from '@server/i18n';
 import { startJobs } from '@server/job/schedule';
+import newsletterScheduler from '@server/lib/newsletters/scheduler';
 import notificationManager from '@server/lib/notifications';
+import DiscordAgent from '@server/lib/notifications/agents/discord';
+import EmailAgent from '@server/lib/notifications/agents/email';
+import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import LocalAgent, {
   setSocketIO,
 } from '@server/lib/notifications/agents/inApp';
-import EmailAgent from '@server/lib/notifications/agents/email';
-import WebPushAgent from '@server/lib/notifications/agents/webpush';
-import DiscordAgent from '@server/lib/notifications/agents/discord';
-import GotifyAgent from '@server/lib/notifications/agents/gotify';
 import NtfyAgent from '@server/lib/notifications/agents/ntfy';
 import PushbulletAgent from '@server/lib/notifications/agents/pushbullet';
 import PushoverAgent from '@server/lib/notifications/agents/pushover';
 import SlackAgent from '@server/lib/notifications/agents/slack';
 import TelegramAgent from '@server/lib/notifications/agents/telegram';
 import WebhookAgent from '@server/lib/notifications/agents/webhook';
-import { getSettings } from '@server/lib/settings';
-import { initializeOnboardingDefaults } from '@server/lib/onboarding';
-import { initI18n } from '@server/i18n';
+import WebPushAgent from '@server/lib/notifications/agents/webpush';
+import {
+  initializeOnboardingDefaults,
+  onboardingImageService,
+} from '@server/lib/onboarding';
 import restartManager from '@server/lib/restartManager';
+import { getSettings } from '@server/lib/settings';
+import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
-import newsletterScheduler from '@server/lib/newsletters/scheduler';
-import clearCookies from '@server/middleware/clearcookies';
 import { checkUser } from '@server/middleware/auth';
+import clearCookies from '@server/middleware/clearcookies';
 import routes from '@server/routes';
 import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
 import logoRoutes from '@server/routes/logo';
-import { onboardingImageService } from '@server/lib/onboarding';
-import { getAppVersion } from '@server/utils/appVersion';
-import { TypeormStore } from 'connect-typeorm/out';
-import cookieParser from 'cookie-parser';
-import csurf from '@dr.pogodin/csurf';
-import type { NextFunction, Request, Response } from 'express';
-import express from 'express';
 import {
   createServiceProxyRouter,
   getActiveProxyPaths,
 } from '@server/routes/serviceProxy';
-import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
+import { getAppVersion } from '@server/utils/appVersion';
+import { TypeormStore } from 'connect-typeorm/out';
+import cookieParser from 'cookie-parser';
+import type { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
-import type { Store } from 'express-session';
+import type { Session as ExpressSession, Store } from 'express-session';
 import session from 'express-session';
+import type { IncomingMessage } from 'http';
+import { createServer } from 'http';
 import next from 'next';
 import path from 'path';
+import { Server as SocketIOServer } from 'socket.io';
+import type { Duplex } from 'stream';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import { Server as SocketIOServer } from 'socket.io';
-import { createServer } from 'http';
-import type { Duplex } from 'stream';
 
 interface SocketRequest extends IncomingMessage {
   session?: ExpressSession & { userId?: number };

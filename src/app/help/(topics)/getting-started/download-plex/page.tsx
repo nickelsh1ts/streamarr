@@ -1,8 +1,8 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Link from 'next/link';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -54,7 +54,7 @@ const HelpContent = () => {
           values={{ plexLogo: <PlexLogo className="inline-block size-9" /> }}
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.downloadPlex.step1"
@@ -88,13 +88,13 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <FormattedMessage
           id="help.common.importantInfo"
           defaultMessage="Important Information"
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.downloadPlex.notRequired"

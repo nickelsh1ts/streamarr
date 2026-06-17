@@ -1,8 +1,8 @@
-import path from 'path';
-import { promises as fs } from 'fs';
-import { createHash } from 'crypto';
-import qrcode from 'qrcode';
 import logger from '@server/logger';
+import { createHash } from 'crypto';
+import { promises as fs } from 'fs';
+import path from 'path';
+import qrcode from 'qrcode';
 
 const baseCacheDirectory = process.env.CONFIG_DIRECTORY
   ? `${process.env.CONFIG_DIRECTORY}/cache/images/qrcode`

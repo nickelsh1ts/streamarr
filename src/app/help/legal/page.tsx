@@ -11,7 +11,7 @@ const LegalPage = () => {
   const intl = useIntl();
   return (
     <>
-      <div className="py-5 bg-zinc-100 text-neutral" style={null}>
+      <div className="text-neutral bg-zinc-100 py-5" style={null}>
         <Breadcrumbs
           paths="/legal"
           homeElement={intl.formatMessage({
@@ -24,15 +24,15 @@ const LegalPage = () => {
           })}
         />
       </div>
-      <section className="py-5 my-auto bg-zinc-100">
-        <main className=" container max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto place-content-center p-1 sm:p-4 space-y-5">
+      <section className="my-auto bg-zinc-100 py-5">
+        <main className="container mx-auto max-w-3xl place-content-center space-y-5 p-1 sm:p-4 lg:max-w-5xl xl:max-w-7xl">
           <div role="tablist" className="tabs tabs-lift overflow-x-auto">
             <input
               defaultChecked
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:bg-secondary! checked:text-white text-primary font-extrabold border-none! whitespace-nowrap!"
+              className="tab checked:bg-secondary! text-primary border-none! font-extrabold whitespace-nowrap! checked:text-white"
               aria-label={intl.formatMessage({
                 id: 'help.legal.termsTab',
                 defaultMessage: 'Terms of Use',
@@ -40,18 +40,18 @@ const LegalPage = () => {
             />
             <div
               role="tabpanel"
-              className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
+              className="tab-content rounded-box bg-zinc-200 p-2 md:p-6"
             >
               <div className="print:hidden">
                 <Link
-                  className="link-neutral font-semibold flex place-items-center max-md:m-2"
+                  className="link-neutral flex place-items-center font-semibold max-md:m-2"
                   href="/help/legal/termsofuse"
                 >
                   <FormattedMessage
                     id="help.legal.hyperlink"
                     defaultMessage="Hyperlink"
                   />{' '}
-                  <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
+                  <ArrowTopRightOnSquareIcon className="ms-1 h-4 w-4" />
                 </Link>
               </div>
               <TermsOfUse />
@@ -60,7 +60,7 @@ const LegalPage = () => {
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:bg-secondary! checked:text-white text-primary font-extrabold border-none! whitespace-nowrap!"
+              className="tab checked:bg-secondary! text-primary border-none! font-extrabold whitespace-nowrap! checked:text-white"
               aria-label={intl.formatMessage({
                 id: 'help.legal.privacyTab',
                 defaultMessage: 'Privacy Statement',
@@ -68,18 +68,18 @@ const LegalPage = () => {
             />
             <div
               role="tabpanel"
-              className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
+              className="tab-content rounded-box bg-zinc-200 p-2 md:p-6"
             >
               <div className="print:hidden">
                 <Link
-                  className="link-neutral font-semibold flex place-items-center max-md:m-2"
+                  className="link-neutral flex place-items-center font-semibold max-md:m-2"
                   href="/help/legal/privacy"
                 >
                   <FormattedMessage
                     id="help.legal.hyperlink"
                     defaultMessage="Hyperlink"
                   />{' '}
-                  <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
+                  <ArrowTopRightOnSquareIcon className="ms-1 h-4 w-4" />
                 </Link>
               </div>
               <Privacy />
@@ -88,7 +88,7 @@ const LegalPage = () => {
               type="radio"
               name="my_tabs_2"
               role="tab"
-              className="tab checked:bg-secondary! checked:text-white text-primary font-extrabold border-none! whitespace-nowrap!"
+              className="tab checked:bg-secondary! text-primary border-none! font-extrabold whitespace-nowrap! checked:text-white"
               aria-label={intl.formatMessage({
                 id: 'help.legal.cookiesTab',
                 defaultMessage: 'Cookie Policy',
@@ -96,18 +96,18 @@ const LegalPage = () => {
             />
             <div
               role="tabpanel"
-              className="tab-content bg-zinc-200 rounded-box p-2 md:p-6"
+              className="tab-content rounded-box bg-zinc-200 p-2 md:p-6"
             >
               <div className="print:hidden">
                 <Link
-                  className="link-neutral font-semibold flex place-items-center max-md:m-2"
+                  className="link-neutral flex place-items-center font-semibold max-md:m-2"
                   href="/help/legal/cookies"
                 >
                   <FormattedMessage
                     id="help.legal.hyperlink"
                     defaultMessage="Hyperlink"
                   />{' '}
-                  <ArrowTopRightOnSquareIcon className="w-4 h-4 ms-1" />
+                  <ArrowTopRightOnSquareIcon className="ms-1 h-4 w-4" />
                 </Link>
               </div>
               <Cookies />

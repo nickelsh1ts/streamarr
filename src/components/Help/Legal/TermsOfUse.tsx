@@ -1,13 +1,13 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import useSettings from '@app/hooks/useSettings';
 import { FormattedMessage } from 'react-intl';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 
 const TermsOfUse = () => {
   const { currentSettings } = useSettings();
   return (
-    <div className="container my-5 text-black max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto p-4">
-      <p className="text-4xl mb-10 font-extrabold">
+    <div className="container mx-auto my-5 max-w-screen-md p-4 text-black lg:max-w-screen-lg xl:max-w-screen-xl">
+      <p className="mb-10 text-4xl font-extrabold">
         <FormattedMessage
           id="help.terms.title"
           defaultMessage="{appTitle} Terms of Use"
@@ -47,7 +47,7 @@ const TermsOfUse = () => {
             }}
           />
         </p>
-        <ul className="list-disc mx-9 my-5">
+        <ul className="mx-9 my-5 list-disc">
           <li className="mb-2">
             <span className="font-extrabold">
               <FormattedMessage
@@ -55,7 +55,7 @@ const TermsOfUse = () => {
                 defaultMessage="Membership"
               />
             </span>
-            <ul className="list-inside space-y-6 my-6">
+            <ul className="my-6 list-inside space-y-6">
               <li>
                 <FormattedMessage
                   id="help.terms.membership1"
@@ -91,7 +91,7 @@ const TermsOfUse = () => {
                 defaultMessage="Cancellation"
               />
             </span>
-            <ul className="list-inside space-y-6 my-6">
+            <ul className="my-6 list-inside space-y-6">
               <li>
                 <FormattedMessage
                   id="help.terms.cancellation1"
@@ -130,7 +130,7 @@ const TermsOfUse = () => {
                 }}
               />
             </span>
-            <ul className="list-inside space-y-6 my-6">
+            <ul className="my-6 list-inside space-y-6">
               <li>
                 <FormattedMessage
                   id="help.terms.service1"

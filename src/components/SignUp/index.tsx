@@ -71,11 +71,11 @@ const Join = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center h-full w-full py-12">
+    <div className="relative flex h-full w-full flex-col items-center py-12">
       <div className="absolute top-4 right-4">
         <LanguagePicker />
       </div>
-      <div className="px-4 sm:mx-auto w-full sm:max-w-4xl">
+      <div className="w-full px-4 sm:mx-auto sm:max-w-4xl">
         <div className="mb-10 w-full text-white">
           <div className="mb-2 flex justify-center text-3xl font-bold">
             <FormattedMessage
@@ -93,7 +93,7 @@ const Join = () => {
         </div>
         <nav className="relative w-full">
           <ul
-            className="divide-y divide-primary rounded-md border border-primary bg-primary/50 md:flex md:divide-y-0"
+            className="divide-primary border-primary bg-primary/50 divide-y rounded-md border md:flex md:divide-y-0"
             style={{ backdropFilter: 'blur(5px)' }}
           >
             <SetupSteps
@@ -125,10 +125,10 @@ const Join = () => {
             />
           </ul>
         </nav>
-        <div className="mt-10 w-full rounded-md border border-secondary bg-secondary/50 backdrop-blur p-4 text-white">
+        <div className="border-secondary bg-secondary/50 mt-10 w-full rounded-md border p-4 text-white backdrop-blur">
           {currentStep === 1 && (
             <div>
-              <p className="mb-2 text-center pb-6">
+              <p className="mb-2 pb-6 text-center">
                 <FormattedMessage
                   id="signUp.getStartedInviteCode"
                   defaultMessage="Get started by entering your invite code below."
@@ -144,7 +144,7 @@ const Join = () => {
           )}
           {currentStep === 2 && (
             <div>
-              <p className="mb-2 text-center pb-6">
+              <p className="mb-2 pb-6 text-center">
                 <FormattedMessage
                   id="signUp.signInWithPlex"
                   defaultMessage="Please sign in with your Plex account {localLoginOption} to continue the registration process. {plexRecommended}."
@@ -175,7 +175,7 @@ const Join = () => {
           )}
           {currentStep === 3 && (
             <div>
-              <p className="mb-2 text-center pb-6">
+              <p className="mb-2 pb-6 text-center">
                 <FormattedMessage
                   id="signUp.reviewDetailsConfirm"
                   defaultMessage="Review your details below and confirm your account."

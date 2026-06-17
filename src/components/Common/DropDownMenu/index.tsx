@@ -51,7 +51,7 @@ const DropdownItem = ({
   return (
     <li className="">
       {divide === 'before' && (
-        <span className="border-t p-0 border-[#ffffff1a] my-1"></span>
+        <span className="my-1 border-t border-[#ffffff1a] p-0"></span>
       )}
       {props.href ? (
         <Link
@@ -67,14 +67,14 @@ const DropdownItem = ({
         <button
           onClick={() => setIsOpen && setIsOpen(!isOpen)}
           onKeyDown={() => setIsOpen && setIsOpen(!isOpen)}
-          className={`w-full text-left rounded-none py-1 ${styleClass} ${isActive ? 'bg-base-content/20' : ''}`}
+          className={`w-full rounded-none py-1 text-left ${styleClass} ${isActive ? 'bg-base-content/20' : ''}`}
           {...(props as unknown as ButtonHTMLAttributes<HTMLButtonElement>)}
         >
           {children}
         </button>
       )}
       {divide === 'after' && (
-        <div className="border-t p-0 border-zinc-300/40 my-1"></div>
+        <div className="my-1 border-t border-zinc-300/40 p-0"></div>
       )}
     </li>
   );
@@ -137,7 +137,7 @@ const DropDownMenu = ({
         >
           <button
             type="button"
-            className={`relative inline-flex h-full items-center text-sm font-medium leading-5 hover:cursor-pointer ${styleClasses.dropdownSideButtonClasses}`}
+            className={`relative inline-flex h-full items-center text-sm leading-5 font-medium hover:cursor-pointer ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={(e) => {
               setIsOpen((state) => !state);
@@ -149,22 +149,22 @@ const DropDownMenu = ({
             {chevron &&
               (!dropUp ? (
                 <ChevronDownIcon
-                  className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                  className={`-ms-1 h-4 w-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
                 />
               ) : (
                 <ChevronUpIcon
-                  className={`w-4 h-4 -ms-1 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                  className={`-ms-1 h-4 w-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
                 />
               ))}
           </button>
         </Tooltip>
         <Transition as={Fragment} show={isOpen}>
           <div
-            className={`absolute z-50 menu ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} text-sm -mr-1 -ml-1 -my-1 ${side}-0 transition ease-out duration-75 opacity-100 translate-y-0 data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? `top-auto bottom-full origin-bottom-${side} data-closed:translate-y-2 data-leave:translate-y-2` : `origin-top-${side} data-closed:-translate-y-2 data-leave:-translate-y-2`}`}
+            className={`menu absolute z-50 ${size === 'md' ? 'min-w-64' : size === 'lg' ? 'min-w-72' : 'min-w-52'} -my-1 -mr-1 -ml-1 text-sm ${side}-0 translate-y-0 opacity-100 transition duration-75 ease-out data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? `top-auto bottom-full origin-bottom-${side} data-closed:translate-y-2 data-leave:translate-y-2` : `origin-top-${side} data-closed:-translate-y-2 data-leave:-translate-y-2`}`}
           >
             <div className={`${styleClasses.dropdownClasses}`}>
               {title && (
-                <span className="ms-4 font-bold text-base-content/45 uppercase">
+                <span className="text-base-content/45 ms-4 font-bold uppercase">
                   {title}
                 </span>
               )}

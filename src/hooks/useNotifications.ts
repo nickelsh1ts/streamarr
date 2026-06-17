@@ -1,9 +1,9 @@
-import { useContext, useEffect } from 'react';
-import { useSWRConfig } from 'swr';
 import {
   NotificationContext,
   type SocketNotificationPayload,
 } from '@app/context/NotificationContext';
+import { useContext, useEffect } from 'react';
+import { useSWRConfig } from 'swr';
 
 type NotificationCallback = (notification: SocketNotificationPayload) => void;
 

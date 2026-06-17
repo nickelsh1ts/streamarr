@@ -141,7 +141,7 @@ const AdminTabs = ({
           </nav>
         </div>
       ) : (
-        <div className="hide-scrollbar hidden overflow-x-scroll border-b border-neutral sm:block m-0">
+        <div className="hide-scrollbar border-neutral m-0 hidden overflow-x-scroll border-b sm:block">
           <nav
             className="flex"
             data-testid="Admin-nav-desktop"

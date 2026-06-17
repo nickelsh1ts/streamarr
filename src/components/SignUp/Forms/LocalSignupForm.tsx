@@ -2,9 +2,9 @@
 import Button from '@app/components/Common/Button';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import { Field, Form, Formik } from 'formik';
-import * as Yup from 'yup';
-import validator from 'validator';
 import { FormattedMessage, useIntl } from 'react-intl';
+import validator from 'validator';
+import * as Yup from 'yup';
 
 interface LocalSignupFormProps {
   onSubmit: (values: {
@@ -119,15 +119,15 @@ const LocalSignupForm = ({
     >
       {({ errors, touched, isValid }) => {
         return (
-          <div className="p-4 place-content-center bg-secondary/50 border border-secondary rounded-b-lg">
+          <div className="bg-secondary/50 border-secondary place-content-center rounded-b-lg border p-4">
             <Form className="mt-4">
               <div>
-                <div className="input input-primary flex items-center mb-2">
+                <div className="input input-primary mb-2 flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
                   </svg>
@@ -143,16 +143,16 @@ const LocalSignupForm = ({
                   />
                 </div>
                 {errors.username && touched.username && (
-                  <div className="text-center text-error my-2">
+                  <div className="text-error my-2 text-center">
                     {errors.username}
                   </div>
                 )}
-                <div className="input input-primary flex items-center mb-2">
+                <div className="input input-primary mb-2 flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
                     <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
@@ -170,16 +170,16 @@ const LocalSignupForm = ({
                   />
                 </div>
                 {errors.email && touched.email && (
-                  <div className="text-center text-error my-2">
+                  <div className="text-error my-2 text-center">
                     {errors.email}
                   </div>
                 )}
-                <div className="input input-primary flex items-center mb-2 mt-5 pr-0">
+                <div className="input input-primary mt-5 mb-2 flex items-center pr-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path
                       fillRule="evenodd"
@@ -189,7 +189,7 @@ const LocalSignupForm = ({
                   </svg>
                   <SensitiveInput
                     as="field"
-                    className="grow w-full"
+                    className="w-full grow"
                     id="password"
                     name="password"
                     placeholder={intl.formatMessage({
@@ -199,16 +199,16 @@ const LocalSignupForm = ({
                   />
                 </div>
                 {errors.password && touched.password && (
-                  <div className="text-center text-error my-2">
+                  <div className="text-error my-2 text-center">
                     {errors.password}
                   </div>
                 )}
-                <div className="input input-primary flex items-center mb-2 pr-0">
+                <div className="input input-primary mb-2 flex items-center pr-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="h-4 w-4 opacity-70 me-2"
+                    className="me-2 h-4 w-4 opacity-70"
                   >
                     <path
                       fillRule="evenodd"
@@ -218,7 +218,7 @@ const LocalSignupForm = ({
                   </svg>
                   <SensitiveInput
                     as="field"
-                    className="grow w-full"
+                    className="w-full grow"
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder={intl.formatMessage({
@@ -228,12 +228,12 @@ const LocalSignupForm = ({
                   />
                 </div>
                 {errors.confirmPassword && touched.confirmPassword && (
-                  <div className="text-center text-error my-2">
+                  <div className="text-error my-2 text-center">
                     {errors.confirmPassword}
                   </div>
                 )}
                 {error && (
-                  <div className="text-sm text-center mb-2 text-error">
+                  <div className="text-error mb-2 text-center text-sm">
                     {error}
                   </div>
                 )}

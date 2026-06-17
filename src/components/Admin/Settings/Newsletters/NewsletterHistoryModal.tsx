@@ -110,7 +110,7 @@ const NewsletterHistoryModal = ({
     >
       {!data && !error && <LoadingEllipsis />}
       {data && data.results.length === 0 && (
-        <p className="py-6 text-center text-sm text-neutral">
+        <p className="text-neutral py-6 text-center text-sm">
           <FormattedMessage
             id="newsletters.noSends"
             defaultMessage="This newsletter has not been sent yet."
@@ -177,7 +177,7 @@ const NewsletterHistoryModal = ({
                   className="flex flex-col items-center gap-3 px-4 py-3"
                   aria-label="Pagination"
                 >
-                  <div className="flex flex-row items-center justify-between gap-2 w-full">
+                  <div className="flex w-full flex-row items-center justify-between gap-2">
                     <p className="text-sm">
                       <FormattedMessage
                         id="common.showingResults"

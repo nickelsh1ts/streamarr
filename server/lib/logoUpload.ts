@@ -1,8 +1,8 @@
-import logger from '@server/logger';
 import { getSettings } from '@server/lib/settings';
-import path from 'path';
+import logger from '@server/logger';
 import fs from 'fs';
-import { writeFile, mkdir } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 
 type LogoUploadResult = {
   customLogo?: string;

@@ -74,9 +74,9 @@ const UserDropdown = ({
   return (
     <div className="indicator" data-tutorial="user-dropdown">
       {notificationSettings?.inAppEnabled && unread?.length > 0 && (
-        <div className="indicator-item indicator-bottom indicator-start left-2 bottom-2 content-center pointer-events-none">
-          <span className="absolute badge badge-xs badge-error text-xs top-1.5" />
-          <span className="badge badge-xs badge-error text-xs animate-ping opacity-75" />
+        <div className="indicator-item indicator-bottom indicator-start pointer-events-none bottom-2 left-2 content-center">
+          <span className="badge badge-xs badge-error absolute top-1.5 text-xs" />
+          <span className="badge badge-xs badge-error animate-ping text-xs opacity-75" />
         </div>
       )}
       <DropDownMenu
@@ -87,7 +87,7 @@ const UserDropdown = ({
         })}
         dropdownIcon={
           <CachedImage
-            className="h-9 w-9 rounded-full mr-1"
+            className="mr-1 h-9 w-9 rounded-full"
             src={user?.id ? `/avatarproxy/${user.id}` : undefined}
             alt=""
             width={36}

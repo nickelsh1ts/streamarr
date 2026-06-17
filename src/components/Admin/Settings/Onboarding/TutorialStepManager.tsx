@@ -1,29 +1,14 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import ImageUpload from '@app/components/Common/ImageUpload';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
+import { useOnboardingContext } from '@app/context/OnboardingContext';
 import { TUTORIAL_PRESETS } from '@app/utils/tutorialPresets';
 import {
-  PlusIcon,
-  CursorArrowRippleIcon,
-  DocumentTextIcon,
-  PhotoIcon,
-  VideoCameraIcon,
-  CodeBracketIcon,
-} from '@heroicons/react/24/outline';
-import {
-  PencilIcon,
-  TrashIcon,
-  CheckBadgeIcon,
-  XCircleIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/solid';
-import type { TutorialStepResponse } from '@server/interfaces/api/onboardingInterfaces';
-import { TutorialMode, TooltipPosition } from '@server/entity/TutorialStep';
-import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   TouchSensor,
@@ -39,14 +24,29 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  CodeBracketIcon,
+  CursorArrowRippleIcon,
+  DocumentTextIcon,
+  PhotoIcon,
+  PlusIcon,
+  VideoCameraIcon,
+} from '@heroicons/react/24/outline';
+import {
+  Bars3Icon,
+  CheckBadgeIcon,
+  PencilIcon,
+  TrashIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import { TooltipPosition, TutorialMode } from '@server/entity/TutorialStep';
+import type { TutorialStepResponse } from '@server/interfaces/api/onboardingInterfaces';
 import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
-import { useState, useCallback } from 'react';
+import { Field, Form, Formik } from 'formik';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import { useOnboardingContext } from '@app/context/OnboardingContext';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 
 interface SortableStepProps {
   step: TutorialStepResponse;
@@ -75,14 +75,14 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 p-3 bg-base-200 rounded-lg ${
-        isDragging ? 'shadow-lg ring-2 ring-primary' : ''
+      className={`bg-base-200 flex items-center gap-3 rounded-lg p-3 ${
+        isDragging ? 'ring-primary shadow-lg ring-2' : ''
       }`}
     >
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-neutral hover:text-base-content touch-none"
+        className="text-neutral hover:text-base-content cursor-grab touch-none active:cursor-grabbing"
         aria-label="Drag to reorder"
       >
         <Bars3Icon className="size-5" />
@@ -90,17 +90,17 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
       <div className="shrink-0">
         {(step.mode === 'spotlight' && tutorialMode === 'both') ||
         tutorialMode === 'spotlight' ? (
-          <CursorArrowRippleIcon className="size-5 text-primary" />
+          <CursorArrowRippleIcon className="text-primary size-5" />
         ) : (
           ((step.mode === 'wizard' && tutorialMode === 'both') ||
             tutorialMode === 'wizard') && (
-            <DocumentTextIcon className="size-5 text-primary" />
+            <DocumentTextIcon className="text-primary size-5" />
           )
         )}
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium truncate">{step.title}</p>
-        <p className="text-xs text-neutral truncate">
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{step.title}</p>
+        <p className="text-neutral truncate text-xs">
           {tutorialMode !== 'wizard' &&
             step.targetSelector &&
             step.mode !== 'wizard' &&
@@ -114,15 +114,15 @@ const SortableStep = ({ step, onEdit, onDelete }: SortableStepProps) => {
         </p>
       </div>
       {(step.imageUrl || step.videoUrl || step.customHtml) && (
-        <div className="shrink-0 flex items-center gap-1 text-neutral">
-          {step.imageUrl && <PhotoIcon className="size-4 text-primary" />}
+        <div className="text-neutral flex shrink-0 items-center gap-1">
+          {step.imageUrl && <PhotoIcon className="text-primary size-4" />}
           {step.imageUrl && step.videoUrl && <span>/</span>}
-          {step.videoUrl && <VideoCameraIcon className="size-4 text-primary" />}
+          {step.videoUrl && <VideoCameraIcon className="text-primary size-4" />}
           {(step.imageUrl || step.videoUrl) && step.customHtml && (
             <span>/</span>
           )}
           {step.customHtml && (
-            <CodeBracketIcon className="size-4 text-accent" />
+            <CodeBracketIcon className="text-accent size-4" />
           )}
         </div>
       )}
@@ -358,7 +358,7 @@ const TutorialStepManager = () => {
 
   return (
     <div>
-      <div className="space-y-2 mb-4">
+      <div className="mb-4 space-y-2">
         {data && data.length > 0 ? (
           <DndContext
             sensors={sensors}
@@ -380,7 +380,7 @@ const TutorialStepManager = () => {
             </SortableContext>
           </DndContext>
         ) : (
-          <div className="text-center py-8 text-neutral">
+          <div className="text-neutral py-8 text-center">
             <FormattedMessage
               id="settings.onboarding.noTutorialSteps"
               defaultMessage="No tutorial steps configured. Add your first step to get started."
@@ -389,7 +389,7 @@ const TutorialStepManager = () => {
         )}
       </div>
       <Button buttonSize="sm" buttonType="primary" onClick={handleCreate}>
-        <PlusIcon className="size-4 mr-2" />
+        <PlusIcon className="mr-2 size-4" />
         <FormattedMessage
           id="settings.onboarding.addStep"
           defaultMessage="Add Step"
@@ -503,10 +503,10 @@ const TutorialStepManager = () => {
             secondaryDisabled={isSubmitting || !isValid}
           >
             <Form className="space-y-2">
-              <div className="border-t border-primary pt-4">
+              <div className="border-primary border-t pt-4">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage id="common.title" defaultMessage="Title" />
                   <span className="text-error ml-1">*</span>
@@ -526,7 +526,7 @@ const TutorialStepManager = () => {
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <FormattedMessage
                     id="common.description"
@@ -553,7 +553,7 @@ const TutorialStepManager = () => {
                 <div>
                   <label
                     htmlFor="mode"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <span className="text-sm">
                       <FormattedMessage
@@ -581,7 +581,7 @@ const TutorialStepManager = () => {
                       })}
                     </option>
                   </Field>
-                  <span className="text-xs text-neutral mt-1 block">
+                  <span className="text-neutral mt-1 block text-xs">
                     <FormattedMessage
                       id="settings.onboarding.stepModeTip"
                       defaultMessage="Choose how this step renders: spotlight highlights an element, wizard shows a carousel slide."
@@ -595,7 +595,7 @@ const TutorialStepManager = () => {
                 <div>
                   <label
                     htmlFor="targetSelector"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <span className="text-sm">
                       <FormattedMessage
@@ -604,7 +604,7 @@ const TutorialStepManager = () => {
                       />
                     </span>
                   </label>
-                  <div className="flex gap-2 mb-2">
+                  <div className="mb-2 flex gap-2">
                     <select
                       className="select select-primary select-sm flex-1"
                       onChange={(e) => {
@@ -640,7 +640,7 @@ const TutorialStepManager = () => {
                     placeholder="[data-tutorial='my-element'], #my-id, .my-class"
                     className="input input-sm input-primary w-full font-mono text-sm"
                   />
-                  <span className="text-xs text-neutral mt-1">
+                  <span className="text-neutral mt-1 text-xs">
                     <FormattedMessage
                       id="settings.onboarding.targetSelectorTip"
                       defaultMessage="CSS selector or data-tutorial attribute name to highlight."
@@ -654,7 +654,7 @@ const TutorialStepManager = () => {
                 <div>
                   <label
                     htmlFor="tooltipPosition"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <span className="text-sm">
                       <FormattedMessage
@@ -705,7 +705,7 @@ const TutorialStepManager = () => {
               <div>
                 <label
                   htmlFor="route"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -729,7 +729,7 @@ const TutorialStepManager = () => {
                   placeholder="/watch"
                   className="input input-sm input-primary w-full font-mono text-sm"
                 />
-                <span className="text-xs text-neutral mt-1">
+                <span className="text-neutral mt-1 text-xs">
                   <FormattedMessage
                     id="settings.onboarding.routeTip"
                     defaultMessage="Navigate to this route when this step is active."
@@ -739,7 +739,7 @@ const TutorialStepManager = () => {
               <div>
                 <label
                   htmlFor="imageUrl"
-                  className="block text-sm font-medium leading-6 text-left mb-2"
+                  className="mb-2 block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -763,8 +763,8 @@ const TutorialStepManager = () => {
                     uploadEndpoint={`/api/v1/settings/onboarding/tutorial/${editingStep.id}/image`}
                   />
                 ) : (
-                  <div className="flex items-center gap-2 p-3 rounded-lg border border-dashed border-base-content/20 bg-base-300/30">
-                    <span className="text-sm text-neutral">
+                  <div className="border-base-content/20 bg-base-300/30 flex items-center gap-2 rounded-lg border border-dashed p-3">
+                    <span className="text-neutral text-sm">
                       <FormattedMessage
                         id="settings.onboarding.imageAvailableAfterSave"
                         defaultMessage="Image upload will be available after saving."
@@ -776,7 +776,7 @@ const TutorialStepManager = () => {
               <div>
                 <label
                   htmlFor="videoUrl"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -800,7 +800,7 @@ const TutorialStepManager = () => {
                   placeholder="https://www.youtube.com/watch?v=..."
                   className="input input-sm input-primary w-full"
                 />
-                <span className="text-xs text-neutral mt-1">
+                <span className="text-neutral mt-1 text-xs">
                   <FormattedMessage
                     id="settings.onboarding.videoUrlTip"
                     defaultMessage="YouTube video URL (will be embedded securely)."
@@ -810,7 +810,7 @@ const TutorialStepManager = () => {
               <div>
                 <label
                   htmlFor="videoAutoplay"
-                  className="flex items-center text-sm font-medium leading-6 text-left gap-2"
+                  className="flex items-center gap-2 text-left text-sm leading-6 font-medium"
                 >
                   <Field
                     type="checkbox"
@@ -835,7 +835,7 @@ const TutorialStepManager = () => {
               <div className="space-y-0">
                 <label
                   htmlFor="customHtml"
-                  className="block text-sm font-medium leading-6 text-left"
+                  className="block text-left text-sm leading-6 font-medium"
                 >
                   <span className="text-sm">
                     <FormattedMessage
@@ -857,9 +857,9 @@ const TutorialStepManager = () => {
                   id="customHtml"
                   name="customHtml"
                   rows={4}
-                  className="textarea textarea-primary w-full font-mono text-sm h-32 leading-normal"
+                  className="textarea textarea-primary h-32 w-full font-mono text-sm leading-normal"
                 />
-                <span className="text-xs text-neutral">
+                <span className="text-neutral text-xs">
                   <FormattedMessage
                     id="settings.onboarding.customHtmlTip"
                     defaultMessage="Custom HTML content."

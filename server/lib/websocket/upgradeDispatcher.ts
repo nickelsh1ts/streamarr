@@ -1,6 +1,6 @@
+import logger from '@server/logger';
 import type { IncomingMessage, Server } from 'http';
 import type { Duplex } from 'stream';
-import logger from '@server/logger';
 
 export interface UpgradeMatcher {
   /** Human-readable name used in logs. */

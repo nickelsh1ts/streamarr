@@ -1,10 +1,10 @@
-import type Notification from '@server/entity/Notification';
-import type { PaginatedResponse } from './common';
-import type { User } from '@server/entity/User';
 import type {
   NotificationSeverity,
   NotificationType,
 } from '@server/constants/notification';
+import type Notification from '@server/entity/Notification';
+import type { User } from '@server/entity/User';
+import type { PaginatedResponse } from './common';
 
 export interface NotificationResultsResponse extends PaginatedResponse {
   results: Notification[];

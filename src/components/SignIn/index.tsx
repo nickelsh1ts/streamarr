@@ -1,10 +1,10 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex.svg';
 import Accordion from '@app/components/Common/Accordion';
 import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import PlexLoginButton from '@app/components/PlexLoginBtn';
 import LocalLogin from '@app/components/SignIn/LocalSignIn';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex.svg';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
@@ -63,9 +63,9 @@ const SignIn = () => {
       <div className="absolute top-4 right-4">
         <LanguagePicker />
       </div>
-      <div className="container max-w-lg mx-auto py-14 px-4">
-        <div className="text-start px-2 mb-4 relative">
-          <p className="text-2xl font-extrabold mb-2">
+      <div className="container mx-auto max-w-lg px-4 py-14">
+        <div className="relative mb-4 px-2 text-start">
+          <p className="mb-2 text-2xl font-extrabold">
             <FormattedMessage
               id="signIn.title"
               defaultMessage="Sign in to continue"
@@ -87,9 +87,9 @@ const SignIn = () => {
         </div>
         <Accordion single atLeastOne>
           {({ openIndexes, handleClick, AccordionContent }) => (
-            <div className="my-4 backdrop-blur-md text-primary-content">
+            <div className="text-primary-content my-4 backdrop-blur-md">
               <button
-                className={`collapse-title text-start mb-px border border-primary bg-primary/40 rounded-t-lg w-full ${
+                className={`collapse-title border-primary bg-primary/40 mb-px w-full rounded-t-lg border text-start ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -106,10 +106,10 @@ const SignIn = () => {
               </button>
               <AccordionContent isOpen={openIndexes.includes(0)}>
                 <div
-                  className={`p-3 place-content-center border border-secondary bg-secondary/50 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
+                  className={`border-secondary bg-secondary/50 place-content-center border p-3 ${currentSettings.localLogin ? '' : 'rounded-b-lg'}`}
                 >
                   <div
-                    className={`text-center text-error my-2 ${error ? 'block' : 'hidden'}`}
+                    className={`text-error my-2 text-center ${error ? 'block' : 'hidden'}`}
                   >
                     <FormattedMessage
                       id="signIn.loginFailed"
@@ -125,7 +125,7 @@ const SignIn = () => {
               {currentSettings.localLogin && (
                 <>
                   <button
-                    className={`collapse-title text-start border border-primary bg-primary/40 w-full ${
+                    className={`collapse-title border-primary bg-primary/40 w-full border text-start ${
                       openIndexes.includes(1)
                         ? 'text-primary-content cursor-not-allowed'
                         : 'rounded-b-lg'
@@ -150,7 +150,7 @@ const SignIn = () => {
           )}
         </Accordion>
         {currentSettings.enableSignUp && (
-          <p className="mt-4 text-start text-sm px-2 relative">
+          <p className="relative mt-4 px-2 text-start text-sm">
             <FormattedMessage
               id="signIn.newUser"
               defaultMessage="New to {applicationTitle}? {signUpLink}"
@@ -163,7 +163,7 @@ const SignIn = () => {
                 signUpLink: (
                   <Link
                     href="/signup"
-                    className="font-bold hover:brightness-75 ms-1"
+                    className="ms-1 font-bold hover:brightness-75"
                   >
                     <FormattedMessage
                       id="signIn.signUp"

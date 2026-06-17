@@ -8,23 +8,23 @@ import Table from '@app/components/Common/Table';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import useDebouncedState from '@app/hooks/useDebouncedState';
-import { useIntl, FormattedMessage } from 'react-intl';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
+  ClipboardDocumentCheckIcon,
+  DocumentMagnifyingGlassIcon,
+  FunnelIcon,
   MagnifyingGlassIcon,
   PauseIcon,
   PlayIcon,
-  FunnelIcon,
-  DocumentMagnifyingGlassIcon,
-  ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import type {
   LogMessage,
   LogsResultsResponse,
 } from '@server/interfaces/api/settingsInterfaces';
-import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
 type Filter = 'debug' | 'info' | 'warn' | 'error';
@@ -164,27 +164,27 @@ const LogsSettings = () => {
       >
         {activeLog && (
           <>
-            <div className="grid mt-5 grid-cols-3 items-start gap-4">
+            <div className="mt-5 grid grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
                   id="logs.modal.timestamp"
                   defaultMessage="Timestamp"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
+              <div className="mb-1 text-sm leading-5 font-medium sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {moment(activeLog.log?.timestamp).format('lll').toString()}
                 </div>
               </div>
             </div>
-            <div className="grid mt-5 grid-cols-3 items-start gap-4">
+            <div className="mt-5 grid grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
                   id="common.severity"
                   defaultMessage="Severity"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
+              <div className="mb-1 text-sm leading-5 font-medium sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   <Badge
                     badgeType={
@@ -202,42 +202,42 @@ const LogsSettings = () => {
                 </div>
               </div>
             </div>
-            <div className="grid mt-5 grid-cols-3 items-start gap-4">
+            <div className="mt-5 grid grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
                   id="logs.modal.label"
                   defaultMessage="Label"
                 />
               </div>
-              <div className="mb-1 text-sm font-medium leading-5 sm:mt-2">
+              <div className="mb-1 text-sm leading-5 font-medium sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.label}
                 </div>
               </div>
             </div>
-            <div className="grid mt-5 grid-cols-3 items-start gap-4">
+            <div className="mt-5 grid grid-cols-3 items-start gap-4">
               <div>
                 <FormattedMessage
                   id="common.message"
                   defaultMessage="Message"
                 />
               </div>
-              <div className="col-span-2 mb-1 text-sm font-medium leading-5 sm:mt-2">
+              <div className="col-span-2 mb-1 text-sm leading-5 font-medium sm:mt-2">
                 <div className="flex max-w-lg items-center">
                   {activeLog.log?.message}
                 </div>
               </div>
             </div>
             {activeLog.log?.data && (
-              <div className="grid grid-cols-1 space-y-4 mt-5">
+              <div className="mt-5 grid grid-cols-1 space-y-4">
                 <div>
                   <FormattedMessage
                     id="logs.modal.additionalData"
                     defaultMessage="Additional Data"
                   />
                 </div>
-                <div className="col-span-2 mb-1 text-sm font-medium leading-5 sm:mt-2">
-                  <code className="block max-h-64 w-full overflow-auto text-clip whitespace-pre bg-base-300 px-6 py-4 ring-1 ring-neutral">
+                <div className="col-span-2 mb-1 text-sm leading-5 font-medium sm:mt-2">
+                  <code className="bg-base-300 ring-neutral block max-h-64 w-full overflow-auto px-6 py-4 text-clip whitespace-pre ring-1">
                     {JSON.stringify(activeLog.log?.data, null, ' ')}
                   </code>
                 </div>
@@ -249,14 +249,14 @@ const LogsSettings = () => {
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage id="common.logs" defaultMessage="Logs" />
       </h3>
-      <p className="mb-5 overflow-hidden w-full">
+      <p className="mb-5 w-full overflow-hidden">
         <FormattedMessage
           id="logs.description"
           defaultMessage="You can also view these logs directly via {stdout}, or in {logPath}"
           values={{
             stdout: <code>stdout</code>,
             logPath: (
-              <code className="max-sm:block overflow-hidden text-ellipsis">
+              <code className="overflow-hidden text-ellipsis max-sm:block">
                 ${appData ? appData.appDataPath : '/app/config'}
                 /logs/streamarr.log
               </code>
@@ -264,14 +264,14 @@ const LogsSettings = () => {
           }}
         />
       </p>
-      <div className="mt-2 flex grow flex-col md:grow-0 sm:flex-row sm:justify-end">
-        <div className="mb-2 flex grow sm:mb-0 sm:mr-2 md:grow-0">
-          <span className="btn btn-sm rounded-md btn-primary rounded-r-none px-3 text-sm pointer-events-none">
+      <div className="mt-2 flex grow flex-col sm:flex-row sm:justify-end md:grow-0">
+        <div className="mb-2 flex grow sm:mr-2 sm:mb-0 md:grow-0">
+          <span className="btn btn-sm btn-primary pointer-events-none rounded-md rounded-r-none px-3 text-sm">
             <MagnifyingGlassIcon className="size-5" />
           </span>
           <input
             type="text"
-            className="input input-sm input-primary rounded-l-none rounded-md flex-1"
+            className="input input-sm input-primary flex-1 rounded-md rounded-l-none"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value as string)}
           />
@@ -298,7 +298,7 @@ const LogsSettings = () => {
             </span>
           </Button>
           <div className="flex grow">
-            <span className="btn btn-sm rounded-md btn-primary rounded-r-none pointer-events-none">
+            <span className="btn btn-sm btn-primary pointer-events-none rounded-md rounded-r-none">
               <FunnelIcon className="h-6 w-6" />
             </span>
             <select
@@ -308,7 +308,7 @@ const LogsSettings = () => {
               onChange={(e) => {
                 setCurrentFilter(e.target.value as Filter);
               }}
-              className="select select-sm select-primary rounded-l-none rounded-md flex-1"
+              className="select select-sm select-primary flex-1 rounded-md rounded-l-none"
             >
               <option value="debug">
                 {intl.formatMessage({
@@ -469,7 +469,7 @@ const LogsSettings = () => {
           <tr className="bg-base-100">
             <Table.TD colSpan={5} noPadding>
               <nav
-                className="flex w-screen flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
+                className="flex w-screen flex-col items-center space-y-3 space-x-4 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
                 aria-label="Pagination"
               >
                 <div className="hidden lg:flex lg:flex-1">
@@ -494,7 +494,7 @@ const LogsSettings = () => {
                   </p>
                 </div>
                 <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
-                  <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
+                  <span className="-mt-3 items-center text-sm sm:mt-0 sm:-ml-4 md:ml-0">
                     <FormattedMessage
                       id="common.resultsDisplay"
                       defaultMessage="Display {select} results per page"

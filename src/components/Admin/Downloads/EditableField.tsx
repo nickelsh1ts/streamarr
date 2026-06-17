@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
 import useClickOutside from '@app/hooks/useClickOutside';
 import { PencilIcon } from '@heroicons/react/24/solid';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface EditableFieldProps {
   value: string;
@@ -138,16 +138,16 @@ const EditableField: React.FC<EditableFieldProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-2 group">
+    <div className="group flex items-center gap-2">
       <button
         onClick={() => !disabled && setIsEditing(true)}
         disabled={disabled}
-        className="font-medium text-left underline underline-offset-4 hover:underline-offset-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center"
+        className="inline-flex cursor-pointer items-center text-left font-medium underline underline-offset-4 hover:underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         title={disabled ? '' : 'Click to edit'}
       >
         <span>{value || placeholder || 'Not set'}</span>
         {!disabled && (
-          <PencilIcon className="w-3 opacity-50 sm:w-0 h-3 ml-1 sm:opacity-0 sm:group-hover:w-3 sm:group-hover:opacity-50 sm:group-hover:ml-1 transition-all duration-150 overflow-visible" />
+          <PencilIcon className="ml-1 h-3 w-3 overflow-visible opacity-50 transition-all duration-150 sm:w-0 sm:opacity-0 sm:group-hover:ml-1 sm:group-hover:w-3 sm:group-hover:opacity-50" />
         )}
       </button>
     </div>

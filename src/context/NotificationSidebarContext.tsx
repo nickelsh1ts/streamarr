@@ -1,6 +1,6 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 interface NotificationSidebarContextProps {
   isOpen: boolean;

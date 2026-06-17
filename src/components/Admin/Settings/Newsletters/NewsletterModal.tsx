@@ -1,10 +1,13 @@
 'use client';
+import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
 import Modal from '@app/components/Common/Modal';
 import Toggle from '@app/components/Common/Toggle';
+import Tooltip from '@app/components/Common/ToolTip';
 import UserSelector from '@app/components/Common/UserSelector';
-import type { User } from '@app/hooks/useUser';
-import useLocale from '@app/hooks/useLocale';
 import Toast from '@app/components/Toast';
+import useLocale from '@app/hooks/useLocale';
+import type { User } from '@app/hooks/useUser';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
 import { ClockIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import type Newsletter from '@server/entity/Newsletter';
@@ -21,9 +24,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import Alert from '@app/components/Common/Alert';
-import Tooltip from '@app/components/Common/ToolTip';
-import Button from '@app/components/Common/Button';
 
 interface NewsletterModalProps {
   show: boolean;
@@ -44,7 +44,7 @@ const DatePickerInput = forwardRef<
   }
 >(({ value, onClick, onChange, placeholder, icon, invalid }, ref) => (
   <div
-    className={`input input-sm flex w-full items-center gap-2 relative ${
+    className={`input input-sm relative flex w-full items-center gap-2 ${
       invalid ? 'input-error' : 'input-primary'
     }`}
     onClick={onClick}
@@ -521,10 +521,10 @@ const NewsletterModal = ({
               }
             >
               <Form className="space-y-3">
-                <div className="border-t border-primary pt-4">
+                <div className="border-primary border-t pt-4">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage id="common.name" defaultMessage="Name" />
                     <span className="text-error ml-1">*</span>
@@ -533,7 +533,7 @@ const NewsletterModal = ({
                     id="name"
                     name="name"
                     type="text"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.name && touched.name ? 'input-error' : ''
                     }`}
                   />
@@ -545,7 +545,7 @@ const NewsletterModal = ({
                 <div>
                   <label
                     htmlFor="subject"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage
                       id="newsletters.subject"
@@ -557,7 +557,7 @@ const NewsletterModal = ({
                     id="subject"
                     name="subject"
                     type="text"
-                    className={`input input-sm input-primary rounded-md w-full ${
+                    className={`input input-sm input-primary w-full rounded-md ${
                       errors.subject && touched.subject ? 'input-error' : ''
                     }`}
                   />
@@ -569,7 +569,7 @@ const NewsletterModal = ({
                 <div>
                   <label
                     htmlFor="description"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage
                       id="newsletters.descriptionLabel"
@@ -581,9 +581,9 @@ const NewsletterModal = ({
                     id="description"
                     name="description"
                     rows={2}
-                    className="input input-sm input-primary rounded-md w-full h-auto py-2"
+                    className="input input-sm input-primary h-auto w-full rounded-md py-2"
                   />
-                  <p className="mt-1 text-sm text-neutral text-left">
+                  <p className="text-neutral mt-1 text-left text-sm">
                     <FormattedMessage
                       id="newsletters.descriptionTip"
                       defaultMessage="Shown to users under this newsletter in their subscription settings."
@@ -594,7 +594,7 @@ const NewsletterModal = ({
                 <div>
                   <label
                     htmlFor="bodyFormat"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage
                       id="newsletters.bodyFormat"
@@ -615,7 +615,7 @@ const NewsletterModal = ({
                 <div>
                   <label
                     htmlFor="body"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage
                       id="newsletters.body"
@@ -656,7 +656,7 @@ const NewsletterModal = ({
                   </Field>
                 </div>
 
-                <div className="rounded-md border border-primary p-3 space-y-3">
+                <div className="border-primary space-y-3 rounded-md border p-3">
                   <p className="text-sm font-semibold">
                     <FormattedMessage
                       id="newsletters.recentlyAdded"
@@ -664,7 +664,7 @@ const NewsletterModal = ({
                     />
                   </p>
                   {availableTypes.length === 0 && (
-                    <p className="text-sm text-neutral">
+                    <p className="text-neutral text-sm">
                       <FormattedMessage
                         id="newsletters.noLibraries"
                         defaultMessage="No enabled Plex libraries were found."
@@ -709,7 +709,7 @@ const NewsletterModal = ({
                                       days: Number(e.target.value),
                                     })
                                   }
-                                  className="input input-sm input-primary rounded-md w-24"
+                                  className="input input-sm input-primary w-24 rounded-md"
                                 />
                               </div>
                               <div>
@@ -733,7 +733,7 @@ const NewsletterModal = ({
                                       count: Number(e.target.value),
                                     })
                                   }
-                                  className="input input-sm input-primary rounded-md w-24"
+                                  className="input input-sm input-primary w-24 rounded-md"
                                 />
                               </div>
                             </div>
@@ -795,7 +795,7 @@ const NewsletterModal = ({
                                     header: e.target.value,
                                   })
                                 }
-                                className="input input-sm input-primary rounded-md w-full"
+                                className="input input-sm input-primary w-full rounded-md"
                               />
                             </div>
                           </div>
@@ -805,7 +805,7 @@ const NewsletterModal = ({
                   })}
                 </div>
 
-                <div className="rounded-md border border-primary p-3 space-y-3">
+                <div className="border-primary space-y-3 rounded-md border p-3">
                   <div className="space-y-3">
                     <p className="text-sm font-semibold">
                       <FormattedMessage
@@ -814,7 +814,7 @@ const NewsletterModal = ({
                       />
                     </p>
                     {availableTopStreamTypes.length === 0 && (
-                      <p className="text-sm text-neutral">
+                      <p className="text-neutral text-sm">
                         <FormattedMessage
                           id="newsletters.noLibraries"
                           defaultMessage="No enabled Plex libraries were found."
@@ -859,7 +859,7 @@ const NewsletterModal = ({
                                         days: Number(e.target.value),
                                       })
                                     }
-                                    className="input input-sm input-primary rounded-md w-24"
+                                    className="input input-sm input-primary w-24 rounded-md"
                                   />
                                 </div>
                                 <div>
@@ -883,7 +883,7 @@ const NewsletterModal = ({
                                         count: Number(e.target.value),
                                       })
                                     }
-                                    className="input input-sm input-primary rounded-md w-24"
+                                    className="input input-sm input-primary w-24 rounded-md"
                                   />
                                 </div>
                               </div>
@@ -946,7 +946,7 @@ const NewsletterModal = ({
                                       header: e.target.value,
                                     })
                                   }
-                                  className="input input-sm input-primary rounded-md w-full"
+                                  className="input input-sm input-primary w-full rounded-md"
                                 />
                               </div>
                             </div>
@@ -957,7 +957,7 @@ const NewsletterModal = ({
                   </div>
                 </div>
 
-                <div className="rounded-md border border-primary p-3 space-y-3">
+                <div className="border-primary space-y-3 rounded-md border p-3">
                   <p className="text-sm font-semibold">
                     <FormattedMessage
                       id="newsletters.byTag"
@@ -992,7 +992,7 @@ const NewsletterModal = ({
                             id="byTagPlexLabel"
                             type="text"
                             name="byTagPlexLabel"
-                            className="input input-sm input-primary rounded-md w-full"
+                            className="input input-sm input-primary w-full rounded-md"
                           />
                         </div>
                         {(() => {
@@ -1082,7 +1082,7 @@ const NewsletterModal = ({
                             id="byTagRadarrTag"
                             type="text"
                             name="byTagRadarrTag"
-                            className="input input-sm input-primary rounded-md w-full"
+                            className="input input-sm input-primary w-full rounded-md"
                           />
                         </div>
                         <div>
@@ -1096,7 +1096,7 @@ const NewsletterModal = ({
                             id="byTagSonarrTag"
                             type="text"
                             name="byTagSonarrTag"
-                            className="input input-sm input-primary rounded-md w-full"
+                            className="input input-sm input-primary w-full rounded-md"
                           />
                         </div>
                       </div>
@@ -1117,7 +1117,7 @@ const NewsletterModal = ({
                           name="byTagCount"
                           min={1}
                           max={24}
-                          className="input input-sm input-primary rounded-md w-24"
+                          className="input input-sm input-primary w-24 rounded-md"
                         />
                       </div>
                       <div className="grow">
@@ -1131,7 +1131,7 @@ const NewsletterModal = ({
                           id="byTagHeader"
                           type="text"
                           name="byTagHeader"
-                          className="input input-sm input-primary rounded-md w-full"
+                          className="input input-sm input-primary w-full rounded-md"
                         />
                       </div>
                     </div>
@@ -1141,7 +1141,7 @@ const NewsletterModal = ({
                 <div>
                   <label
                     htmlFor="recipientMode"
-                    className="block text-sm font-medium leading-6 text-left"
+                    className="block text-left text-sm leading-6 font-medium"
                   >
                     <FormattedMessage
                       id="newsletters.recipients"
@@ -1211,7 +1211,7 @@ const NewsletterModal = ({
                         }}
                         className={`${
                           values.isImportant ? 'bg-error' : 'bg-neutral'
-                        } relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-error focus:ring hover:cursor-pointer`}
+                        } ring-error relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out hover:cursor-pointer focus:ring focus:outline-none`}
                       >
                         <span
                           aria-hidden="true"
@@ -1228,14 +1228,14 @@ const NewsletterModal = ({
                                 : 'opacity-100 duration-200 ease-in'
                             } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity`}
                           >
-                            <XMarkIcon className="h-3 w-3 text-neutral" />
+                            <XMarkIcon className="text-neutral h-3 w-3" />
                           </span>
                           <span
                             className={`${
                               values.isImportant
                                 ? 'opacity-100 duration-200 ease-in'
                                 : 'opacity-0 duration-100 ease-out'
-                            } absolute inset-0 flex h-full w-full items-center justify-center transition-opacity text-extrabold text-lg text-error`}
+                            } text-extrabold text-error absolute inset-0 flex h-full w-full items-center justify-center text-lg transition-opacity`}
                           >
                             !
                           </span>
@@ -1259,7 +1259,7 @@ const NewsletterModal = ({
                     />
                   )}
                 </div>
-                <div className="rounded-md border border-primary p-3 space-y-3">
+                <div className="border-primary space-y-3 rounded-md border p-3">
                   <Toggle
                     id="enabled"
                     valueOf={values.enabled}
@@ -1274,7 +1274,7 @@ const NewsletterModal = ({
                       <div>
                         <label
                           htmlFor="scheduleType"
-                          className="block text-sm font-medium leading-6 text-left"
+                          className="block text-left text-sm leading-6 font-medium"
                         >
                           <FormattedMessage
                             id="newsletters.scheduleType"
@@ -1305,7 +1305,7 @@ const NewsletterModal = ({
                         <div>
                           <label
                             htmlFor="cronSchedule"
-                            className="block text-sm font-medium leading-6 text-left"
+                            className="block text-left text-sm leading-6 font-medium"
                           >
                             <FormattedMessage
                               id="newsletters.cronSchedule"
@@ -1316,14 +1316,14 @@ const NewsletterModal = ({
                             id="cronSchedule"
                             name="cronSchedule"
                             type="text"
-                            className={`input input-sm input-primary rounded-md w-full font-mono ${
+                            className={`input input-sm input-primary w-full rounded-md font-mono ${
                               errors.cronSchedule && touched.cronSchedule
                                 ? 'input-error'
                                 : ''
                             }`}
                           />
                           {cronPreview && (
-                            <p className="mt-1 text-neutral">{cronPreview}</p>
+                            <p className="text-neutral mt-1">{cronPreview}</p>
                           )}
                           {errors.cronSchedule && touched.cronSchedule && (
                             <div className="text-error">
@@ -1335,14 +1335,14 @@ const NewsletterModal = ({
                         <div>
                           <label
                             htmlFor="sendOn"
-                            className="block text-sm font-medium leading-6 text-left"
+                            className="block text-left text-sm leading-6 font-medium"
                           >
                             <FormattedMessage
                               id="newsletters.sendOn"
                               defaultMessage="Send On"
                             />
                           </label>
-                          <div className="flex flex-col gap-2 sm:flex-row items-center">
+                          <div className="flex flex-col items-center gap-2 sm:flex-row">
                             <DatePicker
                               id="sendAt"
                               selected={
@@ -1385,7 +1385,7 @@ const NewsletterModal = ({
                                       xmlns="http://www.w3.org/2000/svg"
                                       viewBox="0 0 24 24"
                                       fill="currentColor"
-                                      className="h-5 w-5 shrink-0 text-primary absolute right-4"
+                                      className="text-primary absolute right-4 h-5 w-5 shrink-0"
                                     >
                                       <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
                                       <path
@@ -1431,7 +1431,7 @@ const NewsletterModal = ({
                                 <DatePickerInput
                                   invalid={!!(errors.sendAt && touched.sendAt)}
                                   icon={
-                                    <ClockIcon className="h-5 w-5 shrink-0 text-primary absolute right-4" />
+                                    <ClockIcon className="text-primary absolute right-4 h-5 w-5 shrink-0" />
                                   }
                                 />
                               }
@@ -1465,7 +1465,7 @@ const NewsletterModal = ({
             >
               <iframe
                 title="newsletter-preview"
-                className="h-[60vh] w-full rounded-md border border-primary"
+                className="border-primary h-[60vh] w-full rounded-md border"
                 style={{ backgroundColor: '#1f1f1f' }}
                 srcDoc={
                   previewHtml

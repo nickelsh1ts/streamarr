@@ -9,9 +9,9 @@ const BackButton = () => {
     <Tooltip tooltipConfig={{ placement: 'bottom' }} content="Back">
       <button
         onClick={() => router.back()}
-        className="pwa-only pointer-events-auto hover:opacity-70 mr-0.5 text-base-content hover:cursor-pointer"
+        className="pwa-only text-base-content pointer-events-auto mr-0.5 hover:cursor-pointer hover:opacity-70"
       >
-        <ArrowLeftIcon className="size-7 m-2" />
+        <ArrowLeftIcon className="m-2 size-7" />
       </button>
     </Tooltip>
   );

@@ -1,7 +1,7 @@
 import NotificationType from '@app/components/Common/NotificationTypeSelector/NotificationType';
-import { NotificationType as Notification } from '@server/constants/notification';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
+import { NotificationType as Notification } from '@server/constants/notification';
 import orderBy from 'lodash/orderBy';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -260,7 +260,7 @@ const NotificationTypeSelector = ({
   return (
     <div role="group" aria-labelledby="group-label" className="form-group">
       <div className="mt-5 max-w-6xl space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+        <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
           <span id="group-label" className="group-label">
             <FormattedMessage
               id="common.notificationTypes"

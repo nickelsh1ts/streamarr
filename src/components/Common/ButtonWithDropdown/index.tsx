@@ -83,7 +83,7 @@ const ButtonWithDropdown = ({
     >
       <button
         type="button"
-        className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
+        className={`relative z-10 inline-flex h-full items-center px-4 py-2 text-sm leading-5 font-medium transition duration-150 ease-in-out hover:z-20 focus:z-20 focus:outline-none ${
           styleClasses.mainButtonClasses
         } ${children ? (side === 'right' ? 'rounded-l-md' : 'rounded-r-md') : 'rounded-md'} ${className && className}`}
         {...props}
@@ -94,23 +94,23 @@ const ButtonWithDropdown = ({
         <span className="relative -ml-px block" ref={buttonRef}>
           <button
             type="button"
-            className={`relative z-10 inline-flex h-full items-center ${side === 'left' ? 'rounded-l-md' : 'rounded-r-md'} px-2 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out hover:z-20 focus:z-20 ${styleClasses.dropdownSideButtonClasses}`}
+            className={`relative z-10 inline-flex h-full items-center ${side === 'left' ? 'rounded-l-md' : 'rounded-r-md'} px-2 py-2 text-sm leading-5 font-medium text-white transition duration-150 ease-in-out hover:z-20 focus:z-20 ${styleClasses.dropdownSideButtonClasses}`}
             aria-label="Expand"
             onClick={() => setIsOpen((state) => !state)}
           >
             {!dropUp ? (
               <ChevronDownIcon
-                className={`w-4 h-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                className={`h-4 w-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
               />
             ) : (
               <ChevronUpIcon
-                className={`w-4 h-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
+                className={`h-4 w-4 transition-transform ${isOpen && 'scale-y-[-1]'}`}
               />
             )}
           </button>
           <Transition as={Fragment} show={isOpen}>
             <div
-              className={`absolute menu min-w-52 text-sm -my-1 ${side === 'left' ? '-ml-1 left-0' : '-mr-1 right-0'} transition ease-out duration-75 opacity-100 translate-y-0 data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-closed:translate-y-2 data-leave:translate-y-2' : 'origin-top-right data-closed:-translate-y-2 data-leave:-translate-y-2'}`}
+              className={`menu absolute -my-1 min-w-52 text-sm ${side === 'left' ? 'left-0 -ml-1' : 'right-0 -mr-1'} translate-y-0 opacity-100 transition duration-75 ease-out data-closed:opacity-0 data-leave:opacity-0 ${dropUp ? 'top-auto bottom-full origin-bottom-right data-closed:translate-y-2 data-leave:translate-y-2' : 'origin-top-right data-closed:-translate-y-2 data-leave:-translate-y-2'}`}
             >
               <div
                 className={`rounded-md ring-1 ring-black/5 ${styleClasses.dropdownClasses}`}

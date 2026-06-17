@@ -7,31 +7,31 @@ import type {
 } from '@server/api/themoviedb/interfaces';
 import type { StatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import { Permission } from '@server/lib/permissions';
-import { getSettings } from '@server/lib/settings';
-import logger from '@server/logger';
-import { checkUser, isAuthenticated } from '@server/middleware/auth';
-import settingsRoutes from './settings';
-import { appDataPath, appDataStatus } from '@server/utils/appDataVolume';
-import { getAppVersion, getCommitTag } from '@server/utils/appVersion';
-import { Router } from 'express';
-import authRoutes from './auth';
-import user from './user';
-import { isPerson } from '@server/utils/typeHelpers';
-import inviteRoutes from './invite';
-import serviceRoutes from './service';
-import calendarRoutes from './calendar';
-import signupRoutes from './signup';
-import notificationRoutes from '@server/routes/notification';
-import downloadsRoutes from './downloads';
 import {
+  getPlexCachedLibraries,
   getPlexHealth,
   isPlexInCooldown,
-  getPlexCachedLibraries,
   resetPlexHealth,
   revalidatePlexLibraries,
   type LibraryItemsResponse,
   type LibraryLink,
 } from '@server/lib/plexHealthCheck';
+import { getSettings } from '@server/lib/settings';
+import logger from '@server/logger';
+import { checkUser, isAuthenticated } from '@server/middleware/auth';
+import notificationRoutes from '@server/routes/notification';
+import { appDataPath, appDataStatus } from '@server/utils/appDataVolume';
+import { getAppVersion, getCommitTag } from '@server/utils/appVersion';
+import { isPerson } from '@server/utils/typeHelpers';
+import { Router } from 'express';
+import authRoutes from './auth';
+import calendarRoutes from './calendar';
+import downloadsRoutes from './downloads';
+import inviteRoutes from './invite';
+import serviceRoutes from './service';
+import settingsRoutes from './settings';
+import signupRoutes from './signup';
+import user from './user';
 
 export const createTmdbWithRegionLanguage = (): TheMovieDb => {
   return new TheMovieDb();

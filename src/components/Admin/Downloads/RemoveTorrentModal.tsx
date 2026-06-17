@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Modal from '@app/components/Common/Modal';
-import { FormattedMessage, useIntl } from 'react-intl';
 import Alert from '@app/components/Common/Alert';
+import Modal from '@app/components/Common/Modal';
+import React, { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface RemoveTorrentModalProps {
   isOpen: boolean;
@@ -100,7 +100,7 @@ const RemoveTorrentModal: React.FC<RemoveTorrentModalProps> = ({
           </Alert>
         )}
 
-        <div className="text-xs text-neutral truncate">{torrentName}</div>
+        <div className="text-neutral truncate text-xs">{torrentName}</div>
       </div>
     </Modal>
   );

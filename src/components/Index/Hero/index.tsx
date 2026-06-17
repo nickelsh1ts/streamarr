@@ -1,13 +1,13 @@
 'use client';
 import ImageFader from '@app/components/Common/ImageFader';
-import useSWR from 'swr';
-import Image from 'next/image';
-import { type Library } from '@server/lib/settings';
-import useSettings from '@app/hooks/useSettings';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import useSettings from '@app/hooks/useSettings';
+import { type Library } from '@server/lib/settings';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import LanguagePicker from '@app/components/Layout/LanguagePicker';
+import useSWR from 'swr';
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -34,7 +34,7 @@ export default function Hero() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <section id="promo" className="min-h-lvh -mt-20">
+    <section id="promo" className="-mt-20 min-h-lvh">
       <ImageFader
         rotationSpeed={6000}
         backgroundImages={
@@ -43,26 +43,26 @@ export default function Hero() {
           ) ?? ['/img/people-cinema-watching.jpg']
         }
       />
-      <div className="grid grid-flow-row min-h-lvh md:ps-12 md:text-start text-center relative">
+      <div className="relative grid min-h-lvh grid-flow-row text-center md:ps-12 md:text-start">
         <div className="absolute top-20 right-4">
           <LanguagePicker />
         </div>
-        <div className="md:ps-4 mt-auto pt-24">
+        <div className="mt-auto pt-24 md:ps-4">
           <Image
             src={logoSrc}
             alt="logo"
             width={448}
             height={100}
             unoptimized={true}
-            className="mb-10 mt-5 h-auto w-[448px] mx-auto md:mx-0 px-5 md:px-0"
+            className="mx-auto mt-5 mb-10 h-auto w-[448px] px-5 md:mx-0 md:px-0"
           />
-          <h1 className="text-xl md:text-3xl font-extrabold mb-2">
+          <h1 className="mb-2 text-xl font-extrabold md:text-3xl">
             <FormattedMessage
               id="hero.title"
               defaultMessage="Unlimited movies and TV shows"
             />
           </h1>
-          <p className="text-sm md:text-base tracking-wide mb-12">
+          <p className="mb-12 text-sm tracking-wide md:text-base">
             <FormattedMessage
               id="hero.subtitle"
               defaultMessage="Watch anywhere, anytime for free. The future is now."
@@ -71,14 +71,14 @@ export default function Hero() {
           {currentSettings.enableSignUp && (
             <form
               action=""
-              className="w-fit mx-auto md:mx-0"
+              className="mx-auto w-fit md:mx-0"
               method="post"
               onSubmit={(e) => e.preventDefault()}
             >
               <div className="label">
                 <label
                   htmlFor="icode"
-                  className="mb-2 text-sm md:text-base text-center md:text-start"
+                  className="mb-2 text-center text-sm md:text-start md:text-base"
                 >
                   <FormattedMessage
                     id="hero.inviteCode"
@@ -87,19 +87,19 @@ export default function Hero() {
                 </label>
               </div>
               {error && (
-                <div className="mb-2 text-error font-semibold text-sm md:text-base">
+                <div className="text-error mb-2 text-sm font-semibold md:text-base">
                   {error}
                 </div>
               )}
-              <div className="flex flex-col sm:flex-row items-end mb-6 w-full max-w-md">
-                <label className="input text-xl rounded-none rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none w-full sm:max-w-48 uppercase border-warning focus-within:border-warning focus-within:outline-warning/30">
+              <div className="mb-6 flex w-full max-w-md flex-col items-end sm:flex-row">
+                <label className="input border-warning focus-within:border-warning focus-within:outline-warning/30 w-full rounded-none rounded-t-lg text-xl uppercase sm:max-w-48 sm:rounded-l-lg sm:rounded-tr-none">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-7 md:size-9 shrink-0"
+                    className="size-7 shrink-0 md:size-9"
                   >
                     <path
                       strokeLinecap="round"
@@ -122,7 +122,7 @@ export default function Hero() {
                 </label>
                 <button
                   type="button"
-                  className="btn btn-warning rounded-none rounded-b-lg sm:rounded-r-lg sm:rounded-bl-none w-full sm:w-auto sm:mt-0 sm:ml-0"
+                  className="btn btn-warning w-full rounded-none rounded-b-lg sm:mt-0 sm:ml-0 sm:w-auto sm:rounded-r-lg sm:rounded-bl-none"
                   onClick={() => {
                     const code = inputRef.current?.value.trim();
                     if (code) {
@@ -138,7 +138,7 @@ export default function Hero() {
                     }
                   }}
                 >
-                  <span className="text-lg text-center rounded-lg cursor-pointe font-bold">
+                  <span className="cursor-pointe rounded-lg text-center text-lg font-bold">
                     <FormattedMessage
                       id="hero.getStarted"
                       defaultMessage="Let's Get Started!"
@@ -149,7 +149,7 @@ export default function Hero() {
             </form>
           )}
           {currentSettings.libraryCounts && (
-            <div className="flex flex-wrap items-center max-md:place-content-center mx-4 md:mx-0 mt-3 md:mt-7 mb-3 divide-x-2 divide-accent">
+            <div className="divide-accent mx-4 mt-3 mb-3 flex flex-wrap items-center divide-x-2 max-md:place-content-center md:mx-0 md:mt-7">
               {mediaLibraries ? (
                 mediaLibraries.length > 0 && (
                   <>
@@ -163,7 +163,7 @@ export default function Hero() {
                       </p>
                     ))}
                     {mediaLibraries.length > 4 && (
-                      <p className="px-4 first:ps-0 last:pe-0 font-bold">
+                      <p className="px-4 font-bold first:ps-0 last:pe-0">
                         <FormattedMessage
                           id="hero.more"
                           defaultMessage="+ more"
@@ -178,7 +178,7 @@ export default function Hero() {
             </div>
           )}
         </div>
-        <div className="md:ps-3 mt-auto mb-20 mx-auto md:mx-0">
+        <div className="mx-auto mt-auto mb-20 md:mx-0 md:ps-3">
           {currentSettings.extendedHome && (
             <button className="" onClick={() => scrollToSection('requesting')}>
               <svg
@@ -187,7 +187,7 @@ export default function Hero() {
                 viewBox="0 0 24 24"
                 strokeWidth={3.5}
                 stroke="currentColor"
-                className="size-9 fa-bounce"
+                className="fa-bounce size-9"
               >
                 <path
                   strokeLinecap="round"

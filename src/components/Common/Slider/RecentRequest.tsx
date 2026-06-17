@@ -1,15 +1,15 @@
 import Badge from '@app/components/Common/Badge';
 import CachedImage from '@app/components/Common/CachedImage';
+import { useInView } from '@app/hooks/useElementInView';
 import { withProperties } from '@app/utils/typeHelpers';
-import { MediaRequestStatus, MediaStatus } from '@server/constants/seerr';
 import { FilmIcon, TvIcon } from '@heroicons/react/24/solid';
+import { MediaRequestStatus, MediaStatus } from '@server/constants/seerr';
+import type { SeerrRequestItem } from '@server/interfaces/api/seerrInterfaces';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
-import { useInView } from '@app/hooks/useElementInView';
-import type { SeerrRequestItem } from '@server/interfaces/api/seerrInterfaces';
-import { usePathname } from 'next/navigation';
 
 const getStatusBadge = (
   requestStatus: number,
@@ -84,7 +84,7 @@ const getStatusBadge = (
 
 const RequestCardPlaceholder = () => {
   return (
-    <div className="relative w-72 animate-pulse rounded-xl bg-base-200 p-4 sm:w-96">
+    <div className="bg-base-200 relative w-72 animate-pulse rounded-xl p-4 sm:w-96">
       <div className="w-20 sm:w-28">
         <div className="w-full" style={{ paddingBottom: '150%' }} />
       </div>
@@ -100,11 +100,11 @@ const RequestCardError = ({
   const pathname = usePathname();
 
   return (
-    <div className="relative flex w-72 overflow-hidden rounded-xl bg-base-300 p-4 text-gray-400 shadow ring-1 ring-red-500 sm:w-96">
+    <div className="bg-base-300 relative flex w-72 overflow-hidden rounded-xl p-4 text-gray-400 shadow ring-1 ring-red-500 sm:w-96">
       <div className="w-20 sm:w-28">
         <div className="w-full" style={{ paddingBottom: '150%' }}>
-          <div className="absolute inset-0 z-10 flex min-w-0 flex-1 flex-col p-4 gap-1">
-            <div className="overflow-hidden text-ellipsis whitespace-normal text-base font-bold text-white sm:text-lg">
+          <div className="absolute inset-0 z-10 flex min-w-0 flex-1 flex-col gap-1 p-4">
+            <div className="overflow-hidden text-base font-bold text-ellipsis whitespace-normal text-white sm:text-lg">
               <FormattedMessage
                 id="userProfile.mediaError"
                 defaultMessage="{mediaType, select, movie {Movie} tv {TV show} other {Media}} not found"
@@ -197,7 +197,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
   }
 
   return (
-    <div className="relative flex w-72 overflow-hidden rounded-xl bg-base-300 bg-cover bg-center p-4 shadow ring-1 ring-primary sm:w-96">
+    <div className="bg-base-300 ring-primary relative flex w-72 overflow-hidden rounded-xl bg-cover bg-center p-4 shadow ring-1 sm:w-96">
       {title.backdropPath && (
         <div className="absolute inset-0 z-0">
           <CachedImage
@@ -206,10 +206,10 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />
-          <div className="absolute inset-0 bg-linear-to-l from-secondary to-secondary/75" />
+          <div className="from-secondary to-secondary/75 absolute inset-0 bg-linear-to-l" />
         </div>
       )}
-      <div className="relative z-10 flex min-w-0 flex-1 gap-1 flex-col pr-4">
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-1 pr-4">
         <div className="hidden text-xs font-medium sm:flex">
           {(title.releaseDate || title.firstAirDate)?.slice(0, 4)}
         </div>
@@ -219,7 +219,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
               ? `/request/movie/${requestData.media.tmdbId}`
               : `/request/tv/${requestData.media.tmdbId}`
           }
-          className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold hover:underline sm:text-lg"
+          className="overflow-hidden text-base font-bold text-ellipsis whitespace-nowrap hover:underline sm:text-lg"
         >
           {title.title || title.name}
         </Link>
@@ -304,11 +304,11 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
             height={900}
           />
         ) : (
-          <div className="flex aspect-2/3 w-full items-center justify-center bg-base-300">
+          <div className="bg-base-300 flex aspect-2/3 w-full items-center justify-center">
             {request.type === 'tv' ? (
-              <TvIcon className="size-10 text-base-content/20" />
+              <TvIcon className="text-base-content/20 size-10" />
             ) : (
-              <FilmIcon className="size-10 text-base-content/20" />
+              <FilmIcon className="text-base-content/20 size-10" />
             )}
           </div>
         )}

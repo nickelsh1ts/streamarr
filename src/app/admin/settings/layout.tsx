@@ -108,7 +108,7 @@ const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   ];
 
   return (
-    <div className="mt-4 mx-4">
+    <div className="mx-4 mt-4">
       <AdminTabs
         tabType="button"
         AdminRoutes={AdminRoutes}

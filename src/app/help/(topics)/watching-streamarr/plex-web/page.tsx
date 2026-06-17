@@ -1,8 +1,8 @@
 'use client';
+import PlexLogo from '@app/assets/services/plex_dark.svg';
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
-import PlexLogo from '@app/assets/services/plex_dark.svg';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 const HelpContent = () => {
@@ -30,7 +30,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.plexWeb.browseLibrary"
@@ -71,7 +71,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.plexWeb.autoQuality"
@@ -91,7 +91,7 @@ const HelpContent = () => {
           />
         </li>
       </ul>
-      <p className="italic text-sm my-4">
+      <p className="my-4 text-sm italic">
         <span className="text-info font-bold">
           <FormattedMessage id="help.common.tip" defaultMessage="Tip" />
         </span>

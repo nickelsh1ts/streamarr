@@ -1,32 +1,32 @@
 'use client';
-import LibraryMenu, { SingleItem } from '@app/components/Layout/LibraryMenu';
-import DropDownMenu from '@app/components/Common/DropDownMenu';
-import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
-import {
-  HomeIcon,
-  CalendarDateRangeIcon,
-  PaperAirplaneIcon,
-  WrenchIcon,
-  XMarkIcon,
-  FilmIcon,
-  TvIcon,
-  ClockIcon,
-  ExclamationTriangleIcon,
-  ChevronDownIcon,
-} from '@heroicons/react/24/solid';
-import type { SetStateAction } from 'react';
-import { useState } from 'react';
 import Accordion from '@app/components/Common/Accordion';
-import Image from 'next/image';
-import VersionStatus from '@app/components/Layout/VersionStatus';
+import DropDownMenu from '@app/components/Common/DropDownMenu';
+import LibraryMenu, { SingleItem } from '@app/components/Layout/LibraryMenu';
 import UserDropdown from '@app/components/Layout/UserDropdown';
+import VersionStatus from '@app/components/Layout/VersionStatus';
+import useHash from '@app/hooks/useHash';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
-import { usePathname } from 'next/navigation';
-import { FormattedMessage, useIntl } from 'react-intl';
-import useHash from '@app/hooks/useHash';
-import useSWR from 'swr';
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import {
+  CalendarDateRangeIcon,
+  ChevronDownIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  FilmIcon,
+  HomeIcon,
+  PaperAirplaneIcon,
+  TvIcon,
+  WrenchIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import type { SetStateAction } from 'react';
+import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 interface MenuLinksProps {
   href: string;
@@ -51,13 +51,13 @@ const Sidebar = () => {
       <div
         id="sidebar"
         data-tutorial="sidebar-nav"
-        className={`flex-none relative z-1006 print:hidden max-sm:hidden lg:hidden pointer-events-auto ${currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'my-3 mx-2'}`}
+        className={`pointer-events-auto relative z-1006 flex-none max-sm:hidden lg:hidden print:hidden ${currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && 'mx-2 my-3'}`}
       >
         <button
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label="open sidebar"
-          className="inline-flex h-10 min-h-10 shrink-0 flex-wrap items-center justify-center px-2 gap-1 text-center hover:text-primary! cursor-pointer"
+          className="hover:text-primary! inline-flex h-10 min-h-10 shrink-0 cursor-pointer flex-wrap items-center justify-center gap-1 px-2 text-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,29 +82,29 @@ const Sidebar = () => {
         <DialogBackdrop
           transition
           data-testid="sidebar-overlay"
-          className="fixed inset-0 z-1005 bg-base-300/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
+          className="bg-base-300/30 fixed inset-0 z-1005 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
         />
         <div className="fixed inset-0 z-1006 flex">
           <DialogPanel
             transition
             data-testid="mobile-drawer"
-            className="menu bg-primary/30 backdrop-blur-md min-h-full w-full max-w-64 p-2 border-r border-primary font-bold overflow-y-auto transition duration-300 ease-out data-closed:-translate-x-full"
+            className="menu bg-primary/30 border-primary min-h-full w-full max-w-64 overflow-y-auto border-r p-2 font-bold backdrop-blur-md transition duration-300 ease-out data-closed:-translate-x-full"
           >
-            <div className="flex flex-row place-items-center place-content-between mb-2">
+            <div className="mb-2 flex flex-row place-content-between place-items-center">
               <Image
                 src={logoSrc}
                 alt="logo"
                 width={176}
                 height={52}
                 unoptimized={true}
-                className="my-2 mx-4 h-auto w-44"
+                className="mx-4 my-2 h-auto w-44"
               />
               <button
                 onClick={() => setIsOpen(false)}
                 aria-label="close sidebar"
-                className="text-zinc-300 hover:text-white hover:cursor-pointer"
+                className="text-zinc-300 hover:cursor-pointer hover:text-white"
               >
-                <XMarkIcon className="w-7 h-7" />
+                <XMarkIcon className="h-7 w-7" />
               </button>
             </div>
             <SidebarMenu isOpen={isOpen} onClick={() => setIsOpen(false)} />
@@ -112,7 +112,7 @@ const Sidebar = () => {
               <VersionStatus onClick={() => setIsOpen(false)} />
               {currentUrl.includes('/watch/web/index.html') && (
                 <>
-                  <div className="bg-zinc-300/40 h-0.5 my-4"></div>
+                  <div className="my-4 h-0.5 bg-zinc-300/40"></div>
                   <div className="flex flex-row place-content-end">
                     <DropDownMenu
                       dropUp
@@ -127,7 +127,7 @@ const Sidebar = () => {
                         defaultMessage: 'Settings',
                       })}
                       dropdownIcon={
-                        <WrenchIcon className="w-6 h-6 scale-x-[-1]" />
+                        <WrenchIcon className="h-6 w-6 scale-x-[-1]" />
                       }
                     >
                       <DropDownMenu.Item
@@ -212,8 +212,8 @@ const Sidebar = () => {
         </div>
       </Dialog>
       {currentUrl.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?/) && (
-        <div className="fixed top-0 right-0 mt-2 me-2 z-1000 lg:flex lg:shrink-0 flex-nowrap pointer-events-none">
-          <div className="mt-1 mr-28 pointer-events-auto max-lg:hidden">
+        <div className="pointer-events-none fixed top-0 right-0 z-1000 me-2 mt-2 flex-nowrap lg:flex lg:shrink-0">
+          <div className="pointer-events-auto mt-1 mr-28 max-lg:hidden">
             <DropDownMenu
               title={intl.formatMessage({
                 id: 'common.settings',
@@ -225,7 +225,7 @@ const Sidebar = () => {
               })}
               toolTip
               ttplacement="bottom"
-              dropdownIcon={<WrenchIcon className="w-6 h-6 scale-x-[-1]" />}
+              dropdownIcon={<WrenchIcon className="h-6 w-6 scale-x-[-1]" />}
             >
               <DropDownMenu.Item href="/watch/web/index.html#!/settings/web/general">
                 <FormattedMessage
@@ -293,7 +293,7 @@ const Sidebar = () => {
       )}
       <ul
         id="sidebarMenu"
-        className={`menu w-56 p-2 max-lg:hidden fixed top-16 bottom-0 left-0 flex flex-col flex-1 flex-nowrap overflow-auto border-r border-neutral font-base`}
+        className={`menu border-neutral font-base fixed top-16 bottom-0 left-0 flex w-56 flex-1 flex-col flex-nowrap overflow-auto border-r p-2 max-lg:hidden`}
       >
         <SidebarMenu />
         {hasPermission([Permission.ADMIN]) && (
@@ -322,7 +322,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   );
 
   return (
-    <div className="space-y-1 mb-1 w-full">
+    <div className="mb-1 w-full space-y-1">
       <Accordion
         single
         atLeastOne
@@ -330,7 +330,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
       >
         {({ openIndexes, handleClick, AccordionContent }) => (
           <span className="pointer-events-auto">
-            <div className="flex mb-1">
+            <div className="mb-1 flex">
               <SingleItem
                 className="flex-1"
                 linkclasses={`${!openIndexes.includes(0) ? 'rounded-r-none' : ''}`}
@@ -353,7 +353,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
               <li className={`${openIndexes.includes(0) ? 'hidden' : ''}`}>
                 <button
                   onClick={() => handleClick(0)}
-                  className={`items-center flex-1 flex focus:bg-primary/70! active:bg-primary/20! gap-0 rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30'}`}
+                  className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 items-center gap-0 rounded-l-none ${url.match(/^\/watch\/web\/index\.html#?!?\/?/) && 'bg-primary/70 hover:bg-primary/30'}`}
                 >
                   <ChevronDownIcon className="size-5" />
                 </button>
@@ -367,7 +367,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             }) &&
               userSettings?.requestUrl && (
                 <>
-                  <div className="flex mb-1">
+                  <div className="mb-1 flex">
                     <SingleItem
                       className="flex-1"
                       linkclasses={`${!openIndexes.includes(1) ? 'rounded-r-none' : ''}`}
@@ -399,7 +399,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                     >
                       <button
                         onClick={() => handleClick(1)}
-                        className={`items-center flex-1 flex focus:bg-primary/70! active:bg-primary/20! rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
+                        className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 items-center rounded-l-none ${url.match(/^\/request\/?(.*)?\/?/) && 'bg-primary/70 hover:bg-primary/30 hover:text-zinc-200'}`}
                       >
                         <ChevronDownIcon className="size-5" />
                       </button>
@@ -481,7 +481,7 @@ export const RequestMenu = ({
         id: 'common.movies',
         defaultMessage: 'Movies',
       }),
-      icon: <FilmIcon className="w-7 h-7" />,
+      icon: <FilmIcon className="h-7 w-7" />,
       regExp: /\/request\/discover\/movies/,
     },
     {
@@ -490,7 +490,7 @@ export const RequestMenu = ({
         id: 'common.shows',
         defaultMessage: 'Shows',
       }),
-      icon: <TvIcon className="w-7 h-7" />,
+      icon: <TvIcon className="h-7 w-7" />,
       regExp: /\/request\/discover\/tv/,
     },
     {
@@ -499,7 +499,7 @@ export const RequestMenu = ({
         id: 'common.requests',
         defaultMessage: 'Requests',
       }),
-      icon: <ClockIcon className="w-7 h-7" />,
+      icon: <ClockIcon className="h-7 w-7" />,
       regExp: /\/request\/requests/,
     },
     {
@@ -508,12 +508,12 @@ export const RequestMenu = ({
         id: 'common.issues',
         defaultMessage: 'Issues',
       }),
-      icon: <ExclamationTriangleIcon className="w-7 h-7" />,
+      icon: <ExclamationTriangleIcon className="h-7 w-7" />,
       regExp: /\/request\/issues/,
     },
   ];
   return (
-    <ul className="menu m-0 p-0 space-y-1 my-1 w-full">
+    <ul className="menu m-0 my-1 w-full space-y-1 p-0">
       {RequestLinks.map((link) => {
         return (
           <SingleItem

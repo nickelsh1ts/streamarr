@@ -1,28 +1,32 @@
 'use client';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
-import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Header from '@app/components/Common/Header';
-import { Permission, useUser } from '@app/hooks/useUser';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
+import NotificationModal from '@app/components/NotificationList/NotificationModal';
+import Toast from '@app/components/Toast';
 import { useNotifications } from '@app/hooks/useNotifications';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   FunnelIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
+import type Notification from '@server/entity/Notification';
 import type { NotificationResultsResponse } from '@server/interfaces/api/notificationInterfaces';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import { usePathname, useSearchParams, useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import { useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import { NotificationCard } from '@app/components/NotificationList/NotificationCard';
-import Toast from '@app/components/Toast';
-import axios from 'axios';
-import NotificationModal from '@app/components/NotificationList/NotificationModal';
-import type Notification from '@server/entity/Notification';
 
 enum Filter {
   ALL = 'all',
@@ -180,7 +184,7 @@ const NotificationsList = () => {
   };
 
   return (
-    <div className="w-full mb-4">
+    <div className="mb-4 w-full">
       <div className="flex flex-col justify-between lg:flex-row lg:items-end">
         <Header
           subtext={subtextItems?.reduce((prev, curr) => (
@@ -195,8 +199,8 @@ const NotificationsList = () => {
           />
         </Header>
         <div className="mt-2 flex grow flex-col sm:flex-row lg:grow-0">
-          <div className="mb-2 flex grow sm:mb-0 sm:mr-2 lg:grow-0">
-            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 text-sm text-primary-content">
+          <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
+            <span className="border-primary bg-base-100 text-primary-content inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
               <FunnelIcon className="h-6 w-6" />
             </span>
             <select
@@ -206,7 +210,7 @@ const NotificationsList = () => {
               onChange={(e) => {
                 setCurrentFilter(e.target.value as Filter);
               }}
-              className="select select-sm select-primary rounded-l-none w-full flex-1 capitalize"
+              className="select select-sm select-primary w-full flex-1 rounded-l-none capitalize"
             >
               <option value="all">
                 <FormattedMessage id="common.all" defaultMessage="All" />
@@ -269,7 +273,7 @@ const NotificationsList = () => {
           </Alert>
         </div>
       )}
-      <ul id="notification-list" className="flex flex-col gap-1 mt-4">
+      <ul id="notification-list" className="mt-4 flex flex-col gap-1">
         {!data && !error && <LoadingEllipsis />}
         {notificationSettings?.inAppEnabled &&
           data?.results.map((notification) => {
@@ -315,9 +319,9 @@ const NotificationsList = () => {
           )}
         </div>
       )}
-      <div className="mt-8 mb-4 border-t border-primary pt-5">
+      <div className="border-primary mt-8 mb-4 border-t pt-5">
         <nav
-          className="flex flex-col items-center space-x-4 space-y-3 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
+          className="flex flex-col items-center space-y-3 space-x-4 px-6 py-3 sm:flex-row sm:space-y-0 md:w-full"
           aria-label="Pagination"
         >
           <div className="hidden lg:flex lg:flex-1">
@@ -341,7 +345,7 @@ const NotificationsList = () => {
             </p>
           </div>
           <div className="flex justify-center sm:flex-1 sm:justify-start md:justify-center">
-            <span className="-mt-3 items-center text-sm sm:-ml-4 sm:mt-0 md:ml-0">
+            <span className="-mt-3 items-center text-sm sm:mt-0 sm:-ml-4 md:ml-0">
               <FormattedMessage
                 id="common.resultsDisplay"
                 defaultMessage="Display {select} results per page"

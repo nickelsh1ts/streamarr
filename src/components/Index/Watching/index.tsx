@@ -68,8 +68,8 @@ function Watching() {
 
   return (
     <section id="watching" className="min-h-lvh place-content-center py-16">
-      <div className="container lg:flex flex-row place-items-center mx-auto px-5">
-        <div className="mx-auto md:p-10 w-4/5">
+      <div className="container mx-auto flex-row place-items-center px-5 lg:flex">
+        <div className="mx-auto w-4/5 md:p-10">
           <Image
             src="/devices-to-watch.png"
             className="mx-auto h-auto w-auto"
@@ -80,13 +80,13 @@ function Watching() {
           />
         </div>
         <div>
-          <p className="font-extrabold tracking-wide mb-3 mt-2 text-center lg:text-start text-3xl">
+          <p className="mt-2 mb-3 text-center text-3xl font-extrabold tracking-wide lg:text-start">
             <FormattedMessage
               id="index.watching.title"
               defaultMessage="Watch the way you want"
             />
           </p>
-          <ul className="list-disc list-outside ps-5">
+          <ul className="list-outside list-disc ps-5">
             {features
               .filter((f) => !f.hidden)
               .map((f, i) => (

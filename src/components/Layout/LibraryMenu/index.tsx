@@ -1,25 +1,25 @@
-import { Permission, useUser } from '@app/hooks/useUser';
+import useHash from '@app/hooks/useHash';
 import useLibraryLinks from '@app/hooks/useLibraryLinks';
+import { Permission, useUser } from '@app/hooks/useUser';
 import {
-  FilmIcon,
   BookmarkIcon,
+  FilmIcon,
   NewspaperIcon,
-  TvIcon,
-  RectangleGroupIcon,
   QueueListIcon,
+  RectangleGroupIcon,
+  TvIcon,
 } from '@heroicons/react/24/outline';
 import {
   MusicalNoteIcon,
   PhotoIcon,
   VideoCameraIcon,
 } from '@heroicons/react/24/solid';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, type SetStateAction } from 'react';
-import useHash from '@app/hooks/useHash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 const PIVOT_STORAGE_KEY = 'library-pivot-settings';
 const VALID_PIVOTS = new Set(['library', 'collections', 'categories']);
@@ -124,7 +124,7 @@ const LibraryMenu = ({
         id: 'library.discover',
         defaultMessage: 'Discover',
       }),
-      icon: <NewspaperIcon className="w-7 h-7" />,
+      icon: <NewspaperIcon className="h-7 w-7" />,
       regExp: '=home&pivot=discover',
       hidden:
         isMobile &&
@@ -144,7 +144,7 @@ const LibraryMenu = ({
         id: 'library.watchlist',
         defaultMessage: 'Watch List',
       }),
-      icon: <BookmarkIcon className="w-7 h-7" />,
+      icon: <BookmarkIcon className="h-7 w-7" />,
       regExp: '=watchlist&pivot=discover',
       hidden:
         (isMobile && !userSettings?.releaseSched) ||
@@ -165,7 +165,7 @@ const LibraryMenu = ({
         id: 'library.playlists',
         defaultMessage: 'Playlists',
       }),
-      icon: <QueueListIcon className="w-7 h-7" />,
+      icon: <QueueListIcon className="h-7 w-7" />,
       regExp: 'source=playlists',
       hidden: !enablePlaylists,
     },
@@ -183,7 +183,7 @@ const LibraryMenu = ({
 
   return (
     <ul
-      className="menu m-0 p-0 space-y-1 mb-1 grid grid-col overflow-auto w-full"
+      className="menu grid-col m-0 mb-1 grid w-full space-y-1 overflow-auto p-0"
       data-tutorial="library-menu"
     >
       {MenuLinks.filter((item) => !item.hidden).map((item) => (
@@ -372,13 +372,13 @@ export const SingleItem = ({
         href={
           href && pivotList && type ? href + '&pivot=' + defaultPivot : href
         }
-        className={`w-full items-center focus:bg-primary/70! active:bg-primary/20! focus:text-primary-content capitalize gap-0 space-x-2 px-4 py-2 ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
+        className={`focus:bg-primary/70! active:bg-primary/20! focus:text-primary-content w-full items-center gap-0 space-x-2 px-4 py-2 capitalize ${isActive ? 'text-primary-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content/70'} ${linkclasses ? linkclasses : ''}`}
       >
         {icon}
         <p className="truncate">{title}</p>
       </Link>
       {isActive && pivotList && (
-        <ul className="flex flex-col gap-1 mt-1">
+        <ul className="mt-1 flex flex-col gap-1">
           {pivotList.map((pivot) => (
             <li key={pivot}>
               <Link
@@ -391,7 +391,7 @@ export const SingleItem = ({
               >
                 <p className="capitalize">{pivot}</p>
                 {isActive && url.includes(`&pivot=${pivot}`) && (
-                  <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                  <div className="divider divider-primary m-0 ms-auto w-7 self-center" />
                 )}
               </Link>
             </li>
@@ -456,11 +456,11 @@ export const MultiItem = ({
         )}
         className="group"
       >
-        <summary className="active:bg-primary/20! space-x-2 gap-0 hover:text-base-content group-open:text-base-content capitalize px-4 py-2">
+        <summary className="active:bg-primary/20! hover:text-base-content group-open:text-base-content gap-0 space-x-2 px-4 py-2 capitalize">
           {icon}
           <p className="inline-flex">{title}</p>
         </summary>
-        <ul className="flex flex-col gap-1 mt-1">
+        <ul className="mt-1 flex flex-col gap-1">
           {LibraryLinks.map((item) => {
             const isActive = item.regExp.includes('source=')
               ? matchesLibrarySource(
@@ -479,12 +479,12 @@ export const MultiItem = ({
                       ? item.href + '&pivot=' + defaultPivot
                       : item.href
                   }
-                  className={`focus:bg-primary/70! active:bg-primary/20! capitalize space-x-2 w-full ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
+                  className={`focus:bg-primary/70! active:bg-primary/20! w-full space-x-2 capitalize ${isActive ? 'text-base-content bg-primary/70 hover:bg-primary/30 hover:text-primary-content/70' : 'text-base-content hover:text-base-content'}`}
                 >
                   <p className="truncate">{item.title}</p>
                 </Link>
                 {isActive && pivotList && (
-                  <ul className="flex flex-col gap-1 mt-1">
+                  <ul className="mt-1 flex flex-col gap-1">
                     {pivotList.map((pivot) => (
                       <li key={pivot}>
                         <Link
@@ -501,7 +501,7 @@ export const MultiItem = ({
                         >
                           <p className="capitalize">{pivot}</p>
                           {isActive && url.includes(`&pivot=${pivot}`) && (
-                            <div className="divider divider-primary m-0 w-7 ms-auto self-center" />
+                            <div className="divider divider-primary m-0 ms-auto w-7 self-center" />
                           )}
                         </Link>
                       </li>

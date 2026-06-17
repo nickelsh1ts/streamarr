@@ -3,35 +3,35 @@ import LibraryMenu from '@app/components/Layout/LibraryMenu';
 import { RequestMenu } from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
+import useHash from '@app/hooks/useHash';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
   Bars3BottomLeftIcon,
+  BookmarkIcon,
   CalendarDateRangeIcon,
   EllipsisHorizontalIcon,
   HomeIcon,
-  PaperAirplaneIcon,
   NewspaperIcon,
-  BookmarkIcon,
+  PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 import {
-  PaperAirplaneIcon as FilledPaperAirplaneIcon,
+  Bars3Icon,
+  BookmarkIcon as FilledBookmarkIcon,
   CalendarDateRangeIcon as FilledCalendarDateRangeIcon,
   HomeIcon as FilledHomeIcon,
-  XMarkIcon,
-  Bars3Icon,
   NewspaperIcon as FilledNewspaperIcon,
-  BookmarkIcon as FilledBookmarkIcon,
+  PaperAirplaneIcon as FilledPaperAirplaneIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { JSX } from 'react';
 import { cloneElement, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { usePathname } from 'next/navigation';
-import useHash from '@app/hooks/useHash';
 import useSWR from 'swr';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 
 interface MenuLink {
   href: string;
@@ -114,7 +114,7 @@ const MobileMenu = () => {
         id: 'library.discover',
         defaultMessage: 'Discover',
       }),
-      svgIcon: <NewspaperIcon className="w-7 h-7" />,
+      svgIcon: <NewspaperIcon className="h-7 w-7" />,
       svgIconSelected: <FilledNewspaperIcon className="h-6 w-6" />,
       activeRegExp: /(?=(\/(.*)=home&pivot=discover))/,
       hidden: !invitesDisabled, // Show when invites is disabled
@@ -274,14 +274,14 @@ const MobileMenu = () => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 sm:hidden z-1010"
+      className="fixed right-0 bottom-0 left-0 z-1010 sm:hidden"
       ref={ref}
       data-tutorial="mobile-nav"
     >
       <Transition
         show={isOpen}
         as="div"
-        className="absolute top-0 left-0 right-0 flex w-full max-h-[85dvh] transition ease-out duration-500 opacity-100 -translate-y-full data-leave:duration-500 data-leave:opacity-0 data-leave:translate-y-0 data-closed:opacity-0 data-closed:translate-y-0 flex-col border-t border-primary bg-primary/30 px-6 pt-6 font-semibold backdrop-blur"
+        className="border-primary bg-primary/30 absolute top-0 right-0 left-0 flex max-h-[85dvh] w-full -translate-y-full flex-col border-t px-6 pt-6 font-semibold opacity-100 backdrop-blur transition duration-500 ease-out data-closed:translate-y-0 data-closed:opacity-0 data-leave:translate-y-0 data-leave:opacity-0 data-leave:duration-500"
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
@@ -317,14 +317,14 @@ const MobileMenu = () => {
               <RequestMenu onClick={setIsOpen} url={url} />
             )}
             {menuType === 'settings' && (
-              <ul className="menu p-0 m-0 space-y-1 w-full">
+              <ul className="menu m-0 w-full space-y-1 p-0">
                 {settingsLinks.map((link, i) => {
                   const isActive = url.match(link.activeRegExp);
                   return (
                     <li key={i} className="">
                       <Link
                         onClick={() => setIsOpen(!isOpen)}
-                        className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 ${isActive ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                        className={`focus:bg-primary/70! active:bg-primary/20! flex items-center gap-0 space-x-2 capitalize ${isActive ? 'bg-primary/70 hover:bg-primary/30 text-white hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                         href={link.href}
                       >
                         {link.content}
@@ -334,12 +334,12 @@ const MobileMenu = () => {
                 })}
               </ul>
             )}
-            <ul className="menu p-0 m-0 mt-2 mb-2 w-full">
+            <ul className="menu m-0 mt-2 mb-2 w-full p-0">
               {(isWatchRoute || !requestDisabled) && (
-                <li className="flex flex-row border-t border-zinc-300/40 pt-2 gap-1">
+                <li className="flex flex-row gap-1 border-t border-zinc-300/40 pt-2">
                   <button
                     onClick={() => setMenuType('library')}
-                    className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'library' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 place-content-center items-center gap-0 space-x-2 capitalize ${menuType === 'library' ? 'bg-primary/70 hover:bg-primary/30 text-white hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                   >
                     <FormattedMessage
                       id="mobileMenu.libraries"
@@ -349,7 +349,7 @@ const MobileMenu = () => {
                   {!requestDisabled && (
                     <button
                       onClick={() => setMenuType('request')}
-                      className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'request' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 place-content-center items-center gap-0 space-x-2 capitalize ${menuType === 'request' ? 'bg-primary/70 hover:bg-primary/30 text-white hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <FormattedMessage
                         id="common.request"
@@ -360,7 +360,7 @@ const MobileMenu = () => {
                   {isWatchRoute && (
                     <button
                       onClick={() => setMenuType('settings')}
-                      className={`flex items-center focus:bg-primary/70! active:bg-primary/20! capitalize gap-0 space-x-2 flex-1 place-content-center ${menuType === 'settings' ? 'text-white bg-primary/70 hover:bg-primary/30 hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                      className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 place-content-center items-center gap-0 space-x-2 capitalize ${menuType === 'settings' ? 'bg-primary/70 hover:bg-primary/30 text-white hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
                     >
                       <FormattedMessage
                         id="common.settings"
@@ -374,8 +374,8 @@ const MobileMenu = () => {
           </>
         )}
       </Transition>
-      <div className="padding-bottom-safe border-t border-primary bg-primary/30 backdrop-blur">
-        <div className="flex h-full items-center justify-between px-6 py-2 text-primary-content backdrop-filter-none">
+      <div className="padding-bottom-safe border-primary bg-primary/30 border-t backdrop-blur">
+        <div className="text-primary-content flex h-full items-center justify-between px-6 py-2 backdrop-filter-none">
           <button
             data-tutorial="mobile-menu-toggle"
             className={`flex flex-col items-center space-y-1 hover:cursor-pointer ${

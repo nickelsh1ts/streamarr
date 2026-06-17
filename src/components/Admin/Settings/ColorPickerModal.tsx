@@ -1,25 +1,25 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { HexColorPicker } from 'react-colorful';
-import type { HslColor } from 'colord';
-import { colord } from 'colord';
+import Button from '@app/components/Common/Button';
+import DropDownMenu from '@app/components/Common/DropDownMenu';
 import Modal from '@app/components/Common/Modal';
 import {
-  rgbToOklch,
   getAllTailwindColors,
   oklchToRgb,
   parseColorToHex,
+  rgbToOklch,
 } from '@app/utils/themeUtils';
-import Button from '@app/components/Common/Button';
+import { CircleStackIcon, CubeIcon } from '@heroicons/react/24/outline';
 import {
   AdjustmentsHorizontalIcon,
   Squares2X2Icon,
   SwatchIcon,
 } from '@heroicons/react/24/solid';
 import type { Theme } from '@server/lib/settings';
-import { CircleStackIcon, CubeIcon } from '@heroicons/react/24/outline';
-import DropDownMenu from '@app/components/Common/DropDownMenu';
+import type { HslColor } from 'colord';
+import { colord } from 'colord';
+import { useMemo, useState } from 'react';
+import { HexColorPicker } from 'react-colorful';
 
 interface ColorPickerModalProps {
   colorName: string;
@@ -51,7 +51,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
       label: 'OKLCH',
       icon: (
         <svg
-          className="size-4 p-0.25 text-primary inline-block"
+          className="text-primary inline-block size-4 p-px"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -70,17 +70,17 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
     {
       value: 'hsl' as const,
       label: 'HSL',
-      icon: <CircleStackIcon className="size-4 text-primary inline-block" />,
+      icon: <CircleStackIcon className="text-primary inline-block size-4" />,
     },
     {
       value: 'rgb' as const,
       label: 'RGB',
-      icon: <CubeIcon className="size-4 text-primary inline-block" />,
+      icon: <CubeIcon className="text-primary inline-block size-4" />,
     },
     {
       value: 'hex' as const,
       label: 'Hex',
-      icon: <CubeIcon className="size-4 text-primary inline-block" />,
+      icon: <CubeIcon className="text-primary inline-block size-4" />,
     },
   ];
 
@@ -181,10 +181,10 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
       size="md"
     >
       <div className="-mt-4">
-        <div className="flex justify-center sm:justify-between flex-wrap gap-2 mb-4">
-          <div className="flex items-center shrink-0 max-sm:w-full">
+        <div className="mb-4 flex flex-wrap justify-center gap-2 sm:justify-between">
+          <div className="flex shrink-0 items-center max-sm:w-full">
             <div
-              className="w-10 h-7 rounded-md items-center justify-center flex"
+              className="flex h-7 w-10 items-center justify-center rounded-md"
               style={{
                 background: colorName?.includes('base-content')
                   ? theme['base-300']
@@ -199,41 +199,41 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
               <div className="text-xl font-extrabold">A</div>
             </div>
             {colorName?.includes('-content') ? (
-              <div className="divider my-auto w-10 mr-2 -ml-4" />
+              <div className="divider my-auto mr-2 -ml-4 w-10" />
             ) : (
-              <div className="divider my-auto w-6 mr-2" />
+              <div className="divider my-auto mr-2 w-6" />
             )}
             <p className="text-neutral">
               Pick a color for{' '}
               <span className="text-white">{colorName?.replace('-', ' ')}</span>
             </p>
           </div>
-          <div className="flex items-center mr-2 bg-base-200 p-1 rounded-lg gap-1">
+          <div className="bg-base-200 mr-2 flex items-center gap-1 rounded-lg p-1">
             <Button
               buttonType={tab === 'palette' ? 'primary' : 'ghost'}
               buttonSize="sm"
               onClick={() => setTab('palette')}
             >
-              <Squares2X2Icon className="size-6 mr-2" /> Palette
+              <Squares2X2Icon className="mr-2 size-6" /> Palette
             </Button>
             <Button
               buttonType={tab === 'picker' ? 'primary' : 'ghost'}
               buttonSize="sm"
               onClick={() => setTab('picker')}
             >
-              <SwatchIcon className="size-6 mr-2" /> Picker
+              <SwatchIcon className="mr-2 size-6" /> Picker
             </Button>
             <Button
               buttonType={tab === 'sliders' ? 'primary' : 'ghost'}
               buttonSize="sm"
               onClick={() => setTab('sliders')}
             >
-              <AdjustmentsHorizontalIcon className="size-6 mr-2" /> Sliders
+              <AdjustmentsHorizontalIcon className="mr-2 size-6" /> Sliders
             </Button>
           </div>
         </div>
         {tab === 'palette' && (
-          <div className="grid grid-cols-11 lg:grid-flow-col lg:grid-rows-11 gap-1">
+          <div className="grid grid-cols-11 gap-1 lg:grid-flow-col lg:grid-rows-11">
             {presets.map((preset) => (
               <button
                 key={preset}
@@ -247,15 +247,15 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
           </div>
         )}
         {tab === 'picker' && (
-          <div className="w-full justify-center flex my-8">
+          <div className="my-8 flex w-full justify-center">
             <HexColorPicker color={color} onChange={setColor} />
           </div>
         )}
         {tab === 'sliders' && (
-          <div className="space-y-8 mb-8 mt-12 sm:mx-8">
+          <div className="mt-12 mb-8 space-y-8 sm:mx-8">
             <div>
               <div className="label">
-                <span className="text-xs text-neutral">Hue: {hsl.h}&deg;</span>
+                <span className="text-neutral text-xs">Hue: {hsl.h}&deg;</span>
               </div>
               <input
                 type="range"
@@ -263,7 +263,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 max="360"
                 value={hsl.h}
                 onChange={(e) => updateFromHsl({ h: parseInt(e.target.value) })}
-                className="range range-lg pe-2 rounded-md text-transparent custom-range [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset] [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent"
+                className="range range-lg custom-range rounded-md pe-2 text-transparent [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset]"
                 style={{
                   background:
                     'linear-gradient(to right, rgb(255, 84, 84), rgb(255, 186, 84), rgb(221, 255, 84), rgb(118, 255, 84), rgb(84, 255, 152), rgb(84, 255, 255), rgb(84, 152, 255), rgb(118, 84, 255), rgb(221, 84, 255), rgb(255, 84, 186), rgb(255, 84, 84))',
@@ -272,7 +272,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
             </div>
             <div>
               <div className="label">
-                <span className="text-xs text-neutral">
+                <span className="text-neutral text-xs">
                   Saturation: {hsl.s}%
                 </span>
               </div>
@@ -282,7 +282,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 max="100"
                 value={hsl.s}
                 onChange={(e) => updateFromHsl({ s: parseInt(e.target.value) })}
-                className={`range range-lg pe-2 rounded-md text-transparent custom-range [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset] [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent`}
+                className={`range range-lg custom-range rounded-md pe-2 text-transparent [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset]`}
                 style={{
                   background: `linear-gradient(to right, ${colord({ h: hsl.h, s: 0, l: hsl.l }).toHex()}, ${colord({ h: hsl.h, s: 100, l: hsl.l }).toHex()})`,
                 }}
@@ -290,7 +290,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
             </div>
             <div>
               <div className="label">
-                <span className="text-xs text-neutral">
+                <span className="text-neutral text-xs">
                   Lightness: {hsl.l}%
                 </span>
               </div>
@@ -300,7 +300,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 max="100"
                 value={hsl.l}
                 onChange={(e) => updateFromHsl({ l: parseInt(e.target.value) })}
-                className={`range range-lg pe-2 rounded-md text-transparent custom-range [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset] [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent`}
+                className={`range range-lg custom-range rounded-md pe-2 text-transparent [&.range::-webkit-slider-thumb]:ms-1 [&.range::-webkit-slider-thumb]:size-6 [&.range::-webkit-slider-thumb]:rounded-lg [&.range::-webkit-slider-thumb]:bg-transparent [&.range::-webkit-slider-thumb]:shadow-[0_0_0_1px_oklch(0_0_0/.3)_inset,0_0_0_2px_oklch(100_0_0)_inset]`}
                 style={{
                   background: `linear-gradient(to right, rgb(0, 0, 0), ${colord({ h: hsl.h, s: hsl.s, l: 50 }).toHex()}, rgb(191, 191, 191))`,
                 }}
@@ -310,7 +310,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
         )}
         <div className="">
           <div className="divider divider-primary w-full" />
-          <span className="text-xs text-neutral">Color Value</span>
+          <span className="text-neutral text-xs">Color Value</span>
           <div className="flex space-x-2">
             <DropDownMenu
               dropUp
@@ -329,7 +329,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 <DropDownMenu.Item
                   key={option.value}
                   onClick={() => setFormat(option.value)}
-                  className={`rounded-none py-2 hover:bg-primary-content/10 ${currentOption?.value === option.value && 'bg-primary/20'}`}
+                  className={`hover:bg-primary-content/10 rounded-none py-2 ${currentOption?.value === option.value && 'bg-primary/20'}`}
                 >
                   <span className="flex items-center gap-1">
                     {option.icon} {option.label}

@@ -6,8 +6,8 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
-import * as Yup from 'yup';
 import { FormattedMessage, useIntl } from 'react-intl';
+import * as Yup from 'yup';
 
 const ResetPassword = ({ guid }: { guid: string }) => {
   const [hasSubmitted, setSubmitted] = useState(false);
@@ -53,9 +53,9 @@ const ResetPassword = ({ guid }: { guid: string }) => {
       <div className="absolute top-4 right-4">
         <LanguagePicker />
       </div>
-      <div className="container max-w-lg mx-auto py-14 px-4">
-        <div className="text-start px-2 mb-4 relative">
-          <h2 className="text-2xl font-extrabold mb-2">
+      <div className="container mx-auto max-w-lg px-4 py-14">
+        <div className="relative mb-4 px-2 text-start">
+          <h2 className="mb-2 text-2xl font-extrabold">
             <FormattedMessage
               id="resetPassword.title"
               defaultMessage="Identify your account"
@@ -68,11 +68,11 @@ const ResetPassword = ({ guid }: { guid: string }) => {
             />
           </p>
         </div>
-        <div className="bg-secondary/50 backdrop-blur-md shadow rounded-lg border border-secondary">
+        <div className="bg-secondary/50 border-secondary rounded-lg border shadow backdrop-blur-md">
           <div className="p-4">
             {hasSubmitted ? (
               <>
-                <p className="text-md font-bold mb-2 mt-4">
+                <p className="text-md mt-4 mb-2 font-bold">
                   <FormattedMessage
                     id="resetPassword.success"
                     defaultMessage="Password reset successfully!"
@@ -124,7 +124,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
                               fill="currentColor"
-                              className="h-4 w-4 opacity-70 me-2"
+                              className="me-2 h-4 w-4 opacity-70"
                             >
                               <path
                                 fillRule="evenodd"
@@ -134,7 +134,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             </svg>
                             <SensitiveInput
                               as="field"
-                              className="grow w-full"
+                              className="w-full grow"
                               id="password"
                               name="password"
                               placeholder={intl.formatMessage({
@@ -157,7 +157,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
                               fill="currentColor"
-                              className="h-4 w-4 opacity-70 me-2"
+                              className="me-2 h-4 w-4 opacity-70"
                             >
                               <path
                                 fillRule="evenodd"
@@ -167,7 +167,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             </svg>
                             <SensitiveInput
                               as="field"
-                              className="grow w-full"
+                              className="w-full grow"
                               id="confirmPassword"
                               name="confirmPassword"
                               placeholder={intl.formatMessage({
@@ -184,14 +184,14 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             )}
                         </div>
                       </div>
-                      <div className="mt-4 border-t border-primary pt-5 mb-4">
+                      <div className="border-primary mt-4 mb-4 border-t pt-5">
                         <Button
                           buttonType="primary"
                           type="submit"
                           className="btn-block"
                           disabled={isSubmitting || !isValid}
                         >
-                          <ArrowDownTrayIcon className="size-7 mr-2" />
+                          <ArrowDownTrayIcon className="mr-2 size-7" />
                           <span>
                             {isSubmitting ? (
                               <FormattedMessage

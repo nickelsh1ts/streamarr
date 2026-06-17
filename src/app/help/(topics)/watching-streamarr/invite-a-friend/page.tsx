@@ -2,7 +2,7 @@
 import Breadcrumbs from '@app/components/Help/Breadcrumbs';
 import HelpCard from '@app/components/Help/HelpCard';
 import useSettings from '@app/hooks/useSettings';
-import { useUser, Permission } from '@app/hooks/useUser';
+import { Permission, useUser } from '@app/hooks/useUser';
 import Link from 'next/link';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -75,7 +75,7 @@ const InviteLimitsSection = () => {
               }}
             />
           </p>
-          <ul className="list list-disc ms-14 my-4">
+          <ul className="list my-4 ms-14 list-disc">
             {defaultUsage !== undefined && (
               <li>
                 <FormattedMessage
@@ -117,7 +117,7 @@ const InviteLimitsSection = () => {
               }}
             />
           </p>
-          <ul className="list list-disc ms-14 my-4">
+          <ul className="list my-4 ms-14 list-disc">
             {defaultUsage !== undefined && (
               <li>
                 <FormattedMessage
@@ -171,7 +171,7 @@ const InviteLimitsSection = () => {
         </p>
       )}
       {currentSettings.enableTrialPeriod && (
-        <p className="italic text-sm my-4">
+        <p className="my-4 text-sm italic">
           <span className="text-info font-bold">
             <FormattedMessage id="help.common.note" defaultMessage="Note" />
           </span>
@@ -210,7 +210,7 @@ const HelpContent = () => {
           }}
         />
       </p>
-      <ul className="list list-disc ms-14 my-4">
+      <ul className="list my-4 ms-14 list-disc">
         <li>
           <FormattedMessage
             id="help.invites.generated"
@@ -243,7 +243,7 @@ const HelpContent = () => {
           defaultMessage="Sending an Invite"
         />
       </div>
-      <ul className="list list-decimal ms-14 my-4">
+      <ul className="list my-4 ms-14 list-decimal">
         <li>
           <FormattedMessage
             id="help.invites.step1"

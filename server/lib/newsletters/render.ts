@@ -1,8 +1,9 @@
 import type Newsletter from '@server/entity/Newsletter';
-import { getIntl } from '@server/i18n';
 import type { IntlShape } from '@server/i18n';
+import { getIntl } from '@server/i18n';
 import { sanitizeHtml } from '@server/lib/sanitize';
 import { getSettings } from '@server/lib/settings';
+import moment from '@server/utils/momentWithLocale';
 import { marked } from 'marked';
 import type {
   NewsletterBlockData,
@@ -11,7 +12,6 @@ import type {
   NewsletterRecentlyAddedSection,
 } from './dataProviders';
 import { resolveBlockData } from './dataProviders';
-import moment from '@server/utils/momentWithLocale';
 
 marked.use({ gfm: true, breaks: true });
 

@@ -1,15 +1,17 @@
-import type { User } from '@server/entity/User';
-import type { NotificationAgentConfig } from '@server/lib/settings';
 import type {
   NotificationSeverity,
   NotificationType,
 } from '@server/constants/notification';
-import type Invite from '@server/entity/Invite';
-import type Event from '@server/entity/Event';
 import { getRepository } from '@server/datasource';
+import type Event from '@server/entity/Event';
+import type Invite from '@server/entity/Invite';
+import type { User } from '@server/entity/User';
 import { User as UserEntity } from '@server/entity/User';
-import type { NotificationAgentKey } from '@server/lib/settings';
 import { shouldSendAdminNotification } from '@server/lib/notifications';
+import type {
+  NotificationAgentConfig,
+  NotificationAgentKey,
+} from '@server/lib/settings';
 
 /**
  * Controls which subset of agents a notification is delivered through.

@@ -1,3 +1,4 @@
+import type { NotificationType } from '@server/constants/notification';
 import type { NotificationAgentTypes } from '@server/interfaces/api/userSettingsInterfaces';
 import {
   ALL_NOTIFICATIONS,
@@ -12,7 +13,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
-import type { NotificationType } from '@server/constants/notification';
 
 @Entity()
 export class UserSettings {

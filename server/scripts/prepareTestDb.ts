@@ -1,9 +1,9 @@
 import { UserType } from '@server/constants/user';
 import dataSource, { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
+import crypto from 'crypto';
 import { copyFileSync } from 'fs';
 import path from 'path';
-import crypto from 'crypto';
 
 const prepareDb = async () => {
   // Copy over test settings.json

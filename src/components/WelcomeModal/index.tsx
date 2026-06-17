@@ -1,15 +1,15 @@
 'use client';
+import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
 import Carousel, { type CarouselHandle } from '@app/components/Common/Carousel';
 import { useOnboardingContext } from '@app/context/OnboardingContext';
+import type { AdminWelcomeSlide } from '@app/utils/adminOnboarding';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import React, { useCallback, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import WelcomeSlide from './WelcomeSlide';
-import Badge from '@app/components/Common/Badge';
-import type { AdminWelcomeSlide } from '@app/utils/adminOnboarding';
 
 const WelcomeModal: React.FC = () => {
   const {
@@ -66,27 +66,27 @@ const WelcomeModal: React.FC = () => {
     <Dialog onClose={handleClose} open={showWelcome}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 z-1050 w-full bg-base-300/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
+        className="bg-base-300/30 fixed inset-0 z-1050 w-full backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
       />
       <div className="fixed inset-0 z-1050 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-1 sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-xl text-left shadow-2xl w-full sm:my-8 sm:max-w-2xl border border-primary/30 bg-base-200 transition duration-300 ease-out data-closed:opacity-0 data-closed:scale-0"
+            className="border-primary/30 bg-base-200 relative w-full transform overflow-hidden rounded-xl border text-left shadow-2xl transition duration-300 ease-out data-closed:scale-0 data-closed:opacity-0 sm:my-8 sm:max-w-2xl"
           >
             {canDismiss && !showAdminWelcome && (
               <button
                 type="button"
                 onClick={handleClose}
-                className="absolute top-1 right-1 z-10 btn hover:bg-zinc-700 p-1 btn-sm rounded-md"
+                className="btn btn-sm absolute top-1 right-1 z-10 rounded-md p-1 hover:bg-zinc-700"
               >
-                <XMarkIcon className="h-5 w-5 text-base-content/70" />
+                <XMarkIcon className="text-base-content/70 h-5 w-5" />
                 <span className="sr-only">
                   <FormattedMessage id="common.close" defaultMessage="Close" />
                 </span>
               </button>
             )}
-            <div className="min-h-100 sm:min-h-112.5 flex flex-col">
+            <div className="flex min-h-100 flex-col sm:min-h-112.5">
               <Carousel
                 ref={carouselRef}
                 showArrows={false}
@@ -95,7 +95,7 @@ const WelcomeModal: React.FC = () => {
                 className="flex-1"
               >
                 {welcomeContent.map((slide) => (
-                  <div key={slide.id} className="p-6 sm:p-8 h-full">
+                  <div key={slide.id} className="h-full p-6 sm:p-8">
                     <WelcomeSlide
                       content={slide}
                       icon={(slide as AdminWelcomeSlide).icon}
@@ -105,7 +105,7 @@ const WelcomeModal: React.FC = () => {
               </Carousel>
             </div>
             <div className="px-6 pb-4 sm:px-8 sm:pb-6">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div>
                   {currentSlide > 0 && (
                     <Button
@@ -113,7 +113,7 @@ const WelcomeModal: React.FC = () => {
                       buttonType="ghost"
                       onClick={handlePrev}
                     >
-                      <ChevronLeftIcon className="h-4 w-4 mr-2" />
+                      <ChevronLeftIcon className="mr-2 h-4 w-4" />
                       <FormattedMessage
                         id="common.previous"
                         defaultMessage="Previous"
@@ -151,7 +151,7 @@ const WelcomeModal: React.FC = () => {
                           id="common.next"
                           defaultMessage="Next"
                         />
-                        <ChevronRightIcon className="h-4 w-4 ml-2" />
+                        <ChevronRightIcon className="ml-2 h-4 w-4" />
                       </>
                     )}
                   </Button>
@@ -163,7 +163,7 @@ const WelcomeModal: React.FC = () => {
         {isPreviewMode && (
           <Badge
             badgeType="warning"
-            className="fixed top-4 left-4 z-1051 px-3 py-1.5 border border-warning bg-warning/30"
+            className="border-warning bg-warning/30 fixed top-4 left-4 z-1051 border px-3 py-1.5"
           >
             <FormattedMessage
               id="settings.onboarding.previewMode"

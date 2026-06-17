@@ -1,29 +1,29 @@
 'use client';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
+import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LoadingEllipsis, {
   SmallLoadingEllipsis,
 } from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
-import ConfirmButton from '@app/components/Common/ConfirmButton';
-import Badge from '@app/components/Common/Badge';
 import Toast from '@app/components/Toast';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowDownTrayIcon,
   CheckBadgeIcon,
-  XCircleIcon,
   ShieldExclamationIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type { ServiceSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
-import RestartRequiredAlert, {
-  RESTART_REQUIRED_SWR_KEY,
-} from '@app/components/Admin/Settings/RestartRequiredAlert';
 
 const ServicesProwlarr = () => {
   const intl = useIntl();
@@ -217,7 +217,7 @@ const ServicesProwlarr = () => {
   }
 
   return (
-    <div className="max-w-6xl mb-10">
+    <div className="mb-10 max-w-6xl">
       <div className="mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
@@ -297,7 +297,7 @@ const ServicesProwlarr = () => {
         }) => {
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="service">
                   <FormattedMessage
                     id="common.settingsEnable"
@@ -323,17 +323,17 @@ const ServicesProwlarr = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="hostname">
                   <FormattedMessage
                     id="common.hostname"
                     defaultMessage="Hostname or IP Address"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="flex">
-                    <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-primary bg-base-100 px-3 sm:text-sm">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
                       {values.useSsl ? 'https://' : 'http://'}
                     </span>
                     <Field
@@ -341,7 +341,7 @@ const ServicesProwlarr = () => {
                       inputMode="url"
                       id="hostname"
                       name="hostname"
-                      className="input input-sm input-primary rounded-md rounded-l-none w-full"
+                      className="input input-sm input-primary w-full rounded-md rounded-l-none"
                     />
                   </div>
                   {errors.hostname &&
@@ -351,10 +351,10 @@ const ServicesProwlarr = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="port">
                   <FormattedMessage id="common.port" defaultMessage="Port" />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <Field
@@ -375,7 +375,7 @@ const ServicesProwlarr = () => {
                     )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="useSsl">
                   <FormattedMessage
                     id="common.useSsl"
@@ -394,7 +394,7 @@ const ServicesProwlarr = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="urlBase">
                   <FormattedMessage
                     id="common.urlBase"
@@ -402,7 +402,7 @@ const ServicesProwlarr = () => {
                   />
                   <span className="text-error mx-1">*</span>
                   <SettingsBadge badgeType="restartRequired" />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="servicesSettings.urlBase.description"
                       defaultMessage="Url Base is required for streamarr to register a proxy route."
@@ -412,7 +412,7 @@ const ServicesProwlarr = () => {
                 <div className="sm:col-span-2">
                   <div className="flex">
                     <Field
-                      className="input input-sm input-primary rounded-md w-full"
+                      className="input input-sm input-primary w-full rounded-md"
                       id="urlBase"
                       name="urlBase"
                       inputMode="url"
@@ -424,16 +424,16 @@ const ServicesProwlarr = () => {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="apiKey" className="text-label">
                   <FormattedMessage
                     id="common.apiKey"
                     defaultMessage="API Key"
                   />
-                  <span className="ml-1 text-error">*</span>
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
-                  <div className="flex col-span-2">
+                  <div className="col-span-2 flex">
                     <SensitiveInput
                       as="field"
                       id="apiKey"
@@ -450,7 +450,7 @@ const ServicesProwlarr = () => {
                 </div>
               </div>
               {isValidated && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 space-y-2 sm:space-x-2 sm:space-y-0">
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="authStatus" className="text-label">
                     <FormattedMessage
                       id="servicesSettings.disableAuth"
@@ -512,8 +512,8 @@ const ServicesProwlarr = () => {
                   </div>
                 </div>
               )}
-              <div className="divider divider-primary mb-0 col-span-full" />
-              <div className="flex justify-end col-span-3 mt-4">
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
                 <div className="flex gap-2">
                   <Button
                     buttonType="warning"
@@ -546,7 +546,7 @@ const ServicesProwlarr = () => {
                     type="submit"
                     disabled={isSubmitting || !isValid}
                   >
-                    <ArrowDownTrayIcon className="size-4 mr-2" />
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
                     <span>
                       {isSubmitting
                         ? intl.formatMessage({

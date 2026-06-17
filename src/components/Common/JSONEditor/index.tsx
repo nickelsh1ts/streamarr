@@ -13,7 +13,7 @@ const AceEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-60 w-full animate-pulse rounded-md bg-base-100" />
+      <div className="bg-base-100 h-60 w-full animate-pulse rounded-md" />
     ),
   }
 );
@@ -60,7 +60,7 @@ const JSONEditor = ({
       fontSize={fontSize}
       showPrintMargin={false}
       setOptions={JSON_EDITOR_OPTIONS}
-      className="rounded-md border border-primary "
+      className="border-primary rounded-md border"
     />
   );
 };

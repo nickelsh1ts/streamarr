@@ -1,6 +1,20 @@
 'use client';
+import Error from '@app/app/error';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
-import { Permission, useUser, UserType } from '@app/hooks/useUser';
+import ProgressCircle from '@app/components/Common/ProgressCircle';
+import Slider from '@app/components/Common/Slider';
+import RecentInvite from '@app/components/Common/Slider/RecentInvite';
+import RecentNotification from '@app/components/Common/Slider/RecentNotification';
+import RecentRequest from '@app/components/Common/Slider/RecentRequest';
+import RecentlyWatched from '@app/components/Common/Slider/RecentlyWatched';
+import useSettings from '@app/hooks/useSettings';
+import { Permission, UserType, useUser } from '@app/hooks/useUser';
+import { momentWithLocale } from '@app/utils/momentLocale';
+import { ArrowRightCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
+import type {
+  SeerrQuotaResponse,
+  SeerrRequestsResponse,
+} from '@server/interfaces/api/seerrInterfaces';
 import type {
   QuotaResponse,
   UserInvitesResponse,
@@ -8,29 +22,15 @@ import type {
   UserWatchDataResponse,
 } from '@server/interfaces/api/userInterfaces';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
-import type {
-  SeerrQuotaResponse,
-  SeerrRequestsResponse,
-} from '@server/interfaces/api/seerrInterfaces';
-import { ArrowRightCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import Error from '@app/app/error';
-import useSWR from 'swr';
-import ProgressCircle from '@app/components/Common/ProgressCircle';
-import Slider from '@app/components/Common/Slider';
-import RecentInvite from '@app/components/Common/Slider/RecentInvite';
-import { FormattedMessage } from 'react-intl';
 import { useEffect } from 'react';
-import RecentNotification from '@app/components/Common/Slider/RecentNotification';
-import RecentlyWatched from '@app/components/Common/Slider/RecentlyWatched';
-import useSettings from '@app/hooks/useSettings';
-import { momentWithLocale } from '@app/utils/momentLocale';
-import RecentRequest from '@app/components/Common/Slider/RecentRequest';
+import { FormattedMessage } from 'react-intl';
+import useSWR from 'swr';
 
 const Placeholder = () => {
   return (
-    <div className="relative animate-pulse p-4 rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+    <div className="bg-primary/30 ring-primary relative flex animate-pulse flex-row gap-8 rounded-lg p-4 px-4 py-5 shadow ring-1 backdrop-blur sm:p-6">
       <div className="w-24 sm:w-24">
         <div className="w-full" style={{ paddingBottom: '63%' }} />
       </div>
@@ -168,17 +168,17 @@ const UserProfile = () => {
             (user.inviteCountRedeemed > 0 ||
               currentSettings.enableSignUp ||
               user.redeemedInvite?.createdBy) && (
-              <div className="overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary sm:p-6 flex flex-row gap-8">
+              <div className="bg-primary/30 ring-primary flex flex-row gap-8 overflow-hidden rounded-lg px-4 py-5 shadow ring-1 backdrop-blur sm:p-6">
                 {(currentSettings.enableSignUp ||
                   user.inviteCountRedeemed > 0) && (
                   <div>
-                    <dt className="truncate text-sm font-bold text-primary-content">
+                    <dt className="text-primary-content truncate text-sm font-bold">
                       <FormattedMessage
                         id="profile.usersInvited"
                         defaultMessage="Users Invited"
                       />
                     </dt>
-                    <dd className="mt-1 text-3xl font-semibold text-primary-content">
+                    <dd className="text-primary-content mt-1 text-3xl font-semibold">
                       <Link
                         className="link-hover"
                         href={
@@ -199,13 +199,13 @@ const UserProfile = () => {
                 )}
                 {user.redeemedInvite?.createdBy && (
                   <div>
-                    <dt className="truncate text-sm font-bold text-primary-content">
+                    <dt className="text-primary-content truncate text-sm font-bold">
                       <FormattedMessage
                         id="profile.invitedBy"
                         defaultMessage="Invited By"
                       />
                     </dt>
-                    <dd className="mt-1 text-3xl font-semibold text-primary-content">
+                    <dd className="text-primary-content mt-1 text-3xl font-semibold">
                       {currentHasPermission(Permission.MANAGE_USERS) ? (
                         <Link
                           className="link-hover"
@@ -231,9 +231,9 @@ const UserProfile = () => {
                 {user.active &&
                 quota.invite.trialPeriodActive &&
                 quota.invite.trialPeriodEnabled ? (
-                  <div className="overflow-hidden rounded-lg bg-yellow-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-yellow-500 sm:p-6">
-                    <dt className="truncate text-sm font-bold text-yellow-300 flex items-center">
-                      <ClockIcon className="size-5 mr-2" />
+                  <div className="overflow-hidden rounded-lg bg-yellow-900/30 px-4 py-5 shadow ring-1 ring-yellow-500 backdrop-blur sm:p-6">
+                    <dt className="flex items-center truncate text-sm font-bold text-yellow-300">
+                      <ClockIcon className="mr-2 size-5" />
                       <FormattedMessage
                         id="settings.trialPeriod"
                         defaultMessage="Trial Period"
@@ -254,8 +254,8 @@ const UserProfile = () => {
                     </dd>
                   </div>
                 ) : !user.active ? (
-                  <div className="overflow-hidden xl:col-span-2 rounded-lg bg-red-900/30 backdrop-blur px-4 py-5 shadow ring-1 ring-red-500 sm:p-6">
-                    <dt className="truncate text-sm font-bold text-red-300 flex items-center">
+                  <div className="overflow-hidden rounded-lg bg-red-900/30 px-4 py-5 shadow ring-1 ring-red-500 backdrop-blur sm:p-6 xl:col-span-2">
+                    <dt className="flex items-center truncate text-sm font-bold text-red-300">
                       {isTrialExpiry ? (
                         <FormattedMessage
                           id="common.accountExpired"
@@ -354,9 +354,9 @@ const UserProfile = () => {
                   </div>
                 ) : (
                   <div
-                    className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                    className={`bg-primary/30 ring-primary overflow-hidden rounded-lg px-4 py-5 shadow ring-1 backdrop-blur ${
                       quota.invite.restricted &&
-                      'bg-linear-to-t from-error/60 to-transparent ring-error'
+                      'from-error/60 ring-error bg-linear-to-t to-transparent'
                     } sm:p-6`}
                   >
                     <dt
@@ -387,7 +387,7 @@ const UserProfile = () => {
                       )}
                     </dt>
                     <dd
-                      className={`mt-1 text-sm font-semibold items-center flex ${
+                      className={`mt-1 flex items-center text-sm font-semibold ${
                         quota.invite.restricted
                           ? 'text-error'
                           : 'text-primary-content'
@@ -408,7 +408,7 @@ const UserProfile = () => {
                             useHeatLevel
                             className="mr-2 h-8 w-8"
                           />
-                          <div className="w-full overflow-hidden truncate">
+                          <div className="w-full truncate overflow-hidden">
                             <span className="text-3xl font-semibold">
                               <FormattedMessage
                                 id="profile.invitesRemaining"
@@ -449,12 +449,12 @@ const UserProfile = () => {
           !seerrUserQuotaError ? (
             seerrUserQuota ? (
               <div
-                className={`overflow-hidden rounded-lg bg-primary/30 backdrop-blur px-4 py-5 shadow ring-1 ring-primary ${
+                className={`bg-primary/30 ring-primary overflow-hidden rounded-lg px-4 py-5 shadow ring-1 backdrop-blur ${
                   anyRestricted &&
-                  'bg-linear-to-t from-error/60 to-transparent ring-error'
-                } sm:p-6 grid grid-cols-2 gap-x-4`}
+                  'from-error/60 ring-error bg-linear-to-t to-transparent'
+                } grid grid-cols-2 gap-x-4 sm:p-6`}
               >
-                <div className="text-sm font-bold col-span-2">
+                <div className="col-span-2 text-sm font-bold">
                   <FormattedMessage
                     id="common.requests"
                     defaultMessage="Requests"
@@ -504,7 +504,7 @@ const UserProfile = () => {
                           className="mr-2 h-6 w-6 shrink-0"
                         />
                         <div className="overflow-hidden">
-                          <div className="text-xl font-semibold truncate">
+                          <div className="truncate text-xl font-semibold">
                             <FormattedMessage
                               id="profile.quotaRemaining"
                               defaultMessage="{remaining} of {limit}"
@@ -519,7 +519,7 @@ const UserProfile = () => {
                       </>
                     ) : (
                       <div className="overflow-hidden">
-                        <span className="text-xl font-semibold truncate">
+                        <span className="truncate text-xl font-semibold">
                           <FormattedMessage
                             id="common.unlimited"
                             defaultMessage="Unlimited"
@@ -572,7 +572,7 @@ const UserProfile = () => {
                           useHeatLevel
                           className="mr-2 h-6 w-6 shrink-0"
                         />
-                        <div className="text-xl font-semibold truncate">
+                        <div className="truncate text-xl font-semibold">
                           <FormattedMessage
                             id="profile.quotaRemaining"
                             defaultMessage="{remaining} of {limit}"
@@ -610,9 +610,9 @@ const UserProfile = () => {
         (currentSettings.enableSignUp ||
           (invites?.results.length ?? 0) > 0) && (
           <>
-            <div className="flex my-4 relative">
+            <div className="relative my-4 flex">
               <Link
-                className="flex items-center gap-2 link-primary"
+                className="link-primary flex items-center gap-2"
                 href={
                   user.id === currentUser?.id
                     ? '/profile/invites?filter=all'
@@ -647,9 +647,9 @@ const UserProfile = () => {
         (!requests || !!requests.results.length) &&
         !requestError && (
           <>
-            <div className="flex my-4 relative">
+            <div className="relative my-4 flex">
               <Link
-                className="flex items-center gap-2 link-primary"
+                className="link-primary flex items-center gap-2"
                 href={
                   user.id === currentUser?.id
                     ? '/request/requests?filter=all'
@@ -684,9 +684,9 @@ const UserProfile = () => {
         !watchError &&
         (!watchData || !!watchData.results.length) && (
           <>
-            <div className="flex my-4 relative">
+            <div className="relative my-4 flex">
               <Link
-                className="flex items-center gap-2 link-primary"
+                className="link-primary flex items-center gap-2"
                 href="/activity/history"
               >
                 <span className="text-2xl font-bold">
@@ -720,9 +720,9 @@ const UserProfile = () => {
         !notificationError &&
         notificationSettings?.inAppEnabled && (
           <>
-            <div className="flex my-4 relative">
+            <div className="relative my-4 flex">
               <Link
-                className="flex items-center gap-2 link-primary"
+                className="link-primary flex items-center gap-2"
                 href={
                   user.id === currentUser?.id
                     ? '/profile/notifications?filter=all'

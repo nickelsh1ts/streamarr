@@ -1,5 +1,9 @@
 'use client';
 import Error from '@app/app/error';
+import DiscordIcon from '@app/assets/extlogos/discord.svg';
+import PushbulletIcon from '@app/assets/extlogos/pushbullet.svg';
+import PushoverIcon from '@app/assets/extlogos/pushover.svg';
+import TelegramIcon from '@app/assets/extlogos/telegram.svg';
 import AdminTabs from '@app/components/Common/AdminTabs';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useUser } from '@app/hooks/useUser';
@@ -8,14 +12,10 @@ import {
   CloudIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/solid';
-import DiscordIcon from '@app/assets/extlogos/discord.svg';
-import PushbulletIcon from '@app/assets/extlogos/pushbullet.svg';
-import PushoverIcon from '@app/assets/extlogos/pushover.svg';
-import TelegramIcon from '@app/assets/extlogos/telegram.svg';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import { useParams, usePathname } from 'next/navigation';
-import useSWR from 'swr';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 const UserSettingsNotifications = ({
   children,
@@ -44,7 +44,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/email',
       content: (
         <span className="flex">
-          <EnvelopeIcon className="size-5 mr-2" />{' '}
+          <EnvelopeIcon className="mr-2 size-5" />{' '}
           <FormattedMessage id="common.email" defaultMessage="Email" />
         </span>
       ),
@@ -59,7 +59,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/webpush',
       content: (
         <span className="flex">
-          <CloudIcon className="size-5 mr-2" />{' '}
+          <CloudIcon className="mr-2 size-5" />{' '}
           <FormattedMessage id="common.webPush" defaultMessage="Web Push" />
         </span>
       ),
@@ -74,7 +74,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/inapp',
       content: (
         <span className="flex">
-          <BellAlertIcon className="size-5 mr-2" />{' '}
+          <BellAlertIcon className="mr-2 size-5" />{' '}
           <FormattedMessage id="common.inApp" defaultMessage="In-App" />
         </span>
       ),
@@ -89,7 +89,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/discord',
       content: (
         <span className="flex">
-          <DiscordIcon className="size-5 mr-2" />
+          <DiscordIcon className="mr-2 size-5" />
           Discord
         </span>
       ),
@@ -104,7 +104,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/pushbullet',
       content: (
         <span className="flex">
-          <PushbulletIcon className="size-5 mr-2" />
+          <PushbulletIcon className="mr-2 size-5" />
           Pushbullet
         </span>
       ),
@@ -119,7 +119,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/pushover',
       content: (
         <span className="flex">
-          <PushoverIcon className="size-5 mr-2" />
+          <PushoverIcon className="mr-2 size-5" />
           Pushover
         </span>
       ),
@@ -134,7 +134,7 @@ const UserSettingsNotifications = ({
       route: '/settings/notifications/telegram',
       content: (
         <span className="flex">
-          <TelegramIcon className="size-5 mr-2" />
+          <TelegramIcon className="mr-2 size-5" />
           Telegram
         </span>
       ),
@@ -166,7 +166,7 @@ const UserSettingsNotifications = ({
 
   return (
     <div>
-      <div className="mb-6 mt-3">
+      <div className="mt-3 mb-6">
         <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="notification.settings"

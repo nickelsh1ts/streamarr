@@ -36,7 +36,7 @@ const ScrollToTopBtn = ({ full = false }: ScrollProps) => {
     <button
       id="scrollToTopBtn"
       type="button"
-      className={`btn btn-outline btn-primary m-auto ${full ? 'h-auto min-h-min p-2 rounded-md' : 'btn-circle'}${isVisible ? '' : ' hidden'}`}
+      className={`btn btn-outline btn-primary m-auto ${full ? 'h-auto min-h-min rounded-md p-2' : 'btn-circle'} ${isVisible ? '' : 'hidden'}`}
       onClick={scrollToTop}
     >
       {full && (

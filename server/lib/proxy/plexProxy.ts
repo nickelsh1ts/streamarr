@@ -1,7 +1,7 @@
-import type { RequestHandler } from 'express';
-import { getSettings } from '@server/lib/settings';
 import { getPlexHealth } from '@server/lib/plexHealthCheck';
+import { getSettings } from '@server/lib/settings';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
+import type { RequestHandler } from 'express';
 import { createServiceProxy, registerWebSocketHandler } from './index';
 
 function getPlexTarget(): string {
