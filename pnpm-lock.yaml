@@ -37,7 +37,7 @@ importers:
         version: 1.17.0
       '@formatjs/intl':
         specifier: ^4.1.9
-        version: 4.1.12
+        version: 4.1.13
       '@headlessui/react':
         specifier: ^2.2.10
         version: 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -64,7 +64,7 @@ importers:
         version: 2.9.3
       connect-typeorm:
         specifier: ^2.0.0
-        version: 2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3)))
+        version: 2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3)))
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -178,7 +178,7 @@ importers:
         version: 2.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-intl:
         specifier: ^10.1.2
-        version: 10.1.11(@types/react@19.2.15)(react@19.2.6)
+        version: 10.1.13(@types/react@19.2.15)(react@19.2.6)
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.15)(react@19.2.6)
@@ -205,7 +205,7 @@ importers:
         version: 0.2.3
       semver:
         specifier: ^7.7.4
-        version: 7.8.2
+        version: 7.8.4
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
@@ -229,7 +229,7 @@ importers:
         version: 2.5.0
       typeorm:
         specifier: ^0.3.28
-        version: 0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3))
+        version: 0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3))
       ua-parser-js:
         specifier: ^2.0.9
         version: 2.0.10
@@ -257,7 +257,7 @@ importers:
     devDependencies:
       '@commitlint/cli':
         specifier: ^21.0.0
-        version: 21.0.2(@types/node@25.9.2)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
+        version: 21.0.2(@types/node@25.9.3)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
       '@commitlint/config-conventional':
         specifier: ^21.0.0
         version: 21.0.2
@@ -269,7 +269,7 @@ importers:
         version: 10.0.1(eslint@9.39.4(jiti@2.6.1))
       '@formatjs/cli':
         specifier: ^6.14.2
-        version: 6.16.6
+        version: 6.16.10
       '@semantic-release/changelog':
         specifier: 6.0.3
         version: 6.0.3(semantic-release@25.0.3(typescript@6.0.3))
@@ -320,7 +320,7 @@ importers:
         version: 2.1.0
       '@types/node':
         specifier: ^25.6.0
-        version: 25.9.2
+        version: 25.9.3
       '@types/node-schedule':
         specifier: ^2.1.8
         version: 2.1.8
@@ -365,7 +365,7 @@ importers:
         version: 8.60.0(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3)
       commitizen:
         specifier: 4.3.1
-        version: 4.3.1(@types/node@25.9.2)(typescript@6.0.3)
+        version: 4.3.1(@types/node@25.9.3)(typescript@6.0.3)
       conventional-changelog-conventionalcommits:
         specifier: ^9.3.1
         version: 9.3.1
@@ -380,7 +380,7 @@ importers:
         version: 15.16.0
       cz-conventional-changelog:
         specifier: 3.3.0
-        version: 3.3.0(@types/node@25.9.2)(typescript@6.0.3)
+        version: 3.3.0(@types/node@25.9.3)(typescript@6.0.3)
       daisyui:
         specifier: 5.5.20
         version: 5.5.20
@@ -446,7 +446,7 @@ importers:
         version: 4.3.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@25.9.2)(typescript@6.0.3)
+        version: 10.9.2(@types/node@25.9.3)(typescript@6.0.3)
       tsc-alias:
         specifier: ^1.8.16
         version: 1.8.17
@@ -1579,30 +1579,42 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@formatjs/cli-native-darwin-arm64@1.1.1':
-    resolution: {integrity: sha512-G2IfmxwDN1kUMIbM9ec5HfJTNR89X11+U3bt4lewfrRqoHOc9bQAkkVHLsY8gNVLjyQIXch58Ewd+AAHkg6cag==}
+  '@formatjs/cli-native-darwin-arm64@1.1.4':
+    resolution: {integrity: sha512-ejXNrd4RDHKWgnNY425RJZglduSVmFFgPLK1+lZa+zLbHz1Z6XyXV7aX1jlicMLGL7HYmaU2i4co//6vu3DrRg==}
     cpu: [arm64]
     os: [darwin]
 
-  '@formatjs/cli-native-linux-arm64@1.2.1':
-    resolution: {integrity: sha512-dbafLt5p1wQi16QnTFuz6s5j5c8HcyRSw+gUp5xEtaQ9Ua2YKRu+YqlgsERg+ArTWN+ZTHIGu+0YymTvfTropA==}
+  '@formatjs/cli-native-linux-arm64-musl@1.0.2':
+    resolution: {integrity: sha512-oDJ6xJANOd/HB+g86vvvWc6oSic/SvEDwu/QUjGhqursTFPQZr2iewzhwm/wFbTp7x9P1X4fy5k87leSSrm45g==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@formatjs/cli-native-linux-arm64@1.2.4':
+    resolution: {integrity: sha512-YDLXzRnI85a96imavjcBUBwt5GMt/DKdwLyOgFeW2htQZYwWr1Vxjsi0Fvc/A4c89DxwkQ64cmhC0Wpl+o/kKQ==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@formatjs/cli-native-linux-x64@1.1.1':
-    resolution: {integrity: sha512-zi6eOPAc03fszPyiGCkmzBxjIxynDFflie9zgbyZIQgKV7MhXEmUmpGYeaTTDX903OFCJJ3ZvpajSTdZ7C7yeQ==}
+  '@formatjs/cli-native-linux-x64-musl@1.0.2':
+    resolution: {integrity: sha512-fmBUVOeGb2Aaf1qVnEybjNx3vk7PQwAshSMLV7xJgSAyht0P1tgoSmq4o2mjYgZ87n/QaqZfiHJlqLwkjsaPtA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@formatjs/cli-native-linux-x64@1.1.4':
+    resolution: {integrity: sha512-BnLTyb2q3j37hUiWYrFuarGvA9XTL0Ye2++pV4LRo1sQJN8TJb3dWfc6O4RTjt/9imKl+egjw4hkrxB6s3XUYw==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@formatjs/cli-native-win32-x64@1.1.2':
-    resolution: {integrity: sha512-2TKatQRlDbVc+eJE4b9n0/+bsDg+DpS0kmHw7OYI1zGXhus4YqRPtlJnraazRmPlXtRNgvY/UYCPgBvX7DbYhw==}
+  '@formatjs/cli-native-win32-x64@1.1.5':
+    resolution: {integrity: sha512-TrF7H25n58o6/L8GP2hA6eCUxKUq2y3+fQE/DFGKkmqWhwLNl/qd+HVEX1Yoz6MiO0dUznNgDsrPvbvZGfERGA==}
     cpu: [x64]
     os: [win32]
 
-  '@formatjs/cli@6.16.6':
-    resolution: {integrity: sha512-82l9wmeqvClrtI/8VQOcFVZQwZWYEiMI505hywngF+xr7ti94OQXg0gi3piYaQarfiIac2GSMibLQ2aQM5mJaA==}
+  '@formatjs/cli@6.16.10':
+    resolution: {integrity: sha512-rzAeTuC1wnwltAyG0KGQNcyCGK/YldjkOvOTjgdLjMmVpPz4l7WGBNPkOb3l8jYBjJ8XxCtQGPAW4kmsmUzQoA==}
     engines: {node: '>= 20.12.0'}
     hasBin: true
     peerDependencies:
@@ -1629,17 +1641,23 @@ packages:
       vue:
         optional: true
 
-  '@formatjs/fast-memoize@3.1.5':
-    resolution: {integrity: sha512-KLi3fan6WnCHmigd9pmEEN8Hid0v4wiFBW576M/d07KMWYecf1CvyMI3n34vCmHT4AoVqG2n702kiHbXjzZX2A==}
+  '@formatjs/fast-memoize@3.1.6':
+    resolution: {integrity: sha512-H5aexk1Le7T9TPmscacZ+1pR6CTa2n1wq+HDVGXhH8TzUlQQpeXzZs91dRtmFHrbeNbjPFPfQujUqm7MHgVoXQ==}
 
   '@formatjs/icu-messageformat-parser@3.5.10':
     resolution: {integrity: sha512-XeJihYLy1lCe19xfK1KWKG/betBOK2rB0luL8lSkjfvJj0zP+LTJvkC+RKd0jsFI8mWxN71LrarHSrEXE8xxOQ==}
 
+  '@formatjs/icu-messageformat-parser@3.5.11':
+    resolution: {integrity: sha512-NVsuNsc2dUVG9+4HBJ/srScxtA/18LqGgwtop/tuN/OIBjVl6QA+0KhfZQddDD9sEh2LeVjLFPGVU3ixa3blcA==}
+
+  '@formatjs/icu-skeleton-parser@2.1.10':
+    resolution: {integrity: sha512-XuSva+8ZGawk8VnD5VD6UeH8KarQ/Z022zgjHDoHmlNiAewstXuuzXc0Hk5pGFSdG+nNw5bfJKXqj1ZXHn9yUA==}
+
   '@formatjs/icu-skeleton-parser@2.1.9':
     resolution: {integrity: sha512-rsxswgHMfU1zUgB2byc08fesf83wLGjFnzLCEtuf00mx2doiqc6pYrf67raI37XqdRcGUviQepk2UKGqpng74Q==}
 
-  '@formatjs/intl@4.1.12':
-    resolution: {integrity: sha512-r288ut+p+CUQZSg+0gAT+D0i6xgrnoxE0B4HTbPY2zei/AtYmFhlu87BKjgCf1CweH4pZIbr152JFjxO8jVb1A==}
+  '@formatjs/intl@4.1.13':
+    resolution: {integrity: sha512-dufOl09iREq8V+laVdlGuyoqNmuzqDvyeA3O3k+0XQfvKJgK8bBWFKqYYWejFMKeOij/4LuPKJA+LsshpXQ4sw==}
 
   '@formatjs/ts-transformer@4.4.11':
     resolution: {integrity: sha512-xfL/YAPRZZeO+X386WqAOA9XHHW7NymM1Fb53IxxHW6oV0p3OKfoBy6Oi98GvWQQsr8y0H/2RyD0ok+mkAExWg==}
@@ -2863,8 +2881,8 @@ packages:
   '@types/node@24.13.0':
     resolution: {integrity: sha512-5vtOqGQr4NJKeEzV441FcOi2MeG9UTWq9LqVLGneDdu4vlX17H8kQ2PA2UmNwCUGPVDj4oBjNhS7ReVEIWJJrg==}
 
-  '@types/node@25.9.2':
-    resolution: {integrity: sha512-G05zqtJhcDLb8uslf5EjCxXg9G1KQxiV8OS0R26IC//Eoyitzqe8z37I7cqvnZlrlSfgocQRfSn/AHBZJJFyGw==}
+  '@types/node@25.9.3':
+    resolution: {integrity: sha512-603BddQMv3pUcr4U2dhujk83N2tTDVr/34wII2B6bJy6g+8WD6yUb11jszNs0gdi4PesVWl7ABt8nYMVpnLUcg==}
 
   '@types/nodemailer@8.0.0':
     resolution: {integrity: sha512-fyf8jWULsCo0d0BuoQ75i6IeoHs47qcqxWc7yUdUcV0pOZGjUTTOvwdG1PRXUDqN/8A64yQdQdnA2pZgcdi+cA==}
@@ -3236,8 +3254,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  acorn@8.16.0:
-    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
+  acorn@8.17.0:
+    resolution: {integrity: sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -5406,8 +5424,8 @@ packages:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
 
-  intl-messageformat@11.2.7:
-    resolution: {integrity: sha512-+q6Ktg119nULZEpZ8YTuGOst9MyEzFtjD63FTGBlN1mLz0Z/MOUYDIvnpVKwq17eezIEh+cfJIebfJoCetpiNw==}
+  intl-messageformat@11.2.8:
+    resolution: {integrity: sha512-l323RCl3qJDVQ8U9j74ut/hVMdg3VPsOHpVMDvFfz9qiq4dPO5ooVYFNVUzzrpgG39a+RLzcXyJb8VFgIU+tUA==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -7371,8 +7389,8 @@ packages:
       react: '>=16'
       react-dom: '>=16'
 
-  react-intl@10.1.11:
-    resolution: {integrity: sha512-9VCaWKumbrP91QvS50IYRlbZsD4KdSLwcfEeF9CQLmnqK9qCvFCfyof694I9lqHJL2/TUxBwLCA+whjF129oAg==}
+  react-intl@10.1.13:
+    resolution: {integrity: sha512-3aKnIOIPN6CWsu3jqPpYMlJZ2U0Qnxhd42xGWQNdGIknK/gBudWOHSIx9vN4XKkITokJLr7YTgs4yLUGtbvP9g==}
     peerDependencies:
       '@types/react': '19'
       react: '19'
@@ -7722,8 +7740,8 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.8.2:
-    resolution: {integrity: sha512-c8jsqUZm3omBOI66G90z1Dyw5z622G8oLG+omfsHBJf3CWQTlOcwOjvOG6wtiNfW6anKm/eA39LMwMtMez2TiQ==}
+  semver@7.8.4:
+    resolution: {integrity: sha512-rUCObTnP32Q08R2uuIrt7r9PlEonuTmtuXYcW6s5kjdlj3xbnwe+21yXptAUYcMAABLkYYTtnmzb3w3EDZfueA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -9822,11 +9840,11 @@ snapshots:
 
   '@colors/colors@1.6.0': {}
 
-  '@commitlint/cli@21.0.2(@types/node@25.9.2)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@6.0.3)':
+  '@commitlint/cli@21.0.2(@types/node@25.9.3)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@6.0.3)':
     dependencies:
       '@commitlint/format': 21.0.1
       '@commitlint/lint': 21.0.2
-      '@commitlint/load': 21.0.2(@types/node@25.9.2)(typescript@6.0.3)
+      '@commitlint/load': 21.0.2(@types/node@25.9.3)(typescript@6.0.3)
       '@commitlint/read': 21.0.2(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)
       '@commitlint/types': 21.0.1
       tinyexec: 1.2.4
@@ -9862,7 +9880,7 @@ snapshots:
   '@commitlint/is-ignored@21.0.2':
     dependencies:
       '@commitlint/types': 21.0.1
-      semver: 7.8.2
+      semver: 7.8.4
 
   '@commitlint/lint@21.0.2':
     dependencies:
@@ -9871,14 +9889,14 @@ snapshots:
       '@commitlint/rules': 21.0.2
       '@commitlint/types': 21.0.1
 
-  '@commitlint/load@21.0.2(@types/node@25.9.2)(typescript@6.0.3)':
+  '@commitlint/load@21.0.2(@types/node@25.9.3)(typescript@6.0.3)':
     dependencies:
       '@commitlint/config-validator': 21.0.1
       '@commitlint/execute-rule': 21.0.1
       '@commitlint/resolve-extends': 21.0.1
       '@commitlint/types': 21.0.1
       cosmiconfig: 9.0.1(typescript@6.0.3)
-      cosmiconfig-typescript-loader: 6.3.0(@types/node@25.9.2)(cosmiconfig@9.0.1(typescript@6.0.3))(typescript@6.0.3)
+      cosmiconfig-typescript-loader: 6.3.0(@types/node@25.9.3)(cosmiconfig@9.0.1(typescript@6.0.3))(typescript@6.0.3)
       es-toolkit: 1.47.0
       is-plain-obj: 4.1.0
       picocolors: 1.1.1
@@ -9934,7 +9952,7 @@ snapshots:
     dependencies:
       '@simple-libs/child-process-utils': 1.0.2
       '@simple-libs/stream-utils': 1.2.0
-      semver: 7.8.2
+      semver: 7.8.4
     optionalDependencies:
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.4.0
@@ -10341,38 +10359,52 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@formatjs/cli-native-darwin-arm64@1.1.1':
+  '@formatjs/cli-native-darwin-arm64@1.1.4':
     optional: true
 
-  '@formatjs/cli-native-linux-arm64@1.2.1':
+  '@formatjs/cli-native-linux-arm64-musl@1.0.2':
     optional: true
 
-  '@formatjs/cli-native-linux-x64@1.1.1':
+  '@formatjs/cli-native-linux-arm64@1.2.4':
     optional: true
 
-  '@formatjs/cli-native-win32-x64@1.1.2':
+  '@formatjs/cli-native-linux-x64-musl@1.0.2':
     optional: true
 
-  '@formatjs/cli@6.16.6':
+  '@formatjs/cli-native-linux-x64@1.1.4':
+    optional: true
+
+  '@formatjs/cli-native-win32-x64@1.1.5':
+    optional: true
+
+  '@formatjs/cli@6.16.10':
     optionalDependencies:
-      '@formatjs/cli-native-darwin-arm64': 1.1.1
-      '@formatjs/cli-native-linux-arm64': 1.2.1
-      '@formatjs/cli-native-linux-x64': 1.1.1
-      '@formatjs/cli-native-win32-x64': 1.1.2
+      '@formatjs/cli-native-darwin-arm64': 1.1.4
+      '@formatjs/cli-native-linux-arm64': 1.2.4
+      '@formatjs/cli-native-linux-arm64-musl': 1.0.2
+      '@formatjs/cli-native-linux-x64': 1.1.4
+      '@formatjs/cli-native-linux-x64-musl': 1.0.2
+      '@formatjs/cli-native-win32-x64': 1.1.5
 
-  '@formatjs/fast-memoize@3.1.5': {}
+  '@formatjs/fast-memoize@3.1.6': {}
 
   '@formatjs/icu-messageformat-parser@3.5.10':
     dependencies:
       '@formatjs/icu-skeleton-parser': 2.1.9
 
+  '@formatjs/icu-messageformat-parser@3.5.11':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.10
+
+  '@formatjs/icu-skeleton-parser@2.1.10': {}
+
   '@formatjs/icu-skeleton-parser@2.1.9': {}
 
-  '@formatjs/intl@4.1.12':
+  '@formatjs/intl@4.1.13':
     dependencies:
-      '@formatjs/fast-memoize': 3.1.5
-      '@formatjs/icu-messageformat-parser': 3.5.10
-      intl-messageformat: 11.2.7
+      '@formatjs/fast-memoize': 3.1.6
+      '@formatjs/icu-messageformat-parser': 3.5.11
+      intl-messageformat: 11.2.8
 
   '@formatjs/ts-transformer@4.4.11':
     dependencies:
@@ -10543,7 +10575,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -10865,7 +10897,7 @@ snapshots:
       metro: 0.84.4
       metro-config: 0.84.4
       metro-core: 0.84.4
-      semver: 7.8.2
+      semver: 7.8.4
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -11108,7 +11140,7 @@ snapshots:
       read-pkg: 10.1.0
       registry-auth-token: 5.1.1
       semantic-release: 25.0.3(typescript@6.0.3)
-      semver: 7.8.2
+      semver: 7.8.4
       tempy: 3.2.0
 
   '@semantic-release/release-notes-generator@14.1.1(semantic-release@25.0.3(typescript@6.0.3))':
@@ -11360,11 +11392,11 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/cookie-parser@1.4.10(@types/express@5.0.6)':
     dependencies:
@@ -11374,7 +11406,7 @@ snapshots:
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/date-arithmetic@4.1.4': {}
 
@@ -11400,7 +11432,7 @@ snapshots:
 
   '@types/express-serve-static-core@5.1.1':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       '@types/qs': 6.15.1
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -11462,19 +11494,19 @@ snapshots:
 
   '@types/node-schedule@2.1.8':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/node@24.13.0':
     dependencies:
       undici-types: 7.18.2
 
-  '@types/node@25.9.2':
+  '@types/node@25.9.3':
     dependencies:
       undici-types: 7.24.6
 
   '@types/nodemailer@8.0.0':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -11486,7 +11518,7 @@ snapshots:
 
   '@types/qrcode@1.5.6':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/qs@6.15.1': {}
 
@@ -11524,12 +11556,12 @@ snapshots:
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/serve-static@2.2.0':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/sinonjs__fake-timers@8.1.1': {}
 
@@ -11550,17 +11582,17 @@ snapshots:
 
   '@types/web-push@3.6.4':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/webxr@0.5.24': {}
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/xml2js@0.4.14':
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
 
   '@types/yamljs@0.2.34': {}
 
@@ -11698,7 +11730,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.59.3
       debug: 4.4.3(supports-color@5.5.0)
       minimatch: 10.2.5
-      semver: 7.8.2
+      semver: 7.8.4
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -11713,7 +11745,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.60.0
       debug: 4.4.3(supports-color@5.5.0)
       minimatch: 10.2.5
-      semver: 7.8.2
+      semver: 7.8.4
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -11841,18 +11873,18 @@ snapshots:
 
   ace-builds@1.44.0: {}
 
-  acorn-jsx@5.3.2(acorn@8.16.0):
+  acorn-jsx@5.3.2(acorn@8.17.0):
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.17.0
 
   acorn-walk@8.3.5:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.17.0
 
   acorn@7.4.1:
     optional: true
 
-  acorn@8.16.0: {}
+  acorn@8.17.0: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -12381,7 +12413,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -12390,7 +12422,7 @@ snapshots:
 
   chromium-edge-launcher@0.3.0:
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -12532,10 +12564,10 @@ snapshots:
 
   commander@9.5.0: {}
 
-  commitizen@4.3.1(@types/node@25.9.2)(typescript@6.0.3):
+  commitizen@4.3.1(@types/node@25.9.3)(typescript@6.0.3):
     dependencies:
       cachedir: 2.3.0
-      cz-conventional-changelog: 3.3.0(@types/node@25.9.2)(typescript@6.0.3)
+      cz-conventional-changelog: 3.3.0(@types/node@25.9.3)(typescript@6.0.3)
       dedent: 0.7.0
       detect-indent: 6.1.0
       find-node-modules: 2.1.3
@@ -12573,13 +12605,13 @@ snapshots:
       ini: 1.3.8
       proto-list: 1.2.4
 
-  connect-typeorm@2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3))):
+  connect-typeorm@2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3))):
     dependencies:
       '@types/debug': 0.0.31
       '@types/express-session': 1.19.0
       debug: 4.4.3(supports-color@5.5.0)
       express-session: 1.19.0
-      typeorm: 0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3))
+      typeorm: 0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3))
     transitivePeerDependencies:
       - supports-color
 
@@ -12618,7 +12650,7 @@ snapshots:
       conventional-commits-filter: 5.0.0
       handlebars: 4.7.9
       meow: 13.2.0
-      semver: 7.8.2
+      semver: 7.8.4
 
   conventional-commit-types@3.0.0: {}
 
@@ -12679,9 +12711,9 @@ snapshots:
       object-assign: 4.1.1
       vary: 1.1.2
 
-  cosmiconfig-typescript-loader@6.3.0(@types/node@25.9.2)(cosmiconfig@9.0.1(typescript@6.0.3))(typescript@6.0.3):
+  cosmiconfig-typescript-loader@6.3.0(@types/node@25.9.3)(cosmiconfig@9.0.1(typescript@6.0.3))(typescript@6.0.3):
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       cosmiconfig: 9.0.1(typescript@6.0.3)
       jiti: 2.6.1
       typescript: 6.0.3
@@ -12817,16 +12849,16 @@ snapshots:
       untildify: 4.0.0
       yauzl: 3.3.2
 
-  cz-conventional-changelog@3.3.0(@types/node@25.9.2)(typescript@6.0.3):
+  cz-conventional-changelog@3.3.0(@types/node@25.9.3)(typescript@6.0.3):
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.1(@types/node@25.9.2)(typescript@6.0.3)
+      commitizen: 4.3.1(@types/node@25.9.3)(typescript@6.0.3)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 21.0.2(@types/node@25.9.2)(typescript@6.0.3)
+      '@commitlint/load': 21.0.2(@types/node@25.9.3)(typescript@6.0.3)
     transitivePeerDependencies:
       - '@types/node'
       - typescript
@@ -13178,7 +13210,7 @@ snapshots:
   engine.io@6.6.7:
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       '@types/ws': 8.18.1
       accepts: 1.3.8
       base64id: 2.0.0
@@ -13587,8 +13619,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.16.0
-      acorn-jsx: 5.3.2(acorn@8.16.0)
+      acorn: 8.17.0
+      acorn-jsx: 5.3.2(acorn@8.17.0)
       eslint-visitor-keys: 4.2.1
 
   esprima@1.2.5:
@@ -14518,10 +14550,10 @@ snapshots:
       hasown: 2.0.3
       side-channel: 1.1.0
 
-  intl-messageformat@11.2.7:
+  intl-messageformat@11.2.8:
     dependencies:
-      '@formatjs/fast-memoize': 3.1.5
-      '@formatjs/icu-messageformat-parser': 3.5.10
+      '@formatjs/fast-memoize': 3.1.6
+      '@formatjs/icu-messageformat-parser': 3.5.11
 
   invariant@2.2.4:
     dependencies:
@@ -14569,7 +14601,7 @@ snapshots:
 
   is-bun-module@2.0.0:
     dependencies:
-      semver: 7.8.2
+      semver: 7.8.4
 
   is-callable@1.2.7: {}
 
@@ -14776,7 +14808,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -14793,7 +14825,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 25.9.2
+      '@types/node': 25.9.3
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -15940,7 +15972,7 @@ snapshots:
 
   node-abi@3.92.0:
     dependencies:
-      semver: 7.8.2
+      semver: 7.8.4
 
   node-addon-api@7.1.1: {}
 
@@ -15979,7 +16011,7 @@ snapshots:
       graceful-fs: 4.2.11
       nopt: 9.0.0
       proc-log: 6.1.0
-      semver: 7.8.2
+      semver: 7.8.4
       tar: 7.5.15
       tinyglobby: 0.2.17
       undici: 6.26.0
@@ -16010,7 +16042,7 @@ snapshots:
       ignore-by-default: 1.0.1
       minimatch: 10.2.5
       pstree.remy: 1.1.8
-      semver: 7.8.2
+      semver: 7.8.4
       simple-update-notifier: 2.0.0
       supports-color: 5.5.0
       touch: 3.1.1
@@ -16029,13 +16061,13 @@ snapshots:
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.8.2
+      semver: 7.8.4
       validate-npm-package-license: 3.0.4
 
   normalize-package-data@8.0.0:
     dependencies:
       hosted-git-info: 9.0.3
-      semver: 7.8.2
+      semver: 7.8.4
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -16743,12 +16775,12 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  react-intl@10.1.11(@types/react@19.2.15)(react@19.2.6):
+  react-intl@10.1.13(@types/react@19.2.15)(react@19.2.6):
     dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.10
-      '@formatjs/intl': 4.1.12
+      '@formatjs/icu-messageformat-parser': 3.5.11
+      '@formatjs/intl': 4.1.13
       '@types/react': 19.2.15
-      intl-messageformat: 11.2.7
+      intl-messageformat: 11.2.8
       react: 19.2.6
 
   react-is@16.13.1: {}
@@ -16816,7 +16848,7 @@ snapshots:
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
       scheduler: 0.27.0
-      semver: 7.8.2
+      semver: 7.8.4
       stacktrace-parser: 0.1.11
       tinyglobby: 0.2.17
       whatwg-fetch: 3.6.20
@@ -17263,7 +17295,7 @@ snapshots:
       p-reduce: 3.0.0
       read-package-up: 12.0.0
       resolve-from: 5.0.0
-      semver: 7.8.2
+      semver: 7.8.4
       signale: 1.4.0
       yargs: 18.0.0
     transitivePeerDependencies:
@@ -17274,7 +17306,7 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.8.2: {}
+  semver@7.8.4: {}
 
   send@0.19.2:
     dependencies:
@@ -17366,7 +17398,7 @@ snapshots:
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.8.2
+      semver: 7.8.4
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
@@ -17449,7 +17481,7 @@ snapshots:
 
   simple-update-notifier@2.0.0:
     dependencies:
-      semver: 7.8.2
+      semver: 7.8.4
 
   skin-tone@2.0.0:
     dependencies:
@@ -17904,7 +17936,7 @@ snapshots:
   terser@5.48.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.16.0
+      acorn: 8.17.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -18021,15 +18053,15 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3):
+  ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 25.9.2
-      acorn: 8.16.0
+      '@types/node': 25.9.3
+      acorn: 8.17.0
       acorn-walk: 8.3.5
       arg: 4.1.3
       create-require: 1.1.1
@@ -18140,7 +18172,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.2)(typescript@6.0.3)):
+  typeorm@0.3.30(babel-plugin-macros@3.1.0)(sqlite3@6.0.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@6.0.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.1
@@ -18159,7 +18191,7 @@ snapshots:
       yargs: 17.7.2
     optionalDependencies:
       sqlite3: 6.0.1
-      ts-node: 10.9.2(@types/node@25.9.2)(typescript@6.0.3)
+      ts-node: 10.9.2(@types/node@25.9.3)(typescript@6.0.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
