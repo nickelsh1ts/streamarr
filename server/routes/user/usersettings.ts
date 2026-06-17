@@ -177,6 +177,7 @@ userSettingsRoutes.post<{ id: string }>(
             admin: Permission.ADMIN,
           }
         )
+        .andWhere('user.active = :isActive', { isActive: true })
         .getMany();
 
       const isDeactivated =
