@@ -176,6 +176,14 @@ notificationRoutes.post<
       });
     }
 
+    logger.info(
+      `Sending notification(s) for ${NotificationType[req.body.type]}`,
+      {
+        label: 'Notifications',
+        recipients: eligibleUsers.length,
+      }
+    );
+
     const createdNotifications: NotificationCreationResult[] = [];
     await Promise.all(
       eligibleUsers.map(async (user) => {

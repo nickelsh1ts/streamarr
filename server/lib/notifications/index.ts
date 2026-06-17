@@ -121,11 +121,6 @@ class NotificationManager {
     payload: NotificationPayload,
     scope: NotificationDeliveryScope = NotificationDeliveryScope.All
   ): Promise<boolean> {
-    logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
-      label: 'Notifications',
-      subject: payload.subject,
-    });
-
     const activeAgents = this.activeAgents.filter(
       (agent) =>
         agent.shouldSend() &&
@@ -143,6 +138,13 @@ class NotificationManager {
         return false;
       }
       return true;
+    }
+
+    if (scope === NotificationDeliveryScope.All) {
+      logger.info(`Sending notification(s) for ${NotificationType[type]}`, {
+        label: 'Notifications',
+        subject: payload.subject,
+      });
     }
 
     const results = await Promise.all(
