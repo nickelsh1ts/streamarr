@@ -1,6 +1,11 @@
 import { Permission } from '@server/lib/permissions';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
+import {
+  createSeerrAssetProxy,
+  createSeerrProxy,
+  createSeerrRuntimeProxy,
+} from '@server/lib/proxy/seerrProxy';
 import { createTautulliProxy } from '@server/lib/proxy/tautulliProxy';
 import {
   createTdarrProxy,
@@ -59,6 +64,16 @@ export function getActiveProxyPaths(): string[] {
     settings.tautulli.urlBase
   ) {
     paths.push(settings.tautulli.urlBase);
+  }
+
+  // Seerr (Overseerr) - no native base-URL support; proxied with on-the-fly
+  // rewrite, so its path must be excluded from OpenAPI request validation.
+  if (
+    settings.overseerr.enabled &&
+    settings.overseerr.hostname &&
+    settings.overseerr.urlBase
+  ) {
+    paths.push(settings.overseerr.urlBase);
   }
 
   return paths;
@@ -207,6 +222,37 @@ export function createServiceProxyRouter(
       'Tautulli',
       false
     );
+  }
+
+  // Register Seerr (Overseerr) proxy. Seerr has no base-URL support, so this
+  // strips the prefix, rewrites the HTML shell (and injects a runtime shim +
+  // theme CSS), and streams static assets untouched.
+  if (
+    settings.overseerr.enabled &&
+    settings.overseerr.hostname &&
+    settings.overseerr.urlBase
+  ) {
+    const seerrConfig = {
+      hostname: settings.overseerr.hostname,
+      port: settings.overseerr.port ?? 5055,
+      useSsl: settings.overseerr.useSsl ?? false,
+      base: settings.overseerr.urlBase,
+      // Read live so theme changes apply without a restart.
+      getTheme: () => getSettings().main.theme,
+    };
+
+    router.use(
+      settings.overseerr.urlBase,
+      sessionMiddleware,
+      checkUser,
+      isAuthenticated([Permission.REQUEST, Permission.STREAMARR], {
+        type: 'or',
+      }),
+      createSeerrProxy(seerrConfig),
+      createSeerrRuntimeProxy(seerrConfig),
+      createSeerrAssetProxy(seerrConfig)
+    );
+    registeredRoutes.push({ name: 'Seerr', path: settings.overseerr.urlBase });
   }
 
   if (registeredRoutes.length > 0) {

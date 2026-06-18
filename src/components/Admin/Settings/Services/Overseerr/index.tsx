@@ -1,5 +1,5 @@
 'use client';
-import Accordion from '@app/components/Common/Accordion';
+import RestartRequiredAlert from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
@@ -16,7 +16,6 @@ import { Field, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import * as Yup from 'yup';
-import nginxExample from './nginxExample';
 
 const ServicesOverseerr = () => {
   const intl = useIntl();
@@ -42,10 +41,11 @@ const ServicesOverseerr = () => {
       .test(
         'no-trailing-slash',
         intl.formatMessage({
-          id: 'servicesSettings.urlBase.noTrailingSlash',
-          defaultMessage: 'URL Base must not end in a trailing slash',
+          id: 'seerrSettings.urlBase.noTrailingSlash',
+          defaultMessage:
+            'URL Base must not end in a trailing slash or whitespace',
         }),
-        (value) => !value || !value.endsWith('/')
+        (value) => !value || (!value.endsWith('/') && !/\s$/.test(value))
       ),
     hostname: Yup.string()
       .required(
@@ -69,6 +69,12 @@ const ServicesOverseerr = () => {
           defaultMessage: 'You must provide a valid port number',
         })
       ),
+    apiKey: Yup.string().required(
+      intl.formatMessage({
+        id: 'servicesSettings.validation.apiKey',
+        defaultMessage: 'You must provide a valid API key',
+      })
+    ),
   });
 
   if (!dataOverseerr) {
@@ -91,18 +97,18 @@ const ServicesOverseerr = () => {
           />
         </p>
       </div>
+      <RestartRequiredAlert filterServices={['Seerr']} />
       <Alert
         title={intl.formatMessage({
           id: 'servicesSettings.overseerr.alertTitle',
-          defaultMessage:
-            'Warning: Seerr Integration requires additional setup',
+          defaultMessage: 'Remove any external Seerr reverse proxy',
         })}
         type="warning"
       >
         <p>
           <FormattedMessage
             id="servicesSettings.overseerr.alertDescription"
-            defaultMessage="To complete the Seerr integration, you must configure a reverse proxy and serve Seerr at a specified url base. Seerr does not currently support url bases natively and must be re-written by a reverse proxy. An Nginx example is provided for reference."
+            defaultMessage="Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
           />
         </p>
       </Alert>
@@ -272,6 +278,7 @@ const ServicesOverseerr = () => {
                     id="common.apiKey"
                     defaultMessage="API Key"
                   />
+                  <span className="text-error ml-1">*</span>
                 </label>
                 <div className="sm:col-span-2">
                   <div className="col-span-2 flex">
@@ -290,34 +297,6 @@ const ServicesOverseerr = () => {
                     )}
                 </div>
               </div>
-              <Accordion>
-                {({ openIndexes, handleClick, AccordionContent }) => (
-                  <div className="text-primary-content backdrop-blur-md">
-                    <div
-                      className={`collapse-title border-primary bg-primary/40 w-full rounded-lg border text-start hover:cursor-pointer ${
-                        openIndexes.includes(0) && 'rounded-b-none'
-                      }`}
-                      onClick={() => handleClick(0)}
-                    >
-                      <FormattedMessage
-                        id="servicesSettings.overseerr.reverseProxyExample"
-                        defaultMessage="Nginx Reverse Proxy Example"
-                      />
-                    </div>
-                    <AccordionContent isOpen={openIndexes.includes(0)}>
-                      <div className="border-secondary bg-secondary/50 rounded-b-lg border p-4">
-                        <code className="block min-w-full overflow-x-auto font-mono text-sm leading-6">
-                          {nginxExample.split('\n').map((line, i) => (
-                            <div key={i} className="whitespace-pre">
-                              {line || '\u00A0'}
-                            </div>
-                          ))}
-                        </code>
-                      </div>
-                    </AccordionContent>
-                  </div>
-                )}
-              </Accordion>
               <div className="divider divider-primary col-span-full mb-0" />
               <div className="col-span-3 mt-4 flex justify-end">
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
