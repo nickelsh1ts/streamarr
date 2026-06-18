@@ -128,7 +128,7 @@ body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.items-center.justify-cent
   background: var(--overseerr-gradient)!important;
 }
 .bg-gray-800 {
-  background: rgba(31, 31, 31, .45);
+  background-color: rgba(31, 31, 31, 1);
 }
 body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.h-full.w-full.items-center.justify-center.bg-gray-800.bg-opacity-70.opacity-100>div>div.absolute.top-0.left-0.right-0.z-0.h-64.max-h-full.w-full>span>img {
   display: block!important;
@@ -156,4 +156,15 @@ body>div.fixed.top-0.bottom-0.left-0.right-0.z-50.flex.h-full.w-full.items-cente
 }
 .text-yellow-100 {
   color: var(--bs-text);
+}
+#__next>div, body {
+  background: revert;
+}
+body {
+  background: var(--main-bg-color);
+}
+.bg-gray-800\/70 {
+  background-color: #272829b3;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
