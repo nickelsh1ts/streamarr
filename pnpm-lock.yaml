@@ -130,7 +130,7 @@ importers:
         version: 2.1.1
       nodemailer:
         specifier: ^8.0.6
-        version: 8.0.10
+        version: 8.0.11
       openpgp:
         specifier: ^6.3.0
         version: 6.3.1
@@ -6412,8 +6412,8 @@ packages:
     resolution: {integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==}
     engines: {node: '>=6.0.0'}
 
-  nodemailer@8.0.10:
-    resolution: {integrity: sha512-BLFuSth7QtHOkBzyqTehWWyub0NTRDuK2Q2SQfnGLsrJnzyU+Yeh4WpV1eZGuARFj1xQJHIdnTuJZLP+b9R1GQ==}
+  nodemailer@8.0.11:
+    resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
     engines: {node: '>=6.0.0'}
 
   nodemailer@8.0.5:
@@ -15588,7 +15588,7 @@ snapshots:
 
   nodemailer@7.0.13: {}
 
-  nodemailer@8.0.10: {}
+  nodemailer@8.0.11: {}
 
   nodemailer@8.0.5:
     optional: true
@@ -16042,7 +16042,7 @@ snapshots:
       fixpack: 4.0.0
       get-port: 5.1.1
       mailparser: 3.9.8
-      nodemailer: 8.0.10
+      nodemailer: 8.0.11
       open: 7.4.2
       p-event: 4.2.0
       p-wait-for: 3.2.0
