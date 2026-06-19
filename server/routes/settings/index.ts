@@ -630,7 +630,23 @@ settingsRoutes.get('/overseerr', (_req, res) => {
   res.status(200).json(settings.overseerr);
 });
 
-settingsRoutes.post('/overseerr', async (req, res) => {
+settingsRoutes.post('/overseerr', async (req, res, next) => {
+  const { urlBase } = req.body;
+
+  if (
+    urlBase !== undefined &&
+    (typeof urlBase !== 'string' ||
+      !urlBase.startsWith('/') ||
+      urlBase.endsWith('/') ||
+      /\s$/.test(urlBase))
+  ) {
+    return next({
+      status: 400,
+      message:
+        'URL Base must have a leading slash and no trailing slash or whitespace.',
+    });
+  }
+
   const settings = getSettings();
 
   Object.assign(settings.overseerr, req.body);

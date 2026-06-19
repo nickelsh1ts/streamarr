@@ -18,6 +18,13 @@ interface ProxyAffectingSettings {
   bazarr: ServiceEntry;
   tdarr: { hostname?: string; enabled?: boolean };
   tautulli: ServiceEntry;
+  overseerr: {
+    enabled?: boolean;
+    hostname?: string;
+    port?: number;
+    useSsl?: boolean;
+    urlBase?: string;
+  };
   network: { trustProxy: boolean; csrfProtection: boolean };
 }
 
@@ -73,6 +80,13 @@ class RestartManager {
       tautulli: {
         hostname: settings.tautulli.hostname,
         urlBase: settings.tautulli.urlBase,
+      },
+      overseerr: {
+        enabled: settings.overseerr.enabled,
+        hostname: settings.overseerr.hostname,
+        port: settings.overseerr.port,
+        useSsl: settings.overseerr.useSsl,
+        urlBase: settings.overseerr.urlBase,
       },
       network: {
         trustProxy: settings.network.trustProxy,
@@ -137,6 +151,16 @@ class RestartManager {
       settings.tautulli.urlBase !== this.snapshot.tautulli.urlBase
     ) {
       changed.push('Tautulli');
+    }
+
+    if (
+      settings.overseerr.enabled !== this.snapshot.overseerr.enabled ||
+      settings.overseerr.hostname !== this.snapshot.overseerr.hostname ||
+      settings.overseerr.port !== this.snapshot.overseerr.port ||
+      settings.overseerr.useSsl !== this.snapshot.overseerr.useSsl ||
+      settings.overseerr.urlBase !== this.snapshot.overseerr.urlBase
+    ) {
+      changed.push('Seerr');
     }
 
     if (settings.network.trustProxy !== this.snapshot.network.trustProxy) {
