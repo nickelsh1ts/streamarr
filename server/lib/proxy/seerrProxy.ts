@@ -74,8 +74,8 @@ function buildSeerrThemeCss(theme: Theme): string {
   const primaryChannels = hexToRgb(
     parseColorToHex(theme.primary) ?? theme.primary
   );
-  const neutralChannels = hexToRgb(
-    parseColorToHex(theme.neutral) ?? theme.neutral
+  const base300Channels = hexToRgb(
+    parseColorToHex(theme['base-300']) ?? theme['base-300']
   );
 
   const vars: Record<string, string> = {
@@ -83,7 +83,7 @@ function buildSeerrThemeCss(theme: Theme): string {
     '--accent-color': primaryChannels,
     '--color-brand-accent': theme.secondary,
     '--bs-primary': theme.primary,
-    '--color-background-accent-focus': theme.secondary,
+    '--color-background-accent-focus': theme.primary,
     '--color-text-accent': theme.secondary,
     '--main-bg-color': theme['base-300'],
     '--modal-bg-color': theme['base-100'],
@@ -96,7 +96,7 @@ function buildSeerrThemeCss(theme: Theme): string {
     '--button-color-hover': theme.secondary,
     '--plex-poster-unwatched': theme['base-content'],
     '--transparency-light-15': `rgba(${primaryChannels}, 0.15)`,
-    '--overseerr-gradient': `linear-gradient(180deg, rgba(${primaryChannels}, 0.47) 0%, rgba(${neutralChannels}, 1) 100%)`,
+    '--overseerr-gradient': `linear-gradient(180deg, rgba(${primaryChannels}, 0.47) 0%, rgba(${base300Channels}, 1) 100%)`,
     '--label-text-color': theme['base-content'],
     '--tw-ring-color': theme.primary,
   };
