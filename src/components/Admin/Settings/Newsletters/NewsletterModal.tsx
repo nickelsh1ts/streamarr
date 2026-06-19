@@ -581,7 +581,7 @@ const NewsletterModal = ({
                     id="description"
                     name="description"
                     rows={2}
-                    className="input input-sm input-primary h-auto w-full rounded-md py-2"
+                    className="textarea textarea-sm textarea-primary h-auto min-h-0 w-full rounded-md py-2"
                   />
                   <p className="text-neutral mt-1 text-left text-sm">
                     <FormattedMessage
