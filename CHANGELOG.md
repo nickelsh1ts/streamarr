@@ -1,3 +1,13 @@
+## [1.10.0](https://github.com/nickelsh1ts/streamarr/compare/v1.9.1...v1.10.0) (2026-06-19)
+
+### ✨ Features
+
+* **seerr:** proxy seerr in-process at a same-origin subpath ([#442](https://github.com/nickelsh1ts/streamarr/issues/442)) ([2c75a06](https://github.com/nickelsh1ts/streamarr/commit/2c75a06b2098bd8b5ed6a3175fbdffd46d66651f))
+
+### 🐛 Bug Fixes
+
+* **seerr:** update css styling to background div ([#441](https://github.com/nickelsh1ts/streamarr/issues/441)) ([8bd40c7](https://github.com/nickelsh1ts/streamarr/commit/8bd40c7392a81700689470a86d89051e57c7aa62))
+
 ## [1.9.1](https://github.com/nickelsh1ts/streamarr/compare/v1.9.0...v1.9.1) (2026-06-17)
 
 ### 🐛 Bug Fixes
