@@ -139,18 +139,40 @@ function buildSeerrShim(base: string, nonce: string): string {
       return f.call(this,input,init);
     };
   }
+  // Prefix a root-relative path with BASE. No-op for relative, absolute,
+  // protocol-relative, or already-prefixed URLs. Shared by the history and
+  // window.open wraps below (unlike pre(), which only prefixes API/asset paths).
+  function full(u){
+    if(typeof u!=='string'||!u)return u;
+    if(u.charAt(0)!=='/'||u.charAt(1)==='/')return u;
+    if(u===BASE||u.indexOf(BASE+'/')===0)return u;
+    return BASE+u;
+  }
   // Keep the iframe address bar under BASE so reloads + Streamarr nav-sync work.
   // Seerr's router stores its own (unprefixed) "as" in history.state, so
   // back/forward still resolve correctly off state, not the URL.
   function wrapHistory(fn){
     return function(state,title,url){
       var a=[state,title,url];
-      try{if(typeof url==='string'&&url.charAt(0)==='/'&&url.charAt(1)!=='/'&&url!==BASE&&url.indexOf(BASE+'/')!==0)a[2]=BASE+url;}catch(e){}
+      try{a[2]=full(url);}catch(e){}
       return fn.apply(this,a);
     };
   }
   history.pushState=wrapHistory(history.pushState);
   history.replaceState=wrapHistory(history.replaceState);
+  // Seerr's Plex login opens a popup via window.open('/<loading route>') and
+  // then points it at plex.tv. That path is root-relative, so without a prefix
+  // the popup lands on the Streamarr origin root (a 404) before the redirect to
+  // Plex. Prefix it with BASE; the absolute plex.tv URL set afterwards via
+  // popup.location is left untouched.
+  if(window.open){
+    var wopen=window.open;
+    window.open=function(url){
+      var a=[].slice.call(arguments);
+      try{if(typeof url==='string')a[0]=full(url);}catch(e){}
+      return wopen.apply(this,a);
+    };
+  }
   // Active links + asPath-based navigation: Seerr's sidebar keys off
   // router.pathname (route table -> always unprefixed/correct), but several
   // hooks read router.asPath (useSearchInput stores it then router.push()es it
