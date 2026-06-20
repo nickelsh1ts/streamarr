@@ -87,7 +87,7 @@ const Watch = ({ children, ...props }) => {
       // If parent location changed (sidebar/menu navigation or Plex parent navigation)
       if (parentUrl !== lastParentUrl) {
         lastParentUrl = parentUrl;
-        setIframeUrl(parentUrl.replace('/watch', ''));
+        setIframeUrl(parentUrl.replace(/^\/watch(?=\/|$|[?#])/, ''));
         // Don't update parent location here!
       }
       // If iframe location changed (user navigated inside iframe)
@@ -103,7 +103,7 @@ const Watch = ({ children, ...props }) => {
             '',
             '/watch' + iframeUrlNow
           );
-          setIframeUrl(iframeUrlNow.replace('/watch', ''));
+          setIframeUrl(iframeUrlNow);
           lastParentUrl = '/watch' + iframeUrlNow;
         }
       }

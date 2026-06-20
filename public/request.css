@@ -20,7 +20,7 @@
   --color-text-on-accent: inherit;
   --zIndex-overlay: 1009;
   --transparency-light-15: inherit;
-  --overseerr-gradient: inherit;
+  --overseerr-gradient: linear-gradient(180deg, rgba(var(--accent-color), 0.47) 0%, var(--color-base-300) 100%) !important;
   --label-text-color: inherit;
   --tw-ring-color: inherit;
 }
@@ -45,7 +45,7 @@
   --color-text-on-accent: #fff;
   --zIndex-overlay: 1009;
   --transparency-light-15: rgba(127, 17, 224, .15);
-  --overseerr-gradient: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --overseerr-gradient: linear-gradient(180deg, rgba(var(--accent-color), 0.47) 0%, var(--color-base-300) 100%) !important;
   --label-text-color: #fff;
   --tw-ring-color: var(--color-primary)!important;
 }
@@ -167,4 +167,27 @@ body {
   background-color: #272829b3;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
+}
+.bg-gray-800\/50 {
+  background-color: rgba(var(--accent-color), 0.37) !important;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+div[style*="linear-gradient(rgba(31, 41, 55"] {
+  background-image: var(--overseerr-gradient) !important;
+}
+.bg-indigo-500\/80:not(:hover) {
+    background-color: rgba(var(--accent-color), 0.8) !important;
+}
+.hover\:bg-indigo-600:hover {
+    background-color: rgb(var(--accent-color)) !important;
+}
+.bg-indigo-600\/80:not(:hover) {
+    background-color: rgba(var(--accent-color), 0.8) !important;
+}
+.focus\:border-indigo-700:focus {
+    border-color: rgb(var(--accent-color)) !important;
+}
+.hover\:border-indigo-500:hover {
+    border-color: rgb(var(--accent-color)) !important;
 }

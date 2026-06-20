@@ -21,8 +21,8 @@ div(style='display: block; background-color: #1f1f1f; padding: 2.5rem 0;')
     tr
       td(style="text-align: center;")
         if showChrome
-          a(href=baseUrl + '/' style='margin: 0 1rem;')
-            img(src=baseUrl + logoUrl style='width: 26rem; max-width: 100%; image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;')
+          a(href=baseUrl + '/' style='display: block; margin: 0 1rem;')
+            img(src=baseUrl + logoUrl alt=applicationTitle style='display: block; margin: 0 auto; width: 100%; min-width: 0; max-width: 26rem; height: auto; image-rendering: crisp-edges; image-rendering: -webkit-optimize-contrast;')
         else
           div(style='margin: 0 1rem 2.5rem; font-size: 3em; font-weight: 700;')
             | #{applicationTitle}
