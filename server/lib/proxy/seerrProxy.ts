@@ -117,10 +117,18 @@ function buildSeerrShim(base: string, nonce: string): string {
   const js = `(function(){
   var BASE=${JSON.stringify(base)};
   function isApp(u){return /^\\/(?:api\\/v1|_next|images|imageproxy|avatarproxy)(?:\\/|$)/.test(u);}
+  // True when u already sits under BASE: BASE itself, or BASE followed by a path
+  // boundary ('/', '?', '#'). Shared by pre(), full(), and fixAsPath() so the
+  // "already prefixed" test stays in one place.
+  function prefixed(u){
+    if(typeof u!=='string'||u.indexOf(BASE)!==0)return false;
+    var c=u.charAt(BASE.length);
+    return c===''||c==='/'||c==='?'||c==='#';
+  }
   function pre(u){
     if(typeof u!=='string'||!u)return u;
     if(u.charAt(0)!=='/'||u.charAt(1)==='/')return u;          // skip relative + protocol-relative
-    if(u===BASE||u.indexOf(BASE+'/')===0)return u;             // already prefixed
+    if(prefixed(u))return u;                                   // already prefixed
     return isApp(u)?BASE+u:u;
   }
   // axios uses XHR in the browser -> covers every Seerr API call (GET/POST/...)
@@ -145,7 +153,7 @@ function buildSeerrShim(base: string, nonce: string): string {
   function full(u){
     if(typeof u!=='string'||!u)return u;
     if(u.charAt(0)!=='/'||u.charAt(1)==='/')return u;
-    if(u===BASE||u.indexOf(BASE+'/')===0)return u;
+    if(prefixed(u))return u;
     return BASE+u;
   }
   // Keep the iframe address bar under BASE so reloads + Streamarr nav-sync work.
@@ -184,8 +192,10 @@ function buildSeerrShim(base: string, nonce: string): string {
   function fixAsPath(){
     try{
       var r=window.next&&window.next.router;
-      if(r&&typeof r.asPath==='string'&&(r.asPath===BASE||r.asPath.indexOf(BASE+'/')===0)){
-        r.replace(r.asPath.slice(BASE.length)||'/',undefined,{shallow:true}).catch(function(){});
+      if(r&&typeof r.asPath==='string'&&prefixed(r.asPath)){
+        var rest=r.asPath.slice(BASE.length);
+        if(rest.charAt(0)!=='/')rest='/'+rest;
+        r.replace(rest,undefined,{shallow:true}).catch(function(){});
         return true;
       }
     }catch(e){}
