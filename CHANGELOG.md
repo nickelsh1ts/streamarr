@@ -1,3 +1,14 @@
+## [1.10.1](https://github.com/nickelsh1ts/streamarr/compare/v1.10.0...v1.10.1) (2026-06-20)
+
+### 🐛 Bug Fixes
+
+* **newsletters:** prevent email content overflowing preview on mobile ([#457](https://github.com/nickelsh1ts/streamarr/issues/457)) ([3f03c15](https://github.com/nickelsh1ts/streamarr/commit/3f03c159f17a32cd3b3be30b02164515f0990888))
+* **newsletters:** update textarea class for NewsletterModal ([#452](https://github.com/nickelsh1ts/streamarr/issues/452)) ([06b2cbd](https://github.com/nickelsh1ts/streamarr/commit/06b2cbdb37c4dfb844ea621df05b5f976688359a))
+* **seerr:** prefix the login popup's window.open under the proxy base ([#454](https://github.com/nickelsh1ts/streamarr/issues/454)) ([17b7c04](https://github.com/nickelsh1ts/streamarr/commit/17b7c0450f515aa42da86afe0886e6e288a67dd2))
+* **seerr:** treat base+query/hash as already-prefixed in proxy shim ([#459](https://github.com/nickelsh1ts/streamarr/issues/459)) ([b4b0906](https://github.com/nickelsh1ts/streamarr/commit/b4b0906cbeeefaa6dc18f67806a6c19aac5bd811))
+* **theme:** update gradient colors and improve variable usage in DynamicFrame ([#455](https://github.com/nickelsh1ts/streamarr/issues/455)) ([f4d7c2c](https://github.com/nickelsh1ts/streamarr/commit/f4d7c2c2b29cee3f7446de4a39028cb68635529c))
+* **watch:** strip only the leading /watch prefix from iframe URL ([#453](https://github.com/nickelsh1ts/streamarr/issues/453)) ([f5d1d0d](https://github.com/nickelsh1ts/streamarr/commit/f5d1d0da8eb50d6c0a63d2631d07d38f4a0a0314))
+
 ## [1.10.0](https://github.com/nickelsh1ts/streamarr/compare/v1.9.1...v1.10.0) (2026-06-19)
 
 ### ✨ Features
