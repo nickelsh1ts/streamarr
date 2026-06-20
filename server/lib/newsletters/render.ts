@@ -145,13 +145,13 @@ const buildPosterHtml = (
   if (item.posterPath) {
     return `<img src="${resourceBase}/imageproxy/t/p/w300${item.posterPath}" alt="${escapeHtml(
       item.title
-    )}" width="${POSTER_WIDTH}" height="${POSTER_HEIGHT}" style="display: block; margin: 0 auto; border-radius: 6px; width: ${POSTER_WIDTH}px; height: ${POSTER_HEIGHT}px; object-fit: cover;" />`;
+    )}" width="${POSTER_WIDTH}" height="${POSTER_HEIGHT}" style="display: block; margin: 0 auto; border-radius: 6px; width: 100%; min-width: 0; max-width: ${POSTER_WIDTH}px; height: auto; aspect-ratio: ${POSTER_WIDTH} / ${POSTER_HEIGHT}; object-fit: cover;" />`;
   }
 
   // No TMDB poster (e.g. music): hosted placeholder with a centered media icon.
   return `<img src="${resourceBase}/img/newsletter/poster-placeholder-${item.mediaType}.png" alt="${escapeHtml(
     item.title
-  )}" width="${POSTER_WIDTH}" height="${POSTER_HEIGHT}" style="display: block; margin: 0 auto; border-radius: 6px; width: ${POSTER_WIDTH}px; height: ${POSTER_HEIGHT}px;" />`;
+  )}" width="${POSTER_WIDTH}" height="${POSTER_HEIGHT}" style="display: block; margin: 0 auto; border-radius: 6px; width: 100%; min-width: 0; max-width: ${POSTER_WIDTH}px; height: auto; aspect-ratio: ${POSTER_WIDTH} / ${POSTER_HEIGHT};" />`;
 };
 
 const buildMediaCellHtml = (
@@ -213,7 +213,7 @@ const buildMediaGridHtml = (
       )}</h2>`
     : '';
 
-  return `${headingHtml}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">${rows.join(
+  return `${headingHtml}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; table-layout: fixed;">${rows.join(
     ''
   )}</table>`;
 };
