@@ -1775,9 +1775,6 @@
   "help.downloadPlex.step2": {
     "defaultMessage": "Si hay un enlace de descarga disponible, selecciónalo y sigue las indicaciones"
   },
-  "help.downloadPlex.step3": {
-    "defaultMessage": "Instala la aplicación"
-  },
   "help.downloadPlex.subheading": {
     "defaultMessage": "Aunque la aplicación {plexLogo} no es necesaria para usar {appTitle}, en ciertos dispositivos como smart TVs o consolas de juegos puede ofrecer una mejor experiencia. Algunos smart TVs y dispositivos multimedia ya vienen con la aplicación {plexLogo2} instalada, o se puede instalar fácilmente a través de sus tiendas de aplicaciones integradas."
   },
@@ -4112,9 +4109,6 @@
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
   },
-  "servicesSettings.overseerr.reverseProxyExample": {
-    "defaultMessage": "Ejemplo de Proxy Inverso Nginx"
-  },
   "servicesSettings.overseerr.title": {
     "defaultMessage": "Configuración de Seerr"
   },
@@ -4192,9 +4186,6 @@
   },
   "settings.allowLiveTv": {
     "defaultMessage": "Permitir Acceso a TV en Vivo"
-  },
-  "settings.crossOriginAccess": {
-    "defaultMessage": "Acceso de Origen Cruzado"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Habilitar Período de Prueba"
@@ -4421,20 +4412,8 @@
   "settings.onboarding.welcomeEnabledTip": {
     "defaultMessage": "Mostrar un carrusel de bienvenida a nuevos usuarios en su primer inicio de sesión."
   },
-  "settings.openOverseerr": {
-    "defaultMessage": "Abrir Seerr"
-  },
-  "settings.openOverseerrSettings": {
-    "defaultMessage": "Abrir Configuración de Seerr"
-  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Anular Límite Global"
-  },
-  "settings.overseerr.localhostDescription": {
-    "defaultMessage": "Seerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
-  },
-  "settings.overseerr.localhostDescriptionSettings": {
-    "defaultMessage": "La configuración de Seerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.permissions": {
     "defaultMessage": "Permisos"
@@ -4721,27 +4700,6 @@
   "system.health.title": {
     "defaultMessage": "Salud"
   },
-  "system.python.alertMessage": {
-    "defaultMessage": "El servicio de sincronización de Plex no está disponible. Las invitaciones y la sincronización de bibliotecas de Plex no están disponibles actualmente."
-  },
-  "system.python.alertTitle": {
-    "defaultMessage": "Servicio de Sincronización de Plex Caído"
-  },
-  "system.python.description": {
-    "defaultMessage": "Gestiona las invitaciones de Plex y la sincronización de bibliotecas."
-  },
-  "system.python.restart": {
-    "defaultMessage": "Reiniciar Servicio"
-  },
-  "system.python.restartFailed": {
-    "defaultMessage": "Error al reiniciar el servicio de sincronización de Plex"
-  },
-  "system.python.restartSuccess": {
-    "defaultMessage": "El servicio de sincronización de Plex se reinició exitosamente"
-  },
-  "system.python.title": {
-    "defaultMessage": "Servicio de Sincronización de Plex"
-  },
   "system.reconnecting": {
     "defaultMessage": "Reconectando…"
   },
@@ -4900,9 +4858,6 @@
   },
   "userPermissions.success": {
     "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
-  },
-  "userPermissions.title": {
-    "defaultMessage": "Editar Permisos de Usuario"
   },
   "userPermissions.viewInvites.description": {
     "defaultMessage": "Otorga permiso para ver invitaciones de otros usuarios."
@@ -5290,5 +5245,68 @@
   },
   "help.notifications.seerrWebhook": {
     "defaultMessage": "Webhook"
+  },
+  "notifications.fields.botAvatarUrl": {
+    "defaultMessage": "URL del avatar del bot"
+  },
+  "notifications.fields.botUsername": {
+    "defaultMessage": "Nombre de usuario del bot"
+  },
+  "notifications.fields.channelTag": {
+    "defaultMessage": "Etiqueta de canal"
+  },
+  "newsletters.bodyFormat": {
+    "defaultMessage": "Formato del cuerpo"
+  },
+  "newsletters.byPlexLabel": {
+    "defaultMessage": "Por etiqueta de Plex"
+  },
+  "newsletters.byServarrTag": {
+    "defaultMessage": "Por etiqueta de Radarr/Sonarr"
+  },
+  "newsletters.byTag": {
+    "defaultMessage": "Por etiqueta"
+  },
+  "newsletters.create": {
+    "defaultMessage": "Crear boletín"
+  },
+  "newsletters.createNewsletter": {
+    "defaultMessage": "Crear boletín"
+  },
+  "newsletters.cronSchedule": {
+    "defaultMessage": "Programación cron"
+  },
+  "newsletters.customRecipients": {
+    "defaultMessage": "Usuarios específicos"
+  },
+  "newsletters.deleteError": {
+    "defaultMessage": "No se pudo eliminar el boletín"
+  },
+  "newsletters.description": {
+    "defaultMessage": "Redacta, programa y envía boletines a tus usuarios."
+  },
+  "newsletters.descriptionLabel": {
+    "defaultMessage": "Descripción"
+  },
+  "newsletters.descriptionTip": {
+    "defaultMessage": "Se muestra a los usuarios, en sus ajustes de suscripción, debajo de este boletín."
+  },
+  "newsletters.editNewsletter": {
+    "defaultMessage": "Editar boletín"
+  },
+  "newsletters.empty": {
+    "defaultMessage": "Aún no hay boletines. Crea uno para comenzar."
+  },
+  "newsletters.failures": {
+    "defaultMessage": "Errores"
+  },
+  "newsletters.history": {
+    "defaultMessage": "Historial"
+  },
+  "newsletters.historyTitle": {
+    "defaultMessage": "Historial de boletines"
+  },
+  "newsletters.important": {
+    "defaultMessage": "Importante"
   }
 }
