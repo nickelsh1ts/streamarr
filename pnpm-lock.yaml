@@ -94,7 +94,7 @@ importers:
         version: 2.4.9(@types/react@19.2.17)(react@19.2.7)
       http-proxy-middleware:
         specifier: ^4.0.0
-        version: 4.1.0
+        version: 4.1.1
       ical:
         specifier: ^0.8.0
         version: 0.8.0
@@ -5306,8 +5306,8 @@ packages:
     resolution: {integrity: sha512-2NxoveTT58mjYT4n3RPTEfCZGLMbidoO8XEieXfpSYxu+PQJ1qpx4ypwH6N+uF9twBPIvRRgvkvW5HUTYWENig==}
     engines: {node: '>= 20'}
 
-  http-proxy-middleware@4.1.0:
-    resolution: {integrity: sha512-XUOAjKncPZjsrgDTTem+CUED6A+piUAKTOwBM8g1gAublBX/GdxTHP8mO+og1EW1evYP8wd0G2c111tExwo/jw==}
+  http-proxy-middleware@4.1.1:
+    resolution: {integrity: sha512-KX5ZofGXLFXqFAkQoOWZ+rTtaLTut7m0gyL+QzJrdejtIZ+F4bPPDoe7reISg2+v0CAz5OfVwEJEhty7X+e57g==}
     engines: {node: ^22.15.0 || ^24.0.0 || >=26.0.0}
 
   http-signature@1.4.0:
@@ -14370,7 +14370,7 @@ snapshots:
       - kerberos
       - supports-color
 
-  http-proxy-middleware@4.1.0:
+  http-proxy-middleware@4.1.1:
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       httpxy: 0.5.3
