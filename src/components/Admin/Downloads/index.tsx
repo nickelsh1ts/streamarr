@@ -750,7 +750,7 @@ const AdminDownloads = () => {
                         hasValidPriority && (
                           <>
                             <select
-                              className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
+                              className="select select-xs select-primary w-auto min-w-32 sm:hidden"
                               disabled={isBulkActing}
                               defaultValue=""
                               onChange={(e) => {
@@ -861,7 +861,7 @@ const AdminDownloads = () => {
                     })()}
                     <>
                       <select
-                        className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
+                        className="select select-xs select-primary w-auto min-w-32 sm:hidden"
                         disabled={isBulkActing}
                         defaultValue=""
                         onChange={(e) => {

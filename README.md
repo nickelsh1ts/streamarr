@@ -24,6 +24,7 @@ Streamarr provides a unified dashboard for managing your Plex server alongside y
 - **\*Arr Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, and more
 - **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring
 - **Flexible Notifications** — Email (with PGP encryption), Web Push, In-App, discord, gotify, ntfy, pushbullet, pushover, slack, telegram and webhook notifications
+- **Email Newsletters** — Customizable email newsletters and communications
 - **Internal Service Proxy** — Securely access embedded \*Arr services through Streamarr
 - **Granular Permissions** — 15+ permission types for fine-grained access control
 - **Trial Periods** — Optionally restrict new users during a configurable trial period
@@ -39,7 +40,6 @@ Streamarr provides a unified dashboard for managing your Plex server alongside y
 ## Planned Features
 
 - **Jellyfin Support** — Dual-backend support for both Plex and Jellyfin users
-- **Email Newsletters** — Customizable email newsletters and communications
 - **Additional Services** — Cleanuparr, Nexroll and Kometa integrations
 - **PostgreSQL Support** — Option to use PostgreSQL instead of SQLite
 

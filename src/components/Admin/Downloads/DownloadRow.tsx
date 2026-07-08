@@ -366,7 +366,7 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
             {torrent.priority !== undefined && torrent.priority > 0 && (
               <>
                 <select
-                  className="select select-xs select-primary block sm:hidden"
+                  className="select select-xs select-primary w-auto min-w-32 sm:hidden"
                   disabled={isActing || isSelected}
                   defaultValue=""
                   onChange={(e) => {
