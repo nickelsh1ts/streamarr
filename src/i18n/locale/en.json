@@ -956,6 +956,9 @@
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
+  "downloads.clearSelection": {
+    "defaultMessage": "Clear"
+  },
   "downloads.client": {
     "defaultMessage": "Client"
   },
@@ -1118,8 +1121,20 @@
   "downloads.savePathUpdated": {
     "defaultMessage": "Save path updated successfully"
   },
+  "downloads.selectAllFiles": {
+    "defaultMessage": "Select all files"
+  },
+  "downloads.selectFile": {
+    "defaultMessage": "Select file {name}"
+  },
+  "downloads.selectFolder": {
+    "defaultMessage": "Select folder {name}"
+  },
   "downloads.selected": {
     "defaultMessage": "selected"
+  },
+  "downloads.setPriorityForSelected": {
+    "defaultMessage": "Set priority for selected files"
   },
   "downloads.staleData": {
     "defaultMessage": "The data for this torrent may be outdated because the download client is offline or not responding."
@@ -1171,6 +1186,9 @@
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
+  },
+  "downloads.toggleFolder": {
+    "defaultMessage": "Toggle folder {name}"
   },
   "downloads.torrentDetails": {
     "defaultMessage": "Torrent Details"

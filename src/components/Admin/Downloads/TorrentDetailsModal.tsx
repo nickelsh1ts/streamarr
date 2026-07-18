@@ -722,7 +722,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                         setShouldLoadFiles(true);
                       }
                     }}
-                    className={`bg-base-200 hover:text-primary hover:bg-base-300 mb-1 flex w-full items-center justify-between text-lg font-semibold transition-all ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} px-2 py-1`}
+                    className={`bg-base-200 hover:text-primary hover:bg-base-300 mb-1 flex w-full items-center justify-between text-lg font-semibold transition-all hover:cursor-pointer ${openIndexes.includes(0) ? 'rounded-t-xl' : 'rounded-xl'} px-2 py-1`}
                   >
                     <FormattedMessage
                       id="downloads.content"
@@ -741,6 +741,7 @@ const TorrentDetailsModal: React.FC<TorrentDetailsModalProps> = ({
                       </div>
                     ) : files.length > 0 ? (
                       <TorrentFileList
+                        key={torrent.hash}
                         files={files}
                         clientType={torrent.clientType}
                         onSetPriority={handleSetFilePriority}
