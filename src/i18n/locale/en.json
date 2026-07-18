@@ -293,6 +293,9 @@
   "common.change": {
     "defaultMessage": "Change"
   },
+  "common.cleaning": {
+    "defaultMessage": "Cleaning"
+  },
   "common.close": {
     "defaultMessage": "Close"
   },
@@ -4843,6 +4846,18 @@
   },
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Bazarr Settings"
+  },
+  "servicesSettings.cleanuparr.alertDescription": {
+    "defaultMessage": "Cleanuparr must be started with its BASE_PATH environment variable set to the same value as the URL Base below (e.g. /cleanuparr). Without it, Cleanuparr serves its assets from the root and they will fail to load inside Streamarr. Restart Cleanuparr after changing BASE_PATH."
+  },
+  "servicesSettings.cleanuparr.alertTitle": {
+    "defaultMessage": "Set a matching base path in Cleanuparr"
+  },
+  "servicesSettings.cleanuparr.description": {
+    "defaultMessage": "Optionally configure the settings for your Cleanuparr server. Cleanuparr must be configured with a matching base path."
+  },
+  "servicesSettings.cleanuparr.title": {
+    "defaultMessage": "Cleanuparr Settings"
   },
   "servicesSettings.disableAuth": {
     "defaultMessage": "Authentication"

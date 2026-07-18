@@ -16,6 +16,7 @@ interface ProxyAffectingSettings {
   lidarr: ServiceEntry;
   prowlarr: ServiceEntry;
   bazarr: ServiceEntry;
+  cleanuparr: ServiceEntry;
   tdarr: { hostname?: string; enabled?: boolean };
   tautulli: ServiceEntry;
   overseerr: {
@@ -73,6 +74,7 @@ class RestartManager {
       lidarr: this.pickService(settings.lidarr),
       prowlarr: this.pickService(settings.prowlarr),
       bazarr: this.pickService(settings.bazarr),
+      cleanuparr: this.pickService(settings.cleanuparr),
       tdarr: {
         hostname: settings.tdarr.hostname,
         enabled: settings.tdarr.enabled,
@@ -137,6 +139,10 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.bazarr, this.snapshot.bazarr)) {
       changed.push('Bazarr');
+    }
+
+    if (this.hasServiceChanged(settings.cleanuparr, this.snapshot.cleanuparr)) {
+      changed.push('Cleanuparr');
     }
 
     if (

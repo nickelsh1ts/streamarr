@@ -25,6 +25,7 @@ const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/indexers/,
   /^\/admin\/srt/,
   /^\/admin\/transcode/,
+  /^\/admin\/cleaning/,
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -130,6 +131,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         route: '/admin/transcode',
         regex: /^\/admin\/transcode/,
         hidden: !services?.some((d) => d.id === 'tdarr' && d.enabled),
+      },
+      {
+        text: intl.formatMessage({
+          id: 'common.cleaning',
+          defaultMessage: 'Cleaning',
+        }),
+        route: '/admin/cleaning',
+        regex: /^\/admin\/cleaning/,
+        hidden: !services?.some(
+          (d) => d.id === 'cleanuparr' && d.enabled && d.urlBase
+        ),
       },
       {
         text: intl.formatMessage({

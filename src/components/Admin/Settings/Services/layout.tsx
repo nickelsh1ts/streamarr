@@ -2,8 +2,6 @@
 import AdminTabs from '@app/components/Common/AdminTabs';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-//TODO: Add support for Cleanuparr
-
 const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
   const intl = useIntl();
 
@@ -42,6 +40,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       text: 'Tdarr',
       route: '/admin/settings/services/tdarr',
       regex: /^\/admin\/settings\/services\/tdarr\/?/,
+    },
+    {
+      text: 'Cleanuparr',
+      route: '/admin/settings/services/cleanuparr',
+      regex: /^\/admin\/settings\/services\/cleanuparr\/?/,
     },
     {
       text: 'Tautulli',
