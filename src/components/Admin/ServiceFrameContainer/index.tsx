@@ -76,6 +76,8 @@ const ServiceFrameContainer = ({
       return '/admin/settings/services/prowlarr';
     if (pathname?.startsWith('/admin/srt'))
       return '/admin/settings/services/bazarr';
+    if (pathname?.startsWith('/admin/cleaning'))
+      return '/admin/settings/services/cleanuparr';
     if (pathname?.startsWith('/admin/transcode'))
       return '/admin/settings/services/tdarr';
     return '/admin/settings/services';
@@ -87,6 +89,7 @@ const ServiceFrameContainer = ({
     if (pathname?.startsWith('/admin/music')) return 'Lidarr';
     if (pathname?.startsWith('/admin/indexers')) return 'Prowlarr';
     if (pathname?.startsWith('/admin/srt')) return 'Bazarr';
+    if (pathname?.startsWith('/admin/cleaning')) return 'Cleanuparr';
     if (pathname?.startsWith('/admin/transcode')) return 'Tdarr';
     return 'Service';
   };

@@ -34,6 +34,7 @@ export type ServiceType =
   | 'lidarr'
   | 'bazarr'
   | 'prowlarr'
+  | 'cleanuparr'
   | 'other';
 
 /**
@@ -110,6 +111,7 @@ export function validateBaseUrl(
     { settings: settings.lidarr, name: 'Lidarr', type: 'lidarr' },
     { settings: settings.bazarr, name: 'Bazarr', type: 'bazarr' },
     { settings: settings.prowlarr, name: 'Prowlarr', type: 'prowlarr' },
+    { settings: settings.cleanuparr, name: 'Cleanuparr', type: 'cleanuparr' },
   ];
 
   for (const svc of singleServices) {

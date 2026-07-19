@@ -3385,6 +3385,82 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TestConnectionResponse'
+  /settings/cleanuparr:
+    get:
+      summary: Get cleanuparr settings
+      description: Retrieves current cleanuparr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update cleanuparr settings
+      description: Updates cleanuparr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+        '400':
+          description: Invalid URL Base (bad format, reserved path, or already in use)
+  /settings/cleanuparr/test:
+    post:
+      summary: Test Cleanuparr configuration
+      description: Tests if the Cleanuparr configuration is valid by calling its key-protected stats endpoint. Returns the URL base on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 11011
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Cleanuparr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Cleanuparr
   /settings/tdarr:
     get:
       summary: Get tdarr settings

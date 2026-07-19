@@ -1,5 +1,9 @@
 import { Permission } from '@server/lib/permissions';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
+import {
+  createCleanuparrProxy,
+  registerCleanuparrWebSocketHandler,
+} from '@server/lib/proxy/cleanuparrProxy';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import {
   createSeerrAssetProxy,
@@ -49,6 +53,11 @@ export function getActiveProxyPaths(): string[] {
     if (service.hostname && service.urlBase) {
       paths.push(service.urlBase);
     }
+  }
+
+  // Cleanuparr (base-URL aware, SignalR)
+  if (settings.cleanuparr.hostname && settings.cleanuparr.urlBase) {
+    paths.push(settings.cleanuparr.urlBase);
   }
 
   // Tdarr (hardcoded paths - no custom base URL support)
@@ -186,6 +195,43 @@ export function createServiceProxyRouter(
       }),
       'Bazarr',
       true
+    );
+  }
+
+  // Register Cleanuparr proxy (requires ADMIN, base-URL aware, SignalR WS)
+  if (
+    settings.cleanuparr.hostname &&
+    settings.cleanuparr.urlBase &&
+    settings.cleanuparr.apiKey
+  ) {
+    const cleanuparrProxy = createCleanuparrProxy({
+      name: 'Cleanuparr',
+      hostname: settings.cleanuparr.hostname,
+      port: settings.cleanuparr.port ?? 11011,
+      useSsl: settings.cleanuparr.useSsl ?? false,
+      baseUrl: settings.cleanuparr.urlBase,
+      apiKey: settings.cleanuparr.apiKey,
+    });
+    const cleanuparrBase = settings.cleanuparr.urlBase;
+    router.get(cleanuparrBase, (req, res, next) => {
+      const [pathOnly, query] = req.originalUrl.split('?');
+      if (pathOnly === cleanuparrBase) {
+        res.redirect(308, `${cleanuparrBase}/${query ? `?${query}` : ''}`);
+        return;
+      }
+      next();
+    });
+    registerProxy(
+      settings.cleanuparr.urlBase,
+      cleanuparrProxy,
+      'Cleanuparr',
+      true
+    );
+    registerCleanuparrWebSocketHandler(
+      dispatcher,
+      sessionMiddleware,
+      cleanuparrProxy,
+      settings.cleanuparr.urlBase
     );
   }
 

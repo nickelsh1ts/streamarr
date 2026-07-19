@@ -12,6 +12,7 @@ export type ServiceType =
   | 'lidarr'
   | 'prowlarr'
   | 'bazarr'
+  | 'cleanuparr'
   | 'tdarr';
 
 export interface ServiceFrameConfig {
@@ -62,6 +63,7 @@ function parseRoute(pathname: string): RouteInfo {
     { pattern: '/admin/music', type: 'lidarr' as const },
     { pattern: '/admin/indexers', type: 'prowlarr' as const },
     { pattern: '/admin/srt', type: 'bazarr' as const },
+    { pattern: '/admin/cleaning', type: 'cleanuparr' as const },
     { pattern: '/admin/transcode', type: 'tdarr' as const },
   ];
 
@@ -154,6 +156,12 @@ function getActiveFrame(
       title: 'subtitles',
       serviceName: 'Bazarr',
       settingsPath: '/admin/settings/services/bazarr',
+    },
+    cleanuparr: {
+      newBase: '/admin/cleaning',
+      title: 'cleaning',
+      serviceName: 'Cleanuparr',
+      settingsPath: '/admin/settings/services/cleanuparr',
     },
   };
 
