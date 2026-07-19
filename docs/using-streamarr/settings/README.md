@@ -234,6 +234,20 @@ When enabled, users can sign up for an account using an [invite code](../invites
 
 This setting is **disabled** by default.
 
+### Plex JWT Authentication (Experimental)
+
+When enabled, Streamarr provisions a short-lived Plex **JWT** (JSON Web Token) for each user alongside their existing Plex token when they sign in, and prefers the JWT for calls to Plex's account service (`plex.tv`). JWTs are valid for 7 days and are refreshed automatically in the background.
+
+This is a security improvement: JWTs are short-lived and independently revocable, unlike the long-lived Plex tokens they sit beside.
+
+{% hint style="info" %}
+This setting is **experimental** and **disabled** by default. It is safe to enable or disable at any time — existing sign-ins are unaffected, and provisioning is non-fatal, so a user always continues to work on their existing Plex token if a JWT cannot be issued.
+{% endhint %}
+
+{% hint style="warning" %}
+JWTs are currently used **only** for `plex.tv` account operations. Your Plex Media Server does not yet validate JWTs, so all communication with the media server itself — library scanning, image proxying, and the embedded Plex Web player — continues to use the legacy Plex token. Enabling this setting does not change media-server behaviour.
+{% endhint %}
+
 ### Default Permissions
 
 Select the permissions assigned to new users by default upon account creation.
