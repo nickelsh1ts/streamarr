@@ -92,8 +92,7 @@ const TutorialWizard: React.FC = () => {
 
   const steps = useMemo(() => tutorialSteps ?? [], [tutorialSteps]);
   const currentStep = steps[currentStepIndex] as
-    | (typeof steps)[number]
-    | undefined;
+    (typeof steps)[number] | undefined;
   const canDismiss =
     (allowSkipTutorial ?? true) || isPreviewMode || canAlwaysSkip;
 

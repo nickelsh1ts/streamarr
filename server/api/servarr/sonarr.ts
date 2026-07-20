@@ -353,12 +353,10 @@ class SonarrAPI extends ServarrBase<{
       return newSeasons;
     }
 
-    const newSeasons = seasons.map(
-      (seasonNumber): SonarrSeason => ({
-        seasonNumber,
-        monitored: true,
-      })
-    );
+    const newSeasons = seasons.map((seasonNumber): SonarrSeason => ({
+      seasonNumber,
+      monitored: true,
+    }));
 
     return newSeasons;
   }

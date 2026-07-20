@@ -386,9 +386,7 @@ export function normalizeTorrent(
 ): NormalizedDownloadItem {
   // Extract raw data based on client type for proper type casting
   let rawData:
-    | QBittorrentRawTorrent
-    | DelugeRawTorrent
-    | TransmissionRawTorrent;
+    QBittorrentRawTorrent | DelugeRawTorrent | TransmissionRawTorrent;
 
   if (clientSettings.client === 'qbittorrent') {
     rawData = (torrent.raw || {}) as QBittorrentRawTorrent;

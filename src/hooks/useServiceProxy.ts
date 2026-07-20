@@ -2,10 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export type ServiceProxyErrorType =
-  | 'not_found'
-  | 'unavailable'
-  | 'timeout'
-  | 'unknown';
+  'not_found' | 'unavailable' | 'timeout' | 'unknown';
 
 export interface ServiceProxyError {
   type: ServiceProxyErrorType;
