@@ -14,11 +14,7 @@ import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
 export type NewsletterMediaType =
-  | 'movie'
-  | 'show'
-  | 'artist'
-  | 'photo'
-  | 'other';
+  'movie' | 'show' | 'artist' | 'photo' | 'other';
 
 export interface NewsletterMediaItem {
   title: string;

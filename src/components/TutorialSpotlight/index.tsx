@@ -60,8 +60,7 @@ const TutorialSpotlight: React.FC = () => {
   const [iframeReady, setIframeReady] = useState(false);
 
   const currentStep = tutorialSteps[currentStepIndex] as
-    | TutorialStepResponse
-    | undefined;
+    TutorialStepResponse | undefined;
   const canDismiss =
     (allowSkipTutorial ?? true) || isPreviewMode || canAlwaysSkip;
   const isLastStep = currentStepIndex === tutorialSteps.length - 1;

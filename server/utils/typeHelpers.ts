@@ -27,10 +27,7 @@ export function withProperties<A extends object, B extends object>(
 }
 export const isPerson = (
   person:
-    | TmdbMovieResult
-    | TmdbTvResult
-    | TmdbPersonResult
-    | TmdbCollectionResult
+    TmdbMovieResult | TmdbTvResult | TmdbPersonResult | TmdbCollectionResult
 ): person is TmdbPersonResult => {
   return (person as TmdbPersonResult).known_for !== undefined;
 };

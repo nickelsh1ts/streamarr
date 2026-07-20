@@ -1,5 +1,6 @@
 'use client';
 import PermissionEdit from '@app/components/Admin/PermissionEdit';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Tooltip from '@app/components/Common/ToolTip';
@@ -17,7 +18,6 @@ import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
-import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 
 const UserSettings = () => {
   const intl = useIntl();
@@ -166,7 +166,7 @@ const UserSettings = () => {
                 </div>
                 <label
                   htmlFor="experimentalJwtAuth"
-                  className="font-bold block"
+                  className="block font-bold"
                 >
                   <span className="mr-2">
                     <FormattedMessage
@@ -175,7 +175,7 @@ const UserSettings = () => {
                     />
                   </span>
                   <SettingsBadge badgeType="experimental" />
-                  <span className="text-sm block font-light text-neutral">
+                  <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
                       id="userSettings.experimentalJwtAuthDescription"
                       defaultMessage="Provision short-lived Plex JWT credentials for users alongside their existing token when they sign in. Safe to enable or disable at any time; existing sign-ins are unaffected."

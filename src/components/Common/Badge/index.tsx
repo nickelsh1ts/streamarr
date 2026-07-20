@@ -3,13 +3,7 @@ import React from 'react';
 
 interface BadgeProps {
   badgeType?:
-    | 'default'
-    | 'primary'
-    | 'error'
-    | 'warning'
-    | 'success'
-    | 'dark'
-    | 'light';
+    'default' | 'primary' | 'error' | 'warning' | 'success' | 'dark' | 'light';
   className?: string;
   href?: string;
   children: React.ReactNode;

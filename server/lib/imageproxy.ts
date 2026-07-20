@@ -302,8 +302,7 @@ class ImageProxy {
       const pathExt = (path.split('.').pop() ?? '').toLowerCase();
       const knownExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
       const contentType = response.headers['content-type'] as
-        | string
-        | undefined;
+        string | undefined;
       const extension = knownExts.includes(pathExt)
         ? pathExt
         : (contentType?.split('/')[1]?.split(';')[0]?.trim() ?? 'jpg');
