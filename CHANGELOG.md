@@ -1,3 +1,23 @@
+## [1.11.0](https://github.com/nickelsh1ts/streamarr/compare/v1.10.1...v1.11.0) (2026-07-20)
+
+### ✨ Features
+
+* **auth:** experimental per-user Plex JWT provisioning ([#407](https://github.com/nickelsh1ts/streamarr/issues/407)) ([d5b26df](https://github.com/nickelsh1ts/streamarr/commit/d5b26df69aaf4e07f5f2f17363b9a67a9c1d818a))
+* **downloads:** folder tree, bulk selection & column sorting for file contents ([#489](https://github.com/nickelsh1ts/streamarr/issues/489)) ([4d31411](https://github.com/nickelsh1ts/streamarr/commit/4d31411907582995d0019649628d155268997b31))
+* **services:** add Cleanuparr integration ([#490](https://github.com/nickelsh1ts/streamarr/issues/490)) ([cf671fc](https://github.com/nickelsh1ts/streamarr/commit/cf671fcc0a344c6372a3612bb8b96933eb1d3308))
+
+### 🐛 Bug Fixes
+
+* **auth:** survive Plex token rotation on abandoned sign-ins ([#408](https://github.com/nickelsh1ts/streamarr/issues/408)) ([a8b1448](https://github.com/nickelsh1ts/streamarr/commit/a8b14484465a85112bd7eca15567b477cd0c61fd))
+* disable priority setting for files being updated ([a7492ff](https://github.com/nickelsh1ts/streamarr/commit/a7492fffe91abd53bb120e6565700adca6f9ff33))
+* disable priority setting inflight & validate API key in cleanuparr ([#500](https://github.com/nickelsh1ts/streamarr/issues/500)) ([571390a](https://github.com/nickelsh1ts/streamarr/commit/571390acaa2445dc044e7a6592924d533b4fab1b))
+* **styles:** update downloads select component ([#467](https://github.com/nickelsh1ts/streamarr/issues/467)) ([1311d3c](https://github.com/nickelsh1ts/streamarr/commit/1311d3cda4e3ed03156edade4a8dfb8aeb4378d8))
+* validate API key and SSL usage in cleanuparr test ([b251e96](https://github.com/nickelsh1ts/streamarr/commit/b251e96c079c149963baa661578b6f36b411df2a))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#487](https://github.com/nickelsh1ts/streamarr/issues/487)) ([86a7808](https://github.com/nickelsh1ts/streamarr/commit/86a7808033481d1d9c67668c730a8a96c1aa2b63))
+
 ## [1.10.1](https://github.com/nickelsh1ts/streamarr/compare/v1.10.0...v1.10.1) (2026-06-20)
 
 ### 🐛 Bug Fixes
