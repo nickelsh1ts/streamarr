@@ -93,23 +93,24 @@ const Layout = ({
     [user]
   );
 
-  // Set Plex token in localStorage after successful login
+  // Keep the Plex Web token in localStorage in sync with the user's current
+  // server-side token. Plex rotates tokens on re-authentication (one token
+  // per account + client identifier), so "set only if absent" can leave a
+  // dead token behind after a rotation, silently breaking the embedded
+  // /watch player until the user clears storage. Reconciling once per
+  // session keeps it self-healing.
   useEffect(() => {
     if (user && !loading && !tokenRef.current) {
       const setPlexToken = async () => {
         try {
-          // Check if token already exists
-          if (localStorage.getItem('myPlexAccessToken')) {
-            tokenRef.current = true;
-            return;
-          }
-
-          // Fetch user's Plex token
+          // Fetch the user's current Plex token
           const response = await axios.get('/api/v1/auth/plex/token');
           const { token } = response.data;
 
           if (token) {
-            localStorage.setItem('myPlexAccessToken', token);
+            if (localStorage.getItem('myPlexAccessToken') !== token) {
+              localStorage.setItem('myPlexAccessToken', token);
+            }
             tokenRef.current = true;
           }
         } catch {
