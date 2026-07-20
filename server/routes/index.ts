@@ -436,8 +436,7 @@ router.get('/backdrops', async (req, res, next) => {
     const data = (
       await tmdb.getAllTrending({ page: 1, timeWindow: 'week' })
     ).results.filter((result) => !isPerson(result)) as (
-      | TmdbMovieResult
-      | TmdbTvResult
+      TmdbMovieResult | TmdbTvResult
     )[];
 
     res

@@ -315,6 +315,7 @@ settingsRoutes.get('/services', (_req, res) => {
 
   const servicesWithId = [
     { ...settings.bazarr, id: 'bazarr' },
+    { ...settings.cleanuparr, id: 'cleanuparr' },
     { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
     { ...settings.overseerr, id: 'overseerr' },
@@ -352,6 +353,82 @@ settingsRoutes.post('/tdarr', async (req, res) => {
   Object.assign(settings.tdarr, req.body);
   settings.save();
   res.status(200).json(settings.tdarr);
+});
+
+settingsRoutes.get('/cleanuparr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.cleanuparr);
+});
+
+settingsRoutes.post('/cleanuparr', async (req, res, next) => {
+  const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'cleanuparr',
+    'cleanuparr'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.cleanuparr, req.body);
+  settings.save();
+  res.status(200).json(settings.cleanuparr);
+});
+
+settingsRoutes.post('/cleanuparr/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase, apiKey } = req.body;
+
+    const portNumber = Number(port);
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      typeof apiKey !== 'string' ||
+      apiKey.trim().length === 0 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
+    ) {
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or API key',
+      });
+    }
+
+    const protocol = useSsl ? 'https' : 'http';
+    const base = String(urlBase ?? '')
+      .split('/')
+      .filter(Boolean)
+      .join('/');
+    const url = new URL(
+      base ? `/${base}/api/stats` : '/api/stats',
+      `${protocol}://${hostname}:${portNumber}`
+    );
+    url.searchParams.set('hours', '1');
+
+    const response = await fetch(url, {
+      headers: { 'X-Api-Key': apiKey },
+      signal: AbortSignal.timeout(getSettings().network.requestTimeout),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Cleanuparr responded with HTTP ${response.status}`);
+    }
+
+    res.status(200).json({ urlBase });
+  } catch (e) {
+    logger.error('Failed to test Cleanuparr', {
+      label: 'Cleanuparr',
+      message: e instanceof Error ? e.message : String(e),
+    });
+
+    next({ status: 500, message: 'Failed to connect to Cleanuparr' });
+  }
 });
 
 settingsRoutes.get('/bazarr', (_req, res) => {

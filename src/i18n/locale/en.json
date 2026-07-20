@@ -293,6 +293,9 @@
   "common.change": {
     "defaultMessage": "Change"
   },
+  "common.cleaning": {
+    "defaultMessage": "Cleaning"
+  },
   "common.close": {
     "defaultMessage": "Close"
   },
@@ -956,6 +959,9 @@
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
+  "downloads.clearSelection": {
+    "defaultMessage": "Clear"
+  },
   "downloads.client": {
     "defaultMessage": "Client"
   },
@@ -1118,8 +1124,20 @@
   "downloads.savePathUpdated": {
     "defaultMessage": "Save path updated successfully"
   },
+  "downloads.selectAllFiles": {
+    "defaultMessage": "Select all files"
+  },
+  "downloads.selectFile": {
+    "defaultMessage": "Select file {name}"
+  },
+  "downloads.selectFolder": {
+    "defaultMessage": "Select folder {name}"
+  },
   "downloads.selected": {
     "defaultMessage": "selected"
+  },
+  "downloads.setPriorityForSelected": {
+    "defaultMessage": "Set priority for selected files"
   },
   "downloads.staleData": {
     "defaultMessage": "The data for this torrent may be outdated because the download client is offline or not responding."
@@ -1171,6 +1189,9 @@
   },
   "downloads.tags": {
     "defaultMessage": "Tags"
+  },
+  "downloads.toggleFolder": {
+    "defaultMessage": "Toggle folder {name}"
   },
   "downloads.torrentDetails": {
     "defaultMessage": "Torrent Details"
@@ -4826,6 +4847,18 @@
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Bazarr Settings"
   },
+  "servicesSettings.cleanuparr.alertDescription": {
+    "defaultMessage": "Cleanuparr must be started with its BASE_PATH environment variable set to the same value as the URL Base below (e.g. /cleanuparr). Without it, Cleanuparr serves its assets from the root and they will fail to load inside Streamarr. Restart Cleanuparr after changing BASE_PATH."
+  },
+  "servicesSettings.cleanuparr.alertTitle": {
+    "defaultMessage": "Set a matching base path in Cleanuparr"
+  },
+  "servicesSettings.cleanuparr.description": {
+    "defaultMessage": "Optionally configure the settings for your Cleanuparr server. Cleanuparr must be configured with a matching base path."
+  },
+  "servicesSettings.cleanuparr.title": {
+    "defaultMessage": "Cleanuparr Settings"
+  },
   "servicesSettings.disableAuth": {
     "defaultMessage": "Authentication"
   },
@@ -5833,6 +5866,12 @@
   },
   "userSettings.engine": {
     "defaultMessage": "Engine"
+  },
+  "userSettings.experimentalJwtAuth": {
+    "defaultMessage": "Plex JWT Authentication"
+  },
+  "userSettings.experimentalJwtAuthDescription": {
+    "defaultMessage": "Provision short-lived Plex JWT credentials for users alongside their existing token when they sign in. Safe to enable or disable at any time; existing sign-ins are unaffected."
   },
   "userSettings.inviteLimit": {
     "defaultMessage": "Default Invite Limit"

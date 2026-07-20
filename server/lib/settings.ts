@@ -169,6 +169,7 @@ export interface MainSettings {
   trialPeriodOutcome: 'promote' | 'deactivate';
   enableHelpCentre: boolean;
   theme: Theme;
+  experimentalJwtAuth: boolean;
 }
 
 interface PublicSettings {
@@ -378,6 +379,7 @@ export interface AllSettings {
   bazarr: ServiceSettings;
   prowlarr: ServiceSettings;
   lidarr: ServiceSettings;
+  cleanuparr: ServiceSettings;
   overseerr: ServiceSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
@@ -429,6 +431,7 @@ class Settings {
         extendedHome: true,
         libraryCounts: true,
         enableTrialPeriod: false,
+        experimentalJwtAuth: false,
         trialPeriodDays: 30,
         trialPeriodOutcome: 'promote',
         enableHelpCentre: true,
@@ -494,6 +497,10 @@ class Settings {
       lidarr: {
         enabled: false,
         urlBase: '/lidarr',
+      },
+      cleanuparr: {
+        enabled: false,
+        urlBase: '/cleanuparr',
       },
       overseerr: {
         enabled: false,
@@ -694,6 +701,14 @@ class Settings {
 
   set lidarr(data: ServiceSettings) {
     this.data.lidarr = mergeSettings(this.data.lidarr, data);
+  }
+
+  get cleanuparr(): ServiceSettings {
+    return this.data.cleanuparr;
+  }
+
+  set cleanuparr(data: ServiceSettings) {
+    this.data.cleanuparr = mergeSettings(this.data.cleanuparr, data);
   }
 
   get overseerr(): ServiceSettings {

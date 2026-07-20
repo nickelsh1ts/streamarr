@@ -21,6 +21,7 @@ import type {
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import ImageProxy from '@server/lib/imageproxy';
 import { hasPermission, Permission } from '@server/lib/permissions';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -846,10 +847,15 @@ router.post(
 
       // taken from auth.ts
       const mainUser = await userRepository.findOneOrFail({
-        select: { id: true, plexToken: true },
+        select: {
+          id: true,
+          plexToken: true,
+          plexJwt: true,
+          plexJwtExpiresAt: true,
+        },
         where: { id: 1 },
       });
-      const mainPlexTv = new PlexTvAPI(mainUser.plexToken ?? '');
+      const mainPlexTv = new PlexTvAPI(preferPlexJwt(mainUser) ?? '');
 
       const plexUsersResponse = await mainPlexTv.getUsers();
       const createdUsers: User[] = [];

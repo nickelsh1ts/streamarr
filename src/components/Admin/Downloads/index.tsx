@@ -1,6 +1,7 @@
 'use client';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SortableColumnHeader from '@app/components/Common/SortableColumnHeader';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
 import { useDownloadActions, useDownloads } from '@app/hooks/useDownloads';
@@ -750,7 +751,7 @@ const AdminDownloads = () => {
                         hasValidPriority && (
                           <>
                             <select
-                              className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
+                              className="select select-xs select-primary w-auto min-w-32 sm:hidden"
                               disabled={isBulkActing}
                               defaultValue=""
                               onChange={(e) => {
@@ -861,7 +862,7 @@ const AdminDownloads = () => {
                     })()}
                     <>
                       <select
-                        className="select select-xs select-primary block w-auto min-w-16 pr-1 sm:hidden"
+                        className="select select-xs select-primary w-auto min-w-32 sm:hidden"
                         disabled={isBulkActing}
                         defaultValue=""
                         onChange={(e) => {
@@ -981,177 +982,102 @@ const AdminDownloads = () => {
                         onChange={handleSelectAll}
                       />
                     </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('name')}
+                    <SortableColumnHeader<Sort>
+                      field="name"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.name"
-                            defaultMessage="Name"
-                          />
-                        </span>
-                        {currentSort === 'name' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('progress')}
+                      <FormattedMessage
+                        id="common.name"
+                        defaultMessage="Name"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="progress"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.progress"
-                            defaultMessage="Progress"
-                          />
-                        </span>
-                        {currentSort === 'progress' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('size')}
+                      <FormattedMessage
+                        id="common.progress"
+                        defaultMessage="Progress"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="size"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.size"
-                            defaultMessage="Size"
-                          />
-                        </span>
-                        {currentSort === 'size' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('speed')}
+                      <FormattedMessage
+                        id="common.size"
+                        defaultMessage="Size"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="speed"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.speed"
-                            defaultMessage="Speed"
-                          />
-                        </span>
-                        {currentSort === 'speed' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('eta')}
+                      <FormattedMessage
+                        id="common.speed"
+                        defaultMessage="Speed"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="eta"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.eta"
-                            defaultMessage="ETA"
-                          />
-                        </span>
-                        {currentSort === 'eta' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('ratio')}
+                      <FormattedMessage id="common.eta" defaultMessage="ETA" />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="ratio"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.ratio"
-                            defaultMessage="Ratio"
-                          />
-                        </span>
-                        {currentSort === 'ratio' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('status')}
+                      <FormattedMessage
+                        id="common.ratio"
+                        defaultMessage="Ratio"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="status"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.status"
-                            defaultMessage="Status"
-                          />
-                        </span>
-                        {currentSort === 'status' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('client')}
+                      <FormattedMessage
+                        id="common.status"
+                        defaultMessage="Status"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="client"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="downloads.client"
-                            defaultMessage="Client"
-                          />
-                        </span>
-                        {currentSort === 'client' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
-                    <th
-                      className="hover:bg-base-300 cursor-pointer transition-colors select-none"
-                      onClick={() => handleSort('priority')}
+                      <FormattedMessage
+                        id="downloads.client"
+                        defaultMessage="Client"
+                      />
+                    </SortableColumnHeader>
+                    <SortableColumnHeader<Sort>
+                      field="priority"
+                      activeField={currentSort}
+                      direction={sortDirection}
+                      onSort={handleSort}
                     >
-                      <div className="flex items-center gap-1">
-                        <span>
-                          <FormattedMessage
-                            id="common.priority"
-                            defaultMessage="Priority"
-                          />
-                        </span>
-                        {currentSort === 'priority' &&
-                          (sortDirection === 'asc' ? (
-                            <ChevronUpIcon className="h-4 w-4" />
-                          ) : (
-                            <ChevronDownIcon className="h-4 w-4" />
-                          ))}
-                      </div>
-                    </th>
+                      <FormattedMessage
+                        id="common.priority"
+                        defaultMessage="Priority"
+                      />
+                    </SortableColumnHeader>
                     <th>
                       <FormattedMessage
                         id="common.actions"

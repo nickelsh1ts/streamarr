@@ -3,6 +3,7 @@ import SeerrAPI from '@server/api/seerr';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { Permission } from '@server/lib/permissions';
+import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -89,11 +90,11 @@ class TrialExpiry {
 
       const admin = await userRepository
         .createQueryBuilder('user')
-        .addSelect('user.plexToken')
+        .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      const adminToken = admin?.plexToken;
+      const adminToken = preferPlexJwt(admin);
       const machineId = settings.plex.machineId;
 
       if (!adminToken || !machineId) {
