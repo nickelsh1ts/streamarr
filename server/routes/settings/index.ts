@@ -389,9 +389,15 @@ settingsRoutes.post('/cleanuparr/test', async (req, res, next) => {
       !/^[A-Za-z0-9.-]+$/.test(hostname) ||
       !Number.isInteger(portNumber) ||
       portNumber < 1 ||
-      portNumber > 65535
+      portNumber > 65535 ||
+      typeof apiKey !== 'string' ||
+      apiKey.trim().length === 0 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
     ) {
-      return next({ status: 400, message: 'Invalid hostname or port' });
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or API key',
+      });
     }
 
     const protocol = useSsl ? 'https' : 'http';
