@@ -380,6 +380,7 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
               onChange={(e) =>
                 applyPriority([...selected], parseInt(e.target.value, 10))
               }
+              disabled={[...selected].some((id) => updatingFiles.has(id))}
               aria-label={intl.formatMessage({
                 id: 'downloads.setPriorityForSelected',
                 defaultMessage: 'Set priority for selected files',
