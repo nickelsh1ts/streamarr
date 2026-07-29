@@ -5458,5 +5458,50 @@
   },
   "newsletters.saveError": {
     "defaultMessage": "Ocurrió un error al guardar el boletín"
+  },
+  "downloads.selectAllFiles": {
+    "defaultMessage": "Seleccionar todos los archivos"
+  },
+  "downloads.selectFile": {
+    "defaultMessage": "Seleccionar archivo {name}"
+  },
+  "downloads.selectFolder": {
+    "defaultMessage": "Seleccionar folder {name}"
+  },
+  "downloads.setPriorityForSelected": {
+    "defaultMessage": "Establecer prioridad para los archivos seleccionados"
+  },
+  "downloads.toggleFolder": {
+    "defaultMessage": "Alternar carpeta {name}"
+  },
+  "newsletters.pastDays": {
+    "defaultMessage": "Días anteriores"
+  },
+  "newsletters.scheduleEnabled": {
+    "defaultMessage": "Habilitar programación"
+  },
+  "newsletters.scheduleType": {
+    "defaultMessage": "Tipo de programación"
+  },
+  "newsletters.sectionHeader": {
+    "defaultMessage": "Encabezado de sección"
+  },
+  "newsletters.sendAt": {
+    "defaultMessage": "Enviar a las"
+  },
+  "newsletters.sendError": {
+    "defaultMessage": "Error al enviar el boletín"
+  },
+  "newsletters.sendNow": {
+    "defaultMessage": "Enviar Ahora"
+  },
+  "newsletters.sendOn": {
+    "defaultMessage": "Enviar el"
+  },
+  "newsletters.sent": {
+    "defaultMessage": "Boletín enviado"
+  },
+  "newsletters.sonarrTag": {
+    "defaultMessage": "Etiqueta de Sonarr"
   }
 }
