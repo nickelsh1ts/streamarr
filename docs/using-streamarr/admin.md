@@ -28,7 +28,7 @@ Primary configuration for your Streamarr instance:
 - **Onboarding** — Welcome modal and tutorial configuration
 - **Jobs & Cache** — Scheduled tasks and cache management
 - **Logs** — Application log viewer
-- **System** — Server health, restart controls, version, and release history
+- **System** — Health of Streamarr and all enabled services, restart controls, version, and release history
 
 See [Settings](settings/README.md) for detailed documentation.
 
@@ -172,7 +172,7 @@ View application logs:
 
 Monitor and manage your Streamarr instance:
 
-- Server health status with restart controls
+- Health status for Streamarr and every enabled service, with per-service retry and restart controls
 - Current version and update availability
 - Release history and changelogs
 - Support and sponsor links

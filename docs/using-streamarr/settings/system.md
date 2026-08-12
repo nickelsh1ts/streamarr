@@ -1,6 +1,6 @@
 # System
 
-The System page provides health monitoring, restart controls, disk space usage, version information, and release history for your Streamarr instance.
+The System page provides health monitoring, restart controls, disk space usage, version information, and release history for your Streamarr instance and every enabled service.
 
 ## Overview
 
@@ -14,7 +14,7 @@ The System page requires **Admin** permission.
 
 ## Health Monitoring
 
-The System page displays health cards for each core service:
+The System page displays a health card for the Streamarr server and for **every enabled and configured service**, giving administrators a real-time view of the whole stack.
 
 ### Streamarr Server
 
@@ -27,6 +27,31 @@ The main server process that handles the web interface, API, and all integration
 | **Unknown**          | Status could not be determined                                |
 
 When the status shows **Restart Required**, a restart button is available directly on the health card.
+
+### Service Health
+
+Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Cleanuparr, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
+
+Each card shows a status badge and, where the service exposes it, the running **version**:
+
+| Status        | Description                                                                     |
+| ------------- | ------------------------------------------------------------------------------- |
+| **Healthy**   | The service responded successfully                                              |
+| **Retrying**  | A transient failure occurred and Streamarr is retrying (Plex, download clients) |
+| **Unhealthy** | The service could not be reached; the error is shown beneath its name           |
+| **Unknown**   | Status has not yet been determined                                              |
+
+- **Plex** reflects Streamarr's existing connection-health state, including its retry cooldown. The other services are actively probed when the page loads.
+- **Version** is shown for services that report one (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Tautulli, Seerr, and download clients). **Cleanuparr** does not expose a version, so its card shows how many services it is monitoring instead.
+- Each card has a **Retry** button that re-checks that service immediately.
+
+### Multi-instance Services
+
+Radarr, Sonarr, and download clients can have multiple instances. These render as a **collapsible parent card** with an aggregated status (unhealthy if any instance is unhealthy) and an "{healthy} of {total} healthy" summary. Expand the card to see a row per instance, each with its own status, version, and Retry button.
+
+{% hint style="info" %}
+Service health is checked when the System page loads and revalidated when the browser tab regains focus. Use a card's **Retry** button to force an immediate re-check.
+{% endhint %}
 
 ---
 
@@ -182,6 +207,8 @@ This helps you see what has changed between versions and what is included in ava
 | ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
 | `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                                                    |
 | `/api/v1/settings/restart`          | POST   | Trigger a server restart                                                                          |
+| `/api/v1/settings/health`           | GET    | Health of all enabled and configured services (Admin only)                                        |
+| `/api/v1/settings/health/retry`     | POST   | Reset and re-check a single service by id, then recompute all (Admin only)                        |
 | `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users)                                    |
 | `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                     |
 | `/api/v1/status`                    | GET    | Get version, update availability                                                                  |
@@ -238,6 +265,45 @@ This helps you see what has changed between versions and what is included in ava
 }
 ```
 
+### Service Health Response
+
+```json
+{
+  "services": [
+    {
+      "id": "plex",
+      "name": "Plex",
+      "status": "healthy",
+      "version": "1.41.0.8994",
+      "retryable": true
+    },
+    {
+      "id": "radarr",
+      "name": "Radarr",
+      "status": "healthy",
+      "retryable": true,
+      "instances": [
+        {
+          "id": "radarr-1",
+          "name": "Radarr 4K",
+          "status": "healthy",
+          "version": "5.16.3.9541"
+        }
+      ]
+    },
+    {
+      "id": "cleanuparr",
+      "name": "Cleanuparr",
+      "status": "healthy",
+      "detail": "Monitoring 3 services",
+      "retryable": true
+    }
+  ]
+}
+```
+
+`status` is one of `"healthy"`, `"retrying"`, `"unhealthy"`, or `"unknown"`. Multi-instance services (Radarr, Sonarr, download clients) include an `instances` array; the parent `status` is the aggregate. The retry endpoint takes a service or instance id in the body, e.g. `{ "id": "radarr-1" }`.
+
 ### Plex Health Response
 
 ```json
@@ -269,6 +335,13 @@ This helps you see what has changed between versions and what is included in ava
 1. The server may still be initializing — wait a few seconds
 2. Check the application logs for errors during startup
 3. Verify the database is accessible and not corrupted
+
+### "A service card shows Unhealthy"
+
+1. Confirm the service is enabled and reachable at its configured hostname and port
+2. Check that any required API key is correct, and that the service's API base path matches what you configured
+3. The error message shown beneath the service name usually indicates the cause (for example a connection refusal or an HTTP status code)
+4. Correct the configuration in **Settings → Services**, then use the card's **Retry** button to re-check
 
 ### "Some disk metrics are unavailable"
 
