@@ -3863,6 +3863,18 @@
   "networkSettings.saveSuccess": {
     "defaultMessage": "Network settings saved successfully"
   },
+  "networkSettings.scheduledRetryAttempts": {
+    "defaultMessage": "Scheduled Retry Attempts"
+  },
+  "networkSettings.scheduledRetryAttempts.description": {
+    "defaultMessage": "Maximum retry attempts to gather data from external services. (Set to 1 to disable)"
+  },
+  "networkSettings.scheduledRetryInterval": {
+    "defaultMessage": "Scheduled Retry Interval"
+  },
+  "networkSettings.scheduledRetryInterval.description": {
+    "defaultMessage": "Time (in seconds) to wait between scheduled retry attempts."
+  },
   "networkSettings.title": {
     "defaultMessage": "Network Settings"
   },
@@ -3877,6 +3889,30 @@
   },
   "networkSettings.validation.requestTimeoutMin": {
     "defaultMessage": "Request timeout must be at least 1 second"
+  },
+  "networkSettings.validation.scheduledRetryAttempts": {
+    "defaultMessage": "You must provide a valid number of retry attempts"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsInteger": {
+    "defaultMessage": "Retry attempts must be a whole number"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsMax": {
+    "defaultMessage": "Retry attempts must not exceed 10"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsMin": {
+    "defaultMessage": "There must be at least 1 attempt"
+  },
+  "networkSettings.validation.scheduledRetryInterval": {
+    "defaultMessage": "You must provide a valid retry interval"
+  },
+  "networkSettings.validation.scheduledRetryIntervalInteger": {
+    "defaultMessage": "Retry interval must be a whole number of seconds"
+  },
+  "networkSettings.validation.scheduledRetryIntervalMax": {
+    "defaultMessage": "Retry interval must not exceed 3600 seconds"
+  },
+  "networkSettings.validation.scheduledRetryIntervalMin": {
+    "defaultMessage": "Retry interval must be at least 30 seconds"
   },
   "newsletterSettings.saveError": {
     "defaultMessage": "Newsletter preferences failed to save."

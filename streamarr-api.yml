@@ -898,6 +898,23 @@ components:
         csrfProtection:
           type: boolean
           example: false
+        scheduledRetryAttempts:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: >-
+            Total number of attempts (including the first) a scheduled task
+            makes to gather its data from external services before aborting.
+            A value of 1 disables retries.
+          example: 3
+        scheduledRetryInterval:
+          type: integer
+          minimum: 30000
+          maximum: 3600000
+          description: >-
+            Delay in milliseconds between scheduled task retry attempts
+            when an external service is unreachable.
+          example: 300000
     SeerrQuotaResponse:
       type: object
       properties:
@@ -8205,8 +8222,12 @@ paths:
                 $ref: '#/components/schemas/NewsletterSendResult'
         '409':
           description: The newsletter is already being sent
+        '422':
+          description: All configured content blocks are empty; nothing to send
         '500':
           description: Server error
+        '503':
+          description: One or more external services are unavailable
   /settings/newsletter/{id}/test:
     parameters:
       - name: id
@@ -8227,6 +8248,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewsletterSendResult'
+        '422':
+          description: All configured content blocks are empty; nothing to send
         '500':
           description: Server error
   /settings/newsletter/{id}/preview:

@@ -19,7 +19,7 @@ Content blocks pull from your connected services, each of which is optional:
 | By Tag (Plex)    | Plex labels          | Labeled items in a Plex library          |
 | By Tag (Servarr) | Radarr / Sonarr tags | A configured Radarr and/or Sonarr server |
 
-A newsletter with no available source simply omits that block.
+A newsletter with no available source simply omits that block. A block that resolves to no items is dropped entirely — including its heading — so an empty block never appears. If **every** configured block resolves empty, the newsletter is not sent (there is nothing to deliver); see [When a content source is unreachable](#when-a-content-source-is-unreachable). A plain newsletter with no content blocks configured always sends.
 
 ---
 
@@ -107,6 +107,12 @@ To prevent accidental spam, a schedule may run **at most once per hour**; anythi
 
 > If the server is offline when a one-time newsletter was due, it is skipped and automatically disabled the next time the server starts.
 
+### When a content source is unreachable
+
+If a scheduled newsletter cannot gather one of its content blocks because a service (Plex, Tautulli, or an \*Arr app) is unreachable, Streamarr does **not** send a half-empty email. It retries after a short delay and, if the source is still unavailable after the configured number of attempts, **aborts** the send — nothing is delivered, the failure is logged, and the run is recorded in the newsletter's [history](#history). One-time newsletters are disabled after an abort.
+
+A block that is simply empty (no matching items) is not a failure — it is dropped and the rest of the newsletter still goes out. This is distinct from a failure: retries only apply to unreachable services, whereas an empty result is not retried. If every configured block is empty, the scheduled run is skipped (logged, not recorded in history, and not retried); a manual **Send Now** or **Test** in the same state reports that there is nothing to send. The number of retry attempts and the delay between them are configured under [Settings → Network](../settings/README.md#scheduled-retry-interval).
+
 ---
 
 ## Preview, test, and send
@@ -122,6 +128,8 @@ A newsletter cannot be sent again while a send is already in progress.
 ## History
 
 Each newsletter keeps a paginated history of its sends, showing the date, what triggered it (manual, scheduled, or test), the recipient count, and the number of failures. Open it from the **History** action on the newsletter list.
+
+An **aborted** scheduled send (see [When a content source is unreachable](#when-a-content-source-is-unreachable)) is recorded here too, with every intended recipient counted as a failure so the undelivered run stands out.
 
 ---
 
