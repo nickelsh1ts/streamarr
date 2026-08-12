@@ -58,9 +58,12 @@ router.get('/', async (req, res, next) => {
       .leftJoinAndSelect('user.redeemedInvite', 'redeemedInvite')
       .leftJoinAndSelect('redeemedInvite.createdBy', 'invitedBy');
 
+    const sortDirection: 'ASC' | 'DESC' =
+      req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
+
     switch (req.query.sort) {
       case 'updated':
-        query = query.orderBy('user.updatedAt', 'DESC');
+        query = query.orderBy('user.updatedAt', sortDirection);
         break;
       case 'displayname':
         query = query
@@ -68,7 +71,7 @@ router.get('/', async (req, res, next) => {
             "CASE WHEN (user.username IS NULL OR user.username = '') THEN CASE WHEN (user.plexUsername IS NULL OR user.plexUsername = '') THEN LOWER(user.email) ELSE LOWER(user.plexUsername) END ELSE LOWER(user.username) END",
             'displayNameSort'
           )
-          .orderBy('displayNameSort', 'ASC');
+          .orderBy('displayNameSort', sortDirection);
         break;
       case 'invites':
         query = query
@@ -78,10 +81,10 @@ router.get('/', async (req, res, next) => {
               .from(Invite, 'invite')
               .where('invite.createdBy.id = user.id');
           }, 'inviteCount')
-          .orderBy('inviteCount', 'DESC');
+          .orderBy('inviteCount', sortDirection);
         break;
       default:
-        query = query.orderBy('user.id', 'ASC');
+        query = query.orderBy('user.id', sortDirection);
         break;
     }
 
@@ -988,6 +991,19 @@ router.get<{ id: string }, UserNotificationsResponse>(
           break;
       }
 
+      let sortFilter: string;
+
+      switch (req.query.sort) {
+        case 'modified':
+          sortFilter = 'notification.updatedAt';
+          break;
+        default:
+          sortFilter = 'notification.createdAt';
+      }
+
+      const sortDirection: 'ASC' | 'DESC' =
+        req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
+
       const [notifications, notificationCount] = await getRepository(
         Notification
       )
@@ -999,7 +1015,7 @@ router.get<{ id: string }, UserNotificationsResponse>(
         .andWhere('notification.isRead IN (:...isRead)', {
           isRead: isReadFilter,
         })
-        .orderBy('notification.createdAt', 'DESC')
+        .orderBy(sortFilter, sortDirection)
         .take(pageSize)
         .skip(skip)
         .getManyAndCount();

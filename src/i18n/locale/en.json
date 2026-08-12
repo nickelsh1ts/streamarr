@@ -773,6 +773,9 @@
   "common.title": {
     "defaultMessage": "Title"
   },
+  "common.toggleSortDirection": {
+    "defaultMessage": "Toggle sort direction"
+  },
   "common.transcodes": {
     "defaultMessage": "Transcodes"
   },
@@ -4252,6 +4255,9 @@
   },
   "notification.signUpDisabledMessage": {
     "defaultMessage": "The admin has currently disabled in-app notifications."
+  },
+  "notification.sortMostRecent": {
+    "defaultMessage": "Most Recent"
   },
   "notification.userCreated": {
     "defaultMessage": "User Created"

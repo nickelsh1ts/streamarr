@@ -13,6 +13,7 @@ import { useUser } from '@app/hooks/useUser';
 import { momentWithLocale } from '@app/utils/momentLocale';
 import {
   BarsArrowDownIcon,
+  BarsArrowUpIcon,
   CheckBadgeIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -44,6 +45,7 @@ enum Filter {
 }
 
 type Sort = 'created' | 'modified';
+type SortDirection = 'asc' | 'desc';
 
 const InviteList = () => {
   useRouteGuard(
@@ -106,6 +108,19 @@ const InviteList = () => {
     }
     return 'created';
   });
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>(() => {
+      if (typeof window !== 'undefined') {
+        const filterString = window.localStorage.getItem(
+          'invites-filter-settings'
+        );
+        if (filterString) {
+          const filterSettings = JSON.parse(filterString);
+          return filterSettings.currentSortDirection || 'desc';
+        }
+      }
+      return 'desc';
+    });
   const [currentPageSize, setCurrentPageSize] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       const filterString = window.localStorage.getItem(
@@ -140,7 +155,7 @@ const InviteList = () => {
   } = useSWR<InviteResultsResponse>(
     `/api/v1/invite?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&filter=${currentFilter}&sort=${currentSort}${
+    }&filter=${currentFilter}&sort=${currentSort}&sortDirection=${currentSortDirection}${
       pathname.startsWith('/profile')
         ? `&createdBy=${currentUser?.id}`
         : userQuery?.userid
@@ -192,8 +207,11 @@ const InviteList = () => {
   // Override with query params if provided, keeping in sync as the URL changes
   const queryFilter = searchParams.get('filter') as Filter;
   const querySort = searchParams.get('sort') as Sort;
+  const querySortDirection = searchParams.get('sortDirection') as SortDirection;
   const [prevQueryFilter, setPrevQueryFilter] = useState(queryFilter);
   const [prevQuerySort, setPrevQuerySort] = useState(querySort);
+  const [prevQuerySortDirection, setPrevQuerySortDirection] =
+    useState(querySortDirection);
   if (prevQueryFilter !== queryFilter) {
     setPrevQueryFilter(queryFilter);
     if (Object.values(Filter).includes(queryFilter)) {
@@ -206,6 +224,12 @@ const InviteList = () => {
       setCurrentSort(querySort);
     }
   }
+  if (prevQuerySortDirection !== querySortDirection) {
+    setPrevQuerySortDirection(querySortDirection);
+    if (['asc', 'desc'].includes(querySortDirection)) {
+      setCurrentSortDirection(querySortDirection);
+    }
+  }
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {
@@ -214,10 +238,11 @@ const InviteList = () => {
       JSON.stringify({
         currentFilter,
         currentSort,
+        currentSortDirection,
         currentPageSize,
       })
     );
-  }, [currentFilter, currentSort, currentPageSize]);
+  }, [currentFilter, currentSort, currentSortDirection, currentPageSize]);
 
   if (isLoading && !error) {
     return <LoadingEllipsis />;
@@ -356,9 +381,30 @@ const InviteList = () => {
               </select>
             </div>
             <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
-              <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
-                <BarsArrowDownIcon className="h-6 w-6" />
-              </span>
+              <button
+                type="button"
+                data-testid="invite-sort-direction-toggle"
+                aria-label={intl.formatMessage({
+                  id: 'common.toggleSortDirection',
+                  defaultMessage: 'Toggle sort direction',
+                })}
+                title={intl.formatMessage({
+                  id: 'common.toggleSortDirection',
+                  defaultMessage: 'Toggle sort direction',
+                })}
+                onClick={() =>
+                  setCurrentSortDirection((prev) =>
+                    prev === 'asc' ? 'desc' : 'asc'
+                  )
+                }
+                className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+              >
+                {currentSortDirection === 'asc' ? (
+                  <BarsArrowUpIcon className="h-6 w-6" />
+                ) : (
+                  <BarsArrowDownIcon className="h-6 w-6" />
+                )}
+              </button>
               <select
                 id="sort"
                 name="sort"

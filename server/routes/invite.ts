@@ -51,6 +51,9 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
         sortFilter = 'invite.createdAt';
     }
 
+    const sortDirection: 'ASC' | 'DESC' =
+      req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
+
     let statusFilter: InviteStatus[];
 
     switch (req.query.filter) {
@@ -130,7 +133,7 @@ inviteRoutes.get<Record<string, string>, InviteResultsResponse>(
     }
 
     const [invites, inviteCount] = await query
-      .orderBy(sortFilter, 'DESC')
+      .orderBy(sortFilter, sortDirection)
       .take(pageSize)
       .skip(skip)
       .getManyAndCount();
