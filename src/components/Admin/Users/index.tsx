@@ -18,6 +18,7 @@ import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import {
   BarsArrowDownIcon,
+  BarsArrowUpIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   InboxArrowDownIcon,
@@ -42,9 +43,11 @@ import validator from 'validator';
 import * as Yup from 'yup';
 
 type Sort = 'created' | 'updated' | 'invites' | 'displayname';
+type SortDirection = 'asc' | 'desc';
 
 const getStoredUserFilterSettings = (): {
   currentSort?: Sort;
+  currentSortDirection?: SortDirection;
   currentPageSize?: number;
 } => {
   if (typeof window === 'undefined') return {};
@@ -66,6 +69,10 @@ const AdminUsers = () => {
   const [currentSort, setCurrentSort] = useState<Sort>(
     () => getStoredUserFilterSettings().currentSort ?? 'displayname'
   );
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>(
+      () => getStoredUserFilterSettings().currentSortDirection ?? 'desc'
+    );
   const [currentPageSize, setCurrentPageSize] = useState<number>(
     () => getStoredUserFilterSettings().currentPageSize ?? 10
   );
@@ -90,7 +97,7 @@ const AdminUsers = () => {
   } = useSWR<UserResultsResponse>(
     `/api/v1/user?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&sort=${currentSort}`
+    }&sort=${currentSort}&sortDirection=${currentSortDirection}`
   );
 
   const [isDeleting, setDeleting] = useState(false);
@@ -114,10 +121,11 @@ const AdminUsers = () => {
       'ul-filter-settings',
       JSON.stringify({
         currentSort,
+        currentSortDirection,
         currentPageSize,
       })
     );
-  }, [currentSort, currentPageSize]);
+  }, [currentSort, currentSortDirection, currentPageSize]);
 
   const isUserPermsEditable = (userId: number) =>
     userId !== 1 && userId !== currentUser?.id;
@@ -526,9 +534,31 @@ const AdminUsers = () => {
             )}
           </div>
           <div className="mb-2 flex grow lg:mb-0 lg:grow-0">
-            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
-              <BarsArrowDownIcon className="size-7" />
-            </span>
+            <button
+              type="button"
+              data-testid="user-sort-direction-toggle"
+              aria-label={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              title={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              onClick={() => {
+                setCurrentSortDirection((prev) =>
+                  prev === 'asc' ? 'desc' : 'asc'
+                );
+                router.push(pathname);
+              }}
+              className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+            >
+              {currentSortDirection === 'asc' ? (
+                <BarsArrowUpIcon className="size-7" />
+              ) : (
+                <BarsArrowDownIcon className="size-7" />
+              )}
+            </button>
             <select
               id="sort"
               name="sort"

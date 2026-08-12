@@ -9,6 +9,8 @@ import Toast from '@app/components/Toast';
 import { useNotifications } from '@app/hooks/useNotifications';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   FunnelIcon,
@@ -34,8 +36,13 @@ enum Filter {
   UNREAD = 'unread',
 }
 
+type Sort = 'created' | 'modified';
+type SortDirection = 'asc' | 'desc';
+
 const getStoredNotificationFilterSettings = (): {
   currentFilter?: Filter;
+  currentSort?: Sort;
+  currentSortDirection?: SortDirection;
   currentPageSize?: number;
 } => {
   if (typeof window === 'undefined') return {};
@@ -69,6 +76,13 @@ const NotificationsList = () => {
     if (Object.values(Filter).includes(queryFilter)) return queryFilter;
     return getStoredNotificationFilterSettings().currentFilter ?? Filter.ALL;
   });
+  const [currentSort, setCurrentSort] = useState<Sort>(
+    () => getStoredNotificationFilterSettings().currentSort ?? 'created'
+  );
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>(
+      () => getStoredNotificationFilterSettings().currentSortDirection ?? 'desc'
+    );
   const [currentPageSize, setCurrentPageSize] = useState<number>(
     () => getStoredNotificationFilterSettings().currentPageSize ?? 10
   );
@@ -99,7 +113,7 @@ const NotificationsList = () => {
         ))
       ? `/api/v1/user/${user?.id}/notifications?take=${currentPageSize}&skip=${
           pageIndex * currentPageSize
-        }&filter=${currentFilter}`
+        }&filter=${currentFilter}&sort=${currentSort}&sortDirection=${currentSortDirection}`
       : null
   );
   const [editNotificationModal, setEditNotificationModal] = useState<{
@@ -125,10 +139,12 @@ const NotificationsList = () => {
       'nl-filter-settings',
       JSON.stringify({
         currentFilter,
+        currentSort,
+        currentSortDirection,
         currentPageSize,
       })
     );
-  }, [currentFilter, currentPageSize]);
+  }, [currentFilter, currentSort, currentSortDirection, currentPageSize]);
 
   const hasNextPage = (data?.pageInfo.pages ?? 0) > pageIndex + 1;
   const hasPrevPage = pageIndex > 0;
@@ -220,6 +236,48 @@ const NotificationsList = () => {
               </option>
               <option value="read">
                 <FormattedMessage id="common.read" defaultMessage="read" />
+              </option>
+            </select>
+          </div>
+          <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
+            <button
+              type="button"
+              data-testid="notification-sort-direction-toggle"
+              aria-label={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              title={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              onClick={() =>
+                setCurrentSortDirection((prev) =>
+                  prev === 'asc' ? 'desc' : 'asc'
+                )
+              }
+              className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+            >
+              {currentSortDirection === 'asc' ? (
+                <BarsArrowUpIcon className="h-6 w-6" />
+              ) : (
+                <BarsArrowDownIcon className="h-6 w-6" />
+              )}
+            </button>
+            <select
+              id="sort"
+              name="sort"
+              value={currentSort}
+              onChange={(e) => {
+                setCurrentSort(e.target.value as Sort);
+              }}
+              className="select select-sm select-primary w-full flex-1 rounded-l-none"
+            >
+              <option value="created">
+                {intl.formatMessage({
+                  id: 'notification.sortMostRecent',
+                  defaultMessage: 'Most Recent',
+                })}
               </option>
             </select>
           </div>

@@ -12,6 +12,7 @@ import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   BarsArrowDownIcon,
+  BarsArrowUpIcon,
   BeakerIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -39,6 +40,7 @@ enum Filter {
 }
 
 type Sort = 'created' | 'modified' | 'name';
+type SortDirection = 'asc' | 'desc';
 
 const FILTER_SETTINGS_KEY = 'newsletters-filter-settings';
 
@@ -67,6 +69,10 @@ const Newsletters = () => {
   const [currentSort, setCurrentSort] = useState<Sort>(
     () => readFilterSettings()?.currentSort || 'modified'
   );
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>(
+      () => readFilterSettings()?.currentSortDirection || 'desc'
+    );
   const [currentPageSize, setCurrentPageSize] = useState<number>(
     () => readFilterSettings()?.currentPageSize || 10
   );
@@ -86,14 +92,17 @@ const Newsletters = () => {
   const { data, error, mutate } = useSWR<NewsletterResultsResponse>(
     `/api/v1/settings/newsletter?take=${currentPageSize}&skip=${
       pageIndex * currentPageSize
-    }&filter=${currentFilter}&sort=${currentSort}`
+    }&filter=${currentFilter}&sort=${currentSort}&sortDirection=${currentSortDirection}`
   );
 
   // Allow filter/sort to be driven by query params, keeping state in sync.
   const queryFilter = searchParams.get('filter') as Filter;
   const querySort = searchParams.get('sort') as Sort;
+  const querySortDirection = searchParams.get('sortDirection') as SortDirection;
   const [prevQueryFilter, setPrevQueryFilter] = useState(queryFilter);
   const [prevQuerySort, setPrevQuerySort] = useState(querySort);
+  const [prevQuerySortDirection, setPrevQuerySortDirection] =
+    useState(querySortDirection);
   if (prevQueryFilter !== queryFilter) {
     setPrevQueryFilter(queryFilter);
     if (Object.values(Filter).includes(queryFilter)) {
@@ -106,14 +115,25 @@ const Newsletters = () => {
       setCurrentSort(querySort);
     }
   }
+  if (prevQuerySortDirection !== querySortDirection) {
+    setPrevQuerySortDirection(querySortDirection);
+    if (['asc', 'desc'].includes(querySortDirection)) {
+      setCurrentSortDirection(querySortDirection);
+    }
+  }
 
   // Persist the filter/sort/page-size selections.
   useEffect(() => {
     window.localStorage.setItem(
       FILTER_SETTINGS_KEY,
-      JSON.stringify({ currentFilter, currentSort, currentPageSize })
+      JSON.stringify({
+        currentFilter,
+        currentSort,
+        currentSortDirection,
+        currentPageSize,
+      })
     );
-  }, [currentFilter, currentSort, currentPageSize]);
+  }, [currentFilter, currentSort, currentSortDirection, currentPageSize]);
 
   const [editState, setEditState] = useState<{
     open: boolean;
@@ -293,9 +313,31 @@ const Newsletters = () => {
             </select>
           </div>
           <div className="mb-2 flex grow sm:mr-2 sm:mb-0 md:grow-0">
-            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
-              <BarsArrowDownIcon className="h-6 w-6" />
-            </span>
+            <button
+              type="button"
+              data-testid="newsletter-sort-direction-toggle"
+              aria-label={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              title={intl.formatMessage({
+                id: 'common.toggleSortDirection',
+                defaultMessage: 'Toggle sort direction',
+              })}
+              onClick={() => {
+                setCurrentSortDirection((prev) =>
+                  prev === 'asc' ? 'desc' : 'asc'
+                );
+                updateQueryParams('page', '1');
+              }}
+              className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+            >
+              {currentSortDirection === 'asc' ? (
+                <BarsArrowUpIcon className="h-6 w-6" />
+              ) : (
+                <BarsArrowDownIcon className="h-6 w-6" />
+              )}
+            </button>
             <select
               id="sort"
               name="sort"

@@ -5790,6 +5790,13 @@ paths:
             type: string
             enum: [created, updated, invites, displayname]
             default: created
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (ascending or descending)
       responses:
         '200':
           description: A JSON array of all users
@@ -6161,6 +6168,19 @@ paths:
             type: string
             nullable: true
             enum: [all, read, unread]
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [created, modified]
+            default: created
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (ascending or descending)
       responses:
         '200':
           description: User's notifications returned
@@ -7729,6 +7749,13 @@ paths:
             enum: [created, modified]
             default: created
         - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (ascending or descending)
+        - in: query
           name: createdBy
           schema:
             type: number
@@ -7965,6 +7992,13 @@ paths:
             enum: [created, modified]
             default: created
         - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (ascending or descending)
+        - in: query
           name: createdBy
           schema:
             type: number
@@ -8077,6 +8111,13 @@ paths:
             nullable: true
             enum: [created, modified, name]
             default: modified
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (ascending or descending)
       responses:
         '200':
           description: A list of newsletters

@@ -254,7 +254,8 @@ newsletterRoutes.get<Record<string, string>, NewsletterResultsResponse>(
           ? req.query.sort
           : 'modified';
       const sortColumn = SORT_COLUMNS[sortKey];
-      const sortDirection: 'ASC' | 'DESC' = sortKey === 'name' ? 'ASC' : 'DESC';
+      const sortDirection: 'ASC' | 'DESC' =
+        req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
 
       const query = getRepository(Newsletter)
         .createQueryBuilder('newsletter')
