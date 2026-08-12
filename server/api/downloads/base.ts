@@ -167,6 +167,32 @@ export async function testConnection(
 }
 
 /**
+ * Fetch the running version of a download client. Performs an authenticated
+ * request, so it also doubles as a connectivity check.
+ */
+export async function getClientVersion(
+  settings: DownloadClientSettings
+): Promise<string> {
+  clearClientCache(settings.id);
+  const client = await getClient(settings);
+
+  switch (settings.client) {
+    case 'qbittorrent':
+      return (client as QBittorrent).getAppVersion();
+    case 'deluge': {
+      const version = await (client as Deluge).getVersion();
+      return version.result;
+    }
+    case 'transmission': {
+      const session = await (client as Transmission).getSession();
+      return session.arguments.version;
+    }
+    default:
+      throw new Error(`Unsupported download client: ${settings.client}`);
+  }
+}
+
+/**
  * Fetch all torrent data from a single client with health check support
  */
 export async function fetchClientData(

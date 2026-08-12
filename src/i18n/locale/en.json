@@ -5570,6 +5570,18 @@
   "sonarrSettings.title": {
     "defaultMessage": "Sonarr Settings"
   },
+  "system.health.collapseInstances": {
+    "defaultMessage": "Hide instances"
+  },
+  "system.health.expandInstances": {
+    "defaultMessage": "Show instances"
+  },
+  "system.health.instanceSummary": {
+    "defaultMessage": "{healthy} of {total} healthy"
+  },
+  "system.health.retryFailed": {
+    "defaultMessage": "Failed to retry service health check."
+  },
   "system.health.title": {
     "defaultMessage": "Health"
   },
@@ -5593,6 +5605,9 @@
   },
   "system.status.healthy": {
     "defaultMessage": "Healthy"
+  },
+  "system.status.retrying": {
+    "defaultMessage": "Retrying…"
   },
   "system.status.unhealthy": {
     "defaultMessage": "Unhealthy"

@@ -4,6 +4,7 @@ import RestartRequiredAlert, {
 } from '@app/components/Admin/Settings/RestartRequiredAlert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
@@ -48,12 +49,14 @@ const ServicesTdarr = () => {
           enabled: dataTdarr?.enabled ?? false,
           hostname: dataTdarr?.hostname ?? '',
           port: dataTdarr?.port ?? 8265,
+          apiKey: dataTdarr?.apiKey ?? '',
         }}
         onSubmit={async (values) => {
           try {
             await axios.post('/api/v1/settings/Tdarr', {
               hostname: values.hostname,
               port: values.port,
+              apiKey: values.apiKey,
               enabled: values.enabled,
             } as ServiceSettings);
 
@@ -174,6 +177,30 @@ const ServicesTdarr = () => {
                     touched.port &&
                     typeof errors.port === 'string' && (
                       <div className="text-error">{errors.port}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="apiKey" className="text-label">
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="col-span-2 flex">
+                    <SensitiveInput
+                      as="field"
+                      id="apiKey"
+                      name="apiKey"
+                      buttonSize="sm"
+                      className="input input-sm input-primary w-full"
+                    />
+                  </div>
+                  {errors.apiKey &&
+                    touched.apiKey &&
+                    typeof errors.apiKey === 'string' && (
+                      <div className="text-error">{errors.apiKey}</div>
                     )}
                 </div>
               </div>

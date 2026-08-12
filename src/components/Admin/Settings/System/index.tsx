@@ -3,6 +3,7 @@ import Error from '@app/app/error';
 import { RESTART_REQUIRED_SWR_KEY } from '@app/components/Admin/Settings/RestartRequiredAlert';
 import DiskSpace from '@app/components/Admin/Settings/System/DiskSpace';
 import Releases from '@app/components/Admin/Settings/System/Releases';
+import ServicesHealth from '@app/components/Admin/Settings/System/ServicesHealth';
 import Alert from '@app/components/Common/Alert';
 import Badge from '@app/components/Common/Badge';
 import Button from '@app/components/Common/Button';
@@ -129,6 +130,7 @@ const SystemSettings = () => {
           isRestarting={isRestartingServer || isReconnecting}
           onRestart={handleRestartServer}
         />
+        <ServicesHealth />
       </div>
       <DiskSpace data={data} />
       <div className="mt-6">
