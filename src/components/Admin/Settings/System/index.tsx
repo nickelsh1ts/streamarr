@@ -132,7 +132,7 @@ const SystemSettings = () => {
         />
         <ServicesHealth />
       </div>
-      <DiskSpace data={data} />
+      <DiskSpace appDataPath={data.appDataPath} />
       <div className="mt-6">
         <List
           title={intl.formatMessage({

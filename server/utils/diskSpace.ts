@@ -11,6 +11,8 @@ import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
+const DU_TIMEOUT_MS = 30 * 1000;
+
 /**
  * Walks up the directory tree from `targetPath` until it finds a path that
  * exists on the filesystem. Returns the nearest existing ancestor (or the
@@ -102,10 +104,45 @@ export const getDiskSpaceStats = async (diskPath: string) => {
 };
 
 /**
- * Recursively calculates the total size in bytes of all files under
- * `targetPath`. Skips symbolic links and unreadable entries.
+ * Returns the total bytes used under `targetPath`. Prefers the native `du`
+ * command, which is significantly faster than a recursive JS walk and runs
+ * off the event loop. Note: `du` reports on-disk (block-allocated) usage
+ * rather than apparent file size, so totals can differ slightly. Falls back to
+ * a recursive walk when `du` is unavailable (e.g. non-POSIX host) or fails.
  */
 export const getPathUsedBytes = async (targetPath: string): Promise<number> => {
+  try {
+    // -s: summarize to a single total; -k: report in 1024-byte block units.
+    // `--` guards against a path that begins with `-` being read as a flag.
+    const { stdout } = await execFileAsync('du', ['-sk', '--', targetPath], {
+      timeout: DU_TIMEOUT_MS,
+    });
+    const blocksKb = Number(stdout.trim().split(/\s+/)[0]);
+
+    if (Number.isFinite(blocksKb)) {
+      return blocksKb * 1024;
+    }
+
+    throw new Error(`Unable to parse du output for path: ${targetPath}`);
+  } catch (e) {
+    logger.warn('Falling back to recursive path size calculation', {
+      label: 'Settings',
+      targetPath,
+      errorMessage: e instanceof Error ? e.message : 'Unknown error',
+    });
+
+    return getPathUsedBytesRecursive(targetPath);
+  }
+};
+
+/**
+ * Recursively calculates the total size in bytes of all files under
+ * `targetPath`. Skips symbolic links and unreadable entries. Used as a
+ * fallback when the native `du` command is unavailable.
+ */
+const getPathUsedBytesRecursive = async (
+  targetPath: string
+): Promise<number> => {
   try {
     const rootStats = await fsPromises.lstat(targetPath);
 
@@ -236,4 +273,46 @@ export const getConfigDiskSpace = async (
     },
     { items: [], failedPaths: [] }
   );
+};
+
+const DISK_SPACE_CACHE_TTL_MS = 30 * 1000;
+
+type DiskSpaceResult = {
+  items: DiskSpaceItem[];
+  failedPaths: DiskSpaceFailure[];
+};
+
+let diskSpaceCache: {
+  key: string;
+  expiresAt: number;
+  promise: Promise<DiskSpaceResult>;
+} | null = null;
+
+export const getCachedConfigDiskSpace = async (
+  configPath: string
+): Promise<DiskSpaceResult> => {
+  const now = Date.now();
+
+  if (
+    diskSpaceCache &&
+    diskSpaceCache.key === configPath &&
+    diskSpaceCache.expiresAt > now
+  ) {
+    return diskSpaceCache.promise;
+  }
+
+  const promise = getConfigDiskSpace(configPath);
+  diskSpaceCache = {
+    key: configPath,
+    expiresAt: now + DISK_SPACE_CACHE_TTL_MS,
+    promise,
+  };
+
+  promise.catch(() => {
+    if (diskSpaceCache?.promise === promise) {
+      diskSpaceCache = null;
+    }
+  });
+
+  return promise;
 };

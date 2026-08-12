@@ -90,26 +90,38 @@ interface ReleasesProps {
 const Releases = ({ currentVersion }: ReleasesProps) => {
   const { data, error } = useSWR<GitHubRelease[]>('/api/v1/settings/releases');
 
+  const header = (
+    <h3 className="text-2xl font-bold">
+      <FormattedMessage id="aboutReleases.title" defaultMessage="Releases" />
+    </h3>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div>
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   if (!data) {
     return (
-      <div className="text-gray-300">
-        <FormattedMessage
-          id="aboutReleases.dataUnavailable"
-          defaultMessage="Release data is currently unavailable"
-        />
+      <div>
+        {header}
+        <div className="text-gray-300">
+          <FormattedMessage
+            id="aboutReleases.dataUnavailable"
+            defaultMessage="Release data is currently unavailable"
+          />
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">
-        <FormattedMessage id="aboutReleases.title" defaultMessage="Releases" />
-      </h3>
+      {header}
       <div className="mt-6 mb-10 space-y-3">
         {data.map((release, index) => {
           return (

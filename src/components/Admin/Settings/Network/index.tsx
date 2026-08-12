@@ -131,26 +131,35 @@ const NetworkSettings = () => {
       ),
   });
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="networkSettings.title"
+          defaultMessage="Network Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="networkSettings.description"
+          defaultMessage="Configure global network settings for your Streamarr instance."
+        />
+      </p>
+    </div>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="networkSettings.title"
-            defaultMessage="Network Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="networkSettings.description"
-            defaultMessage="Configure global network settings for your Streamarr instance."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert
         filterServices={['Proxy Support', 'CSRF Protection']}
       />

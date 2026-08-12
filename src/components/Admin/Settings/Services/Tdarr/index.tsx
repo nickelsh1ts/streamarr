@@ -23,26 +23,35 @@ const ServicesTdarr = () => {
     '/api/v1/settings/tdarr'
   );
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.tdarr.title"
+          defaultMessage="Tdarr Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.tdarr.description"
+          defaultMessage="Configure the settings for your Tdarr server."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataTdarr) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.tdarr.title"
-            defaultMessage="Tdarr Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.tdarr.description"
-            defaultMessage="Configure the settings for your Tdarr server."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert filterServices={['Tdarr']} />
       <Formik
         initialValues={{

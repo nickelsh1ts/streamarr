@@ -75,8 +75,19 @@ const UserPasswordChange = () => {
       ),
   });
 
+  const header = (
+    <h3 className="text-2xl font-extrabold">
+      <FormattedMessage id="common.password" defaultMessage="Password" />
+    </h3>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mt-3 mb-6">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   if (!data) {
@@ -90,11 +101,7 @@ const UserPasswordChange = () => {
   ) {
     return (
       <>
-        <div className="mt-3 mb-6">
-          <h3 className="text-2xl font-extrabold">
-            <FormattedMessage id="common.password" defaultMessage="Password" />
-          </h3>
-        </div>
+        <div className="mt-3 mb-6">{header}</div>
         <Alert
           title={intl.formatMessage({
             id: 'userSettings.password.noPermission',

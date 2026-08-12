@@ -148,8 +148,24 @@ const UserSettingsNotifications = ({
       : `/admin/users/${user?.id}${settingsRoute.route}`,
   }));
 
+  const header = (
+    <div className="mt-3 mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="notification.settings"
+          defaultMessage="Notification Settings"
+        />
+      </h3>
+    </div>
+  );
+
   if (userLoading || (!data && !error)) {
-    return <LoadingEllipsis />;
+    return (
+      <div>
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   if (userError || !user) {
@@ -166,14 +182,7 @@ const UserSettingsNotifications = ({
 
   return (
     <div>
-      <div className="mt-3 mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="notification.settings"
-            defaultMessage="Notification Settings"
-          />
-        </h3>
-      </div>
+      {header}
       <AdminTabs tabType="button" AdminRoutes={computedRoutes} />
       <div className="section">{children}</div>
     </div>

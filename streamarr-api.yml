@@ -5352,53 +5352,66 @@ paths:
                   appDataPath:
                     type: string
                     example: /app/config
-                  diskSpace:
-                    type: object
-                    properties:
-                      items:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            deviceId:
-                              type: string
-                              example: '2064'
-                            name:
-                              type: string
-                              example: App Data
-                            path:
-                              type: string
-                              example: /app/config
-                            mountPoint:
-                              type: string
-                              example: /
-                            pathUsedBytes:
-                              type: number
-                              example: 104857600
-                            totalBytes:
-                              type: number
-                              example: 249108103168
-                            freeBytes:
-                              type: number
-                              example: 124554051584
-                            usedBytes:
-                              type: number
-                              example: 124554051584
-                            usedPercent:
-                              type: number
-                              format: float
-                              example: 50
-                      failedPaths:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              example: Image Cache
-                            path:
-                              type: string
-                              example: /app/config/cache/images
+  /settings/about/diskspace:
+    get:
+      summary: Get disk space usage
+      description: >-
+        Returns disk usage for the application data directory and its immediate
+        subdirectories. Results are cached server-side for a short period.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Disk space usage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        deviceId:
+                          type: string
+                          example: '2064'
+                        name:
+                          type: string
+                          example: App Data
+                        path:
+                          type: string
+                          example: /app/config
+                        mountPoint:
+                          type: string
+                          example: /
+                        pathUsedBytes:
+                          type: number
+                          example: 104857600
+                        totalBytes:
+                          type: number
+                          example: 249108103168
+                        freeBytes:
+                          type: number
+                          example: 124554051584
+                        usedBytes:
+                          type: number
+                          example: 124554051584
+                        usedPercent:
+                          type: number
+                          format: float
+                          example: 50
+                  failedPaths:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: Image Cache
+                        path:
+                          type: string
+                          example: /app/config/cache/images
   /settings/releases:
     get:
       summary: Get GitHub releases

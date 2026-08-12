@@ -217,26 +217,35 @@ const ServicesLidarr = () => {
     }
   };
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.lidarr.title"
+          defaultMessage="Lidarr Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.lidarr.description"
+          defaultMessage="Optionally configure the settings for your Lidarr server."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataLidarr) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.lidarr.title"
-            defaultMessage="Lidarr Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.lidarr.description"
-            defaultMessage="Optionally configure the settings for your Lidarr server."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert filterServices={['Lidarr']} />
       <Formik
         initialValues={{

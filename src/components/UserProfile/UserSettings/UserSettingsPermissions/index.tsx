@@ -28,8 +28,22 @@ const UserPermissions = () => {
     user ? `/api/v1/user/${user?.id}/settings/permissions` : null
   );
 
+  const header = (
+    <h3 className="text-2xl font-extrabold">
+      <FormattedMessage
+        id="settings.permissions"
+        defaultMessage="Permissions"
+      />
+    </h3>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mt-3 mb-6">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   if (!data) {
@@ -45,14 +59,7 @@ const UserPermissions = () => {
   if (currentUser?.id !== 1 && currentUser?.id === user?.id) {
     return (
       <>
-        <div className="mt-3 mb-6">
-          <h3 className="text-2xl font-extrabold">
-            <FormattedMessage
-              id="settings.permissions"
-              defaultMessage="Permissions"
-            />
-          </h3>
-        </div>
+        <div className="mt-3 mb-6">{header}</div>
         <Alert
           title={
             <FormattedMessage
