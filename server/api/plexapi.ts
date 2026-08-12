@@ -8,6 +8,7 @@ interface PlexStatusResponse {
   MediaContainer: {
     machineIdentifier: string;
     friendlyName: string;
+    version?: string;
   };
 }
 

@@ -13,6 +13,7 @@ export interface PlexHealthState {
   lastError?: string;
   cooldownUntil?: Date;
   consecutiveFailures: number;
+  version?: string;
 }
 
 export interface LibraryLink {
@@ -38,11 +39,12 @@ let plexHealthState: PlexHealthState = {
 };
 
 let cachedLibraries: LibraryItemsResponse | undefined;
+let cachedPlexVersion: string | undefined;
 let retryTimeout: NodeJS.Timeout | undefined;
 let revalidating = false;
 
 export function getPlexHealth(): PlexHealthState {
-  return { ...plexHealthState };
+  return { ...plexHealthState, version: cachedPlexVersion };
 }
 
 export function isPlexInCooldown(): boolean {
@@ -126,6 +128,28 @@ export function getPlexCachedLibraries(): LibraryItemsResponse | undefined {
   return cachedLibraries;
 }
 
+/**
+ * Best-effort fetch of the Plex server version for display purposes. Does not
+ * affect the health state and is skipped once the version is known or while
+ * Plex is in cooldown.
+ */
+export async function refreshPlexVersion(): Promise<void> {
+  if (cachedPlexVersion || isPlexInCooldown()) return;
+  try {
+    const admin = await getRepository(User).findOneOrFail({
+      select: { id: true, plexToken: true },
+      where: { id: 1 },
+    });
+    const plexApi = new PlexAPI({ plexToken: admin.plexToken });
+    const status = await plexApi.getStatus();
+    if (status.MediaContainer.version) {
+      cachedPlexVersion = status.MediaContainer.version;
+    }
+  } catch {
+    // Version stays unknown; status is reported separately.
+  }
+}
+
 function setPlexCachedLibraries(data: LibraryItemsResponse): void {
   cachedLibraries = data;
 }
@@ -154,7 +178,10 @@ export async function revalidatePlexLibraries(): Promise<void> {
     );
 
     await withPlexHealth(async () => {
-      await plexApi.getStatus();
+      const status = await plexApi.getStatus();
+      if (status.MediaContainer.version) {
+        cachedPlexVersion = status.MediaContainer.version;
+      }
 
       const libraries = await Promise.all(
         allEnabledLibraries.map(async (lib) => {

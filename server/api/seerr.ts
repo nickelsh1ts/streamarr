@@ -146,6 +146,17 @@ class SeerrAPI {
     }
   }
 
+  public async getStatus(): Promise<{ version: string }> {
+    try {
+      const response = await this.axios.get<{ version: string }>('/status');
+      return { version: response.data.version };
+    } catch (e) {
+      throw new Error(
+        `[Seerr] Failed to fetch status: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
   public async getDefaultQuotas(): Promise<SeerrQuotaResponse> {
     try {
       const response =

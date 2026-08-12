@@ -72,6 +72,76 @@ components:
         consecutiveFailures:
           type: number
           example: 0
+    ServiceHealthInstance:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique instance identifier
+          example: 'radarr-1'
+        name:
+          type: string
+          description: Display name of the instance
+          example: 'Radarr (4K)'
+        status:
+          type: string
+          enum: [healthy, retrying, unhealthy, unknown]
+          example: 'healthy'
+        version:
+          type: string
+          nullable: true
+          description: Reported service version, when available
+        detail:
+          type: string
+          nullable: true
+          description: Additional health detail shown when a version is not available
+        error:
+          type: string
+          nullable: true
+          description: Error message from the most recent failed check
+    ServiceHealth:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Service identifier
+          example: 'radarr'
+        name:
+          type: string
+          description: Display name of the service
+          example: 'Radarr'
+        status:
+          type: string
+          enum: [healthy, retrying, unhealthy, unknown]
+          example: 'healthy'
+        version:
+          type: string
+          nullable: true
+          description: Reported service version, when available
+        detail:
+          type: string
+          nullable: true
+          description: Additional health detail shown when a version is not available
+        error:
+          type: string
+          nullable: true
+          description: Error message from the most recent failed check
+        retryable:
+          type: boolean
+          description: Whether the service supports a manual retry
+          example: true
+        instances:
+          type: array
+          description: Present for multi-instance services (Radarr, Sonarr, download clients)
+          items:
+            $ref: '#/components/schemas/ServiceHealthInstance'
+    ServiceHealthResponse:
+      type: object
+      properties:
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceHealth'
     CalendarEvent:
       type: object
       properties:
@@ -3214,6 +3284,59 @@ paths:
                           type: string
                           description: Service identifier
                           example: 'bazarr'
+  /settings/health:
+    get:
+      summary: Get service health
+      description: Returns the health of all enabled and configured services. Plex reflects its existing in-memory health state; all other services are actively probed using their saved configuration.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceHealthResponse'
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - insufficient permissions
+        '500':
+          description: Failed to compute service health
+  /settings/health/retry:
+    post:
+      summary: Retry a service health check
+      description: Resets any passive health state for the identified service and recomputes the full health report. Accepts a service or instance identifier (e.g. `plex`, `radarr`, `radarr-1`, `downloads`, `downloads-2`).
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Service or instance identifier to retry
+                  example: 'radarr-1'
+              required:
+                - id
+      responses:
+        '200':
+          description: Recomputed service health report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceHealthResponse'
+        '400':
+          description: A service id is required
+        '401':
+          description: Unauthorized - user not authenticated
+        '403':
+          description: Forbidden - insufficient permissions
+        '500':
+          description: Failed to retry service health check
   /settings/uptime:
     get:
       summary: Get Uptime settings
