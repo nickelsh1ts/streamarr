@@ -199,6 +199,26 @@ The maximum time, in seconds, that Streamarr will wait for a response from an ex
 
 Increase this value if you connect to slow or remote services that occasionally time out; lower it if you would rather fail fast when a service is unresponsive.
 
+### Scheduled Retry Attempts
+
+The number of times a scheduled task that pulls data from external services (such as Plex, Tautulli, or the \*Arr apps) retries before giving up.
+
+- Must be a whole number.
+- Minimum: **1** (retries disabled — the task runs once). Maximum: **10**.
+
+When an external service is unreachable, Streamarr does not act on incomplete data. It waits the retry interval below and tries again, up to this many total attempts. If every attempt fails, the task is **aborted** and the failure is logged. Data that is simply empty (for example, no matching items) is **not** treated as a failure and does not trigger a retry.
+
+> Only scheduled tasks retry. On-demand actions — such as a manual newsletter **Send Now** — fail immediately so you can fix the problem and try again.
+
+Scheduled newsletters are the first feature to use these settings; see [Newsletters → When a content source is unreachable](../newsletters/README.md#when-a-content-source-is-unreachable) for how an aborted send behaves.
+
+### Scheduled Retry Interval
+
+The time, in seconds, Streamarr waits between the scheduled retry attempts described above.
+
+- Must be a whole number of seconds.
+- Minimum: **30 seconds**. Maximum: **3600 seconds** (1 hour).
+
 ---
 
 ## API Reference

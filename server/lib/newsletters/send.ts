@@ -10,7 +10,8 @@ import logger from '@server/logger';
 import path from 'path';
 import { In } from 'typeorm';
 import validator from 'validator';
-import { resolveBlockData } from './dataProviders';
+import type { NewsletterDataFailure } from './dataProviders';
+import { getConfiguredBlocks, resolveBlockData } from './dataProviders';
 import type { RenderedNewsletter } from './render';
 import {
   getNewsletterEmailStrings,
@@ -22,6 +23,96 @@ const runningNewsletters = new Set<number>();
 
 export const isNewsletterSending = (id: number): boolean =>
   runningNewsletters.has(id);
+
+export class NewsletterDataUnavailableError extends Error {
+  public readonly failures: NewsletterDataFailure[];
+
+  constructor(failures: NewsletterDataFailure[]) {
+    super(
+      'One or more external services are unavailable. The newsletter was not sent.'
+    );
+    this.name = 'NewsletterDataUnavailableError';
+    this.failures = failures;
+  }
+}
+
+export class NewsletterEmptyError extends Error {
+  public readonly blocks: string[];
+
+  constructor(blocks: string[]) {
+    super('There is no content to send — all configured blocks are empty.');
+    this.name = 'NewsletterEmptyError';
+    this.blocks = blocks;
+  }
+}
+
+/**
+ * Resolves a newsletter's recipient list: active users, honouring custom
+ * selection and per-user un-subscription for non-important newsletters, filtered
+ * to those with a valid email address.
+ */
+const resolveNewsletterRecipients = async (
+  newsletter: Newsletter
+): Promise<User[]> => {
+  const userRepository = getRepository(User);
+
+  let recipients =
+    newsletter.recipientMode === 'custom'
+      ? await userRepository.find({
+          where: { id: In(newsletter.recipientIds ?? []), active: true },
+          relations: ['settings'],
+        })
+      : await userRepository.find({
+          where: { active: true },
+          relations: ['settings'],
+        });
+
+  if (!newsletter.isImportant) {
+    recipients = recipients.filter(
+      (user) =>
+        !(user.settings?.unsubscribedNewsletters ?? []).includes(newsletter.id)
+    );
+  }
+
+  return recipients.filter((user) =>
+    validator.isEmail(user.email, { require_tld: false })
+  );
+};
+
+export const recordNewsletterAbort = async (
+  newsletter: Newsletter,
+  failures: NewsletterDataFailure[]
+): Promise<{ recipientCount: number }> => {
+  const recipients = await resolveNewsletterRecipients(newsletter);
+  const recipientCount = recipients.length;
+
+  await getRepository(NewsletterHistory).save(
+    new NewsletterHistory({
+      newsletter,
+      triggeredBy: 'schedule',
+      recipientCount,
+      failureCount: recipientCount,
+    })
+  );
+
+  logger.error(
+    'Newsletter was aborted because external services were unavailable',
+    {
+      label: 'Newsletters',
+      newsletterId: newsletter.id,
+      name: newsletter.name,
+      recipientCount,
+      failures: failures.map((failure) => ({
+        block: failure.block,
+        source: failure.source,
+        mediaType: failure.mediaType,
+        error: failure.error,
+      })),
+    }
+  );
+
+  return { recipientCount };
+};
 
 /**
  * Sends a newsletter to its resolved recipients using PreparedEmail
@@ -56,39 +147,30 @@ export const sendNewsletter = async (
   runningNewsletters.add(newsletter.id);
 
   try {
-    let recipients: User[];
+    const recipients: User[] =
+      triggeredBy === 'test' && options.testUser
+        ? [options.testUser].filter((user) =>
+            validator.isEmail(user.email, { require_tld: false })
+          )
+        : await resolveNewsletterRecipients(newsletter);
 
-    if (triggeredBy === 'test' && options.testUser) {
-      recipients = [options.testUser];
-    } else {
-      const userRepository = getRepository(User);
-
-      recipients =
-        newsletter.recipientMode === 'custom'
-          ? await userRepository.find({
-              where: { id: In(newsletter.recipientIds ?? []), active: true },
-              relations: ['settings'],
-            })
-          : await userRepository.find({
-              where: { active: true },
-              relations: ['settings'],
-            });
-
-      if (!newsletter.isImportant) {
-        recipients = recipients.filter(
-          (user) =>
-            !(user.settings?.unsubscribedNewsletters ?? []).includes(
-              newsletter.id
-            )
-        );
-      }
-    }
-
-    recipients = recipients.filter((user) =>
-      validator.isEmail(user.email, { require_tld: false })
+    const { data: blockData, failures } = await resolveBlockData(
+      newsletter.blocks
     );
 
-    const blockData = await resolveBlockData(newsletter.blocks);
+    if (failures.length > 0) {
+      throw new NewsletterDataUnavailableError(failures);
+    }
+
+    const configuredBlocks = getConfiguredBlocks(newsletter.blocks);
+
+    if (
+      configuredBlocks.length > 0 &&
+      configuredBlocks.every((block) => blockData[block].length === 0)
+    ) {
+      throw new NewsletterEmptyError(configuredBlocks);
+    }
+
     const { applicationUrl, applicationTitle, customLogo } = settings.main;
     const logoUrl = customLogo || '/logo_full.png';
 
