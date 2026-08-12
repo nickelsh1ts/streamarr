@@ -267,48 +267,57 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
     }
   };
 
+  const header = (
+    <div className="my-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="plexSettings.title"
+          defaultMessage="Plex Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="plexSettings.description"
+          defaultMessage="Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
+        />
+      </p>
+      {!!onComplete && (
+        <Alert type="primary">
+          <p className="flex-1 text-sm leading-5">
+            <FormattedMessage
+              id="plexSettings.setupInstructions"
+              defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
+              values={{
+                plexLink: (
+                  <a
+                    href="https://plex.tv"
+                    className="inline-flex text-white transition duration-300 hover:underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    plex.tv
+                  </a>
+                ),
+              }}
+            />
+          </p>
+        </Alert>
+      )}
+    </div>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <>
+        {header}
+        <LoadingEllipsis />
+      </>
+    );
   }
 
   return (
     <>
-      <div className="my-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="plexSettings.title"
-            defaultMessage="Plex Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="plexSettings.description"
-            defaultMessage="Configure the settings for your Plex server. Streamarr scans your Plex libraries to generate menus and share to invited users."
-          />
-        </p>
-        {!!onComplete && (
-          <Alert type="primary">
-            <p className="flex-1 text-sm leading-5">
-              <FormattedMessage
-                id="plexSettings.setupInstructions"
-                defaultMessage="To set up Plex, you can either enter the details manually or select a server retrieved from {plexLink}. Press the button to the right of the dropdown to fetch the list of available servers."
-                values={{
-                  plexLink: (
-                    <a
-                      href="https://plex.tv"
-                      className="inline-flex text-white transition duration-300 hover:underline"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      plex.tv
-                    </a>
-                  ),
-                }}
-              />
-            </p>
-          </Alert>
-        )}
-      </div>
+      {header}
       <Formik
         initialValues={{
           hostname: data?.ip,

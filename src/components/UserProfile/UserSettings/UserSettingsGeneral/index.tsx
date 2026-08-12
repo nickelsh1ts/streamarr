@@ -221,8 +221,22 @@ const UserSettingsGeneral = () => {
     }
   };
 
+  const header = (
+    <h3 className="text-2xl font-extrabold">
+      <FormattedMessage
+        id="generalSettings.title"
+        defaultMessage="General Settings"
+      />
+    </h3>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mt-3 mb-6">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   if (!data) {
@@ -237,12 +251,7 @@ const UserSettingsGeneral = () => {
 
   return (
     <div className="mt-3 mb-6">
-      <h3 className="text-2xl font-extrabold">
-        <FormattedMessage
-          id="generalSettings.title"
-          defaultMessage="General Settings"
-        />
-      </h3>
+      {header}
       <Formik
         initialValues={{
           displayName: data?.username ?? '',

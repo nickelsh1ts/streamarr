@@ -115,11 +115,8 @@ const GeneralSettings = () => {
     }
   };
 
-  if (!data && !error) {
-    return <LoadingEllipsis />;
-  }
-  return (
-    <div className="mb-6">
+  const header = (
+    <>
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage
           id="generalSettings.title"
@@ -132,6 +129,20 @@ const GeneralSettings = () => {
           defaultMessage="Configure global and default Streamarr settings"
         />
       </p>
+    </>
+  );
+
+  if (!data && !error) {
+    return (
+      <div className="mb-6">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+  return (
+    <div className="mb-6">
+      {header}
       <Formik
         initialValues={{
           applicationTitle: data?.applicationTitle,

@@ -52,6 +52,13 @@ export const settingsAboutLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const settingsAboutDiskSpaceLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit expensive disk space introspection per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const newsletterPreviewLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 30,

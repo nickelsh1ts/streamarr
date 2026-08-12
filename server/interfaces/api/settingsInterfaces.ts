@@ -25,10 +25,11 @@ export interface SettingsAboutResponse {
     type: string;
     version: string;
   };
-  diskSpace: {
-    items: DiskSpaceItem[];
-    failedPaths: DiskSpaceFailure[];
-  };
+}
+
+export interface SettingsAboutDiskSpaceResponse {
+  items: DiskSpaceItem[];
+  failedPaths: DiskSpaceFailure[];
 }
 
 export interface DiskSpaceItem {

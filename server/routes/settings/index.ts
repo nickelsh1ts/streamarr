@@ -12,6 +12,7 @@ import type {
   LogMessage,
   LogsResultsResponse,
   ServiceHealthResponse,
+  SettingsAboutDiskSpaceResponse,
   SettingsAboutResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import { scheduledJobs } from '@server/job/schedule';
@@ -25,7 +26,11 @@ import {
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
-import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
+import {
+  arrAuthLimiter,
+  settingsAboutDiskSpaceLimiter,
+  settingsAboutLimiter,
+} from '@server/lib/rateLimiters';
 import restartManager from '@server/lib/restartManager';
 import { plexFullScanner } from '@server/lib/scanners/plex';
 import {
@@ -44,7 +49,7 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
-import { getConfigDiskSpace } from '@server/utils/diskSpace';
+import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs, { promises as fsPromises } from 'fs';
@@ -1198,10 +1203,9 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
   const userRepository = getRepository(User);
   const configPath = appDataPath();
 
-  const [totalInvites, totalUsers, diskSpace] = await Promise.all([
+  const [totalInvites, totalUsers] = await Promise.all([
     inviteRepository.count(),
     userRepository.count(),
-    getConfigDiskSpace(configPath),
   ]);
 
   const dbTypeRaw = dataSource.options.type;
@@ -1242,9 +1246,17 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
     nodeVersion: process.version.replace(/^v/, ''),
     appDataPath: configPath,
     database: { type: dbDisplayType, version: dbVersion },
-    diskSpace,
   } as SettingsAboutResponse);
 });
+
+settingsRoutes.get(
+  '/about/diskspace',
+  settingsAboutDiskSpaceLimiter,
+  async (_req, res) => {
+    const diskSpace = await getCachedConfigDiskSpace(appDataPath());
+    res.status(200).json(diskSpace as SettingsAboutDiskSpaceResponse);
+  }
+);
 
 settingsRoutes.get('/releases', async (_req, res, next) => {
   try {

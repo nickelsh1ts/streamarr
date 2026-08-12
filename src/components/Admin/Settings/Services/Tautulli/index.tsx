@@ -123,26 +123,35 @@ const ServicesTautulli = () => {
     ]
   );
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.tautulli.title"
+          defaultMessage="Tautulli Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.tautulli.description"
+          defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataTautulli) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.tautulli.title"
-            defaultMessage="Tautulli Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.tautulli.description"
-            defaultMessage="Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert filterServices={['Tautulli']} />
       <Formik
         initialValues={{

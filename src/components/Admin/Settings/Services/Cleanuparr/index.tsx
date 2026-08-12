@@ -100,26 +100,35 @@ const ServicesCleanuparr = () => {
     [intl]
   );
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.cleanuparr.title"
+          defaultMessage="Cleanuparr Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.cleanuparr.description"
+          defaultMessage="Optionally configure the settings for your Cleanuparr server. Cleanuparr must be configured with a matching base path."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataCleanuparr) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.cleanuparr.title"
-            defaultMessage="Cleanuparr Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.cleanuparr.description"
-            defaultMessage="Optionally configure the settings for your Cleanuparr server. Cleanuparr must be configured with a matching base path."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert filterServices={['Cleanuparr']} />
       <Alert
         title={intl.formatMessage({
