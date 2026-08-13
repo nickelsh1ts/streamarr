@@ -1,3 +1,32 @@
+## [1.12.0](https://github.com/nickelsh1ts/streamarr/compare/v1.11.0...v1.12.0) (2026-08-13)
+
+### ✨ Features
+
+* **auth:** harden sign-in session handling and tighten socket CORS ([#519](https://github.com/nickelsh1ts/streamarr/issues/519)) ([476e844](https://github.com/nickelsh1ts/streamarr/commit/476e844ec663063def85cbf312a86ba9fb2875da))
+* **newsletters:** retry when external services are unreachable, then abort ([#515](https://github.com/nickelsh1ts/streamarr/issues/515)) ([d6cd17f](https://github.com/nickelsh1ts/streamarr/commit/d6cd17f1fae6caadf550c98bc009f40675a353bd))
+* **settings:** report health of all enabled services ([#512](https://github.com/nickelsh1ts/streamarr/issues/512)) ([20af08f](https://github.com/nickelsh1ts/streamarr/commit/20af08f993b6134da3cfa12bd032f526d2093a82))
+* **sort:** add sort direction toggle to all sortable lists ([#517](https://github.com/nickelsh1ts/streamarr/issues/517)) ([3abeaab](https://github.com/nickelsh1ts/streamarr/commit/3abeaab793810433fe5b2b61825da2312ce54e87))
+
+### 🐛 Bug Fixes
+
+* **auth:** return 401 for unauthenticated requests and react to session death ([#520](https://github.com/nickelsh1ts/streamarr/issues/520)) ([0bb44ae](https://github.com/nickelsh1ts/streamarr/commit/0bb44ae14dd1e0b6d22a04b86b5abf5492ded15a))
+
+### ⚡ Performance
+
+* **auth:** resolve index and protected-route redirects server-side ([#518](https://github.com/nickelsh1ts/streamarr/issues/518)) ([d13594d](https://github.com/nickelsh1ts/streamarr/commit/d13594dd09e285d3e50482d133d220c9e9b636f1))
+
+### ♻️ Refactoring
+
+* **loading:** scope page-level loading states to their sections ([#516](https://github.com/nickelsh1ts/streamarr/issues/516)) ([55be30c](https://github.com/nickelsh1ts/streamarr/commit/55be30cfb3a027590504fa0f8e04cda1dae70c72))
+
+### 📦 Build System
+
+* **docker:** update node.js runtime to e88a35b ([#444](https://github.com/nickelsh1ts/streamarr/issues/444)) ([17bd094](https://github.com/nickelsh1ts/streamarr/commit/17bd094417820860224dbb048b17d325d95cb6a5))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#445](https://github.com/nickelsh1ts/streamarr/issues/445)) ([b8e4914](https://github.com/nickelsh1ts/streamarr/commit/b8e4914cf24ecc6b3783dac6deb51307daec248a))
+
 ## [1.11.0](https://github.com/nickelsh1ts/streamarr/compare/v1.10.1...v1.11.0) (2026-07-20)
 
 ### ✨ Features
