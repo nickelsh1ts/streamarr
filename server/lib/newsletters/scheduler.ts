@@ -1,8 +1,17 @@
 import { getRepository } from '@server/datasource';
 import Newsletter from '@server/entity/Newsletter';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import schedule from 'node-schedule';
-import { sendNewsletter } from './send';
+import {
+  NewsletterDataUnavailableError,
+  NewsletterEmptyError,
+  recordNewsletterAbort,
+  sendNewsletter,
+} from './send';
+
+const DEFAULT_RETRY_ATTEMPTS = 3;
+const DEFAULT_RETRY_INTERVAL_MS = 5 * 60 * 1000;
 
 /**
  * Manages dynamic node-schedule jobs keyed by newsletter id, unlike the
@@ -12,6 +21,13 @@ import { sendNewsletter } from './send';
  */
 class NewsletterScheduler {
   private jobs = new Map<number, schedule.Job>();
+
+  // Tracks in-flight retry attempts for scheduled sends whose content sources
+  // were unreachable, keyed by newsletter id.
+  private retries = new Map<
+    number,
+    { attempts: number; timer: NodeJS.Timeout | null }
+  >();
 
   public async loadAll(): Promise<void> {
     try {
@@ -70,22 +86,54 @@ class NewsletterScheduler {
         name: newsletter.name,
       });
 
+      let fresh: Newsletter | null = null;
+
       try {
         // Re-fetch so edits made after scheduling are respected.
-        const fresh = await getRepository(Newsletter).findOne({
+        fresh = await getRepository(Newsletter).findOne({
           where: { id: newsletter.id },
         });
 
+        const pending = this.retries.get(newsletter.id);
+        if (pending?.timer) {
+          clearTimeout(pending.timer);
+          pending.timer = null;
+        }
+
         if (!fresh || !fresh.enabled) {
+          this.retries.delete(newsletter.id);
           return;
         }
 
         await sendNewsletter(fresh, 'schedule');
+        this.retries.delete(fresh.id);
 
         if (fresh.scheduleType === 'once') {
           this.cancel(fresh.id);
         }
       } catch (e) {
+        if (e instanceof NewsletterDataUnavailableError) {
+          await this.handleDataUnavailable(fresh ?? newsletter, e, run);
+          return;
+        }
+
+        if (e instanceof NewsletterEmptyError) {
+          this.retries.delete(newsletter.id);
+
+          logger.warn(
+            'Scheduled newsletter skipped; all configured content blocks were empty',
+            {
+              label: 'Newsletters',
+              newsletterId: newsletter.id,
+              name: newsletter.name,
+              blocks: e.blocks,
+            }
+          );
+
+          await this.disableOnceNewsletter(fresh ?? newsletter);
+          return;
+        }
+
         logger.error('Scheduled newsletter send failed', {
           label: 'Newsletters',
           newsletterId: newsletter.id,
@@ -130,6 +178,100 @@ class NewsletterScheduler {
       existing.cancel();
       this.jobs.delete(id);
     }
+
+    const retry = this.retries.get(id);
+
+    if (retry?.timer) {
+      clearTimeout(retry.timer);
+    }
+
+    this.retries.delete(id);
+  }
+
+  private async handleDataUnavailable(
+    newsletter: Newsletter,
+    error: NewsletterDataUnavailableError,
+    run: () => Promise<void>
+  ): Promise<void> {
+    const { network } = getSettings();
+    const maxAttempts = Math.max(
+      1,
+      network.scheduledRetryAttempts ?? DEFAULT_RETRY_ATTEMPTS
+    );
+    const intervalMs = Math.max(
+      0,
+      network.scheduledRetryInterval ?? DEFAULT_RETRY_INTERVAL_MS
+    );
+
+    const state = this.retries.get(newsletter.id) ?? {
+      attempts: 0,
+      timer: null,
+    };
+    state.attempts += 1;
+
+    if (state.attempts < maxAttempts) {
+      logger.warn(
+        `External services unavailable on attempt ${state.attempts} of ${maxAttempts}, retrying in ${intervalMs}ms`,
+        {
+          label: 'Newsletters',
+          newsletterId: newsletter.id,
+          name: newsletter.name,
+          attempt: state.attempts,
+          maxAttempts,
+          retryInMs: intervalMs,
+          failures: error.failures.map((failure) => failure.source),
+        }
+      );
+
+      state.timer = setTimeout(() => void run(), intervalMs);
+      this.retries.set(newsletter.id, state);
+      return;
+    }
+
+    this.retries.delete(newsletter.id);
+
+    try {
+      await recordNewsletterAbort(newsletter, error.failures);
+    } catch (e) {
+      logger.error('Failed to record aborted newsletter', {
+        label: 'Newsletters',
+        newsletterId: newsletter.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    }
+
+    await this.disableOnceNewsletter(newsletter);
+  }
+
+  /**
+   * Disables and unschedules a one-time newsletter after it has been aborted or
+   * skipped. Recurring newsletters are left untouched so they run again on
+   * their next cron tick. No-op for recurring schedules.
+   */
+  private async disableOnceNewsletter(newsletter: Newsletter): Promise<void> {
+    if (newsletter.scheduleType !== 'once') {
+      return;
+    }
+
+    try {
+      const newsletterRepository = getRepository(Newsletter);
+      const current = await newsletterRepository.findOne({
+        where: { id: newsletter.id },
+      });
+
+      if (current) {
+        current.enabled = false;
+        await newsletterRepository.save(current);
+      }
+    } catch (e) {
+      logger.error('Failed to disable one-time newsletter after abort', {
+        label: 'Newsletters',
+        newsletterId: newsletter.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    }
+
+    this.cancel(newsletter.id);
   }
 
   public nextRun(id: number): Date | null {

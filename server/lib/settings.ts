@@ -63,6 +63,8 @@ export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
   csrfProtection: boolean;
+  scheduledRetryAttempts: number;
+  scheduledRetryInterval: number;
 }
 
 export interface DVRSettings {
@@ -471,6 +473,8 @@ class Settings {
         requestTimeout: 10000,
         trustProxy: false,
         csrfProtection: false,
+        scheduledRetryAttempts: 3,
+        scheduledRetryInterval: 300000,
       },
       tautulli: {
         enabled: false,

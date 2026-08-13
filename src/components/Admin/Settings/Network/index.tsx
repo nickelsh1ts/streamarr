@@ -63,28 +63,103 @@ const NetworkSettings = () => {
       ),
     trustProxy: Yup.boolean(),
     csrfProtection: Yup.boolean(),
+    scheduledRetryAttempts: Yup.number()
+      .typeError(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryAttempts',
+          defaultMessage: 'You must provide a valid number of retry attempts',
+        })
+      )
+      .required(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryAttempts',
+          defaultMessage: 'You must provide a valid number of retry attempts',
+        })
+      )
+      .integer(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryAttemptsInteger',
+          defaultMessage: 'Retry attempts must be a whole number',
+        })
+      )
+      .min(
+        1,
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryAttemptsMin',
+          defaultMessage: 'There must be at least 1 attempt',
+        })
+      )
+      .max(
+        10,
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryAttemptsMax',
+          defaultMessage: 'Retry attempts must not exceed 10',
+        })
+      ),
+    scheduledRetryInterval: Yup.number()
+      .typeError(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryInterval',
+          defaultMessage: 'You must provide a valid retry interval',
+        })
+      )
+      .required(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryInterval',
+          defaultMessage: 'You must provide a valid retry interval',
+        })
+      )
+      .integer(
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryIntervalInteger',
+          defaultMessage: 'Retry interval must be a whole number of seconds',
+        })
+      )
+      .min(
+        30,
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryIntervalMin',
+          defaultMessage: 'Retry interval must be at least 30 seconds',
+        })
+      )
+      .max(
+        3600,
+        intl.formatMessage({
+          id: 'networkSettings.validation.scheduledRetryIntervalMax',
+          defaultMessage: 'Retry interval must not exceed 3600 seconds',
+        })
+      ),
   });
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="networkSettings.title"
+          defaultMessage="Network Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="networkSettings.description"
+          defaultMessage="Configure global network settings for your Streamarr instance."
+        />
+      </p>
+    </div>
+  );
+
   if (!data && !error) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="networkSettings.title"
-            defaultMessage="Network Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="networkSettings.description"
-            defaultMessage="Configure global network settings for your Streamarr instance."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert
         filterServices={['Proxy Support', 'CSRF Protection']}
       />
@@ -93,6 +168,10 @@ const NetworkSettings = () => {
           requestTimeout: data ? data.requestTimeout / 1000 : 10,
           trustProxy: data?.trustProxy ?? false,
           csrfProtection: data?.csrfProtection ?? false,
+          scheduledRetryAttempts: data?.scheduledRetryAttempts ?? 3,
+          scheduledRetryInterval: data
+            ? data.scheduledRetryInterval / 1000
+            : 300,
         }}
         enableReinitialize
         validationSchema={NetworkSettingsSchema}
@@ -102,6 +181,9 @@ const NetworkSettings = () => {
               requestTimeout: Number(values.requestTimeout) * 1000,
               trustProxy: values.trustProxy,
               csrfProtection: values.csrfProtection,
+              scheduledRetryAttempts: Number(values.scheduledRetryAttempts),
+              scheduledRetryInterval:
+                Number(values.scheduledRetryInterval) * 1000,
             });
             revalidate();
             mutate(RESTART_REQUIRED_SWR_KEY);
@@ -227,6 +309,72 @@ const NetworkSettings = () => {
                   touched.requestTimeout &&
                   typeof errors.requestTimeout === 'string' && (
                     <div className="text-error">{errors.requestTimeout}</div>
+                  )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+              <label htmlFor="scheduledRetryAttempts" className="col-span-1">
+                <FormattedMessage
+                  id="networkSettings.scheduledRetryAttempts"
+                  defaultMessage="Scheduled Retry Attempts"
+                />
+                <span className="text-neutral block text-sm font-light">
+                  <FormattedMessage
+                    id="networkSettings.scheduledRetryAttempts.description"
+                    defaultMessage="Maximum retry attempts to gather data from external services. (Set to 1 to disable)"
+                  />
+                </span>
+              </label>
+              <div className="col-span-2">
+                <Field
+                  id="scheduledRetryAttempts"
+                  name="scheduledRetryAttempts"
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  max="10"
+                  step="1"
+                  className="input input-primary input-sm w-1/6 rounded-md"
+                />
+                {errors.scheduledRetryAttempts &&
+                  touched.scheduledRetryAttempts &&
+                  typeof errors.scheduledRetryAttempts === 'string' && (
+                    <div className="text-error">
+                      {errors.scheduledRetryAttempts}
+                    </div>
+                  )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+              <label htmlFor="scheduledRetryInterval" className="col-span-1">
+                <FormattedMessage
+                  id="networkSettings.scheduledRetryInterval"
+                  defaultMessage="Scheduled Retry Interval"
+                />
+                <span className="text-neutral block text-sm font-light">
+                  <FormattedMessage
+                    id="networkSettings.scheduledRetryInterval.description"
+                    defaultMessage="Time (in seconds) to wait between scheduled retry attempts."
+                  />
+                </span>
+              </label>
+              <div className="col-span-2">
+                <Field
+                  id="scheduledRetryInterval"
+                  name="scheduledRetryInterval"
+                  type="number"
+                  inputMode="numeric"
+                  min="30"
+                  max="3600"
+                  step="1"
+                  className="input input-primary input-sm w-1/6 rounded-md"
+                />
+                {errors.scheduledRetryInterval &&
+                  touched.scheduledRetryInterval &&
+                  typeof errors.scheduledRetryInterval === 'string' && (
+                    <div className="text-error">
+                      {errors.scheduledRetryInterval}
+                    </div>
                   )}
               </div>
             </div>

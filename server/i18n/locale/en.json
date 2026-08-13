@@ -27,5 +27,6 @@
   "notifications.user.created.message": "Invited by {displayName}.",
   "notifications.user.created.subject": "New User Created: {displayName}",
   "notifications.userSettings.extensionRequested": "Access extension requested",
-  "notifications.userSettings.extensionRequestedMessage": "{displayName} requested an access extension. {state, select, deactivated {Account Deactivated} ended {Trial Ended} other {Trial Ends}}: {accessEndDate}"
+  "notifications.userSettings.extensionRequestedMessage": "{displayName} requested an access extension. {state, select, deactivated {Account Deactivated} ended {Trial Ended} other {Trial Ends}}: {accessEndDate}",
+  "system.service.monitoring": "Monitoring {count, plural, one {# service} other {# services}}"
 }

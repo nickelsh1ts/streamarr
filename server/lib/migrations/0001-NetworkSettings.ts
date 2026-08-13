@@ -18,6 +18,8 @@ const migrateNetworkProxyCsrf = (
     requestTimeout: 10000,
     trustProxy: settings.main.trustProxy ?? false,
     csrfProtection: settings.main.csrfProtection ?? false,
+    scheduledRetryAttempts: 3,
+    scheduledRetryInterval: 300000,
   };
 
   delete settings.main.trustProxy;

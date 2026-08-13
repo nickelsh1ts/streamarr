@@ -11,6 +11,8 @@ import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
 import type {
   LogMessage,
   LogsResultsResponse,
+  ServiceHealthResponse,
+  SettingsAboutDiskSpaceResponse,
   SettingsAboutResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import { scheduledJobs } from '@server/job/schedule';
@@ -20,12 +22,21 @@ import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import {
   markPlexHealthy,
+  resetPlexHealth,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
 import QRCodeProxy from '@server/lib/qrcodeproxy';
-import { arrAuthLimiter, settingsAboutLimiter } from '@server/lib/rateLimiters';
+import {
+  arrAuthLimiter,
+  settingsAboutDiskSpaceLimiter,
+  settingsAboutLimiter,
+} from '@server/lib/rateLimiters';
 import restartManager from '@server/lib/restartManager';
 import { plexFullScanner } from '@server/lib/scanners/plex';
+import {
+  getServicesHealth,
+  resetServiceHealthState,
+} from '@server/lib/serviceHealth';
 import type {
   JobId,
   MainSettings,
@@ -38,7 +49,7 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
-import { getConfigDiskSpace } from '@server/utils/diskSpace';
+import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs, { promises as fsPromises } from 'fs';
@@ -326,6 +337,52 @@ settingsRoutes.get('/services', (_req, res) => {
 
   res.status(200).json(servicesWithId);
 });
+
+settingsRoutes.get<unknown, ServiceHealthResponse>(
+  '/health',
+  async (_req, res, next) => {
+    try {
+      const services = await getServicesHealth();
+      res.status(200).json({ services });
+    } catch (e) {
+      logger.error('Failed to get service health', {
+        label: 'Health Check',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to get service health.' });
+    }
+  }
+);
+
+settingsRoutes.post<unknown, ServiceHealthResponse, { id?: string }>(
+  '/health/retry',
+  async (req, res, next) => {
+    const { id } = req.body;
+
+    if (typeof id !== 'string' || id.trim().length === 0) {
+      return next({ status: 400, message: 'A service id is required.' });
+    }
+
+    try {
+      if (id === 'plex') {
+        resetPlexHealth();
+        await revalidatePlexLibraries();
+      } else {
+        resetServiceHealthState(id);
+      }
+
+      const services = await getServicesHealth();
+      res.status(200).json({ services });
+    } catch (e) {
+      logger.error('Failed to retry service health check', {
+        label: 'Health Check',
+        serviceId: id,
+        message: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to retry service health check.' });
+    }
+  }
+);
 
 settingsRoutes.get('/uptime', (_req, res) => {
   const settings = getSettings();
@@ -1146,10 +1203,9 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
   const userRepository = getRepository(User);
   const configPath = appDataPath();
 
-  const [totalInvites, totalUsers, diskSpace] = await Promise.all([
+  const [totalInvites, totalUsers] = await Promise.all([
     inviteRepository.count(),
     userRepository.count(),
-    getConfigDiskSpace(configPath),
   ]);
 
   const dbTypeRaw = dataSource.options.type;
@@ -1190,9 +1246,17 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
     nodeVersion: process.version.replace(/^v/, ''),
     appDataPath: configPath,
     database: { type: dbDisplayType, version: dbVersion },
-    diskSpace,
   } as SettingsAboutResponse);
 });
+
+settingsRoutes.get(
+  '/about/diskspace',
+  settingsAboutDiskSpaceLimiter,
+  async (_req, res) => {
+    const diskSpace = await getCachedConfigDiskSpace(appDataPath());
+    res.status(200).json(diskSpace as SettingsAboutDiskSpaceResponse);
+  }
+);
 
 settingsRoutes.get('/releases', async (_req, res, next) => {
   try {

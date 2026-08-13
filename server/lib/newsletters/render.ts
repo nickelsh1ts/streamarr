@@ -264,7 +264,7 @@ export const renderNewsletter = async (
     : undefined;
 
   const blockData =
-    providedBlockData ?? (await resolveBlockData(newsletter.blocks));
+    providedBlockData ?? (await resolveBlockData(newsletter.blocks)).data;
 
   let body = newsletter.body ?? '';
 

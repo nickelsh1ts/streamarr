@@ -40,26 +40,35 @@ const ServicesUptime = () => {
       ),
   });
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.uptime.title"
+          defaultMessage="Uptime Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.uptime.description"
+          defaultMessage="Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataUptime) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.uptime.title"
-            defaultMessage="Uptime Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.uptime.description"
-            defaultMessage="Optionally configure the settings for your Uptime server. Streamarr presents your uptime link via the help centre."
-          />
-        </p>
-      </div>
+      {header}
       <Formik
         initialValues={{
           enabled: dataUptime?.enabled ?? false,

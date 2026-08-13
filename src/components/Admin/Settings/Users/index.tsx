@@ -27,12 +27,8 @@ const UserSettings = () => {
     mutate: revalidate,
   } = useSWR<MainSettings>('/api/v1/settings/main');
 
-  if (!data && !error) {
-    return <LoadingEllipsis />;
-  }
-
-  return (
-    <div className="mb-6">
+  const header = (
+    <>
       <h3 className="text-2xl font-extrabold">
         <FormattedMessage
           id="userSettings.title"
@@ -45,6 +41,21 @@ const UserSettings = () => {
           defaultMessage="Configure global and default user settings."
         />
       </p>
+    </>
+  );
+
+  if (!data && !error) {
+    return (
+      <div className="mb-6">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-6">
+      {header}
       <Formik
         initialValues={{
           localLogin: data?.localLogin,

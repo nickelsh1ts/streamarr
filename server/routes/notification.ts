@@ -36,6 +36,9 @@ notificationRoutes.get<Record<string, string>, NotificationResultsResponse>(
         sortFilter = 'notification.createdAt';
     }
 
+    const sortDirection: 'ASC' | 'DESC' =
+      req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
+
     let typeFilter: NotificationType[];
 
     switch (req.query.type) {
@@ -90,7 +93,7 @@ notificationRoutes.get<Record<string, string>, NotificationResultsResponse>(
     }
 
     const [notifications, notificationCount] = await query
-      .orderBy(sortFilter, 'DESC')
+      .orderBy(sortFilter, sortDirection)
       .take(pageSize)
       .skip(skip)
       .getManyAndCount();

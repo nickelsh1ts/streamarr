@@ -1,4 +1,5 @@
 import Alert from '@app/components/Common/Alert';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProgressBar from '@app/components/Common/ProgressBar';
 import { formatBytes } from '@app/utils/numberHelper';
 import {
@@ -6,12 +7,13 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/solid';
-import type { SettingsAboutResponse } from '@server/interfaces/api/settingsInterfaces';
+import type { SettingsAboutDiskSpaceResponse } from '@server/interfaces/api/settingsInterfaces';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR from 'swr';
 
 interface DiskSpaceProps {
-  data: SettingsAboutResponse;
+  appDataPath: string;
 }
 
 const ROOT_NODE_KEY = '__root__';
@@ -107,13 +109,21 @@ const DiskMetrics = ({
   </div>
 );
 
-const DiskSpace = ({ data }: DiskSpaceProps) => {
+const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
   const intl = useIntl();
 
-  const { items: diskSpaceItems, failedPaths } = data.diskSpace;
-  const appDataNorm = normalizePath(data.appDataPath);
+  const { data, error } = useSWR<SettingsAboutDiskSpaceResponse>(
+    '/api/v1/settings/about/diskspace',
+    { revalidateOnFocus: false }
+  );
+
+  const diskSpaceItems = useMemo(() => data?.items ?? [], [data]);
+  const failedPaths = data?.failedPaths ?? [];
+  const appDataNorm = normalizePath(appDataPath);
   const hasDiskSpaceWarning =
-    failedPaths.length > 0 || diskSpaceItems.length === 0;
+    !!error ||
+    failedPaths.length > 0 ||
+    (!!data && diskSpaceItems.length === 0);
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
     () => new Set([ROOT_NODE_KEY])
@@ -210,7 +220,7 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
 
   return (
     <div className="mt-6">
-      <div className="flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-2xl font-extrabold">
           <FormattedMessage
             id="systemSettings.diskSpace.title"
@@ -218,6 +228,7 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
           />
         </h3>
       </div>
+      {!data && !error && <LoadingEllipsis />}
       {hasDiskSpaceWarning && (
         <Alert
           type="warning"
@@ -234,120 +245,122 @@ const DiskSpace = ({ data }: DiskSpaceProps) => {
           </span>
         </Alert>
       )}
-      <div className="border-base-content/10 mt-4 overflow-hidden rounded-lg border">
-        <div className="border-base-content/10 text-base-content bg-base-200/50 hidden gap-3 border-b px-3 py-2 text-sm font-semibold md:grid md:grid-cols-12">
-          <span className="col-span-4">
-            <FormattedMessage
-              id="systemSettings.diskSpace.location"
-              defaultMessage="Location"
-            />
-          </span>
-          <span className="col-span-2 text-right">
-            <FormattedMessage
-              id="systemSettings.diskSpace.freeSpace"
-              defaultMessage="Free Space"
-            />
-          </span>
-          <span className="col-span-2 text-right">
-            <FormattedMessage
-              id="systemSettings.diskSpace.usedSpace"
-              defaultMessage="Used Space"
-            />
-          </span>
-          <span className="col-span-2 text-right">
-            <FormattedMessage
-              id="systemSettings.diskSpace.totalSpace"
-              defaultMessage="Total Space"
-            />
-          </span>
-          <span className="col-span-2" />
-        </div>
-        <div>
-          {rootDiskItem && (
-            <div className="bg-base-200/50 hover:bg-base-200/30 grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
-              <div className="min-w-0 md:col-span-4">
-                <span className="text-base-content flex items-center gap-2 text-sm">
-                  <ExpandButton
-                    hasChildren={childCountByParent.has(ROOT_NODE_KEY)}
-                    isExpanded={expandedRows.has(ROOT_NODE_KEY)}
-                    onToggle={() => toggleRow(ROOT_NODE_KEY)}
-                  />
-                  <span className="min-w-0 truncate font-mono">
-                    {rootDiskItem.mountPoint}
-                  </span>
-                </span>
-              </div>
-              <DiskMetrics
-                freeBytes={rootDiskItem.freeBytes}
-                usedBytes={rootDiskItem.usedBytes}
-                totalBytes={rootDiskItem.totalBytes}
+      {(data || error) && (
+        <div className="border-base-content/10 mt-4 overflow-hidden rounded-lg border">
+          <div className="border-base-content/10 text-base-content bg-base-200/50 hidden gap-3 border-b px-3 py-2 text-sm font-semibold md:grid md:grid-cols-12">
+            <span className="col-span-4">
+              <FormattedMessage
+                id="systemSettings.diskSpace.location"
+                defaultMessage="Location"
               />
-              <div className="md:col-span-2">
-                <ProgressBar
-                  progress={rootUsedPercent}
-                  color={getDiskSpaceColor(rootUsedPercent)}
-                  showPercentage={false}
-                  size="sm"
-                />
-              </div>
-            </div>
-          )}
-          {diskRows.map((row) => {
-            const hasChildren = childCountByParent.has(row.rowKey);
-            const isExpanded = expandedRows.has(row.rowKey);
-            const isVisible = isRowVisible(row.parentKey);
-            return (
-              <div
-                key={`${row.disk.deviceId}-${row.disk.path}`}
-                className={`bg-base-200/50 hover:bg-base-200/30 overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
-                  isVisible
-                    ? 'border-base-content/10 max-h-40 translate-y-0 border-t opacity-100'
-                    : 'pointer-events-none max-h-0 -translate-y-1 opacity-0'
-                }`}
-              >
-                <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
-                  <div className="min-w-0 md:col-span-4">
-                    <span
-                      className={`text-base-content flex items-center gap-2 text-sm ${
-                        !row.isChild
-                          ? ''
-                          : row.parentKey === ROOT_NODE_KEY
-                            ? 'pl-4'
-                            : 'pl-16'
-                      }`}
-                    >
-                      <ExpandButton
-                        hasChildren={hasChildren}
-                        isExpanded={isExpanded}
-                        onToggle={() => toggleRow(row.rowKey)}
-                      />
-                      {row.isChild && (
-                        <ArrowTurnDownRightIcon className="text-neutral size-5 shrink-0" />
-                      )}
-                      <span className="min-w-0 truncate font-mono">
-                        {row.displayPath}
-                      </span>
-                    </span>
-                  </div>
-                  <DiskMetrics
-                    freeBytes={row.disk.freeBytes}
-                    usedBytes={row.usedBytes}
-                    totalBytes={row.totalBytes}
-                  />
-                  <div className="md:col-span-2">
-                    <ProgressBar
-                      progress={row.usedPercent}
-                      color={getDiskSpaceColor(row.usedPercent)}
-                      showPercentage={false}
-                      size="sm"
+            </span>
+            <span className="col-span-2 text-right">
+              <FormattedMessage
+                id="systemSettings.diskSpace.freeSpace"
+                defaultMessage="Free Space"
+              />
+            </span>
+            <span className="col-span-2 text-right">
+              <FormattedMessage
+                id="systemSettings.diskSpace.usedSpace"
+                defaultMessage="Used Space"
+              />
+            </span>
+            <span className="col-span-2 text-right">
+              <FormattedMessage
+                id="systemSettings.diskSpace.totalSpace"
+                defaultMessage="Total Space"
+              />
+            </span>
+            <span className="col-span-2" />
+          </div>
+          <div>
+            {rootDiskItem && (
+              <div className="bg-base-200/50 hover:bg-base-200/30 grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
+                <div className="min-w-0 md:col-span-4">
+                  <span className="text-base-content flex items-center gap-2 text-sm">
+                    <ExpandButton
+                      hasChildren={childCountByParent.has(ROOT_NODE_KEY)}
+                      isExpanded={expandedRows.has(ROOT_NODE_KEY)}
+                      onToggle={() => toggleRow(ROOT_NODE_KEY)}
                     />
-                  </div>
+                    <span className="min-w-0 truncate font-mono">
+                      {rootDiskItem.mountPoint}
+                    </span>
+                  </span>
+                </div>
+                <DiskMetrics
+                  freeBytes={rootDiskItem.freeBytes}
+                  usedBytes={rootDiskItem.usedBytes}
+                  totalBytes={rootDiskItem.totalBytes}
+                />
+                <div className="md:col-span-2">
+                  <ProgressBar
+                    progress={rootUsedPercent}
+                    color={getDiskSpaceColor(rootUsedPercent)}
+                    showPercentage={false}
+                    size="sm"
+                  />
                 </div>
               </div>
-            );
-          })}
+            )}
+            {diskRows.map((row) => {
+              const hasChildren = childCountByParent.has(row.rowKey);
+              const isExpanded = expandedRows.has(row.rowKey);
+              const isVisible = isRowVisible(row.parentKey);
+              return (
+                <div
+                  key={`${row.disk.deviceId}-${row.disk.path}`}
+                  className={`bg-base-200/50 hover:bg-base-200/30 overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
+                    isVisible
+                      ? 'border-base-content/10 max-h-40 translate-y-0 border-t opacity-100'
+                      : 'pointer-events-none max-h-0 -translate-y-1 opacity-0'
+                  }`}
+                >
+                  <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
+                    <div className="min-w-0 md:col-span-4">
+                      <span
+                        className={`text-base-content flex items-center gap-2 text-sm ${
+                          !row.isChild
+                            ? ''
+                            : row.parentKey === ROOT_NODE_KEY
+                              ? 'pl-4'
+                              : 'pl-16'
+                        }`}
+                      >
+                        <ExpandButton
+                          hasChildren={hasChildren}
+                          isExpanded={isExpanded}
+                          onToggle={() => toggleRow(row.rowKey)}
+                        />
+                        {row.isChild && (
+                          <ArrowTurnDownRightIcon className="text-neutral size-5 shrink-0" />
+                        )}
+                        <span className="min-w-0 truncate font-mono">
+                          {row.displayPath}
+                        </span>
+                      </span>
+                    </div>
+                    <DiskMetrics
+                      freeBytes={row.disk.freeBytes}
+                      usedBytes={row.usedBytes}
+                      totalBytes={row.totalBytes}
+                    />
+                    <div className="md:col-span-2">
+                      <ProgressBar
+                        progress={row.usedPercent}
+                        color={getDiskSpaceColor(row.usedPercent)}
+                        showPercentage={false}
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

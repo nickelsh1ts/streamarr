@@ -25,10 +25,11 @@ export interface SettingsAboutResponse {
     type: string;
     version: string;
   };
-  diskSpace: {
-    items: DiskSpaceItem[];
-    failedPaths: DiskSpaceFailure[];
-  };
+}
+
+export interface SettingsAboutDiskSpaceResponse {
+  items: DiskSpaceItem[];
+  failedPaths: DiskSpaceFailure[];
 }
 
 export interface DiskSpaceItem {
@@ -141,4 +142,31 @@ export interface GitHubRelease {
   tarball_url: string;
   zipball_url: string;
   body: string;
+}
+
+export type ServiceHealthStatus =
+  'healthy' | 'retrying' | 'unhealthy' | 'unknown';
+
+export interface ServiceHealthInstance {
+  id: string;
+  name: string;
+  status: ServiceHealthStatus;
+  version?: string;
+  detail?: string;
+  error?: string;
+}
+
+export interface ServiceHealth {
+  id: string;
+  name: string;
+  status: ServiceHealthStatus;
+  version?: string;
+  detail?: string;
+  error?: string;
+  retryable: boolean;
+  instances?: ServiceHealthInstance[];
+}
+
+export interface ServiceHealthResponse {
+  services: ServiceHealth[];
 }

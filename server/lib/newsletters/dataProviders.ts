@@ -37,6 +37,18 @@ export interface NewsletterBlockData {
   byTag: NewsletterMediaItem[];
 }
 
+export interface NewsletterDataFailure {
+  block: 'recentlyAdded' | 'topStreams' | 'byTag';
+  source: string;
+  mediaType?: NewsletterMediaType;
+  error: string;
+}
+
+export interface NewsletterBlockDataResult {
+  data: NewsletterBlockData;
+  failures: NewsletterDataFailure[];
+}
+
 const MAX_BLOCK_ITEMS = 24;
 const DEFAULT_DAYS = 7;
 const DEFAULT_COUNT = 6;
@@ -287,15 +299,19 @@ const collectRecentlyAddedForType = async (
 
 const getRecentlyAdded = async (
   config: NonNullable<NewsletterBlockConfig['recentlyAdded']>
-): Promise<NewsletterRecentlyAddedSection[]> => {
+): Promise<{
+  sections: NewsletterRecentlyAddedSection[];
+  failures: NewsletterDataFailure[];
+}> => {
+  const sections: NewsletterRecentlyAddedSection[] = [];
+  const failures: NewsletterDataFailure[] = [];
+
   try {
     const plexClient = await getPlexClient();
 
     if (!plexClient) {
-      return [];
+      return { sections, failures };
     }
-
-    const sections: NewsletterRecentlyAddedSection[] = [];
 
     for (const type of RECENTLY_ADDED_TYPES) {
       const typeConfig = config[type];
@@ -315,24 +331,37 @@ const getRecentlyAdded = async (
           sections.push({ type, items });
         }
       } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        failures.push({
+          block: 'recentlyAdded',
+          source: 'plex',
+          mediaType: type,
+          error: errorMessage,
+        });
         logger.warn(
           'Failed to gather a recently added section for newsletter',
           {
             label: 'Newsletters',
             mediaType: type,
-            errorMessage: e instanceof Error ? e.message : String(e),
+            errorMessage,
           }
         );
       }
     }
 
-    return sections;
+    return { sections, failures };
   } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    failures.push({
+      block: 'recentlyAdded',
+      source: 'plex',
+      error: errorMessage,
+    });
     logger.warn('Failed to gather recently added items for newsletter', {
       label: 'Newsletters',
-      errorMessage: e instanceof Error ? e.message : String(e),
+      errorMessage,
     });
-    return [];
+    return { sections, failures };
   }
 };
 
@@ -422,7 +451,13 @@ const collectTopStreamsForType = async (
 
 const getTopStreams = async (
   config: NonNullable<NewsletterBlockConfig['topStreams']>
-): Promise<NewsletterRecentlyAddedSection[]> => {
+): Promise<{
+  sections: NewsletterRecentlyAddedSection[];
+  failures: NewsletterDataFailure[];
+}> => {
+  const sections: NewsletterRecentlyAddedSection[] = [];
+  const failures: NewsletterDataFailure[] = [];
+
   try {
     const settings = getSettings();
 
@@ -431,13 +466,11 @@ const getTopStreams = async (
         'Tautulli is not configured; skipping top streams newsletter block',
         { label: 'Newsletters' }
       );
-      return [];
+      return { sections, failures };
     }
 
     const tautulli = new TautulliAPI(settings.tautulli);
     const plexClient = await getPlexClient();
-
-    const sections: NewsletterRecentlyAddedSection[] = [];
 
     for (const type of TOP_STREAMS_TYPES) {
       const typeConfig = config[type];
@@ -458,28 +491,45 @@ const getTopStreams = async (
           sections.push({ type, items });
         }
       } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        failures.push({
+          block: 'topStreams',
+          source: 'tautulli',
+          mediaType: type,
+          error: errorMessage,
+        });
         logger.warn('Failed to gather a top streams section for newsletter', {
           label: 'Newsletters',
           mediaType: type,
-          errorMessage: e instanceof Error ? e.message : String(e),
+          errorMessage,
         });
       }
     }
 
-    return sections;
+    return { sections, failures };
   } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    failures.push({
+      block: 'topStreams',
+      source: 'tautulli',
+      error: errorMessage,
+    });
     logger.warn('Failed to gather top streams for newsletter', {
       label: 'Newsletters',
-      errorMessage: e instanceof Error ? e.message : String(e),
+      errorMessage,
     });
-    return [];
+    return { sections, failures };
   }
 };
 
 const getByTag = async (
   config: NonNullable<NewsletterBlockConfig['byTag']>
-): Promise<NewsletterMediaItem[]> => {
+): Promise<{
+  items: NewsletterMediaItem[];
+  failures: NewsletterDataFailure[];
+}> => {
   const items: NewsletterMediaItem[] = [];
+  const failures: NewsletterDataFailure[] = [];
   const seen = new Set<string>();
 
   const pushUnique = (item: NewsletterMediaItem) => {
@@ -537,11 +587,13 @@ const getByTag = async (
         }
       }
     } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      failures.push({ block: 'byTag', source: 'plex', error: errorMessage });
       logger.warn(
         'Failed to gather Plex labeled items for by tag newsletter block',
         {
           label: 'Newsletters',
-          errorMessage: e instanceof Error ? e.message : String(e),
+          errorMessage,
         }
       );
     }
@@ -586,12 +638,18 @@ const getByTag = async (
 
         resolved.forEach(pushUnique);
       } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        failures.push({
+          block: 'byTag',
+          source: `radarr:${radarrSettings.name}`,
+          error: errorMessage,
+        });
         logger.warn(
           'Failed to gather Radarr tagged movies for by tag newsletter block',
           {
             label: 'Newsletters',
             server: radarrSettings.name,
-            errorMessage: e instanceof Error ? e.message : String(e),
+            errorMessage,
           }
         );
       }
@@ -650,42 +708,86 @@ const getByTag = async (
 
         resolved.forEach(pushUnique);
       } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        failures.push({
+          block: 'byTag',
+          source: `sonarr:${sonarrSettings.name}`,
+          error: errorMessage,
+        });
         logger.warn(
           'Failed to gather Sonarr tagged series for by tag newsletter block',
           {
             label: 'Newsletters',
             server: sonarrSettings.name,
-            errorMessage: e instanceof Error ? e.message : String(e),
+            errorMessage,
           }
         );
       }
     }
   }
 
-  return items.slice(0, count);
+  return { items: items.slice(0, count), failures };
+};
+
+export type NewsletterBlockKey = 'recentlyAdded' | 'topStreams' | 'byTag';
+
+export const getConfiguredBlocks = (
+  blocks: NewsletterBlockConfig | null | undefined
+): NewsletterBlockKey[] => {
+  const configured: NewsletterBlockKey[] = [];
+
+  if (
+    RECENTLY_ADDED_TYPES.some((type) => blocks?.recentlyAdded?.[type]?.enabled)
+  ) {
+    configured.push('recentlyAdded');
+  }
+
+  if (TOP_STREAMS_TYPES.some((type) => blocks?.topStreams?.[type]?.enabled)) {
+    configured.push('topStreams');
+  }
+
+  if (blocks?.byTag?.plex?.enabled || blocks?.byTag?.servarr?.enabled) {
+    configured.push('byTag');
+  }
+
+  return configured;
 };
 
 export const resolveBlockData = async (
   blocks: NewsletterBlockConfig | null | undefined
-): Promise<NewsletterBlockData> => {
-  const hasRecentlyAdded = RECENTLY_ADDED_TYPES.some(
-    (type) => blocks?.recentlyAdded?.[type]?.enabled
-  );
-  const hasTopStreams = TOP_STREAMS_TYPES.some(
-    (type) => blocks?.topStreams?.[type]?.enabled
-  );
+): Promise<NewsletterBlockDataResult> => {
+  const configured = new Set(getConfiguredBlocks(blocks));
+
+  const emptySections = {
+    sections: [] as NewsletterRecentlyAddedSection[],
+    failures: [] as NewsletterDataFailure[],
+  };
 
   const [recentlyAdded, topStreams, byTag] = await Promise.all([
-    hasRecentlyAdded && blocks?.recentlyAdded
+    configured.has('recentlyAdded') && blocks?.recentlyAdded
       ? getRecentlyAdded(blocks.recentlyAdded)
-      : Promise.resolve([] as NewsletterRecentlyAddedSection[]),
-    hasTopStreams && blocks?.topStreams
+      : Promise.resolve(emptySections),
+    configured.has('topStreams') && blocks?.topStreams
       ? getTopStreams(blocks.topStreams)
-      : Promise.resolve([] as NewsletterRecentlyAddedSection[]),
-    blocks?.byTag?.plex?.enabled || blocks?.byTag?.servarr?.enabled
+      : Promise.resolve(emptySections),
+    configured.has('byTag') && blocks?.byTag
       ? getByTag(blocks.byTag)
-      : Promise.resolve([] as NewsletterMediaItem[]),
+      : Promise.resolve({
+          items: [] as NewsletterMediaItem[],
+          failures: [] as NewsletterDataFailure[],
+        }),
   ]);
 
-  return { recentlyAdded, topStreams, byTag };
+  return {
+    data: {
+      recentlyAdded: recentlyAdded.sections,
+      topStreams: topStreams.sections,
+      byTag: byTag.items,
+    },
+    failures: [
+      ...recentlyAdded.failures,
+      ...topStreams.failures,
+      ...byTag.failures,
+    ],
+  };
 };

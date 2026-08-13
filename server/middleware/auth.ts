@@ -94,7 +94,12 @@ export const isAuthenticated = (
   options?: PermissionCheckOptions
 ) => {
   const authMiddleware = (req, res, next) => {
-    if (!req.user || !req.user.hasPermission(permissions ?? 0, options)) {
+    if (!req.user) {
+      res.status(401).json({
+        status: 401,
+        error: 'You must be signed in to access this endpoint',
+      });
+    } else if (!req.user.hasPermission(permissions ?? 0, options)) {
       res.status(403).json({
         status: 403,
         error: 'You do not have permission to access this endpoint',

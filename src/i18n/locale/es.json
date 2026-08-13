@@ -105,7 +105,7 @@
     "defaultMessage": "Volver arriba"
   },
   "cache.description": {
-    "defaultMessage": "Streamarr almacena en caché las solicitudes a endpoints de API externos para optimizar el rendimiento y evitar hacer llamadas API innecesarias."
+    "defaultMessage": "Streamarr almacena en caché las solicitudes a endpoints de API externos para optimizar el rendimiento y evitar hacer llamadas a la API innecesarias."
   },
   "cache.flushCache": {
     "defaultMessage": "Limpiar Caché"
@@ -1774,9 +1774,6 @@
   },
   "help.downloadPlex.step2": {
     "defaultMessage": "Si hay un enlace de descarga disponible, selecciónalo y sigue las indicaciones"
-  },
-  "help.downloadPlex.step3": {
-    "defaultMessage": "Instala la aplicación"
   },
   "help.downloadPlex.subheading": {
     "defaultMessage": "Aunque la aplicación {plexLogo} no es necesaria para usar {appTitle}, en ciertos dispositivos como smart TVs o consolas de juegos puede ofrecer una mejor experiencia. Algunos smart TVs y dispositivos multimedia ya vienen con la aplicación {plexLogo2} instalada, o se puede instalar fácilmente a través de sus tiendas de aplicaciones integradas."
@@ -4112,9 +4109,6 @@
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
   },
-  "servicesSettings.overseerr.reverseProxyExample": {
-    "defaultMessage": "Ejemplo de Proxy Inverso Nginx"
-  },
   "servicesSettings.overseerr.title": {
     "defaultMessage": "Configuración de Seerr"
   },
@@ -4192,9 +4186,6 @@
   },
   "settings.allowLiveTv": {
     "defaultMessage": "Permitir Acceso a TV en Vivo"
-  },
-  "settings.crossOriginAccess": {
-    "defaultMessage": "Acceso de Origen Cruzado"
   },
   "settings.enableTrialPeriod": {
     "defaultMessage": "Habilitar Período de Prueba"
@@ -4421,20 +4412,8 @@
   "settings.onboarding.welcomeEnabledTip": {
     "defaultMessage": "Mostrar un carrusel de bienvenida a nuevos usuarios en su primer inicio de sesión."
   },
-  "settings.openOverseerr": {
-    "defaultMessage": "Abrir Seerr"
-  },
-  "settings.openOverseerrSettings": {
-    "defaultMessage": "Abrir Configuración de Seerr"
-  },
   "settings.overrideGlobalLimit": {
     "defaultMessage": "Anular Límite Global"
-  },
-  "settings.overseerr.localhostDescription": {
-    "defaultMessage": "Seerr no puede ser incrustado al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrelo en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
-  },
-  "settings.overseerr.localhostDescriptionSettings": {
-    "defaultMessage": "La configuración de Seerr no puede ser incrustada al acceder localmente debido a restricciones de seguridad del navegador. Por favor ábrela en una nueva pestaña para continuar o accede a streamarr desde un nombre de host seguro."
   },
   "settings.permissions": {
     "defaultMessage": "Permisos"
@@ -4721,27 +4700,6 @@
   "system.health.title": {
     "defaultMessage": "Salud"
   },
-  "system.python.alertMessage": {
-    "defaultMessage": "El servicio de sincronización de Plex no está disponible. Las invitaciones y la sincronización de bibliotecas de Plex no están disponibles actualmente."
-  },
-  "system.python.alertTitle": {
-    "defaultMessage": "Servicio de Sincronización de Plex Caído"
-  },
-  "system.python.description": {
-    "defaultMessage": "Gestiona las invitaciones de Plex y la sincronización de bibliotecas."
-  },
-  "system.python.restart": {
-    "defaultMessage": "Reiniciar Servicio"
-  },
-  "system.python.restartFailed": {
-    "defaultMessage": "Error al reiniciar el servicio de sincronización de Plex"
-  },
-  "system.python.restartSuccess": {
-    "defaultMessage": "El servicio de sincronización de Plex se reinició exitosamente"
-  },
-  "system.python.title": {
-    "defaultMessage": "Servicio de Sincronización de Plex"
-  },
   "system.reconnecting": {
     "defaultMessage": "Reconectando…"
   },
@@ -4900,9 +4858,6 @@
   },
   "userPermissions.success": {
     "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
-  },
-  "userPermissions.title": {
-    "defaultMessage": "Editar Permisos de Usuario"
   },
   "userPermissions.viewInvites.description": {
     "defaultMessage": "Otorga permiso para ver invitaciones de otros usuarios."
@@ -5196,7 +5151,7 @@
     "defaultMessage": "Remover"
   },
   "expiredAccess.message": {
-    "defaultMessage": "Tu cuenta ha expirado. Aún puedes acceder a tu perfil y configuración. {isTrialEnabled, select, true { incluyendo las opciones de solicitud de extensión de la prueba} other {. Por favor, contacta a un administrador para reactivar tu acceso.}}"
+    "defaultMessage": "Tu cuenta esta actualmente {state, select, true {expirada} other {desactivada}}. Aún puedes acceder a tu perfil y configuración{isTrialEnabled, select, true { Incluyendo opciones de solicitud de extensión de prueba.} other {. Por favor, póngase en contacto con un administrador para reactivar su acceso.}}"
   },
   "expiredAccess.title": {
     "defaultMessage": "El acceso a la cuenta ha expirado"
@@ -5290,5 +5245,263 @@
   },
   "help.notifications.seerrWebhook": {
     "defaultMessage": "Webhook"
+  },
+  "notifications.fields.botAvatarUrl": {
+    "defaultMessage": "URL del avatar del bot"
+  },
+  "notifications.fields.botUsername": {
+    "defaultMessage": "Nombre de usuario del bot"
+  },
+  "notifications.fields.channelTag": {
+    "defaultMessage": "Etiqueta de canal"
+  },
+  "newsletters.bodyFormat": {
+    "defaultMessage": "Formato del cuerpo"
+  },
+  "newsletters.byPlexLabel": {
+    "defaultMessage": "Por etiqueta de Plex"
+  },
+  "newsletters.byServarrTag": {
+    "defaultMessage": "Por etiqueta de Radarr/Sonarr"
+  },
+  "newsletters.byTag": {
+    "defaultMessage": "Por etiqueta"
+  },
+  "newsletters.create": {
+    "defaultMessage": "Crear boletín"
+  },
+  "newsletters.createNewsletter": {
+    "defaultMessage": "Crear boletín"
+  },
+  "newsletters.cronSchedule": {
+    "defaultMessage": "Programación cron"
+  },
+  "newsletters.customRecipients": {
+    "defaultMessage": "Usuarios específicos"
+  },
+  "newsletters.deleteError": {
+    "defaultMessage": "No se pudo eliminar el boletín"
+  },
+  "newsletters.description": {
+    "defaultMessage": "Redacta, programa y envía boletines a tus usuarios."
+  },
+  "newsletters.descriptionLabel": {
+    "defaultMessage": "Descripción"
+  },
+  "newsletters.descriptionTip": {
+    "defaultMessage": "Se muestra a los usuarios, en sus ajustes de suscripción, debajo de este boletín."
+  },
+  "newsletters.editNewsletter": {
+    "defaultMessage": "Editar boletín"
+  },
+  "newsletters.empty": {
+    "defaultMessage": "Aún no hay boletines. Crea uno para comenzar."
+  },
+  "newsletters.failures": {
+    "defaultMessage": "Errores"
+  },
+  "newsletters.history": {
+    "defaultMessage": "Historial"
+  },
+  "newsletters.historyTitle": {
+    "defaultMessage": "Historial de boletines"
+  },
+  "newsletters.important": {
+    "defaultMessage": "Importante"
+  },
+  "common.version": {
+    "defaultMessage": "Versión"
+  },
+  "help.notifications.seerrNtfyDesc": {
+    "defaultMessage": "Notificaciones enviadas mediante notificaciones push de ntfy."
+  },
+  "common.about": {
+    "defaultMessage": "Acerca de"
+  },
+  "common.accountDeactivated": {
+    "defaultMessage": "Cuenta Desactivada"
+  },
+  "common.date": {
+    "defaultMessage": "Fecha"
+  },
+  "common.deactivated": {
+    "defaultMessage": "Desactivada"
+  },
+  "common.newsletterManagement": {
+    "defaultMessage": "Gestión de boletines"
+  },
+  "common.newsletters": {
+    "defaultMessage": "Boletines"
+  },
+  "common.required": {
+    "defaultMessage": "Requerido"
+  },
+  "common.save": {
+    "defaultMessage": "Guardar"
+  },
+  "expiredAccess.deactivatedTitle": {
+    "defaultMessage": "Cuenta Desactivada"
+  },
+  "help.downloadPlex.step3": {
+    "defaultMessage": "Si no se inicia la descarga, siga las instrucciones proporcionadas para buscar e instalar la aplicación en la plataforma deseada"
+  },
+  "librarySelector.defaultLibraries": {
+    "defaultMessage": "Bibliotecas predeterminadas"
+  },
+  "librarySelector.noChange": {
+    "defaultMessage": "Sin cambios"
+  },
+  "linkedAccounts.linkButton": {
+    "defaultMessage": "Vincular {name} Cuenta"
+  },
+  "linkedAccounts.linkFailed": {
+    "defaultMessage": "Ocurrió un error al vincular su cuenta de Plex"
+  },
+  "linkedAccounts.noLinkedAccounts": {
+    "defaultMessage": "No tienes ninguna cuenta externa vinculada a tu cuenta."
+  },
+  "linkedAccounts.noPermissionDescription": {
+    "defaultMessage": "No tienes permiso para ver las cuentas vinculadas de este usuario"
+  },
+  "linkedAccounts.notLinked": {
+    "defaultMessage": "Ninguna cuenta vinculada"
+  },
+  "linkedAccounts.title": {
+    "defaultMessage": "Cuentas Vinculadas"
+  },
+  "linkedAccounts.userNoLinkedAccounts": {
+    "defaultMessage": "Este usuario no tiene ninguna cuenta externa vinculada a su cuenta."
+  },
+  "newsletterSettings.saveError": {
+    "defaultMessage": "No fue posible guardar las preferencias del boletín."
+  },
+  "newsletterSettings.saveSuccess": {
+    "defaultMessage": "¡Las preferencias del boletín se guardaron correctamente!"
+  },
+  "newsletterSettings.title": {
+    "defaultMessage": "Suscripciones al boletín"
+  },
+  "newsletters.allSubscribers": {
+    "defaultMessage": "Todos los usuarios suscritos"
+  },
+  "newsletters.importantWarning": {
+    "defaultMessage": "Los boletines importantes se entregan a todos los destinatarios seleccionados. No podrán cancelar la suscripción. Úselo con moderación."
+  },
+  "newsletters.invalidCron": {
+    "defaultMessage": "Expresión de programación no válida"
+  },
+  "newsletters.isImportant": {
+    "defaultMessage": "Importante!"
+  },
+  "newsletters.isImportantTooltip": {
+    "defaultMessage": "¡No es posible darse de baja!"
+  },
+  "newsletters.lastSent": {
+    "defaultMessage": "Enviado por última vez"
+  },
+  "newsletters.maxItems": {
+    "defaultMessage": "Máximo de elementos"
+  },
+  "newsletters.noLibraries": {
+    "defaultMessage": "No se encontraron bibliotecas de Plex habilitadas."
+  },
+  "newsletters.noResults": {
+    "defaultMessage": "Ningún boletín coincide con el filtro actual."
+  },
+  "newsletters.noSends": {
+    "defaultMessage": "Este boletín aún no se ha enviado."
+  },
+  "newsletters.notScheduled": {
+    "defaultMessage": "No programado"
+  },
+  "newsletters.once": {
+    "defaultMessage": "Una vez"
+  },
+  "newsletters.plexLabel": {
+    "defaultMessage": "Etiqueta de Plex"
+  },
+  "newsletters.plexLabelLibraries": {
+    "defaultMessage": "Bibliotecas de etiquetas de Plex"
+  },
+  "newsletters.preview": {
+    "defaultMessage": "Vista previa del boletín"
+  },
+  "newsletters.previewError": {
+    "defaultMessage": "No se pudo generar la vista previa"
+  },
+  "newsletters.radarrTag": {
+    "defaultMessage": "Etiqueta de Radarr"
+  },
+  "newsletters.recentMovies": {
+    "defaultMessage": "Películas añadidas recientemente"
+  },
+  "newsletters.recentMusic": {
+    "defaultMessage": "Música añadida recientemente"
+  },
+  "newsletters.recentOther": {
+    "defaultMessage": "Añadido recientemente"
+  },
+  "newsletters.recentPhotos": {
+    "defaultMessage": "Fotos añadidas recientemente"
+  },
+  "newsletters.recentShows": {
+    "defaultMessage": "Series añadidas recientemente"
+  },
+  "newsletters.recentlyAdded": {
+    "defaultMessage": "Añadido recientemente"
+  },
+  "newsletters.recipients": {
+    "defaultMessage": "Destinatarios"
+  },
+  "newsletters.recurring": {
+    "defaultMessage": "Recurrente"
+  },
+  "newsletters.saveError": {
+    "defaultMessage": "Ocurrió un error al guardar el boletín"
+  },
+  "downloads.selectAllFiles": {
+    "defaultMessage": "Seleccionar todos los archivos"
+  },
+  "downloads.selectFile": {
+    "defaultMessage": "Seleccionar archivo {name}"
+  },
+  "downloads.selectFolder": {
+    "defaultMessage": "Seleccionar folder {name}"
+  },
+  "downloads.setPriorityForSelected": {
+    "defaultMessage": "Establecer prioridad para los archivos seleccionados"
+  },
+  "downloads.toggleFolder": {
+    "defaultMessage": "Alternar carpeta {name}"
+  },
+  "newsletters.pastDays": {
+    "defaultMessage": "Días anteriores"
+  },
+  "newsletters.scheduleEnabled": {
+    "defaultMessage": "Habilitar programación"
+  },
+  "newsletters.scheduleType": {
+    "defaultMessage": "Tipo de programación"
+  },
+  "newsletters.sectionHeader": {
+    "defaultMessage": "Encabezado de sección"
+  },
+  "newsletters.sendAt": {
+    "defaultMessage": "Enviar a las"
+  },
+  "newsletters.sendError": {
+    "defaultMessage": "Error al enviar el boletín"
+  },
+  "newsletters.sendNow": {
+    "defaultMessage": "Enviar Ahora"
+  },
+  "newsletters.sendOn": {
+    "defaultMessage": "Enviar el"
+  },
+  "newsletters.sent": {
+    "defaultMessage": "Boletín enviado"
+  },
+  "newsletters.sonarrTag": {
+    "defaultMessage": "Etiqueta de Sonarr"
   }
 }

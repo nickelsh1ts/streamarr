@@ -2,7 +2,7 @@
   "name": "streamarr",
   "version": "1.11.0",
   "private": true,
-  "packageManager": "pnpm@11.6.0",
+  "packageManager": "pnpm@11.14.0",
   "scripts": {
     "dev": "nodemon -e ts --watch server --watch streamarr-api.yml -e .json,.ts,.yml -x tsx --tsconfig server/tsconfig.json server/index.ts",
     "build:next": "next build",
@@ -159,7 +159,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.0.0",
     "nodemon": "^3.1.14",
-    "postcss": "8.5.18",
+    "postcss": "8.5.25",
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.8.0",

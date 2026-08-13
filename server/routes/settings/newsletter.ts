@@ -21,6 +21,8 @@ import {
 import newsletterScheduler from '@server/lib/newsletters/scheduler';
 import {
   isNewsletterSending,
+  NewsletterDataUnavailableError,
+  NewsletterEmptyError,
   sendNewsletter,
 } from '@server/lib/newsletters/send';
 import {
@@ -77,7 +79,7 @@ const resolvePreviewBlockData = async (
     return cached.data;
   }
 
-  const data = await resolveBlockData(newsletter.blocks);
+  const { data } = await resolveBlockData(newsletter.blocks);
   previewBlockDataCache.set(key, { data, expires: now + PREVIEW_CACHE_TTL });
 
   // Opportunistically drop expired entries so the map cannot grow unbounded.
@@ -252,7 +254,8 @@ newsletterRoutes.get<Record<string, string>, NewsletterResultsResponse>(
           ? req.query.sort
           : 'modified';
       const sortColumn = SORT_COLUMNS[sortKey];
-      const sortDirection: 'ASC' | 'DESC' = sortKey === 'name' ? 'ASC' : 'DESC';
+      const sortDirection: 'ASC' | 'DESC' =
+        req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
 
       const query = getRepository(Newsletter)
         .createQueryBuilder('newsletter')
@@ -459,6 +462,15 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
         newsletterId: req.params.id,
         errorMessage: e instanceof Error ? e.message : String(e),
       });
+
+      if (e instanceof NewsletterDataUnavailableError) {
+        return next({ status: 503, message: e.message });
+      }
+
+      if (e instanceof NewsletterEmptyError) {
+        return next({ status: 422, message: e.message });
+      }
+
       next({
         status: 500,
         message: e instanceof Error ? e.message : 'Unable to send newsletter.',
@@ -493,6 +505,11 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
         newsletterId: req.params.id,
         errorMessage: e instanceof Error ? e.message : String(e),
       });
+
+      if (e instanceof NewsletterEmptyError) {
+        return next({ status: 422, message: e.message });
+      }
+
       next({
         status: 500,
         message:

@@ -50,26 +50,35 @@ const ServicesBazarr = () => {
       ),
   });
 
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.bazarr.title"
+          defaultMessage="Bazarr Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.bazarr.description"
+          defaultMessage="Optionally configure the settings for your Bazarr server."
+        />
+      </p>
+    </div>
+  );
+
   if (!dataBazarr) {
-    return <LoadingEllipsis />;
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
   }
 
   return (
     <div className="mb-10 max-w-6xl">
-      <div className="mb-6">
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="servicesSettings.bazarr.title"
-            defaultMessage="Bazarr Settings"
-          />
-        </h3>
-        <p className="mb-5">
-          <FormattedMessage
-            id="servicesSettings.bazarr.description"
-            defaultMessage="Optionally configure the settings for your Bazarr server."
-          />
-        </p>
-      </div>
+      {header}
       <RestartRequiredAlert filterServices={['Bazarr']} />
       <Formik
         initialValues={{
