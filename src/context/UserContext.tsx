@@ -2,6 +2,7 @@
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
 import { publicRoutes } from '@app/proxy';
+import axios from 'axios';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -20,15 +21,31 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
   const isAuthPage = /^\/(signin|signup|setup|resetpassword(?:\/|$))/.test(
     pathname || ''
   );
-  const { user, error, revalidate } = useUser({
+  const { user, error } = useUser({
     initialData: initialUser,
     disableAutoRevalidation: isAuthPage,
   });
   const routing = useRef(false);
 
   useEffect(() => {
-    revalidate();
-  }, [pathname, revalidate]);
+    const interceptorId = axios.interceptors.response.use(
+      (response) => response,
+      (e) => {
+        if (
+          e.response?.status === 401 &&
+          !routing.current &&
+          !publicRoutes.test(window.location.pathname)
+        ) {
+          routing.current = true;
+          window.location.href = '/signin';
+        }
+        return Promise.reject(e);
+      }
+    );
+    return () => {
+      axios.interceptors.response.eject(interceptorId);
+    };
+  }, []);
 
   useEffect(() => {
     // Don't redirect during setup process, signin, or on public routes
