@@ -269,15 +269,18 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
       }
     }
 
-    // Set logged in session
-    if (req.session) {
-      req.session.userId = user.id;
-    }
+    // Regenerate the session ID on sign-in to prevent session fixation, then
+    // let express-session persist the new session on response end.
+    const authedUser = user;
+    await new Promise<void>((resolve, reject) =>
+      req.session.regenerate((e) => (e ? reject(e) : resolve()))
+    );
+    req.session.userId = authedUser.id;
 
     // Silently provision a per-user Plex JWT device (experimental, non-fatal)
-    void maybeProvisionPlexJwt(user.id, authToken);
+    void maybeProvisionPlexJwt(authedUser.id, authToken);
 
-    res.status(200).json(user?.filter() ?? {});
+    res.status(200).json(authedUser.filter());
   } catch (e) {
     logger.error('Something went wrong authenticating with Plex account', {
       label: 'API',
@@ -388,12 +391,15 @@ authRoutes.post('/local', async (req, res, next) => {
       }
     }
 
-    // Set logged in session
-    if (user && req.session) {
-      req.session.userId = user.id;
-    }
+    // Regenerate the session ID on sign-in to prevent session fixation; let
+    // express-session persist it on response end.
+    const authedUser = user;
+    await new Promise<void>((resolve, reject) =>
+      req.session.regenerate((e) => (e ? reject(e) : resolve()))
+    );
+    req.session.userId = authedUser.id;
 
-    res.status(200).json(user?.filter() ?? {});
+    res.status(200).json(authedUser.filter());
   } catch (e) {
     logger.error(
       'Something went wrong authenticating with Streamarr password',
@@ -420,7 +426,7 @@ authRoutes.post('/logout', (req, res, next) => {
     res.clearCookie('streamarr.sid', {
       httpOnly: true,
       sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: req.secure,
     });
     res.status(200).json({ status: 'ok' });
   });

@@ -174,10 +174,6 @@ app
     server.use('/api', sessionMiddleware);
     const httpServer = createServer(server);
     const io = new SocketIOServer(httpServer, {
-      cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
-      },
       destroyUpgrade: false,
     });
     io.engine.use(sessionMiddleware);
