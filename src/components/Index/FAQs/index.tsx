@@ -395,7 +395,7 @@ function FAQs() {
             .map((faq, idx) => (
               <div
                 key={idx}
-                className="join-item bg-base-100 rounded-box overflow-hidden"
+                className="join-item bg-base-100 rounded-box overflow-hidden border-0"
               >
                 <button
                   type="button"

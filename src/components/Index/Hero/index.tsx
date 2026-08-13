@@ -180,7 +180,12 @@ export default function Hero() {
         </div>
         <div className="mx-auto mt-auto mb-20 md:mx-0 md:ps-3">
           {currentSettings.extendedHome && (
-            <button className="" onClick={() => scrollToSection('requesting')}>
+            <button
+              type="button"
+              aria-label="Scroll down"
+              className="cursor-pointer hover:opacity-60"
+              onClick={() => scrollToSection('requesting')}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
