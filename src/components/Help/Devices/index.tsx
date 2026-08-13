@@ -264,7 +264,7 @@ const DeviceTabs = () => {
           gradient="backdrop-blur-xl bg-black/70"
           backgroundImages={
             backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+              (backdrop) => `https://image.tmdb.org/t/p/w1280${backdrop}`
             ) ?? ['/img/people-cinema-watching.jpg']
           }
         />
@@ -272,7 +272,7 @@ const DeviceTabs = () => {
           return (
             <div
               key={i}
-              className={`relative mx-auto flex max-w-screen-xl flex-wrap px-5 text-white ${activeTab === `tab-${i}` ? 'block' : 'hidden'}`}
+              className={`relative mx-auto flex max-w-7xl flex-wrap px-5 text-white ${activeTab === `tab-${i}` ? 'block' : 'hidden'}`}
             >
               <div className="container mx-auto mt-6 max-w-screen-sm px-4 md:grow md:max-lg:w-1/2">
                 <p className="border-primary border-s-2 py-2 ps-6 text-2xl leading-6 text-white uppercase">

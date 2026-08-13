@@ -39,7 +39,7 @@ export default function Hero() {
         rotationSpeed={6000}
         backgroundImages={
           backdrops?.map(
-            (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+            (backdrop) => `https://image.tmdb.org/t/p/w1280${backdrop}`
           ) ?? ['/img/people-cinema-watching.jpg']
         }
       />
@@ -54,7 +54,7 @@ export default function Hero() {
             width={448}
             height={100}
             unoptimized={true}
-            className="mx-auto mt-5 mb-10 h-auto w-[448px] px-5 md:mx-0 md:px-0"
+            className="mx-auto mt-5 mb-10 h-auto w-md px-5 md:mx-0 md:px-0"
           />
           <h1 className="mb-2 text-xl font-extrabold md:text-3xl">
             <FormattedMessage

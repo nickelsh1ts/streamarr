@@ -32,12 +32,12 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
       ...new Set(
         watchData?.results
           .filter((r) => r.backdropPath)
-          .map((r) => `https://image.tmdb.org/t/p/original${r.backdropPath}`)
+          .map((r) => `https://image.tmdb.org/t/p/w1280${r.backdropPath}`)
       ),
     ];
     if (watchBackdrops.length) return watchBackdrops;
     return (
-      backdrops?.map((b) => `https://image.tmdb.org/t/p/original${b}`) ?? [
+      backdrops?.map((b) => `https://image.tmdb.org/t/p/w1280${b}`) ?? [
         '/img/people-cinema-watching.jpg',
       ]
     );

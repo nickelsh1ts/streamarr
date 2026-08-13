@@ -23,7 +23,7 @@ const HelpHeader = () => {
           gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
           backgroundImages={
             backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+              (backdrop) => `https://image.tmdb.org/t/p/w1280${backdrop}`
             ) ?? ['/img/people-cinema-watching.jpg']
           }
         />
@@ -32,7 +32,7 @@ const HelpHeader = () => {
             <LanguagePicker />
           </div>
         )}
-        <div className="z-0 container mx-auto h-44 max-w-screen-xl content-center">
+        <div className="z-0 container mx-auto h-44 max-w-7xl content-center">
           <h2 className="my-4 text-center text-3xl font-extrabold text-white">
             <FormattedMessage
               id="help.helpCentre"
