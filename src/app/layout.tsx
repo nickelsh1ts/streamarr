@@ -9,9 +9,10 @@ import NotificationProvider from '@app/context/NotificationContext';
 import { NotificationSidebarProvider } from '@app/context/NotificationSidebarContext';
 import { SettingsProvider } from '@app/context/SettingsContext';
 import { UserContext } from '@app/context/UserContext';
-import type { User } from '@app/hooks/useUser';
-import { getPublicSettings } from '@app/utils/serverFetchHelpers';
-import { cookies } from 'next/headers';
+import {
+  getPublicSettings,
+  getServerUser,
+} from '@app/utils/serverFetchHelpers';
 import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -23,34 +24,14 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const currentSettings = await getPublicSettings();
-
-  let user: User | undefined = undefined;
-  try {
-    const cookieStore = await cookies();
-    const cookieHeader = cookieStore
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join('; ');
-    const res = await fetch(
-      `http://${process.env.HOST || 'localhost'}:${
-        process.env.PORT || 3000
-      }/api/v1/auth/me`,
-      {
-        headers: { cookie: cookieHeader || undefined },
-      }
-    );
-    if (res.ok) {
-      user = await res.json();
-    }
-  } catch {
-    // ignore
-  }
+  const user = await getServerUser();
 
   const initialized = currentSettings.initialized;
 
   return (
     <html lang="en-CA" className="scroll-smooth" data-theme="streamarr">
       <head>
+        <link rel="preconnect" href="https://image.tmdb.org" />
         <PWAHeader applicationTitle={currentSettings.applicationTitle} />
       </head>
       <body

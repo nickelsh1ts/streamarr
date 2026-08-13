@@ -20,12 +20,12 @@ const Header = () => {
           gradient="bg-gradient-to-t from-brand-dark/90 to-brand-light/70"
           backgroundImages={
             backdrops?.map(
-              (backdrop) => `https://image.tmdb.org/t/p/original${backdrop}`
+              (backdrop) => `https://image.tmdb.org/t/p/w1280${backdrop}`
             ) ?? ['/img/people-cinema-watching.jpg']
           }
         />
       </div>
-      <div className="relative container mx-auto max-w-screen-lg py-14">
+      <div className="relative container mx-auto max-w-5xl py-14">
         <p className="mx-7 text-center text-3xl font-extrabold text-white md:mx-14 md:text-5xl">
           <FormattedMessage
             id="help.devices.headerTitle"
