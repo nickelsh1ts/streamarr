@@ -144,7 +144,7 @@
     "@types/xml2js": "^0.4.14",
     "@types/yamljs": "^0.2.34",
     "commitizen": "4.3.2",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
+    "conventional-changelog-conventionalcommits": "^10.0.0",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.13.1",
@@ -255,7 +255,7 @@
               {
                 "type": "chore",
                 "section": "🔧 Chores",
-                "hidden": true
+                "effect": "hidden"
               }
             ]
           }
