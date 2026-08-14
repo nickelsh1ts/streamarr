@@ -436,12 +436,18 @@ router.get<{ id: string }>('/:id', async (req, res, next) => {
 
     const user = await userRepository.findOneOrFail({
       where: { id: Number(req.params.id) },
-      relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
+      relations: {
+        redeemedInvite: {
+          createdBy: true,
+        },
+      },
     });
 
     const invites = await getRepository(Invite).find({
       where: { createdBy: { id: user.id } },
-      relations: ['redeemedBy'],
+      relations: {
+        redeemedBy: true,
+      },
     });
 
     const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy
@@ -1068,7 +1074,11 @@ router.put<
         id: Number(req.params.notificationId),
         notifyUser: { id: user.id },
       },
-      relations: ['createdBy', 'updatedBy', 'notifyUser'],
+      relations: {
+        createdBy: true,
+        updatedBy: true,
+        notifyUser: true,
+      },
     });
 
     if (!notification) {
@@ -1155,7 +1165,11 @@ router.put<
     // If no notificationIds provided, update ALL user's notifications (no additional filter)
     const notifications = await notificationRepository.find({
       where: whereCondition,
-      relations: ['createdBy', 'updatedBy', 'notifyUser'],
+      relations: {
+        createdBy: true,
+        updatedBy: true,
+        notifyUser: true,
+      },
     });
 
     // Validate that all requested notification IDs belong to the user

@@ -1211,7 +1211,7 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
   const dbTypeRaw = dataSource.options.type;
   let dbVersion = 'unknown';
   try {
-    if (dbTypeRaw === 'sqlite' || dbTypeRaw === 'better-sqlite3') {
+    if (dbTypeRaw === 'better-sqlite3') {
       const result = await dataSource.query(
         'SELECT sqlite_version() as version'
       );
@@ -1231,7 +1231,7 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
   }
 
   const dbDisplayType =
-    dbTypeRaw === 'sqlite' || dbTypeRaw === 'better-sqlite3'
+    dbTypeRaw === 'better-sqlite3'
       ? 'SQLite'
       : dbTypeRaw === 'postgres'
         ? 'PostgreSQL'

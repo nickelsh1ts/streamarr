@@ -92,7 +92,9 @@ export abstract class BaseAgent<T extends NotificationAgentConfig> {
     }
 
     const users = await getRepository(UserEntity).find({
-      relations: ['settings'],
+      relations: {
+        settings: true,
+      },
     });
 
     return users.filter(

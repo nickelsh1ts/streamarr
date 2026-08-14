@@ -60,11 +60,15 @@ const resolveNewsletterRecipients = async (
     newsletter.recipientMode === 'custom'
       ? await userRepository.find({
           where: { id: In(newsletter.recipientIds ?? []), active: true },
-          relations: ['settings'],
+          relations: {
+            settings: true,
+          },
         })
       : await userRepository.find({
           where: { active: true },
-          relations: ['settings'],
+          relations: {
+            settings: true,
+          },
         });
 
   if (!newsletter.isImportant) {

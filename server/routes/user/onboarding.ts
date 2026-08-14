@@ -160,7 +160,9 @@ router.post<{ id: string }>('/welcome/complete', async (req, res, next) => {
     const onboardingRepo = getRepository(UserOnboarding);
     let onboarding = await onboardingRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
 
     if (!onboarding) {
@@ -203,7 +205,9 @@ router.post<{ id: string }>('/welcome/dismiss', async (req, res, next) => {
     const onboardingRepo = getRepository(UserOnboarding);
     let onboarding = await onboardingRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
 
     if (!onboarding) {
@@ -246,7 +250,9 @@ router.post<{ id: string }>('/tutorial/progress', async (req, res, next) => {
     const onboardingRepo = getRepository(UserOnboarding);
     let onboarding = await onboardingRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
 
     if (!onboarding) {
@@ -285,7 +291,9 @@ router.post<{ id: string }>('/tutorial/complete', async (req, res, next) => {
     const onboardingRepo = getRepository(UserOnboarding);
     let onboarding = await onboardingRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
 
     if (!onboarding) {
@@ -328,7 +336,9 @@ router.post<{ id: string }>('/tutorial/skip', async (req, res, next) => {
     const onboardingRepo = getRepository(UserOnboarding);
     let onboarding = await onboardingRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
 
     if (!onboarding) {
