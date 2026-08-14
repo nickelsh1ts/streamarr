@@ -33,12 +33,18 @@ authRoutes.get('/me', isAuthenticated(), async (req, res) => {
   }
   const user = await userRepository.findOneOrFail({
     where: { id: req.user.id },
-    relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
+    relations: {
+      redeemedInvite: {
+        createdBy: true,
+      },
+    },
   });
 
   const invites = await getRepository(Invite).find({
     where: { createdBy: { id: user.id } },
-    relations: ['redeemedBy'],
+    relations: {
+      redeemedBy: true,
+    },
   });
 
   const createdBySummary: UserSummary | null = user.redeemedInvite?.createdBy

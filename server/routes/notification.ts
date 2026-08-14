@@ -153,7 +153,9 @@ notificationRoutes.post<
 
     const users = await userRepository.find({
       where: userIds.map((id) => ({ id })),
-      relations: ['settings'],
+      relations: {
+        settings: true,
+      },
     });
 
     if (users.length === 0) {

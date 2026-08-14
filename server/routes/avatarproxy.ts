@@ -59,7 +59,10 @@ router.get('/:userId', async (req, res) => {
     }
 
     const user = await getRepository(User).findOne({
-      select: ['id', 'avatar'],
+      select: {
+        id: true,
+        avatar: true,
+      },
       where: { id: userId },
     });
     const dbAvatar = user?.avatar;

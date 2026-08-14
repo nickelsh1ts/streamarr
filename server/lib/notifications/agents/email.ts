@@ -161,7 +161,11 @@ class EmailAgent
 
     if (payload.notifyAdmin) {
       const userRepository = getRepository(User);
-      const users = await userRepository.find({ relations: ['settings'] });
+      const users = await userRepository.find({
+        relations: {
+          settings: true,
+        },
+      });
 
       await Promise.all(
         users

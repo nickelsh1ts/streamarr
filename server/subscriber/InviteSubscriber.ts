@@ -97,7 +97,9 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
     const userRepository = getRepository(User);
 
     const allUsers = await userRepository.find({
-      relations: ['settings'],
+      relations: {
+        settings: true,
+      },
     });
 
     const admins = allUsers.filter(

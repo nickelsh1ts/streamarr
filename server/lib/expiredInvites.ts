@@ -78,7 +78,10 @@ class ExpiredInvites {
 
       try {
         const allInvites = await inviteRepository.find({
-          select: ['id', 'icode'],
+          select: {
+            id: true,
+            icode: true,
+          },
         });
         const files = await fs.readdir(cacheDir);
         for (const file of files) {

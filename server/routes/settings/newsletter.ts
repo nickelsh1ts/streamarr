@@ -490,7 +490,9 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
 
       const testUser = await getRepository(User).findOneOrFail({
         where: { id: req.user?.id },
-        relations: ['settings'],
+        relations: {
+          settings: true,
+        },
       });
 
       const result = await sendNewsletter(newsletter, 'test', { testUser });

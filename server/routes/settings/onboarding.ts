@@ -779,7 +779,9 @@ router.post<
       const onboardingRepo = getRepository(UserOnboarding);
 
       const allOnboardings = await onboardingRepo.find({
-        relations: ['user'],
+        relations: {
+          user: true,
+        },
       });
 
       // Filter out users with ADMIN or MANAGE_USERS permissions

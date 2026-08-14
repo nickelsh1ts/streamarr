@@ -23,7 +23,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
     const userRepository = getRepository(User);
 
-    const allUsers = await userRepository.find({ relations: ['settings'] });
+    const allUsers = await userRepository.find({
+      relations: {
+        settings: true,
+      },
+    });
 
     const usersToNotify = allUsers.filter((user) => {
       if (
@@ -73,7 +77,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     const userRepository = getRepository(User);
     const fullEntity = await userRepository.findOne({
       where: { id: event.entity.id },
-      relations: ['redeemedInvite', 'redeemedInvite.createdBy'],
+      relations: {
+        redeemedInvite: {
+          createdBy: true,
+        },
+      },
     });
 
     if (fullEntity) {

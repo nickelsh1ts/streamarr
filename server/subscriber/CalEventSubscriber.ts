@@ -33,7 +33,9 @@ export class CalEventSubscriber implements EntitySubscriberInterface<Event> {
     const userRepository = getRepository(User);
 
     const users = await userRepository.find({
-      relations: ['settings'],
+      relations: {
+        settings: true,
+      },
     });
 
     const eligibleUsers = users.filter(

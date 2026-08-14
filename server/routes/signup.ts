@@ -79,7 +79,9 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     const inviteRepository = getRepository(Invite);
     const invite = await inviteRepository.findOne({
       where: { icode },
-      relations: ['redeemedBy'],
+      relations: {
+        redeemedBy: true,
+      },
     });
     if (!invite) {
       res.status(404).json({ success: false, message: 'Invite not found.' });
@@ -456,7 +458,9 @@ signupRoutes.post('/localauth', async (req, res) => {
     const inviteRepository = getRepository(Invite);
     const invite = await inviteRepository.findOne({
       where: { icode },
-      relations: ['redeemedBy'],
+      relations: {
+        redeemedBy: true,
+      },
     });
     if (!invite) {
       res.status(404).json({ success: false, message: 'Invite not found.' });
@@ -649,7 +653,9 @@ signupRoutes.post('/complete', async (req, res) => {
     const userRepository = getRepository(User);
     const user = await userRepository.findOne({
       where: { id: userId },
-      relations: ['settings'],
+      relations: {
+        settings: true,
+      },
     });
 
     if (!user) {

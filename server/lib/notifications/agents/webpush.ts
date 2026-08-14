@@ -137,7 +137,11 @@ class WebPushAgent
     }
 
     if (payload.notifyAdmin) {
-      const users = await userRepository.find({ relations: ['settings'] });
+      const users = await userRepository.find({
+        relations: {
+          settings: true,
+        },
+      });
 
       const manageUsers = users.filter(
         (user) =>

@@ -7,5 +7,6 @@ allowBuilds:
   '@scarf/scarf': false
   esbuild: false
   unrs-resolver: false
+  better-sqlite3: true
 overrides:
   eslint-config-next>typescript-eslint: ^8.58.2
