@@ -17,7 +17,7 @@ import type {
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
-import { redirect, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR, { SWRConfig } from 'swr';
@@ -30,6 +30,7 @@ const Layout = ({
   initialized: boolean;
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
   const tokenRef = useRef(false);
@@ -123,33 +124,33 @@ const Layout = ({
     }
   }, [user, loading]);
 
-  if (!initialized) {
-    if (!pathname.match(/setup|signin\/plex\/loading/)) {
-      redirect('/setup');
+  const redirectTarget = useMemo(() => {
+    if (!initialized) {
+      return pathname.match(/setup|signin\/plex\/loading/) ? null : '/setup';
     }
-  } else {
+
     // Redirect from setup to admin after completion
     if (pathname.match(/^\/setup$/) && user) {
-      redirect('/admin');
+      return '/admin';
     }
 
     // Protected routes require authentication
     if (!publicRoutes.test(pathname) && !user && !loading) {
-      redirect('/signin');
+      return '/signin';
     }
 
     // Authenticated users on signin/home go to watch
     if (pathname.match(/(signin|\/$)/) && user && !loading) {
-      redirect(isExpiredUser ? '/profile' : '/watch');
+      return isExpiredUser ? '/profile' : '/watch';
     }
 
     // Signup disabled redirect
     if (pathname.match(/signup/) && !currentSettings.enableSignUp) {
-      redirect('/signin');
+      return '/signin';
     }
 
     if (pathname.match(/^\/help(\/|$)/) && !currentSettings.enableHelpCentre) {
-      redirect('/');
+      return '/';
     }
 
     // Feature-disabled redirects
@@ -161,8 +162,30 @@ const Layout = ({
       ((pathname.match(/schedule/) && !userSettings.releaseSched) ||
         (pathname.match(/request/) && !userSettings.requestUrl))
     ) {
-      redirect('/watch');
+      return '/watch';
     }
+
+    return null;
+  }, [
+    initialized,
+    pathname,
+    user,
+    loading,
+    currentSettings.enableSignUp,
+    currentSettings.enableHelpCentre,
+    userSettings,
+    userSettingsLoading,
+    isExpiredUser,
+  ]);
+
+  useEffect(() => {
+    if (redirectTarget && redirectTarget !== pathname) {
+      router.replace(redirectTarget);
+    }
+  }, [redirectTarget, pathname, router]);
+
+  if (redirectTarget && redirectTarget !== pathname) {
+    return null;
   }
 
   return (

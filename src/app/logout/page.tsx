@@ -11,28 +11,23 @@ const LogOutPage = () => {
   const router = useRouter();
   const intl = useIntl();
 
-  const clearPlexToken = () => {
-    try {
-      localStorage.removeItem('myPlexAccessToken');
-    } catch {
-      // fail silently
-    }
-  };
-
-  const logout = async () => {
-    clearPlexToken();
-    const response = await axios.post('/api/v1/auth/logout');
-
-    if (response.data?.status === 'ok') {
-      revalidate().then(() => {
-        router.push('/');
-      });
-    }
-  };
-
   useEffect(() => {
+    const logout = async () => {
+      try {
+        localStorage.removeItem('myPlexAccessToken');
+      } catch {
+        // fail silently
+      }
+
+      const response = await axios.post('/api/v1/auth/logout');
+
+      if (response.data?.status === 'ok') {
+        revalidate(undefined, false);
+      }
+    };
+
     logout();
-  });
+  }, [revalidate, router]);
 
   return (
     <LoadingEllipsis
