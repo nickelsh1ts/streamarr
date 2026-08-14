@@ -105,7 +105,7 @@ const ICodeForm = ({ onComplete }: { onComplete: (code: string) => void }) => {
                     id: 'invite.code',
                     defaultMessage: 'Invite Code',
                   })}
-                  defaultValue={values.icode}
+                  value={values.icode}
                   required
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setFieldValue('icode', e.target.value);

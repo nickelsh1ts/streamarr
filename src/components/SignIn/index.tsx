@@ -89,7 +89,7 @@ const SignIn = () => {
           {({ openIndexes, handleClick, AccordionContent }) => (
             <div className="text-primary-content my-4 backdrop-blur-md">
               <button
-                className={`collapse-title border-primary bg-primary/40 mb-px w-full rounded-t-lg border text-start ${
+                className={`collapse-title border-primary bg-primary/40 mb-px w-full cursor-pointer rounded-t-lg border text-start ${
                   openIndexes.includes(0) &&
                   'text-primary-content cursor-not-allowed'
                 }`}
@@ -125,7 +125,7 @@ const SignIn = () => {
               {currentSettings.localLogin && (
                 <>
                   <button
-                    className={`collapse-title border-primary bg-primary/40 w-full border text-start ${
+                    className={`collapse-title border-primary bg-primary/40 w-full cursor-pointer border text-start ${
                       openIndexes.includes(1)
                         ? 'text-primary-content cursor-not-allowed'
                         : 'rounded-b-lg'

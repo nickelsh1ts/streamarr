@@ -8,7 +8,7 @@ const Cookies = () => {
 
   return (
     <div
-      className="container mx-auto my-5 max-w-screen-md p-4 text-black lg:max-w-screen-lg xl:max-w-screen-xl"
+      className="container mx-auto my-5 max-w-3xl p-4 text-black lg:max-w-5xl xl:max-w-7xl"
       id="cookies"
     >
       <p className="mb-6 text-4xl font-extrabold">
@@ -116,7 +116,7 @@ const Cookies = () => {
       <p>
         <FormattedMessage
           id="help.cookies.managingDesc"
-          defaultMessage='Most web browsers allow you to control cookies through their settings. You can typically find these options in your browser&apos;s "Settings", "Preferences", or "Privacy" menu. Please note that disabling essential cookies may prevent you from using {appTitle} properly, as they are required for authentication and security.'
+          defaultMessage={`Most web browsers allow you to control cookies through their settings. You can typically find these options in your browser's "Settings", "Preferences", or "Privacy" menu. Please note that disabling essential cookies may prevent you from using {appTitle} properly, as they are required for authentication and security.`}
           values={{
             appTitle: (
               <span className="text-primary font-bold">

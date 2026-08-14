@@ -1698,7 +1698,7 @@
     "defaultMessage": "Last Updated:"
   },
   "help.cookies.managingDesc": {
-    "defaultMessage": "Most web browsers allow you to control cookies through their settings. You can typically find these options in your browser&apos;s \"Settings\", \"Preferences\", or \"Privacy\" menu. Please note that disabling essential cookies may prevent you from using {appTitle} properly, as they are required for authentication and security."
+    "defaultMessage": "Most web browsers allow you to control cookies through their settings. You can typically find these options in your browser's \"Settings\", \"Preferences\", or \"Privacy\" menu. Please note that disabling essential cookies may prevent you from using {appTitle} properly, as they are required for authentication and security."
   },
   "help.cookies.managingTitle": {
     "defaultMessage": "Managing Cookies"
