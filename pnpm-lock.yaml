@@ -338,7 +338,7 @@ importers:
         version: 0.3.0
       cypress:
         specifier: ^15.13.1
-        version: 15.18.1
+        version: 15.20.0
       cz-conventional-changelog:
         specifier: 3.3.0
         version: 3.3.0(@types/node@25.9.5)(typescript@6.0.3)
@@ -3401,8 +3401,8 @@ packages:
   append-field@1.0.0:
     resolution: {integrity: sha512-klpgFSWLW1ZEs8svjfb7g4qWY0YS5imI82dTg+QahUvJ8YqAY0P10Uk8tTyh9ZGuYEZEMaeJYCF5BFuX552hsw==}
 
-  arch@2.2.0:
-    resolution: {integrity: sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==}
+  arch@3.0.0:
+    resolution: {integrity: sha512-AmIAC+Wtm2AU8lGfTtHsw0Y9Qtftx2YXEEtiBP10xFUtMOA+sHHx6OAddyL52mUKh1vsXQ6/w1mVDptZCyUt4Q==}
 
   arg@4.1.3:
     resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
@@ -4156,8 +4156,8 @@ packages:
   cy-mobile-commands@0.3.0:
     resolution: {integrity: sha512-Bj5P2ylw88hPqolLu68xWB6euVH5uNt8zyh+Ju8sBukGv39mWZxpjp6LtnUX/LK/YMthwvILYHhvr9SG1TP+4w==}
 
-  cypress@15.18.1:
-    resolution: {integrity: sha512-JtkTVtUE2lvLYgZCaug+Uai0H9IqsJirlBO49c87QwG0bJUGvAUVBz1EJve0b0oaYP244Ew9M0BkrHpcqkYxmw==}
+  cypress@15.20.0:
+    resolution: {integrity: sha512-yrt6z9YERlggq5FReDx+PkbjrNoEQPeM03MQC1GvLlFGItk8ervC0A/7fjzWoWVRRXjsem+Pj3cunknARl/37g==}
     engines: {node: ^20.1.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
 
@@ -4792,6 +4792,10 @@ packages:
 
   extsprintf@1.3.0:
     resolution: {integrity: sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==}
+    engines: {'0': node >=0.6.0}
+
+  extsprintf@1.4.1:
+    resolution: {integrity: sha512-Wrk35e8ydCKDj/ArClo1VrPVmN8zph5V4AtHwIuHhvMXsKf73UT3BOD+azBIW+3wOJ4FhEH7zyaJCFvChjYvMA==}
     engines: {'0': node >=0.6.0}
 
   fast-deep-equal@3.1.3:
@@ -8057,9 +8061,9 @@ packages:
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
-  systeminformation@5.31.17:
-    resolution: {integrity: sha512-TvFA9iwDWlMjqZVlKIJ0Cy+Zgm9ttlMx0SMRwJDMNKyhlEKWBMb3+WRwDi/3dvHdWbexpos4Osp4U49p5WjB5g==}
-    engines: {node: '>=8.0.0'}
+  systeminformation@5.33.1:
+    resolution: {integrity: sha512-DEN6ICHk3Tk0Uf/hrAHh7xlt7iL5CJFBtPZinA0H62DrGG/KPKqq/Nzj6lCXPS4Ay/sf/14zNnk9LpqKzBIc+w==}
+    engines: {node: '>=10.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
 
@@ -11869,7 +11873,7 @@ snapshots:
 
   append-field@1.0.0: {}
 
-  arch@2.2.0: {}
+  arch@3.0.0: {}
 
   arg@4.1.3:
     optional: true
@@ -12711,14 +12715,14 @@ snapshots:
 
   cy-mobile-commands@0.3.0: {}
 
-  cypress@15.18.1:
+  cypress@15.20.0:
     dependencies:
       '@cypress/request': 4.0.1
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
       '@types/sinonjs__fake-timers': 8.1.1
       '@types/sizzle': 2.3.10
       '@types/tmp': 0.2.6
-      arch: 2.2.0
+      arch: 3.0.0
       blob-util: 2.0.2
       bluebird: 3.7.2
       buffer: 5.7.1
@@ -12746,10 +12750,9 @@ snapshots:
       proxy-from-env: 1.0.0
       request-progress: 3.0.0
       supports-color: 8.1.1
-      systeminformation: 5.31.17
+      systeminformation: 5.33.1
       tmp: 0.2.7
       tree-kill: 1.2.2
-      tslib: 1.14.1
       untildify: 4.0.0
       yauzl: 3.4.0
 
@@ -13700,6 +13703,8 @@ snapshots:
   extend@3.0.2: {}
 
   extsprintf@1.3.0: {}
+
+  extsprintf@1.4.1: {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -17559,7 +17564,7 @@ snapshots:
 
   symbol-tree@3.2.4: {}
 
-  systeminformation@5.31.17: {}
+  systeminformation@5.33.1: {}
 
   tabbable@6.4.0: {}
 
@@ -18054,7 +18059,7 @@ snapshots:
     dependencies:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
-      extsprintf: 1.3.0
+      extsprintf: 1.4.1
 
   vfile-message@4.0.3:
     dependencies:
