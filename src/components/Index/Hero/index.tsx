@@ -5,6 +5,7 @@ import LanguagePicker from '@app/components/Layout/LanguagePicker';
 import useSettings from '@app/hooks/useSettings';
 import { type Library } from '@server/lib/settings';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -16,6 +17,7 @@ const scrollToSection = (id: string) => {
 
 export default function Hero() {
   const intl = useIntl();
+  const router = useRouter();
   const { currentSettings } = useSettings();
   const { data: backdrops } = useSWR<string[]>('/api/v1/backdrops', {
     refreshInterval: 0,
@@ -127,7 +129,7 @@ export default function Hero() {
                     const code = inputRef.current?.value.trim();
                     if (code) {
                       setError(null);
-                      window.location.href = `/signup?icode=${encodeURIComponent(code)}`;
+                      router.push(`/signup?icode=${encodeURIComponent(code)}`);
                     } else {
                       setError(
                         intl.formatMessage({
