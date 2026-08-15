@@ -27,11 +27,13 @@ import { XCircleIcon } from '@heroicons/react/24/solid';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
 import axios from 'axios';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 
 const Setup = () => {
+  const router = useRouter();
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [plexSettingsComplete, setPlexSettingsComplete] = useState(false);
@@ -72,7 +74,7 @@ const Setup = () => {
         }
 
         // Redirect to admin page
-        window.location.href = '/admin';
+        router.push('/admin');
       }
     } catch (e) {
       Toast({
@@ -278,7 +280,7 @@ const Setup = () => {
         show={showRestartModal}
         onSkip={() => {
           setShowRestartModal(false);
-          window.location.href = '/admin';
+          router.refresh();
         }}
         services={restartServices}
       />

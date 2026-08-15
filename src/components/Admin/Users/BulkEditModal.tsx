@@ -262,7 +262,7 @@ const BulkEditModal = ({
     >
       <div
         role="tablist"
-        className="tabs-border border-neutral border-b"
+        className="tabs-border border-neutral flex gap-2 border-b"
         onKeyDown={(e) => {
           if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
             return;
@@ -292,7 +292,7 @@ const BulkEditModal = ({
             aria-selected={activeTab === tab.id}
             aria-controls="bulk-edit-tabpanel"
             tabIndex={activeTab === tab.id ? 0 : -1}
-            className={`tab h-fit w-fit py-2 font-bold [--tab-color:black] ${activeTab === tab.id ? 'tab-active border-primary! text-primary' : ''}`}
+            className={`tab h-fit w-fit cursor-pointer py-2 font-bold [--tab-color:black] hover:opacity-60 ${activeTab === tab.id ? 'tab-active border-primary! text-primary' : ''}`}
           >
             {tab.title}
           </button>

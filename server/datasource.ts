@@ -3,7 +3,7 @@ import type { DataSourceOptions, EntityTarget, Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 
 const devConfig: DataSourceOptions = {
-  type: 'sqlite',
+  type: 'better-sqlite3',
   database: process.env.CONFIG_DIRECTORY
     ? `${process.env.CONFIG_DIRECTORY}/db/db.sqlite3`
     : 'config/db/db.sqlite3',
@@ -17,7 +17,7 @@ const devConfig: DataSourceOptions = {
 };
 
 const prodConfig: DataSourceOptions = {
-  type: 'sqlite',
+  type: 'better-sqlite3',
   database: process.env.CONFIG_DIRECTORY
     ? `${process.env.CONFIG_DIRECTORY}/db/db.sqlite3`
     : 'config/db/db.sqlite3',

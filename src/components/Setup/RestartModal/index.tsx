@@ -3,6 +3,7 @@ import Modal from '@app/components/Common/Modal';
 import { waitForRestart } from '@app/utils/restartHelpers';
 import { ArrowPathIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -14,6 +15,7 @@ interface RestartModalProps {
 
 const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
   const intl = useIntl();
+  const router = useRouter();
   const [isRestarting, setIsRestarting] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [restartFailed, setRestartFailed] = useState(false);
@@ -30,7 +32,7 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
       setIsReconnecting(true);
 
       if (await waitForRestart()) {
-        window.location.href = '/admin';
+        router.push('/admin');
       } else {
         setIsReconnecting(false);
         setRestartFailed(true);
@@ -40,7 +42,7 @@ const RestartModal = ({ show, services, onSkip }: RestartModalProps) => {
       setIsReconnecting(false);
       setRestartFailed(true);
     }
-  }, []);
+  }, [router]);
 
   const isProcessing = isRestarting || isReconnecting;
 

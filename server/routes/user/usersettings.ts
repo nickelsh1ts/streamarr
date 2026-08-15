@@ -669,7 +669,10 @@ userSettingsRoutes.get<{ id: string }, { hasPassword: boolean }>(
     try {
       const user = await userRepository.findOne({
         where: { id: Number(req.params.id) },
-        select: ['id', 'password'],
+        select: {
+          id: true,
+          password: true,
+        },
       });
 
       if (!user) {
@@ -696,7 +699,10 @@ userSettingsRoutes.post<
     });
 
     const userWithPassword = await userRepository.findOne({
-      select: ['id', 'password'],
+      select: {
+        id: true,
+        password: true,
+      },
       where: { id: Number(req.params.id) },
     });
 
@@ -804,7 +810,9 @@ userSettingsRoutes.post<
 
       const user = await userRepository.findOne({
         where: { id: Number(req.params.id) },
-        relations: ['settings'],
+        relations: {
+          settings: true,
+        },
       });
 
       if (!user) {
