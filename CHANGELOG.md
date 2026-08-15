@@ -1,3 +1,5 @@
+## [1.12.1](https://github.com/nickelsh1ts/streamarr/compare/v1.12.0...v1.12.1) (2026-08-15)
+
 ## [1.12.0](https://github.com/nickelsh1ts/streamarr/compare/v1.11.0...v1.12.0) (2026-08-13)
 
 ### ✨ Features
