@@ -2,7 +2,6 @@ allowBuilds:
   bcrypt: true
   cypress: true
   sharp: true
-  sqlite3: true
   '@parcel/watcher': false
   '@scarf/scarf': false
   esbuild: false

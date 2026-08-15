@@ -81,6 +81,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+      - name: Install build prerequisites
+        run: apk add --no-cache python3 make g++ libc6-compat
       - name: Install and Enable Corepack
         run: npm install -g corepack --force && corepack enable
       - name: Install dependencies
