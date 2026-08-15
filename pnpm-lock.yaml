@@ -157,7 +157,7 @@ importers:
         version: 1.20.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-colorful:
         specifier: ^5.6.1
-        version: 5.7.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 5.8.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-datepicker:
         specifier: ^9.1.0
         version: 9.1.0(date-fns-tz@3.2.0(date-fns@4.4.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -7267,8 +7267,8 @@ packages:
       react: ^16.14.0 || ^17 || ^18 || ^19
       react-dom: ^16.14.0 || ^17 || ^18 || ^19
 
-  react-colorful@5.7.0:
-    resolution: {integrity: sha512-fuesYIemttah97XmsIHmz4OORDHiSFzyc9HMAIrCHJou2jaRQmL8cFJ76K4zQhhj8jzwOBlOi4BaGTjjOZCfTg==}
+  react-colorful@5.8.0:
+    resolution: {integrity: sha512-Wy9OzPfjSN9bF12OB8N7UQvlsZ0I+7wHxpN+bV5BjNQGxOj6IiwkRjevJK9yOBjJWGQvAaf1OXtn8rUeEatAng==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -16427,7 +16427,7 @@ snapshots:
       react-overlays: 5.2.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       uncontrollable: 7.2.1(react@19.2.8)
 
-  react-colorful@5.7.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-colorful@5.8.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
