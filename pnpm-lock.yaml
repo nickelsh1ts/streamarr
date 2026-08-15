@@ -208,7 +208,7 @@ importers:
         version: 5.0.1(express@5.2.1)
       swr:
         specifier: ^2.4.1
-        version: 2.4.2(react@19.2.8)
+        version: 2.5.0(react@19.2.8)
       typeorm:
         specifier: ^1.0.0
         version: 1.1.0(babel-plugin-macros@3.1.0)(better-sqlite3@12.11.1)(ts-node@10.9.2(@types/node@25.9.5)(typescript@6.0.3))
@@ -8053,8 +8053,8 @@ packages:
     peerDependencies:
       express: '>=4.0.0 || >=5.0.0-beta'
 
-  swr@2.4.2:
-    resolution: {integrity: sha512-ej644Y2bvkIajfR32KGeSSdBXQW+ScjGjkybZgSE7kFpk9eGnV44XY9FJylXi+W75pavSX1PVNB57W5EbhGIYw==}
+  swr@2.5.0:
+    resolution: {integrity: sha512-W0GomadRJe9OfzIoRX0kZHhDSaRRfdiOUeH6uazgR05SibBhDNwfdTbhAxmFtObvkf59fFymo22mooKukosvNA==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -17556,7 +17556,7 @@ snapshots:
       express: 5.2.1
       swagger-ui-dist: 5.32.6
 
-  swr@2.4.2(react@19.2.8):
+  swr@2.5.0(react@19.2.8):
     dependencies:
       dequal: 2.0.3
       react: 19.2.8
