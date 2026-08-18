@@ -590,6 +590,9 @@
   "common.preview": {
     "defaultMessage": "Preview"
   },
+  "common.previewLoading": {
+    "defaultMessage": "Loading…"
+  },
   "common.previous": {
     "defaultMessage": "Previous"
   },
