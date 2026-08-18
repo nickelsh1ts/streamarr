@@ -16,7 +16,7 @@ const DynamicLogo = () => {
         width={190}
         height={35}
         unoptimized
-        className="h-[45px] w-[190px] object-contain object-left max-md:hidden"
+        className="h-11.25 w-47.5 object-contain object-left max-md:hidden"
       />
       <Image
         src={logoSmallSrc}
@@ -24,7 +24,7 @@ const DynamicLogo = () => {
         width={45}
         height={45}
         unoptimized
-        className="h-[45px] w-[45px] object-contain object-left md:hidden"
+        className="h-11.25 w-11.25 object-contain object-left md:hidden"
       />
     </>
   );

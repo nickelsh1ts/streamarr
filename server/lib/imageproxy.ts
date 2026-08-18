@@ -23,6 +23,8 @@ const baseCacheDirectory = process.env.CONFIG_DIRECTORY
   ? `${process.env.CONFIG_DIRECTORY}/cache/images`
   : path.join(__dirname, '../../config/cache/images');
 
+const TMDB_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
+
 class ImageProxy {
   private static isRunning = false;
 
@@ -110,11 +112,17 @@ class ImageProxy {
             return;
           }
 
-          const [, expireAtSt] = imageFile.split('.');
+          const [maxAgeSt, expireAtSt] = imageFile.split('.');
+          const maxAge = Number(maxAgeSt);
           const expireAt = Number(expireAtSt);
           const now = Date.now();
 
-          if (now > expireAt) {
+          const cappedExpireAt =
+            key === 'tmdb' && maxAge > TMDB_MAX_AGE_SECONDS
+              ? expireAt - (maxAge - TMDB_MAX_AGE_SECONDS) * 1000
+              : expireAt;
+
+          if (now > cappedExpireAt) {
             await promises.rm(path.join(filePath, imageFile));
             deletedImages += 1;
           }
@@ -310,7 +318,10 @@ class ImageProxy {
         (response.headers['cache-control'] as string | undefined) ?? ''
       ).match(/max-age=(\d+)/);
       const parsedMaxAge = Number(maxAgeMatch?.[1]);
-      const maxAge = parsedMaxAge > 0 ? parsedMaxAge : this.defaultMaxAge;
+      let maxAge = parsedMaxAge > 0 ? parsedMaxAge : this.defaultMaxAge;
+      if (this.key === 'tmdb' && maxAge > TMDB_MAX_AGE_SECONDS) {
+        maxAge = TMDB_MAX_AGE_SECONDS;
+      }
       const expireAt = Date.now() + maxAge * 1000;
       const etag = (response.headers.etag ?? '').replace(/"/g, '');
 

@@ -77,7 +77,7 @@ class LogoUpload {
         fs.unlinkSync(filePath);
       }
 
-      settings.main = { ...settings.main, customLogo: undefined };
+      settings.main = { ...settings.main, customLogo: null };
     } else if (type === 'logoSmall' && settings.main.customLogoSmall) {
       const urlPath = settings.main.customLogoSmall.split('?')[0];
       const filename = path.basename(urlPath);
@@ -87,7 +87,7 @@ class LogoUpload {
         fs.unlinkSync(filePath);
       }
 
-      settings.main = { ...settings.main, customLogoSmall: undefined };
+      settings.main = { ...settings.main, customLogoSmall: null };
     }
 
     settings.save();
