@@ -93,6 +93,7 @@ const NewsletterModal = ({
   const { locale } = useLocale();
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
     registerDatePickerLocale(locale);
@@ -436,6 +437,7 @@ const NewsletterModal = ({
         }
 
         const previewNewsletter = async () => {
+          setPreviewLoading(true);
           try {
             const response = await axios.post(
               '/api/v1/settings/newsletter/preview',
@@ -455,6 +457,8 @@ const NewsletterModal = ({
               type: 'error',
               icon: <XCircleIcon className="size-7" />,
             });
+          } finally {
+            setPreviewLoading(false);
           }
         };
 
@@ -503,10 +507,18 @@ const NewsletterModal = ({
               onOk={() => handleSubmit()}
               okDisabled={isSubmitting || !isValid}
               secondaryButtonType="default"
-              secondaryText={intl.formatMessage({
-                id: 'common.preview',
-                defaultMessage: 'Preview',
-              })}
+              secondaryDisabled={previewLoading || isSubmitting}
+              secondaryText={
+                previewLoading
+                  ? intl.formatMessage({
+                      id: 'common.previewLoading',
+                      defaultMessage: 'Loading…',
+                    })
+                  : intl.formatMessage({
+                      id: 'common.preview',
+                      defaultMessage: 'Preview',
+                    })
+              }
               onSecondary={() => previewNewsletter()}
               title={
                 newsletter
