@@ -2035,6 +2035,16 @@ components:
         types:
           type: number
           example: 2
+        options:
+          type: object
+          properties:
+            retentionLimit:
+              type: number
+              example: 1
+            retentionTime:
+              type: string
+              enum: [days, weeks, months, years]
+              example: 'years'
     RestartStatus:
       type: object
       properties:
