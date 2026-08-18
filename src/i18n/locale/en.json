@@ -332,6 +332,9 @@
   "common.date": {
     "defaultMessage": "Date"
   },
+  "common.day": {
+    "defaultMessage": "{count, plural, one {Day} other {Days}}"
+  },
   "common.days": {
     "defaultMessage": "{count, plural, one {# day} other {# days}}"
   },
@@ -419,6 +422,9 @@
   "common.finish": {
     "defaultMessage": "Finish"
   },
+  "common.forever": {
+    "defaultMessage": "Forever"
+  },
   "common.futuredays": {
     "defaultMessage": "Future Days"
   },
@@ -496,6 +502,9 @@
   },
   "common.message": {
     "defaultMessage": "Message"
+  },
+  "common.month": {
+    "defaultMessage": "{count, plural, one {Month} other {Months}}"
   },
   "common.movies": {
     "defaultMessage": "Movies"
@@ -850,6 +859,12 @@
   },
   "common.webPush": {
     "defaultMessage": "Web Push"
+  },
+  "common.week": {
+    "defaultMessage": "{count, plural, one {Week} other {Weeks}}"
+  },
+  "common.year": {
+    "defaultMessage": "{count, plural, one {Year} other {Years}}"
   },
   "confirmAccount.disableWebPush": {
     "defaultMessage": "Disable Web Push"
@@ -3332,6 +3347,9 @@
   "imageUpload.uploading": {
     "defaultMessage": "Uploading…"
   },
+  "inAppNotifications.retentionAgeDescription": {
+    "defaultMessage": "The maximum age of in-app notifications before they are automatically deleted."
+  },
   "inAppNotifications.saveError": {
     "defaultMessage": "In App notification settings failed to save."
   },
@@ -4501,6 +4519,9 @@
   },
   "notifications.pushover.userKeyRequired": {
     "defaultMessage": "You must provide your Pushover user key"
+  },
+  "notifications.retentionAge": {
+    "defaultMessage": "Retention Age"
   },
   "notifications.slack.webhookUrlRequired": {
     "defaultMessage": "You must provide a valid Slack webhook URL"

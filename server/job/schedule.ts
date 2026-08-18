@@ -3,7 +3,6 @@ import expiredInvites from '@server/lib/expiredInvites';
 import ImageProxy from '@server/lib/imageproxy';
 import { plexAccess } from '@server/lib/plexAccessLost';
 import refreshToken from '@server/lib/refreshToken';
-import { plexFullScanner } from '@server/lib/scanners/plex';
 import type { JobId } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import trialExpiry from '@server/lib/trialExpiry';
@@ -25,23 +24,6 @@ export const scheduledJobs: ScheduledJob[] = [];
 
 export const startJobs = (): void => {
   const jobs = getSettings().jobs;
-
-  // Run full plex scan every 24 hours
-  scheduledJobs.push({
-    id: 'plex-full-scan',
-    name: 'Plex Full Library Scan',
-    type: 'process',
-    interval: 'hours',
-    cronSchedule: jobs['plex-full-scan'].schedule,
-    job: schedule.scheduleJob(jobs['plex-full-scan'].schedule, () => {
-      logger.info('Starting scheduled job: Plex Full Library Scan', {
-        label: 'Jobs',
-      });
-      plexFullScanner.run();
-    }),
-    running: () => plexFullScanner.status().running,
-    cancelFn: () => plexFullScanner.cancel(),
-  });
 
   // Run image cache cleanup every 24 hours
   scheduledJobs.push({
@@ -100,6 +82,18 @@ export const startJobs = (): void => {
     interval: 'hours',
     cronSchedule: jobs['notification-cleanup']?.schedule,
     job: schedule.scheduleJob(jobs['notification-cleanup']?.schedule, () => {
+      const settings = getSettings().notifications.agents.inApp.options;
+      const retentionLimit = Number(settings.retentionLimit);
+
+      if (!Number.isFinite(retentionLimit) || retentionLimit <= 0) {
+        logger.info(
+          'Notification retention is set to forever (0), skipping notification cleanup job.',
+          {
+            label: 'Jobs',
+          }
+        );
+        return;
+      }
       logger.info('Starting scheduled job: Notification Cleanup', {
         label: 'Jobs',
       });

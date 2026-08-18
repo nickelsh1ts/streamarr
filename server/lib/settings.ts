@@ -307,6 +307,13 @@ export interface NotificationAgentNtfy extends NotificationAgentConfig {
   };
 }
 
+export interface NotificationAgentInApp extends NotificationAgentConfig {
+  options: {
+    retentionLimit: number;
+    retentionTime?: 'days' | 'weeks' | 'months' | 'years';
+  };
+}
+
 export enum NotificationAgentKey {
   DISCORD = 'discord',
   EMAIL = 'email',
@@ -332,7 +339,7 @@ export interface NotificationAgents {
   telegram: NotificationAgentTelegram;
   webhook: NotificationAgentWebhook;
   webpush: NotificationAgentConfig;
-  inApp: NotificationAgentConfig;
+  inApp: NotificationAgentInApp;
 }
 
 interface NotificationSettings {
@@ -590,7 +597,13 @@ class Settings {
             },
           },
           webpush: { enabled: false, options: {} },
-          inApp: { enabled: true, options: {} },
+          inApp: {
+            enabled: true,
+            options: {
+              retentionLimit: 1,
+              retentionTime: 'years',
+            },
+          },
         },
       },
       jobs: {
