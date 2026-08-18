@@ -137,7 +137,17 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
     });
   }, []);
 
-  const { rootDiskItem, diskRows } = useMemo(() => {
+  const { rootDiskItem, diskRows, rootPath } = useMemo(() => {
+    const calculateRootPath = (
+      appDataPath: string,
+      mountPoint?: string
+    ): string => {
+      if (mountPoint === '/') return '/';
+      if (appDataPath === '/') return '/';
+      const parts = appDataPath.split('/').filter(Boolean);
+      return '/' + parts.slice(0, -1).join('/');
+    };
+
     const appDataDirLabel =
       appDataNorm === '/'
         ? '/'
@@ -147,6 +157,8 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
       diskSpaceItems.find((d) => normalizePath(d.path) === appDataNorm) ?? null;
     const appDataUsedBytes = appDataItem?.pathUsedBytes ?? 0;
     const rootDiskItem = appDataItem ?? diskSpaceItems[0] ?? null;
+
+    const rootPath = calculateRootPath(appDataNorm, rootDiskItem?.mountPoint);
 
     const diskRows = diskSpaceItems.map((disk) => {
       const path = normalizePath(disk.path);
@@ -193,7 +205,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
       };
     });
 
-    return { rootDiskItem, diskRows };
+    return { rootDiskItem, diskRows, rootPath };
   }, [diskSpaceItems, appDataNorm]);
 
   const childCountByParent = useMemo(() => {
@@ -285,7 +297,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
                       onToggle={() => toggleRow(ROOT_NODE_KEY)}
                     />
                     <span className="min-w-0 truncate font-mono">
-                      {rootDiskItem.mountPoint}
+                      {rootPath}
                     </span>
                   </span>
                 </div>
