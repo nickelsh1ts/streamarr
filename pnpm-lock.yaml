@@ -147,8 +147,8 @@ importers:
         specifier: ^19.2.5
         version: 19.2.8
       react-ace:
-        specifier: ^14.0.1
-        version: 14.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^15.0.0
+        version: 15.0.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-animate-height:
         specifier: ^3.2.3
         version: 3.2.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -7050,8 +7050,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  react-ace@14.1.0:
-    resolution: {integrity: sha512-H+Tuw1oa3uP6zRoLBOayPVaMy5Le4G33OpEmLOfSVks75ajmrmFGbyWWEHfBYLCCpu5KfyFlod9jCEUc7i5ekw==}
+  react-ace@15.0.0:
+    resolution: {integrity: sha512-gdmS5ftF0hsbkcrAjZQqYbXwFg5JrHuxjki8mP6Bn9kfa6lHKfZk9sU9EfS0ifQ1CpGCmRxF/VC7GRvlJMBuZw==}
     peerDependencies:
       react: ^0.13.0 || ^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^0.13.0 || ^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -16033,7 +16033,7 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  react-ace@14.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-ace@15.0.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       ace-builds: 1.44.0
       diff-match-patch: 1.0.5
