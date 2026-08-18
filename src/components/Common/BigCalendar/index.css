@@ -17,7 +17,7 @@
 }
 
 .react-datepicker__calendar-icon {
-  @apply text-primary h-5! w-5! p-1.5!;
+  @apply text-primary h-5! w-5! p-2!;
 }
 
 .react-datepicker__view-calendar-icon input {
