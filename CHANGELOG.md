@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/nickelsh1ts/streamarr/compare/v1.13.0...v1.13.1) (2026-08-19)
+
+### 🐛 Bug Fixes
+
+* **auth:** set token on successful auth and redirect after logout ([#577](https://github.com/nickelsh1ts/streamarr/issues/577)) ([e002701](https://github.com/nickelsh1ts/streamarr/commit/e0027019241ed6fc21e4a842b1a7c0c21483da15))
+* **sort:** added tooltip to sort direction ([#576](https://github.com/nickelsh1ts/streamarr/issues/576)) ([91d6b9c](https://github.com/nickelsh1ts/streamarr/commit/91d6b9c8c1be8d06959b90cf2bdd951cb8812f5d))
+
 ## [1.13.0](https://github.com/nickelsh1ts/streamarr/compare/v1.12.1...v1.13.0) (2026-08-19)
 
 ## [1.12.1](https://github.com/nickelsh1ts/streamarr/compare/v1.12.0...v1.12.1) (2026-08-15)
