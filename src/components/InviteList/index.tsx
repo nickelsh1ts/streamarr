@@ -3,6 +3,7 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProgressCircle from '@app/components/Common/ProgressCircle';
+import Tooltip from '@app/components/Common/ToolTip';
 import InviteModal from '@app/components/InviteList/InviteModal';
 import InviteCard from '@app/components/InviteList/InvitesCard';
 import InviteShareModal from '@app/components/InviteList/InviteShareModal';
@@ -381,30 +382,37 @@ const InviteList = () => {
               </select>
             </div>
             <div className="mb-2 flex grow sm:mr-2 sm:mb-0 lg:grow-0">
-              <button
-                type="button"
-                data-testid="invite-sort-direction-toggle"
-                aria-label={intl.formatMessage({
+              <Tooltip
+                content={intl.formatMessage({
                   id: 'common.toggleSortDirection',
                   defaultMessage: 'Toggle sort direction',
                 })}
-                title={intl.formatMessage({
-                  id: 'common.toggleSortDirection',
-                  defaultMessage: 'Toggle sort direction',
-                })}
-                onClick={() =>
-                  setCurrentSortDirection((prev) =>
-                    prev === 'asc' ? 'desc' : 'asc'
-                  )
-                }
-                className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
               >
-                {currentSortDirection === 'asc' ? (
-                  <BarsArrowUpIcon className="h-6 w-6" />
-                ) : (
-                  <BarsArrowDownIcon className="h-6 w-6" />
-                )}
-              </button>
+                <button
+                  type="button"
+                  data-testid="invite-sort-direction-toggle"
+                  aria-label={intl.formatMessage({
+                    id: 'common.toggleSortDirection',
+                    defaultMessage: 'Toggle sort direction',
+                  })}
+                  title={intl.formatMessage({
+                    id: 'common.toggleSortDirection',
+                    defaultMessage: 'Toggle sort direction',
+                  })}
+                  onClick={() =>
+                    setCurrentSortDirection((prev) =>
+                      prev === 'asc' ? 'desc' : 'asc'
+                    )
+                  }
+                  className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+                >
+                  {currentSortDirection === 'asc' ? (
+                    <BarsArrowUpIcon className="h-6 w-6" />
+                  ) : (
+                    <BarsArrowDownIcon className="h-6 w-6" />
+                  )}
+                </button>
+              </Tooltip>
               <select
                 id="sort"
                 name="sort"
