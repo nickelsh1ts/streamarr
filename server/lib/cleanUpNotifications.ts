@@ -1,5 +1,6 @@
 import { getRepository } from '@server/datasource';
 import Notification from '@server/entity/Notification';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { LessThan } from 'typeorm';
 
@@ -29,8 +30,36 @@ class CleanUpNotifications {
 
     const notificationRepository = getRepository(Notification);
     const cutoffDate = new Date();
+    const settings = getSettings().notifications.agents.inApp.options;
+
+    const retentionLimit = Number(settings.retentionLimit);
+    const retentionTime = settings.retentionTime ?? 'years';
+
+    if (!Number.isFinite(retentionLimit) || retentionLimit <= 0) {
+      cutoffDate.setTime(0);
+    } else {
+      switch (retentionTime) {
+        case 'days':
+          cutoffDate.setDate(cutoffDate.getDate() - retentionLimit);
+          break;
+        case 'weeks':
+          cutoffDate.setDate(cutoffDate.getDate() - retentionLimit * 7);
+          break;
+        case 'months':
+          cutoffDate.setMonth(cutoffDate.getMonth() - retentionLimit);
+          break;
+        case 'years':
+          cutoffDate.setFullYear(cutoffDate.getFullYear() - retentionLimit);
+          break;
+        default:
+          logger.warn(
+            `Unknown notification retentionTime "${String(settings.retentionTime)}"; defaulting to years.`,
+            { label: 'Jobs' }
+          );
+          cutoffDate.setFullYear(cutoffDate.getFullYear() - retentionLimit);
+      }
+    }
     let deletedCount = 0;
-    cutoffDate.setFullYear(cutoffDate.getFullYear() - 1); // Notifications older than 1 year
 
     try {
       if (!this.isRunning) {

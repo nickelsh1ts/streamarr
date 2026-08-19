@@ -30,13 +30,18 @@ const InAppNotifications = () => {
   return (
     <Formik
       initialValues={{
-        enabled: data?.enabled,
+        enabled: data?.enabled ?? false,
+        retentionLimit: data?.options?.retentionLimit ?? 1,
+        retentionTime: data?.options?.retentionTime ?? 'years',
       }}
       onSubmit={async (values) => {
         try {
           await axios.post('/api/v1/settings/notifications/inapp', {
             enabled: values.enabled,
-            options: {},
+            options: {
+              retentionLimit: values.retentionLimit,
+              retentionTime: values.retentionTime,
+            },
           });
           mutate('/api/v1/settings/public');
           Toast({
@@ -62,7 +67,7 @@ const InAppNotifications = () => {
         }
       }}
     >
-      {({ isSubmitting }) => {
+      {({ isSubmitting, values, setFieldValue }) => {
         const testSettings = async () => {
           setIsTesting(true);
           let toastId: string | undefined;
@@ -101,22 +106,110 @@ const InAppNotifications = () => {
         };
         return (
           <Form className="mt-5">
-            <div className="max-w-5xl max-sm:space-y-4 max-sm:space-y-reverse sm:grid sm:grid-cols-3 sm:items-center sm:gap-4">
-              <label htmlFor="preset">
-                <FormattedMessage
-                  id="notifications.enableAgent"
-                  defaultMessage="Enable Agent"
-                />
-                <span className="text-error ml-1">*</span>
-              </label>
-              <div className="sm:col-span-2">
-                <div className="flex">
-                  <Field
-                    type="checkbox"
-                    id="enabled"
-                    name="enabled"
-                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+            <div className="max-w-5xl space-y-4">
+              <div className="space-y-4 sm:grid sm:grid-cols-3 sm:items-center">
+                <label htmlFor="enabled">
+                  <FormattedMessage
+                    id="notifications.enableAgent"
+                    defaultMessage="Enable Agent"
                   />
+                </label>
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
+                  <div className="flex">
+                    <Field
+                      type="checkbox"
+                      id="enabled"
+                      name="enabled"
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
+                </div>
+                <label htmlFor="retentionAge">
+                  <FormattedMessage
+                    id="notifications.retentionAge"
+                    defaultMessage="Retention Age"
+                  />
+                  <span className="text-error ml-1">*</span>
+                  <span className="text-neutral block text-sm">
+                    <FormattedMessage
+                      id="inAppNotifications.retentionAgeDescription"
+                      defaultMessage="The maximum age of in-app notifications before they are automatically deleted."
+                    />
+                  </span>
+                </label>
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
+                  <div className="flex">
+                    <div className="col-span-2 space-x-2">
+                      <Field
+                        as="select"
+                        name="retentionLimit"
+                        id="retentionLimit"
+                        className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
+                        onChange={(e) =>
+                          setFieldValue(
+                            'retentionLimit',
+                            Number(e.target.value)
+                          )
+                        }
+                      >
+                        <option id={`retention-forever`} value={0}>
+                          <FormattedMessage
+                            id="common.forever"
+                            defaultMessage="Forever"
+                          />
+                        </option>
+                        {[...Array(100)].map((_item, i) => (
+                          <option
+                            id={`retention-${i + 1}`}
+                            value={i + 1}
+                            key={`$retention-${i + 1}`}
+                          >
+                            {i + 1}
+                          </option>
+                        ))}
+                      </Field>
+                      {values.retentionLimit > 0 && (
+                        <Field
+                          as="select"
+                          name="retentionTime"
+                          id="retentionTime"
+                          className="select select-sm select-primary w-auto min-w-20 shrink-0 rounded-md"
+                          onChange={(e) =>
+                            setFieldValue('retentionTime', e.target.value)
+                          }
+                        >
+                          <option id={`retention-days`} value={'days'}>
+                            <FormattedMessage
+                              id="common.day"
+                              defaultMessage="{count, plural, one {Day} other {Days}}"
+                              values={{ count: values.retentionLimit }}
+                            />
+                          </option>
+                          <option id={`retention-weeks`} value={'weeks'}>
+                            <FormattedMessage
+                              id="common.week"
+                              defaultMessage="{count, plural, one {Week} other {Weeks}}"
+                              values={{ count: values.retentionLimit }}
+                            />
+                          </option>
+                          <option id={`retention-months`} value={'months'}>
+                            <FormattedMessage
+                              id="common.month"
+                              defaultMessage="{count, plural, one {Month} other {Months}}"
+                              values={{ count: values.retentionLimit }}
+                            />
+                          </option>
+                          <option id={`retention-years`} value={'years'}>
+                            <FormattedMessage
+                              id="common.year"
+                              defaultMessage="{count, plural, one {Year} other {Years}}"
+                              values={{ count: values.retentionLimit }}
+                            />
+                          </option>
+                        </Field>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

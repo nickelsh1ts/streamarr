@@ -37,7 +37,7 @@ const QuotaSelector = ({
 
   return (
     <div className={`${isDisabled ? 'opacity-50' : ''}`}>
-      <span className="flex space-x-4">
+      <span className="flex items-center gap-4">
         <select
           className="select select-sm select-primary disabled:border-primary w-auto min-w-20 shrink-0 rounded-md disabled:border"
           value={limitOverride ?? quotaLimit}
