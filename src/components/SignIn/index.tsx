@@ -33,9 +33,23 @@ const SignIn = () => {
         if (response.data?.id) {
           const { data: authenticatedUser } =
             await axios.get('/api/v1/auth/me');
-          revalidate(authenticatedUser, false).then(() =>
-            router.push('/watch')
-          );
+          revalidate(authenticatedUser, false)
+            .then(async () => {
+              try {
+                const response = await axios.get('/api/v1/auth/plex/token');
+                const { token } = response.data;
+
+                if (token) {
+                  if (localStorage.getItem('myPlexAccessToken') !== token) {
+                    localStorage.setItem('myPlexAccessToken', token);
+                  }
+                }
+              } catch {
+                // Token fetch failed or user doesn't have a Plex token
+                // Do not set tokenRef.current = true here; allow retry on next render
+              }
+            })
+            .then(() => router.push('/watch'));
         }
       } catch (e) {
         setError(

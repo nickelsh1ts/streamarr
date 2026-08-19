@@ -19,13 +19,15 @@ const LogOutPage = () => {
         // fail silently
       }
 
-      const response = await axios.post('/api/v1/auth/logout');
-
-      if (response.data?.status === 'ok') {
-        revalidate(undefined, false);
-      }
+      await axios
+        .post('/api/v1/auth/logout')
+        .then(() => {
+          revalidate(undefined, false);
+        })
+        .finally(() => {
+          router.replace('/signin');
+        });
     };
-
     logout();
   }, [revalidate, router]);
 
