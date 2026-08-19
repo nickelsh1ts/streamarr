@@ -451,12 +451,6 @@ authRoutes.get('/plex/token', isAuthenticated(), async (req, res, next) => {
       return next({ status: 404, message: 'Plex token not found' });
     }
 
-    logger.debug('Plex token retrieved', {
-      label: 'API',
-      userId: user.id,
-      displayName: user.displayName,
-    });
-
     res.status(200).json({ token: user.plexToken });
   } catch (e) {
     logger.error('Error fetching Plex token', {
