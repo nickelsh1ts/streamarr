@@ -313,31 +313,38 @@ const Newsletters = () => {
             </select>
           </div>
           <div className="mb-2 flex grow sm:mr-2 sm:mb-0 md:grow-0">
-            <button
-              type="button"
-              data-testid="newsletter-sort-direction-toggle"
-              aria-label={intl.formatMessage({
+            <Tooltip
+              content={intl.formatMessage({
                 id: 'common.toggleSortDirection',
                 defaultMessage: 'Toggle sort direction',
               })}
-              title={intl.formatMessage({
-                id: 'common.toggleSortDirection',
-                defaultMessage: 'Toggle sort direction',
-              })}
-              onClick={() => {
-                setCurrentSortDirection((prev) =>
-                  prev === 'asc' ? 'desc' : 'asc'
-                );
-                updateQueryParams('page', '1');
-              }}
-              className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
             >
-              {currentSortDirection === 'asc' ? (
-                <BarsArrowUpIcon className="h-6 w-6" />
-              ) : (
-                <BarsArrowDownIcon className="h-6 w-6" />
-              )}
-            </button>
+              <button
+                type="button"
+                data-testid="newsletter-sort-direction-toggle"
+                aria-label={intl.formatMessage({
+                  id: 'common.toggleSortDirection',
+                  defaultMessage: 'Toggle sort direction',
+                })}
+                title={intl.formatMessage({
+                  id: 'common.toggleSortDirection',
+                  defaultMessage: 'Toggle sort direction',
+                })}
+                onClick={() => {
+                  setCurrentSortDirection((prev) =>
+                    prev === 'asc' ? 'desc' : 'asc'
+                  );
+                  updateQueryParams('page', '1');
+                }}
+                className="border-primary bg-base-100 hover:bg-base-200 inline-flex cursor-pointer items-center rounded-l-md border border-r-0 px-3 transition-colors sm:text-sm"
+              >
+                {currentSortDirection === 'asc' ? (
+                  <BarsArrowUpIcon className="h-6 w-6" />
+                ) : (
+                  <BarsArrowDownIcon className="h-6 w-6" />
+                )}
+              </button>
+            </Tooltip>
             <select
               id="sort"
               name="sort"
