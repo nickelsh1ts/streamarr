@@ -215,6 +215,9 @@ svg {
     background-image: var(--logo-sm-url);
     width: 45px;
   }
+  [class*="GuideTab-container-"] {
+    padding: 20px 0 0;
+  }
 }
 @media (max-width: 452px) {
   [class*="PageHeaderLeft-pageHeaderLeft-"], [class*="PageHeaderRight-pageHeaderRight-"] {
@@ -360,11 +363,6 @@ svg {
 @media (max-width: 390px) {
   [class*="DirectoryListJumpBar-jumpBar-"] {
     display: none ;
-  }
-}
-@media (min-width: 1024px) {
-  [class*="LiveTVViewPage-page-"] {
-    margin-left: 12rem;
   }
 }
 [class*="SignInLaunchPagePoll-button-"]:after {
