@@ -144,7 +144,7 @@
     "@types/xml2js": "^0.4.14",
     "@types/yamljs": "^0.2.34",
     "commitizen": "4.3.2",
-    "conventional-changelog-conventionalcommits": "^10.0.0",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
     "cypress": "^15.13.1",
@@ -214,58 +214,48 @@
             "types": [
               {
                 "type": "feat",
-                "section": "✨ Features",
-                "effect": "bump"
+                "section": "✨ Features"
               },
               {
                 "type": "fix",
-                "section": "🐛 Bug Fixes",
-                "effect": "bump"
+                "section": "🐛 Bug Fixes"
               },
               {
                 "type": "perf",
-                "section": "⚡ Performance",
-                "effect": "bump"
+                "section": "⚡ Performance"
               },
               {
                 "type": "revert",
-                "section": "⏪ Reverts",
-                "effect": "bump"
+                "section": "⏪ Reverts"
               },
               {
                 "type": "docs",
-                "section": "📚 Documentation",
-                "effect": "changelog"
+                "section": "📚 Documentation"
               },
               {
                 "type": "style",
-                "section": "💎 Styles",
-                "effect": "changelog"
+                "section": "💎 Styles"
               },
               {
                 "type": "refactor",
-                "section": "♻️ Refactoring",
-                "effect": "changelog"
+                "section": "♻️ Refactoring"
               },
               {
                 "type": "test",
-                "section": "🧪 Tests",
-                "effect": "changelog"
+                "section": "🧪 Tests"
               },
               {
                 "type": "build",
-                "section": "📦 Build System",
-                "effect": "changelog"
+                "section": "📦 Build System"
               },
               {
                 "type": "ci",
-                "section": "🤖 CI/CD",
-                "effect": "changelog"
+                "section": "🤖 CI/CD"
               },
               {
                 "type": "chore",
                 "section": "🔧 Chores",
-                "effect": "hidden"
+                "hidden": true
               }
             ]
           }
