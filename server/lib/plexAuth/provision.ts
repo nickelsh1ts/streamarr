@@ -3,6 +3,7 @@ import { User } from '@server/entity/User';
 import { encryptDevice, provisionJwt } from '@server/lib/plexAuth/jwt';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import moment from '@server/utils/momentWithLocale';
 
 /**
  * Provisions a per-user Plex JWT device after a successful legacy sign-in
@@ -58,7 +59,9 @@ export const maybeProvisionPlexJwt = async (
     logger.info('Provisioned Plex JWT device for user', {
       label: 'Plex JWT',
       userId,
-      jwtExpiresAt: expiresAt.toISOString(),
+      jwtExpiresAt: moment(expiresAt)
+        .locale(getSettings().main.locale)
+        .format('MMM D YYYY, h:mm A'),
     });
   } catch (e) {
     logger.warn(

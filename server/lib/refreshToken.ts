@@ -4,6 +4,7 @@ import { User } from '@server/entity/User';
 import { decryptDevice, refreshJwt } from '@server/lib/plexAuth/jwt';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import moment from '@server/utils/momentWithLocale';
 import { isAxiosError } from 'axios';
 
 /**
@@ -129,7 +130,9 @@ class RefreshToken {
       logger.debug('Refreshed Plex JWT for user', {
         label: 'Plex JWT',
         userId: user.id,
-        jwtExpiresAt: expiresAt.toISOString(),
+        jwtExpiresAt: moment(expiresAt)
+          .locale(getSettings().main.locale)
+          .format('MMM D YYYY, h:mm A'),
       });
     } catch (e) {
       const status = isAxiosError(e) ? e.response?.status : undefined;
