@@ -208,7 +208,7 @@ importers:
         version: 5.0.1(express@5.2.1(supports-color@5.5.0))
       swr:
         specifier: ^2.4.1
-        version: 2.5.0(react@19.2.8)
+        version: 2.5.1(react@19.2.8)
       typeorm:
         specifier: ^1.0.0
         version: 1.1.0(babel-plugin-macros@3.1.0)(better-sqlite3@13.0.3)(supports-color@5.5.0)(ts-node@10.9.2(@types/node@25.9.5)(typescript@6.0.3))
@@ -4530,6 +4530,7 @@ packages:
   eslint@9.39.5:
     resolution: {integrity: sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -7855,8 +7856,8 @@ packages:
     peerDependencies:
       express: '>=4.0.0 || >=5.0.0-beta'
 
-  swr@2.5.0:
-    resolution: {integrity: sha512-W0GomadRJe9OfzIoRX0kZHhDSaRRfdiOUeH6uazgR05SibBhDNwfdTbhAxmFtObvkf59fFymo22mooKukosvNA==}
+  swr@2.5.1:
+    resolution: {integrity: sha512-BRw55e8r0B7SpDN20CAzoQAHl7y1yP7/Zt7oqUjMv0vSt2u2Xnkm88Ws+VypbV9BXHQVuSuyVq7zMjO16wSExw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -17179,7 +17180,7 @@ snapshots:
       express: 5.2.1(supports-color@5.5.0)
       swagger-ui-dist: 5.32.6
 
-  swr@2.5.0(react@19.2.8):
+  swr@2.5.1(react@19.2.8):
     dependencies:
       dequal: 2.0.3
       react: 19.2.8
