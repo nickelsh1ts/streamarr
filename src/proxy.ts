@@ -8,7 +8,7 @@ export const publicRoutes =
 const SESSION_COOKIE = 'streamarr.sid';
 
 export function proxy(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
+  const { pathname, search } = req.nextUrl;
 
   // Always allow static files and Next.js internals
   if (
@@ -24,12 +24,20 @@ export function proxy(req: NextRequest) {
   }
 
   // Public routes are reachable without a session.
-  if (publicRoutes.test(pathname)) {
+  if (
+    publicRoutes.test(pathname) ||
+    pathname.startsWith('/watch/web/index.html')
+  ) {
     return NextResponse.next();
   }
 
   if (!req.cookies.get(SESSION_COOKIE)) {
-    return NextResponse.redirect(new URL('/signin', req.url));
+    const url = new URL('/signin', req.url);
+    const redirectUrl = pathname + search;
+
+    url.searchParams.set('redirect_url', redirectUrl);
+
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

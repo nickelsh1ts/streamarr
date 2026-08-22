@@ -28,6 +28,13 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
   const routing = useRef(false);
   const router = useRouter();
 
+  const buildSigninRedirect = () => {
+    const { pathname: currentPath, search, hash } = window.location;
+    return (
+      '/signin?redirect_url=' + encodeURIComponent(currentPath + search + hash)
+    );
+  };
+
   useEffect(() => {
     const interceptorId = axios.interceptors.response.use(
       (response) => response,
@@ -35,10 +42,11 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
         if (
           e.response?.status === 401 &&
           !routing.current &&
+          window.location.pathname !== '/logout' &&
           !publicRoutes.test(window.location.pathname)
         ) {
           routing.current = true;
-          router.replace('/signin');
+          router.replace(buildSigninRedirect());
         }
         return Promise.reject(e);
       }
@@ -52,15 +60,17 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
     // Don't redirect during setup process, signin, or on public routes
     const isSetupPage = pathname === '/setup';
     const isPublicRoute = publicRoutes.test(pathname);
+    // /logout manages its own redirect once it finishes clearing the session
+    const isLogoutPage = pathname === '/logout';
 
-    if (
-      !isSetupPage &&
-      !isPublicRoute &&
-      (!user || error) &&
-      !routing.current
-    ) {
+    if (isPublicRoute) {
+      routing.current = false;
+      return;
+    }
+
+    if (!isSetupPage && !isLogoutPage && (!user || error) && !routing.current) {
       routing.current = true;
-      router.replace('/signin');
+      router.replace(buildSigninRedirect());
     }
   }, [pathname, user, error, router]);
 
