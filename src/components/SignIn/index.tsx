@@ -8,7 +8,7 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -18,7 +18,14 @@ const SignIn = () => {
   const [pinId, setPinId] = useState<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { currentSettings } = useSettings();
+
+  const redirectParam = searchParams.get('redirect_url');
+  const redirect =
+    redirectParam && redirectParam.match(/^\/(?![/\\]).*$/)
+      ? redirectParam
+      : '/watch';
 
   // Effect that is triggered when the pin session id comes back from the Plex
   // OAuth popup. The server exchanges the pin for the Plex token internally.
@@ -49,7 +56,7 @@ const SignIn = () => {
                 // Do not set tokenRef.current = true here; allow retry on next render
               }
             })
-            .then(() => router.push('/watch'));
+            .then(() => router.push(redirect));
         }
       } catch (e) {
         setError(
@@ -62,15 +69,15 @@ const SignIn = () => {
     if (pinId) {
       login();
     }
-  }, [pinId, revalidate, router]);
+  }, [pinId, redirect, revalidate, router]);
 
   // Effect that is triggered whenever `useUser`'s user changes. If we get a new
   // valid user, we redirect the user to the home page as the login was successful.
   useEffect(() => {
     if (user) {
-      router.push('/watch');
+      router.push(redirect);
     }
-  }, [user, router]);
+  }, [user, router, redirect]);
 
   return (
     <>

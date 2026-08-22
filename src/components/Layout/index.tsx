@@ -134,9 +134,21 @@ const Layout = ({
       return '/admin';
     }
 
-    // Protected routes require authentication
-    if (!publicRoutes.test(pathname) && !user && !loading) {
-      return '/signin';
+    // Protected routes require authentication (/logout manages its own redirect)
+    if (
+      pathname !== '/logout' &&
+      !publicRoutes.test(pathname) &&
+      !user &&
+      !loading
+    ) {
+      const location =
+        typeof window !== 'undefined'
+          ? window.location
+          : { search: '', hash: '' };
+      return (
+        '/signin?redirect_url=' +
+        encodeURIComponent(pathname + location.search + location.hash)
+      );
     }
 
     // Authenticated users on signin/home go to watch
