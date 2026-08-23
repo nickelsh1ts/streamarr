@@ -15,7 +15,6 @@ export interface ServiceProxyConfig {
   getTarget: () => string;
   pathPrefix?: string;
   webSocket?: boolean;
-  wsPath?: string;
   suppressErrors?: () => boolean;
 }
 
@@ -33,7 +32,9 @@ export function createServiceProxy(config: ServiceProxyConfig) {
     changeOrigin: true,
     ws: webSocket,
     router: () => getTarget(),
-    pathRewrite: pathPrefix ? (path) => `${pathPrefix}${path}` : undefined,
+    pathRewrite: pathPrefix
+      ? (path) => (path.startsWith(pathPrefix) ? path : `${pathPrefix}${path}`)
+      : undefined,
     on: {
       proxyReq: (proxyReq, req) => {
         const expressReq = req as Request;

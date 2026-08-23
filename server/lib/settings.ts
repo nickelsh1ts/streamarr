@@ -59,6 +59,10 @@ export interface ServiceSettings {
   apiKey?: string;
 }
 
+export interface AudiobookshelfSettings extends ServiceSettings {
+  enableNewUserSignIn?: boolean;
+}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
@@ -207,6 +211,7 @@ export interface FullPublicSettings extends PublicSettings {
     quotaExpiryTime?: string;
   };
   seerrEnabled: boolean;
+  audiobookshelfEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -390,6 +395,7 @@ export interface AllSettings {
   lidarr: ServiceSettings;
   cleanuparr: ServiceSettings;
   overseerr: ServiceSettings;
+  audiobookshelf: AudiobookshelfSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
   onboarding: OnboardingSettings;
@@ -516,6 +522,11 @@ class Settings {
       overseerr: {
         enabled: false,
         urlBase: '/seerr',
+      },
+      audiobookshelf: {
+        enabled: false,
+        urlBase: '/audiobookshelf',
+        enableNewUserSignIn: false,
       },
       public: { initialized: false },
       notifications: {
@@ -736,6 +747,14 @@ class Settings {
     this.data.overseerr = mergeSettings(this.data.overseerr, data);
   }
 
+  get audiobookshelf(): AudiobookshelfSettings {
+    return this.data.audiobookshelf;
+  }
+
+  set audiobookshelf(data: AudiobookshelfSettings) {
+    this.data.audiobookshelf = mergeSettings(this.data.audiobookshelf, data);
+  }
+
   set radarr(data: RadarrSettings[]) {
     this.data.radarr = data;
   }
@@ -790,6 +809,9 @@ class Settings {
       },
       seerrEnabled:
         this.data.overseerr.enabled && !!this.data.overseerr.hostname,
+      audiobookshelfEnabled:
+        !!this.data.audiobookshelf.enabled &&
+        !!this.data.audiobookshelf.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,

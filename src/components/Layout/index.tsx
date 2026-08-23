@@ -172,7 +172,8 @@ const Layout = ({
       !userSettingsLoading &&
       userSettings &&
       ((pathname.match(/schedule/) && !userSettings.releaseSched) ||
-        (pathname.match(/request/) && !userSettings.requestUrl))
+        (pathname.match(/request/) && !userSettings.requestEnabled) ||
+        (pathname.match(/listen/) && !userSettings.audiobooksEnabled))
     ) {
       return '/watch';
     }

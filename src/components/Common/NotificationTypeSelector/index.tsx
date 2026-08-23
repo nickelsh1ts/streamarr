@@ -1,4 +1,5 @@
 import NotificationType from '@app/components/Common/NotificationTypeSelector/NotificationType';
+import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { NotificationType as Notification } from '@server/constants/notification';
@@ -65,6 +66,8 @@ const NotificationTypeSelector = ({
 }: NotificationTypeSelectorProps) => {
   const { hasPermission } = useUser({ id: user?.id });
   const intl = useIntl();
+
+  const { currentSettings } = useSettings();
 
   const availableTypes = useMemo(() => {
     const types: NotificationItem[] = [
@@ -200,6 +203,23 @@ const NotificationTypeSelector = ({
         hidden: !!user && !hasPermission(Permission.MANAGE_USERS),
         hasNotifyUser: true,
       },
+      {
+        id: 'audiobookshelf-pw-reset',
+        name: intl.formatMessage({
+          id: 'notification.audiobookshelfPasswordFailed',
+          defaultMessage: 'Audiobookshelf Password Reset Requested',
+        }),
+        description: intl.formatMessage({
+          id: 'notification.audiobookshelfPasswordFailed.description',
+          defaultMessage:
+            'Get notified when a user asks for their Audiobookshelf password to be reset',
+        }),
+        value: Notification.AUDIOBOOKSHELF_PW_RESET,
+        hidden:
+          (!!user && !hasPermission(Permission.MANAGE_USERS)) ||
+          !currentSettings.audiobookshelfEnabled,
+        hasNotifyUser: true,
+      },
       // {
       //   id: 'system',
       //   name: intl.formatMessage({
@@ -251,7 +271,13 @@ const NotificationTypeSelector = ({
     return user
       ? orderBy(filteredTypes, ['hasNotifyUser'], ['desc'])
       : filteredTypes;
-  }, [intl, user, hasPermission, enabledTypes]);
+  }, [
+    intl,
+    user,
+    hasPermission,
+    currentSettings.audiobookshelfEnabled,
+    enabledTypes,
+  ]);
 
   if (!availableTypes.length) {
     return null;

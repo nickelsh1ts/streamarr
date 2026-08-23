@@ -11,6 +11,9 @@ export type { PermissionCheckOptions };
 export interface User {
   id: number;
   plexUsername?: string;
+  audiobookshelfId?: string;
+  audiobookshelfUsername?: string;
+  audiobookshelfPwNotifiedAt?: Date | null;
   username?: string;
   displayName: string;
   email: string;

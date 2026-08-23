@@ -1,6 +1,7 @@
 'use client';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import { useUser } from '@app/hooks/useUser';
+import { clearAudiobookshelfToken } from '@app/utils/audiobookshelf';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -18,6 +19,8 @@ const LogOutPage = () => {
       } catch {
         // fail silently
       }
+
+      clearAudiobookshelfToken();
 
       await axios
         .post('/api/v1/auth/logout')

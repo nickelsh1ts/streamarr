@@ -365,7 +365,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
             {hasPermission([Permission.REQUEST, Permission.STREAMARR], {
               type: 'or',
             }) &&
-              userSettings?.requestUrl && (
+              userSettings?.requestEnabled && (
                 <>
                   <div className="mb-1 flex">
                     <SingleItem
