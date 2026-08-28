@@ -395,7 +395,7 @@ importers:
         version: 4.3.3
       tsc-alias:
         specifier: ^1.8.16
-        version: 1.9.1
+        version: 1.9.2
       tsx:
         specifier: ^4.21.0
         version: 4.23.12
@@ -8044,8 +8044,8 @@ packages:
       '@swc/wasm':
         optional: true
 
-  tsc-alias@1.9.1:
-    resolution: {integrity: sha512-sFZdVFthH8uvdplPJrOYGOHcxu6UPtcAcY678JPwEQiMzgLZYFO7Qc/rzELp7ingTc+OxtzH6n+8Pn2eVQep6w==}
+  tsc-alias@1.9.2:
+    resolution: {integrity: sha512-VTWQGMv0xXCEyHDLpmV2DEvGYHMxwsyx87dZeou2ynkM0+WOFdHe+KWiRucavMPUEdQysr7xSu60Y/WY0R4YKA==}
     engines: {node: '>=16.20.2'}
     hasBin: true
 
@@ -17335,7 +17335,7 @@ snapshots:
       yn: 3.1.1
     optional: true
 
-  tsc-alias@1.9.1:
+  tsc-alias@1.9.2:
     dependencies:
       chokidar: 3.6.0
       commander: 9.5.0
