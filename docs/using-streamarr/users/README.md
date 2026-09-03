@@ -115,6 +115,7 @@ Streamarr uses a granular permission system. Users can have any combination of t
 | **Streamarr**            | Basic access to the Streamarr dashboard.                                              |
 | **Vote**                 | Vote on content or events.                                                            |
 | **Request**              | Request content through Seerr integration.                                            |
+| **Audiobooks**           | Listen to audiobooks through the Audiobookshelf integration.                          |
 | **View Schedule**        | View the release calendar.                                                            |
 | **Manage Events**        | Create, edit, and delete calendar events.                                             |
 | **Create Events**        | Create new calendar events (but not edit/delete).                                     |
@@ -220,10 +221,11 @@ Local user passwords must meet minimum complexity requirements:
 
 When configured by the administrator, additional navigation links appear for users:
 
-| Link              | Location                | Shown When                                              |
-| ----------------- | ----------------------- | ------------------------------------------------------- |
-| **Watch History** | User dropdown menu      | Tautulli is configured and has a URL base set           |
-| **Request**       | Sidebar and mobile menu | Seerr is configured and user has **Request** permission |
+| Link              | Location                | Shown When                                                                        |
+| ----------------- | ----------------------- | --------------------------------------------------------------------------------- |
+| **Watch History** | User dropdown menu      | Tautulli is configured and has a URL base set                                     |
+| **Request**       | Sidebar and mobile menu | Seerr is configured and user has **Request** permission                           |
+| **Audiobooks**    | Library menu            | Audiobookshelf is enabled and user has **Audiobooks** or **Streamarr** permission |
 
 ---
 

@@ -108,6 +108,18 @@ const PermissionEdit = ({
           permission: Permission.REQUEST,
         },
         {
+          id: 'audiobooks',
+          name: intl.formatMessage({
+            id: 'common.audiobooks',
+            defaultMessage: 'Audiobooks',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.audiobooks.description',
+            defaultMessage: 'Grant permission to listen to audiobooks.',
+          }),
+          permission: Permission.LISTEN,
+        },
+        {
           id: 'viewschedule',
           name: intl.formatMessage({
             id: 'userPermissions.viewSchedule.name',

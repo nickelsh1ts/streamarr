@@ -32,6 +32,9 @@ export interface UserSettingsGeneralResponse {
   requestHostname?: string;
   requestEnabled?: boolean;
   releaseSched?: boolean;
+  audiobooksEnabled?: boolean;
+  audiobooksBaseUrl?: string;
+  audiobookshelfNewUserSignIn?: boolean;
   plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }
 

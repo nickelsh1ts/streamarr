@@ -10,6 +10,7 @@ import type { Server as SocketIOServer } from 'socket.io';
 import { getSettings } from './settings';
 
 interface ProxyAffectingSettings {
+  audiobookshelf: ServiceEntry;
   plex: { ip: string };
   radarr: ArrayServiceEntry[];
   sonarr: ArrayServiceEntry[];
@@ -90,6 +91,7 @@ class RestartManager {
         useSsl: settings.overseerr.useSsl,
         urlBase: settings.overseerr.urlBase,
       },
+      audiobookshelf: this.pickService(settings.audiobookshelf),
       network: {
         trustProxy: settings.network.trustProxy,
         csrfProtection: settings.network.csrfProtection,
@@ -167,6 +169,15 @@ class RestartManager {
       settings.overseerr.urlBase !== this.snapshot.overseerr.urlBase
     ) {
       changed.push('Seerr');
+    }
+
+    if (
+      this.hasServiceChanged(
+        settings.audiobookshelf,
+        this.snapshot.audiobookshelf
+      )
+    ) {
+      changed.push('Audiobookshelf');
     }
 
     if (settings.network.trustProxy !== this.snapshot.network.trustProxy) {

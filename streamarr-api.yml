@@ -883,6 +883,14 @@ components:
         apiKey:
           type: string
           nullable: true
+    AudiobookshelfSettings:
+      allOf:
+        - $ref: '#/components/schemas/ServiceSettings'
+        - type: object
+          properties:
+            enableNewUserSignIn:
+              type: boolean
+              description: Allow users to provision a new Audiobookshelf account.
     NetworkSettings:
       type: object
       required:
@@ -3613,6 +3621,82 @@ paths:
                     type: string
         '500':
           description: Failed to connect to Cleanuparr
+  /settings/audiobookshelf:
+    get:
+      summary: Get Audiobookshelf settings
+      description: Retrieves current Audiobookshelf settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AudiobookshelfSettings'
+    post:
+      summary: Update Audiobookshelf settings
+      description: Updates Audiobookshelf settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AudiobookshelfSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AudiobookshelfSettings'
+        '400':
+          description: Invalid URL Base (bad format, reserved path, or already in use)
+  /settings/audiobookshelf/test:
+    post:
+      summary: Test Audiobookshelf configuration
+      description: Tests if the Audiobookshelf configuration is valid by calling its key-protected stats endpoint. Returns the URL base on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 11011
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Audiobookshelf instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Audiobookshelf
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -6706,6 +6790,142 @@ paths:
           description: User not found
         '500':
           description: Server error while unlinking Plex account
+  /user/{userId}/settings/linked-accounts/audiobookshelf/session:
+    post:
+      summary: Silently renew the embedded Audiobookshelf session
+      description: Re-authenticates an already-linked Audiobookshelf account using its stored password and returns the path used to authenticate the embedded ABS application.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: >-
+            Audiobookshelf session renewed. Returns a short-lived access token
+            and sets the `refresh_token` cookie. The client writes the access
+            token to the shared-origin `token` localStorage key that the
+            Audiobookshelf web client reads on boot.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accessToken
+                properties:
+                  accessToken:
+                    type: string
+        '404':
+          description: User not found
+        '409':
+          description: No Audiobookshelf account linked yet
+        '422':
+          description: The stored password no longer works - the user must reset it from user settings
+        '502':
+          description: Audiobookshelf request failed
+        '503':
+          description: Audiobookshelf is not configured
+  /user/{userId}/settings/linked-accounts/audiobookshelf:
+    post:
+      summary: Link an Audiobookshelf account
+      description: >
+        Self-service callers linking a not-yet-linked account only ever supply `newPassword`: it either verifies a pre-existing account (matched by
+        email or username), or creates a new one. A `MANAGE_USERS` caller linking a pre-existing account may omit `newPassword` entirely to leave it
+        untouched ("keep as is"), or supply one to reset it. Resetting an already-linked account's password always requires `newPassword`; a
+        self-service caller must also supply `currentPassword` to verify it first (a manager does not).
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  description: Required only when a non-manager resets an already-linked account's password.
+                newPassword:
+                  type: string
+                  description: Required unless a user manager is linking a pre-existing not-yet-linked account without resetting its password.
+      responses:
+        '200':
+          description: >-
+            Audiobookshelf account successfully linked. `accessToken` is `null`
+            when a manager linked an account without resetting its password, as
+            no session could be established.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accessToken
+                properties:
+                  accessToken:
+                    type: string
+                    nullable: true
+        '400':
+          description: Missing current or new password
+        '403':
+          description: The caller cannot manage this user's settings, or new account creation is disabled
+        '404':
+          description: User not found
+        '409':
+          description: Incorrect current password, or incorrect password for the matched Audiobookshelf account - ask an administrator to reset it
+        '422':
+          description: The account exists but Audiobookshelf rejected the reset/sign-in attempt
+        '502':
+          description: Audiobookshelf request failed
+        '503':
+          description: Audiobookshelf is not configured
+    delete:
+      summary: Unlink an Audiobookshelf account
+      description: Removes the Audiobookshelf association from the Streamarr user without deleting the Audiobookshelf account or its API keys.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Audiobookshelf account successfully unlinked
+        '404':
+          description: User not found
+        '500':
+          description: Server error while unlinking Audiobookshelf account
+  /user/{userId}/settings/linked-accounts/audiobookshelf/notify:
+    post:
+      summary: Notify administrators about an Audiobookshelf account Password reset request
+      description: Sends the `AUDIOBOOKSHELF_PW_RESET` notification to users with `MANAGE_USERS` permission, asking them to reset their Audiobookshelf password. Limited to once per user - repeat calls fail until an administrator links the account.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Administrators notified
+        '404':
+          description: User not found
+        '409':
+          description: An administrator has already been notified
+        '500':
+          description: Server error while sending the notification
   /user/{userId}/settings/notifications:
     get:
       summary: Get notification settings for a user

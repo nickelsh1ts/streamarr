@@ -1,6 +1,8 @@
 'use client';
+import AudiobookshelfLogo from '@app/assets/services/audiobookshelf.svg';
 import PlexLogo from '@app/assets/services/plex.svg';
 import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import PlexOAuth from '@app/utils/plex';
@@ -10,11 +12,13 @@ import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
+import AudiobookshelfModal from './AudiobookshelfModal';
 
 const plexOAuth = new PlexOAuth();
 
 enum LinkedAccountType {
   Plex = 'Plex',
+  Audiobookshelf = 'Audiobookshelf',
 }
 
 type LinkedAccount = {
@@ -34,6 +38,7 @@ const UserSettingsAccounts = () => {
     user ? `/api/v1/user/${user?.id}/settings/password` : null
   );
   const [error, setError] = useState<string | null>(null);
+  const [showAudiobookshelfModal, setShowAudiobookshelfModal] = useState(false);
 
   const accounts: LinkedAccount[] = useMemo(() => {
     const accounts: LinkedAccount[] = [];
@@ -42,6 +47,11 @@ const UserSettingsAccounts = () => {
       accounts.push({
         type: LinkedAccountType.Plex,
         username: user.plexUsername,
+      });
+    if (user.audiobookshelfUsername)
+      accounts.push({
+        type: LinkedAccountType.Audiobookshelf,
+        username: user.audiobookshelfUsername,
       });
     return accounts;
   }, [user]);
@@ -75,7 +85,14 @@ const UserSettingsAccounts = () => {
         plexOAuth.preparePopup();
         setTimeout(() => linkPlexAccount(), 1500);
       },
-      hide: accounts.some((a) => a.type === LinkedAccountType.Plex),
+      hide:
+        currentUser?.id !== user?.id ||
+        accounts.some((a) => a.type === LinkedAccountType.Plex),
+    },
+    {
+      name: 'Audiobookshelf',
+      action: () => setShowAudiobookshelfModal(true),
+      hide: accounts.some((a) => a.type === LinkedAccountType.Audiobookshelf),
     },
   ].filter((l) => !l.hide);
 
@@ -90,6 +107,22 @@ const UserSettingsAccounts = () => {
         intl.formatMessage({
           id: 'linkedAccounts.deleteFailed',
           defaultMessage: 'Failed to delete linked account',
+        })
+      );
+    }
+  };
+
+  const deleteAudiobookshelfRequest = async () => {
+    try {
+      await axios.delete(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/audiobookshelf`
+      );
+      await revalidateUser();
+    } catch {
+      setError(
+        intl.formatMessage({
+          id: 'linkedAccounts.audiobookshelfUnlinkFailed',
+          defaultMessage: 'Failed to unlink Audiobookshelf account',
         })
       );
     }
@@ -137,45 +170,57 @@ const UserSettingsAccounts = () => {
         </div>
       </div>
       {error && <Alert title={error} type="error" />}
-      {currentUser?.id === user?.id && !!linkable.length && (
-        <ul className="space-y-4">
-          {linkable.map(({ name, action }) => (
-            <li
-              key={name}
-              className="bg-base-200/50 ring-neutral flex flex-wrap items-center gap-4 overflow-hidden rounded-lg px-4 py-5 shadow ring-1 sm:p-6"
-            >
-              <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
-                <PlexLogo className="w-9" />
-              </div>
-              <div>
-                <div className="truncate text-sm font-bold text-gray-300">
-                  {name}
+      {(currentUser?.id === user?.id ||
+        currentUserHasPermission(Permission.MANAGE_USERS)) &&
+        !!linkable.length && (
+          <ul className="mb-4 flex flex-col gap-4">
+            {linkable.map(({ name, action }) => (
+              <li
+                key={name}
+                className="bg-base-200/50 ring-neutral flex flex-wrap items-center gap-4 overflow-hidden rounded-lg px-4 py-5 shadow ring-1 sm:p-6"
+              >
+                <div className="w-12">
+                  {name === 'Plex' ? (
+                    <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                      <PlexLogo className="w-9" />
+                    </div>
+                  ) : (
+                    <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                      <AudiobookshelfLogo className="w-9" />
+                    </div>
+                  )}
                 </div>
-                <div className="text-xl font-semibold text-white">
+                <div>
+                  <div className="truncate text-sm font-bold text-gray-300">
+                    {name}
+                  </div>
+                  <div className="text-xl font-semibold text-white">
+                    <FormattedMessage
+                      id="linkedAccounts.notLinked"
+                      defaultMessage="No Account Linked"
+                      values={{ name }}
+                    />
+                  </div>
+                </div>
+                <div className="grow" />
+                <Button
+                  buttonSize="sm"
+                  buttonType="primary"
+                  onClick={action}
+                  className="max-sm:btn-block cursor-pointer"
+                >
                   <FormattedMessage
-                    id="linkedAccounts.notLinked"
-                    defaultMessage="No Account Linked"
+                    id="linkedAccounts.linkButton"
+                    defaultMessage="Link {name} Account"
                     values={{ name }}
                   />
-                </div>
-              </div>
-              <div className="grow" />
-              <button
-                onClick={action}
-                className="max-sm:btn-block bg-primary hover:bg-primary/80 focus-visible:outline-primary rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-offset-2"
-              >
-                <FormattedMessage
-                  id="linkedAccounts.linkButton"
-                  defaultMessage="Link {name} Account"
-                  values={{ name }}
-                />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
       {accounts.length ? (
-        <ul className="space-y-4">
+        <ul className="flex flex-col gap-4">
           {accounts.map((acct, i) => (
             <li
               key={i}
@@ -185,6 +230,11 @@ const UserSettingsAccounts = () => {
                 {acct.type === LinkedAccountType.Plex && (
                   <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                     <PlexLogo className="w-9" />
+                  </div>
+                )}
+                {acct.type === LinkedAccountType.Audiobookshelf && (
+                  <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                    <AudiobookshelfLogo className="w-9" />
                   </div>
                 )}
               </div>
@@ -197,29 +247,67 @@ const UserSettingsAccounts = () => {
                 </div>
               </div>
               <div className="grow" />
-              {currentUser?.id === user?.id && enableMediaServerUnlink && (
-                <ConfirmButton
-                  buttonSize="sm"
-                  onClick={() => {
-                    deleteRequest();
-                  }}
-                  confirmText={
-                    <FormattedMessage
-                      id="common.areYouSure"
-                      defaultMessage="Are you sure?"
-                    />
-                  }
-                  className="max-sm:btn-block"
-                >
-                  <TrashIcon className="mr-2 size-5" />
-                  <span>
-                    <FormattedMessage
-                      id="common.unlinkAccount"
-                      defaultMessage="Unlink Account"
-                    />
-                  </span>
-                </ConfirmButton>
-              )}
+              {acct.type === LinkedAccountType.Plex &&
+                currentUser?.id === user?.id &&
+                enableMediaServerUnlink && (
+                  <ConfirmButton
+                    buttonSize="sm"
+                    onClick={() => {
+                      deleteRequest();
+                    }}
+                    confirmText={
+                      <FormattedMessage
+                        id="common.areYouSure"
+                        defaultMessage="Are you sure?"
+                      />
+                    }
+                    className="max-sm:btn-block"
+                  >
+                    <TrashIcon className="mr-2 size-5" />
+                    <span>
+                      <FormattedMessage
+                        id="common.unlinkAccount"
+                        defaultMessage="Unlink Account"
+                      />
+                    </span>
+                  </ConfirmButton>
+                )}
+              {acct.type === LinkedAccountType.Audiobookshelf &&
+                (currentUser?.id === user?.id ||
+                  currentUserHasPermission(Permission.MANAGE_USERS)) && (
+                  <>
+                    <Button
+                      buttonSize="sm"
+                      buttonType="warning"
+                      onClick={() => setShowAudiobookshelfModal(true)}
+                      className="max-sm:btn-block cursor-pointer"
+                    >
+                      <FormattedMessage
+                        id="linkedAccounts.audiobookshelfResetButton"
+                        defaultMessage="Reset Password"
+                      />
+                    </Button>
+                    <ConfirmButton
+                      buttonSize="sm"
+                      onClick={deleteAudiobookshelfRequest}
+                      confirmText={
+                        <FormattedMessage
+                          id="common.areYouSure"
+                          defaultMessage="Are you sure?"
+                        />
+                      }
+                      className="max-sm:btn-block"
+                    >
+                      <TrashIcon className="mr-2 size-5" />
+                      <span>
+                        <FormattedMessage
+                          id="common.unlinkAccount"
+                          defaultMessage="Unlink Account"
+                        />
+                      </span>
+                    </ConfirmButton>
+                  </>
+                )}
             </li>
           ))}
         </ul>
@@ -239,6 +327,20 @@ const UserSettingsAccounts = () => {
             )}
           </h3>
         </div>
+      )}
+      {user && (
+        <AudiobookshelfModal
+          userId={user.id}
+          show={showAudiobookshelfModal}
+          alreadyLinked={!!user.audiobookshelfUsername}
+          isManager={currentUserHasPermission(Permission.MANAGE_USERS)}
+          alreadyNotified={!!user.audiobookshelfPwNotifiedAt}
+          onClose={() => setShowAudiobookshelfModal(false)}
+          onLinked={async () => {
+            setShowAudiobookshelfModal(false);
+            await revalidateUser();
+          }}
+        />
       )}
     </>
   );

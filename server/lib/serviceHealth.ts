@@ -11,9 +11,11 @@ import type {
   ServiceHealthInstance,
   ServiceHealthStatus,
 } from '@server/interfaces/api/settingsInterfaces';
+import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import { resetClientHealth } from '@server/lib/healthCheck';
 import { getPlexHealth, refreshPlexVersion } from '@server/lib/plexHealthCheck';
 import type {
+  AudiobookshelfSettings,
   DownloadClientSettings,
   DVRSettings,
   ServiceSettings,
@@ -210,6 +212,20 @@ async function checkTautulli(): Promise<CheckResult> {
   }
 }
 
+async function checkAudiobookshelf(
+  service: AudiobookshelfSettings
+): Promise<CheckResult> {
+  try {
+    const version = await withTimeout(
+      getAudiobookshelfAPI(service).getVersion(),
+      timeout()
+    );
+    return { status: 'healthy', version };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
 async function checkSeerr(service: ServiceSettings): Promise<CheckResult> {
   try {
     const status = await withTimeout(
@@ -355,6 +371,17 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
       return {
         id: 'cleanuparr',
         name: 'Cleanuparr',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.audiobookshelf)) return null;
+      const result = await checkAudiobookshelf(settings.audiobookshelf);
+      return {
+        id: 'audiobookshelf',
+        name: 'Audiobookshelf',
         retryable: true,
         ...result,
       };

@@ -16,6 +16,7 @@ import type {
   SettingsAboutResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import { scheduledJobs } from '@server/job/schedule';
+import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
 import ImageProxy from '@server/lib/imageproxy';
@@ -820,6 +821,68 @@ settingsRoutes.post('/tautulli', async (req, res, next) => {
   }
 
   res.status(200).json(settings.tautulli);
+});
+
+settingsRoutes.get('/audiobookshelf', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.audiobookshelf);
+});
+
+settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'audiobookshelf',
+    'audiobookshelf'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.audiobookshelf, req.body);
+  settings.save();
+  res.status(200).json(settings.audiobookshelf);
+});
+
+settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase, apiKey } = req.body;
+
+    const portNumber = Number(port);
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      typeof apiKey !== 'string' ||
+      apiKey.trim().length === 0 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
+    ) {
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or API key',
+      });
+    }
+
+    await getAudiobookshelfAPI({
+      hostname,
+      port: portNumber,
+      useSsl: useSsl ?? false,
+      apiKey,
+    }).getAllLibraries();
+
+    res.status(200).json({ urlBase });
+  } catch (e) {
+    logger.error('Failed to test Audiobookshelf', {
+      label: 'Audiobookshelf',
+      message: e instanceof Error ? e.message : String(e),
+    });
+
+    next({ status: 500, message: 'Failed to connect to Audiobookshelf' });
+  }
 });
 
 settingsRoutes.get(
