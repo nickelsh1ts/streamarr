@@ -555,7 +555,7 @@
     "defaultMessage": "restante"
   },
   "common.remove": {
-    "defaultMessage": "Eliminar"
+    "defaultMessage": "Remover"
   },
   "common.removing": {
     "defaultMessage": "Eliminando…"
@@ -1974,7 +1974,7 @@
     "defaultMessage": "Microsoft Edge te mostrará la posibilidad de instalar la aplicación en el lado derecho de la barra de direcciones."
   },
   "help.downloadStreamarr.edge.remove": {
-    "defaultMessage": "Eliminar"
+    "defaultMessage": "Remover"
   },
   "help.downloadStreamarr.edge.removeOrDeleteIos": {
     "defaultMessage": "Toca Eliminar de la Pantalla de Inicio para mantenerla en la Biblioteca de Apps, o toca Eliminar App para borrarla del iPhone"
@@ -4101,10 +4101,10 @@
     "defaultMessage": "Configuración de Lidarr"
   },
   "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Para completar la integración de Seerr, debes configurar un proxy inverso y servir Seerr en una url base especificada. Seerr actualmente no soporta url bases de forma nativa y debe ser reescrito por un proxy inverso. Se proporciona un ejemplo de Nginx como referencia."
+    "defaultMessage": "Streamarr ahora ofrece Seerr a través de su propio proxy inverso integrado en la URL base a continuación, por lo que no se requiere ningún proxy inverso externo. Si configuraste uno anteriormente (such as the legacy Nginx rewrite)para ofrecer Seerr en esta ruta, debes eliminarlo; una regla restante interceptará estas solicitudes y el proxy integrado no funcionará. Cambiar la URL base surtirá efecto después de reiniciar el servidor."
   },
   "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Advertencia: La integración de Seerr requiere configuración adicional"
+    "defaultMessage": "Elimina cualquier proxy inverso externo de Seerr"
   },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
@@ -5503,5 +5503,713 @@
   },
   "newsletters.sonarrTag": {
     "defaultMessage": "Etiqueta de Sonarr"
+  },
+  "profile.moviesPastDays": {
+    "defaultMessage": "Películas (últimos {days} {days, plural, one {día} other {días}})"
+  },
+  "newsletters.body": {
+    "defaultMessage": "Cuerpo"
+  },
+  "common.toggleSortDirection": {
+    "defaultMessage": "Cambiar sentido de ordenación"
+  },
+  "downloads.clearSelection": {
+    "defaultMessage": "Limpiar"
+  },
+  "inAppNotifications.retentionAgeDescription": {
+    "defaultMessage": "La antigüedad máxima de las notificaciones en la aplicación antes de que se eliminen automáticamente."
+  },
+  "networkSettings.scheduledRetryAttempts": {
+    "defaultMessage": "Intentos de reintento programados"
+  },
+  "networkSettings.scheduledRetryAttempts.description": {
+    "defaultMessage": "Número máximo de reintentos para recopilar datos de servicios externos. (Establece en 1 para desactivar)"
+  },
+  "networkSettings.scheduledRetryInterval": {
+    "defaultMessage": "Intervalo de reintentos programados"
+  },
+  "networkSettings.scheduledRetryInterval.description": {
+    "defaultMessage": "Tiempo (in seconds) de espera entre intentos de reintento programados."
+  },
+  "networkSettings.validation.scheduledRetryAttempts": {
+    "defaultMessage": "Debes indicar un número válido de reintentos"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsInteger": {
+    "defaultMessage": "Los reintentos deben ser un número entero"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsMax": {
+    "defaultMessage": "Los reintentos no deben superar los 10"
+  },
+  "networkSettings.validation.scheduledRetryAttemptsMin": {
+    "defaultMessage": "Debe haber al menos 1 intento"
+  },
+  "networkSettings.validation.scheduledRetryInterval": {
+    "defaultMessage": "Debes indicar un intervalo de reintento válido"
+  },
+  "networkSettings.validation.scheduledRetryIntervalInteger": {
+    "defaultMessage": "El intervalo de reintento debe ser un número entero de segundos"
+  },
+  "networkSettings.validation.scheduledRetryIntervalMax": {
+    "defaultMessage": "El intervalo de reintento no debe superar los 3600 segundos"
+  },
+  "networkSettings.validation.scheduledRetryIntervalMin": {
+    "defaultMessage": "El intervalo de reintento debe ser de al menos 30 segundos"
+  },
+  "newsletters.sortLastModified": {
+    "defaultMessage": "Última modificación"
+  },
+  "newsletters.sortMostRecent": {
+    "defaultMessage": "Más reciente"
+  },
+  "newsletters.sortName": {
+    "defaultMessage": "Nombre"
+  },
+  "newsletters.statusDisabled": {
+    "defaultMessage": "Borrador"
+  },
+  "newsletters.statusEnabled": {
+    "defaultMessage": "Programado"
+  },
+  "newsletters.subject": {
+    "defaultMessage": "Asunto del correo electrónico"
+  },
+  "newsletters.test": {
+    "defaultMessage": "Prueba"
+  },
+  "newsletters.testError": {
+    "defaultMessage": "Error al enviar el boletín de prueba"
+  },
+  "newsletters.testSent": {
+    "defaultMessage": "Boletín de prueba enviado a tu correo electrónico"
+  },
+  "newsletters.topMovies": {
+    "defaultMessage": "Películas más populares"
+  },
+  "newsletters.topMusic": {
+    "defaultMessage": "Música destacada"
+  },
+  "newsletters.topShows": {
+    "defaultMessage": "Series más populares"
+  },
+  "newsletters.topStreams": {
+    "defaultMessage": "Transmisiones más populares"
+  },
+  "newsletters.trigger.schedule": {
+    "defaultMessage": "Programado"
+  },
+  "newsletters.trigger.test": {
+    "defaultMessage": "Prueba"
+  },
+  "newsletters.triggeredBy": {
+    "defaultMessage": "Ejecutar"
+  },
+  "newsletters.validation.cronInvalid": {
+    "defaultMessage": "Ingresa una programación cron válida (5 fields)."
+  },
+  "newsletters.validation.cronRequired": {
+    "defaultMessage": "Se requiere una programación para los boletines recurrentes"
+  },
+  "newsletters.validation.cronTooFrequent": {
+    "defaultMessage": "Los boletines se pueden ejecutar como máximo una vez por hora."
+  },
+  "newsletters.validation.nameRequired": {
+    "defaultMessage": "El nombre es obligatorio"
+  },
+  "newsletters.validation.sendAtRequired": {
+    "defaultMessage": "Se requiere una fecha para los boletines de envío único"
+  },
+  "newsletters.validation.subjectRequired": {
+    "defaultMessage": "El asunto es obligatorio"
+  },
+  "notification.accessExtensionRequested": {
+    "defaultMessage": "Se solicitó extensión de acceso"
+  },
+  "notification.accessExtensionRequested.description": {
+    "defaultMessage": "Recibir notificaciones cuando un usuario solicite una extensión de acceso"
+  },
+  "notification.plexAccessLost": {
+    "defaultMessage": "Acceso a Plex revocado"
+  },
+  "notification.plexAccessLost.description": {
+    "defaultMessage": "Recibir notificaciones cuando se elimine y desactive a un usuario del servidor de Plex"
+  },
+  "notification.sortMostRecent": {
+    "defaultMessage": "Más recientes"
+  },
+  "notifications.discord.idInvalid": {
+    "defaultMessage": "Debes proporcionar un ID de usuario de Discord válido"
+  },
+  "notifications.discord.idRequired": {
+    "defaultMessage": "Debes proporcionar tu ID de usuario de Discord"
+  },
+  "notifications.discord.webhookUrlInvalid": {
+    "defaultMessage": "Debes proporcionar una URL de webhook de Discord válida"
+  },
+  "notifications.discord.webhookUrlRequired": {
+    "defaultMessage": "Debes proporcionar tu URL de webhook de Discord"
+  },
+  "notifications.fields.accessToken": {
+    "defaultMessage": "Token de acceso"
+  },
+  "notifications.fields.applicationToken": {
+    "defaultMessage": "Token de la aplicación"
+  },
+  "notifications.fields.authMethodNone": {
+    "defaultMessage": "Ninguno"
+  },
+  "notifications.fields.authMethodToken": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.authMethodUsernamePassword": {
+    "defaultMessage": "Usuario / Contraseña"
+  },
+  "notifications.fields.authentication": {
+    "defaultMessage": "Autenticación"
+  },
+  "notifications.fields.authorizationHeader": {
+    "defaultMessage": "Encabezado de autorización"
+  },
+  "notifications.fields.enableMentions": {
+    "defaultMessage": "Activar menciones"
+  },
+  "notifications.fields.jsonPayload": {
+    "defaultMessage": "Carga útil JSON"
+  },
+  "notifications.fields.notificationRoleId": {
+    "defaultMessage": "ID de rol de notificación"
+  },
+  "notifications.fields.priority": {
+    "defaultMessage": "Prioridad"
+  },
+  "notifications.fields.pushoverAccessToken": {
+    "defaultMessage": "Token de API de la aplicación"
+  },
+  "notifications.fields.pushoverApplicationToken": {
+    "defaultMessage": "Token de API de la aplicación"
+  },
+  "notifications.fields.pushoverUserKey": {
+    "defaultMessage": "Clave de usuario"
+  },
+  "notifications.fields.serverUrl": {
+    "defaultMessage": "URL del servidor"
+  },
+  "notifications.fields.sound": {
+    "defaultMessage": "Sonido"
+  },
+  "notifications.fields.telegramBotApi": {
+    "defaultMessage": "Token de API o URL del bot"
+  },
+  "notifications.fields.telegramBotUsername": {
+    "defaultMessage": "Nombre de usuario del bot"
+  },
+  "notifications.fields.telegramChatId": {
+    "defaultMessage": "ID de chat"
+  },
+  "notifications.fields.telegramMessageThreadId": {
+    "defaultMessage": "ID del hilo de mensajes"
+  },
+  "notifications.fields.telegramSendSilently": {
+    "defaultMessage": "Enviar en silencio"
+  },
+  "notifications.fields.token": {
+    "defaultMessage": "Token"
+  },
+  "notifications.fields.topic": {
+    "defaultMessage": "Tema"
+  },
+  "notifications.fields.webhookUrl": {
+    "defaultMessage": "URL del webhook"
+  },
+  "notifications.gotify.tokenRequired": {
+    "defaultMessage": "Debes proporcionar un token de aplicación de Gotify"
+  },
+  "notifications.gotify.urlInvalid": {
+    "defaultMessage": "Debes proporcionar una URL válida del servidor de Gotify"
+  },
+  "notifications.gotify.urlRequired": {
+    "defaultMessage": "Debes proporcionar la URL de tu servidor de Gotify"
+  },
+  "notifications.ntfy.passwordRequired": {
+    "defaultMessage": "Debes proporcionar una contraseña"
+  },
+  "notifications.ntfy.priorityDefault": {
+    "defaultMessage": "Predeterminado"
+  },
+  "notifications.ntfy.priorityHigh": {
+    "defaultMessage": "Alto"
+  },
+  "notifications.ntfy.priorityLow": {
+    "defaultMessage": "Bajo"
+  },
+  "notifications.ntfy.priorityMin": {
+    "defaultMessage": "Minimo"
+  },
+  "notifications.ntfy.priorityUrgent": {
+    "defaultMessage": "Urgente"
+  },
+  "notifications.ntfy.tokenRequired": {
+    "defaultMessage": "Debes proporcionar un token"
+  },
+  "notifications.ntfy.topicInvalid": {
+    "defaultMessage": "El tema solo puede contener letras, números, guiones y guiones bajos"
+  },
+  "notifications.ntfy.topicRequired": {
+    "defaultMessage": "Debes proporcionar el tema de tu ntfy"
+  },
+  "notifications.ntfy.urlInvalid": {
+    "defaultMessage": "Debes proprcionar un URL válida"
+  },
+  "notifications.ntfy.urlRequired": {
+    "defaultMessage": "Debes proporcionar la URL de tu servidor de ntfy"
+  },
+  "notifications.ntfy.usernameRequired": {
+    "defaultMessage": "Debes proporcionar un nombre de usuario"
+  },
+  "notifications.provider.saveError": {
+    "defaultMessage": "Error al guardar la configuración de notificaciones de {provider}."
+  },
+  "notifications.provider.saveSuccess": {
+    "defaultMessage": "¡La configuración de notificaciones de {provider} se guardó con éxito!"
+  },
+  "notifications.provider.testError": {
+    "defaultMessage": "¡La configuración de notificaciones de {provider} se guardó con éxito!"
+  },
+  "notifications.provider.testSuccess": {
+    "defaultMessage": "¡Notificación de prueba de {provider} enviada!"
+  },
+  "notifications.providers.discord": {
+    "defaultMessage": "Discord"
+  },
+  "notifications.providers.gotify": {
+    "defaultMessage": "Gotify"
+  },
+  "notifications.providers.ntfy": {
+    "defaultMessage": "ntfy"
+  },
+  "notifications.providers.pushbullet": {
+    "defaultMessage": "Pushbullet"
+  },
+  "notifications.providers.pushover": {
+    "defaultMessage": "Pushover"
+  },
+  "notifications.providers.slack": {
+    "defaultMessage": "Slack"
+  },
+  "notifications.providers.telegram": {
+    "defaultMessage": "Telegram"
+  },
+  "notifications.providers.webhook": {
+    "defaultMessage": "el webhook"
+  },
+  "notifications.pushbullet.accessTokenRequired": {
+    "defaultMessage": "Debes proporcionar tu token de acceso de Pushbullet"
+  },
+  "notifications.pushbullet.tokenRequired": {
+    "defaultMessage": "Debes proporcionar tu token de acceso de Pushbullet"
+  },
+  "notifications.pushover.accessTokenRequired": {
+    "defaultMessage": "Debes proporcionar tu token de API de la aplicación de Pushover"
+  },
+  "notifications.pushover.applicationTokenRequired": {
+    "defaultMessage": "Debes proporcionar tu token de API de la aplicación de Pushover"
+  },
+  "notifications.pushover.userKeyRequired": {
+    "defaultMessage": "Debes proporcionar tu clave de usuario de Pushover"
+  },
+  "notifications.retentionAge": {
+    "defaultMessage": "Edad de retención"
+  },
+  "notifications.slack.webhookUrlRequired": {
+    "defaultMessage": "Debes proporcionar una URL de webhook de Slack válida"
+  },
+  "notifications.telegram.botApiRequired": {
+    "defaultMessage": "Debes proporcionar tu token de API o URL del bot de Telegram"
+  },
+  "notifications.telegram.chatIdRequired": {
+    "defaultMessage": "Debes proporcionar tu ID de chat de Telegram"
+  },
+  "notifications.validation.typesRequired": {
+    "defaultMessage": "Debes seleccionar al menos un tipo de notificación."
+  },
+  "notifications.webhook.addHeader": {
+    "defaultMessage": "Añadir encabezado"
+  },
+  "notifications.webhook.authHeaderConflict": {
+    "defaultMessage": "No puedes usar el campo de encabezado de autorización y un encabezado personalizado 'Authorization' al mismo tiempo. Elimina uno."
+  },
+  "notifications.webhook.customHeaders": {
+    "defaultMessage": "Encabezados personalizados"
+  },
+  "notifications.webhook.headerName": {
+    "defaultMessage": "Nombre del encabezado"
+  },
+  "notifications.webhook.headerNameRequired": {
+    "defaultMessage": "Debes proporcionar un nombre de encabezado"
+  },
+  "notifications.webhook.headerValue": {
+    "defaultMessage": "Valor"
+  },
+  "notifications.webhook.headerValueRequired": {
+    "defaultMessage": "Debes proporcionar un valor de encabezado"
+  },
+  "notifications.webhook.payloadEmptyJson": {
+    "defaultMessage": "El contenido JSON no puede estar vacío"
+  },
+  "notifications.webhook.payloadInvalidJson": {
+    "defaultMessage": "Debes proporcionar un JSON válido"
+  },
+  "notifications.webhook.payloadRequired": {
+    "defaultMessage": "Debes proporcionar un contenido JSON"
+  },
+  "notifications.webhook.removeHeader": {
+    "defaultMessage": "Eliminar encabezado"
+  },
+  "notifications.webhook.resetPayload": {
+    "defaultMessage": "Restablecer a los valores predeterminados"
+  },
+  "notifications.webhook.templateVariables": {
+    "defaultMessage": "Variables de plantilla"
+  },
+  "notifications.webhook.urlRequired": {
+    "defaultMessage": "Debes proporcionar una URL válida"
+  },
+  "notifications.webhook.varExtra": {
+    "defaultMessage": "Matriz de datos adicionales: úsala como una clave JSON con un valor de matriz vacía"
+  },
+  "notifications.webhook.varGroupGeneral": {
+    "defaultMessage": "General"
+  },
+  "notifications.webhook.varGroupNotifyUser": {
+    "defaultMessage": "Notificar al usuario"
+  },
+  "notifications.webhook.varGroupSpecial": {
+    "defaultMessage": "Especiales (JSON keys)"
+  },
+  "notifications.webhook.varImage": {
+    "defaultMessage": "URL de la imagen de notificación"
+  },
+  "notifications.webhook.varMessage": {
+    "defaultMessage": "Cuerpo del mensaje de notificación"
+  },
+  "notifications.webhook.varNotificationType": {
+    "defaultMessage": "El tipo de notificación (e.g. NEW_INVITE)"
+  },
+  "notifications.webhook.varNotifyAvatar": {
+    "defaultMessage": "URL del avatar del destinatario"
+  },
+  "notifications.webhook.varNotifyEmail": {
+    "defaultMessage": "Correo electrónico del destinatario"
+  },
+  "notifications.webhook.varNotifyUsername": {
+    "defaultMessage": "Nombre visible del destinatario"
+  },
+  "notifications.webhook.varSubject": {
+    "defaultMessage": "Asunto de la notificación"
+  },
+  "profile.accountDeactivatedMessage": {
+    "defaultMessage": "Tu cuenta ha sido desactivada. {trialPeriodEnabled, select, true {Puedes solicitar una extensión de acceso {link}.} other {Ponte en contacto con un administrador para restaurar tu acceso.}}"
+  },
+  "profile.accountDeactivatedMessageAdmin": {
+    "defaultMessage": "La cuenta de este usuario ha sido desactivada. Puedes reactivarla desde su configuración {link}."
+  },
+  "profile.quotaRemaining": {
+    "defaultMessage": "{remaining} de {limit}"
+  },
+  "seerrSettings.urlBase.noTrailingSlash": {
+    "defaultMessage": "La URL base no debe terminar en una barra diagonal ni en un espacio en blanco"
+  },
+  "servicesSettings.cleanuparr.alertTitle": {
+    "defaultMessage": "Configura una ruta base coincidente en Cleanuparr"
+  },
+  "servicesSettings.cleanuparr.description": {
+    "defaultMessage": "Configura opcionalmente los ajustes para tu servidor de Cleanuparr. Cleanuparr debe estar configurado con una ruta base coincidente."
+  },
+  "servicesSettings.cleanuparr.title": {
+    "defaultMessage": "Ajustes de Cleanuparr"
+  },
+  "common.previewLoading": {
+    "defaultMessage": "Cargando…"
+  },
+  "newsletters.schedule": {
+    "defaultMessage": "Planificación"
+  },
+  "newsletters.trigger.manual": {
+    "defaultMessage": "Manual"
+  },
+  "servicesSettings.cleanuparr.alertDescription": {
+    "defaultMessage": "Cleanuparr debe iniciarse con su variable de entorno BASE_PATH configurada con el mismo valor que la URL base de abajo (e.g. /cleanuparr). Sin esto, Cleanuparr servirá sus recursos desde la raíz y no se cargarán dentro de Streamarr. Reinicia Cleanuparr después de cambiar BASE_PATH."
+  },
+  "servicesSettings.validation.apiKey": {
+    "defaultMessage": "Debes proporcionar una clave API válida"
+  },
+  "settings.accessExtensionRequest.button": {
+    "defaultMessage": "Solicitar extensión"
+  },
+  "settings.accessExtensionRequest.description": {
+    "defaultMessage": "Solicita una extensión de acceso a los administradores."
+  },
+  "settings.accessExtensionRequest.error": {
+    "defaultMessage": "No se pudo enviar la solicitud de extensión de acceso."
+  },
+  "settings.accessExtensionRequest.requested": {
+    "defaultMessage": "Solicitud pendiente"
+  },
+  "settings.accessExtensionRequest.submitting": {
+    "defaultMessage": "Enviando solicitud…"
+  },
+  "settings.accessExtensionRequest.success": {
+    "defaultMessage": "Solicitud de extensión de acceso enviada con éxito."
+  },
+  "settings.accessExtensionRequest.title": {
+    "defaultMessage": "Extensión de acceso"
+  },
+  "settings.accessExtensionRequested": {
+    "defaultMessage": "Extensión solicitada"
+  },
+  "settings.allowPlexHome": {
+    "defaultMessage": "Miembro de Plex Home"
+  },
+  "settings.linkedAccounts": {
+    "defaultMessage": "Cuentas vinculadas"
+  },
+  "settings.reinvite": {
+    "defaultMessage": "Reinvitar"
+  },
+  "settings.reinviteError": {
+    "defaultMessage": "No se pudo reinvitar al usuario."
+  },
+  "settings.reinviteFailed": {
+    "defaultMessage": "La invitación de Plex falló y el usuario sigue desactivado."
+  },
+  "settings.reinviteSuccess": {
+    "defaultMessage": "¡Usuario reinvitado con éxito!"
+  },
+  "settings.reinviting": {
+    "defaultMessage": "reinvitado…"
+  },
+  "settings.savedPlexSyncFailed": {
+    "defaultMessage": "Configuración guardada, pero la sincronización con Plex falló."
+  },
+  "settings.savedPlexSyncFailedMessage": {
+    "defaultMessage": "Tus cambios se guardaron, pero no se pudieron sincronizar con Plex."
+  },
+  "settings.savedUserRemovedFromPlex": {
+    "defaultMessage": "Configuración guardada, pero el usuario no se encontró en Plex."
+  },
+  "settings.savedUserRemovedFromPlexMessage": {
+    "defaultMessage": "Este usuario fue eliminado del servidor de Plex y su cuenta ha sido desactivada."
+  },
+  "settings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "El acceso se desactivará después de esta fecha (Default: {count, plural, one {# day} other {# days}})"
+  },
+  "settings.userRemovedFromPlexWarning": {
+    "defaultMessage": "Este usuario fue eliminado del servidor de Plex y su cuenta ha sido desactivada. Puedes reinvitarlo a continuación."
+  },
+  "common.at": {
+    "defaultMessage": "a las"
+  },
+  "common.cleaning": {
+    "defaultMessage": "Limpieza"
+  },
+  "common.day": {
+    "defaultMessage": "{count, plural, one {Día} other {Días}}"
+  },
+  "common.forever": {
+    "defaultMessage": "Siempre"
+  },
+  "common.month": {
+    "defaultMessage": "{count, plural, one {Mes} other {Meses}}"
+  },
+  "common.week": {
+    "defaultMessage": "{count, plural, one {Semana} other {Semanas}}"
+  },
+  "common.year": {
+    "defaultMessage": "{count, plural, one {Año} other {Años}}"
+  },
+  "newsletters.sentSummary": {
+    "defaultMessage": "Enviado a {count} destinatario(s){failures, plural, =0 {} other {, # con errores}}."
+  },
+  "system.health.retryFailed": {
+    "defaultMessage": "No se pudo reintentar la comprobación del estado del servicio"
+  },
+  "system.status.retrying": {
+    "defaultMessage": "Reintendando…"
+  },
+  "systemSettings.diskSpace.collapseChildren": {
+    "defaultMessage": "Contraer elementos secundarios"
+  },
+  "systemSettings.diskSpace.expandChildren": {
+    "defaultMessage": "Expandir elementos secundarios"
+  },
+  "systemSettings.diskSpace.freeSpace": {
+    "defaultMessage": "Espacio libre"
+  },
+  "systemSettings.diskSpace.location": {
+    "defaultMessage": "Ubicación"
+  },
+  "systemSettings.diskSpace.title": {
+    "defaultMessage": "Espacio en disco"
+  },
+  "systemSettings.diskSpace.totalSpace": {
+    "defaultMessage": "Espacio total"
+  },
+  "systemSettings.diskSpace.usedSpace": {
+    "defaultMessage": "Espacio utilizado"
+  },
+  "systemSettings.diskSpace.warningBody": {
+    "defaultMessage": "Streamarr no pudo leer todas las rutas locales configuradas. El uso de disco disponible se muestra a continuación."
+  },
+  "systemSettings.diskSpace.warningTitle": {
+    "defaultMessage": "Algunas métricas de disco no están disponibles"
+  },
+  "systemSettings.featureRequests": {
+    "defaultMessage": "Solicitudes de funciones"
+  },
+  "systemSettings.homePage": {
+    "defaultMessage": "Página principal"
+  },
+  "systemSettings.moreInfo": {
+    "defaultMessage": "Más información"
+  },
+  "systemSettings.nodeVersion": {
+    "defaultMessage": "Node.js"
+  },
+  "systemSettings.source": {
+    "defaultMessage": "Fuente"
+  },
+  "systemSettings.uptime": {
+    "defaultMessage": "Tiempo de actividad"
+  },
+  "toggle.disabled": {
+    "defaultMessage": "Deshabilitado"
+  },
+  "toggle.enabled": {
+    "defaultMessage": "Habilitado"
+  },
+  "toggle.noChange": {
+    "defaultMessage": "Sin cambios"
+  },
+  "userLibraries.error": {
+    "defaultMessage": "Algo salió mal al guardar la configuración de acceso de Plex."
+  },
+  "userLibraries.savedPlexSyncFailed": {
+    "defaultMessage": "Configuración guardada, pero la sincronización de Plex falló."
+  },
+  "userLibraries.savedPlexSyncFailedMessage": {
+    "defaultMessage": "Se guardaron los cambios, pero no se pudo sincronizar {count, plural, one {# usuario} other {# usuarios}} con Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlex": {
+    "defaultMessage": "Configuración guardada, pero algunos usuarios no se encontraron en Plex."
+  },
+  "userLibraries.savedUsersRemovedFromPlexMessage": {
+    "defaultMessage": "{count, plural, one {# usuario fue} other {# usuarios fueron}} eliminados del servidor Plex y {count, plural, one {ha sido} other {han sido}} descativado."
+  },
+  "userLibraries.success": {
+    "defaultMessage": "¡Configuración de acceso de Plex guardada con éxito!"
+  },
+  "userLibraries.syncedWithPlex": {
+    "defaultMessage": "Los cambios se han sincronizado con Plex."
+  },
+  "userProfile.mediaError": {
+    "defaultMessage": "{mediaType, select, movie {Película} tv {Programa de televisión} other {Elemento multimedia}} no encontrado"
+  },
+  "userProfile.seasons": {
+    "defaultMessage": "{seasonCount, plural, one {Temporada} other {Temporadas}}"
+  },
+  "userSettings.accessExtensionRequested": {
+    "defaultMessage": "Acceso de extensión solicitado"
+  },
+  "userSettings.experimentalJwtAuth": {
+    "defaultMessage": "Autenticación JWT de Plex"
+  },
+  "userSettings.experimentalJwtAuthDescription": {
+    "defaultMessage": "Emitir credenciales JWT de Plex de corta duración para los usuarios junto con su token existente al iniciar sesión. Es seguro activarlo o desactivarlo en cualquier momento; los inicios de sesión existentes no se ven afectados."
+  },
+  "userSettings.notifications.discordId": {
+    "defaultMessage": "ID de usuario de Discord"
+  },
+  "userSettings.notifications.discordTitle": {
+    "defaultMessage": "Notificaciones de Discord"
+  },
+  "userSettings.notifications.pushbulletAccessToken": {
+    "defaultMessage": "Token de acceso"
+  },
+  "userSettings.notifications.pushbulletTitle": {
+    "defaultMessage": "Notificaciones de Pushbullet"
+  },
+  "userSettings.notifications.pushoverApplicationToken": {
+    "defaultMessage": "Token de API de la aplicación"
+  },
+  "userSettings.notifications.pushoverSound": {
+    "defaultMessage": "Sonido"
+  },
+  "userSettings.notifications.pushoverTitle": {
+    "defaultMessage": "Notificaciones de Pushover"
+  },
+  "userSettings.notifications.pushoverUserKey": {
+    "defaultMessage": "Clave de usuario"
+  },
+  "userSettings.notifications.settingsLoadError": {
+    "defaultMessage": "No se pudieron cargar los ajustes de notificación."
+  },
+  "userSettings.notifications.soundDefault": {
+    "defaultMessage": "Predeterminado del dispositivo"
+  },
+  "userSettings.notifications.telegramChatId": {
+    "defaultMessage": "ID del chat"
+  },
+  "userSettings.notifications.telegramMessageThreadId": {
+    "defaultMessage": "ID de hilo de mensajes"
+  },
+  "userSettings.notifications.telegramSendSilently": {
+    "defaultMessage": "Enviar silenciosamente"
+  },
+  "userSettings.notifications.telegramTitle": {
+    "defaultMessage": "Notificaciones de Telegram"
+  },
+  "userSettings.notifications.userLoadError": {
+    "defaultMessage": "No se pudieron cargar los ajustes del perfil de usuario."
+  },
+  "userSettings.trialPeriodDescriptionDeactivate": {
+    "defaultMessage": "Establecer un período de días antes de que los usuarios sean desactivados y pierdan el acceso"
+  },
+  "userSettings.trialPeriodDescriptionPromote": {
+    "defaultMessage": "Establecer un período de días hasta que los usuarios puedan crear invitaciones"
+  },
+  "userSettings.trialPeriodOutcome.deactivate": {
+    "defaultMessage": "Desactivar"
+  },
+  "userSettings.trialPeriodOutcome.promote": {
+    "defaultMessage": "Promover"
+  },
+  "users.bulkEditLibrariesDescription": {
+    "defaultMessage": "Los cambios se aplicarán a todos los usuarios seleccionados y se sincronizarán con Plex automáticamente al guardar. Los campos que no se modifiquen permanecerán sin cambios. Los usuarios locales se actualizarán pero no se sincronizarán."
+  },
+  "users.bulkEditTitle": {
+    "defaultMessage": "Edición masiva de usuarios"
+  },
+  "validation.required": {
+    "defaultMessage": "Este campo es obligatorio."
+  },
+  "profile.accountExpiredMessage": {
+    "defaultMessage": "El acceso a tu cuenta ha caducado. {trialPeriodEnabled, select, true {Puedes solicitar una extensión {link}.} other {Ponte en contacto con un administrador para ampliar tu acceso.}}"
+  },
+  "profile.accountExpiredMessageAdmin": {
+    "defaultMessage": "La cuenta de este usuario ha expirado. {trialPeriodEnabled, select, true {Amplía el plazo estableciendo un nuevo período de prueba {link}.} other {Vuelve a habilitar los períodos de prueba para ampliar el acceso.}}"
+  },
+  "profile.tvPastDays": {
+    "defaultMessage": "Series de televisión (últimos {days} {days, plural, one {día} other {días}})"
+  },
+  "settings.ExpiredTrialPeriodDescriptionPromote": {
+    "defaultMessage": "No se pueden crear invitaciones hasta después de esta fecha (Predeterminado: {count, plural, one {# día} other {# días}})"
+  },
+  "system.health.collapseInstances": {
+    "defaultMessage": "Ocultar instancias"
+  },
+  "system.health.expandInstances": {
+    "defaultMessage": "Mostrar instancias"
+  },
+  "system.health.instanceSummary": {
+    "defaultMessage": "{healthy} de {total} en buen estado"
   }
 }
