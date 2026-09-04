@@ -391,6 +391,7 @@ userSettingsRoutes.post<{ id: string }>(
           actionUrl: `/admin/users/${user.id}/settings/linked-accounts`,
           actionUrlTitle: 'View User Settings',
           severity: NotificationSeverity.WARNING,
+          createdBy: req.user,
         })
       );
 
@@ -586,6 +587,7 @@ userSettingsRoutes.post<{ id: string }>(
           actionUrl: `/admin/users/${user.id}/settings`,
           actionUrlTitle: 'Manage User',
           severity: NotificationSeverity.WARNING,
+          createdBy: req.user,
         })
       );
 
