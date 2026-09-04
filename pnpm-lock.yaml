@@ -16,7 +16,7 @@ importers:
         version: 8.0.0
       '@ctrl/qbittorrent':
         specifier: ^9.11.2
-        version: 9.14.0
+        version: 9.15.0
       '@ctrl/shared-torrent':
         specifier: ^6.5.1
         version: 6.5.1(ofetch@1.5.1)
@@ -1166,9 +1166,13 @@ packages:
     resolution: {integrity: sha512-fEfw3AeQ8XhVsNzogZrnyTNDD/Tpbfl3ybHsspBMvj0UKctabApv1JV3JJUQG/hoX6hiO+DtQS+acN7dMPX01g==}
     engines: {node: '>20'}
 
-  '@ctrl/qbittorrent@9.14.0':
-    resolution: {integrity: sha512-Ye1yX6zahOugx6RHQoiBkE8Od21RmO3i1gbSrOSYtoDIqr+9Utz8Rf6FkY7IEKB8JbeWjwuEhQt23usmhcFt5Q==}
-    engines: {node: '>=18'}
+  '@ctrl/magnet-link@5.0.0':
+    resolution: {integrity: sha512-bu8ldZq8lzAyddqykTB/FnDFFPEYus+Eho/GQEydQxupvUS6osOSzBCphuyyoDmMqGHwVw3Uob6oPiOQ+w075A==}
+    engines: {node: '>20'}
+
+  '@ctrl/qbittorrent@9.15.0':
+    resolution: {integrity: sha512-3dNCWH3/nkKK4s0cIcT8Acfx2sB3AmahvxOgnjutPFqU+c9vxZ+pJEhjFqcOg4uZI+d1O9cV8cdX4S5U04vCiQ==}
+    engines: {node: '>=22'}
 
   '@ctrl/shared-torrent@6.5.1':
     resolution: {integrity: sha512-ZdItYUwzHOu+8s416oRIEwvqDUC3aON4Lv/Ev4H5KxEkbjfkQiaONS/7+jos2+yJWleiXlRdBsoIpZR5Cd1UHQ==}
@@ -3898,6 +3902,10 @@ packages:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
 
+  cookie@2.0.1:
+    resolution: {integrity: sha512-yuToqVvRrj6pfDXREyQAAv8SkAEk/8GS3jQRTiUMm66TVtBYmqQeoEjL2Lmq8Rpo6271vH76InTChTitEAm65w==}
+    engines: {node: '>=22'}
+
   copy-to-clipboard@3.3.3:
     resolution: {integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==}
 
@@ -5516,6 +5524,7 @@ packages:
   isomorphic-dompurify@3.22.0:
     resolution: {integrity: sha512-cz/BkSODnQir4IV2quqbuEHhAGz4MAYGvhoemsxuwMpY/oZbRHlNjPLPyIQ0fdULiwDPUE+OHPwWb6XTEiNk1A==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+    deprecated: Raised the minimum Node.js version (breaking) without a major bump. Use 4.x for the same code with correct semver, or pin 3.19.0 for Node < 22.22.2.
 
   isstream@0.1.2:
     resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
@@ -8104,8 +8113,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  type-fest@5.8.0:
-    resolution: {integrity: sha512-YGYEVz3Fm5iy/AybuA0oyNFq7H4CgQNfRp/qfe8nurE1kuCeNm3/vfm9X4Mtl+qLyaKJUh5xrFZwogr41SMjYA==}
+  type-fest@5.9.0:
+    resolution: {integrity: sha512-yANm3Jr3GiJ1qgJlxGAVxTOIcEOk1rhQHamlXtnrCK7EHP4HeM9OGxtMg/W7HFdrVzw/ZWJKGVIJusVH85sLtw==}
     engines: {node: '>=20'}
 
   type-is@1.6.18:
@@ -9669,7 +9678,7 @@ snapshots:
       cookie-es: 3.1.1
       node-fetch-native: 1.6.7
       ofetch: 1.5.1
-      type-fest: 5.8.0
+      type-fest: 5.9.0
       ufo: 1.6.4
       uint8array-extras: 1.5.0
 
@@ -9678,15 +9687,20 @@ snapshots:
       rfc4648: 1.5.4
       uint8array-extras: 1.5.0
 
-  '@ctrl/qbittorrent@9.14.0':
+  '@ctrl/magnet-link@5.0.0':
     dependencies:
-      '@ctrl/magnet-link': 4.3.0
+      rfc4648: 1.5.4
+      uint8array-extras: 1.5.0
+
+  '@ctrl/qbittorrent@9.15.0':
+    dependencies:
+      '@ctrl/magnet-link': 5.0.0
       '@ctrl/shared-torrent': 6.5.1(ofetch@1.5.1)
       '@ctrl/torrent-file': 4.5.1
-      cookie: 1.1.1
+      cookie: 2.0.1
       node-fetch-native: 1.6.7
       ofetch: 1.5.1
-      type-fest: 5.8.0
+      type-fest: 5.9.0
       ufo: 1.6.4
       uint8array-extras: 1.5.0
 
@@ -12289,6 +12303,8 @@ snapshots:
   cookie@0.7.2: {}
 
   cookie@1.1.1: {}
+
+  cookie@2.0.1: {}
 
   copy-to-clipboard@3.3.3:
     dependencies:
@@ -16350,14 +16366,14 @@ snapshots:
     dependencies:
       find-up-simple: 1.0.1
       read-pkg: 10.1.0
-      type-fest: 5.8.0
+      type-fest: 5.9.0
 
   read-pkg@10.1.0:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 8.0.0
       parse-json: 8.3.0
-      type-fest: 5.8.0
+      type-fest: 5.9.0
       unicorn-magic: 0.4.0
 
   read-pkg@9.0.1:
@@ -17393,7 +17409,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  type-fest@5.8.0:
+  type-fest@5.9.0:
     dependencies:
       tagged-tag: 1.0.0
 
