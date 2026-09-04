@@ -464,7 +464,7 @@ settingsRoutes.post('/cleanuparr/test', async (req, res, next) => {
       .filter(Boolean)
       .join('/');
     const url = new URL(
-      base ? `/${base}/api/stats` : '/api/stats',
+      base ? `/${base}/api/v2/stats` : '/api/v2/stats',
       `${protocol}://${hostname}:${portNumber}`
     );
     url.searchParams.set('hours', '1');
