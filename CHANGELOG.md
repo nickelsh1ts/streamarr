@@ -1,3 +1,30 @@
+## [1.14.0](https://github.com/nickelsh1ts/streamarr/compare/v1.13.1...v1.14.0) (2026-09-04)
+
+### ✨ Features
+
+* **audiobookshelf:** add Audiobookshelf integration and settings management ([#596](https://github.com/nickelsh1ts/streamarr/issues/596)) ([2ded84d](https://github.com/nickelsh1ts/streamarr/commit/2ded84dc34997738db39eefdd2d225140ada5e9e))
+* **auth:** add support for redirect url ([#586](https://github.com/nickelsh1ts/streamarr/issues/586)) ([7437b6d](https://github.com/nickelsh1ts/streamarr/commit/7437b6dc0cf79bc24fd5261b26ed57ce40caf4a7))
+* **styles:** add Audiobookshelf styling ([#600](https://github.com/nickelsh1ts/streamarr/issues/600)) ([315570f](https://github.com/nickelsh1ts/streamarr/commit/315570f436b3630648534e18f43845d95463b091))
+
+### 🐛 Bug Fixes
+
+* **cleanuparr:** use api v2 for health check and test connection ([#598](https://github.com/nickelsh1ts/streamarr/issues/598)) ([489229d](https://github.com/nickelsh1ts/streamarr/commit/489229d4921714007730e8d13f63e5b2f99607b2))
+* **notifications:** add createdBy field to notifications ([#615](https://github.com/nickelsh1ts/streamarr/issues/615)) ([aa9717f](https://github.com/nickelsh1ts/streamarr/commit/aa9717fc3174bb7c301c71af2870fbec9d9f3839))
+* **settings:** prevent disk-space/cache scans from freezing app ([#597](https://github.com/nickelsh1ts/streamarr/issues/597)) ([c66a144](https://github.com/nickelsh1ts/streamarr/commit/c66a1445de32122b74b0f5b5b0c14d8b8e798674))
+
+### ♻️ Refactoring
+
+* **token:** collapse token failure logging into single entry ([#587](https://github.com/nickelsh1ts/streamarr/issues/587)) ([583604d](https://github.com/nickelsh1ts/streamarr/commit/583604d02933f5a6809e019e5b7a1485bf5fa1db))
+
+### 📦 Build System
+
+* **docker:** update node.js runtime to 2d984a1 ([#525](https://github.com/nickelsh1ts/streamarr/issues/525)) ([7da674c](https://github.com/nickelsh1ts/streamarr/commit/7da674c560a5bd606061ea4a6b3b07bd37ea81be))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#502](https://github.com/nickelsh1ts/streamarr/issues/502)) ([2f2f00a](https://github.com/nickelsh1ts/streamarr/commit/2f2f00a8103e260085ac56acffd619c74319e13a))
+* **actions:** update github actions ([#614](https://github.com/nickelsh1ts/streamarr/issues/614)) ([68ed451](https://github.com/nickelsh1ts/streamarr/commit/68ed451f288cf4c231883897dae7d7e79e4be224))
+
 ## [1.13.1](https://github.com/nickelsh1ts/streamarr/compare/v1.13.0...v1.13.1) (2026-08-19)
 
 ### 🐛 Bug Fixes
