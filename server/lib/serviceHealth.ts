@@ -101,7 +101,7 @@ interface CleanuparrStats {
 async function checkCleanuparr(service: ServiceSettings): Promise<CheckResult> {
   const intl = getIntl(getSettings().main.locale ?? 'en');
   try {
-    const url = buildUrl(service, 'api/stats', 11011);
+    const url = buildUrl(service, 'api/v2/stats', 11011);
     url.searchParams.set('hours', '1');
 
     const response = await fetch(url, {
