@@ -72,6 +72,10 @@ app
   .then(async () => {
     const dbConnection = await dataSource.initialize();
 
+    if (dataSource.options.type === 'better-sqlite3') {
+      await dbConnection.query('PRAGMA synchronous=NORMAL');
+    }
+
     // Run migrations in production
     if (process.env.NODE_ENV === 'production') {
       await dbConnection.query('PRAGMA foreign_keys=OFF');

@@ -107,6 +107,7 @@ export interface CacheResponse {
     avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
+  cachedAt: number;
 }
 
 export interface StatusResponse {

@@ -3,15 +3,13 @@ import type {
   DiskSpaceItem,
 } from '@server/interfaces/api/settingsInterfaces';
 import logger from '@server/logger';
+import { getPathUsedBytes } from '@server/utils/pathSize';
 import { execFile } from 'child_process';
 import { promises as fsPromises } from 'fs';
-import type { Dir } from 'node:fs';
 import path from 'path';
 import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
-
-const DU_TIMEOUT_MS = 30 * 1000;
 
 /**
  * Walks up the directory tree from `targetPath` until it finds a path that
@@ -101,102 +99,6 @@ export const getDiskSpaceStats = async (diskPath: string) => {
       usedPercent: totalBytes > 0 ? (usedBytes / totalBytes) * 100 : 0,
     };
   }
-};
-
-/**
- * Returns the total bytes used under `targetPath`. Prefers the native `du`
- * command, which is significantly faster than a recursive JS walk and runs
- * off the event loop. Note: `du` reports on-disk (block-allocated) usage
- * rather than apparent file size, so totals can differ slightly. Falls back to
- * a recursive walk when `du` is unavailable (e.g. non-POSIX host) or fails.
- */
-export const getPathUsedBytes = async (targetPath: string): Promise<number> => {
-  try {
-    // -s: summarize to a single total; -k: report in 1024-byte block units.
-    // `--` guards against a path that begins with `-` being read as a flag.
-    const { stdout } = await execFileAsync('du', ['-sk', '--', targetPath], {
-      timeout: DU_TIMEOUT_MS,
-    });
-    const blocksKb = Number(stdout.trim().split(/\s+/)[0]);
-
-    if (Number.isFinite(blocksKb)) {
-      return blocksKb * 1024;
-    }
-
-    throw new Error(`Unable to parse du output for path: ${targetPath}`);
-  } catch (e) {
-    logger.warn('Falling back to recursive path size calculation', {
-      label: 'Settings',
-      targetPath,
-      errorMessage: e instanceof Error ? e.message : 'Unknown error',
-    });
-
-    return getPathUsedBytesRecursive(targetPath);
-  }
-};
-
-/**
- * Recursively calculates the total size in bytes of all files under
- * `targetPath`. Skips symbolic links and unreadable entries. Used as a
- * fallback when the native `du` command is unavailable.
- */
-const getPathUsedBytesRecursive = async (
-  targetPath: string
-): Promise<number> => {
-  try {
-    const rootStats = await fsPromises.lstat(targetPath);
-
-    if (rootStats.isFile()) {
-      return rootStats.size;
-    }
-
-    if (!rootStats.isDirectory()) {
-      return 0;
-    }
-  } catch {
-    return 0;
-  }
-
-  let totalBytes = 0;
-  const stack = [targetPath];
-
-  while (stack.length > 0) {
-    const currentPath = stack.pop();
-
-    if (!currentPath) {
-      continue;
-    }
-
-    let dir: Dir;
-
-    try {
-      dir = await fsPromises.opendir(currentPath);
-    } catch {
-      continue;
-    }
-
-    for await (const entry of dir) {
-      const entryPath = path.join(currentPath, entry.name);
-
-      try {
-        const entryStats = await fsPromises.lstat(entryPath);
-
-        if (entryStats.isSymbolicLink()) {
-          continue;
-        }
-
-        if (entryStats.isDirectory()) {
-          stack.push(entryPath);
-        } else if (entryStats.isFile()) {
-          totalBytes += entryStats.size;
-        }
-      } catch {
-        // Ignore unreadable entries and continue calculating what we can.
-      }
-    }
-  }
-
-  return totalBytes;
 };
 
 /**

@@ -66,6 +66,13 @@ export const settingsAboutDiskSpaceLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const settingsCacheLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const newsletterPreviewLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 30,
