@@ -169,7 +169,7 @@ const DynamicFrame = ({
       '--color-text-accent': theme.secondary,
       '--main-bg-color': theme['base-300'],
       '--modal-bg-color': theme['base-100'],
-      '--drop-down-menu-bg': theme.neutral,
+      '--drop-down-menu-bg': theme['base-100'],
       '--text': theme['base-content'],
       '--text-hover': theme['base-content'],
       '--color-text-on-accent': theme['base-content'],
