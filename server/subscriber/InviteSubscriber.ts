@@ -135,6 +135,7 @@ export class InviteSubscriber implements EntitySubscriberInterface<Invite> {
         ),
         actionUrl: '/invites',
         actionUrlTitle: 'View Invites',
+        createdBy: entity.createdBy,
       })
     );
   }
