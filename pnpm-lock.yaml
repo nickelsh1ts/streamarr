@@ -49,10 +49,10 @@ importers:
         version: 1.44.0
       axios:
         specifier: ^1.15.2
-        version: 1.19.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
+        version: 1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
       axios-rate-limit:
         specifier: ^1.9.0
-        version: 1.9.0(axios@1.19.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0))
+        version: 1.9.0(axios@1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0))
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -3390,8 +3390,8 @@ packages:
     peerDependencies:
       axios: '*'
 
-  axios@1.19.0:
-    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -11725,11 +11725,11 @@ snapshots:
 
   axe-core@4.13.0: {}
 
-  axios-rate-limit@1.9.0(axios@1.19.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)):
+  axios-rate-limit@1.9.0(axios@1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)):
     dependencies:
-      axios: 1.19.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
+      axios: 1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
 
-  axios@1.19.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0):
+  axios@1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@5.5.0))
       form-data: 4.0.6
