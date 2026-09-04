@@ -113,6 +113,12 @@
   "cache.flushed": {
     "defaultMessage": "{cacheName} cache flushed."
   },
+  "cache.lastUpdated": {
+    "defaultMessage": "Updated {time}"
+  },
+  "cache.refresh": {
+    "defaultMessage": "Refresh"
+  },
   "cache.table.cacheName": {
     "defaultMessage": "Cache Name"
   },

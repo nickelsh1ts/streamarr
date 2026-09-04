@@ -248,6 +248,33 @@ Counts refresh automatically once Plex is reachable. To force an immediate refre
 3. Clear image cache if it's very large
 4. Check network connectivity to external services
 
+### Streamarr is slow or freezes briefly
+
+If the app briefly freezes or becomes unresponsive — often noticeable when
+opening **System Settings** (Disk Space) or **Jobs & Cache**, and
+occasionally paired with a log entry like `Falling back to recursive path
+size calculation` — this is usually disk I/O contention:
+
+- Streamarr's SQLite database is synchronous and lives in `config/db/`,
+  alongside `config/cache`. When something scans a large `cache` directory
+  (many cached images) on a slow or network-mounted disk (NAS, SMB/NFS
+  share, or Docker Desktop's file-sharing layer on macOS/Windows), that scan
+  can compete with the database for disk access and briefly stall other
+  requests.
+- This is more likely to show up over long uptimes, as the image cache
+  grows, or on hosts with slow/high-latency storage.
+
+To reduce this:
+
+1. Update to the latest version — recent releases cache disk-space and
+   image-cache stats server-side and cap how long a filesystem scan can run.
+2. If `config` is on a NAS/network share, moving it to local/faster storage
+   will help the most.
+3. Try raising `UV_THREADPOOL_SIZE` (e.g. to `8`) — see
+   [Environment Variables](../getting-started/installation.md#environment-variables).
+4. Periodically clear the image cache from **Settings → Jobs & Cache** if it
+   has grown very large.
+
 ### High memory usage
 
 1. Disable image caching if not needed

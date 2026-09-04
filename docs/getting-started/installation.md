@@ -106,14 +106,15 @@ docker compose up -d
 
 ## Environment Variables
 
-| Variable           | Default            | Description                                                                   |
-| ------------------ | ------------------ | ----------------------------------------------------------------------------- |
-| `CONFIG_DIRECTORY` | `/app/config`      | Override the configuration directory path                                     |
-| `NODE_ENV`         | `production`       | Set to `development` for development mode                                     |
-| `LOG_LEVEL`        | `debug`            | Winston log level (`error`, `warn`, `info`, `debug`)                          |
-| `TZ`               | `UTC`              | Timezone for the container                                                    |
-| `PORT`             | `3000`             | Port the web interface and API listen on                                      |
-| `HOST`             | _(all interfaces)_ | Network interface/address to bind to. Leave unset to listen on all interfaces |
+| Variable             | Default            | Description                                                                                                                                                                                                                                                         |
+| -------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CONFIG_DIRECTORY`   | `/app/config`      | Override the configuration directory path                                                                                                                                                                                                                           |
+| `NODE_ENV`           | `production`       | Set to `development` for development mode                                                                                                                                                                                                                           |
+| `LOG_LEVEL`          | `debug`            | Winston log level (`error`, `warn`, `info`, `debug`)                                                                                                                                                                                                                |
+| `TZ`                 | `UTC`              | Timezone for the container                                                                                                                                                                                                                                          |
+| `PORT`               | `3000`             | Port the web interface and API listen on                                                                                                                                                                                                                            |
+| `HOST`               | _(all interfaces)_ | Network interface/address to bind to. Leave unset to listen on all interfaces                                                                                                                                                                                       |
+| `UV_THREADPOOL_SIZE` | `4` (Node default) | Size of Node's libuv threadpool, used for filesystem and other async I/O. Consider raising this (e.g. `8`) if `config` lives on slow or network-mounted storage — see [Streamarr is slow / freezes briefly](../support/faq.md#streamarr-is-slow-or-freezes-briefly) |
 
 {% hint style="info" %}
 If you change `PORT`, update your container port mapping (e.g. `-p 8080:8080`) and the `Application URL` in **Settings → General** accordingly.
