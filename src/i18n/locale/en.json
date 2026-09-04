@@ -113,6 +113,12 @@
   "cache.flushed": {
     "defaultMessage": "{cacheName} cache flushed."
   },
+  "cache.lastUpdated": {
+    "defaultMessage": "Updated {time}"
+  },
+  "cache.refresh": {
+    "defaultMessage": "Refresh"
+  },
   "cache.table.cacheName": {
     "defaultMessage": "Cache Name"
   },
@@ -268,6 +274,9 @@
   },
   "common.at": {
     "defaultMessage": "at"
+  },
+  "common.audiobooks": {
+    "defaultMessage": "Audiobooks"
   },
   "common.available": {
     "defaultMessage": "Available"
@@ -479,6 +488,12 @@
   "common.lifetime": {
     "defaultMessage": "Life time"
   },
+  "common.linkAccount": {
+    "defaultMessage": "Link Account"
+  },
+  "common.linking": {
+    "defaultMessage": "Linking…"
+  },
   "common.loading": {
     "defaultMessage": "Loading"
   },
@@ -662,6 +677,9 @@
   "common.reset": {
     "defaultMessage": "Reset"
   },
+  "common.resetPassword": {
+    "defaultMessage": "Reset Password"
+  },
   "common.resetToDefault": {
     "defaultMessage": "Reset to Default"
   },
@@ -793,6 +811,9 @@
   },
   "common.tryAdjustingFilters": {
     "defaultMessage": "Try adjusting your filters or add a new torrent."
+  },
+  "common.tryAgain": {
+    "defaultMessage": "Try Again"
   },
   "common.tvShows": {
     "defaultMessage": "TV Shows"
@@ -3752,6 +3773,45 @@
   "librarySelector.noChange": {
     "defaultMessage": "No change"
   },
+  "linkedAccounts.audiobookshelfCurrentRequired": {
+    "defaultMessage": "You must provide the current password"
+  },
+  "linkedAccounts.audiobookshelfExistingAccountBlocked": {
+    "defaultMessage": "An existing Audiobookshelf account matches your profile. Ask an administrator to link it for you."
+  },
+  "linkedAccounts.audiobookshelfLinkFailed": {
+    "defaultMessage": "An error occurred while linking your Audiobookshelf account"
+  },
+  "linkedAccounts.audiobookshelfLinkSuccess": {
+    "defaultMessage": "Audiobookshelf account linked successfully."
+  },
+  "linkedAccounts.audiobookshelfModalSubtitleManager": {
+    "defaultMessage": "If an account with the same username/email exists on the Audiobookshelf server, it will be linked to this user. Otherwise, provide a password to create a new account."
+  },
+  "linkedAccounts.audiobookshelfModalTitle": {
+    "defaultMessage": "Link Audiobookshelf Account"
+  },
+  "linkedAccounts.audiobookshelfNotify": {
+    "defaultMessage": "Request Password Reset"
+  },
+  "linkedAccounts.audiobookshelfNotifyFailed": {
+    "defaultMessage": "Failed to send notifications."
+  },
+  "linkedAccounts.audiobookshelfNotifySent": {
+    "defaultMessage": "Password Reset Requested"
+  },
+  "linkedAccounts.audiobookshelfResetButton": {
+    "defaultMessage": "Reset Password"
+  },
+  "linkedAccounts.audiobookshelfResetModalTitle": {
+    "defaultMessage": "Reset Audiobookshelf Password"
+  },
+  "linkedAccounts.audiobookshelfResetSuccess": {
+    "defaultMessage": "Audiobookshelf password reset successfully."
+  },
+  "linkedAccounts.audiobookshelfUnlinkFailed": {
+    "defaultMessage": "Failed to unlink Audiobookshelf account"
+  },
   "linkedAccounts.deleteFailed": {
     "defaultMessage": "Failed to delete linked account"
   },
@@ -3775,6 +3835,18 @@
   },
   "linkedAccounts.userNoLinkedAccounts": {
     "defaultMessage": "This user does not have any external accounts linked to their account."
+  },
+  "listen.audiobookshelfNotLinkedTitle": {
+    "defaultMessage": "Audiobookshelf Account Required"
+  },
+  "listen.audiobookshelfPasswordFailed": {
+    "defaultMessage": "Please reset your Audiobookshelf password and try again."
+  },
+  "listen.audiobookshelfSigninFailed": {
+    "defaultMessage": "Failed to sign in to Audiobookshelf."
+  },
+  "listen.linkAccount": {
+    "defaultMessage": "Link Audiobookshelf Account"
   },
   "localSignup.confirmPasswordRequired": {
     "defaultMessage": "Please confirm your password"
@@ -4201,6 +4273,12 @@
   },
   "notification.accessExtensionRequested.description": {
     "defaultMessage": "Get notified when a user requests an access extension"
+  },
+  "notification.audiobookshelfPasswordFailed": {
+    "defaultMessage": "Audiobookshelf Password Reset Requested"
+  },
+  "notification.audiobookshelfPasswordFailed.description": {
+    "defaultMessage": "Get notified when a user asks for their Audiobookshelf password to be reset"
   },
   "notification.deleteThis": {
     "defaultMessage": "Delete this notification"
@@ -4894,6 +4972,24 @@
   },
   "serviceUnavailable.unreachableMessage": {
     "defaultMessage": "Unable to connect to {serviceName}. Service is unreachable."
+  },
+  "servicesSettings.audiobookshelf.alertDescription": {
+    "defaultMessage": "Audiobookshelf must be started with its ROUTER_BASE_PATH environment variable set to the same value as the URL Base below (e.g. /audiobookshelf). Without it, Audiobookshelf serves its assets from the root and they will fail to load inside Streamarr. Restart Audiobookshelf after changing ROUTER_BASE_PATH."
+  },
+  "servicesSettings.audiobookshelf.alertTitle": {
+    "defaultMessage": "Set a matching base path in Audiobookshelf"
+  },
+  "servicesSettings.audiobookshelf.description": {
+    "defaultMessage": "Optionally configure the settings for your Audiobookshelf server."
+  },
+  "servicesSettings.audiobookshelf.enableNewUserSignIn": {
+    "defaultMessage": "Enable New User Signin"
+  },
+  "servicesSettings.audiobookshelf.enableNewUserSignIn.description": {
+    "defaultMessage": "Allow users to create an Audiobookshelf account."
+  },
+  "servicesSettings.audiobookshelf.title": {
+    "defaultMessage": "Audiobookshelf Settings"
   },
   "servicesSettings.authDisableFailed": {
     "defaultMessage": "Failed to disable authentication on {service}"
@@ -5836,6 +5932,9 @@
   },
   "userPermissions.advancedInvites.name": {
     "defaultMessage": "Advanced Invite"
+  },
+  "userPermissions.audiobooks.description": {
+    "defaultMessage": "Grant permission to listen to audiobooks."
   },
   "userPermissions.createEvents.description": {
     "defaultMessage": "Grant permission to create custom events."

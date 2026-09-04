@@ -23,6 +23,7 @@ interface DynamicFrameProps {
   settingsPath?: string;
   isConfigured?: boolean;
   injectTheme?: boolean;
+  initialAuthPath?: string;
 }
 
 const DynamicFrame = ({
@@ -35,6 +36,7 @@ const DynamicFrame = ({
   settingsPath,
   isConfigured = true,
   injectTheme = false,
+  initialAuthPath,
   ...props
 }: DynamicFrameProps) => {
   const pathname = usePathname();
@@ -85,9 +87,18 @@ const DynamicFrame = ({
   // Include initialHash for hash-based routing (e.g., Tdarr uses /#/libraries)
   const iframeSrc = useMemo(() => {
     if (!domainURL || !basePath) return '';
-    return `${domainURL}${basePath}${subPath}${initialHash}`;
+    if (!initialAuthPath) {
+      return `${domainURL}${basePath}${subPath}${initialHash}`;
+    }
+    const target = `${subPath}${initialHash}`;
+    // Audiobookshelf's login page reads `redirect` and replaces the route
+    // to it after a successful sign-in, preserving deep links across auth.
+    const redirect = target
+      ? `${initialAuthPath.includes('?') ? '&' : '?'}redirect=${encodeURIComponent(target)}`
+      : '';
+    return `${domainURL}${initialAuthPath}${redirect}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domainURL, basePath]); // Intentionally exclude subPath/initialHash to only compute initial src
+  }, [domainURL, basePath, initialAuthPath]);
 
   // Handle iframe load event
   const handleIframeLoad = useCallback(() => {
@@ -158,7 +169,7 @@ const DynamicFrame = ({
       '--color-text-accent': theme.secondary,
       '--main-bg-color': theme['base-300'],
       '--modal-bg-color': theme['base-100'],
-      '--drop-down-menu-bg': theme.neutral,
+      '--drop-down-menu-bg': theme['base-100'],
       '--text': theme['base-content'],
       '--text-hover': theme['base-content'],
       '--color-text-on-accent': theme['base-content'],

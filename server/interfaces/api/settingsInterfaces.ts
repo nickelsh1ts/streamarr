@@ -78,6 +78,7 @@ export interface PublicSettingsResponse {
     quotaExpiryTime?: string;
   };
   seerrEnabled: boolean;
+  audiobookshelfEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;
@@ -106,6 +107,7 @@ export interface CacheResponse {
     avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
+  cachedAt: number;
 }
 
 export interface StatusResponse {

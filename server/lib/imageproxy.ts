@@ -1,5 +1,6 @@
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import { getPathUsedBytes } from '@server/utils/pathSize';
 import axios from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';
@@ -140,30 +141,19 @@ class ImageProxy {
   ): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
-    const imageTotalSize = await ImageProxy.getDirectorySize(cacheDirectory);
-    const imageCount = await ImageProxy.getImageCount(cacheDirectory);
+    const [imageTotalSize, imageCount] = await Promise.all([
+      getPathUsedBytes(cacheDirectory).catch((e) => {
+        logger.warn('Failed to calculate image cache size', {
+          label: 'Image Cache',
+          cacheDirectory,
+          errorMessage: e instanceof Error ? e.message : 'Unknown error',
+        });
+        return 0;
+      }),
+      ImageProxy.getImageCount(cacheDirectory),
+    ]);
 
     return { size: imageTotalSize, imageCount };
-  }
-
-  private static async getDirectorySize(dir: string): Promise<number> {
-    try {
-      const files = await promises.readdir(dir, { withFileTypes: true });
-      const paths = files.map(async (file) => {
-        const path = join(dir, file.name);
-        if (file.isDirectory()) return await ImageProxy.getDirectorySize(path);
-        if (file.isFile()) {
-          const { size } = await promises.stat(path);
-          return size;
-        }
-        return 0;
-      });
-      return (await Promise.all(paths))
-        .flat(Infinity)
-        .reduce((i, size) => i + size, 0);
-    } catch {
-      return 0;
-    }
   }
 
   private static async getImageCount(dir: string) {

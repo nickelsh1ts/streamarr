@@ -30,7 +30,7 @@ When the status shows **Restart Required**, a restart button is available direct
 
 ### Service Health
 
-Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Cleanuparr, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
+Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Cleanuparr, Audiobookshelf, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
 
 Each card shows a status badge and, where the service exposes it, the running **version**:
 
@@ -42,7 +42,7 @@ Each card shows a status badge and, where the service exposes it, the running **
 | **Unknown**   | Status has not yet been determined                                              |
 
 - **Plex** reflects Streamarr's existing connection-health state, including its retry cooldown. The other services are actively probed when the page loads.
-- **Version** is shown for services that report one (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Tautulli, Seerr, and download clients). **Cleanuparr** does not expose a version, so its card shows how many services it is monitoring instead.
+- **Version** is shown for services that report one (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Bazarr, Tdarr, Audiobookshelf, Tautulli, Seerr, and download clients). **Cleanuparr** does not expose a version, so its card shows how many services it is monitoring instead.
 - Each card has a **Retry** button that re-checks that service immediately.
 
 ### Multi-instance Services

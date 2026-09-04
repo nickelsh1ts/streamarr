@@ -4,6 +4,7 @@ import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import type { UserSummary } from '@server/interfaces/api/userInterfaces';
+import { revokeAudiobookshelfSession } from '@server/lib/audiobookshelf';
 import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
@@ -421,6 +422,8 @@ authRoutes.post('/local', async (req, res, next) => {
 });
 
 authRoutes.post('/logout', (req, res, next) => {
+  const audiobookshelfRefreshToken = req.cookies?.refresh_token;
+
   req.session?.destroy((err) => {
     if (err) {
       return next({
@@ -434,6 +437,22 @@ authRoutes.post('/logout', (req, res, next) => {
       sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
       secure: req.secure,
     });
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: req.secure,
+      path: '/',
+    });
+
+    if (audiobookshelfRefreshToken) {
+      revokeAudiobookshelfSession(audiobookshelfRefreshToken).catch((e) => {
+        logger.debug('Failed to revoke Audiobookshelf session on logout', {
+          label: 'Audiobookshelf',
+          message: e instanceof Error ? e.message : String(e),
+        });
+      });
+    }
+
     res.status(200).json({ status: 'ok' });
   });
 });

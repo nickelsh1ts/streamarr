@@ -132,6 +132,7 @@ export const handlePlexAccessLost = async (user: User): Promise<void> => {
           actionUrl: `/admin/users/${user.id}/settings`,
           actionUrlTitle: 'View User Settings',
           severity: NotificationSeverity.WARNING,
+          createdBy: user,
         })
       );
     } catch (e) {

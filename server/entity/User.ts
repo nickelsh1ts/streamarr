@@ -47,6 +47,7 @@ export class User {
     'email',
     'plexId',
     'plexToken',
+    'audiobookshelfPassword',
     'plexJwt',
     'plexJwtDevice',
   ];
@@ -89,6 +90,18 @@ export class User {
 
   @Column({ type: 'text', nullable: true, select: false })
   public plexToken?: string;
+
+  @Column({ type: 'text', nullable: true })
+  public audiobookshelfId?: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  public audiobookshelfUsername?: string | null;
+
+  @Column({ type: 'text', nullable: true, select: false })
+  public audiobookshelfPassword?: string | null;
+
+  @Column({ type: 'datetime', nullable: true })
+  public audiobookshelfPwNotifiedAt?: Date | null;
 
   @Column({ type: 'text', nullable: true, select: false })
   public plexJwt?: string | null;

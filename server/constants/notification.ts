@@ -10,6 +10,7 @@ export enum NotificationType {
   NEW_INVITE = 16384,
   ACCESS_EXTENSION_REQUESTED = 32768,
   PLEX_ACCESS_LOST = 65536,
+  AUDIOBOOKSHELF_PW_RESET = 131072,
 }
 
 export enum NotificationSeverity {

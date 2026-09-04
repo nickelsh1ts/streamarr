@@ -1,0 +1,137 @@
+@charset "utf-8";
+/* CSS Document */
+@import url(https://theme-park.dev/css/base/audiobookshelf/audiobookshelf-base.css);
+.react-chroma-dark {
+  --color-background-accent: inherit;
+  --color-brand-accent: inherit;
+  --main-bg-color: inherit;
+  --modal-bg-color: inherit;
+  --link-color: inherit;
+  --button-color: inherit;
+  --button-color-hover: inherit;
+  --accent-color: inherit;
+  --plex-poster-unwatched: inherit;
+  --text: inherit;
+  --text-hover: inherit;
+  --drop-down-menu-bg: inherit;
+  --color-background-accent-focus: inherit;
+  --bs-primary: inherit;
+  --color-text-accent: inherit;
+  --color-text-on-accent: inherit;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: inherit;
+  --label-text-color: inherit;
+  --tw-ring-color: inherit;
+  --drop-down-menu-bg: var(--color-base-100);
+  --button-text: var(--color-base-content);
+  --color-bg: var(--color-base-300);
+  --color-accent: var(--color-primary) !important;
+  --blur-sm: 8px;
+}
+:root {
+  --color-background-accent: var(--color-primary);
+  --color-brand-accent: var(--color-primary);
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: var(--color-primary);
+  --button-color-hover: var(--color-primary);
+  --accent-color: 127, 17, 224;
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: var(--color-primary);
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: var(--color-primary);
+  --color-background-accent-focus: var(--color-primary) ;
+  --bs-primary: var(--color-primary) ;
+  --color-text-accent: var(--color-primary);
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: rgba(127, 17, 224, .15);
+  --label-text-color: #fff;
+  --tw-ring-color: var(--color-primary)!important;
+  --drop-down-menu-bg: var(--color-base-100);
+  --button-text: var(--color-base-content);
+  --color-bg: var(--color-base-300);
+  --color-accent: var(--color-primary) !important;
+  --blur-sm: 8px;
+}
+/* Desktop Only */
+@media (min-width: 1024px) {
+
+}
+/* Except Desktop */
+@media (max-width: 1023px) {
+
+}
+/*Mobile Only*/
+@media (max-width: 639px) {
+
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 14px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsla(0, 0%, 100%, 0.2);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-thumb:active {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+body .bg-bg, button.bg-bg {
+    background: var(--color-base-300) !important;
+    background-color: var(--color-base-300) !important;
+}
+[id*=book-card] .material-symbols {
+  background: transparent !important;
+}
+#appbar form[role=search] [class*=text-] {
+  color: var(--color-base-content) !important;
+}
+#appbar form[role=search] [class*=text-] {
+  background: var(--color-base-300) !important;
+}
+.bg-gray-500, .bg-gray-200 {
+  background: var(--color-primary) !important;
+}
+.bg-gray-700 {
+  background: var(--color-base-100) !important;
+}
+.abs-icons, .material-symbols {
+  color: var(--color-primary-content) !important;
+}
+.bg-white {
+  background: var(--color-base-200) !important;
+}
+.modal.modal-bg {
+    background: var(--color-base-100) !important;
+    background-color: color-mix(in oklab, var(--color-base-100) 80%, transparent) !important;
+    --tw-backdrop-blur: blur(var(--blur-sm) /* 8px */);
+    -webkit-backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+    backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+}

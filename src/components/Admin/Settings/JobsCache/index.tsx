@@ -11,6 +11,7 @@ import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { formatBytes } from '@app/utils/numberHelper';
 import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
+  ArrowPathIcon,
   CheckBadgeIcon,
   StopIcon,
   XCircleIcon,
@@ -102,8 +103,9 @@ const JobsCacheSettings = () => {
     mutate: cacheRevalidate,
     isLoading,
   } = useSWR<CacheResponse>('/api/v1/settings/cache', {
-    refreshInterval: 10000,
+    refreshInterval: 60000,
   });
+  const [isRefreshingCache, setIsRefreshingCache] = useState(false);
 
   const [jobModalState, dispatch] = useReducer(jobModalReducer, {
     isOpen: false,
@@ -177,6 +179,18 @@ const JobsCacheSettings = () => {
       icon: <CheckBadgeIcon className="size-7" />,
     });
     cacheRevalidate();
+  };
+
+  const refreshCache = async () => {
+    setIsRefreshingCache(true);
+    try {
+      const { data: freshCacheData } = await axios.get<CacheResponse>(
+        '/api/v1/settings/cache?force=true'
+      );
+      cacheRevalidate(freshCacheData, { revalidate: false });
+    } finally {
+      setIsRefreshingCache(false);
+    }
   };
 
   const scheduleJob = async () => {
@@ -553,12 +567,39 @@ const JobsCacheSettings = () => {
         </Table>
       </div>
       <div>
-        <h3 className="text-2xl font-extrabold">
-          <FormattedMessage
-            id="imageCache.title"
-            defaultMessage="Image Cache"
-          />
-        </h3>
+        <div className="flex flex-wrap items-center justify-between gap-x-2">
+          <h3 className="text-2xl font-extrabold">
+            <FormattedMessage
+              id="imageCache.title"
+              defaultMessage="Image Cache"
+            />
+          </h3>
+          <div className="flex items-center gap-3">
+            {cacheData?.cachedAt && (
+              <span className="text-neutral text-xs">
+                <FormattedMessage
+                  id="cache.lastUpdated"
+                  defaultMessage="Updated {time}"
+                  values={{ time: moment(cacheData.cachedAt).from(now) }}
+                />
+              </span>
+            )}
+            <Button
+              type="button"
+              buttonSize="xs"
+              buttonType="ghost"
+              disabled={isRefreshingCache}
+              onClick={() => refreshCache()}
+            >
+              <ArrowPathIcon
+                className={`size-5 ${isRefreshingCache ? 'animate-spin' : ''}`}
+              />
+              <span className="sr-only">
+                <FormattedMessage id="cache.refresh" defaultMessage="Refresh" />
+              </span>
+            </Button>
+          </div>
+        </div>
         <p className="mb-5 w-full overflow-hidden">
           <FormattedMessage
             id="imageCache.description"

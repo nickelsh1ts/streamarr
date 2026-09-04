@@ -60,6 +60,8 @@ class RefreshToken {
       .orWhere('user.plexJwtDevice IS NOT NULL')
       .getMany();
 
+    let userPingFailed: { userId: number; errorMessage: string }[] = [];
+
     for (const user of users) {
       if (!this.isRunning) {
         logger.info('Plex refresh token job cancelled.', {
@@ -67,23 +69,33 @@ class RefreshToken {
         });
         return;
       }
-      this.refreshUserLegacyToken(user);
+      await this.refreshUserLegacyToken(user).catch((e) => {
+        userPingFailed.push({
+          userId: user.id,
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+      });
       await this.refreshUserJwt(user);
+    }
+
+    if (userPingFailed.length > 0) {
+      logger.error('Failed to ping tokens', {
+        label: 'Plex Refresh Token',
+        failureCount: userPingFailed.length,
+        failures: userPingFailed,
+      });
     }
 
     this.isRunning = false;
   }
 
-  private refreshUserLegacyToken(user: User) {
+  private async refreshUserLegacyToken(user: User) {
     if (!user.plexToken) {
       return;
     }
 
     const plexTvApi = new PlexTvAPI(user.plexToken);
-    plexTvApi.pingToken().catch(() => {
-      // Failures are already logged inside pingToken; keep-alive pings are
-      // best-effort and must not become unhandled rejections.
-    });
+    await plexTvApi.pingToken();
   }
 
   private async refreshUserJwt(user: User) {

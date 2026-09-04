@@ -937,11 +937,7 @@ class PlexTvAPI extends ExternalAPI {
         throw new Error('No pong response');
       }
     } catch (e) {
-      logger.error('Failed to ping token', {
-        label: 'Plex Refresh Token',
-        errorMessage: e.message,
-      });
-      throw e;
+      throw new Error(e instanceof Error ? e.message : String(e), { cause: e });
     }
   }
 }

@@ -65,6 +65,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
         actionUrl: '/admin/users',
         actionUrlTitle: 'View Users',
         severity: NotificationSeverity.PRIMARY,
+        createdBy: entity.redeemedInvite?.createdBy,
       })
     );
   }

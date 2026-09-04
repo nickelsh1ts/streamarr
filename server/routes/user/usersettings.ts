@@ -15,6 +15,14 @@ import type {
   UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
+import {
+  AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+  decryptSecret,
+  encryptSecret,
+  findAudiobookshelfAccount,
+  getAudiobookshelfAPI,
+  getAudiobookshelfUsernameCandidate,
+} from '@server/lib/audiobookshelf';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
@@ -23,6 +31,7 @@ import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
 import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
 import {
+  audiobookshelfLinkLimiter,
   plexAuthLimiter,
   trialExtensionRequestLimiter,
 } from '@server/lib/rateLimiters';
@@ -41,9 +50,360 @@ import {
   normalizeSharedLibrariesValue,
   resolveSharedLibraryKeys,
 } from '@server/utils/sharedLibraries';
+import type { Request, Response } from 'express';
 import { Router } from 'express';
 
 const userSettingsRoutes = Router({ mergeParams: true });
+
+/** Matches Audiobookshelf's own refresh token lifetime (30 days). */
+const AUDIOBOOKSHELF_REFRESH_TOKEN_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+
+/** Attempts an Audiobookshelf login, returning `null` on invalid credentials. */
+async function signInAudiobookshelf(
+  api: ReturnType<typeof getAudiobookshelfAPI>,
+  username: string,
+  password: string
+) {
+  try {
+    return await api.login(username, password);
+  } catch {
+    return null;
+  }
+}
+
+function respondWithAudiobookshelfSession(
+  req: Request,
+  res: Response,
+  tokens: { accessToken: string; refreshToken: string }
+) {
+  res.cookie('refresh_token', tokens.refreshToken, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: req.secure,
+    maxAge: AUDIOBOOKSHELF_REFRESH_TOKEN_MAX_AGE,
+    path: '/',
+  });
+  res.status(200).json({ accessToken: tokens.accessToken });
+}
+
+/**
+ * `interactive` distinguishes the two callers:
+ *  - `false`: the silent sign-in Listen performs on every visit. Only
+ *    renews the session for an already-linked account using its stored
+ *    password.
+ *  - `true`: the explicit "Link Audiobookshelf Account" action, which
+ *    requires a password the user just typed in.
+ */
+const audiobookshelfLinkHandler =
+  (interactive: boolean) => async (req, res, next) => {
+    const settings = getSettings().audiobookshelf;
+    if (
+      !settings.enabled ||
+      !settings.hostname ||
+      !settings.port ||
+      !settings.apiKey
+    ) {
+      return next({
+        status: 503,
+        message: 'Audiobookshelf is not configured.',
+      });
+    }
+
+    const userRepository = getRepository(User);
+    const user = await userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.audiobookshelfPassword')
+      .where('user.id = :id', { id: Number(req.params.id) })
+      .getOne();
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    const adminApi = getAudiobookshelfAPI(settings);
+
+    try {
+      if (!interactive) {
+        if (!user.audiobookshelfId || !user.audiobookshelfUsername) {
+          return next({
+            status: 409,
+            message: 'No Audiobookshelf account linked yet.',
+          });
+        }
+
+        const storedPassword = user.audiobookshelfPassword
+          ? decryptSecret(user.audiobookshelfPassword)
+          : null;
+        const tokens =
+          storedPassword &&
+          (await signInAudiobookshelf(
+            adminApi,
+            user.audiobookshelfUsername,
+            storedPassword
+          ));
+        if (!tokens) {
+          return next({
+            status: 422,
+            message: 'Your session has expired. Please reset your password.',
+          });
+        }
+
+        return respondWithAudiobookshelfSession(req, res, tokens);
+      }
+
+      const { currentPassword, newPassword } = req.body as {
+        currentPassword?: string;
+        newPassword?: string;
+      };
+
+      const isManager = !!req.user?.hasPermission(Permission.MANAGE_USERS);
+      let targetId = user.audiobookshelfId;
+      let targetUsername = user.audiobookshelfUsername;
+      let tokens: { accessToken: string; refreshToken: string } | null = null;
+
+      if (targetId && targetUsername) {
+        if (!newPassword) {
+          return next({
+            status: 400,
+            message:
+              'A new password is required to reset your Audiobookshelf account.',
+          });
+        }
+        if (!isManager) {
+          if (!currentPassword) {
+            return next({
+              status: 400,
+              message: 'Your current password is required.',
+            });
+          }
+          const verified = await signInAudiobookshelf(
+            adminApi,
+            targetUsername,
+            currentPassword
+          );
+          if (!verified) {
+            return next({
+              status: 409,
+              message: 'Incorrect current password.',
+            });
+          }
+        }
+        await adminApi.updateUser(targetId, { password: newPassword });
+        tokens = await signInAudiobookshelf(
+          adminApi,
+          targetUsername,
+          newPassword
+        );
+        if (!tokens) {
+          return next({
+            status: 422,
+            message: `Failed to reset the Audiobookshelf account ${targetUsername}.`,
+          });
+        }
+      } else {
+        const candidate = await findAudiobookshelfAccount(user, adminApi);
+
+        if (candidate) {
+          if (isManager) {
+            targetId = candidate.id;
+            targetUsername = candidate.username;
+            if (newPassword) {
+              await adminApi.updateUser(targetId, { password: newPassword });
+              tokens = await signInAudiobookshelf(
+                adminApi,
+                targetUsername,
+                newPassword
+              );
+              if (!tokens) {
+                return next({
+                  status: 422,
+                  message: `Failed to reset the Audiobookshelf account ${targetUsername}.`,
+                });
+              }
+            }
+          } else {
+            if (!newPassword) {
+              return next({
+                status: 400,
+                message:
+                  'A password is required to link your Audiobookshelf account.',
+              });
+            }
+            tokens = await signInAudiobookshelf(
+              adminApi,
+              candidate.username,
+              newPassword
+            );
+            if (!tokens) {
+              return next({
+                status: 409,
+                message: `Incorrect password for the Audiobookshelf account ${candidate.username}. Please try again or ask an administrator to reset it for you.`,
+              });
+            }
+            targetId = candidate.id;
+            targetUsername = candidate.username;
+          }
+        } else {
+          if (!isManager && !settings.enableNewUserSignIn) {
+            return next({
+              status: 403,
+              message:
+                'Creating new Audiobookshelf accounts is disabled. Ask an administrator to link one for you.',
+            });
+          }
+          if (!newPassword) {
+            return next({
+              status: 400,
+              message: isManager
+                ? 'No existing Audiobookshelf account was found. Provide a password to create one.'
+                : 'A password is required to create your Audiobookshelf account.',
+            });
+          }
+
+          const username = await adminApi.getAvailableUsername(
+            getAudiobookshelfUsernameCandidate(user)
+          );
+          const created = await adminApi.createUser({
+            username,
+            password: newPassword,
+            email: user.email,
+            type: 'user',
+            isActive: true,
+            permissions: AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+          });
+          targetId = created.id;
+          targetUsername = created.username;
+          tokens = await signInAudiobookshelf(
+            adminApi,
+            targetUsername,
+            newPassword
+          );
+          if (!tokens) {
+            return next({
+              status: 422,
+              message:
+                'Failed to sign in to the newly created Audiobookshelf account.',
+            });
+          }
+        }
+      }
+
+      const wasLinked = !!user.audiobookshelfId;
+      user.audiobookshelfId = targetId;
+      user.audiobookshelfUsername = targetUsername;
+      user.audiobookshelfPassword =
+        tokens && newPassword ? encryptSecret(newPassword) : null;
+      user.audiobookshelfPwNotifiedAt = null;
+      await userRepository.save(user);
+
+      if (!wasLinked) {
+        logger.info('Linked Audiobookshelf account', {
+          label: 'Audiobookshelf',
+          userId: user.id,
+          audiobookshelfUserId: user.audiobookshelfId,
+        });
+      }
+
+      if (!tokens) {
+        return res.status(200).json({ accessToken: null });
+      }
+      return respondWithAudiobookshelfSession(req, res, tokens);
+    } catch (e) {
+      logger.error('Failed to link Audiobookshelf account', {
+        label: 'Audiobookshelf',
+        message: e instanceof Error ? e.message : String(e),
+        userId: user.id,
+      });
+      next({ status: 502, message: 'Failed to connect to Audiobookshelf.' });
+    }
+  };
+
+userSettingsRoutes.post<{ id: string }, { accessToken: string | null }>(
+  '/linked-accounts/audiobookshelf/session',
+  isOwnProfileOrAdmin(),
+  audiobookshelfLinkHandler(false)
+);
+
+userSettingsRoutes.post<
+  { id: string },
+  { accessToken: string | null },
+  { currentPassword?: string; newPassword?: string }
+>(
+  '/linked-accounts/audiobookshelf',
+  audiobookshelfLinkLimiter,
+  isOwnProfileOrAdmin(),
+  audiobookshelfLinkHandler(true)
+);
+
+userSettingsRoutes.post<{ id: string }>(
+  '/linked-accounts/audiobookshelf/notify',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (user.audiobookshelfPwNotifiedAt) {
+        return next({
+          status: 409,
+          message: 'Administrators have already been notified.',
+        });
+      }
+
+      user.audiobookshelfPwNotifiedAt = new Date();
+      await userRepository.save(user);
+
+      const managers = await userRepository
+        .createQueryBuilder('user')
+        .where(
+          '(user.permissions & :manageUsers) = :manageUsers OR (user.permissions & :admin) = :admin',
+          {
+            manageUsers: Permission.MANAGE_USERS,
+            admin: Permission.ADMIN,
+          }
+        )
+        .andWhere('user.active = :isActive', { isActive: true })
+        .getMany();
+
+      await sendGroupNotification(
+        NotificationType.AUDIOBOOKSHELF_PW_RESET,
+        managers,
+        (intl) => ({
+          subject: intl.formatMessage({
+            id: 'notifications.userSettings.audiobookshelfLinkRequested',
+            defaultMessage: 'Audiobookshelf Password Reset Requested',
+          }),
+          message: intl.formatMessage(
+            {
+              id: 'notifications.userSettings.audiobookshelfLinkRequestedMessage',
+              defaultMessage:
+                '{displayName} has requested a password reset for their Audiobookshelf account.',
+            },
+            { displayName: user.displayName }
+          ),
+          actionUrl: `/admin/users/${user.id}/settings/linked-accounts`,
+          actionUrlTitle: 'View User Settings',
+          severity: NotificationSeverity.WARNING,
+          createdBy: req.user,
+        })
+      );
+
+      res.status(204).send();
+    } catch (e) {
+      next({
+        status: 500,
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+);
 
 userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
   '/main',
@@ -67,6 +427,11 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         hostname: overseerrHostname,
         port: overseerrPort,
         enabled: overseerrEnabled,
+      },
+      audiobookshelf: {
+        enabled: audiobooksEnabled,
+        urlBase: audiobooksBaseUrl,
+        enableNewUserSignIn: audiobookshelfNewUserSignIn,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -113,6 +478,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         requestHostname: `${overseerrHostname}:${overseerrPort}`,
         requestEnabled: overseerrEnabled,
         releaseSched: releaseSched,
+        audiobooksEnabled: audiobooksEnabled,
+        audiobooksBaseUrl: audiobooksBaseUrl,
+        audiobookshelfNewUserSignIn: audiobookshelfNewUserSignIn,
       });
     } catch (e) {
       next({ status: 500, message: e.message });
@@ -219,6 +587,7 @@ userSettingsRoutes.post<{ id: string }>(
           actionUrl: `/admin/users/${user.id}/settings`,
           actionUrlTitle: 'Manage User',
           severity: NotificationSeverity.WARNING,
+          createdBy: req.user,
         })
       );
 
@@ -985,6 +1354,38 @@ userSettingsRoutes.delete<{ id: string }>(
       user.plexToken = null;
       await userRepository.save(user);
 
+      return res.status(204).send();
+    } catch (e) {
+      return next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string }>(
+  '/linked-accounts/audiobookshelf',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
+
+    try {
+      const user = await userRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      user.audiobookshelfId = null;
+      user.audiobookshelfUsername = null;
+      user.audiobookshelfPassword = null;
+      user.audiobookshelfPwNotifiedAt = null;
+      await userRepository.save(user);
+
+      logger.info('Unlinked Audiobookshelf account', {
+        label: 'Audiobookshelf',
+        userId: user.id,
+      });
       return res.status(204).send();
     } catch (e) {
       return next({ status: 500, message: e.message });

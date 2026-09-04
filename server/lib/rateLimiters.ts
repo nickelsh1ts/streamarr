@@ -38,6 +38,13 @@ export const resetPasswordLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const audiobookshelfLinkLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const avatarLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 120, // 2 req/sec per IP — covers page loads, blocks bulk enumeration
@@ -55,6 +62,13 @@ export const settingsAboutLimiter = rateLimit({
 export const settingsAboutDiskSpaceLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 30, // limit expensive disk space introspection per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const settingsCacheLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
 });

@@ -11,9 +11,11 @@ import type {
   ServiceHealthInstance,
   ServiceHealthStatus,
 } from '@server/interfaces/api/settingsInterfaces';
+import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import { resetClientHealth } from '@server/lib/healthCheck';
 import { getPlexHealth, refreshPlexVersion } from '@server/lib/plexHealthCheck';
 import type {
+  AudiobookshelfSettings,
   DownloadClientSettings,
   DVRSettings,
   ServiceSettings,
@@ -99,7 +101,7 @@ interface CleanuparrStats {
 async function checkCleanuparr(service: ServiceSettings): Promise<CheckResult> {
   const intl = getIntl(getSettings().main.locale ?? 'en');
   try {
-    const url = buildUrl(service, 'api/stats', 11011);
+    const url = buildUrl(service, 'api/v2/stats', 11011);
     url.searchParams.set('hours', '1');
 
     const response = await fetch(url, {
@@ -205,6 +207,20 @@ async function checkTautulli(): Promise<CheckResult> {
       timeout()
     );
     return { status: 'healthy', version: info.tautulli_version };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
+async function checkAudiobookshelf(
+  service: AudiobookshelfSettings
+): Promise<CheckResult> {
+  try {
+    const version = await withTimeout(
+      getAudiobookshelfAPI(service).getVersion(),
+      timeout()
+    );
+    return { status: 'healthy', version };
   } catch (e) {
     return { status: 'unhealthy', error: errorMessage(e) };
   }
@@ -355,6 +371,17 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
       return {
         id: 'cleanuparr',
         name: 'Cleanuparr',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.audiobookshelf)) return null;
+      const result = await checkAudiobookshelf(settings.audiobookshelf);
+      return {
+        id: 'audiobookshelf',
+        name: 'Audiobookshelf',
         retryable: true,
         ...result,
       };

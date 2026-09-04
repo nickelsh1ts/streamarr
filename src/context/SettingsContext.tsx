@@ -25,6 +25,7 @@ const defaultSettings: PublicSettingsResponse = {
   trialPeriodOutcome: 'promote',
   defaultInviteQuotas: {},
   seerrEnabled: false,
+  audiobookshelfEnabled: false,
   statusUrl: '',
   statusEnabled: false,
   customLogo: undefined,

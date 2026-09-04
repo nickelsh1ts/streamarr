@@ -1,4 +1,8 @@
 import { Permission } from '@server/lib/permissions';
+import {
+  createServiceProxy,
+  registerWebSocketHandler,
+} from '@server/lib/proxy';
 import { createArrProxy } from '@server/lib/proxy/arrProxy';
 import {
   createCleanuparrProxy,
@@ -56,8 +60,21 @@ export function getActiveProxyPaths(): string[] {
   }
 
   // Cleanuparr (base-URL aware, SignalR)
-  if (settings.cleanuparr.hostname && settings.cleanuparr.urlBase) {
+  if (
+    settings.cleanuparr.enabled &&
+    settings.cleanuparr.hostname &&
+    settings.cleanuparr.urlBase
+  ) {
     paths.push(settings.cleanuparr.urlBase);
+  }
+
+  // Audiobookshelf (base-URL aware)
+  if (
+    settings.audiobookshelf.enabled &&
+    settings.audiobookshelf.hostname &&
+    settings.audiobookshelf.urlBase
+  ) {
+    paths.push(settings.audiobookshelf.urlBase);
   }
 
   // Tdarr (hardcoded paths - no custom base URL support)
@@ -110,13 +127,20 @@ export function createServiceProxyRouter(
     path: string,
     proxy: RequestHandler,
     label: string,
-    requireAdmin = false
+    requireAdmin = false,
+    permissions?: Permission[]
   ): void => {
-    router.use(
-      path,
-      ...(requireAdmin ? adminMiddleware : authMiddleware),
-      proxy
-    );
+    const guard = permissions
+      ? [
+          sessionMiddleware,
+          checkUser,
+          isAuthenticated(permissions, { type: 'or' }),
+        ]
+      : requireAdmin
+        ? adminMiddleware
+        : authMiddleware;
+
+    router.use(path, ...guard, proxy);
     registeredRoutes.push({ name: label, path });
   };
 
@@ -200,6 +224,7 @@ export function createServiceProxyRouter(
 
   // Register Cleanuparr proxy (requires ADMIN, base-URL aware, SignalR WS)
   if (
+    settings.cleanuparr.enabled &&
     settings.cleanuparr.hostname &&
     settings.cleanuparr.urlBase &&
     settings.cleanuparr.apiKey
@@ -232,6 +257,40 @@ export function createServiceProxyRouter(
       sessionMiddleware,
       cleanuparrProxy,
       settings.cleanuparr.urlBase
+    );
+  }
+
+  // Register Audiobookshelf proxy (requires LISTEN or STREAMARR, base-URL aware)
+  if (
+    settings.audiobookshelf.enabled &&
+    settings.audiobookshelf.hostname &&
+    settings.audiobookshelf.urlBase &&
+    settings.audiobookshelf.apiKey
+  ) {
+    const audiobookshelfProxy = createServiceProxy({
+      name: 'Audiobookshelf',
+      getTarget: () => {
+        const { audiobookshelf } = getSettings();
+        const protocol = audiobookshelf.useSsl ? 'https' : 'http';
+        return `${protocol}://${audiobookshelf.hostname}:${audiobookshelf.port}`;
+      },
+      pathPrefix: settings.audiobookshelf.urlBase,
+      webSocket: false,
+      suppressErrors: () => false,
+    });
+
+    registerProxy(
+      settings.audiobookshelf.urlBase,
+      audiobookshelfProxy,
+      'Audiobookshelf',
+      false,
+      [Permission.LISTEN, Permission.STREAMARR]
+    );
+    registerWebSocketHandler(
+      dispatcher,
+      sessionMiddleware,
+      settings.audiobookshelf.urlBase,
+      audiobookshelfProxy
     );
   }
 

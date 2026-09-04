@@ -35,6 +35,7 @@ export type ServiceType =
   | 'bazarr'
   | 'prowlarr'
   | 'cleanuparr'
+  | 'audiobookshelf'
   | 'other';
 
 /**
@@ -112,6 +113,11 @@ export function validateBaseUrl(
     { settings: settings.bazarr, name: 'Bazarr', type: 'bazarr' },
     { settings: settings.prowlarr, name: 'Prowlarr', type: 'prowlarr' },
     { settings: settings.cleanuparr, name: 'Cleanuparr', type: 'cleanuparr' },
+    {
+      settings: settings.audiobookshelf,
+      name: 'Audiobookshelf',
+      type: 'audiobookshelf',
+    },
   ];
 
   for (const svc of singleServices) {

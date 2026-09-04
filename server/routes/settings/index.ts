@@ -9,6 +9,7 @@ import Invite from '@server/entity/Invite';
 import { User } from '@server/entity/User';
 import type { PlexConnection } from '@server/interfaces/api/plexInterfaces';
 import type {
+  CacheResponse,
   LogMessage,
   LogsResultsResponse,
   ServiceHealthResponse,
@@ -16,20 +17,20 @@ import type {
   SettingsAboutResponse,
 } from '@server/interfaces/api/settingsInterfaces';
 import { scheduledJobs } from '@server/job/schedule';
+import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
-import ImageProxy from '@server/lib/imageproxy';
 import { Permission } from '@server/lib/permissions';
 import {
   markPlexHealthy,
   resetPlexHealth,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
 import {
   arrAuthLimiter,
   settingsAboutDiskSpaceLimiter,
   settingsAboutLimiter,
+  settingsCacheLimiter,
 } from '@server/lib/rateLimiters';
 import restartManager from '@server/lib/restartManager';
 import { plexFullScanner } from '@server/lib/scanners/plex';
@@ -49,10 +50,11 @@ import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
+import { getCachedImageCacheOverview } from '@server/utils/cacheOverview';
 import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import fs, { promises as fsPromises } from 'fs';
+import fs from 'fs';
 import { escapeRegExp, merge, omit, set, sortBy } from 'lodash';
 import { rescheduleJob } from 'node-schedule';
 import path from 'path';
@@ -463,7 +465,7 @@ settingsRoutes.post('/cleanuparr/test', async (req, res, next) => {
       .filter(Boolean)
       .join('/');
     const url = new URL(
-      base ? `/${base}/api/stats` : '/api/stats',
+      base ? `/${base}/api/v2/stats` : '/api/v2/stats',
       `${protocol}://${hostname}:${portNumber}`
     );
     url.searchParams.set('hours', '1');
@@ -822,6 +824,68 @@ settingsRoutes.post('/tautulli', async (req, res, next) => {
   res.status(200).json(settings.tautulli);
 });
 
+settingsRoutes.get('/audiobookshelf', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.audiobookshelf);
+});
+
+settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'audiobookshelf',
+    'audiobookshelf'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.audiobookshelf, req.body);
+  settings.save();
+  res.status(200).json(settings.audiobookshelf);
+});
+
+settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase, apiKey } = req.body;
+
+    const portNumber = Number(port);
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      typeof apiKey !== 'string' ||
+      apiKey.trim().length === 0 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
+    ) {
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or API key',
+      });
+    }
+
+    await getAudiobookshelfAPI({
+      hostname,
+      port: portNumber,
+      useSsl: useSsl ?? false,
+      apiKey,
+    }).getAllLibraries();
+
+    res.status(200).json({ urlBase });
+  } catch (e) {
+    logger.error('Failed to test Audiobookshelf', {
+      label: 'Audiobookshelf',
+      message: e instanceof Error ? e.message : String(e),
+    });
+
+    next({ status: 500, message: 'Failed to connect to Audiobookshelf' });
+  }
+});
+
 settingsRoutes.get(
   '/plex/users',
   isAuthenticated(Permission.MANAGE_USERS),
@@ -1129,7 +1193,7 @@ settingsRoutes.post<{ jobId: JobId }>(
   }
 );
 
-settingsRoutes.get('/cache', async (_req, res) => {
+settingsRoutes.get('/cache', settingsCacheLimiter, async (req, res) => {
   const cacheManagerCaches = cacheManager.getAllCaches();
 
   const apiCaches = Object.values(cacheManagerCaches).map((cache) => ({
@@ -1138,37 +1202,16 @@ settingsRoutes.get('/cache', async (_req, res) => {
     stats: cache.getStats(),
   }));
 
-  const tmdbImageCache = await ImageProxy.getImageStats('tmdb');
-  const plexImageCache = await ImageProxy.getImageStats('plex');
-  const avatarImageCache = await ImageProxy.getImageStats('avatar');
-
-  // QR code cache stats
-  const qrProxy = new QRCodeProxy();
-  const qrCacheDir = qrProxy.getCacheDirectory();
-  let qrImageCount = 0;
-  let qrCacheSize = 0;
-  try {
-    const files = await fsPromises.readdir(qrCacheDir);
-    for (const file of files) {
-      if (file.endsWith('.png')) {
-        qrImageCount++;
-        const stat = await fsPromises.stat(path.join(qrCacheDir, file));
-        qrCacheSize += stat.size;
-      }
-    }
-  } catch {
-    // ignore errors, just show 0s
-  }
+  const force = req.query.force === 'true';
+  const { imageCache, cachedAt } = await getCachedImageCacheOverview({
+    force,
+  });
 
   res.status(200).json({
     apiCaches,
-    imageCache: {
-      tmdb: tmdbImageCache,
-      plex: plexImageCache,
-      avatar: avatarImageCache,
-      qrcode: { imageCount: qrImageCount, size: qrCacheSize },
-    },
-  });
+    imageCache,
+    cachedAt,
+  } as CacheResponse);
 });
 
 settingsRoutes.post<{ cacheId: AvailableCacheIds }>(
