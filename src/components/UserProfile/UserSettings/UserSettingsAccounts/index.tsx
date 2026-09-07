@@ -4,6 +4,7 @@ import PlexLogo from '@app/assets/services/plex.svg';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
+import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import PlexOAuth from '@app/utils/plex';
 import { TrashIcon } from '@heroicons/react/24/solid';
@@ -37,6 +38,7 @@ const UserSettingsAccounts = () => {
   const { data: passwordInfo } = useSWR<{ hasPassword: boolean }>(
     user ? `/api/v1/user/${user?.id}/settings/password` : null
   );
+  const { currentSettings } = useSettings();
   const [error, setError] = useState<string | null>(null);
   const [showAudiobookshelfModal, setShowAudiobookshelfModal] = useState(false);
 
@@ -92,7 +94,9 @@ const UserSettingsAccounts = () => {
     {
       name: 'Audiobookshelf',
       action: () => setShowAudiobookshelfModal(true),
-      hide: accounts.some((a) => a.type === LinkedAccountType.Audiobookshelf),
+      hide:
+        accounts.some((a) => a.type === LinkedAccountType.Audiobookshelf) ||
+        !currentSettings?.audiobookshelfEnabled,
     },
   ].filter((l) => !l.hide);
 
