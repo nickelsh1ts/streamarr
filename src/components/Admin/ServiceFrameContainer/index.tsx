@@ -72,6 +72,8 @@ const ServiceFrameContainer = ({
     if (isTvRoute) return '/admin/settings/services/sonarr';
     if (pathname?.startsWith('/admin/music'))
       return '/admin/settings/services/lidarr';
+    if (pathname?.startsWith('/admin/books'))
+      return '/admin/settings/services/chaptarr';
     if (pathname?.startsWith('/admin/indexers'))
       return '/admin/settings/services/prowlarr';
     if (pathname?.startsWith('/admin/srt'))
@@ -87,6 +89,7 @@ const ServiceFrameContainer = ({
     if (isMoviesRoute) return 'Radarr';
     if (isTvRoute) return 'Sonarr';
     if (pathname?.startsWith('/admin/music')) return 'Lidarr';
+    if (pathname?.startsWith('/admin/books')) return 'Chaptarr';
     if (pathname?.startsWith('/admin/indexers')) return 'Prowlarr';
     if (pathname?.startsWith('/admin/srt')) return 'Bazarr';
     if (pathname?.startsWith('/admin/cleaning')) return 'Cleanuparr';

@@ -180,6 +180,7 @@ export function createServiceProxyRouter(
   const singleArrServices = [
     { service: settings.lidarr, name: 'Lidarr' },
     { service: settings.prowlarr, name: 'Prowlarr' },
+    { service: settings.chaptarr, name: 'Chaptarr' },
   ];
 
   for (const { service, name } of singleArrServices) {

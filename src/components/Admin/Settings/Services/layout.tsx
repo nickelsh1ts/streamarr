@@ -27,6 +27,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/lidarr\/?/,
     },
     {
+      text: 'Chaptarr',
+      route: '/admin/settings/services/chaptarr',
+      regex: /^\/admin\/settings\/services\/chaptarr\/?/,
+    },
+    {
       text: 'Prowlarr',
       route: '/admin/settings/services/prowlarr',
       regex: /^\/admin\/settings\/services\/prowlarr\/?/,

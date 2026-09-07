@@ -1,0 +1,588 @@
+'use client';
+import RestartRequiredAlert, {
+  RESTART_REQUIRED_SWR_KEY,
+} from '@app/components/Admin/Settings/RestartRequiredAlert';
+import type { TestResponse } from '@app/components/Admin/Settings/Services/Lidarr';
+import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
+import Badge from '@app/components/Common/Badge';
+import Button from '@app/components/Common/Button';
+import ConfirmButton from '@app/components/Common/ConfirmButton';
+import LoadingEllipsis, {
+  SmallLoadingEllipsis,
+} from '@app/components/Common/LoadingEllipsis';
+import SensitiveInput from '@app/components/Common/SensitiveInput';
+import Toast from '@app/components/Toast';
+import {
+  ArrowDownTrayIcon,
+  CheckBadgeIcon,
+  ShieldExclamationIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/solid';
+import type { ChaptarrSettings } from '@server/lib/settings';
+import axios from 'axios';
+import { Field, Formik } from 'formik';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useSWR, { mutate } from 'swr';
+import * as Yup from 'yup';
+
+const ServicesChaptarr = () => {
+  const intl = useIntl();
+  const initialLoad = useRef(false);
+  const {
+    data,
+    error,
+    mutate: revalidate,
+  } = useSWR<ChaptarrSettings>('/api/v1/settings/chaptarr');
+  const [isValidated, setIsValidated] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+  const [isDisablingAuth, setIsDisablingAuth] = useState(false);
+
+  // Fetch auth status when service is configured and validated
+  const { data: authStatus, mutate: revalidateAuthStatus } = useSWR<{
+    authenticationMethod: string;
+    isAuthDisabled: boolean;
+  }>(
+    data?.enabled && data?.hostname && data?.apiKey && isValidated
+      ? '/api/v1/settings/chaptarr/auth'
+      : null
+  );
+
+  const SettingsSchema = Yup.object().shape({
+    urlBase: Yup.string()
+      .required(
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.required',
+          defaultMessage: 'You must provide a valid URL Base',
+        })
+      )
+      .test(
+        'leading-slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.leadingSlash',
+          defaultMessage: 'URL Base must have a leading slash',
+        }),
+        (value) => !value || value?.startsWith('/')
+      )
+      .test(
+        'no-trailing-slash',
+        intl.formatMessage({
+          id: 'servicesSettings.urlBase.noTrailingSlash',
+          defaultMessage: 'URL Base must not end in a trailing slash',
+        }),
+        (value) => !value || !value.endsWith('/')
+      ),
+  });
+
+  const performTest = useCallback(
+    async ({
+      hostname,
+      port,
+      apiKey,
+      urlBase,
+      useSsl,
+    }: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      urlBase?: string;
+      useSsl?: boolean;
+    }) => {
+      const success = await axios
+        .post<TestResponse>('/api/v1/settings/chaptarr/test', {
+          hostname,
+          port: Number(port),
+          apiKey,
+          urlBase,
+          useSsl,
+        })
+        .then(
+          () => true,
+          () => false
+        );
+
+      try {
+        if (success) {
+          setIsValidated(true);
+          revalidateAuthStatus();
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testsuccess',
+                  defaultMessage:
+                    '{service} connection established successfully!',
+                },
+                { service: 'Chaptarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+          }
+        } else {
+          setIsValidated(false);
+          if (initialLoad.current) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'servicesSettings.testfailed',
+                  defaultMessage: 'Failed to connect to {service}.',
+                },
+                { service: 'Chaptarr' }
+              ),
+              type: 'error',
+              icon: <XCircleIcon className="size-7" />,
+            });
+          }
+        }
+      } finally {
+        setIsTesting(false);
+        initialLoad.current = true;
+      }
+    },
+    [revalidateAuthStatus, intl]
+  );
+
+  const testConnection = useCallback(
+    (params: {
+      hostname: string;
+      port: number;
+      apiKey: string;
+      urlBase?: string;
+      useSsl?: boolean;
+    }) => {
+      setIsTesting(true);
+      void performTest(params);
+    },
+    [performTest]
+  );
+
+  // Auto-test connection on page load if service is configured
+  useEffect(() => {
+    if (
+      data?.enabled &&
+      data?.hostname &&
+      data?.apiKey &&
+      !isValidated &&
+      !isTesting
+    ) {
+      void performTest({
+        hostname: data.hostname,
+        port: data.port,
+        apiKey: data.apiKey,
+        urlBase: data.urlBase,
+        useSsl: data.useSsl,
+      });
+    }
+  }, [data, isTesting, isValidated, performTest]);
+
+  const handleDisableAuth = async () => {
+    if (!data || isDisablingAuth) return;
+
+    setIsDisablingAuth(true);
+    try {
+      await axios.post('/api/v1/settings/chaptarr/auth');
+      revalidateAuthStatus(
+        { authenticationMethod: 'external', isAuthDisabled: true },
+        { revalidate: false }
+      );
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisabledService',
+            defaultMessage: 'Authentication disabled on {service}',
+          },
+          { service: 'Chaptarr' }
+        ),
+        type: 'success',
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+    } catch {
+      Toast({
+        title: intl.formatMessage(
+          {
+            id: 'servicesSettings.authDisableFailed',
+            defaultMessage: 'Failed to disable authentication on {service}',
+          },
+          { service: 'Chaptarr' }
+        ),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsDisablingAuth(false);
+    }
+  };
+
+  const header = (
+    <div className="mb-6">
+      <h3 className="text-2xl font-extrabold">
+        <FormattedMessage
+          id="servicesSettings.chaptarr.title"
+          defaultMessage="Chaptarr Settings"
+        />
+      </h3>
+      <p className="mb-5">
+        <FormattedMessage
+          id="servicesSettings.chaptarr.description"
+          defaultMessage="Optionally configure the settings for your Chaptarr server."
+        />
+      </p>
+    </div>
+  );
+
+  if (!data && !error) {
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-10 max-w-6xl">
+      {header}
+      <RestartRequiredAlert filterServices={['Chaptarr']} />
+      <Formik
+        initialValues={{
+          enabled: data?.enabled || false,
+          hostname: data?.hostname || '',
+          port: data?.port || 8789,
+          useSsl: data?.useSsl || false,
+          urlBase: data?.urlBase ?? '/chaptarr',
+          apiKey: data?.apiKey || '',
+        }}
+        validationSchema={SettingsSchema}
+        onSubmit={async (values) => {
+          try {
+            await axios.post('/api/v1/settings/chaptarr', {
+              enabled: values.enabled,
+              hostname: values.hostname,
+              port: Number(values.port),
+              useSsl: values.useSsl,
+              urlBase: values.urlBase,
+              apiKey: values.apiKey,
+            } as ChaptarrSettings);
+
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveSuccess',
+                  defaultMessage: '{appName} settings saved successfully',
+                },
+                { appName: 'Chaptarr' }
+              ),
+              type: 'success',
+              icon: <CheckBadgeIcon className="size-7" />,
+            });
+
+            mutate(RESTART_REQUIRED_SWR_KEY);
+          } catch (e) {
+            Toast({
+              title: intl.formatMessage(
+                {
+                  id: 'common.settingsSaveError',
+                  defaultMessage:
+                    'Something went wrong while saving {appName} settings.',
+                },
+                { appName: 'Chaptarr' }
+              ),
+              type: 'error',
+              message: e.response?.data?.message || e.message,
+              icon: <XCircleIcon className="size-7" />,
+            });
+          } finally {
+            revalidate();
+          }
+        }}
+      >
+        {({
+          errors,
+          touched,
+          values,
+          handleSubmit,
+          setFieldValue,
+          isSubmitting,
+          isValid,
+        }) => {
+          return (
+            <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="service">
+                  <FormattedMessage
+                    id="common.settingsEnable"
+                    defaultMessage="Enable"
+                  />
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      type="checkbox"
+                      id="enabled"
+                      name="enabled"
+                      onChange={() => {
+                        setFieldValue('enabled', !values.enabled);
+                      }}
+                      className="checkbox checkbox-sm checkbox-primary rounded-md"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="hostname">
+                  <FormattedMessage
+                    id="common.hostname"
+                    defaultMessage="Hostname or IP Address"
+                  />
+                  <span className="text-error ml-1">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 sm:text-sm">
+                      {values.useSsl ? 'https://' : 'http://'}
+                    </span>
+                    <Field
+                      type="text"
+                      inputMode="url"
+                      id="hostname"
+                      name="hostname"
+                      className="input input-sm input-primary w-full rounded-md rounded-l-none"
+                    />
+                  </div>
+                  {errors.hostname &&
+                    touched.hostname &&
+                    typeof errors.hostname === 'string' && (
+                      <div className="text-error">{errors.hostname}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="port">
+                  <FormattedMessage id="common.port" defaultMessage="Port" />
+                  <span className="text-error ml-1">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="text"
+                    inputMode="numeric"
+                    id="port"
+                    name="port"
+                    className="input input-sm input-primary w-1/6 rounded-md"
+                    autoComplete="off"
+                    data-1pignore="true"
+                    data-lpignore="true"
+                    data-bwignore="true"
+                  />
+                  {errors.port &&
+                    touched.port &&
+                    typeof errors.port === 'string' && (
+                      <div className="text-error">{errors.port}</div>
+                    )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="useSsl">
+                  <FormattedMessage
+                    id="common.useSsl"
+                    defaultMessage="Use SSL"
+                  />
+                </label>
+                <div className="sm:col-span-2">
+                  <Field
+                    type="checkbox"
+                    id="useSsl"
+                    name="useSsl"
+                    onChange={() => {
+                      setFieldValue('useSsl', !values.useSsl);
+                    }}
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="urlBase">
+                  <FormattedMessage
+                    id="common.urlBase"
+                    defaultMessage="URL Base"
+                  />
+                  <span className="text-error mx-1">*</span>
+                  <SettingsBadge badgeType="restartRequired" />
+                  <span className="text-neutral block text-sm font-light">
+                    <FormattedMessage
+                      id="servicesSettings.urlBase.description"
+                      defaultMessage="Url Base is required for streamarr to register a proxy route."
+                    />
+                  </span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="flex">
+                    <Field
+                      className="input input-sm input-primary w-full rounded-md"
+                      id="urlBase"
+                      name="urlBase"
+                      inputMode="url"
+                      type="text"
+                    />
+                  </div>
+                  {errors.urlBase && touched.urlBase && (
+                    <div className="text-error">{errors.urlBase}</div>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                <label htmlFor="apiKey" className="text-label">
+                  <FormattedMessage
+                    id="common.apiKey"
+                    defaultMessage="API Key"
+                  />
+                  <span className="text-error ml-1">*</span>
+                </label>
+                <div className="sm:col-span-2">
+                  <div className="col-span-2 flex">
+                    <SensitiveInput
+                      as="field"
+                      id="apiKey"
+                      name="apiKey"
+                      buttonSize="sm"
+                      className="input input-sm input-primary w-full"
+                    />
+                  </div>
+                  {errors.apiKey &&
+                    touched.apiKey &&
+                    typeof errors.apiKey === 'string' && (
+                      <div className="text-error">{errors.apiKey}</div>
+                    )}
+                </div>
+              </div>
+              {isValidated && (
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="authStatus" className="text-label">
+                    <FormattedMessage
+                      id="servicesSettings.disableAuth"
+                      defaultMessage="Authentication"
+                    />
+                  </label>
+                  <div className="sm:col-span-2">
+                    {!authStatus ? (
+                      <div className="place-items-start">
+                        <SmallLoadingEllipsis />
+                      </div>
+                    ) : authStatus?.authenticationMethod === 'external' ? (
+                      <div
+                        className="tooltip"
+                        data-tip={intl.formatMessage(
+                          {
+                            id: 'servicesSettings.authDisabled.tooltip',
+                            defaultMessage:
+                              'To re-enable authentication, change the setting directly in {service}',
+                          },
+                          { service: 'Chaptarr' }
+                        )}
+                      >
+                        <Badge badgeType="warning">
+                          <FormattedMessage
+                            id="servicesSettings.authDisabled"
+                            defaultMessage="Auth Disabled"
+                          />
+                        </Badge>
+                      </div>
+                    ) : (
+                      <>
+                        <ConfirmButton
+                          onClick={handleDisableAuth}
+                          confirmText={
+                            <FormattedMessage
+                              id="common.areYouSure"
+                              defaultMessage="Are you sure?"
+                            />
+                          }
+                          buttonSize="sm"
+                        >
+                          <ShieldExclamationIcon className="mr-1 size-5" />
+                          <FormattedMessage
+                            id="servicesSettings.disableAuth.button"
+                            defaultMessage="Disable {service} Auth"
+                            values={{ service: 'Chaptarr' }}
+                          />
+                        </ConfirmButton>
+                        <p className="mt-2 text-sm text-gray-500">
+                          <FormattedMessage
+                            id="servicesSettings.disableAuth.description"
+                            defaultMessage="Disables authentication on {service}. You must understand the risks before proceeding. Only do this if {service} is not directly exposed to the internet."
+                            values={{ service: 'Chaptarr' }}
+                          />
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="divider divider-primary col-span-full mb-0" />
+              <div className="col-span-3 mt-4 flex justify-end">
+                <div className="flex gap-2">
+                  <Button
+                    buttonType="warning"
+                    buttonSize="sm"
+                    type="button"
+                    disabled={
+                      !values.apiKey ||
+                      !values.hostname ||
+                      !values.port ||
+                      isTesting ||
+                      isSubmitting
+                    }
+                    onClick={() =>
+                      testConnection({
+                        hostname: values.hostname,
+                        port: Number(values.port),
+                        apiKey: values.apiKey,
+                        urlBase: values.urlBase,
+                        useSsl: values.useSsl,
+                      })
+                    }
+                  >
+                    {isTesting ? (
+                      <FormattedMessage
+                        id="common.testing"
+                        defaultMessage="Testing…"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="common.test"
+                        defaultMessage="Test"
+                      />
+                    )}
+                  </Button>
+                  <Button
+                    buttonType="primary"
+                    buttonSize="sm"
+                    type="submit"
+                    disabled={isSubmitting || !isValid}
+                  >
+                    <ArrowDownTrayIcon className="mr-2 size-4" />
+                    <span>
+                      {isSubmitting ? (
+                        <FormattedMessage
+                          id="common.saving"
+                          defaultMessage="Saving…"
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="common.saveChanges"
+                          defaultMessage="Save Changes"
+                        />
+                      )}
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            </form>
+          );
+        }}
+      </Formik>
+    </div>
+  );
+};
+
+export default ServicesChaptarr;
