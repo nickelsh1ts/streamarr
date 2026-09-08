@@ -4017,6 +4017,139 @@ paths:
           description: Lidarr not configured
         '500':
           description: Failed to disable authentication on Lidarr
+  /settings/chaptarr:
+    get:
+      summary: Get Chaptarr settings
+      description: Retrieves current Chaptarr settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+    post:
+      summary: Update Chaptarr settings
+      description: Updates Chaptarr settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceSettings'
+  /settings/chaptarr/test:
+    post:
+      summary: Test Chaptarr configuration
+      description: Tests if the Chaptarr configuration is valid. Returns profiles, root folders, and tags on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8686
+                apiKey:
+                  type: string
+                  example: yourapikey
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - apiKey
+      responses:
+        '200':
+          description: Successfully connected to Chaptarr instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceProfile'
+                  rootFolders:
+                    type: array
+                    items:
+                      type: object
+                  tags:
+                    type: array
+                    items:
+                      type: object
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Chaptarr
+  /settings/chaptarr/auth:
+    get:
+      summary: Get Chaptarr authentication status
+      description: Returns the current authentication method configured on Chaptarr.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticationMethod:
+                    type: string
+                    enum: [None, Basic, Forms, External]
+                  isAuthDisabled:
+                    type: boolean
+        '400':
+          description: Chaptarr not configured
+        '500':
+          description: Failed to connect to Chaptarr
+    post:
+      summary: Disable authentication on Chaptarr
+      description: |
+        Sets the authentication method to 'External' on Chaptarr.
+        This allows Streamarr to proxy the Chaptarr web UI without requiring
+        separate login.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Authentication disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  authenticationMethod:
+                    type: string
+        '400':
+          description: Chaptarr not configured
+        '500':
+          description: Failed to disable authentication on Chaptarr
   /settings/overseerr:
     get:
       summary: Get overseerr settings
