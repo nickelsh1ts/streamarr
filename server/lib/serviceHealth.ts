@@ -1,5 +1,6 @@
 import { clearClientCache, getClientVersion } from '@server/api/downloads/base';
 import SeerrAPI from '@server/api/seerr';
+import ChaptarrAPI from '@server/api/servarr/chaptarr';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import RadarrAPI from '@server/api/servarr/radarr';
@@ -351,6 +352,18 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
         })
       );
       return { id: 'lidarr', name: 'Lidarr', retryable: true, ...result };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.chaptarr)) return null;
+      const result = await checkArr(
+        new ChaptarrAPI({
+          apiKey: settings.chaptarr.apiKey ?? '',
+          url: ChaptarrAPI.buildServiceUrl(settings.chaptarr, '/api/v1'),
+          timeout: timeout(),
+        })
+      );
+      return { id: 'chaptarr', name: 'Chaptarr', retryable: true, ...result };
     })(),
 
     (async (): Promise<ServiceHealth | null> => {

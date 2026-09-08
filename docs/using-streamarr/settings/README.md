@@ -488,6 +488,18 @@ Connect Lidarr for music management.
 | **API Key**        | Found in Lidarr → Settings → General |
 | **URL Base**       | Default is `/lidarr`                 |
 
+#### Chaptarr
+
+Connect Chaptarr for book management. Chaptarr is embedded in the Admin Panel under **Books**.
+
+| Setting            | Description                              |
+| ------------------ | ---------------------------------------- |
+| **Hostname or IP** | Address of your Chaptarr server          |
+| **Port**           | Default is `8789`                        |
+| **API Key**        | Found in Chaptarr -> Settings -> General |
+| **Use SSL**        | Enable for HTTPS connections             |
+| **URL Base**       | Default is `/chaptarr`                   |
+
 #### Seerr
 
 Connect Seerr for request management.

@@ -51,6 +51,7 @@ export function getActiveProxyPaths(): string[] {
   const singleArrServices = [
     settings.lidarr,
     settings.prowlarr,
+    settings.chaptarr,
     settings.bazarr,
   ];
   for (const service of singleArrServices) {

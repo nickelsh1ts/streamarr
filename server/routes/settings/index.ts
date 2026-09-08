@@ -854,43 +854,47 @@ settingsRoutes.get('/chaptarr/auth', arrAuthLimiter, async (req, res, next) => {
   }
 });
 
-settingsRoutes.post('/chaptarr/auth', async (req, res, next) => {
-  const settings = getSettings();
-  const chaptarrSettings = settings.chaptarr;
+settingsRoutes.post(
+  '/chaptarr/auth',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    const settings = getSettings();
+    const chaptarrSettings = settings.chaptarr;
 
-  if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
-    return next({ status: 400, message: 'Chaptarr not configured' });
+    if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
+      return next({ status: 400, message: 'Chaptarr not configured' });
+    }
+
+    try {
+      const chaptarr = new ChaptarrAPI({
+        apiKey: chaptarrSettings.apiKey,
+        url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
+      });
+
+      const hostConfig = await chaptarr.disableAuthentication();
+
+      logger.info('Authentication disabled on Chaptarr', {
+        label: 'Chaptarr',
+        userId: req.user?.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        authenticationMethod: hostConfig.authenticationMethod,
+      });
+    } catch (e) {
+      logger.error('Failed to disable Chaptarr authentication', {
+        label: 'Chaptarr',
+        message: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Failed to disable authentication on Chaptarr',
+      });
+    }
   }
-
-  try {
-    const chaptarr = new ChaptarrAPI({
-      apiKey: chaptarrSettings.apiKey,
-      url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
-      timeout: getSettings().network.requestTimeout,
-    });
-
-    const hostConfig = await chaptarr.disableAuthentication();
-
-    logger.info('Authentication disabled on Chaptarr', {
-      label: 'Chaptarr',
-      userId: req.user?.id,
-    });
-
-    res.status(200).json({
-      success: true,
-      authenticationMethod: hostConfig.authenticationMethod,
-    });
-  } catch (e) {
-    logger.error('Failed to disable Chaptarr authentication', {
-      label: 'Chaptarr',
-      message: e.message,
-    });
-    next({
-      status: 500,
-      message: 'Failed to disable authentication on Chaptarr',
-    });
-  }
-});
+);
 
 settingsRoutes.get('/overseerr', (_req, res) => {
   const settings = getSettings();
