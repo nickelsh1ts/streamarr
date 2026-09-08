@@ -16,12 +16,11 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-//TODO: Add an activity page with usage statistics and recent actions and historical data import
-
 const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/movies/,
   /^\/admin\/tv/,
   /^\/admin\/music/,
+  /^\/admin\/books/,
   /^\/admin\/indexers/,
   /^\/admin\/srt/,
   /^\/admin\/transcode/,
@@ -99,6 +98,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         regex: /^\/admin\/music/,
         hidden: !services?.some(
           (d) => d.id === 'lidarr' && d.enabled && d.urlBase
+        ),
+      },
+      {
+        text: intl.formatMessage({
+          id: 'common.books',
+          defaultMessage: 'Books',
+        }),
+        route: '/admin/books',
+        regex: /^\/admin\/books/,
+        hidden: !services?.some(
+          (d) => d.id === 'chaptarr' && d.enabled && d.urlBase
         ),
       },
       {

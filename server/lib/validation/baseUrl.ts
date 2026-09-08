@@ -32,6 +32,7 @@ export type ServiceType =
   | 'radarr'
   | 'sonarr'
   | 'lidarr'
+  | 'chaptarr'
   | 'bazarr'
   | 'prowlarr'
   | 'cleanuparr'
@@ -113,6 +114,7 @@ export function validateBaseUrl(
     { settings: settings.bazarr, name: 'Bazarr', type: 'bazarr' },
     { settings: settings.prowlarr, name: 'Prowlarr', type: 'prowlarr' },
     { settings: settings.cleanuparr, name: 'Cleanuparr', type: 'cleanuparr' },
+    { settings: settings.chaptarr, name: 'Chaptarr', type: 'chaptarr' },
     {
       settings: settings.audiobookshelf,
       name: 'Audiobookshelf',

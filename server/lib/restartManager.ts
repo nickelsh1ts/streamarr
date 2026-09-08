@@ -15,6 +15,7 @@ interface ProxyAffectingSettings {
   radarr: ArrayServiceEntry[];
   sonarr: ArrayServiceEntry[];
   lidarr: ServiceEntry;
+  chaptarr: ServiceEntry;
   prowlarr: ServiceEntry;
   bazarr: ServiceEntry;
   cleanuparr: ServiceEntry;
@@ -73,6 +74,7 @@ class RestartManager {
         apiKey: s.apiKey,
       })),
       lidarr: this.pickService(settings.lidarr),
+      chaptarr: this.pickService(settings.chaptarr),
       prowlarr: this.pickService(settings.prowlarr),
       bazarr: this.pickService(settings.bazarr),
       cleanuparr: this.pickService(settings.cleanuparr),
@@ -133,6 +135,10 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.lidarr, this.snapshot.lidarr)) {
       changed.push('Lidarr');
+    }
+
+    if (this.hasServiceChanged(settings.chaptarr, this.snapshot.chaptarr)) {
+      changed.push('Chaptarr');
     }
 
     if (this.hasServiceChanged(settings.prowlarr, this.snapshot.prowlarr)) {

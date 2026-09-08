@@ -5,6 +5,7 @@ export type AvailableCacheIds =
   | 'radarr'
   | 'sonarr'
   | 'lidarr'
+  | 'chaptarr'
   | 'prowlarr'
   | 'imdb'
   | 'github'
@@ -50,6 +51,7 @@ class CacheManager {
     radarr: new Cache('radarr', 'Radarr API'),
     sonarr: new Cache('sonarr', 'Sonarr API'),
     lidarr: new Cache('lidarr', 'Lidarr API'),
+    chaptarr: new Cache('chaptarr', 'Chaptarr API'),
     prowlarr: new Cache('prowlarr', 'Prowlarr API'),
     imdb: new Cache('imdb', 'IMDB Radarr Proxy', {
       stdTtl: 43200,

@@ -63,6 +63,8 @@ export interface AudiobookshelfSettings extends ServiceSettings {
   enableNewUserSignIn?: boolean;
 }
 
+export interface ChaptarrSettings extends ServiceSettings {}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
@@ -396,6 +398,7 @@ export interface AllSettings {
   cleanuparr: ServiceSettings;
   overseerr: ServiceSettings;
   audiobookshelf: AudiobookshelfSettings;
+  chaptarr: ChaptarrSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
   onboarding: OnboardingSettings;
@@ -514,6 +517,10 @@ class Settings {
       lidarr: {
         enabled: false,
         urlBase: '/lidarr',
+      },
+      chaptarr: {
+        enabled: false,
+        urlBase: '/chaptarr',
       },
       cleanuparr: {
         enabled: false,
@@ -729,6 +736,14 @@ class Settings {
 
   set lidarr(data: ServiceSettings) {
     this.data.lidarr = mergeSettings(this.data.lidarr, data);
+  }
+
+  get chaptarr(): ServiceSettings {
+    return this.data.chaptarr;
+  }
+
+  set chaptarr(data: ServiceSettings) {
+    this.data.chaptarr = mergeSettings(this.data.chaptarr, data);
   }
 
   get cleanuparr(): ServiceSettings {

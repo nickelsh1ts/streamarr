@@ -45,6 +45,7 @@ describe('Admin Pages', () => {
       'radarr',
       'sonarr',
       'lidarr',
+      'chaptarr',
       'prowlarr',
       'bazarr',
       'tdarr',

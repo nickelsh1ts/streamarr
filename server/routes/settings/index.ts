@@ -1,6 +1,7 @@
 import GithubAPI from '@server/api/github';
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import ChaptarrAPI from '@server/api/servarr/chaptarr';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import TautulliAPI from '@server/api/tautulli';
@@ -315,7 +316,9 @@ settingsRoutes.get('/services', (_req, res) => {
 
   services.push(
     settings.bazarr,
+    settings.cleanuparr,
     settings.lidarr,
+    settings.chaptarr,
     settings.overseerr,
     settings.prowlarr,
     settings.tdarr,
@@ -331,6 +334,7 @@ settingsRoutes.get('/services', (_req, res) => {
     { ...settings.cleanuparr, id: 'cleanuparr' },
     { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
+    { ...settings.chaptarr, id: 'chaptarr' },
     { ...settings.overseerr, id: 'overseerr' },
     { ...settings.prowlarr, id: 'prowlarr' },
     { ...settings.tdarr, id: 'tdarr' },
@@ -759,6 +763,138 @@ settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
     });
   }
 });
+
+settingsRoutes.get('/chaptarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.chaptarr);
+});
+
+settingsRoutes.post('/chaptarr', async (req, res, next) => {
+  const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'chaptarr', 'chaptarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.chaptarr, req.body);
+  settings.save();
+  res.status(200).json(settings.chaptarr);
+});
+
+settingsRoutes.post<undefined, Record<string, unknown>, ServiceSettings>(
+  '/chaptarr/test',
+  async (req, res, next) => {
+    try {
+      const chaptarr = new ChaptarrAPI({
+        apiKey: req.body.apiKey,
+        url: ChaptarrAPI.buildServiceUrl(req.body, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
+      });
+
+      const urlBase = await chaptarr
+        .getSystemStatus()
+        .then((value) => value.urlBase)
+        .catch(() => req.body.urlBase);
+      const profiles = await chaptarr.getProfiles();
+      const folders = await chaptarr.getRootFolders();
+      const tags = await chaptarr.getTags();
+
+      res.status(200).json({
+        profiles,
+        rootFolders: folders.map((folder) => ({
+          id: folder.id,
+          path: folder.path,
+        })),
+        tags,
+        urlBase,
+      });
+    } catch (e) {
+      logger.error('Failed to test Chaptarr', {
+        label: 'Chaptarr',
+        message: e.message,
+      });
+
+      next({ status: 500, message: 'Failed to connect to Chaptarr' });
+    }
+  }
+);
+
+settingsRoutes.get('/chaptarr/auth', arrAuthLimiter, async (req, res, next) => {
+  const settings = getSettings();
+  const chaptarrSettings = settings.chaptarr;
+
+  if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
+    return next({ status: 400, message: 'Chaptarr not configured' });
+  }
+
+  try {
+    const chaptarr = new ChaptarrAPI({
+      apiKey: chaptarrSettings.apiKey,
+      url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
+    });
+
+    const hostConfig = await chaptarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Chaptarr auth status', {
+      label: 'Chaptarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Chaptarr' });
+  }
+});
+
+settingsRoutes.post(
+  '/chaptarr/auth',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    const settings = getSettings();
+    const chaptarrSettings = settings.chaptarr;
+
+    if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
+      return next({ status: 400, message: 'Chaptarr not configured' });
+    }
+
+    try {
+      const chaptarr = new ChaptarrAPI({
+        apiKey: chaptarrSettings.apiKey,
+        url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
+      });
+
+      const hostConfig = await chaptarr.disableAuthentication();
+
+      logger.info('Authentication disabled on Chaptarr', {
+        label: 'Chaptarr',
+        userId: req.user?.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        authenticationMethod: hostConfig.authenticationMethod,
+      });
+    } catch (e) {
+      logger.error('Failed to disable Chaptarr authentication', {
+        label: 'Chaptarr',
+        message: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Failed to disable authentication on Chaptarr',
+      });
+    }
+  }
+);
 
 settingsRoutes.get('/overseerr', (_req, res) => {
   const settings = getSettings();
