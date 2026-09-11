@@ -343,8 +343,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@types/node@25.9.5)(typescript@6.0.3)
       daisyui:
-        specifier: 5.7.22
-        version: 5.7.22
+        specifier: 5.7.28
+        version: 5.7.28
       eslint:
         specifier: ^9.39.4
         version: 9.39.5(jiti@2.7.0)(supports-color@5.5.0)
@@ -4009,8 +4009,8 @@ packages:
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
     engines: {node: '>= 10'}
 
-  daisyui@5.7.22:
-    resolution: {integrity: sha512-pYii+2NCN0+OIL6Lpuc054LK0QJeNv+GRK9UzN1GRmjdYhYO6WFl0QLoj5oPcitPD7o+okiiI0SKFkn641TxmA==}
+  daisyui@5.7.28:
+    resolution: {integrity: sha512-BxQap2QOj7NQy5nEsjTHRmybmUZP3t+O5G6vfdidZuptBsh/QyKN9wbdrGDZk198fMI3UyYnA/rCWlggZIhGnw==}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -6355,10 +6355,6 @@ packages:
 
   nodemailer@7.0.13:
     resolution: {integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==}
-    engines: {node: '>=6.0.0'}
-
-  nodemailer@8.0.11:
-    resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
     engines: {node: '>=6.0.0'}
 
   nodemailer@9.0.6:
@@ -12437,7 +12433,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  daisyui@5.7.22: {}
+  daisyui@5.7.28: {}
 
   damerau-levenshtein@1.0.8: {}
 
@@ -15406,14 +15402,10 @@ snapshots:
 
   nodemailer@7.0.13: {}
 
-  nodemailer@8.0.11:
-    optional: true
-
   nodemailer@9.0.6:
     optional: true
 
-  nodemailer@9.1.1:
-    optional: true
+  nodemailer@9.1.1: {}
 
   nodemon@3.1.14:
     dependencies:
