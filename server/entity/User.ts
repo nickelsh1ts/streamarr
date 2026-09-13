@@ -103,6 +103,9 @@ export class User {
   @Column({ type: 'datetime', nullable: true })
   public audiobookshelfPwNotifiedAt?: Date | null;
 
+  @Column({ type: 'text', nullable: true })
+  public shelfmarkUsername?: string | null;
+
   @Column({ type: 'text', nullable: true, select: false })
   public plexJwt?: string | null;
 

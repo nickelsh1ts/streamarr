@@ -23,6 +23,12 @@ import {
   TDARR_STATIC_PATH,
 } from '@server/lib/proxy/tdarrProxy';
 import { getSettings } from '@server/lib/settings';
+import {
+  getShelfmarkAPI,
+  linkShelfmarkAccount,
+  ShelfmarkAccountCreationDisabledError,
+  ShelfmarkAccountLinkRequiresManagerError,
+} from '@server/lib/shelfmark';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
@@ -78,6 +84,14 @@ export function getActiveProxyPaths(): string[] {
     paths.push(settings.audiobookshelf.urlBase);
   }
 
+  if (
+    settings.shelfmark.enabled &&
+    settings.shelfmark.hostname &&
+    settings.shelfmark.urlBase
+  ) {
+    paths.push(settings.shelfmark.urlBase);
+  }
+
   // Tdarr (hardcoded paths - no custom base URL support)
   if (settings.tdarr.enabled && settings.tdarr.hostname) {
     paths.push(TDARR_PROXY_PATH);
@@ -129,7 +143,8 @@ export function createServiceProxyRouter(
     proxy: RequestHandler,
     label: string,
     requireAdmin = false,
-    permissions?: Permission[]
+    permissions?: Permission[],
+    middleware: RequestHandler[] = []
   ): void => {
     const guard = permissions
       ? [
@@ -141,7 +156,7 @@ export function createServiceProxyRouter(
         ? adminMiddleware
         : authMiddleware;
 
-    router.use(path, ...guard, proxy);
+    router.use(path, ...guard, ...middleware, proxy);
     registeredRoutes.push({ name: label, path });
   };
 
@@ -262,7 +277,7 @@ export function createServiceProxyRouter(
     );
   }
 
-  // Register Audiobookshelf proxy (requires LISTEN or STREAMARR, base-URL aware)
+  // Register Audiobookshelf proxy (requires LISTEN or READER, base-URL aware)
   if (
     settings.audiobookshelf.enabled &&
     settings.audiobookshelf.hostname &&
@@ -286,13 +301,92 @@ export function createServiceProxyRouter(
       audiobookshelfProxy,
       'Audiobookshelf',
       false,
-      [Permission.LISTEN, Permission.STREAMARR]
+      [Permission.LISTEN, Permission.READER]
     );
     registerWebSocketHandler(
       dispatcher,
       sessionMiddleware,
       settings.audiobookshelf.urlBase,
       audiobookshelfProxy
+    );
+  }
+
+  if (
+    settings.shelfmark.enabled &&
+    settings.shelfmark.hostname &&
+    settings.shelfmark.urlBase
+  ) {
+    const shelfmarkProxy = createServiceProxy({
+      name: 'Shelfmark',
+      getTarget: () => {
+        const { shelfmark } = getSettings();
+        const protocol = shelfmark.useSsl ? 'https' : 'http';
+        return `${protocol}://${shelfmark.hostname}:${shelfmark.port}`;
+      },
+      pathPrefix: settings.shelfmark.urlBase,
+      webSocket: false,
+      suppressErrors: () => false,
+      onProxyReq: (proxyReq, req) => {
+        proxyReq.removeHeader('X-Auth-User');
+        proxyReq.removeHeader('X-Auth-Groups');
+        proxyReq.setHeader('X-Auth-User', req.user!.shelfmarkUsername!);
+        proxyReq.setHeader(
+          'X-Auth-Groups',
+          req.user?.hasPermission(Permission.ADMIN) ? 'streamarr-admin' : ''
+        );
+      },
+    });
+
+    registerProxy(
+      settings.shelfmark.urlBase,
+      shelfmarkProxy,
+      'Shelfmark',
+      false,
+      [Permission.BOOKMARK, Permission.READER],
+      [
+        async (req, res, next) => {
+          try {
+            const settings = getSettings().shelfmark;
+            const user = req.user!;
+            const existingAccount =
+              user.shelfmarkUsername &&
+              (await getShelfmarkAPI(settings).getAllUsers()).some(
+                (candidate) =>
+                  candidate.username.toLocaleLowerCase() ===
+                  user.shelfmarkUsername?.toLocaleLowerCase()
+              );
+            if (existingAccount) {
+              return next();
+            }
+
+            await linkShelfmarkAccount(user, {
+              allowCreation: !!settings.enableNewUserSignIn,
+              allowExistingAccountLink: user.hasPermission(
+                Permission.MANAGE_USERS
+              ),
+            });
+            return next();
+          } catch (e) {
+            if (
+              e instanceof ShelfmarkAccountCreationDisabledError ||
+              e instanceof ShelfmarkAccountLinkRequiresManagerError
+            ) {
+              return res.status(403).json({
+                message:
+                  'Your Shelfmark account must be linked by an administrator before you can access it.',
+              });
+            }
+            logger.error('Failed to provision Shelfmark proxy account', {
+              label: 'Shelfmark',
+              message: e instanceof Error ? e.message : String(e),
+              userId: req.user?.id,
+            });
+            return res.status(502).json({
+              message: 'Failed to connect to Shelfmark.',
+            });
+          }
+        },
+      ]
     );
   }
 

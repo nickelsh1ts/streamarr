@@ -34,6 +34,9 @@ export interface UserSettingsGeneralResponse {
   releaseSched?: boolean;
   audiobooksEnabled?: boolean;
   audiobooksBaseUrl?: string;
+  shelfmarkBaseUrl?: string;
+  shelfmarkEnabled?: boolean;
+  shelfmarkNewUserSignIn?: boolean;
   audiobookshelfNewUserSignIn?: boolean;
   plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }

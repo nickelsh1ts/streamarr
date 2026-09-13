@@ -20,8 +20,10 @@ import type {
   DownloadClientSettings,
   DVRSettings,
   ServiceSettings,
+  ShelfmarkSettings,
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { getShelfmarkAPI } from '@server/lib/shelfmark';
 
 interface CheckResult {
   status: ServiceHealthStatus;
@@ -227,6 +229,18 @@ async function checkAudiobookshelf(
   }
 }
 
+async function checkShelfmark(
+  service: ShelfmarkSettings
+): Promise<CheckResult> {
+  try {
+    const api = getShelfmarkAPI(service);
+    const version = await withTimeout(api.getVersion(), timeout());
+    return { status: 'healthy', version };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
 async function checkSeerr(service: ServiceSettings): Promise<CheckResult> {
   try {
     const status = await withTimeout(
@@ -395,6 +409,17 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
       return {
         id: 'audiobookshelf',
         name: 'Audiobookshelf',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.shelfmark)) return null;
+      const result = await checkShelfmark(settings.shelfmark);
+      return {
+        id: 'shelfmark',
+        name: 'Shelfmark',
         retryable: true,
         ...result,
       };

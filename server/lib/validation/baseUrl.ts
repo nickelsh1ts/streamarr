@@ -15,6 +15,7 @@ const RESERVED_PATHS = [
   '/logo',
   '/api-docs',
   '/watch',
+  '/bookmark',
   '/schedule',
   '/help',
   '/signup',
@@ -37,6 +38,7 @@ export type ServiceType =
   | 'prowlarr'
   | 'cleanuparr'
   | 'audiobookshelf'
+  | 'shelfmark'
   | 'other';
 
 /**
@@ -120,6 +122,7 @@ export function validateBaseUrl(
       name: 'Audiobookshelf',
       type: 'audiobookshelf',
     },
+    { settings: settings.shelfmark, name: 'Shelfmark', type: 'shelfmark' },
   ];
 
   for (const svc of singleServices) {

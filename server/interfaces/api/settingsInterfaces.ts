@@ -79,6 +79,7 @@ export interface PublicSettingsResponse {
   };
   seerrEnabled: boolean;
   audiobookshelfEnabled: boolean;
+  shelfmarkEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   customLogo?: string;
