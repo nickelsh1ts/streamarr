@@ -197,6 +197,11 @@ class ImageProxy {
       headers?: Record<string, string>;
       defaultMaxAge?: number;
       validateResponse?: (headers: Record<string, unknown>) => void;
+      maxRedirects?: number;
+      beforeRedirect?: (
+        options: Record<string, unknown>,
+        responseDetails: { headers: Record<string, unknown> }
+      ) => void;
     } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
@@ -207,7 +212,8 @@ class ImageProxy {
       baseURL: baseUrl,
       withCredentials: false,
       headers: options.headers,
-      maxRedirects: 0,
+      maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
+      beforeRedirect: options.beforeRedirect,
     });
 
     if (options.rateLimitOptions) {
