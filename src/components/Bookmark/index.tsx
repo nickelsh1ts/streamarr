@@ -11,7 +11,7 @@ import useSWR from 'swr';
 
 const Bookmark = ({ children }: { children?: React.ReactNode }) => {
   useRouteGuard([Permission.BOOKMARK, Permission.READER], { type: 'or' });
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const [hostname] = useState(() =>
     typeof window !== 'undefined'
       ? `${window.location.protocol}//${window.location.host}`
@@ -21,7 +21,7 @@ const Bookmark = ({ children }: { children?: React.ReactNode }) => {
     user ? `/api/v1/user/${user.id}/settings/main` : null
   );
 
-  if (isLoading) {
+  if (userLoading || isLoading) {
     return <LoadingEllipsis />;
   }
 
