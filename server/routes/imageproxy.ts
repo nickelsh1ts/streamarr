@@ -8,6 +8,8 @@ import { Router } from 'express';
 const router = Router();
 
 const PLEX_IMAGE_PATH_REGEX = /^\/library\/metadata\/\d+\/thumb(\/\d+)?$/;
+const TMDB_IMAGE_PATH_REGEX =
+  /^\/t\/p\/[a-zA-Z0-9_]+\/[a-zA-Z0-9_\-.]+\.(?:jpg|jpeg|png|webp)$/i;
 const PLEX_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let plexTokenCache: {
@@ -22,6 +24,13 @@ const validatePlexImageResponse = (headers: Record<string, unknown>) => {
   const contentType = headers['content-type'];
   if (typeof contentType !== 'string' || !contentType.startsWith('image/')) {
     throw new Error(`Invalid Plex image content type: ${String(contentType)}`);
+  }
+};
+
+const validateTmdbImageResponse = (headers: Record<string, unknown>) => {
+  const contentType = headers['content-type'];
+  if (typeof contentType !== 'string' || !contentType.startsWith('image/')) {
+    throw new Error(`Invalid TMDB image content type: ${String(contentType)}`);
   }
 };
 
@@ -101,17 +110,18 @@ router.get('/plex', isAuthenticated(), async (req, res) => {
 
 const tmdbImageProxy = new ImageProxy('tmdb', 'https://image.tmdb.org', {
   rateLimitOptions: { maxRequests: 20, maxRPS: 50 },
+  validateResponse: validateTmdbImageResponse,
 });
 
 router.get('/*splat', async (req, res) => {
-  const imagePath = req.path.replace('/image', '');
+  const imagePath = req.path.replace('/image', '').replace(/\/+/g, '/');
 
-  if (imagePath.startsWith('//') || imagePath.includes('://')) {
+  if (!TMDB_IMAGE_PATH_REGEX.test(imagePath)) {
     logger.error('Invalid URL for image proxy', {
       label: 'Image Proxy',
       imagePath,
     });
-    return res.status(403).send('Invalid URL for image proxy');
+    return res.status(400).send('Invalid URL for image proxy');
   }
 
   try {

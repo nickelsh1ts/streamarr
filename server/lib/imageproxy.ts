@@ -207,6 +207,7 @@ class ImageProxy {
       baseURL: baseUrl,
       withCredentials: false,
       headers: options.headers,
+      maxRedirects: 0,
     });
 
     if (options.rateLimitOptions) {
@@ -229,6 +230,10 @@ class ImageProxy {
   }
 
   public async getImage(path: string): Promise<ImageResponse> {
+    if (this.axios.defaults.baseURL && /^(?:[a-z]+:|\/\/)/i.test(path)) {
+      throw new Error(`Invalid path for ImageProxy with baseURL: ${path}`);
+    }
+
     const cacheKey = this.getCacheKey(path);
 
     const imageResponse = await this.get(cacheKey);
@@ -289,6 +294,10 @@ class ImageProxy {
     cacheKey: string
   ): Promise<ImageResponse | null> {
     try {
+      if (this.axios.defaults.baseURL && /^(?:[a-z]+:|\/\/)/i.test(path)) {
+        throw new Error(`Invalid path for ImageProxy with baseURL: ${path}`);
+      }
+
       const directory = join(this.getCacheDirectory(), cacheKey);
       const response = await this.axios.get(path, {
         responseType: 'arraybuffer',
