@@ -46,6 +46,7 @@ import type {
   ServiceSettings,
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { getShelfmarkAPI } from '@server/lib/shelfmark';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -1019,6 +1020,70 @@ settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
     });
 
     next({ status: 500, message: 'Failed to connect to Audiobookshelf' });
+  }
+});
+
+settingsRoutes.get('/shelfmark', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.post('/shelfmark', async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'shelfmark',
+    'shelfmark'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.shelfmark, req.body);
+  settings.save();
+  res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.post('/shelfmark/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase } = req.body;
+
+    const portNumber = Number(port);
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      typeof urlBase !== 'string' ||
+      !urlBase.startsWith('/') ||
+      urlBase.endsWith('/') ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
+    ) {
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or URL Base',
+      });
+    }
+
+    await getShelfmarkAPI({
+      enabled: false,
+      hostname,
+      port: portNumber,
+      useSsl: useSsl ?? false,
+      urlBase,
+    }).getHealth();
+
+    res.status(200).json({ urlBase });
+  } catch (e) {
+    logger.error('Failed to test Shelfmark', {
+      label: 'Shelfmark',
+      message: e instanceof Error ? e.message : String(e),
+    });
+
+    next({ status: 500, message: 'Failed to connect to Shelfmark' });
   }
 });
 

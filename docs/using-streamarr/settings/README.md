@@ -455,6 +455,18 @@ Configuration options are the same as Radarr, with the default port being `8989`
 
 ### Other Services
 
+#### Shelfmark
+
+Connect Shelfmark for book and audiobook search and requests. See [Books](../bookmark.md) for the required proxy-authentication configuration and account behavior.
+
+| Setting                    | Description                                                        |
+| -------------------------- | ------------------------------------------------------------------ |
+| **Hostname or IP**         | Address of the Shelfmark server                                    |
+| **Port**                   | Default is `13378`                                                 |
+| **Use SSL**                | Enable for HTTPS connections                                       |
+| **URL Base**               | Default is `/shelfmark`; must match Shelfmark's `ROUTER_BASE_PATH` |
+| **Enable New User Signin** | Allow users to create and manage their own Shelfmark account       |
+
 #### Bazarr
 
 Connect Bazarr for subtitle management.

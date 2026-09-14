@@ -104,6 +104,12 @@
   "backToTop.backUpTop": {
     "defaultMessage": "Back up top"
   },
+  "bookmark.shelfmarkNotLinkedMessage": {
+    "defaultMessage": "Your Shelfmark account must be linked by an administrator before you can access it."
+  },
+  "bookmark.shelfmarkNotLinkedTitle": {
+    "defaultMessage": "Shelfmark Account Required"
+  },
   "cache.description": {
     "defaultMessage": "Streamarr caches requests to external API endpoints to optimize performance and avoid making unnecessary API calls."
   },
@@ -287,6 +293,9 @@
   "common.blocklisted": {
     "defaultMessage": "Blocklisted"
   },
+  "common.bookmark": {
+    "defaultMessage": "Bookmark"
+  },
   "common.books": {
     "defaultMessage": "Books"
   },
@@ -394,6 +403,9 @@
   },
   "common.downloads": {
     "defaultMessage": "Downloads"
+  },
+  "common.ebooks": {
+    "defaultMessage": "eBooks"
   },
   "common.edit": {
     "defaultMessage": "Edit"
@@ -3833,6 +3845,12 @@
   "linkedAccounts.notLinked": {
     "defaultMessage": "No Account Linked"
   },
+  "linkedAccounts.shelfmarkLinkFailed": {
+    "defaultMessage": "Failed to link Shelfmark account"
+  },
+  "linkedAccounts.shelfmarkUnlinkFailed": {
+    "defaultMessage": "Failed to unlink Shelfmark account"
+  },
   "linkedAccounts.title": {
     "defaultMessage": "Linked Accounts"
   },
@@ -5090,6 +5108,24 @@
   "servicesSettings.prowlarr.title": {
     "defaultMessage": "Prowlarr Settings"
   },
+  "servicesSettings.shelfmark.alertDescription": {
+    "defaultMessage": "Set ROUTER_BASE_PATH to this URL Base and AUTH_METHOD to proxy. Configure PROXY_AUTH_USER_HEADER as X-Auth-User, PROXY_AUTH_ADMIN_GROUP_HEADER as X-Auth-Groups, and PROXY_AUTH_ADMIN_GROUP_NAME as streamarr-admin. Keep Shelfmark private; it trusts these proxy headers. Restart Shelfmark after changing its environment."
+  },
+  "servicesSettings.shelfmark.alertTitle": {
+    "defaultMessage": "Set a matching base path in Shelfmark"
+  },
+  "servicesSettings.shelfmark.description": {
+    "defaultMessage": "Optionally configure the settings for your Shelfmark server."
+  },
+  "servicesSettings.shelfmark.enableNewUserSignIn": {
+    "defaultMessage": "Enable New User Signin"
+  },
+  "servicesSettings.shelfmark.enableNewUserSignIn.description": {
+    "defaultMessage": "Allow users to create and manage their own Shelfmark accounts."
+  },
+  "servicesSettings.shelfmark.title": {
+    "defaultMessage": "Shelfmark Settings"
+  },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
   },
@@ -5945,6 +5981,9 @@
   "userPermissions.audiobooks.description": {
     "defaultMessage": "Grant permission to listen to audiobooks."
   },
+  "userPermissions.bookmark.description": {
+    "defaultMessage": "Grant permission to search and request books."
+  },
   "userPermissions.createEvents.description": {
     "defaultMessage": "Grant permission to create custom events."
   },
@@ -5962,6 +6001,9 @@
   },
   "userPermissions.createNotifications.name": {
     "defaultMessage": "Create Notifications"
+  },
+  "userPermissions.ebooks.description": {
+    "defaultMessage": "Reserved for a future eBook service integration."
   },
   "userPermissions.error": {
     "defaultMessage": "Something went wrong while saving user permissions."
@@ -5983,6 +6025,12 @@
   },
   "userPermissions.manageUsers.description": {
     "defaultMessage": "Grant permission to manage users. Users with this permission cannot modify users with or grant the Admin privilege."
+  },
+  "userPermissions.reader.description": {
+    "defaultMessage": "Grant permission to access book and audiobook services."
+  },
+  "userPermissions.reader.name": {
+    "defaultMessage": "Reader"
   },
   "userPermissions.request.description": {
     "defaultMessage": "Grant permission to access requests (note: access in Seerr must be granted as well)"

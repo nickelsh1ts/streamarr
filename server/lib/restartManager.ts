@@ -11,6 +11,7 @@ import { getSettings } from './settings';
 
 interface ProxyAffectingSettings {
   audiobookshelf: ServiceEntry;
+  shelfmark: ServiceEntry;
   plex: { ip: string };
   radarr: ArrayServiceEntry[];
   sonarr: ArrayServiceEntry[];
@@ -32,6 +33,7 @@ interface ProxyAffectingSettings {
 }
 
 interface ServiceEntry {
+  enabled?: boolean;
   hostname?: string;
   urlBase?: string;
   apiKey?: string;
@@ -98,15 +100,18 @@ class RestartManager {
         trustProxy: settings.network.trustProxy,
         csrfProtection: settings.network.csrfProtection,
       },
+      shelfmark: this.pickService(settings.shelfmark),
     };
   }
 
   private pickService(svc: {
+    enabled?: boolean;
     hostname?: string;
     urlBase?: string;
     apiKey?: string;
   }): ServiceEntry {
     return {
+      enabled: svc.enabled,
       hostname: svc.hostname,
       urlBase: svc.urlBase,
       apiKey: svc.apiKey,
@@ -135,6 +140,10 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.lidarr, this.snapshot.lidarr)) {
       changed.push('Lidarr');
+    }
+
+    if (this.hasServiceChanged(settings.shelfmark, this.snapshot.shelfmark)) {
+      changed.push('Shelfmark');
     }
 
     if (this.hasServiceChanged(settings.chaptarr, this.snapshot.chaptarr)) {
@@ -204,6 +213,7 @@ class RestartManager {
     snap: ServiceEntry
   ): boolean {
     return (
+      current.enabled !== snap.enabled ||
       current.hostname !== snap.hostname ||
       current.urlBase !== snap.urlBase ||
       current.apiKey !== snap.apiKey

@@ -63,6 +63,10 @@ export interface AudiobookshelfSettings extends ServiceSettings {
   enableNewUserSignIn?: boolean;
 }
 
+export interface ShelfmarkSettings extends Omit<ServiceSettings, 'apiKey'> {
+  enableNewUserSignIn?: boolean;
+}
+
 export interface ChaptarrSettings extends ServiceSettings {}
 
 export interface NetworkSettings {
@@ -214,6 +218,7 @@ export interface FullPublicSettings extends PublicSettings {
   };
   seerrEnabled: boolean;
   audiobookshelfEnabled: boolean;
+  shelfmarkEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -398,6 +403,7 @@ export interface AllSettings {
   cleanuparr: ServiceSettings;
   overseerr: ServiceSettings;
   audiobookshelf: AudiobookshelfSettings;
+  shelfmark: ShelfmarkSettings;
   chaptarr: ChaptarrSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
@@ -533,6 +539,11 @@ class Settings {
       audiobookshelf: {
         enabled: false,
         urlBase: '/audiobookshelf',
+        enableNewUserSignIn: false,
+      },
+      shelfmark: {
+        enabled: false,
+        urlBase: '/shelfmark',
         enableNewUserSignIn: false,
       },
       public: { initialized: false },
@@ -770,6 +781,14 @@ class Settings {
     this.data.audiobookshelf = mergeSettings(this.data.audiobookshelf, data);
   }
 
+  get shelfmark(): ShelfmarkSettings {
+    return this.data.shelfmark;
+  }
+
+  set shelfmark(data: ShelfmarkSettings) {
+    this.data.shelfmark = mergeSettings(this.data.shelfmark, data);
+  }
+
   set radarr(data: RadarrSettings[]) {
     this.data.radarr = data;
   }
@@ -827,6 +846,8 @@ class Settings {
       audiobookshelfEnabled:
         !!this.data.audiobookshelf.enabled &&
         !!this.data.audiobookshelf.hostname,
+      shelfmarkEnabled:
+        !!this.data.shelfmark.enabled && !!this.data.shelfmark.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,

@@ -1,7 +1,7 @@
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import type { Request, RequestHandler, Response } from 'express';
-import type { IncomingMessage } from 'http';
+import type { ClientRequest, IncomingMessage } from 'http';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { Socket } from 'net';
 
@@ -16,6 +16,7 @@ export interface ServiceProxyConfig {
   pathPrefix?: string;
   webSocket?: boolean;
   suppressErrors?: () => boolean;
+  onProxyReq?: (proxyReq: ClientRequest, req: Request) => void;
 }
 
 export function createServiceProxy(config: ServiceProxyConfig) {
@@ -25,6 +26,7 @@ export function createServiceProxy(config: ServiceProxyConfig) {
     pathPrefix,
     webSocket = false,
     suppressErrors,
+    onProxyReq,
   } = config;
 
   const proxy = createProxyMiddleware({
@@ -43,6 +45,7 @@ export function createServiceProxy(config: ServiceProxyConfig) {
         proxyReq.setHeader('X-Real-IP', clientIp);
         proxyReq.setHeader('X-Forwarded-For', clientIp);
         proxyReq.setHeader('X-Forwarded-Proto', expressReq.protocol || 'http');
+        onProxyReq?.(proxyReq, expressReq);
       },
       proxyRes: (proxyRes) => {
         const location = proxyRes.headers['location'];

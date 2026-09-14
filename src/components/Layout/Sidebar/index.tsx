@@ -9,12 +9,14 @@ import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import {
+  BookmarkSquareIcon,
   CalendarDateRangeIcon,
   ChevronDownIcon,
   ClockIcon,
   ExclamationTriangleIcon,
   FilmIcon,
   HomeIcon,
+  MicrophoneIcon,
   PaperAirplaneIcon,
   TvIcon,
   WrenchIcon,
@@ -34,6 +36,59 @@ interface MenuLinksProps {
   icon: React.ReactNode;
   regExp: RegExp;
 }
+
+export interface BookMenuLink extends MenuLinksProps {
+  dataTutorial: string;
+  dataTestId: string;
+}
+
+export const useBookMenuLinks = (): BookMenuLink[] => {
+  const intl = useIntl();
+  const { hasPermission, user } = useUser();
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user.id}/settings/main` : null
+  );
+
+  return [
+    {
+      href: '/listen',
+      title: intl.formatMessage({
+        id: 'common.audiobooks',
+        defaultMessage: 'Audiobooks',
+      }),
+      icon: <MicrophoneIcon className="size-7" />,
+      regExp: /\/listen\/?/,
+      dataTutorial: 'nav-audiobooks',
+      dataTestId: 'nav-audiobooks',
+    },
+    {
+      href: '/bookmark',
+      title: intl.formatMessage({
+        id: 'common.bookmark',
+        defaultMessage: 'Bookmark',
+      }),
+      icon: <BookmarkSquareIcon className="size-7" />,
+      regExp: /\/bookmark\/?/,
+      dataTutorial: 'nav-bookmark',
+      dataTestId: 'nav-bookmark',
+    },
+  ].filter((link) => {
+    if (link.href === '/listen') {
+      return (
+        userSettings?.audiobooksEnabled &&
+        hasPermission([Permission.LISTEN, Permission.READER], {
+          type: 'or',
+        })
+      );
+    }
+    return (
+      userSettings?.shelfmarkEnabled &&
+      hasPermission([Permission.BOOKMARK, Permission.READER], {
+        type: 'or',
+      })
+    );
+  });
+};
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -320,13 +375,24 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
+  const bookLinks = useBookMenuLinks();
+  const primaryBookLink = bookLinks.find((link) => link.href === '/listen');
+  const additionalBookLinks = primaryBookLink
+    ? bookLinks.filter((link) => link !== primaryBookLink)
+    : [];
 
   return (
     <div className="mb-1 w-full space-y-1">
       <Accordion
         single
         atLeastOne
-        initialOpenIndexes={url.match(/^\/request\/?(.*)?\/?/) ? [1] : [0]}
+        initialOpenIndexes={
+          url.match(/^\/request\/?(.*)?\/?/)
+            ? [1]
+            : url.match(/^\/(listen|bookmark)\/?/)
+              ? [2]
+              : [0]
+        }
       >
         {({ openIndexes, handleClick, AccordionContent }) => (
           <span className="pointer-events-auto">
@@ -410,6 +476,62 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                   </AccordionContent>
                 </>
               )}
+            {!!bookLinks.length && (
+              <>
+                {bookLinks.length === 1 ? (
+                  <SingleItem
+                    className="flex-1"
+                    liKey={bookLinks[0].title}
+                    data-tutorial={bookLinks[0].dataTutorial}
+                    data-testid={bookLinks[0].dataTestId}
+                    onClick={() => onClick && onClick(!isOpen)}
+                    href={bookLinks[0].href}
+                    title={bookLinks[0].title}
+                    icon={bookLinks[0].icon}
+                    url={url}
+                    regExp={bookLinks[0].regExp}
+                  />
+                ) : primaryBookLink ? (
+                  <>
+                    <div className="mb-1 flex">
+                      <SingleItem
+                        className="flex-1"
+                        linkclasses={`${!openIndexes.includes(2) ? 'rounded-r-none' : ''}`}
+                        liKey={primaryBookLink.title}
+                        data-tutorial={primaryBookLink.dataTutorial}
+                        data-testid={primaryBookLink.dataTestId}
+                        onClick={() => {
+                          onClick && onClick(!isOpen);
+                          handleClick(2);
+                        }}
+                        href={primaryBookLink.href}
+                        title={primaryBookLink.title}
+                        icon={primaryBookLink.icon}
+                        url={url}
+                        regExp={primaryBookLink.regExp}
+                      />
+                      <li
+                        className={`${openIndexes.includes(2) ? 'hidden' : ''}`}
+                      >
+                        <button
+                          onClick={() => handleClick(2)}
+                          className="focus:bg-primary/70! active:bg-primary/20! flex flex-1 items-center rounded-l-none"
+                        >
+                          <ChevronDownIcon className="size-5" />
+                        </button>
+                      </li>
+                    </div>
+                    <AccordionContent isOpen={openIndexes.includes(2)}>
+                      <BooksMenu
+                        links={additionalBookLinks}
+                        onClick={onClick}
+                        url={url}
+                      />
+                    </AccordionContent>
+                  </>
+                ) : null}
+              </>
+            )}
           </span>
         )}
       </Accordion>
@@ -528,6 +650,33 @@ export const RequestMenu = ({
           />
         );
       })}
+    </ul>
+  );
+};
+
+export const BooksMenu = ({
+  links,
+  onClick,
+  url,
+}: RequestMenuProps & { url: string; links?: BookMenuLink[] }) => {
+  const availableBookLinks = useBookMenuLinks();
+  const bookLinks = links ?? availableBookLinks;
+  return (
+    <ul className="menu m-0 my-1 w-full space-y-1 p-0">
+      {bookLinks.map((link) => (
+        <SingleItem
+          key={link.title}
+          liKey={link.title}
+          data-tutorial={link.dataTutorial}
+          data-testid={link.dataTestId}
+          onClick={() => onClick(false)}
+          href={link.href}
+          title={link.title}
+          icon={link.icon}
+          url={url}
+          regExp={link.regExp}
+        />
+      ))}
     </ul>
   );
 };

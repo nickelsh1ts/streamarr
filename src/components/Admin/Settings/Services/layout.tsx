@@ -57,6 +57,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/audiobookshelf\/?/,
     },
     {
+      text: 'Shelfmark',
+      route: '/admin/settings/services/shelfmark',
+      regex: /^\/admin\/settings\/services\/shelfmark\/?/,
+    },
+    {
       text: 'Tautulli',
       route: '/admin/settings/services/tautulli',
       regex: /^\/admin\/settings\/services\/tautulli\/?/,

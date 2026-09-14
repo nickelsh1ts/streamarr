@@ -14,6 +14,7 @@ export interface User {
   audiobookshelfId?: string;
   audiobookshelfUsername?: string;
   audiobookshelfPwNotifiedAt?: Date | null;
+  shelfmarkUsername?: string | null;
   username?: string;
   displayName: string;
   email: string;

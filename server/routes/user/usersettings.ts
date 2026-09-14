@@ -36,6 +36,12 @@ import {
   trialExtensionRequestLimiter,
 } from '@server/lib/rateLimiters';
 import { getSettings } from '@server/lib/settings';
+import {
+  getShelfmarkAPI,
+  linkShelfmarkAccount,
+  ShelfmarkAccountCreationDisabledError,
+  ShelfmarkAccountLinkRequiresManagerError,
+} from '@server/lib/shelfmark';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { canMakePermissionsChange } from '@server/routes/user';
@@ -405,6 +411,171 @@ userSettingsRoutes.post<{ id: string }>(
   }
 );
 
+userSettingsRoutes.get<{ id: string }, { linked: boolean; username?: string }>(
+  '/linked-accounts/shelfmark',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const settings = getSettings().shelfmark;
+    if (
+      !settings.enabled ||
+      !settings.hostname ||
+      !settings.port ||
+      !settings.urlBase
+    ) {
+      return next({ status: 503, message: 'Shelfmark is not configured.' });
+    }
+
+    const user = await getRepository(User).findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+    if (
+      !user.hasPermission([Permission.BOOKMARK, Permission.READER], {
+        type: 'or',
+      })
+    ) {
+      return res.status(200).json({ linked: false });
+    }
+
+    if (!user.shelfmarkUsername) {
+      return res.status(200).json({ linked: false });
+    }
+
+    try {
+      const shelfmarkUser = (
+        await getShelfmarkAPI(settings).getAllUsers()
+      ).find(
+        (candidate) =>
+          candidate.username.toLocaleLowerCase() ===
+          user.shelfmarkUsername?.toLocaleLowerCase()
+      );
+      return res
+        .status(200)
+        .json(
+          shelfmarkUser
+            ? { linked: true, username: shelfmarkUser.username }
+            : { linked: false }
+        );
+    } catch (e) {
+      logger.error('Failed to retrieve Shelfmark linked-account status', {
+        label: 'Shelfmark',
+        message: e instanceof Error ? e.message : String(e),
+        userId: user.id,
+      });
+      return next({ status: 502, message: 'Failed to connect to Shelfmark.' });
+    }
+  }
+);
+
+userSettingsRoutes.post<{ id: string }, { linked: boolean; username: string }>(
+  '/linked-accounts/shelfmark',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const settings = getSettings().shelfmark;
+    if (
+      !settings.enabled ||
+      !settings.hostname ||
+      !settings.port ||
+      !settings.urlBase
+    ) {
+      return next({ status: 503, message: 'Shelfmark is not configured.' });
+    }
+
+    const user = await getRepository(User).findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+    if (
+      !user.hasPermission([Permission.BOOKMARK, Permission.READER], {
+        type: 'or',
+      })
+    ) {
+      return next({
+        status: 403,
+        message: 'User does not have Shelfmark access.',
+      });
+    }
+    const isManager = req.user!.hasPermission(Permission.MANAGE_USERS);
+    if (!isManager && !settings.enableNewUserSignIn) {
+      return next({
+        status: 403,
+        message: 'Creating new Shelfmark accounts is disabled.',
+      });
+    }
+
+    try {
+      const username = await linkShelfmarkAccount(user, {
+        allowCreation: isManager || !!settings.enableNewUserSignIn,
+        allowExistingAccountLink: isManager,
+      });
+      return res.status(200).json({
+        linked: true,
+        username,
+      });
+    } catch (e) {
+      if (e instanceof ShelfmarkAccountCreationDisabledError) {
+        return next({
+          status: 403,
+          message: 'Creating new Shelfmark accounts is disabled.',
+        });
+      }
+      if (e instanceof ShelfmarkAccountLinkRequiresManagerError) {
+        return next({
+          status: 403,
+          message:
+            'An administrator must link this existing Shelfmark account.',
+        });
+      }
+      logger.error('Failed to provision Shelfmark linked account', {
+        label: 'Shelfmark',
+        message: e instanceof Error ? e.message : String(e),
+        userId: user.id,
+      });
+      return next({ status: 502, message: 'Failed to connect to Shelfmark.' });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string }>(
+  '/linked-accounts/shelfmark',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const isManager = req.user!.hasPermission(Permission.MANAGE_USERS);
+    if (!isManager && !getSettings().shelfmark.enableNewUserSignIn) {
+      return next({
+        status: 403,
+        message: 'Unlinking Shelfmark accounts is disabled.',
+      });
+    }
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    try {
+      user.shelfmarkUsername = null;
+      await userRepository.save(user);
+      logger.info('Unlinked Shelfmark account', {
+        label: 'Shelfmark',
+        userId: user.id,
+      });
+      return res.status(204).send();
+    } catch (e) {
+      return next({
+        status: 500,
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+);
+
 userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
   '/main',
   isOwnProfileOrAdmin(),
@@ -432,6 +603,11 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         enabled: audiobooksEnabled,
         urlBase: audiobooksBaseUrl,
         enableNewUserSignIn: audiobookshelfNewUserSignIn,
+      },
+      shelfmark: {
+        enabled: shelfmarkEnabled,
+        urlBase: shelfmarkBaseUrl,
+        enableNewUserSignIn: shelfmarkNewUserSignIn,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -481,6 +657,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         audiobooksEnabled: audiobooksEnabled,
         audiobooksBaseUrl: audiobooksBaseUrl,
         audiobookshelfNewUserSignIn: audiobookshelfNewUserSignIn,
+        shelfmarkEnabled: shelfmarkEnabled,
+        shelfmarkBaseUrl: shelfmarkBaseUrl,
+        shelfmarkNewUserSignIn: shelfmarkNewUserSignIn,
       });
     } catch (e) {
       next({ status: 500, message: e.message });

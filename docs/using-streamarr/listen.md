@@ -34,9 +34,9 @@ Use **Test** to verify the connection before saving. Once configured, Audiobooks
 
 ## Access Control
 
-The Audiobooks page and its proxy route require either the **Audiobooks** permission or the **Streamarr** permission. Because **Streamarr** is granted to every user by default, the **Audiobooks** permission is only needed for users who do not have it.
+The Audiobooks page and its proxy route require either the **Audiobooks** permission or the **Reader** permission.
 
-Grant it under **Users → (select a user) → Permissions → Audiobooks**.
+Grant access under **Users → (select a user) → Permissions → Reader** or **Audiobooks**.
 
 ---
 
