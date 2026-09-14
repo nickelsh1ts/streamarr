@@ -32,7 +32,7 @@ import {
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
-import type { RequestHandler } from 'express';
+import type { Request, RequestHandler } from 'express';
 import { Router } from 'express';
 
 /**
@@ -144,9 +144,10 @@ export function createServiceProxyRouter(
     label: string,
     requireAdmin = false,
     permissions?: Permission[],
-    middleware: RequestHandler[] = []
+    middleware: RequestHandler[] = [],
+    bypassAuth?: (req: Request) => boolean
   ): void => {
-    const guard = permissions
+    const rawGuard = permissions
       ? [
           sessionMiddleware,
           checkUser,
@@ -155,6 +156,14 @@ export function createServiceProxyRouter(
       : requireAdmin
         ? adminMiddleware
         : authMiddleware;
+
+    const guard = bypassAuth
+      ? rawGuard.map(
+          (fn): RequestHandler =>
+            (req, res, next) =>
+              bypassAuth(req) ? next() : fn(req, res, next)
+        )
+      : rawGuard;
 
     router.use(path, ...guard, ...middleware, proxy);
     registeredRoutes.push({ name: label, path });
@@ -296,12 +305,19 @@ export function createServiceProxyRouter(
       suppressErrors: () => false,
     });
 
+    const isAudiobookshelfPublicRequest = (req: Request): boolean => {
+      const path = req.path || req.originalUrl || '';
+      return path.startsWith('/public/') || path === '/public';
+    };
+
     registerProxy(
       settings.audiobookshelf.urlBase,
       audiobookshelfProxy,
       'Audiobookshelf',
       false,
-      [Permission.LISTEN, Permission.READER]
+      [Permission.LISTEN, Permission.READER],
+      [],
+      isAudiobookshelfPublicRequest
     );
     registerWebSocketHandler(
       dispatcher,
