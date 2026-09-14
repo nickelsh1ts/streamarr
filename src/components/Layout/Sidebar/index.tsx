@@ -669,7 +669,7 @@ export const BooksMenu = ({
           liKey={link.title}
           data-tutorial={link.dataTutorial}
           data-testid={link.dataTestId}
-          onClick={() => onClick(false)}
+          onClick={() => onClick && onClick(false)}
           href={link.href}
           title={link.title}
           icon={link.icon}
