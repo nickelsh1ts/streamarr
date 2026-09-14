@@ -891,6 +891,14 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Audiobookshelf account.
+    ShelfmarkSettings:
+      allOf:
+        - $ref: '#/components/schemas/ServiceSettings'
+        - type: object
+          properties:
+            enableNewUserSignIn:
+              type: boolean
+              description: Allow users to provision a new Shelfmark account.
     NetworkSettings:
       type: object
       required:
@@ -1564,6 +1572,10 @@ components:
           type: boolean
           example: true
           description: Whether Seerr (Overseerr) is configured and enabled
+        shelfmarkEnabled:
+          type: boolean
+          example: false
+          description: Whether Shelfmark is configured and enabled
         statusUrl:
           type: string
           description: External URL for the status/uptime page
@@ -3697,6 +3709,78 @@ paths:
                     type: string
         '500':
           description: Failed to connect to Audiobookshelf
+  /settings/shelfmark:
+    get:
+      summary: Get Shelfmark settings
+      description: Retrieves current Shelfmark settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShelfmarkSettings'
+    post:
+      summary: Update Shelfmark settings
+      description: Updates Shelfmark settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShelfmarkSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShelfmarkSettings'
+        '400':
+          description: Invalid URL Base (bad format, reserved path, or already in use)
+  /settings/shelfmark/test:
+    post:
+      summary: Test Shelfmark configuration
+      description: Tests the unauthenticated Shelfmark health endpoint. Returns the URL base on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 13378
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+      responses:
+        '200':
+          description: Successfully connected to Shelfmark instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Shelfmark
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -6706,6 +6790,26 @@ paths:
                   releaseSched:
                     type: boolean
                     description: Whether release schedule feature is enabled
+                  audiobooksEnabled:
+                    type: boolean
+                    description: Whether the Audiobookshelf integration is enabled
+                  audiobooksBaseUrl:
+                    type: string
+                    nullable: true
+                    description: Audiobookshelf proxy URL base path
+                  audiobookshelfNewUserSignIn:
+                    type: boolean
+                    description: Whether users may create Audiobookshelf accounts
+                  shelfmarkEnabled:
+                    type: boolean
+                    description: Whether the Shelfmark integration is enabled
+                  shelfmarkBaseUrl:
+                    type: string
+                    nullable: true
+                    description: Shelfmark proxy URL base path
+                  shelfmarkNewUserSignIn:
+                    type: boolean
+                    description: Whether users may create Shelfmark accounts
     post:
       summary: Update general settings for a user
       description: Updates and returns general settings for a specific user. Requires `MANAGE_USERS` permission if editing other users.
@@ -7084,6 +7188,88 @@ paths:
           description: An administrator has already been notified
         '500':
           description: Server error while sending the notification
+  /user/{userId}/settings/linked-accounts/shelfmark:
+    get:
+      summary: Get Shelfmark linked-account status
+      description: Returns the persisted Streamarr association only when its Shelfmark user exists.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Shelfmark linked-account status
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - linked
+                properties:
+                  linked:
+                    type: boolean
+                  username:
+                    type: string
+        '404':
+          description: User not found
+        '502':
+          description: Shelfmark request failed
+        '503':
+          description: Shelfmark is not configured
+    post:
+      summary: Provision a Shelfmark linked account
+      description: Links a matching Shelfmark user or creates one through proxy authentication when new user sign-in is enabled, then synchronizes its email and display name from Streamarr. When new user sign-in is disabled, requires `MANAGE_USERS` permission.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Shelfmark account is available
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - linked
+                  - username
+                properties:
+                  linked:
+                    type: boolean
+                  username:
+                    type: string
+        '403':
+          description: User does not have Shelfmark access, creation is disabled, or the caller cannot manage users
+        '404':
+          description: User not found
+        '502':
+          description: Shelfmark request failed
+        '503':
+          description: Shelfmark is not configured
+    delete:
+      summary: Unlink a Shelfmark account
+      description: Removes the Streamarr association without deleting the Shelfmark user or its data. When new user sign-in is disabled, requires `MANAGE_USERS` permission.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Shelfmark account unlinked from Streamarr
+        '404':
+          description: User not found
   /user/{userId}/settings/notifications:
     get:
       summary: Get notification settings for a user
