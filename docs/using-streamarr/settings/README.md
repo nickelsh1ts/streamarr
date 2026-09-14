@@ -457,7 +457,7 @@ Configuration options are the same as Radarr, with the default port being `8989`
 
 #### Shelfmark
 
-Connect Shelfmark for book and audiobook search and requests. See [Books](../bookmark.md) for the required proxy-authentication configuration and account behavior.
+Connect Shelfmark for book and audiobook search and requests. See [Bookmark](../bookmark.md) for the required proxy-authentication configuration and account behavior.
 
 | Setting                    | Description                                                        |
 | -------------------------- | ------------------------------------------------------------------ |

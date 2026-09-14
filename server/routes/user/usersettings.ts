@@ -23,6 +23,10 @@ import {
   getAudiobookshelfAPI,
   getAudiobookshelfUsernameCandidate,
 } from '@server/lib/audiobookshelf';
+import {
+  CalibreWebUsernameConflictError,
+  isUniqueConstraintError,
+} from '@server/lib/calibreweb';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
@@ -576,6 +580,177 @@ userSettingsRoutes.delete<{ id: string }>(
   }
 );
 
+// Calibre-Web has no user-management API, so this only associates a
+// username - the account may already exist, or be auto-created by CWA's
+// reverse-proxy auto-create option using the trusted X-Auth-User header.
+userSettingsRoutes.get<{ id: string }, { linked: boolean; username?: string }>(
+  '/linked-accounts/calibreweb',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const settings = getSettings().calibreweb;
+    if (!settings.enabled || !settings.hostname || !settings.urlBase) {
+      return next({ status: 503, message: 'Calibre-Web is not configured.' });
+    }
+
+    const user = await getRepository(User).findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+    if (
+      !user.hasPermission([Permission.READER, Permission.EBOOKS], {
+        type: 'or',
+      })
+    ) {
+      return res.status(200).json({ linked: false });
+    }
+
+    return res
+      .status(200)
+      .json(
+        user.calibrewebUsername
+          ? { linked: true, username: user.calibrewebUsername }
+          : { linked: false }
+      );
+  }
+);
+
+userSettingsRoutes.post<{ id: string }, { linked: boolean; username: string }>(
+  '/linked-accounts/calibreweb',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const settings = getSettings().calibreweb;
+    if (!settings.enabled || !settings.hostname || !settings.urlBase) {
+      return next({ status: 503, message: 'Calibre-Web is not configured.' });
+    }
+
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+    if (
+      !user.hasPermission([Permission.READER, Permission.EBOOKS], {
+        type: 'or',
+      })
+    ) {
+      return next({
+        status: 403,
+        message: 'User does not have Calibre-Web access.',
+      });
+    }
+
+    const isManager = req.user!.hasPermission(Permission.MANAGE_USERS);
+    if (!isManager && !settings.enableNewUserSignIn) {
+      return next({
+        status: 403,
+        message: 'Linking Calibre-Web accounts is disabled.',
+      });
+    }
+
+    const username = getAudiobookshelfUsernameCandidate(user);
+
+    try {
+      await userRepository.manager.transaction(async (manager) => {
+        const transactionalRepo = manager.getRepository(User);
+
+        // Guards against two Streamarr users ending up with the same
+        // Calibre-Web username (which would make Calibre-Web treat them as
+        // one account via the trusted X-Auth-User header) since we have no
+        // API to tell whether it's actually the same underlying account.
+        const conflictingUser = await transactionalRepo
+          .createQueryBuilder('user')
+          .where('LOWER(user.calibrewebUsername) = LOWER(:username)', {
+            username,
+          })
+          .andWhere('user.id != :id', { id: user.id })
+          .getOne();
+
+        if (conflictingUser) {
+          if (!isManager) {
+            throw new CalibreWebUsernameConflictError();
+          }
+          conflictingUser.calibrewebUsername = null;
+          await transactionalRepo.save(conflictingUser);
+          logger.warn('Reassigned Calibre-Web username between users', {
+            label: 'Calibre-Web',
+            username,
+            fromUserId: conflictingUser.id,
+            toUserId: user.id,
+          });
+        }
+
+        user.calibrewebUsername = username;
+        await transactionalRepo.save(user);
+      });
+
+      logger.info('Linked Calibre-Web account', {
+        label: 'Calibre-Web',
+        userId: user.id,
+      });
+      return res.status(200).json({ linked: true, username });
+    } catch (e) {
+      if (e instanceof CalibreWebUsernameConflictError) {
+        return next({
+          status: 409,
+          message:
+            'This Calibre-Web username is already linked to another user. Ask an administrator to link it for you.',
+        });
+      }
+      if (isUniqueConstraintError(e)) {
+        return next({
+          status: 409,
+          message:
+            'This Calibre-Web username was just linked by another user. Please try again.',
+        });
+      }
+      return next({
+        status: 500,
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string }>(
+  '/linked-accounts/calibreweb',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const isManager = req.user!.hasPermission(Permission.MANAGE_USERS);
+    if (!isManager && !getSettings().calibreweb.enableNewUserSignIn) {
+      return next({
+        status: 403,
+        message: 'Unlinking Calibre-Web accounts is disabled.',
+      });
+    }
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: Number(req.params.id) },
+    });
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    try {
+      user.calibrewebUsername = null;
+      await userRepository.save(user);
+      logger.info('Unlinked Calibre-Web account', {
+        label: 'Calibre-Web',
+        userId: user.id,
+      });
+      return res.status(204).send();
+    } catch (e) {
+      return next({
+        status: 500,
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+);
+
 userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
   '/main',
   isOwnProfileOrAdmin(),
@@ -608,6 +783,11 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         enabled: shelfmarkEnabled,
         urlBase: shelfmarkBaseUrl,
         enableNewUserSignIn: shelfmarkNewUserSignIn,
+      },
+      calibreweb: {
+        enabled: calibrewebEnabled,
+        urlBase: calibrewebBaseUrl,
+        enableNewUserSignIn: calibrewebNewUserSignIn,
       },
     } = getSettings();
     const userRepository = getRepository(User);
@@ -660,6 +840,9 @@ userSettingsRoutes.get<{ id: string }, UserSettingsGeneralResponse>(
         shelfmarkEnabled: shelfmarkEnabled,
         shelfmarkBaseUrl: shelfmarkBaseUrl,
         shelfmarkNewUserSignIn: shelfmarkNewUserSignIn,
+        calibrewebEnabled: calibrewebEnabled,
+        calibrewebBaseUrl: calibrewebBaseUrl,
+        calibrewebNewUserSignIn: calibrewebNewUserSignIn,
       });
     } catch (e) {
       next({ status: 500, message: e.message });

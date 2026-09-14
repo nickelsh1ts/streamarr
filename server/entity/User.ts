@@ -106,6 +106,18 @@ export class User {
   @Column({ type: 'text', nullable: true })
   public shelfmarkUsername?: string | null;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+    unique: true,
+    transformer: {
+      from: (value: string | null): string | null => value,
+      to: (value: string | null): string | null =>
+        value ? value.toLowerCase() : null,
+    },
+  })
+  public calibrewebUsername?: string | null;
+
   @Column({ type: 'text', nullable: true, select: false })
   public plexJwt?: string | null;
 

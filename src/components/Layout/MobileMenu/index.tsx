@@ -98,7 +98,7 @@ const MobileMenu = () => {
       type: 'or',
     }) || !userSettings?.requestUrl;
   const bookLinks = useBookMenuLinks();
-  const isBookRoute = url.match(/^\/(listen|bookmark)\/?/);
+  const isBookRoute = url.match(/^\/(read|listen|bookmark)\/?/);
 
   const isWatchRoute = url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/);
 
@@ -420,7 +420,7 @@ const MobileMenu = () => {
               if (
                 !isOpen ||
                 (menuType === 'nav' &&
-                  !url.match(/^\/(request|listen|bookmark)\/?(.*)?\/?/))
+                  !url.match(/^\/(request|read|listen|bookmark)\/?(.*)?\/?/))
               ) {
                 setMenuType('library');
               }

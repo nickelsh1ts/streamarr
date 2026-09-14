@@ -16,6 +16,7 @@ const RESERVED_PATHS = [
   '/api-docs',
   '/watch',
   '/bookmark',
+  '/read',
   '/schedule',
   '/help',
   '/signup',
@@ -39,6 +40,7 @@ export type ServiceType =
   | 'cleanuparr'
   | 'audiobookshelf'
   | 'shelfmark'
+  | 'calibreweb'
   | 'other';
 
 /**
@@ -123,6 +125,7 @@ export function validateBaseUrl(
       type: 'audiobookshelf',
     },
     { settings: settings.shelfmark, name: 'Shelfmark', type: 'shelfmark' },
+    { settings: settings.calibreweb, name: 'Calibre-Web', type: 'calibreweb' },
   ];
 
   for (const svc of singleServices) {

@@ -15,6 +15,7 @@ export interface User {
   audiobookshelfUsername?: string;
   audiobookshelfPwNotifiedAt?: Date | null;
   shelfmarkUsername?: string | null;
+  calibrewebUsername?: string | null;
   username?: string;
   displayName: string;
   email: string;

@@ -12,6 +12,7 @@ import { getSettings } from './settings';
 interface ProxyAffectingSettings {
   audiobookshelf: ServiceEntry;
   shelfmark: ServiceEntry;
+  calibreweb: ServiceEntry;
   plex: { ip: string };
   radarr: ArrayServiceEntry[];
   sonarr: ArrayServiceEntry[];
@@ -101,6 +102,7 @@ class RestartManager {
         csrfProtection: settings.network.csrfProtection,
       },
       shelfmark: this.pickService(settings.shelfmark),
+      calibreweb: this.pickService(settings.calibreweb),
     };
   }
 
@@ -144,6 +146,10 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.shelfmark, this.snapshot.shelfmark)) {
       changed.push('Shelfmark');
+    }
+
+    if (this.hasServiceChanged(settings.calibreweb, this.snapshot.calibreweb)) {
+      changed.push('Calibre-Web');
     }
 
     if (this.hasServiceChanged(settings.chaptarr, this.snapshot.chaptarr)) {

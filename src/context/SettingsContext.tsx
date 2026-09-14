@@ -27,6 +27,7 @@ const defaultSettings: PublicSettingsResponse = {
   seerrEnabled: false,
   audiobookshelfEnabled: false,
   shelfmarkEnabled: false,
+  calibrewebEnabled: false,
   statusUrl: '',
   statusEnabled: false,
   customLogo: undefined,

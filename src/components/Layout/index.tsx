@@ -64,7 +64,7 @@ const Layout = ({
   const isMainLayout = useMemo(
     () =>
       !pathname.match(
-        /\/(help\/?(.*)?|watch\/?(.*)?|signin\/plex\/loading|setup|logout|\/?$)/
+        /\/(help\/?(.*)?|watch\/?(.*)?|read\/read\/[^/]+\/[^/]+|signin\/plex\/loading|setup|logout|\/?$)/
       ),
     [pathname]
   );
