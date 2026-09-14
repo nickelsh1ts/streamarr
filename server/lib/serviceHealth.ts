@@ -13,10 +13,12 @@ import type {
   ServiceHealthStatus,
 } from '@server/interfaces/api/settingsInterfaces';
 import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
+import { getCalibreWebAPI } from '@server/lib/calibreweb';
 import { resetClientHealth } from '@server/lib/healthCheck';
 import { getPlexHealth, refreshPlexVersion } from '@server/lib/plexHealthCheck';
 import type {
   AudiobookshelfSettings,
+  CalibreWebSettings,
   DownloadClientSettings,
   DVRSettings,
   ServiceSettings,
@@ -241,6 +243,17 @@ async function checkShelfmark(
   }
 }
 
+async function checkCalibreWeb(
+  service: CalibreWebSettings
+): Promise<CheckResult> {
+  try {
+    await withTimeout(getCalibreWebAPI(service).testConnection(), timeout());
+    return { status: 'healthy' };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
 async function checkSeerr(service: ServiceSettings): Promise<CheckResult> {
   try {
     const status = await withTimeout(
@@ -420,6 +433,17 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
       return {
         id: 'shelfmark',
         name: 'Shelfmark',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.calibreweb)) return null;
+      const result = await checkCalibreWeb(settings.calibreweb);
+      return {
+        id: 'calibreweb',
+        name: 'Calibre-Web',
         retryable: true,
         ...result,
       };

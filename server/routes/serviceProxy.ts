@@ -92,6 +92,15 @@ export function getActiveProxyPaths(): string[] {
     paths.push(settings.shelfmark.urlBase);
   }
 
+  // Calibre-Web (relies on X-Script-Name; no native urlBase config on its own)
+  if (
+    settings.calibreweb.enabled &&
+    settings.calibreweb.hostname &&
+    settings.calibreweb.urlBase
+  ) {
+    paths.push(settings.calibreweb.urlBase);
+  }
+
   // Tdarr (hardcoded paths - no custom base URL support)
   if (settings.tdarr.enabled && settings.tdarr.hostname) {
     paths.push(TDARR_PROXY_PATH);
@@ -403,6 +412,66 @@ export function createServiceProxyRouter(
           }
         },
       ]
+    );
+  }
+
+  // Register Calibre-Web proxy (requires READER or EBOOKS). Calibre-Web has
+  // no urlBase config of its own - it relies entirely on the X-Script-Name
+  // header (Flask/WSGI reverse-proxy convention) to scope its own routes,
+  // static assets, and session cookies under our base path. Its Flask routes
+  // are registered unprefixed, so the path Express already stripped down to
+  // (e.g. /login) is exactly what Calibre-Web expects on the wire - do not
+  // re-add the URL base here.
+  if (
+    settings.calibreweb.enabled &&
+    settings.calibreweb.hostname &&
+    settings.calibreweb.urlBase
+  ) {
+    const calibrewebProxy = createServiceProxy({
+      name: 'Calibre-Web',
+      getTarget: () => {
+        const { calibreweb } = getSettings();
+        const protocol = calibreweb.useSsl ? 'https' : 'http';
+        return `${protocol}://${calibreweb.hostname}:${calibreweb.port ?? 8083}`;
+      },
+      webSocket: false,
+      suppressErrors: () => false,
+      onProxyReq: (proxyReq, req) => {
+        const { calibreweb } = getSettings();
+        proxyReq.setHeader('X-Script-Name', calibreweb.urlBase ?? '');
+        proxyReq.setHeader('X-Forwarded-Prefix', calibreweb.urlBase ?? '');
+        proxyReq.setHeader('X-Scheme', req.protocol);
+        if (req.headers.host) {
+          proxyReq.setHeader('X-Forwarded-Host', req.headers.host);
+        }
+        const headerName = calibreweb.headerAuthName || 'X-Auth-User';
+        proxyReq.removeHeader(headerName);
+        proxyReq.removeHeader('X-Remote-Email');
+        if (calibreweb.headerAuthEnabled && req.user?.calibrewebUsername) {
+          proxyReq.setHeader(headerName, req.user.calibrewebUsername);
+          if (req.user.email) {
+            proxyReq.setHeader('X-Remote-Email', req.user.email);
+          }
+        }
+      },
+    });
+
+    registerProxy(
+      settings.calibreweb.urlBase,
+      calibrewebProxy,
+      'Calibre-Web',
+      false,
+      [Permission.READER, Permission.EBOOKS]
+    );
+
+    router.get(
+      '/user_profiles.json',
+      sessionMiddleware,
+      checkUser,
+      isAuthenticated([Permission.READER, Permission.EBOOKS], {
+        type: 'or',
+      }),
+      calibrewebProxy
     );
   }
 

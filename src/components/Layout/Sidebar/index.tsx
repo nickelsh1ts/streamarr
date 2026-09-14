@@ -10,6 +10,7 @@ import { Permission, useUser } from '@app/hooks/useUser';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import {
   BookmarkSquareIcon,
+  BookOpenIcon,
   CalendarDateRangeIcon,
   ChevronDownIcon,
   ClockIcon,
@@ -51,6 +52,17 @@ export const useBookMenuLinks = (): BookMenuLink[] => {
 
   return [
     {
+      href: '/read',
+      title: intl.formatMessage({
+        id: 'common.books',
+        defaultMessage: 'Books',
+      }),
+      icon: <BookOpenIcon className="size-7" />,
+      regExp: /\/read\/?/,
+      dataTutorial: 'nav-read',
+      dataTestId: 'nav-read',
+    },
+    {
       href: '/listen',
       title: intl.formatMessage({
         id: 'common.audiobooks',
@@ -81,9 +93,17 @@ export const useBookMenuLinks = (): BookMenuLink[] => {
         })
       );
     }
+    if (link.href === '/bookmark') {
+      return (
+        userSettings?.shelfmarkEnabled &&
+        hasPermission([Permission.BOOKMARK, Permission.READER], {
+          type: 'or',
+        })
+      );
+    }
     return (
-      userSettings?.shelfmarkEnabled &&
-      hasPermission([Permission.BOOKMARK, Permission.READER], {
+      userSettings?.calibrewebEnabled &&
+      hasPermission([Permission.READER, Permission.EBOOKS], {
         type: 'or',
       })
     );
@@ -376,10 +396,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
     user ? `/api/v1/user/${user?.id}/settings/main` : null
   );
   const bookLinks = useBookMenuLinks();
-  const primaryBookLink = bookLinks.find((link) => link.href === '/listen');
-  const additionalBookLinks = primaryBookLink
-    ? bookLinks.filter((link) => link !== primaryBookLink)
-    : [];
+  const [primaryBookLink, ...additionalBookLinks] = bookLinks;
 
   return (
     <div className="mb-1 w-full space-y-1">
@@ -389,7 +406,7 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
         initialOpenIndexes={
           url.match(/^\/request\/?(.*)?\/?/)
             ? [1]
-            : url.match(/^\/(listen|bookmark)\/?/)
+            : url.match(/^\/(read|listen|bookmark)\/?/)
               ? [2]
               : [0]
         }

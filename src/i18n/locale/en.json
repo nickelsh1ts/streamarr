@@ -3827,6 +3827,12 @@
   "linkedAccounts.audiobookshelfUnlinkFailed": {
     "defaultMessage": "Failed to unlink Audiobookshelf account"
   },
+  "linkedAccounts.calibrewebLinkFailed": {
+    "defaultMessage": "Failed to link Calibre-Web account"
+  },
+  "linkedAccounts.calibrewebUnlinkFailed": {
+    "defaultMessage": "Failed to unlink Calibre-Web account"
+  },
   "linkedAccounts.deleteFailed": {
     "defaultMessage": "Failed to delete linked account"
   },
@@ -4937,6 +4943,18 @@
   "radarrSettings.title": {
     "defaultMessage": "Radarr Settings"
   },
+  "read.calibrewebLinkFailed": {
+    "defaultMessage": "Failed to link Calibre-Web account"
+  },
+  "read.calibrewebLinkPrompt": {
+    "defaultMessage": "Link your Calibre-Web account to continue."
+  },
+  "read.calibrewebNotLinkedMessage": {
+    "defaultMessage": "Your Calibre-Web account must be linked by an administrator before you can access it."
+  },
+  "read.calibrewebNotLinkedTitle": {
+    "defaultMessage": "Calibre-Web Account Required"
+  },
   "resetPassword.backToSignIn": {
     "defaultMessage": "Back to Sign in"
   },
@@ -5029,6 +5047,42 @@
   },
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Bazarr Settings"
+  },
+  "servicesSettings.calibreweb.alertDescription": {
+    "defaultMessage": "Users can also sign in with a Calibre-Web password directly. For single sign-on instead, turn on Reverse Proxy Header Login in Calibre-Web and enable Header Auth below."
+  },
+  "servicesSettings.calibreweb.alertTitle": {
+    "defaultMessage": "Reverse proxy header login (optional)"
+  },
+  "servicesSettings.calibreweb.description": {
+    "defaultMessage": "Optionally configure the settings for your Calibre-Web, Calibre-Web Automated, or AutoCaliWeb server."
+  },
+  "servicesSettings.calibreweb.enableNewUserSignIn": {
+    "defaultMessage": "Enable New User Signin"
+  },
+  "servicesSettings.calibreweb.enableNewUserSignIn.description": {
+    "defaultMessage": "Allow users to link or auto-create their own Calibre-Web account."
+  },
+  "servicesSettings.calibreweb.headerAuthEnabled": {
+    "defaultMessage": "Enable Reverse Proxy Header Auth"
+  },
+  "servicesSettings.calibreweb.headerAuthEnabled.description": {
+    "defaultMessage": "Send the linked username header so Calibre-Web can sign users in automatically."
+  },
+  "servicesSettings.calibreweb.headerAuthName": {
+    "defaultMessage": "Reverse Proxy Header Name"
+  },
+  "servicesSettings.calibreweb.headerAuthName.description": {
+    "defaultMessage": "Must match the header name configured in Calibre-Web."
+  },
+  "servicesSettings.calibreweb.headerAuthName.invalid": {
+    "defaultMessage": "Must be a valid HTTP header name"
+  },
+  "servicesSettings.calibreweb.headerAuthName.required": {
+    "defaultMessage": "A header name is required"
+  },
+  "servicesSettings.calibreweb.title": {
+    "defaultMessage": "Calibre-Web Settings"
   },
   "servicesSettings.chaptarr.description": {
     "defaultMessage": "Optionally configure the settings for your Chaptarr server."

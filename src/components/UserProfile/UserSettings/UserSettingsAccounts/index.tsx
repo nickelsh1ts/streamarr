@@ -1,5 +1,6 @@
 'use client';
 import AudiobookshelfLogo from '@app/assets/services/audiobookshelf.svg';
+import CalibreWebLogo from '@app/assets/services/calibreweb.svg';
 import PlexLogo from '@app/assets/services/plex.svg';
 import ShelfmarkLogo from '@app/assets/services/shelfmark.png';
 import Alert from '@app/components/Common/Alert';
@@ -25,6 +26,7 @@ enum LinkedAccountType {
   Plex = 'Plex',
   Audiobookshelf = 'Audiobookshelf',
   Shelfmark = 'Shelfmark',
+  CalibreWeb = 'Calibre-Web',
 }
 
 type LinkedAccount = {
@@ -33,6 +35,11 @@ type LinkedAccount = {
 };
 
 interface ShelfmarkLinkedAccountResponse {
+  linked: boolean;
+  username?: string;
+}
+
+interface CalibreWebLinkedAccountResponse {
   linked: boolean;
   username?: string;
 }
@@ -63,6 +70,18 @@ const UserSettingsAccounts = () => {
         ? `/api/v1/user/${user.id}/settings/linked-accounts/shelfmark`
         : null
     );
+  const hasCalibrewebAccess =
+    !!userSettings?.calibrewebEnabled &&
+    !!user &&
+    hasPermission([Permission.READER, Permission.EBOOKS], user.permissions, {
+      type: 'or',
+    });
+  const { data: calibrewebAccount, mutate: revalidateCalibrewebAccount } =
+    useSWR<CalibreWebLinkedAccountResponse>(
+      hasCalibrewebAccess
+        ? `/api/v1/user/${user.id}/settings/linked-accounts/calibreweb`
+        : null
+    );
   const { currentSettings } = useSettings();
   const [error, setError] = useState<string | null>(null);
   const [showAudiobookshelfModal, setShowAudiobookshelfModal] = useState(false);
@@ -86,8 +105,14 @@ const UserSettingsAccounts = () => {
         username: shelfmarkAccount.username,
       });
     }
+    if (calibrewebAccount?.linked && calibrewebAccount.username) {
+      accounts.push({
+        type: LinkedAccountType.CalibreWeb,
+        username: calibrewebAccount.username,
+      });
+    }
     return accounts;
-  }, [shelfmarkAccount, user]);
+  }, [calibrewebAccount, shelfmarkAccount, user]);
 
   const linkPlexAccount = async () => {
     setError(null);
@@ -148,6 +173,43 @@ const UserSettingsAccounts = () => {
     }
   };
 
+  const deleteCalibreWebRequest = async () => {
+    try {
+      await axios.delete(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/calibreweb`
+      );
+      await revalidateCalibrewebAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.calibrewebUnlinkFailed',
+            defaultMessage: 'Failed to unlink Calibre-Web account',
+          })
+      );
+    }
+  };
+
+  const linkCalibreWebAccount = async () => {
+    setError(null);
+    try {
+      await axios.post(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/calibreweb`
+      );
+      await revalidateCalibrewebAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.calibrewebLinkFailed',
+            defaultMessage: 'Failed to link Calibre-Web account',
+          })
+      );
+    }
+  };
+
   const linkable = [
     {
       name: 'Plex',
@@ -173,6 +235,15 @@ const UserSettingsAccounts = () => {
         !hasShelfmarkAccess ||
         !!shelfmarkAccount?.linked ||
         (!userSettings?.shelfmarkNewUserSignIn &&
+          !currentUserHasPermission(Permission.MANAGE_USERS)),
+    },
+    {
+      name: 'Calibre-Web',
+      action: linkCalibreWebAccount,
+      hide:
+        !hasCalibrewebAccess ||
+        !!calibrewebAccount?.linked ||
+        (!userSettings?.calibrewebNewUserSignIn &&
           !currentUserHasPermission(Permission.MANAGE_USERS)),
     },
   ].filter((l) => !l.hide);
@@ -275,6 +346,10 @@ const UserSettingsAccounts = () => {
                         height={40}
                       />
                     </div>
+                  ) : name === 'Calibre-Web' ? (
+                    <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                      <CalibreWebLogo className="h-9" />
+                    </div>
                   ) : (
                     <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                       <AudiobookshelfLogo className="w-9" />
@@ -337,6 +412,11 @@ const UserSettingsAccounts = () => {
                       width={40}
                       height={40}
                     />
+                  </div>
+                )}
+                {acct.type === LinkedAccountType.CalibreWeb && (
+                  <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                    <CalibreWebLogo className="h-9" />
                   </div>
                 )}
               </div>
@@ -416,6 +496,29 @@ const UserSettingsAccounts = () => {
                   <ConfirmButton
                     buttonSize="sm"
                     onClick={deleteShelfmarkRequest}
+                    confirmText={
+                      <FormattedMessage
+                        id="common.areYouSure"
+                        defaultMessage="Are you sure?"
+                      />
+                    }
+                    className="max-sm:btn-block"
+                  >
+                    <TrashIcon className="mr-2 size-5" />
+                    <span>
+                      <FormattedMessage
+                        id="common.unlinkAccount"
+                        defaultMessage="Unlink Account"
+                      />
+                    </span>
+                  </ConfirmButton>
+                )}
+              {acct.type === LinkedAccountType.CalibreWeb &&
+                (userSettings?.calibrewebNewUserSignIn ||
+                  currentUserHasPermission(Permission.MANAGE_USERS)) && (
+                  <ConfirmButton
+                    buttonSize="sm"
+                    onClick={deleteCalibreWebRequest}
                     confirmText={
                       <FormattedMessage
                         id="common.areYouSure"

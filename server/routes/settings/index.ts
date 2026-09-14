@@ -21,6 +21,10 @@ import { scheduledJobs } from '@server/job/schedule';
 import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
+import {
+  getCalibreWebAPI,
+  validateHeaderAuthName,
+} from '@server/lib/calibreweb';
 import { Permission } from '@server/lib/permissions';
 import {
   markPlexHealthy,
@@ -1086,6 +1090,90 @@ settingsRoutes.post('/shelfmark/test', async (req, res, next) => {
     next({ status: 500, message: 'Failed to connect to Shelfmark' });
   }
 });
+
+settingsRoutes.get('/calibreweb', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.calibreweb);
+});
+
+settingsRoutes.post('/calibreweb', arrAuthLimiter, async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'calibreweb',
+    'calibreweb'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  const headerAuthName =
+    typeof req.body.headerAuthName === 'string'
+      ? req.body.headerAuthName.trim()
+      : '';
+
+  const headerError = validateHeaderAuthName(headerAuthName);
+  if (headerError) {
+    return next({ status: 400, message: headerError });
+  }
+
+  if (req.body.headerAuthEnabled && !headerAuthName) {
+    return next({
+      status: 400,
+      message:
+        'A header name is required when header authentication is enabled.',
+    });
+  }
+
+  Object.assign(settings.calibreweb, req.body, { headerAuthName });
+  settings.save();
+  res.status(200).json(settings.calibreweb);
+});
+
+settingsRoutes.post(
+  '/calibreweb/test',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    try {
+      const { hostname, port, useSsl, urlBase } = req.body;
+
+      const portNumber = Number(port);
+      if (
+        typeof hostname !== 'string' ||
+        !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+        !Number.isInteger(portNumber) ||
+        portNumber < 1 ||
+        portNumber > 65535 ||
+        typeof urlBase !== 'string' ||
+        !urlBase.startsWith('/') ||
+        urlBase.endsWith('/') ||
+        (useSsl !== undefined && typeof useSsl !== 'boolean')
+      ) {
+        return next({
+          status: 400,
+          message: 'Invalid hostname, port, or URL Base',
+        });
+      }
+
+      await getCalibreWebAPI({
+        hostname,
+        port: portNumber,
+        useSsl: useSsl ?? false,
+      }).testConnection();
+
+      res.status(200).json({ urlBase });
+    } catch (e) {
+      logger.error('Failed to test Calibre-Web', {
+        label: 'Calibre-Web',
+        message: e instanceof Error ? e.message : String(e),
+      });
+
+      next({ status: 500, message: 'Failed to connect to Calibre-Web' });
+    }
+  }
+);
 
 settingsRoutes.get(
   '/plex/users',

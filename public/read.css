@@ -1,0 +1,138 @@
+@charset "utf-8";
+/* CSS Document */
+@import url(https://theme-park.dev/css/base/calibreweb/calibreweb-base.css);
+.react-chroma-dark {
+  --color-background-accent: inherit;
+  --color-brand-accent: inherit;
+  --main-bg-color: inherit;
+  --modal-bg-color: inherit;
+  --link-color: inherit;
+  --button-color: inherit;
+  --button-color-hover: inherit;
+  --accent-color: inherit;
+  --plex-poster-unwatched: inherit;
+  --text: inherit;
+  --text-hover: inherit;
+  --drop-down-menu-bg: inherit;
+  --color-background-accent-focus: inherit;
+  --bs-primary: inherit;
+  --color-text-accent: inherit;
+  --color-text-on-accent: inherit;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: inherit;
+  --label-text-color: inherit;
+  --tw-ring-color: inherit;
+  --drop-down-menu-bg: var(--color-base-100);
+  --button-text: var(--color-base-content);
+  --color-bg: var(--color-base-300);
+  --color-accent: var(--color-primary) !important;
+  --blur-sm: 8px;
+  --button-text-hover: var(--color-base-content) !important;
+  --button-color-hover: var(--color-primary)!important;
+}
+:root {
+  --color-background-accent: var(--color-primary);
+  --color-brand-accent: var(--color-primary);
+  --main-bg-color: #1f1f1f;
+  --modal-bg-color: #1b1b1b;
+  --link-color: #fff;
+  --button-color: var(--color-primary);
+  --button-color-hover: var(--color-primary);
+  --accent-color: 127, 17, 224;
+  --plex-poster-unwatched: #fff;
+  --color-background-accent: var(--color-primary);
+  --text: #fff;
+  --text-hover: #fff;
+  --drop-down-menu-bg: #1f1f1f;
+  --color-background-accent: var(--color-primary);
+  --color-background-accent-focus: var(--color-primary) ;
+  --bs-primary: var(--color-primary) ;
+  --color-text-accent: var(--color-primary);
+  --color-text-on-accent: #fff;
+  --zIndex-overlay: 1009;
+  --transparency-light-15: rgba(127, 17, 224, .15);
+  --label-text-color: #fff;
+  --tw-ring-color: var(--color-primary)!important;
+  --drop-down-menu-bg: var(--color-base-100);
+  --button-text: var(--color-base-content);
+  --color-bg: var(--color-base-300);
+  --color-accent: var(--color-primary) !important;
+  --blur-sm: 8px;
+  --button-text-hover: var(--color-base-content) !important;
+  --button-color-hover: var(--color-primary)!important;
+}
+/* Desktop Only */
+@media (min-width: 1024px) {
+
+}
+/* Except Desktop */
+@media (max-width: 1023px) {
+
+}
+/*Mobile Only*/
+@media (max-width: 639px) {
+
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 14px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsla(0, 0%, 100%, 0.2);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-thumb:active {
+  background: hsla(0, 0%, 100%, 0.2);
+}
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.read-toggle-btn.hovering, .edit-metadata-btn.hovering, .send-ereader-btn.hovering {
+  background: var(--color-primary)!important;
+}
+.shelf-actions {
+  background: var(--color-base-200)!important;
+}
+.btn-primary {
+  background: var(--color-base-100)!important;
+}
+.btn-primary.active {
+  background: var(--color-primary)!important;
+}
+.btn-primary.active.focus:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary.active:focus:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary.active:hover:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary:active.focus:not(#edit_book):not(#add-to-shelf:not([data-original-title="Download :"])):not(#btnGroupDrop1), .btn-primary:active:focus:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary:active:hover:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary:active>span.glyphicon:not(#edit_book > span):not(#btnGroupDrop1 > span.glyphicon.glyphicon-download):not(#edit_book):not(#add-to-shelf span):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary:focus>span.glyphicon:not(#edit_book > span):not(#btnGroupDrop1 > span.glyphicon.glyphicon-download):not(#edit_book):not(#add-to-shelf span):not([data-original-title="Download :"]):not(#btnGroupDrop1), .btn-primary:hover>span.glyphicon:not(#edit_book > span):not(#btnGroupDrop1 > span.glyphicon.glyphicon-download):not(#edit_book):not(#add-to-shelf span):not([data-original-title="Download :"]):not(#btnGroupDrop1), .open>.dropdown-toggle.btn-primary.focus:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .open>.dropdown-toggle.btn-primary:focus:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1), .open>.dropdown-toggle.btn-primary:hover:not(#edit_book):not(#add-to-shelf):not([data-original-title="Download :"]):not(#btnGroupDrop1) {
+    color: var(--button-text-hover)!important;
+    background-color: revert!important;
+    border-color: var(--button-color-hover)!important;
+}
+input.pill:checked + label {
+  color: var(--color-primary)!important;
+}
+.btn-default {
+  background-color: var(--color-primary)!important;
+}
+input.pill + label:hover {
+  color: var(--color-primary)!important;
+}
+.btn-file {
+  background-color: revert!important;
+}

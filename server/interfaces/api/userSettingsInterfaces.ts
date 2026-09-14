@@ -38,6 +38,9 @@ export interface UserSettingsGeneralResponse {
   shelfmarkEnabled?: boolean;
   shelfmarkNewUserSignIn?: boolean;
   audiobookshelfNewUserSignIn?: boolean;
+  calibrewebBaseUrl?: string;
+  calibrewebEnabled?: boolean;
+  calibrewebNewUserSignIn?: boolean;
   plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }
 

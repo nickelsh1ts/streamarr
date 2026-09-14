@@ -67,6 +67,12 @@ export interface ShelfmarkSettings extends Omit<ServiceSettings, 'apiKey'> {
   enableNewUserSignIn?: boolean;
 }
 
+export interface CalibreWebSettings extends Omit<ServiceSettings, 'apiKey'> {
+  enableNewUserSignIn?: boolean;
+  headerAuthEnabled?: boolean;
+  headerAuthName?: string;
+}
+
 export interface ChaptarrSettings extends ServiceSettings {}
 
 export interface NetworkSettings {
@@ -219,6 +225,7 @@ export interface FullPublicSettings extends PublicSettings {
   seerrEnabled: boolean;
   audiobookshelfEnabled: boolean;
   shelfmarkEnabled: boolean;
+  calibrewebEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -404,6 +411,7 @@ export interface AllSettings {
   overseerr: ServiceSettings;
   audiobookshelf: AudiobookshelfSettings;
   shelfmark: ShelfmarkSettings;
+  calibreweb: CalibreWebSettings;
   chaptarr: ChaptarrSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
@@ -545,6 +553,13 @@ class Settings {
         enabled: false,
         urlBase: '/shelfmark',
         enableNewUserSignIn: false,
+      },
+      calibreweb: {
+        enabled: false,
+        urlBase: '/calibreweb',
+        enableNewUserSignIn: false,
+        headerAuthEnabled: false,
+        headerAuthName: 'X-Auth-User',
       },
       public: { initialized: false },
       notifications: {
@@ -789,6 +804,14 @@ class Settings {
     this.data.shelfmark = mergeSettings(this.data.shelfmark, data);
   }
 
+  get calibreweb(): CalibreWebSettings {
+    return this.data.calibreweb;
+  }
+
+  set calibreweb(data: CalibreWebSettings) {
+    this.data.calibreweb = mergeSettings(this.data.calibreweb, data);
+  }
+
   set radarr(data: RadarrSettings[]) {
     this.data.radarr = data;
   }
@@ -848,6 +871,8 @@ class Settings {
         !!this.data.audiobookshelf.hostname,
       shelfmarkEnabled:
         !!this.data.shelfmark.enabled && !!this.data.shelfmark.hostname,
+      calibrewebEnabled:
+        !!this.data.calibreweb.enabled && !!this.data.calibreweb.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,

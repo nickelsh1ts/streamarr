@@ -19,6 +19,7 @@
 - [Plex Web](using-streamarr/plex-web.md)
 - [Calendar](using-streamarr/calendar/README.md)
 - [Requests](using-streamarr/requests.md)
+- [Books](using-streamarr/books.md)
 - [Audiobooks](using-streamarr/listen.md)
 - [Bookmark](using-streamarr/bookmark.md)
 - [Activity](using-streamarr/activity.md)

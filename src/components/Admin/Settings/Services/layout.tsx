@@ -62,6 +62,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/shelfmark\/?/,
     },
     {
+      text: 'Calibre-Web',
+      route: '/admin/settings/services/calibreweb',
+      regex: /^\/admin\/settings\/services\/calibreweb\/?/,
+    },
+    {
       text: 'Tautulli',
       route: '/admin/settings/services/tautulli',
       regex: /^\/admin\/settings\/services\/tautulli\/?/,

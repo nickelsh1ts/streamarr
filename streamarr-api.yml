@@ -899,6 +899,21 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Shelfmark account.
+    CalibreWebSettings:
+      allOf:
+        - $ref: '#/components/schemas/ServiceSettings'
+        - type: object
+          properties:
+            enableNewUserSignIn:
+              type: boolean
+              description: Allow users to link their own Calibre-Web username without administrator approval.
+            headerAuthEnabled:
+              type: boolean
+              description: Send the linked Calibre-Web username via a trusted reverse-proxy header, for use with Calibre-Web's own "Reverse Proxy Login" feature.
+            headerAuthName:
+              type: string
+              description: Name of the header used to pass the trusted username to Calibre-Web (must match Calibre-Web's configured reverse-proxy header name).
+              example: X-Auth-User
     NetworkSettings:
       type: object
       required:
@@ -1576,6 +1591,10 @@ components:
           type: boolean
           example: false
           description: Whether Shelfmark is configured and enabled
+        calibrewebEnabled:
+          type: boolean
+          example: false
+          description: Whether Calibre-Web is configured and enabled
         statusUrl:
           type: string
           description: External URL for the status/uptime page
@@ -3781,6 +3800,79 @@ paths:
                     type: string
         '500':
           description: Failed to connect to Shelfmark
+  /settings/calibreweb:
+    get:
+      summary: Get Calibre-Web settings
+      description: Retrieves current Calibre-Web (or Calibre-Web Automated / AutoCaliWeb) settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalibreWebSettings'
+    post:
+      summary: Update Calibre-Web settings
+      description: Updates Calibre-Web settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalibreWebSettings'
+      responses:
+        '200':
+          description: 'Values were successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalibreWebSettings'
+        '400':
+          description: Invalid URL Base (bad format, reserved path, or already in use), or an invalid/reserved headerAuthName
+  /settings/calibreweb/test:
+    post:
+      summary: Test Calibre-Web configuration
+      description: Tests connectivity to Calibre-Web by requesting its unauthenticated login page. Returns the URL base on success.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 8083
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+              required:
+                - hostname
+                - port
+                - urlBase
+      responses:
+        '200':
+          description: Successfully connected to Calibre-Web instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlBase:
+                    type: string
+        '500':
+          description: Failed to connect to Calibre-Web
   /settings/tdarr:
     get:
       summary: Get tdarr settings
@@ -6810,6 +6902,16 @@ paths:
                   shelfmarkNewUserSignIn:
                     type: boolean
                     description: Whether users may create Shelfmark accounts
+                  calibrewebEnabled:
+                    type: boolean
+                    description: Whether the Calibre-Web integration is enabled
+                  calibrewebBaseUrl:
+                    type: string
+                    nullable: true
+                    description: Calibre-Web proxy URL base path
+                  calibrewebNewUserSignIn:
+                    type: boolean
+                    description: Whether users may link their own Calibre-Web account
     post:
       summary: Update general settings for a user
       description: Updates and returns general settings for a specific user. Requires `MANAGE_USERS` permission if editing other users.
@@ -7268,6 +7370,86 @@ paths:
       responses:
         '204':
           description: Shelfmark account unlinked from Streamarr
+        '404':
+          description: User not found
+  /user/{userId}/settings/linked-accounts/calibreweb:
+    get:
+      summary: Get Calibre-Web linked-account status
+      description: Returns the persisted association with a Calibre-Web username. Calibre-Web has no API to verify the account still exists.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Calibre-Web linked-account status
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - linked
+                properties:
+                  linked:
+                    type: boolean
+                  username:
+                    type: string
+        '404':
+          description: User not found
+        '503':
+          description: Calibre-Web is not configured
+    post:
+      summary: Link a Calibre-Web username
+      description: Associates the user's own username, Plex username, or email prefix (matching the Audiobookshelf/Shelfmark fallback pattern) as their Calibre-Web username, for use with reverse-proxy header authentication. The Calibre-Web account itself must already exist and match - Calibre-Web has no API to create or verify it. When new user sign-in is disabled, requires `MANAGE_USERS` permission.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Calibre-Web account linked
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - linked
+                  - username
+                properties:
+                  linked:
+                    type: boolean
+                  username:
+                    type: string
+        '403':
+          description: User does not have Calibre-Web access, linking is disabled, or the caller cannot manage users
+        '404':
+          description: User not found
+        '409':
+          description: The derived username is already linked to another Streamarr user; only `MANAGE_USERS` can reassign it
+        '503':
+          description: Calibre-Web is not configured
+    delete:
+      summary: Unlink a Calibre-Web account
+      description: Removes the Streamarr association without affecting the Calibre-Web account. When new user sign-in is disabled, requires `MANAGE_USERS` permission.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Calibre-Web account unlinked from Streamarr
         '404':
           description: User not found
   /user/{userId}/settings/notifications:
