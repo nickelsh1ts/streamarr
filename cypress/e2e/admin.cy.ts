@@ -49,6 +49,7 @@ describe('Admin Pages', () => {
       'prowlarr',
       'bazarr',
       'tdarr',
+      'nexroll',
       'tautulli',
       'overseerr',
       'downloads',

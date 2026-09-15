@@ -30,7 +30,7 @@ When the status shows **Restart Required**, a restart button is available direct
 
 ### Service Health
 
-Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Cleanuparr, Audiobookshelf, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
+Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Cleanuparr, NeXroll, Audiobookshelf, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
 
 Each card shows a status badge and, where the service exposes it, the running **version**:
 
@@ -70,6 +70,7 @@ Streamarr tracks changes to settings that affect the internal proxy system and s
 | Chaptarr connection    | Chaptarr        |
 | Prowlarr connection    | Prowlarr        |
 | Bazarr connection      | Bazarr          |
+| NeXroll connection     | NeXroll         |
 | Tdarr hostname/enabled | Tdarr           |
 | Tautulli hostname/URL  | Tautulli        |
 | Seerr connection       | Seerr           |

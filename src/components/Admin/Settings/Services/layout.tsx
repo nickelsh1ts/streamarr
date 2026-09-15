@@ -52,6 +52,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/cleanuparr\/?/,
     },
     {
+      text: 'NeXroll',
+      route: '/admin/settings/services/nexroll',
+      regex: /^\/admin\/settings\/services\/nexroll\/?/,
+    },
+    {
       text: 'Audiobookshelf',
       route: '/admin/settings/services/audiobookshelf',
       regex: /^\/admin\/settings\/services\/audiobookshelf\/?/,

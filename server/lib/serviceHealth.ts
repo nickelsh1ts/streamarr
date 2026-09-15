@@ -204,6 +204,24 @@ async function checkTdarr(service: ServiceSettings): Promise<CheckResult> {
   }
 }
 
+async function checkNexroll(service: ServiceSettings): Promise<CheckResult> {
+  try {
+    const protocol = service.useSsl ? 'https' : 'http';
+    const response = await fetch(
+      `${protocol}://${service.hostname}:${service.port ?? 9393}/health`,
+      { signal: AbortSignal.timeout(timeout()) }
+    );
+
+    if (!response.ok) {
+      throw new Error(`NeXroll responded with HTTP ${response.status}`);
+    }
+
+    return { status: 'healthy' };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
 async function checkTautulli(): Promise<CheckResult> {
   const tautulli = getSettings().tautulli;
   try {
@@ -414,6 +432,12 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
         retryable: true,
         ...result,
       };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.nexroll)) return null;
+      const result = await checkNexroll(settings.nexroll);
+      return { id: 'nexroll', name: 'NeXroll', retryable: true, ...result };
     })(),
 
     (async (): Promise<ServiceHealth | null> => {

@@ -8,6 +8,10 @@ import {
   createCleanuparrProxy,
   registerCleanuparrWebSocketHandler,
 } from '@server/lib/proxy/cleanuparrProxy';
+import {
+  createNexrollDocumentProxy,
+  createNexrollStreamingProxy,
+} from '@server/lib/proxy/nexrollProxy';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import {
   createSeerrAssetProxy,
@@ -73,6 +77,14 @@ export function getActiveProxyPaths(): string[] {
     settings.cleanuparr.urlBase
   ) {
     paths.push(settings.cleanuparr.urlBase);
+  }
+
+  if (
+    settings.nexroll.enabled &&
+    settings.nexroll.hostname &&
+    settings.nexroll.urlBase
+  ) {
+    paths.push(settings.nexroll.urlBase);
   }
 
   // Audiobookshelf (base-URL aware)
@@ -293,6 +305,30 @@ export function createServiceProxyRouter(
       cleanuparrProxy,
       settings.cleanuparr.urlBase
     );
+  }
+
+  if (
+    settings.nexroll.enabled &&
+    settings.nexroll.hostname &&
+    settings.nexroll.urlBase
+  ) {
+    const nexrollConfig = {
+      hostname: settings.nexroll.hostname,
+      port: settings.nexroll.port ?? 9393,
+      useSsl: settings.nexroll.useSsl ?? false,
+      base: settings.nexroll.urlBase,
+    };
+
+    router.use(
+      settings.nexroll.urlBase,
+      ...adminMiddleware,
+      createNexrollDocumentProxy(nexrollConfig),
+      createNexrollStreamingProxy(nexrollConfig)
+    );
+    registeredRoutes.push({
+      name: 'NeXroll',
+      path: settings.nexroll.urlBase,
+    });
   }
 
   // Register Audiobookshelf proxy (requires LISTEN or READER, base-URL aware)

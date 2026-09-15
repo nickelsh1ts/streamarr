@@ -58,6 +58,7 @@ When \*Arr services are configured, additional tabs appear for direct management
 | **Subtitles**  | Bazarr     | Manage subtitle downloads        |
 | **Transcodes** | Tdarr      | Manage transcoding jobs          |
 | **Cleaning**   | Cleanuparr | Manage queue and library cleanup |
+| **Prerolls**   | NeXroll    | Manage prerolls and schedules    |
 | **Downloads**  | Downloads  | Manage torrent clients           |
 
 {% hint style="info" %}
@@ -78,16 +79,17 @@ The Admin Panel embeds configured \*Arr services directly within Streamarr:
 
 ### Supported Services
 
-| Service        | URL Path           | Description                  |
-| -------------- | ------------------ | ---------------------------- |
-| **Radarr**     | `/admin/movies`    | Movie management via Radarr  |
-| **Sonarr**     | `/admin/tv`        | TV management via Sonarr     |
-| **Lidarr**     | `/admin/music`     | Music management via Lidarr  |
-| **Prowlarr**   | `/admin/indexers`  | Indexer management           |
-| **Bazarr**     | `/admin/srt`       | Subtitle management          |
-| **Tdarr**      | `/admin/transcode` | Transcoding queue            |
-| **Cleanuparr** | `/admin/cleaning`  | Queue and library cleanup    |
-| **Chaptarr**   | `/admin/books`     | Book management via Chaptarr |
+| Service        | URL Path           | Description                     |
+| -------------- | ------------------ | ------------------------------- |
+| **Radarr**     | `/admin/movies`    | Movie management via Radarr     |
+| **Sonarr**     | `/admin/tv`        | TV management via Sonarr        |
+| **Lidarr**     | `/admin/music`     | Music management via Lidarr     |
+| **Prowlarr**   | `/admin/indexers`  | Indexer management              |
+| **Bazarr**     | `/admin/srt`       | Subtitle management             |
+| **Tdarr**      | `/admin/transcode` | Transcoding queue               |
+| **Cleanuparr** | `/admin/cleaning`  | Queue and library cleanup       |
+| **Chaptarr**   | `/admin/books`     | Book management via Chaptarr    |
+| **NeXroll**    | `/admin/prerolls`  | Preroll and schedule management |
 
 ### Configuration
 
@@ -99,7 +101,7 @@ Each service requires proper setup in Settings:
 4. Save and the tab will appear in the Admin Panel
 
 {% hint style="warning" %}
-Services that run behind their own base path (Sonarr, Radarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Cleanuparr) must have that base path configured **inside the service** to match the **URL Base** set in Streamarr. For **Cleanuparr**, set its `BASE_PATH` environment variable to the same value (for example `/cleanuparr`) and restart it; otherwise it serves its assets from the root and they will not load inside the embedded frame.
+Services that run behind their own base path (Sonarr, Radarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Cleanuparr) must have that base path configured **inside the service** to match the **URL Base** set in Streamarr. For **Cleanuparr**, set its `BASE_PATH` environment variable to the same value (for example `/cleanuparr`) and restart it. NeXroll does not require a matching internal base-path setting; Streamarr adapts its root-based web interface automatically.
 {% endhint %}
 
 ---
@@ -131,7 +133,7 @@ Configure \*Arr and other integrations:
 
 - Radarr (multiple instances supported)
 - Sonarr (multiple instances supported)
-- Lidarr, Chaptarr, Prowlarr, Bazarr, Tdarr, Cleanuparr, Seerr
+- Lidarr, Chaptarr, Prowlarr, Bazarr, Tdarr, Cleanuparr, NeXroll, Seerr
 - Tautulli
 - Download clients
 

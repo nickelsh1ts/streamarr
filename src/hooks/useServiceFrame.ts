@@ -14,6 +14,7 @@ export type ServiceType =
   | 'prowlarr'
   | 'bazarr'
   | 'cleanuparr'
+  | 'nexroll'
   | 'tdarr';
 
 export interface ServiceFrameConfig {
@@ -66,6 +67,7 @@ function parseRoute(pathname: string): RouteInfo {
     { pattern: '/admin/books', type: 'chaptarr' as const },
     { pattern: '/admin/srt', type: 'bazarr' as const },
     { pattern: '/admin/cleaning', type: 'cleanuparr' as const },
+    { pattern: '/admin/prerolls', type: 'nexroll' as const },
     { pattern: '/admin/transcode', type: 'tdarr' as const },
   ];
 
@@ -170,6 +172,12 @@ function getActiveFrame(
       title: 'cleaning',
       serviceName: 'Cleanuparr',
       settingsPath: '/admin/settings/services/cleanuparr',
+    },
+    nexroll: {
+      newBase: '/admin/prerolls',
+      title: 'prerolls',
+      serviceName: 'NeXroll',
+      settingsPath: '/admin/settings/services/nexroll',
     },
   };
 

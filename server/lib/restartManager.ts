@@ -21,6 +21,13 @@ interface ProxyAffectingSettings {
   prowlarr: ServiceEntry;
   bazarr: ServiceEntry;
   cleanuparr: ServiceEntry;
+  nexroll: {
+    enabled?: boolean;
+    hostname?: string;
+    port?: number;
+    useSsl?: boolean;
+    urlBase?: string;
+  };
   tdarr: { hostname?: string; enabled?: boolean };
   tautulli: ServiceEntry;
   overseerr: {
@@ -81,6 +88,13 @@ class RestartManager {
       prowlarr: this.pickService(settings.prowlarr),
       bazarr: this.pickService(settings.bazarr),
       cleanuparr: this.pickService(settings.cleanuparr),
+      nexroll: {
+        enabled: settings.nexroll.enabled,
+        hostname: settings.nexroll.hostname,
+        port: settings.nexroll.port,
+        useSsl: settings.nexroll.useSsl,
+        urlBase: settings.nexroll.urlBase,
+      },
       tdarr: {
         hostname: settings.tdarr.hostname,
         enabled: settings.tdarr.enabled,
@@ -166,6 +180,16 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.cleanuparr, this.snapshot.cleanuparr)) {
       changed.push('Cleanuparr');
+    }
+
+    if (
+      settings.nexroll.enabled !== this.snapshot.nexroll.enabled ||
+      settings.nexroll.hostname !== this.snapshot.nexroll.hostname ||
+      settings.nexroll.port !== this.snapshot.nexroll.port ||
+      settings.nexroll.useSsl !== this.snapshot.nexroll.useSsl ||
+      settings.nexroll.urlBase !== this.snapshot.nexroll.urlBase
+    ) {
+      changed.push('NeXroll');
     }
 
     if (

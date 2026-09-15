@@ -9,7 +9,7 @@ Welcome to the Streamarr Documentation.
 - **Full Plex Integration** — Sign in with Plex and manage user access directly from Streamarr
 - **Embedded Plex Web** — Watch content directly within Streamarr without leaving the app
 - **Bookmark** — Search and request books and audiobooks through an embedded Shelfmark server
-- **\*Arr Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, and more
+- **Media Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, NeXroll, and more
 - **Powerful Invite System** — Generate invite codes with usage limits, expiry dates, library access controls, and QR codes
 - **Release Calendar** — View upcoming releases from Sonarr and Radarr, plus create custom events
 - **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring and automatic connection testing

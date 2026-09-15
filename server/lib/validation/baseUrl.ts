@@ -38,6 +38,9 @@ export type ServiceType =
   | 'bazarr'
   | 'prowlarr'
   | 'cleanuparr'
+  | 'nexroll'
+  | 'overseerr'
+  | 'tautulli'
   | 'audiobookshelf'
   | 'shelfmark'
   | 'calibreweb'
@@ -54,6 +57,10 @@ export function validateBaseUrl(
 ): BaseUrlValidationResult {
   if (!baseUrl) {
     return { valid: true };
+  }
+
+  if (baseUrl === '/') {
+    return { valid: false, error: 'URL Base must not be /' };
   }
 
   if (!baseUrl.startsWith('/')) {
@@ -118,6 +125,9 @@ export function validateBaseUrl(
     { settings: settings.bazarr, name: 'Bazarr', type: 'bazarr' },
     { settings: settings.prowlarr, name: 'Prowlarr', type: 'prowlarr' },
     { settings: settings.cleanuparr, name: 'Cleanuparr', type: 'cleanuparr' },
+    { settings: settings.nexroll, name: 'NeXroll', type: 'nexroll' },
+    { settings: settings.overseerr, name: 'Seerr', type: 'overseerr' },
+    { settings: settings.tautulli, name: 'Tautulli', type: 'tautulli' },
     { settings: settings.chaptarr, name: 'Chaptarr', type: 'chaptarr' },
     {
       settings: settings.audiobookshelf,
@@ -137,6 +147,10 @@ export function validateBaseUrl(
         id: svc.type, // Use type as id for single services
       });
     }
+  }
+
+  if (settings.tdarr.enabled) {
+    allPaths.push({ path: '/tdarr', name: 'Tdarr', type: 'other' });
   }
 
   const duplicate = allPaths.find(
