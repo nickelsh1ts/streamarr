@@ -7,7 +7,7 @@ import { createHash } from 'crypto';
 import { promises } from 'fs';
 import path, { join } from 'path';
 
-type ImageResponse = {
+export type ImageResponse = {
   meta: {
     revalidateAfter: number;
     curRevalidate: number;
