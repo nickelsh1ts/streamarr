@@ -168,7 +168,7 @@
     "tailwindcss": "4.3.3",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.0"
   },
   "engines": {
     "node": ">=24.0.0",
