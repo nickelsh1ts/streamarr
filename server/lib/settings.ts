@@ -408,6 +408,7 @@ export interface AllSettings {
   prowlarr: ServiceSettings;
   lidarr: ServiceSettings;
   cleanuparr: ServiceSettings;
+  nexroll: ServiceSettings;
   overseerr: ServiceSettings;
   audiobookshelf: AudiobookshelfSettings;
   shelfmark: ShelfmarkSettings;
@@ -539,6 +540,11 @@ class Settings {
       cleanuparr: {
         enabled: false,
         urlBase: '/cleanuparr',
+      },
+      nexroll: {
+        enabled: false,
+        port: 9393,
+        urlBase: '/nexroll',
       },
       overseerr: {
         enabled: false,
@@ -778,6 +784,14 @@ class Settings {
 
   set cleanuparr(data: ServiceSettings) {
     this.data.cleanuparr = mergeSettings(this.data.cleanuparr, data);
+  }
+
+  get nexroll(): ServiceSettings {
+    return this.data.nexroll;
+  }
+
+  set nexroll(data: ServiceSettings) {
+    this.data.nexroll = mergeSettings(this.data.nexroll, data);
   }
 
   get overseerr(): ServiceSettings {

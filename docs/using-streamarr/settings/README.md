@@ -533,6 +533,19 @@ Connect Tdarr for transcoding management.
 | **Hostname or IP** | Address of your Tdarr server            |
 | **Port**           | Default is `8265`                       |
 
+#### NeXroll
+
+Connect NeXroll for preroll library, sequence, and schedule management. When enabled, it is embedded in the Admin Panel under **Prerolls**.
+
+| Setting            | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| **Hostname or IP** | Address of your NeXroll server                    |
+| **Port**           | Default is `9393`                                 |
+| **Use SSL**        | Enable when NeXroll is served directly over HTTPS |
+| **URL Base**       | Streamarr proxy path; default is `/nexroll`       |
+
+Streamarr restricts the NeXroll proxy to administrators. NeXroll's optional username/password login remains active inside the embedded app. To rely only on Streamarr authentication, disable **Require Login** from NeXroll's own authentication settings.
+
 #### Tautulli
 
 Connect Tautulli for Plex statistics.

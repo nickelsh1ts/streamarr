@@ -883,6 +883,30 @@ components:
         apiKey:
           type: string
           nullable: true
+    NexrollSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          example: false
+        hostname:
+          type: string
+          nullable: true
+          example: '127.0.0.1'
+        port:
+          type: number
+          example: 9393
+        useSsl:
+          type: boolean
+          example: false
+        urlBase:
+          type: string
+          example: '/nexroll'
+      required:
+        - enabled
+        - port
+        - useSsl
+        - urlBase
     AudiobookshelfSettings:
       allOf:
         - $ref: '#/components/schemas/ServiceSettings'
@@ -3873,6 +3897,84 @@ paths:
                     type: string
         '500':
           description: Failed to connect to Calibre-Web
+  /settings/nexroll:
+    get:
+      summary: Get NeXroll settings
+      description: Retrieves the current NeXroll settings.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NexrollSettings'
+    post:
+      summary: Update NeXroll settings
+      description: Updates the NeXroll settings with the provided values.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NexrollSettings'
+      responses:
+        '200':
+          description: Values were successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NexrollSettings'
+        '400':
+          description: Invalid URL base or connection settings
+  /settings/nexroll/test:
+    post:
+      summary: Test NeXroll configuration
+      description: Tests NeXroll connectivity using its public health endpoint.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname:
+                  type: string
+                  example: '127.0.0.1'
+                port:
+                  type: number
+                  example: 9393
+                useSsl:
+                  type: boolean
+                  example: false
+                urlBase:
+                  type: string
+                  example: '/nexroll'
+              required:
+                - hostname
+                - port
+                - urlBase
+      responses:
+        '200':
+          description: Successfully connected to NeXroll
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urlBase:
+                    type: string
+                  status:
+                    type: string
+        '400':
+          description: Invalid hostname, port, SSL, or URL base
+        '500':
+          description: Failed to connect to NeXroll
   /settings/tdarr:
     get:
       summary: Get tdarr settings

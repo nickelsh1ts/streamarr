@@ -25,6 +25,7 @@ const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/srt/,
   /^\/admin\/transcode/,
   /^\/admin\/cleaning/,
+  /^\/admin\/prerolls/,
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -151,6 +152,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         regex: /^\/admin\/cleaning/,
         hidden: !services?.some(
           (d) => d.id === 'cleanuparr' && d.enabled && d.urlBase
+        ),
+      },
+      {
+        text: intl.formatMessage({
+          id: 'common.prerolls',
+          defaultMessage: 'Prerolls',
+        }),
+        route: '/admin/prerolls',
+        regex: /^\/admin\/prerolls/,
+        hidden: !services?.some(
+          (d) => d.id === 'nexroll' && d.enabled && d.hostname && d.urlBase
         ),
       },
       {

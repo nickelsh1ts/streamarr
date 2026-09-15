@@ -322,6 +322,7 @@ settingsRoutes.get('/services', (_req, res) => {
   services.push(
     settings.bazarr,
     settings.cleanuparr,
+    settings.nexroll,
     settings.lidarr,
     settings.chaptarr,
     settings.overseerr,
@@ -337,6 +338,7 @@ settingsRoutes.get('/services', (_req, res) => {
   const servicesWithId = [
     { ...settings.bazarr, id: 'bazarr' },
     { ...settings.cleanuparr, id: 'cleanuparr' },
+    { ...settings.nexroll, id: 'nexroll' },
     { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
     { ...settings.chaptarr, id: 'chaptarr' },
@@ -421,6 +423,90 @@ settingsRoutes.post('/tdarr', async (req, res) => {
   Object.assign(settings.tdarr, req.body);
   settings.save();
   res.status(200).json(settings.tdarr);
+});
+
+settingsRoutes.get('/nexroll', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.nexroll);
+});
+
+settingsRoutes.post('/nexroll', async (req, res, next) => {
+  const settings = getSettings();
+  const { enabled, hostname, port, useSsl, urlBase } = req.body;
+  const portNumber = Number(port);
+  const validation = validateBaseUrl(urlBase, 'nexroll', 'nexroll');
+
+  if (
+    typeof enabled !== 'boolean' ||
+    (hostname !== undefined &&
+      hostname !== '' &&
+      (typeof hostname !== 'string' || !/^[A-Za-z0-9.-]+$/.test(hostname))) ||
+    (enabled && !hostname) ||
+    !Number.isInteger(portNumber) ||
+    portNumber < 1 ||
+    portNumber > 65535 ||
+    typeof useSsl !== 'boolean' ||
+    !validation.valid
+  ) {
+    return next({
+      status: 400,
+      message:
+        validation.error ?? 'Invalid NeXroll connection settings supplied',
+    });
+  }
+
+  settings.nexroll = {
+    enabled,
+    hostname: hostname || undefined,
+    port: portNumber,
+    useSsl,
+    urlBase,
+  };
+  settings.save();
+  res.status(200).json(settings.nexroll);
+});
+
+settingsRoutes.post('/nexroll/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase } = req.body;
+    const portNumber = Number(port);
+    const validation = validateBaseUrl(urlBase, 'nexroll', 'nexroll');
+
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean') ||
+      !validation.valid
+    ) {
+      return next({
+        status: 400,
+        message: validation.error ?? 'Invalid hostname, port, or SSL setting',
+      });
+    }
+
+    const protocol = useSsl ? 'https' : 'http';
+    const response = await fetch(
+      `${protocol}://${hostname}:${portNumber}/health`,
+      { signal: AbortSignal.timeout(getSettings().network.requestTimeout) }
+    );
+
+    if (!response.ok) {
+      throw new Error(`NeXroll responded with HTTP ${response.status}`);
+    }
+
+    const health = (await response.json()) as { status?: string };
+    res.status(200).json({ urlBase, status: health.status ?? 'ok' });
+  } catch (e) {
+    logger.error('Failed to test NeXroll', {
+      label: 'NeXroll',
+      message: e instanceof Error ? e.message : String(e),
+    });
+    next({ status: 500, message: 'Failed to connect to NeXroll' });
+  }
 });
 
 settingsRoutes.get('/cleanuparr', (_req, res) => {
