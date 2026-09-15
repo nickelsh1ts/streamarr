@@ -41,7 +41,7 @@ Use **Test** to verify the Shelfmark health endpoint before saving. The [System]
 
 ## Access And Accounts
 
-The Books page requires either the **Bookmark** permission or the **Reader** permission. Give users access under **Users → (select a user) → Permissions → Reader** or **Bookmark**.
+The Bookmark page requires either the **Bookmark** permission or the **Reader** permission. Give users access under **Users → (select a user) → Permissions → Reader** or **Bookmark**.
 
 Streamarr identifies Shelfmark users with the first available value in this order:
 
@@ -49,7 +49,7 @@ Streamarr identifies Shelfmark users with the first available value in this orde
 2. Plex username
 3. The part of the email address before `@`
 
-When **Enable New User Signin** is enabled, visiting Books automatically creates a Shelfmark account when one does not already exist. Streamarr also synchronizes the user's email address and display name when it links or creates the account. Self-service linking can only adopt an existing Shelfmark account when its email address matches the Streamarr user; otherwise, a user manager must link it.
+When **Enable New User Signin** is enabled, visiting Bookmark automatically creates a Shelfmark account when one does not already exist. Streamarr also synchronizes the user's email address and display name when it links or creates the account. Self-service linking can only adopt an existing Shelfmark account when its email address matches the Streamarr user; otherwise, a user manager must link it.
 
 When it is disabled, an unlinked user sees an account-required message instead of Shelfmark. A user with **Manage Users** can link an existing Shelfmark account or create a new one from that user's **Linked Accounts** page.
 

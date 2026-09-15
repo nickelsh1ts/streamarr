@@ -6066,7 +6066,7 @@
     "defaultMessage": "Create Notifications"
   },
   "userPermissions.ebooks.description": {
-    "defaultMessage": "Reserved for a future eBook service integration."
+    "defaultMessage": "Grant permission to access eBooks through Calibre-Web."
   },
   "userPermissions.error": {
     "defaultMessage": "Something went wrong while saving user permissions."

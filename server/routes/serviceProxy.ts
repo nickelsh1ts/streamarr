@@ -28,10 +28,12 @@ import {
 } from '@server/lib/proxy/tdarrProxy';
 import { getSettings } from '@server/lib/settings';
 import {
-  getShelfmarkAPI,
+  hasVerifiedShelfmarkAccount,
+  isShelfmarkUniqueConstraintError,
   linkShelfmarkAccount,
   ShelfmarkAccountCreationDisabledError,
   ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkUsernameConflictError,
 } from '@server/lib/shelfmark';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
@@ -411,14 +413,7 @@ export function createServiceProxyRouter(
           try {
             const settings = getSettings().shelfmark;
             const user = req.user!;
-            const existingAccount =
-              user.shelfmarkUsername &&
-              (await getShelfmarkAPI(settings).getAllUsers()).some(
-                (candidate) =>
-                  candidate.username.toLocaleLowerCase() ===
-                  user.shelfmarkUsername?.toLocaleLowerCase()
-              );
-            if (existingAccount) {
+            if (await hasVerifiedShelfmarkAccount(user, settings)) {
               return next();
             }
 
@@ -437,6 +432,18 @@ export function createServiceProxyRouter(
               return res.status(403).json({
                 message:
                   'Your Shelfmark account must be linked by an administrator before you can access it.',
+              });
+            }
+            if (e instanceof ShelfmarkUsernameConflictError) {
+              return res.status(409).json({
+                message:
+                  'This Shelfmark username is already linked to another user. Ask an administrator to link it for you.',
+              });
+            }
+            if (isShelfmarkUniqueConstraintError(e)) {
+              return res.status(409).json({
+                message:
+                  'This Shelfmark username was just linked by another user. Please try again.',
               });
             }
             logger.error('Failed to provision Shelfmark proxy account', {

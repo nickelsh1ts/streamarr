@@ -117,7 +117,7 @@ Streamarr uses a granular permission system. Users can have any combination of t
 | **Request**              | Request content through Seerr integration.                                            |
 | **Reader**               | Access all book and audiobook services.                                               |
 | **Audiobooks**           | Listen to audiobooks through the Audiobookshelf integration.                          |
-| **eBooks**               | Reserved for a future eBook service integration.                                      |
+| **eBooks**               | Access to eBooks through the Calibre-Web service integration.                         |
 | **Bookmark**             | Search and request books through the Shelfmark integration.                           |
 | **View Schedule**        | View the release calendar.                                                            |
 | **Manage Events**        | Create, edit, and delete calendar events.                                             |
