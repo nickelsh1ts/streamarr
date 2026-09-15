@@ -20,6 +20,8 @@ const ALLOWED_AVATAR_HOSTS = new Set([
   'gravatar.com',
   'i.imgur.com',
   'cdn.discordapp.com',
+  'media.discordapp.net',
+  'wp.com',
 ]);
 
 function isValidAvatarUrl(url: string): boolean {
@@ -46,6 +48,15 @@ function getAvatarProxy(): ImageProxy {
   return ImageProxy.getOrCreate('avatar', '', {
     defaultMaxAge: AVATAR_MAX_AGE,
     validateResponse: validateAvatarImageResponse,
+    maxRedirects: 5,
+    beforeRedirect: (options) => {
+      const target =
+        (options.href as string | undefined) ??
+        `${(options.protocol as string) || 'https:'}//${(options.hostname as string) || (options.host as string)}${(options.path as string) || ''}`;
+      if (!isValidAvatarUrl(target)) {
+        throw new Error(`Disallowed avatar redirect target: ${target}`);
+      }
+    },
   });
 }
 
