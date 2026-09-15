@@ -377,6 +377,8 @@ export function createServiceProxyRouter(
     settings.shelfmark.hostname &&
     settings.shelfmark.urlBase
   ) {
+    const shelfmarkPermissions = [Permission.BOOKMARK, Permission.READER];
+
     const shelfmarkProxy = createServiceProxy({
       name: 'Shelfmark',
       getTarget: () => {
@@ -403,7 +405,7 @@ export function createServiceProxyRouter(
       shelfmarkProxy,
       'Shelfmark',
       false,
-      [Permission.BOOKMARK, Permission.READER],
+      shelfmarkPermissions,
       [
         async (req, res, next) => {
           try {
@@ -448,6 +450,14 @@ export function createServiceProxyRouter(
           }
         },
       ]
+    );
+
+    registerWebSocketHandler(
+      dispatcher,
+      sessionMiddleware,
+      settings.shelfmark.urlBase,
+      shelfmarkProxy,
+      (user) => user.hasPermission(shelfmarkPermissions, { type: 'or' })
     );
   }
 

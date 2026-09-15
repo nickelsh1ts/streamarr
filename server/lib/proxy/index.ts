@@ -1,3 +1,5 @@
+import { getRepository } from '@server/datasource';
+import { User } from '@server/entity/User';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import type { Request, RequestHandler, Response } from 'express';
@@ -95,13 +97,14 @@ export function registerWebSocketHandler(
   dispatcher: UpgradeDispatcher,
   sessionMiddleware: RequestHandler,
   wsPath: string,
-  proxy: ReturnType<typeof createProxyMiddleware>
+  proxy: ReturnType<typeof createProxyMiddleware>,
+  authorizeUser?: (user: User) => boolean | Promise<boolean>
 ) {
   dispatcher.register({
     name: `proxy:${wsPath}`,
     match: (url) => url.startsWith(wsPath),
     handle: (req: SessionRequest, socket, head) => {
-      sessionMiddleware(req as unknown as Request, {} as Response, () => {
+      sessionMiddleware(req as unknown as Request, {} as Response, async () => {
         if (!req.session?.userId) {
           logger.warn('Unauthenticated WebSocket upgrade attempt', {
             label: 'Proxy',
@@ -110,6 +113,28 @@ export function registerWebSocketHandler(
           socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
           socket.destroy();
           return;
+        }
+        if (authorizeUser) {
+          try {
+            const user = await getRepository(User).findOne({
+              where: { id: req.session.userId },
+            });
+            if (!user || !(await authorizeUser(user))) {
+              socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+              socket.destroy();
+              return;
+            }
+            (req as Request).user = user;
+          } catch (e) {
+            logger.error('WebSocket upgrade authorization failed', {
+              label: 'Proxy',
+              path: req.url,
+              message: e instanceof Error ? e.message : String(e),
+            });
+            socket.write('HTTP/1.1 502 Bad Gateway\r\n\r\n');
+            socket.destroy();
+            return;
+          }
         }
         proxy.upgrade(req, socket as Socket, head);
       });
