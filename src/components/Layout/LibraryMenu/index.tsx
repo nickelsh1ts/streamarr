@@ -10,7 +10,6 @@ import {
   TvIcon,
 } from '@heroicons/react/24/outline';
 import {
-  MicrophoneIcon,
   MusicalNoteIcon,
   PhotoIcon,
   VideoCameraIcon,
@@ -288,30 +287,6 @@ const LibraryMenu = ({
           ) : null;
         })
       )}
-      {hasPermission([Permission.LISTEN, Permission.STREAMARR], {
-        type: 'or',
-      }) &&
-        userSettings?.audiobooksEnabled && (
-          <div className="mb-1 flex">
-            <SingleItem
-              className="flex-1"
-              liKey={'audiobooks'}
-              data-tutorial="nav-audiobooks"
-              data-testid="nav-audiobooks"
-              onClick={() => {
-                setIsOpen && setIsOpen(!isOpen);
-              }}
-              href={'/listen'}
-              title={intl.formatMessage({
-                id: 'common.audiobooks',
-                defaultMessage: 'Audiobooks',
-              })}
-              icon={<MicrophoneIcon className="size-7" />}
-              url={url}
-              regExp={/\/listen\/?/}
-            />
-          </div>
-        )}
     </ul>
   );
 };

@@ -1,6 +1,10 @@
 'use client';
 import LibraryMenu from '@app/components/Layout/LibraryMenu';
-import { RequestMenu } from '@app/components/Layout/Sidebar';
+import {
+  BooksMenu,
+  RequestMenu,
+  useBookMenuLinks,
+} from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
@@ -93,6 +97,8 @@ const MobileMenu = () => {
     !hasPermission([Permission.REQUEST, Permission.STREAMARR], {
       type: 'or',
     }) || !userSettings?.requestUrl;
+  const bookLinks = useBookMenuLinks();
+  const isBookRoute = url.match(/^\/(read|listen|bookmark)\/?/);
 
   const isWatchRoute = url.match(/^\/watch\/web\/index\.html#?!?\/?(.*)?\/?/);
 
@@ -316,6 +322,9 @@ const MobileMenu = () => {
             {menuType === 'request' && (
               <RequestMenu onClick={setIsOpen} url={url} />
             )}
+            {menuType === 'books' && (
+              <BooksMenu onClick={setIsOpen} url={url} />
+            )}
             {menuType === 'settings' && (
               <ul className="menu m-0 w-full space-y-1 p-0">
                 {settingsLinks.map((link, i) => {
@@ -335,7 +344,7 @@ const MobileMenu = () => {
               </ul>
             )}
             <ul className="menu m-0 mt-2 mb-2 w-full p-0">
-              {(isWatchRoute || !requestDisabled) && (
+              {(isWatchRoute || !requestDisabled || bookLinks.length > 0) && (
                 <li className="flex flex-row gap-1 border-t border-zinc-300/40 pt-2">
                   <button
                     onClick={() => setMenuType('library')}
@@ -354,6 +363,17 @@ const MobileMenu = () => {
                       <FormattedMessage
                         id="common.request"
                         defaultMessage="Request"
+                      />
+                    </button>
+                  )}
+                  {!!bookLinks.length && (
+                    <button
+                      onClick={() => setMenuType('books')}
+                      className={`focus:bg-primary/70! active:bg-primary/20! flex flex-1 place-content-center items-center gap-0 space-x-2 capitalize ${menuType === 'books' ? 'bg-primary/70 hover:bg-primary/30 text-white hover:text-zinc-200' : 'text-zinc-300 hover:text-white'}`}
+                    >
+                      <FormattedMessage
+                        id="common.books"
+                        defaultMessage="Books"
                       />
                     </button>
                   )}
@@ -382,7 +402,8 @@ const MobileMenu = () => {
               isOpen &&
               (menuType === 'library' ||
                 menuType === 'settings' ||
-                menuType === 'request')
+                menuType === 'request' ||
+                menuType === 'books')
                 ? 'text-primary'
                 : ''
             }`}
@@ -391,18 +412,23 @@ const MobileMenu = () => {
                 menuType === 'library' ||
                 menuType === 'settings' ||
                 menuType === 'request' ||
+                menuType === 'books' ||
                 !isOpen
               ) {
                 toggle();
               }
               if (
                 !isOpen ||
-                (menuType === 'nav' && !url.match(/^\/request\/?(.*)?\/?/))
+                (menuType === 'nav' &&
+                  !url.match(/^\/(request|read|listen|bookmark)\/?(.*)?\/?/))
               ) {
                 setMenuType('library');
               }
               if (url.match(/^\/request\/?(.*)?\/?/) && !requestDisabled) {
                 setMenuType('request');
+              }
+              if (isBookRoute && bookLinks.length > 0) {
+                setMenuType('books');
               }
               if (
                 url.match(/^\/watch\/web\/index\.html#!\/settings\/?(.*)?\/?/)
@@ -414,7 +440,8 @@ const MobileMenu = () => {
             {isOpen &&
             (menuType === 'library' ||
               menuType === 'settings' ||
-              menuType === 'request') ? (
+              menuType === 'request' ||
+              menuType === 'books') ? (
               <Bars3BottomLeftIcon className="size-7" />
             ) : (
               <Bars3Icon className="size-7" />

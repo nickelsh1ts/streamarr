@@ -1,13 +1,19 @@
 'use client';
 import AudiobookshelfLogo from '@app/assets/services/audiobookshelf.svg';
+import CalibreWebLogo from '@app/assets/services/calibreweb.svg';
 import PlexLogo from '@app/assets/services/plex.svg';
+import ShelfmarkLogo from '@app/assets/services/shelfmark.png';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
+import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import PlexOAuth from '@app/utils/plex';
 import { TrashIcon } from '@heroicons/react/24/solid';
+import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { hasPermission } from '@server/lib/permissions';
 import axios from 'axios';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -19,12 +25,24 @@ const plexOAuth = new PlexOAuth();
 enum LinkedAccountType {
   Plex = 'Plex',
   Audiobookshelf = 'Audiobookshelf',
+  Shelfmark = 'Shelfmark',
+  CalibreWeb = 'Calibre-Web',
 }
 
 type LinkedAccount = {
   type: LinkedAccountType;
   username: string;
 };
+
+interface ShelfmarkLinkedAccountResponse {
+  linked: boolean;
+  username?: string;
+}
+
+interface CalibreWebLinkedAccountResponse {
+  linked: boolean;
+  username?: string;
+}
 
 const UserSettingsAccounts = () => {
   const intl = useIntl();
@@ -37,6 +55,34 @@ const UserSettingsAccounts = () => {
   const { data: passwordInfo } = useSWR<{ hasPassword: boolean }>(
     user ? `/api/v1/user/${user?.id}/settings/password` : null
   );
+  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
+    user ? `/api/v1/user/${user.id}/settings/main` : null
+  );
+  const hasShelfmarkAccess =
+    !!userSettings?.shelfmarkEnabled &&
+    !!user &&
+    hasPermission([Permission.BOOKMARK, Permission.READER], user.permissions, {
+      type: 'or',
+    });
+  const { data: shelfmarkAccount, mutate: revalidateShelfmarkAccount } =
+    useSWR<ShelfmarkLinkedAccountResponse>(
+      hasShelfmarkAccess
+        ? `/api/v1/user/${user.id}/settings/linked-accounts/shelfmark`
+        : null
+    );
+  const hasCalibrewebAccess =
+    !!userSettings?.calibrewebEnabled &&
+    !!user &&
+    hasPermission([Permission.READER, Permission.EBOOKS], user.permissions, {
+      type: 'or',
+    });
+  const { data: calibrewebAccount, mutate: revalidateCalibrewebAccount } =
+    useSWR<CalibreWebLinkedAccountResponse>(
+      hasCalibrewebAccess
+        ? `/api/v1/user/${user.id}/settings/linked-accounts/calibreweb`
+        : null
+    );
+  const { currentSettings } = useSettings();
   const [error, setError] = useState<string | null>(null);
   const [showAudiobookshelfModal, setShowAudiobookshelfModal] = useState(false);
 
@@ -53,8 +99,20 @@ const UserSettingsAccounts = () => {
         type: LinkedAccountType.Audiobookshelf,
         username: user.audiobookshelfUsername,
       });
+    if (shelfmarkAccount?.linked && shelfmarkAccount.username) {
+      accounts.push({
+        type: LinkedAccountType.Shelfmark,
+        username: shelfmarkAccount.username,
+      });
+    }
+    if (calibrewebAccount?.linked && calibrewebAccount.username) {
+      accounts.push({
+        type: LinkedAccountType.CalibreWeb,
+        username: calibrewebAccount.username,
+      });
+    }
     return accounts;
-  }, [user]);
+  }, [calibrewebAccount, shelfmarkAccount, user]);
 
   const linkPlexAccount = async () => {
     setError(null);
@@ -78,6 +136,80 @@ const UserSettingsAccounts = () => {
     }
   };
 
+  const linkShelfmarkAccount = async () => {
+    setError(null);
+    try {
+      await axios.post(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/shelfmark`
+      );
+      await revalidateShelfmarkAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.shelfmarkLinkFailed',
+            defaultMessage: 'Failed to link Shelfmark account',
+          })
+      );
+    }
+  };
+
+  const deleteShelfmarkRequest = async () => {
+    try {
+      await axios.delete(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/shelfmark`
+      );
+      await revalidateShelfmarkAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.shelfmarkUnlinkFailed',
+            defaultMessage: 'Failed to unlink Shelfmark account',
+          })
+      );
+    }
+  };
+
+  const deleteCalibreWebRequest = async () => {
+    try {
+      await axios.delete(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/calibreweb`
+      );
+      await revalidateCalibrewebAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.calibrewebUnlinkFailed',
+            defaultMessage: 'Failed to unlink Calibre-Web account',
+          })
+      );
+    }
+  };
+
+  const linkCalibreWebAccount = async () => {
+    setError(null);
+    try {
+      await axios.post(
+        `/api/v1/user/${user?.id}/settings/linked-accounts/calibreweb`
+      );
+      await revalidateCalibrewebAccount();
+      await revalidateUser();
+    } catch (e) {
+      setError(
+        e.response?.data?.message ??
+          intl.formatMessage({
+            id: 'linkedAccounts.calibrewebLinkFailed',
+            defaultMessage: 'Failed to link Calibre-Web account',
+          })
+      );
+    }
+  };
+
   const linkable = [
     {
       name: 'Plex',
@@ -92,7 +224,27 @@ const UserSettingsAccounts = () => {
     {
       name: 'Audiobookshelf',
       action: () => setShowAudiobookshelfModal(true),
-      hide: accounts.some((a) => a.type === LinkedAccountType.Audiobookshelf),
+      hide:
+        accounts.some((a) => a.type === LinkedAccountType.Audiobookshelf) ||
+        !currentSettings?.audiobookshelfEnabled,
+    },
+    {
+      name: 'Shelfmark',
+      action: linkShelfmarkAccount,
+      hide:
+        !hasShelfmarkAccess ||
+        !!shelfmarkAccount?.linked ||
+        (!userSettings?.shelfmarkNewUserSignIn &&
+          !currentUserHasPermission(Permission.MANAGE_USERS)),
+    },
+    {
+      name: 'Calibre-Web',
+      action: linkCalibreWebAccount,
+      hide:
+        !hasCalibrewebAccess ||
+        !!calibrewebAccount?.linked ||
+        (!userSettings?.calibrewebNewUserSignIn &&
+          !currentUserHasPermission(Permission.MANAGE_USERS)),
     },
   ].filter((l) => !l.hide);
 
@@ -184,6 +336,20 @@ const UserSettingsAccounts = () => {
                     <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                       <PlexLogo className="w-9" />
                     </div>
+                  ) : name === 'Shelfmark' ? (
+                    <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                      <Image
+                        src={ShelfmarkLogo}
+                        alt="Shelfmark"
+                        className="w-9"
+                        width={40}
+                        height={40}
+                      />
+                    </div>
+                  ) : name === 'Calibre-Web' ? (
+                    <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                      <CalibreWebLogo className="h-9" />
+                    </div>
                   ) : (
                     <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                       <AudiobookshelfLogo className="w-9" />
@@ -235,6 +401,22 @@ const UserSettingsAccounts = () => {
                 {acct.type === LinkedAccountType.Audiobookshelf && (
                   <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
                     <AudiobookshelfLogo className="w-9" />
+                  </div>
+                )}
+                {acct.type === LinkedAccountType.Shelfmark && (
+                  <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                    <Image
+                      src={ShelfmarkLogo}
+                      alt="Shelfmark"
+                      className="w-9"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                )}
+                {acct.type === LinkedAccountType.CalibreWeb && (
+                  <div className="flex aspect-square h-full items-center justify-center rounded-full bg-neutral-800">
+                    <CalibreWebLogo className="h-9" />
                   </div>
                 )}
               </div>
@@ -307,6 +489,52 @@ const UserSettingsAccounts = () => {
                       </span>
                     </ConfirmButton>
                   </>
+                )}
+              {acct.type === LinkedAccountType.Shelfmark &&
+                (userSettings?.shelfmarkNewUserSignIn ||
+                  currentUserHasPermission(Permission.MANAGE_USERS)) && (
+                  <ConfirmButton
+                    buttonSize="sm"
+                    onClick={deleteShelfmarkRequest}
+                    confirmText={
+                      <FormattedMessage
+                        id="common.areYouSure"
+                        defaultMessage="Are you sure?"
+                      />
+                    }
+                    className="max-sm:btn-block"
+                  >
+                    <TrashIcon className="mr-2 size-5" />
+                    <span>
+                      <FormattedMessage
+                        id="common.unlinkAccount"
+                        defaultMessage="Unlink Account"
+                      />
+                    </span>
+                  </ConfirmButton>
+                )}
+              {acct.type === LinkedAccountType.CalibreWeb &&
+                (userSettings?.calibrewebNewUserSignIn ||
+                  currentUserHasPermission(Permission.MANAGE_USERS)) && (
+                  <ConfirmButton
+                    buttonSize="sm"
+                    onClick={deleteCalibreWebRequest}
+                    confirmText={
+                      <FormattedMessage
+                        id="common.areYouSure"
+                        defaultMessage="Are you sure?"
+                      />
+                    }
+                    className="max-sm:btn-block"
+                  >
+                    <TrashIcon className="mr-2 size-5" />
+                    <span>
+                      <FormattedMessage
+                        id="common.unlinkAccount"
+                        defaultMessage="Unlink Account"
+                      />
+                    </span>
+                  </ConfirmButton>
                 )}
             </li>
           ))}

@@ -72,12 +72,16 @@ const ServiceFrameContainer = ({
     if (isTvRoute) return '/admin/settings/services/sonarr';
     if (pathname?.startsWith('/admin/music'))
       return '/admin/settings/services/lidarr';
+    if (pathname?.startsWith('/admin/books'))
+      return '/admin/settings/services/chaptarr';
     if (pathname?.startsWith('/admin/indexers'))
       return '/admin/settings/services/prowlarr';
     if (pathname?.startsWith('/admin/srt'))
       return '/admin/settings/services/bazarr';
     if (pathname?.startsWith('/admin/cleaning'))
       return '/admin/settings/services/cleanuparr';
+    if (pathname?.startsWith('/admin/prerolls'))
+      return '/admin/settings/services/nexroll';
     if (pathname?.startsWith('/admin/transcode'))
       return '/admin/settings/services/tdarr';
     return '/admin/settings/services';
@@ -87,9 +91,11 @@ const ServiceFrameContainer = ({
     if (isMoviesRoute) return 'Radarr';
     if (isTvRoute) return 'Sonarr';
     if (pathname?.startsWith('/admin/music')) return 'Lidarr';
+    if (pathname?.startsWith('/admin/books')) return 'Chaptarr';
     if (pathname?.startsWith('/admin/indexers')) return 'Prowlarr';
     if (pathname?.startsWith('/admin/srt')) return 'Bazarr';
     if (pathname?.startsWith('/admin/cleaning')) return 'Cleanuparr';
+    if (pathname?.startsWith('/admin/prerolls')) return 'NeXroll';
     if (pathname?.startsWith('/admin/transcode')) return 'Tdarr';
     return 'Service';
   };

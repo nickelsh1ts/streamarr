@@ -155,7 +155,7 @@ After starting Streamarr for the first time:
 | Tab                | Services                                  |
 | ------------------ | ----------------------------------------- |
 | **\*Arr Services** | Radarr, Sonarr, Lidarr                    |
-| **Media Services** | Prowlarr, Bazarr, Tdarr                   |
+| **Media Services** | Prowlarr, Bazarr, Tdarr, NeXroll          |
 | **Monitoring**     | Tautulli, Uptime Kuma                     |
 | **Downloads**      | qBittorrent, Deluge, Transmission clients |
 

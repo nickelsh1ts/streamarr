@@ -10,9 +10,11 @@ export type ServiceType =
   | 'radarr'
   | 'sonarr'
   | 'lidarr'
+  | 'chaptarr'
   | 'prowlarr'
   | 'bazarr'
   | 'cleanuparr'
+  | 'nexroll'
   | 'tdarr';
 
 export interface ServiceFrameConfig {
@@ -62,8 +64,10 @@ function parseRoute(pathname: string): RouteInfo {
   const singleServices = [
     { pattern: '/admin/music', type: 'lidarr' as const },
     { pattern: '/admin/indexers', type: 'prowlarr' as const },
+    { pattern: '/admin/books', type: 'chaptarr' as const },
     { pattern: '/admin/srt', type: 'bazarr' as const },
     { pattern: '/admin/cleaning', type: 'cleanuparr' as const },
+    { pattern: '/admin/prerolls', type: 'nexroll' as const },
     { pattern: '/admin/transcode', type: 'tdarr' as const },
   ];
 
@@ -145,6 +149,12 @@ function getActiveFrame(
       serviceName: 'Lidarr',
       settingsPath: '/admin/settings/services/lidarr',
     },
+    chaptarr: {
+      newBase: '/admin/books',
+      title: 'books',
+      serviceName: 'Chaptarr',
+      settingsPath: '/admin/settings/services/chaptarr',
+    },
     prowlarr: {
       newBase: '/admin/indexers',
       title: 'indexers',
@@ -162,6 +172,12 @@ function getActiveFrame(
       title: 'cleaning',
       serviceName: 'Cleanuparr',
       settingsPath: '/admin/settings/services/cleanuparr',
+    },
+    nexroll: {
+      newBase: '/admin/prerolls',
+      title: 'prerolls',
+      serviceName: 'NeXroll',
+      settingsPath: '/admin/settings/services/nexroll',
     },
   };
 

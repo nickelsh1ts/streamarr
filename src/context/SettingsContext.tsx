@@ -26,6 +26,8 @@ const defaultSettings: PublicSettingsResponse = {
   defaultInviteQuotas: {},
   seerrEnabled: false,
   audiobookshelfEnabled: false,
+  shelfmarkEnabled: false,
+  calibrewebEnabled: false,
   statusUrl: '',
   statusEnabled: false,
   customLogo: undefined,

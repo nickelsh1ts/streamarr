@@ -1,6 +1,7 @@
 import GithubAPI from '@server/api/github';
 import PlexAPI from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
+import ChaptarrAPI from '@server/api/servarr/chaptarr';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import TautulliAPI from '@server/api/tautulli';
@@ -20,6 +21,10 @@ import { scheduledJobs } from '@server/job/schedule';
 import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import type { AvailableCacheIds } from '@server/lib/cache';
 import cacheManager from '@server/lib/cache';
+import {
+  getCalibreWebAPI,
+  validateHeaderAuthName,
+} from '@server/lib/calibreweb';
 import { Permission } from '@server/lib/permissions';
 import {
   markPlexHealthy,
@@ -45,6 +50,7 @@ import type {
   ServiceSettings,
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { getShelfmarkAPI } from '@server/lib/shelfmark';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -315,7 +321,10 @@ settingsRoutes.get('/services', (_req, res) => {
 
   services.push(
     settings.bazarr,
+    settings.cleanuparr,
+    settings.nexroll,
     settings.lidarr,
+    settings.chaptarr,
     settings.overseerr,
     settings.prowlarr,
     settings.tdarr,
@@ -329,8 +338,10 @@ settingsRoutes.get('/services', (_req, res) => {
   const servicesWithId = [
     { ...settings.bazarr, id: 'bazarr' },
     { ...settings.cleanuparr, id: 'cleanuparr' },
+    { ...settings.nexroll, id: 'nexroll' },
     { ...downloadsService, id: 'downloads' },
     { ...settings.lidarr, id: 'lidarr' },
+    { ...settings.chaptarr, id: 'chaptarr' },
     { ...settings.overseerr, id: 'overseerr' },
     { ...settings.prowlarr, id: 'prowlarr' },
     { ...settings.tdarr, id: 'tdarr' },
@@ -412,6 +423,90 @@ settingsRoutes.post('/tdarr', async (req, res) => {
   Object.assign(settings.tdarr, req.body);
   settings.save();
   res.status(200).json(settings.tdarr);
+});
+
+settingsRoutes.get('/nexroll', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.nexroll);
+});
+
+settingsRoutes.post('/nexroll', async (req, res, next) => {
+  const settings = getSettings();
+  const { enabled, hostname, port, useSsl, urlBase } = req.body;
+  const portNumber = Number(port);
+  const validation = validateBaseUrl(urlBase, 'nexroll', 'nexroll');
+
+  if (
+    typeof enabled !== 'boolean' ||
+    (hostname !== undefined &&
+      hostname !== '' &&
+      (typeof hostname !== 'string' || !/^[A-Za-z0-9.-]+$/.test(hostname))) ||
+    (enabled && !hostname) ||
+    !Number.isInteger(portNumber) ||
+    portNumber < 1 ||
+    portNumber > 65535 ||
+    typeof useSsl !== 'boolean' ||
+    !validation.valid
+  ) {
+    return next({
+      status: 400,
+      message:
+        validation.error ?? 'Invalid NeXroll connection settings supplied',
+    });
+  }
+
+  settings.nexroll = {
+    enabled,
+    hostname: hostname || undefined,
+    port: portNumber,
+    useSsl,
+    urlBase,
+  };
+  settings.save();
+  res.status(200).json(settings.nexroll);
+});
+
+settingsRoutes.post('/nexroll/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase } = req.body;
+    const portNumber = Number(port);
+    const validation = validateBaseUrl(urlBase, 'nexroll', 'nexroll');
+
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean') ||
+      !validation.valid
+    ) {
+      return next({
+        status: 400,
+        message: validation.error ?? 'Invalid hostname, port, or SSL setting',
+      });
+    }
+
+    const protocol = useSsl ? 'https' : 'http';
+    const response = await fetch(
+      `${protocol}://${hostname}:${portNumber}/health`,
+      { signal: AbortSignal.timeout(getSettings().network.requestTimeout) }
+    );
+
+    if (!response.ok) {
+      throw new Error(`NeXroll responded with HTTP ${response.status}`);
+    }
+
+    const health = (await response.json()) as { status?: string };
+    res.status(200).json({ urlBase, status: health.status ?? 'ok' });
+  } catch (e) {
+    logger.error('Failed to test NeXroll', {
+      label: 'NeXroll',
+      message: e instanceof Error ? e.message : String(e),
+    });
+    next({ status: 500, message: 'Failed to connect to NeXroll' });
+  }
 });
 
 settingsRoutes.get('/cleanuparr', (_req, res) => {
@@ -760,6 +855,138 @@ settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
   }
 });
 
+settingsRoutes.get('/chaptarr', (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.chaptarr);
+});
+
+settingsRoutes.post('/chaptarr', async (req, res, next) => {
+  const settings = getSettings();
+
+  // Validate urlBase
+  const validation = validateBaseUrl(req.body.urlBase, 'chaptarr', 'chaptarr');
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.chaptarr, req.body);
+  settings.save();
+  res.status(200).json(settings.chaptarr);
+});
+
+settingsRoutes.post<undefined, Record<string, unknown>, ServiceSettings>(
+  '/chaptarr/test',
+  async (req, res, next) => {
+    try {
+      const chaptarr = new ChaptarrAPI({
+        apiKey: req.body.apiKey,
+        url: ChaptarrAPI.buildServiceUrl(req.body, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
+      });
+
+      const urlBase = await chaptarr
+        .getSystemStatus()
+        .then((value) => value.urlBase)
+        .catch(() => req.body.urlBase);
+      const profiles = await chaptarr.getProfiles();
+      const folders = await chaptarr.getRootFolders();
+      const tags = await chaptarr.getTags();
+
+      res.status(200).json({
+        profiles,
+        rootFolders: folders.map((folder) => ({
+          id: folder.id,
+          path: folder.path,
+        })),
+        tags,
+        urlBase,
+      });
+    } catch (e) {
+      logger.error('Failed to test Chaptarr', {
+        label: 'Chaptarr',
+        message: e.message,
+      });
+
+      next({ status: 500, message: 'Failed to connect to Chaptarr' });
+    }
+  }
+);
+
+settingsRoutes.get('/chaptarr/auth', arrAuthLimiter, async (req, res, next) => {
+  const settings = getSettings();
+  const chaptarrSettings = settings.chaptarr;
+
+  if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
+    return next({ status: 400, message: 'Chaptarr not configured' });
+  }
+
+  try {
+    const chaptarr = new ChaptarrAPI({
+      apiKey: chaptarrSettings.apiKey,
+      url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
+      timeout: getSettings().network.requestTimeout,
+    });
+
+    const hostConfig = await chaptarr.getHostConfig();
+
+    res.status(200).json({
+      authenticationMethod: hostConfig.authenticationMethod,
+      isAuthDisabled:
+        hostConfig.authenticationMethod === 'External' ||
+        hostConfig.authenticationMethod === 'None',
+    });
+  } catch (e) {
+    logger.error('Failed to get Chaptarr auth status', {
+      label: 'Chaptarr',
+      message: e.message,
+    });
+    next({ status: 500, message: 'Failed to connect to Chaptarr' });
+  }
+});
+
+settingsRoutes.post(
+  '/chaptarr/auth',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    const settings = getSettings();
+    const chaptarrSettings = settings.chaptarr;
+
+    if (!chaptarrSettings.hostname || !chaptarrSettings.apiKey) {
+      return next({ status: 400, message: 'Chaptarr not configured' });
+    }
+
+    try {
+      const chaptarr = new ChaptarrAPI({
+        apiKey: chaptarrSettings.apiKey,
+        url: ChaptarrAPI.buildServiceUrl(chaptarrSettings, '/api/v1'),
+        timeout: getSettings().network.requestTimeout,
+      });
+
+      const hostConfig = await chaptarr.disableAuthentication();
+
+      logger.info('Authentication disabled on Chaptarr', {
+        label: 'Chaptarr',
+        userId: req.user?.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        authenticationMethod: hostConfig.authenticationMethod,
+      });
+    } catch (e) {
+      logger.error('Failed to disable Chaptarr authentication', {
+        label: 'Chaptarr',
+        message: e.message,
+      });
+      next({
+        status: 500,
+        message: 'Failed to disable authentication on Chaptarr',
+      });
+    }
+  }
+);
+
 settingsRoutes.get('/overseerr', (_req, res) => {
   const settings = getSettings();
 
@@ -885,6 +1112,154 @@ settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
     next({ status: 500, message: 'Failed to connect to Audiobookshelf' });
   }
 });
+
+settingsRoutes.get('/shelfmark', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.post('/shelfmark', async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'shelfmark',
+    'shelfmark'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  Object.assign(settings.shelfmark, req.body);
+  settings.save();
+  res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.post('/shelfmark/test', async (req, res, next) => {
+  try {
+    const { hostname, port, useSsl, urlBase } = req.body;
+
+    const portNumber = Number(port);
+    if (
+      typeof hostname !== 'string' ||
+      !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+      !Number.isInteger(portNumber) ||
+      portNumber < 1 ||
+      portNumber > 65535 ||
+      typeof urlBase !== 'string' ||
+      !urlBase.startsWith('/') ||
+      urlBase.endsWith('/') ||
+      (useSsl !== undefined && typeof useSsl !== 'boolean')
+    ) {
+      return next({
+        status: 400,
+        message: 'Invalid hostname, port, or URL Base',
+      });
+    }
+
+    await getShelfmarkAPI({
+      enabled: false,
+      hostname,
+      port: portNumber,
+      useSsl: useSsl ?? false,
+      urlBase,
+    }).getHealth();
+
+    res.status(200).json({ urlBase });
+  } catch (e) {
+    logger.error('Failed to test Shelfmark', {
+      label: 'Shelfmark',
+      message: e instanceof Error ? e.message : String(e),
+    });
+
+    next({ status: 500, message: 'Failed to connect to Shelfmark' });
+  }
+});
+
+settingsRoutes.get('/calibreweb', async (_req, res) => {
+  const settings = getSettings();
+
+  res.status(200).json(settings.calibreweb);
+});
+
+settingsRoutes.post('/calibreweb', arrAuthLimiter, async (req, res, next) => {
+  const settings = getSettings();
+
+  const validation = validateBaseUrl(
+    req.body.urlBase,
+    'calibreweb',
+    'calibreweb'
+  );
+  if (!validation.valid) {
+    return next({ status: 400, message: validation.error });
+  }
+
+  const headerAuthName =
+    typeof req.body.headerAuthName === 'string'
+      ? req.body.headerAuthName.trim()
+      : '';
+
+  const headerError = validateHeaderAuthName(headerAuthName);
+  if (headerError) {
+    return next({ status: 400, message: headerError });
+  }
+
+  if (req.body.headerAuthEnabled && !headerAuthName) {
+    return next({
+      status: 400,
+      message:
+        'A header name is required when header authentication is enabled.',
+    });
+  }
+
+  Object.assign(settings.calibreweb, req.body, { headerAuthName });
+  settings.save();
+  res.status(200).json(settings.calibreweb);
+});
+
+settingsRoutes.post(
+  '/calibreweb/test',
+  arrAuthLimiter,
+  async (req, res, next) => {
+    try {
+      const { hostname, port, useSsl, urlBase } = req.body;
+
+      const portNumber = Number(port);
+      if (
+        typeof hostname !== 'string' ||
+        !/^[A-Za-z0-9.-]+$/.test(hostname) ||
+        !Number.isInteger(portNumber) ||
+        portNumber < 1 ||
+        portNumber > 65535 ||
+        typeof urlBase !== 'string' ||
+        !urlBase.startsWith('/') ||
+        urlBase.endsWith('/') ||
+        (useSsl !== undefined && typeof useSsl !== 'boolean')
+      ) {
+        return next({
+          status: 400,
+          message: 'Invalid hostname, port, or URL Base',
+        });
+      }
+
+      await getCalibreWebAPI({
+        hostname,
+        port: portNumber,
+        useSsl: useSsl ?? false,
+      }).testConnection();
+
+      res.status(200).json({ urlBase });
+    } catch (e) {
+      logger.error('Failed to test Calibre-Web', {
+        label: 'Calibre-Web',
+        message: e instanceof Error ? e.message : String(e),
+      });
+
+      next({ status: 500, message: 'Failed to connect to Calibre-Web' });
+    }
+  }
+);
 
 settingsRoutes.get(
   '/plex/users',

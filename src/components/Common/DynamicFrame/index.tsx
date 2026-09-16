@@ -24,6 +24,7 @@ interface DynamicFrameProps {
   isConfigured?: boolean;
   injectTheme?: boolean;
   initialAuthPath?: string;
+  fullScreen?: boolean;
 }
 
 const DynamicFrame = ({
@@ -37,6 +38,7 @@ const DynamicFrame = ({
   isConfigured = true,
   injectTheme = false,
   initialAuthPath,
+  fullScreen = false,
   ...props
 }: DynamicFrameProps) => {
   const pathname = usePathname();
@@ -263,7 +265,7 @@ const DynamicFrame = ({
   if (proxyStatus === 'loading') {
     return (
       <div
-        className={`${isAdminRoute ? 'h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)]' : 'h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-4.35rem)]'} flex items-center justify-center`}
+        className={`${fullScreen ? 'h-dvh' : isAdminRoute ? 'h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)]' : 'h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-4.35rem)]'} flex items-center justify-center`}
       >
         <LoadingEllipsis />
       </div>
@@ -290,7 +292,7 @@ const DynamicFrame = ({
         ref={iframeRef}
         loading="lazy"
         onLoad={handleIframeLoad}
-        className={`w-full ${isAdminRoute ? 'h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)]' : 'h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-4.35rem)]'} relative ${loadingIframe ? 'invisible' : ''}`}
+        className={`w-full ${fullScreen ? 'h-dvh' : isAdminRoute ? 'h-[calc(100dvh-11.6rem)] sm:h-[calc(100dvh-8.45rem)]' : 'h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-4.35rem)]'} relative ${loadingIframe ? 'invisible' : ''}`}
         src={iframeSrc}
         allowFullScreen
         title={title}

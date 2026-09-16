@@ -7,7 +7,7 @@ import { createHash } from 'crypto';
 import { promises } from 'fs';
 import path, { join } from 'path';
 
-type ImageResponse = {
+export type ImageResponse = {
   meta: {
     revalidateAfter: number;
     curRevalidate: number;
@@ -197,6 +197,11 @@ class ImageProxy {
       headers?: Record<string, string>;
       defaultMaxAge?: number;
       validateResponse?: (headers: Record<string, unknown>) => void;
+      maxRedirects?: number;
+      beforeRedirect?: (
+        options: Record<string, unknown>,
+        responseDetails: { headers: Record<string, unknown> }
+      ) => void;
     } = {}
   ) {
     this.cacheVersion = options.cacheVersion ?? 1;
@@ -207,6 +212,8 @@ class ImageProxy {
       baseURL: baseUrl,
       withCredentials: false,
       headers: options.headers,
+      maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
+      beforeRedirect: options.beforeRedirect,
     });
 
     if (options.rateLimitOptions) {
@@ -229,6 +236,10 @@ class ImageProxy {
   }
 
   public async getImage(path: string): Promise<ImageResponse> {
+    if (this.axios.defaults.baseURL && /^(?:[a-z]+:|\/\/)/i.test(path)) {
+      throw new Error(`Invalid path for ImageProxy with baseURL: ${path}`);
+    }
+
     const cacheKey = this.getCacheKey(path);
 
     const imageResponse = await this.get(cacheKey);
@@ -289,6 +300,10 @@ class ImageProxy {
     cacheKey: string
   ): Promise<ImageResponse | null> {
     try {
+      if (this.axios.defaults.baseURL && /^(?:[a-z]+:|\/\/)/i.test(path)) {
+        throw new Error(`Invalid path for ImageProxy with baseURL: ${path}`);
+      }
+
       const directory = join(this.getCacheDirectory(), cacheKey);
       const response = await this.axios.get(path, {
         responseType: 'arraybuffer',

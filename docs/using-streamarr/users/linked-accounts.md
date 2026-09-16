@@ -1,6 +1,6 @@
 # Linked Accounts
 
-Linked Accounts let a Streamarr user connect an external identity—**Plex** or **Audiobookshelf**—to their Streamarr account. Linking a Plex account enables Plex sign-in for that user and ties their Plex identity (username and avatar) to their Streamarr profile. Linking an Audiobookshelf account lets Streamarr sign the user in to the embedded [Audiobooks](../listen.md) player automatically.
+Linked Accounts let a Streamarr user connect an external identity—**Plex**, **Audiobookshelf**, **Shelfmark**, or **Calibre-Web**—to their Streamarr account. Linking a Plex account enables Plex sign-in for that user and ties their Plex identity (username and avatar) to their Streamarr profile. Linking an Audiobookshelf account lets Streamarr sign the user in to the embedded [Audiobooks](../listen.md) player automatically. Linking Shelfmark authorizes the user for embedded [Bookmark](../bookmark.md). Linking Calibre-Web authorizes the user for the embedded [Books](../books.md) page.
 
 ## Overview
 
@@ -12,7 +12,7 @@ There are two places to manage linked accounts:
 | **Users → (select a user) → Settings → Linked Accounts** | Admins viewing **another** user's linked accounts |
 
 {% hint style="info" %}
-Supported linked account types are **Plex** and **Audiobookshelf**. Additional providers may be added in future releases.
+Supported linked account types are **Plex**, **Audiobookshelf**, **Shelfmark**, and **Calibre-Web**. Additional providers may be added in future releases.
 {% endhint %}
 
 ---
@@ -98,12 +98,44 @@ Unlinking clears the stored credentials from Streamarr only. The account itself 
 
 ---
 
+## Linking A Shelfmark Account
+
+Shelfmark appears when an administrator has enabled and configured the integration. It uses proxy authentication and has no separate password.
+
+Streamarr looks for a Shelfmark user with the user's Streamarr username, Plex username, or email prefix, in that order. A successful link also synchronizes the user's email address and display name to Shelfmark.
+
+| Situation                                      | Result                                                                           |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| Matching Shelfmark user exists                 | A user manager links it. Self-service linking requires a matching email address. |
+| No match and **Enable New User Signin** is on  | Streamarr creates and links a Shelfmark user.                                    |
+| No match and **Enable New User Signin** is off | A user with **Manage Users** must link or create the account.                    |
+
+When new user sign-in is enabled, users can link and unlink their own Shelfmark account. When it is disabled, only users with **Manage Users** can do so. Unlinking removes the Streamarr association only; the Shelfmark user and its data remain intact. See [Bookmark](../bookmark.md) for the full integration guide.
+
+---
+
+## Linking A Calibre-Web Account
+
+Calibre-Web appears when an administrator has enabled and configured the integration. Unlike the other providers, Calibre-Web has no API to create or verify accounts - linking only associates a username, trusted via a reverse-proxy header.
+
+Streamarr uses the same username as Shelfmark: the user's Streamarr username, Plex username, or email prefix, in that order.
+
+| Situation                                      | Result                                                                                   |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Enable New User Signin** is on               | The user can link their own username. Calibre-Web Automated may auto-create the account. |
+| **Enable New User Signin** is off              | A user with **Manage Users** must link the account.                                      |
+| The username is already linked to another user | Linking fails unless a user with **Manage Users** reassigns it.                          |
+
+Unlinking removes the Streamarr association only; the Calibre-Web account and its data remain intact. See [Books](../books.md) for the full integration guide.
+
+---
+
 ## Admin View
 
-Administrators with the **Manage Users** permission can open any user's **Linked Accounts** page to see which external accounts that user has connected.
+Users with the **Manage Users** permission can open any user's **Linked Accounts** page to see which external accounts that user has connected. They can also manage Audiobookshelf and Shelfmark account links for those users.
 
 {% hint style="info" %}
-The admin view is **read-only**. Linking and unlinking can only be performed by the account owner from their own profile settings—an admin cannot link or unlink on a user's behalf.
+Plex accounts can only be linked or unlinked by the account owner. Audiobookshelf, Shelfmark, and Calibre-Web account links can be managed on another user's behalf by a user manager.
 {% endhint %}
 
 If you try to view another user's linked accounts without the **Manage Users** permission, Streamarr displays a permission error.
@@ -120,5 +152,11 @@ If you try to view another user's linked accounts without the **Manage Users** p
 | `/api/v1/user/{id}/settings/linked-accounts/audiobookshelf`         | DELETE | Unlink the user's Audiobookshelf account                                                                                     |
 | `/api/v1/user/{id}/settings/linked-accounts/audiobookshelf/notify`  | POST   | Ask administrators to reset the user's Audiobookshelf password                                                               |
 | `/api/v1/user/{id}/settings/linked-accounts/audiobookshelf/session` | POST   | Renew the Audiobookshelf session for an already-linked account                                                               |
+| `/api/v1/user/{id}/settings/linked-accounts/shelfmark`              | GET    | Get the user's Shelfmark linked-account status                                                                               |
+| `/api/v1/user/{id}/settings/linked-accounts/shelfmark`              | POST   | Link or create a Shelfmark account                                                                                           |
+| `/api/v1/user/{id}/settings/linked-accounts/shelfmark`              | DELETE | Remove the Streamarr Shelfmark association without deleting the Shelfmark account                                            |
+| `/api/v1/user/{id}/settings/linked-accounts/calibreweb`             | GET    | Get the user's Calibre-Web linked-account status                                                                             |
+| `/api/v1/user/{id}/settings/linked-accounts/calibreweb`             | POST   | Link the user's Calibre-Web username                                                                                         |
+| `/api/v1/user/{id}/settings/linked-accounts/calibreweb`             | DELETE | Remove the Streamarr Calibre-Web association without deleting the account                                                    |
 
 These endpoints act on the authenticated user's own account. Viewing another user's account information requires the **Manage Users** permission.

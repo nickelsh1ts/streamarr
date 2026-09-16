@@ -108,18 +108,6 @@ const PermissionEdit = ({
           permission: Permission.REQUEST,
         },
         {
-          id: 'audiobooks',
-          name: intl.formatMessage({
-            id: 'common.audiobooks',
-            defaultMessage: 'Audiobooks',
-          }),
-          description: intl.formatMessage({
-            id: 'userPermissions.audiobooks.description',
-            defaultMessage: 'Grant permission to listen to audiobooks.',
-          }),
-          permission: Permission.LISTEN,
-        },
-        {
           id: 'viewschedule',
           name: intl.formatMessage({
             id: 'userPermissions.viewSchedule.name',
@@ -146,6 +134,58 @@ const PermissionEdit = ({
         },
       ],
       permission: Permission.STREAMARR,
+    },
+    {
+      id: 'reader',
+      name: intl.formatMessage({
+        id: 'userPermissions.reader.name',
+        defaultMessage: 'Reader',
+      }),
+      description: intl.formatMessage({
+        id: 'userPermissions.reader.description',
+        defaultMessage:
+          'Grant permission to access book and audiobook services.',
+      }),
+      permission: Permission.READER,
+      children: [
+        {
+          id: 'audiobooks',
+          name: intl.formatMessage({
+            id: 'common.audiobooks',
+            defaultMessage: 'Audiobooks',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.audiobooks.description',
+            defaultMessage: 'Grant permission to listen to audiobooks.',
+          }),
+          permission: Permission.LISTEN,
+        },
+        {
+          id: 'ebooks',
+          name: intl.formatMessage({
+            id: 'common.ebooks',
+            defaultMessage: 'eBooks',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.ebooks.description',
+            defaultMessage:
+              'Grant permission to access eBooks through Calibre-Web.',
+          }),
+          permission: Permission.EBOOKS,
+        },
+        {
+          id: 'bookmark',
+          name: intl.formatMessage({
+            id: 'common.bookmark',
+            defaultMessage: 'Bookmark',
+          }),
+          description: intl.formatMessage({
+            id: 'userPermissions.bookmark.description',
+            defaultMessage: 'Grant permission to search and request books.',
+          }),
+          permission: Permission.BOOKMARK,
+        },
+      ],
     },
     {
       id: 'manageinvite',
