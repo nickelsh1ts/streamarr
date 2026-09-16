@@ -1,13 +1,16 @@
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
-import ImageProxy from '@server/lib/imageproxy';
+import ImageProxy, { type ImageResponse } from '@server/lib/imageproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
+import type { Response } from 'express';
 import { Router } from 'express';
 
 const router = Router();
 
 const PLEX_IMAGE_PATH_REGEX = /^\/library\/metadata\/\d+\/thumb(\/\d+)?$/;
+const TMDB_IMAGE_PATH_REGEX =
+  /^\/t\/p\/[a-zA-Z0-9_(),]+\/[a-zA-Z0-9_\-.]+\.(?:jpg|jpeg|png|webp)$/i;
 const PLEX_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let plexTokenCache: {
@@ -18,11 +21,27 @@ let plexTokenCache: {
   expiresAt: 0,
 };
 
-const validatePlexImageResponse = (headers: Record<string, unknown>) => {
+const validateImageContentType = (
+  headers: Record<string, unknown>,
+  label: string
+) => {
   const contentType = headers['content-type'];
   if (typeof contentType !== 'string' || !contentType.startsWith('image/')) {
-    throw new Error(`Invalid Plex image content type: ${String(contentType)}`);
+    throw new Error(
+      `Invalid ${label} image content type: ${String(contentType)}`
+    );
   }
+};
+
+const sendImageResponse = (res: Response, imageData: ImageResponse) => {
+  res.writeHead(200, {
+    'Content-Type': `image/${imageData.meta.extension}`,
+    'Content-Length': imageData.imageBuffer.length,
+    'Cache-Control': `public, max-age=${imageData.meta.curRevalidate}`,
+    'Streamarr-Cache-Key': imageData.meta.cacheKey,
+    'Streamarr-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
+  });
+  res.end(imageData.imageBuffer);
 };
 
 const getPlexAdminToken = async (): Promise<{
@@ -74,21 +93,14 @@ router.get('/plex', isAuthenticated(), async (req, res) => {
         headers: { 'X-Plex-Token': plexToken },
         defaultMaxAge: 2419200,
         rateLimitOptions: { maxRequests: 20, maxRPS: 50 },
-        validateResponse: validatePlexImageResponse,
+        validateResponse: (headers) =>
+          validateImageContentType(headers, 'Plex'),
       },
       tokenChanged
     );
 
     const imageData = await plexImageProxy.getImage(plexPath);
-
-    res.writeHead(200, {
-      'Content-Type': `image/${imageData.meta.extension}`,
-      'Content-Length': imageData.imageBuffer.length,
-      'Cache-Control': `public, max-age=${imageData.meta.curRevalidate}`,
-      'Streamarr-Cache-Key': imageData.meta.cacheKey,
-      'Streamarr-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
-    });
-    res.end(imageData.imageBuffer);
+    sendImageResponse(res, imageData);
   } catch (e) {
     logger.error('Failed to proxy Plex image', {
       label: 'Image Proxy',
@@ -101,31 +113,26 @@ router.get('/plex', isAuthenticated(), async (req, res) => {
 
 const tmdbImageProxy = new ImageProxy('tmdb', 'https://image.tmdb.org', {
   rateLimitOptions: { maxRequests: 20, maxRPS: 50 },
+  validateResponse: (headers) => validateImageContentType(headers, 'TMDB'),
 });
 
 router.get('/*splat', async (req, res) => {
-  const imagePath = req.path.replace('/image', '');
+  // Normalize duplicate slashes and supported proxy prefixes.
+  const imagePath = req.path
+    .replace(/\/+/g, '/')
+    .replace(/^\/(?:image|tmdb)(?=\/)/, '');
 
-  if (imagePath.startsWith('//') || imagePath.includes('://')) {
+  if (!TMDB_IMAGE_PATH_REGEX.test(imagePath)) {
     logger.error('Invalid URL for image proxy', {
       label: 'Image Proxy',
       imagePath,
     });
-    return res.status(403).send('Invalid URL for image proxy');
+    return res.status(400).send('Invalid URL for image proxy');
   }
 
   try {
     const imageData = await tmdbImageProxy.getImage(imagePath);
-
-    res.writeHead(200, {
-      'Content-Type': `image/${imageData.meta.extension}`,
-      'Content-Length': imageData.imageBuffer.length,
-      'Cache-Control': `public, max-age=${imageData.meta.curRevalidate}`,
-      'Streamarr-Cache-Key': imageData.meta.cacheKey,
-      'Streamarr-Cache-Status': imageData.meta.cacheMiss ? 'MISS' : 'HIT',
-    });
-
-    res.end(imageData.imageBuffer);
+    sendImageResponse(res, imageData);
   } catch (e) {
     logger.error('Failed to proxy image', {
       label: 'Image Proxy',

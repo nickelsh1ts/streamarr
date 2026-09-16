@@ -11,13 +11,23 @@ import { getSettings } from './settings';
 
 interface ProxyAffectingSettings {
   audiobookshelf: ServiceEntry;
+  shelfmark: ServiceEntry;
+  calibreweb: ServiceEntry;
   plex: { ip: string };
   radarr: ArrayServiceEntry[];
   sonarr: ArrayServiceEntry[];
   lidarr: ServiceEntry;
+  chaptarr: ServiceEntry;
   prowlarr: ServiceEntry;
   bazarr: ServiceEntry;
   cleanuparr: ServiceEntry;
+  nexroll: {
+    enabled?: boolean;
+    hostname?: string;
+    port?: number;
+    useSsl?: boolean;
+    urlBase?: string;
+  };
   tdarr: { hostname?: string; enabled?: boolean };
   tautulli: ServiceEntry;
   overseerr: {
@@ -31,6 +41,7 @@ interface ProxyAffectingSettings {
 }
 
 interface ServiceEntry {
+  enabled?: boolean;
   hostname?: string;
   urlBase?: string;
   apiKey?: string;
@@ -73,9 +84,17 @@ class RestartManager {
         apiKey: s.apiKey,
       })),
       lidarr: this.pickService(settings.lidarr),
+      chaptarr: this.pickService(settings.chaptarr),
       prowlarr: this.pickService(settings.prowlarr),
       bazarr: this.pickService(settings.bazarr),
       cleanuparr: this.pickService(settings.cleanuparr),
+      nexroll: {
+        enabled: settings.nexroll.enabled,
+        hostname: settings.nexroll.hostname,
+        port: settings.nexroll.port,
+        useSsl: settings.nexroll.useSsl,
+        urlBase: settings.nexroll.urlBase,
+      },
       tdarr: {
         hostname: settings.tdarr.hostname,
         enabled: settings.tdarr.enabled,
@@ -96,15 +115,19 @@ class RestartManager {
         trustProxy: settings.network.trustProxy,
         csrfProtection: settings.network.csrfProtection,
       },
+      shelfmark: this.pickService(settings.shelfmark),
+      calibreweb: this.pickService(settings.calibreweb),
     };
   }
 
   private pickService(svc: {
+    enabled?: boolean;
     hostname?: string;
     urlBase?: string;
     apiKey?: string;
   }): ServiceEntry {
     return {
+      enabled: svc.enabled,
       hostname: svc.hostname,
       urlBase: svc.urlBase,
       apiKey: svc.apiKey,
@@ -135,6 +158,18 @@ class RestartManager {
       changed.push('Lidarr');
     }
 
+    if (this.hasServiceChanged(settings.shelfmark, this.snapshot.shelfmark)) {
+      changed.push('Shelfmark');
+    }
+
+    if (this.hasServiceChanged(settings.calibreweb, this.snapshot.calibreweb)) {
+      changed.push('Calibre-Web');
+    }
+
+    if (this.hasServiceChanged(settings.chaptarr, this.snapshot.chaptarr)) {
+      changed.push('Chaptarr');
+    }
+
     if (this.hasServiceChanged(settings.prowlarr, this.snapshot.prowlarr)) {
       changed.push('Prowlarr');
     }
@@ -145,6 +180,16 @@ class RestartManager {
 
     if (this.hasServiceChanged(settings.cleanuparr, this.snapshot.cleanuparr)) {
       changed.push('Cleanuparr');
+    }
+
+    if (
+      settings.nexroll.enabled !== this.snapshot.nexroll.enabled ||
+      settings.nexroll.hostname !== this.snapshot.nexroll.hostname ||
+      settings.nexroll.port !== this.snapshot.nexroll.port ||
+      settings.nexroll.useSsl !== this.snapshot.nexroll.useSsl ||
+      settings.nexroll.urlBase !== this.snapshot.nexroll.urlBase
+    ) {
+      changed.push('NeXroll');
     }
 
     if (
@@ -198,6 +243,7 @@ class RestartManager {
     snap: ServiceEntry
   ): boolean {
     return (
+      current.enabled !== snap.enabled ||
       current.hostname !== snap.hostname ||
       current.urlBase !== snap.urlBase ||
       current.apiKey !== snap.apiKey

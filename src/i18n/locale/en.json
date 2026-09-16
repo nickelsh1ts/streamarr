@@ -104,6 +104,12 @@
   "backToTop.backUpTop": {
     "defaultMessage": "Back up top"
   },
+  "bookmark.shelfmarkNotLinkedMessage": {
+    "defaultMessage": "Your Shelfmark account must be linked by an administrator before you can access it."
+  },
+  "bookmark.shelfmarkNotLinkedTitle": {
+    "defaultMessage": "Shelfmark Account Required"
+  },
   "cache.description": {
     "defaultMessage": "Streamarr caches requests to external API endpoints to optimize performance and avoid making unnecessary API calls."
   },
@@ -287,6 +293,12 @@
   "common.blocklisted": {
     "defaultMessage": "Blocklisted"
   },
+  "common.bookmark": {
+    "defaultMessage": "Bookmark"
+  },
+  "common.books": {
+    "defaultMessage": "Books"
+  },
   "common.by": {
     "defaultMessage": "by"
   },
@@ -391,6 +403,9 @@
   },
   "common.downloads": {
     "defaultMessage": "Downloads"
+  },
+  "common.ebooks": {
+    "defaultMessage": "eBooks"
   },
   "common.edit": {
     "defaultMessage": "Edit"
@@ -610,6 +625,9 @@
   },
   "common.port": {
     "defaultMessage": "Port"
+  },
+  "common.prerolls": {
+    "defaultMessage": "Prerolls"
   },
   "common.preview": {
     "defaultMessage": "Preview"
@@ -3812,6 +3830,12 @@
   "linkedAccounts.audiobookshelfUnlinkFailed": {
     "defaultMessage": "Failed to unlink Audiobookshelf account"
   },
+  "linkedAccounts.calibrewebLinkFailed": {
+    "defaultMessage": "Failed to link Calibre-Web account"
+  },
+  "linkedAccounts.calibrewebUnlinkFailed": {
+    "defaultMessage": "Failed to unlink Calibre-Web account"
+  },
   "linkedAccounts.deleteFailed": {
     "defaultMessage": "Failed to delete linked account"
   },
@@ -3829,6 +3853,12 @@
   },
   "linkedAccounts.notLinked": {
     "defaultMessage": "No Account Linked"
+  },
+  "linkedAccounts.shelfmarkLinkFailed": {
+    "defaultMessage": "Failed to link Shelfmark account"
+  },
+  "linkedAccounts.shelfmarkUnlinkFailed": {
+    "defaultMessage": "Failed to unlink Shelfmark account"
   },
   "linkedAccounts.title": {
     "defaultMessage": "Linked Accounts"
@@ -4916,6 +4946,18 @@
   "radarrSettings.title": {
     "defaultMessage": "Radarr Settings"
   },
+  "read.calibrewebLinkFailed": {
+    "defaultMessage": "Failed to link Calibre-Web account"
+  },
+  "read.calibrewebLinkPrompt": {
+    "defaultMessage": "Link your Calibre-Web account to continue."
+  },
+  "read.calibrewebNotLinkedMessage": {
+    "defaultMessage": "Your Calibre-Web account must be linked by an administrator before you can access it."
+  },
+  "read.calibrewebNotLinkedTitle": {
+    "defaultMessage": "Calibre-Web Account Required"
+  },
   "resetPassword.backToSignIn": {
     "defaultMessage": "Back to Sign in"
   },
@@ -5009,6 +5051,48 @@
   "servicesSettings.bazarr.title": {
     "defaultMessage": "Bazarr Settings"
   },
+  "servicesSettings.calibreweb.alertDescription": {
+    "defaultMessage": "Users can also sign in with a Calibre-Web password directly. For single sign-on instead, turn on Reverse Proxy Header Login in Calibre-Web and enable Header Auth below."
+  },
+  "servicesSettings.calibreweb.alertTitle": {
+    "defaultMessage": "Reverse proxy header login (optional)"
+  },
+  "servicesSettings.calibreweb.description": {
+    "defaultMessage": "Optionally configure the settings for your Calibre-Web, Calibre-Web Automated, or AutoCaliWeb server."
+  },
+  "servicesSettings.calibreweb.enableNewUserSignIn": {
+    "defaultMessage": "Enable New User Signin"
+  },
+  "servicesSettings.calibreweb.enableNewUserSignIn.description": {
+    "defaultMessage": "Allow users to link or auto-create their own Calibre-Web account."
+  },
+  "servicesSettings.calibreweb.headerAuthEnabled": {
+    "defaultMessage": "Enable Reverse Proxy Header Auth"
+  },
+  "servicesSettings.calibreweb.headerAuthEnabled.description": {
+    "defaultMessage": "Send the linked username header so Calibre-Web can sign users in automatically."
+  },
+  "servicesSettings.calibreweb.headerAuthName": {
+    "defaultMessage": "Reverse Proxy Header Name"
+  },
+  "servicesSettings.calibreweb.headerAuthName.description": {
+    "defaultMessage": "Must match the header name configured in Calibre-Web."
+  },
+  "servicesSettings.calibreweb.headerAuthName.invalid": {
+    "defaultMessage": "Must be a valid HTTP header name"
+  },
+  "servicesSettings.calibreweb.headerAuthName.required": {
+    "defaultMessage": "A header name is required"
+  },
+  "servicesSettings.calibreweb.title": {
+    "defaultMessage": "Calibre-Web Settings"
+  },
+  "servicesSettings.chaptarr.description": {
+    "defaultMessage": "Optionally configure the settings for your Chaptarr server."
+  },
+  "servicesSettings.chaptarr.title": {
+    "defaultMessage": "Chaptarr Settings"
+  },
   "servicesSettings.cleanuparr.alertDescription": {
     "defaultMessage": "Cleanuparr must be started with its BASE_PATH environment variable set to the same value as the URL Base below (e.g. /cleanuparr). Without it, Cleanuparr serves its assets from the root and they will fail to load inside Streamarr. Restart Cleanuparr after changing BASE_PATH."
   },
@@ -5063,6 +5147,12 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Lidarr Settings"
   },
+  "servicesSettings.nexroll.description": {
+    "defaultMessage": "Optionally configure the settings for your NeXroll server."
+  },
+  "servicesSettings.nexroll.title": {
+    "defaultMessage": "NeXroll Settings"
+  },
   "servicesSettings.overseerr.alertDescription": {
     "defaultMessage": "Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
   },
@@ -5080,6 +5170,24 @@
   },
   "servicesSettings.prowlarr.title": {
     "defaultMessage": "Prowlarr Settings"
+  },
+  "servicesSettings.shelfmark.alertDescription": {
+    "defaultMessage": "Set ROUTER_BASE_PATH to this URL Base and AUTH_METHOD to proxy. Configure PROXY_AUTH_USER_HEADER as X-Auth-User, PROXY_AUTH_ADMIN_GROUP_HEADER as X-Auth-Groups, and PROXY_AUTH_ADMIN_GROUP_NAME as streamarr-admin. Keep Shelfmark private; it trusts these proxy headers. Restart Shelfmark after changing its environment."
+  },
+  "servicesSettings.shelfmark.alertTitle": {
+    "defaultMessage": "Set a matching base path in Shelfmark"
+  },
+  "servicesSettings.shelfmark.description": {
+    "defaultMessage": "Optionally configure the settings for your Shelfmark server."
+  },
+  "servicesSettings.shelfmark.enableNewUserSignIn": {
+    "defaultMessage": "Enable New User Signin"
+  },
+  "servicesSettings.shelfmark.enableNewUserSignIn.description": {
+    "defaultMessage": "Allow users to create and manage their own Shelfmark accounts."
+  },
+  "servicesSettings.shelfmark.title": {
+    "defaultMessage": "Shelfmark Settings"
   },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
@@ -5936,6 +6044,9 @@
   "userPermissions.audiobooks.description": {
     "defaultMessage": "Grant permission to listen to audiobooks."
   },
+  "userPermissions.bookmark.description": {
+    "defaultMessage": "Grant permission to search and request books."
+  },
   "userPermissions.createEvents.description": {
     "defaultMessage": "Grant permission to create custom events."
   },
@@ -5953,6 +6064,9 @@
   },
   "userPermissions.createNotifications.name": {
     "defaultMessage": "Create Notifications"
+  },
+  "userPermissions.ebooks.description": {
+    "defaultMessage": "Grant permission to access eBooks through Calibre-Web."
   },
   "userPermissions.error": {
     "defaultMessage": "Something went wrong while saving user permissions."
@@ -5974,6 +6088,12 @@
   },
   "userPermissions.manageUsers.description": {
     "defaultMessage": "Grant permission to manage users. Users with this permission cannot modify users with or grant the Admin privilege."
+  },
+  "userPermissions.reader.description": {
+    "defaultMessage": "Grant permission to access book and audiobook services."
+  },
+  "userPermissions.reader.name": {
+    "defaultMessage": "Reader"
   },
   "userPermissions.request.description": {
     "defaultMessage": "Grant permission to access requests (note: access in Seerr must be granted as well)"

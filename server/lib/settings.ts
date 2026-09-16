@@ -63,6 +63,18 @@ export interface AudiobookshelfSettings extends ServiceSettings {
   enableNewUserSignIn?: boolean;
 }
 
+export interface ShelfmarkSettings extends Omit<ServiceSettings, 'apiKey'> {
+  enableNewUserSignIn?: boolean;
+}
+
+export interface CalibreWebSettings extends Omit<ServiceSettings, 'apiKey'> {
+  enableNewUserSignIn?: boolean;
+  headerAuthEnabled?: boolean;
+  headerAuthName?: string;
+}
+
+export interface ChaptarrSettings extends ServiceSettings {}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
@@ -212,6 +224,8 @@ export interface FullPublicSettings extends PublicSettings {
   };
   seerrEnabled: boolean;
   audiobookshelfEnabled: boolean;
+  shelfmarkEnabled: boolean;
+  calibrewebEnabled: boolean;
   statusUrl: string;
   statusEnabled: boolean;
   theme: Theme;
@@ -394,8 +408,12 @@ export interface AllSettings {
   prowlarr: ServiceSettings;
   lidarr: ServiceSettings;
   cleanuparr: ServiceSettings;
+  nexroll: ServiceSettings;
   overseerr: ServiceSettings;
   audiobookshelf: AudiobookshelfSettings;
+  shelfmark: ShelfmarkSettings;
+  calibreweb: CalibreWebSettings;
+  chaptarr: ChaptarrSettings;
   public: PublicSettings;
   notifications: NotificationSettings;
   onboarding: OnboardingSettings;
@@ -515,9 +533,18 @@ class Settings {
         enabled: false,
         urlBase: '/lidarr',
       },
+      chaptarr: {
+        enabled: false,
+        urlBase: '/chaptarr',
+      },
       cleanuparr: {
         enabled: false,
         urlBase: '/cleanuparr',
+      },
+      nexroll: {
+        enabled: false,
+        port: 9393,
+        urlBase: '/nexroll',
       },
       overseerr: {
         enabled: false,
@@ -527,6 +554,18 @@ class Settings {
         enabled: false,
         urlBase: '/audiobookshelf',
         enableNewUserSignIn: false,
+      },
+      shelfmark: {
+        enabled: false,
+        urlBase: '/shelfmark',
+        enableNewUserSignIn: false,
+      },
+      calibreweb: {
+        enabled: false,
+        urlBase: '/calibreweb',
+        enableNewUserSignIn: false,
+        headerAuthEnabled: false,
+        headerAuthName: 'X-Auth-User',
       },
       public: { initialized: false },
       notifications: {
@@ -731,12 +770,28 @@ class Settings {
     this.data.lidarr = mergeSettings(this.data.lidarr, data);
   }
 
+  get chaptarr(): ServiceSettings {
+    return this.data.chaptarr;
+  }
+
+  set chaptarr(data: ServiceSettings) {
+    this.data.chaptarr = mergeSettings(this.data.chaptarr, data);
+  }
+
   get cleanuparr(): ServiceSettings {
     return this.data.cleanuparr;
   }
 
   set cleanuparr(data: ServiceSettings) {
     this.data.cleanuparr = mergeSettings(this.data.cleanuparr, data);
+  }
+
+  get nexroll(): ServiceSettings {
+    return this.data.nexroll;
+  }
+
+  set nexroll(data: ServiceSettings) {
+    this.data.nexroll = mergeSettings(this.data.nexroll, data);
   }
 
   get overseerr(): ServiceSettings {
@@ -753,6 +808,22 @@ class Settings {
 
   set audiobookshelf(data: AudiobookshelfSettings) {
     this.data.audiobookshelf = mergeSettings(this.data.audiobookshelf, data);
+  }
+
+  get shelfmark(): ShelfmarkSettings {
+    return this.data.shelfmark;
+  }
+
+  set shelfmark(data: ShelfmarkSettings) {
+    this.data.shelfmark = mergeSettings(this.data.shelfmark, data);
+  }
+
+  get calibreweb(): CalibreWebSettings {
+    return this.data.calibreweb;
+  }
+
+  set calibreweb(data: CalibreWebSettings) {
+    this.data.calibreweb = mergeSettings(this.data.calibreweb, data);
   }
 
   set radarr(data: RadarrSettings[]) {
@@ -812,6 +883,10 @@ class Settings {
       audiobookshelfEnabled:
         !!this.data.audiobookshelf.enabled &&
         !!this.data.audiobookshelf.hostname,
+      shelfmarkEnabled:
+        !!this.data.shelfmark.enabled && !!this.data.shelfmark.hostname,
+      calibrewebEnabled:
+        !!this.data.calibreweb.enabled && !!this.data.calibreweb.hostname,
       statusUrl: this.data.uptime.externalUrl,
       statusEnabled: this.data.uptime.enabled,
       theme: this.data.main.theme,

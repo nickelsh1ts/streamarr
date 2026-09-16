@@ -113,6 +113,18 @@ class ExternalAPI {
     return response.data;
   }
 
+  protected async put<T>(
+    endpoint: string,
+    data: Record<string, unknown>,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response = await this.axios.put<T>(endpoint, data, config);
+    if (this.cache) {
+      this.cache.flushAll();
+    }
+    return response.data;
+  }
+
   protected async getRolling<T>(
     endpoint: string,
     config?: AxiosRequestConfig,

@@ -16,16 +16,16 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
-//TODO: Add an activity page with usage statistics and recent actions and historical data import
-
 const IFRAME_ROUTE_PATTERNS = [
   /^\/admin\/movies/,
   /^\/admin\/tv/,
   /^\/admin\/music/,
+  /^\/admin\/books/,
   /^\/admin\/indexers/,
   /^\/admin\/srt/,
   /^\/admin\/transcode/,
   /^\/admin\/cleaning/,
+  /^\/admin\/prerolls/,
 ];
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -103,6 +103,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
       {
         text: intl.formatMessage({
+          id: 'common.books',
+          defaultMessage: 'Books',
+        }),
+        route: '/admin/books',
+        regex: /^\/admin\/books/,
+        hidden: !services?.some(
+          (d) => d.id === 'chaptarr' && d.enabled && d.urlBase
+        ),
+      },
+      {
+        text: intl.formatMessage({
           id: 'common.indexers',
           defaultMessage: 'Indexers',
         }),
@@ -141,6 +152,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         regex: /^\/admin\/cleaning/,
         hidden: !services?.some(
           (d) => d.id === 'cleanuparr' && d.enabled && d.urlBase
+        ),
+      },
+      {
+        text: intl.formatMessage({
+          id: 'common.prerolls',
+          defaultMessage: 'Prerolls',
+        }),
+        route: '/admin/prerolls',
+        regex: /^\/admin\/prerolls/,
+        hidden: !services?.some(
+          (d) => d.id === 'nexroll' && d.enabled && d.hostname && d.urlBase
         ),
       },
       {

@@ -1,5 +1,6 @@
 import { clearClientCache, getClientVersion } from '@server/api/downloads/base';
 import SeerrAPI from '@server/api/seerr';
+import ChaptarrAPI from '@server/api/servarr/chaptarr';
 import LidarrAPI from '@server/api/servarr/lidarr';
 import ProwlarrAPI from '@server/api/servarr/prowlarr';
 import RadarrAPI from '@server/api/servarr/radarr';
@@ -12,15 +13,19 @@ import type {
   ServiceHealthStatus,
 } from '@server/interfaces/api/settingsInterfaces';
 import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
+import { getCalibreWebAPI } from '@server/lib/calibreweb';
 import { resetClientHealth } from '@server/lib/healthCheck';
 import { getPlexHealth, refreshPlexVersion } from '@server/lib/plexHealthCheck';
 import type {
   AudiobookshelfSettings,
+  CalibreWebSettings,
   DownloadClientSettings,
   DVRSettings,
   ServiceSettings,
+  ShelfmarkSettings,
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
+import { getShelfmarkAPI } from '@server/lib/shelfmark';
 
 interface CheckResult {
   status: ServiceHealthStatus;
@@ -199,6 +204,24 @@ async function checkTdarr(service: ServiceSettings): Promise<CheckResult> {
   }
 }
 
+async function checkNexroll(service: ServiceSettings): Promise<CheckResult> {
+  try {
+    const protocol = service.useSsl ? 'https' : 'http';
+    const response = await fetch(
+      `${protocol}://${service.hostname}:${service.port ?? 9393}/health`,
+      { signal: AbortSignal.timeout(timeout()) }
+    );
+
+    if (!response.ok) {
+      throw new Error(`NeXroll responded with HTTP ${response.status}`);
+    }
+
+    return { status: 'healthy' };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
 async function checkTautulli(): Promise<CheckResult> {
   const tautulli = getSettings().tautulli;
   try {
@@ -221,6 +244,29 @@ async function checkAudiobookshelf(
       timeout()
     );
     return { status: 'healthy', version };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
+async function checkShelfmark(
+  service: ShelfmarkSettings
+): Promise<CheckResult> {
+  try {
+    const api = getShelfmarkAPI(service);
+    const version = await withTimeout(api.getVersion(), timeout());
+    return { status: 'healthy', version };
+  } catch (e) {
+    return { status: 'unhealthy', error: errorMessage(e) };
+  }
+}
+
+async function checkCalibreWeb(
+  service: CalibreWebSettings
+): Promise<CheckResult> {
+  try {
+    await withTimeout(getCalibreWebAPI(service).testConnection(), timeout());
+    return { status: 'healthy' };
   } catch (e) {
     return { status: 'unhealthy', error: errorMessage(e) };
   }
@@ -354,6 +400,18 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
     })(),
 
     (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.chaptarr)) return null;
+      const result = await checkArr(
+        new ChaptarrAPI({
+          apiKey: settings.chaptarr.apiKey ?? '',
+          url: ChaptarrAPI.buildServiceUrl(settings.chaptarr, '/api/v1'),
+          timeout: timeout(),
+        })
+      );
+      return { id: 'chaptarr', name: 'Chaptarr', retryable: true, ...result };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
       if (!isServiceConfigured(settings.bazarr)) return null;
       const result = await checkBazarr(settings.bazarr);
       return { id: 'bazarr', name: 'Bazarr', retryable: true, ...result };
@@ -377,11 +435,39 @@ export async function getServicesHealth(): Promise<ServiceHealth[]> {
     })(),
 
     (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.nexroll)) return null;
+      const result = await checkNexroll(settings.nexroll);
+      return { id: 'nexroll', name: 'NeXroll', retryable: true, ...result };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
       if (!isServiceConfigured(settings.audiobookshelf)) return null;
       const result = await checkAudiobookshelf(settings.audiobookshelf);
       return {
         id: 'audiobookshelf',
         name: 'Audiobookshelf',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.shelfmark)) return null;
+      const result = await checkShelfmark(settings.shelfmark);
+      return {
+        id: 'shelfmark',
+        name: 'Shelfmark',
+        retryable: true,
+        ...result,
+      };
+    })(),
+
+    (async (): Promise<ServiceHealth | null> => {
+      if (!isServiceConfigured(settings.calibreweb)) return null;
+      const result = await checkCalibreWeb(settings.calibreweb);
+      return {
+        id: 'calibreweb',
+        name: 'Calibre-Web',
         retryable: true,
         ...result,
       };

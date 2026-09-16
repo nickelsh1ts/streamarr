@@ -455,6 +455,18 @@ Configuration options are the same as Radarr, with the default port being `8989`
 
 ### Other Services
 
+#### Shelfmark
+
+Connect Shelfmark for book and audiobook search and requests. See [Bookmark](../bookmark.md) for the required proxy-authentication configuration and account behavior.
+
+| Setting                    | Description                                                        |
+| -------------------------- | ------------------------------------------------------------------ |
+| **Hostname or IP**         | Address of the Shelfmark server                                    |
+| **Port**                   | Default is `13378`                                                 |
+| **Use SSL**                | Enable for HTTPS connections                                       |
+| **URL Base**               | Default is `/shelfmark`; must match Shelfmark's `ROUTER_BASE_PATH` |
+| **Enable New User Signin** | Allow users to create and manage their own Shelfmark account       |
+
 #### Bazarr
 
 Connect Bazarr for subtitle management.
@@ -488,6 +500,18 @@ Connect Lidarr for music management.
 | **API Key**        | Found in Lidarr → Settings → General |
 | **URL Base**       | Default is `/lidarr`                 |
 
+#### Chaptarr
+
+Connect Chaptarr for book management. Chaptarr is embedded in the Admin Panel under **Books**.
+
+| Setting            | Description                              |
+| ------------------ | ---------------------------------------- |
+| **Hostname or IP** | Address of your Chaptarr server          |
+| **Port**           | Default is `8789`                        |
+| **API Key**        | Found in Chaptarr -> Settings -> General |
+| **Use SSL**        | Enable for HTTPS connections             |
+| **URL Base**       | Default is `/chaptarr`                   |
+
 #### Seerr
 
 Connect Seerr for request management.
@@ -508,6 +532,19 @@ Connect Tdarr for transcoding management.
 | **Enable**         | Enable or disable the Tdarr integration |
 | **Hostname or IP** | Address of your Tdarr server            |
 | **Port**           | Default is `8265`                       |
+
+#### NeXroll
+
+Connect NeXroll for preroll library, sequence, and schedule management. When enabled, it is embedded in the Admin Panel under **Prerolls**.
+
+| Setting            | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| **Hostname or IP** | Address of your NeXroll server                    |
+| **Port**           | Default is `9393`                                 |
+| **Use SSL**        | Enable when NeXroll is served directly over HTTPS |
+| **URL Base**       | Streamarr proxy path; default is `/nexroll`       |
+
+Streamarr restricts the NeXroll proxy to administrators. NeXroll's optional username/password login remains active inside the embedded app. To rely only on Streamarr authentication, disable **Require Login** from NeXroll's own authentication settings.
 
 #### Tautulli
 

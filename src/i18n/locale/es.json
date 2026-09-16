@@ -18,7 +18,7 @@
     "defaultMessage": "Esto generalmente significa que Streamarr no ha sido reiniciado desde que {serviceName} fue agregado o actualizado."
   },
   "aboutReleases.changelogTitle": {
-    "defaultMessage": "Historial de cambios de la versión {version}"
+    "defaultMessage": "Registro de cambios de la versión {version}"
   },
   "aboutReleases.dataUnavailable": {
     "defaultMessage": "Los datos de lanzamiento no están disponibles actualmente"
@@ -558,7 +558,7 @@
     "defaultMessage": "Remover"
   },
   "common.removing": {
-    "defaultMessage": "Eliminando…"
+    "defaultMessage": "Removiendo…"
   },
   "common.request": {
     "defaultMessage": "Solicitud"
@@ -813,7 +813,7 @@
     "defaultMessage": "Ocurrió un error al realizar la acción."
   },
   "downloads.actionForceRecheck": {
-    "defaultMessage": "Forzar Reverificación"
+    "defaultMessage": "Forzar comprobación"
   },
   "downloads.actionQueueDown": {
     "defaultMessage": "Bajar en la Cola"
@@ -822,7 +822,7 @@
     "defaultMessage": "Subir en la Cola"
   },
   "downloads.actionRemoved": {
-    "defaultMessage": "Eliminado"
+    "defaultMessage": "Removido"
   },
   "downloads.actionTopPriority": {
     "defaultMessage": "Mover al Principio"
@@ -1806,13 +1806,13 @@
     "defaultMessage": "Cómo descargar la aplicación {appTitle}"
   },
   "help.downloadStreamarr.browseToWebsiteAndroid": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Explorar el {appTitle} sitio web."
   },
   "help.downloadStreamarr.browseToWebsiteIos": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Explorar el {appTitle} sitio web."
   },
   "help.downloadStreamarr.browseToWebsiteUninstall": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Explorar el {appTitle} sitio web."
   },
   "help.downloadStreamarr.chrome.add": {
     "defaultMessage": "Añadir."
@@ -1836,7 +1836,7 @@
     "defaultMessage": "Aplicaciones"
   },
   "help.downloadStreamarr.chrome.browseToWebsite": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Explorar el {appTitle} sitio web."
   },
   "help.downloadStreamarr.chrome.confirmDetails": {
     "defaultMessage": "Confirma o edita los detalles del sitio web y toca {add}"
@@ -2034,13 +2034,13 @@
     "defaultMessage": "macOS"
   },
   "help.downloadStreamarr.navigateToWebsiteEdge": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Navega el {appTitle} sitio web."
   },
   "help.downloadStreamarr.navigateToWebsiteEdgeIos": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Navega el {appTitle} sitio web."
   },
   "help.downloadStreamarr.navigateToWebsiteSafari": {
-    "defaultMessage": "Navega al sitio web de {appTitle}."
+    "defaultMessage": "Navega el {appTitle} sitio web."
   },
   "help.downloadStreamarr.removeWebAppEdge": {
     "defaultMessage": "Cómo Eliminar una Aplicación Web de tu Pantalla de Inicio"
@@ -3360,7 +3360,7 @@
     "defaultMessage": "¡Invitación creada exitosamente!"
   },
   "invite.defaultLibraries": {
-    "defaultMessage": "Bibliotecas Predeterminadas ({libraries})"
+    "defaultMessage": "Predeterminadas ({libraries})"
   },
   "invite.defaultLibrariesAll": {
     "defaultMessage": "Predeterminado (Todas las bibliotecas)"
@@ -4152,13 +4152,13 @@
     "defaultMessage": "La URL base no debe tener una barra diagonal al final"
   },
   "servicesSettings.urlBase.required": {
-    "defaultMessage": "La URL Base es requerida"
+    "defaultMessage": "Se debe proporcionar una URL base válida"
   },
   "servicesSettings.validation.apiKeyRequired": {
     "defaultMessage": "Debes proporcionar una clave API"
   },
   "servicesSettings.validation.apikey": {
-    "defaultMessage": "Debes proporcionar una clave API válida"
+    "defaultMessage": "Clave API es requerida"
   },
   "servicesSettings.validation.clientType": {
     "defaultMessage": "Debes seleccionar un tipo de cliente"
@@ -4170,7 +4170,7 @@
     "defaultMessage": "Debes proporcionar un nombre de servidor válido"
   },
   "servicesSettings.validation.urlBaseRequired": {
-    "defaultMessage": "La URL Base es requerida"
+    "defaultMessage": "La base URL es requerida"
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "La URL no debe tener una barra diagonal al final"
@@ -4431,7 +4431,7 @@
     "defaultMessage": "Anclar Bibliotecas"
   },
   "settings.pinLibrariesError": {
-    "defaultMessage": "Error al anclar bibliotecas"
+    "defaultMessage": "Error al fijar las bibliotecas"
   },
   "settings.pinLibrariesErrorMessage": {
     "defaultMessage": "Ocurrió un error al anclar las bibliotecas"
@@ -4617,7 +4617,7 @@
     "defaultMessage": "Inicia sesión para continuar"
   },
   "signUp.autoPinLibrariesFailed": {
-    "defaultMessage": "Error al anclar bibliotecas"
+    "defaultMessage": "Anclar bibliotecas ha fallado"
   },
   "signUp.autoPinLibrariesHelp": {
     "defaultMessage": "Anclar automáticamente las bibliotecas compartidas a tu pantalla de inicio de Plex"
@@ -4998,7 +4998,7 @@
     "defaultMessage": "¡Contraseña guardada exitosamente!"
   },
   "userSettings.permissionsSaved": {
-    "defaultMessage": "¡Permisos de usuario guardados exitosamente!"
+    "defaultMessage": "¡Permisos guardados exitosamente!"
   },
   "userSettings.pgpPublicKey": {
     "defaultMessage": "Clave Pública PGP"
@@ -5772,7 +5772,7 @@
     "defaultMessage": "¡La configuración de notificaciones de {provider} se guardó con éxito!"
   },
   "notifications.provider.testError": {
-    "defaultMessage": "¡La configuración de notificaciones de {provider} se guardó con éxito!"
+    "defaultMessage": "Error al enviar la notificación de prueba de {provider}."
   },
   "notifications.provider.testSuccess": {
     "defaultMessage": "¡Notificación de prueba de {provider} enviada!"
@@ -6030,7 +6030,7 @@
     "defaultMessage": "Enviado a {count} destinatario(s){failures, plural, =0 {} other {, # con errores}}."
   },
   "system.health.retryFailed": {
-    "defaultMessage": "No se pudo reintentar la comprobación del estado del servicio"
+    "defaultMessage": "Error al reintentar la comprobación del estado del servicio."
   },
   "system.status.retrying": {
     "defaultMessage": "Reintendando…"
@@ -6211,5 +6211,113 @@
   },
   "system.health.instanceSummary": {
     "defaultMessage": "{healthy} de {total} en buen estado"
+  },
+  "cache.lastUpdated": {
+    "defaultMessage": "Actualizado el {time}"
+  },
+  "cache.refresh": {
+    "defaultMessage": "Actualizar"
+  },
+  "common.audiobooks": {
+    "defaultMessage": "Audiolibros"
+  },
+  "common.books": {
+    "defaultMessage": "Libros"
+  },
+  "common.linkAccount": {
+    "defaultMessage": "Vincular cuenta"
+  },
+  "common.linking": {
+    "defaultMessage": "Vinculando…"
+  },
+  "common.resetPassword": {
+    "defaultMessage": "Restablecer contraseña"
+  },
+  "common.tryAgain": {
+    "defaultMessage": "Intentar de nuevo"
+  },
+  "linkedAccounts.audiobookshelfCurrentRequired": {
+    "defaultMessage": "Debes proporcionar la contraseña actual"
+  },
+  "linkedAccounts.audiobookshelfExistingAccountBlocked": {
+    "defaultMessage": "Ya existe una cuenta de Audiobookshelf que coincide con tu perfil. Pide a un administrador que la vincule por ti."
+  },
+  "linkedAccounts.audiobookshelfLinkFailed": {
+    "defaultMessage": "Se produjo un error al vincular tu cuenta de Audiobookshelf"
+  },
+  "linkedAccounts.audiobookshelfLinkSuccess": {
+    "defaultMessage": "Cuenta de Audiobookshelf vinculada con éxito."
+  },
+  "linkedAccounts.audiobookshelfModalSubtitleManager": {
+    "defaultMessage": "Si ya existe una cuenta con el mismo nombre de usuario o correo electrónico en el servidor de Audiobookshelf, se vinculará a este usuario. De lo contrario, proporcione una contraseña para crear una nueva cuenta."
+  },
+  "linkedAccounts.audiobookshelfModalTitle": {
+    "defaultMessage": "Vincular cuenta de Audiobookshelf"
+  },
+  "linkedAccounts.audiobookshelfNotify": {
+    "defaultMessage": "Solicitar restablecimiento de contraseña"
+  },
+  "linkedAccounts.audiobookshelfNotifyFailed": {
+    "defaultMessage": "No se pudieron enviar las notificaciones."
+  },
+  "linkedAccounts.audiobookshelfNotifySent": {
+    "defaultMessage": "Solicitud de restablecimiento de contraseña"
+  },
+  "linkedAccounts.audiobookshelfResetButton": {
+    "defaultMessage": "Restablecer contraseña"
+  },
+  "linkedAccounts.audiobookshelfResetModalTitle": {
+    "defaultMessage": "Restablecer contraseña de Audiobookshelf"
+  },
+  "linkedAccounts.audiobookshelfResetSuccess": {
+    "defaultMessage": "Contraseña de Audiobookshelf restablecida con éxito."
+  },
+  "linkedAccounts.audiobookshelfUnlinkFailed": {
+    "defaultMessage": "Error al desvincular la cuenta de Audiobookshelf"
+  },
+  "listen.audiobookshelfNotLinkedTitle": {
+    "defaultMessage": "Se requiere una cuenta de Audiobookshelf"
+  },
+  "listen.audiobookshelfPasswordFailed": {
+    "defaultMessage": "Por favor, restablece tu contraseña de Audiobookshelf e inténtalo de nuevo."
+  },
+  "listen.audiobookshelfSigninFailed": {
+    "defaultMessage": "Error al iniciar sesión en Audiobookshelf."
+  },
+  "listen.linkAccount": {
+    "defaultMessage": "Vincular cuenta de Audiobookshelf"
+  },
+  "notification.audiobookshelfPasswordFailed": {
+    "defaultMessage": "Restablecimiento de contraseña de Audiobookshelf solicitado"
+  },
+  "notification.audiobookshelfPasswordFailed.description": {
+    "defaultMessage": "Recibir notificaciones cuando un usuario solicite el restablecimiento de su contraseña de Audiobookshelf"
+  },
+  "servicesSettings.audiobookshelf.alertDescription": {
+    "defaultMessage": "Audiobookshelf debe iniciarse con su variable de ROUTER_BASE_PATH entorno configurada con el mismo valor que la base de URL a continuación (por ejemplo, /audiobookshelf). Sin ella, Audiobookshelf sirve sus recursos desde la raíz y estos no se cargarán dentro de Streamarr. Reinicie Audiobookshelf después de cambiar ROUTER_BASE_PATH."
+  },
+  "servicesSettings.audiobookshelf.alertTitle": {
+    "defaultMessage": "Establecer una ruta base coincidente en Audiobookshelf"
+  },
+  "servicesSettings.audiobookshelf.description": {
+    "defaultMessage": "Configurar opcionalmente los ajustes de tu servidor de Audiobookshelf."
+  },
+  "servicesSettings.audiobookshelf.enableNewUserSignIn": {
+    "defaultMessage": "Habilitar el registro de nuevos usuarios"
+  },
+  "servicesSettings.audiobookshelf.enableNewUserSignIn.description": {
+    "defaultMessage": "Permitir a los usuarios crear una cuenta de Audiobookshelf."
+  },
+  "servicesSettings.audiobookshelf.title": {
+    "defaultMessage": "Configuración de Audiobookshelf"
+  },
+  "servicesSettings.chaptarr.description": {
+    "defaultMessage": "Configurar opcionalmente los ajustes de tu servidor de Chaptarr."
+  },
+  "servicesSettings.chaptarr.title": {
+    "defaultMessage": "Configuración de Chaptarr"
+  },
+  "userPermissions.audiobooks.description": {
+    "defaultMessage": "Conceder permiso para escuchar audiolibros."
   }
 }

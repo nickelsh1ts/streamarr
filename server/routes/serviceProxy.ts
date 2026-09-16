@@ -8,6 +8,10 @@ import {
   createCleanuparrProxy,
   registerCleanuparrWebSocketHandler,
 } from '@server/lib/proxy/cleanuparrProxy';
+import {
+  createNexrollDocumentProxy,
+  createNexrollStreamingProxy,
+} from '@server/lib/proxy/nexrollProxy';
 import { createPlexProxy } from '@server/lib/proxy/plexProxy';
 import {
   createSeerrAssetProxy,
@@ -23,10 +27,18 @@ import {
   TDARR_STATIC_PATH,
 } from '@server/lib/proxy/tdarrProxy';
 import { getSettings } from '@server/lib/settings';
+import {
+  hasVerifiedShelfmarkAccount,
+  isShelfmarkUniqueConstraintError,
+  linkShelfmarkAccount,
+  ShelfmarkAccountCreationDisabledError,
+  ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkUsernameConflictError,
+} from '@server/lib/shelfmark';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
-import type { RequestHandler } from 'express';
+import type { Request, RequestHandler } from 'express';
 import { Router } from 'express';
 
 /**
@@ -51,6 +63,7 @@ export function getActiveProxyPaths(): string[] {
   const singleArrServices = [
     settings.lidarr,
     settings.prowlarr,
+    settings.chaptarr,
     settings.bazarr,
   ];
   for (const service of singleArrServices) {
@@ -68,6 +81,14 @@ export function getActiveProxyPaths(): string[] {
     paths.push(settings.cleanuparr.urlBase);
   }
 
+  if (
+    settings.nexroll.enabled &&
+    settings.nexroll.hostname &&
+    settings.nexroll.urlBase
+  ) {
+    paths.push(settings.nexroll.urlBase);
+  }
+
   // Audiobookshelf (base-URL aware)
   if (
     settings.audiobookshelf.enabled &&
@@ -75,6 +96,23 @@ export function getActiveProxyPaths(): string[] {
     settings.audiobookshelf.urlBase
   ) {
     paths.push(settings.audiobookshelf.urlBase);
+  }
+
+  if (
+    settings.shelfmark.enabled &&
+    settings.shelfmark.hostname &&
+    settings.shelfmark.urlBase
+  ) {
+    paths.push(settings.shelfmark.urlBase);
+  }
+
+  // Calibre-Web (relies on X-Script-Name; no native urlBase config on its own)
+  if (
+    settings.calibreweb.enabled &&
+    settings.calibreweb.hostname &&
+    settings.calibreweb.urlBase
+  ) {
+    paths.push(settings.calibreweb.urlBase);
   }
 
   // Tdarr (hardcoded paths - no custom base URL support)
@@ -128,9 +166,11 @@ export function createServiceProxyRouter(
     proxy: RequestHandler,
     label: string,
     requireAdmin = false,
-    permissions?: Permission[]
+    permissions?: Permission[],
+    middleware: RequestHandler[] = [],
+    bypassAuth?: (req: Request) => boolean
   ): void => {
-    const guard = permissions
+    const rawGuard = permissions
       ? [
           sessionMiddleware,
           checkUser,
@@ -140,7 +180,15 @@ export function createServiceProxyRouter(
         ? adminMiddleware
         : authMiddleware;
 
-    router.use(path, ...guard, proxy);
+    const guard = bypassAuth
+      ? rawGuard.map(
+          (fn): RequestHandler =>
+            (req, res, next) =>
+              bypassAuth(req) ? next() : fn(req, res, next)
+        )
+      : rawGuard;
+
+    router.use(path, ...guard, ...middleware, proxy);
     registeredRoutes.push({ name: label, path });
   };
 
@@ -180,6 +228,7 @@ export function createServiceProxyRouter(
   const singleArrServices = [
     { service: settings.lidarr, name: 'Lidarr' },
     { service: settings.prowlarr, name: 'Prowlarr' },
+    { service: settings.chaptarr, name: 'Chaptarr' },
   ];
 
   for (const { service, name } of singleArrServices) {
@@ -260,7 +309,31 @@ export function createServiceProxyRouter(
     );
   }
 
-  // Register Audiobookshelf proxy (requires LISTEN or STREAMARR, base-URL aware)
+  if (
+    settings.nexroll.enabled &&
+    settings.nexroll.hostname &&
+    settings.nexroll.urlBase
+  ) {
+    const nexrollConfig = {
+      hostname: settings.nexroll.hostname,
+      port: settings.nexroll.port ?? 9393,
+      useSsl: settings.nexroll.useSsl ?? false,
+      base: settings.nexroll.urlBase,
+    };
+
+    router.use(
+      settings.nexroll.urlBase,
+      ...adminMiddleware,
+      createNexrollDocumentProxy(nexrollConfig),
+      createNexrollStreamingProxy(nexrollConfig)
+    );
+    registeredRoutes.push({
+      name: 'NeXroll',
+      path: settings.nexroll.urlBase,
+    });
+  }
+
+  // Register Audiobookshelf proxy (requires LISTEN or READER, base-URL aware)
   if (
     settings.audiobookshelf.enabled &&
     settings.audiobookshelf.hostname &&
@@ -279,18 +352,179 @@ export function createServiceProxyRouter(
       suppressErrors: () => false,
     });
 
+    const isAudiobookshelfPublicRequest = (req: Request): boolean => {
+      const path = req.path || req.originalUrl || '';
+      return path.startsWith('/public/') || path === '/public';
+    };
+
     registerProxy(
       settings.audiobookshelf.urlBase,
       audiobookshelfProxy,
       'Audiobookshelf',
       false,
-      [Permission.LISTEN, Permission.STREAMARR]
+      [Permission.LISTEN, Permission.READER],
+      [],
+      isAudiobookshelfPublicRequest
     );
     registerWebSocketHandler(
       dispatcher,
       sessionMiddleware,
       settings.audiobookshelf.urlBase,
       audiobookshelfProxy
+    );
+  }
+
+  if (
+    settings.shelfmark.enabled &&
+    settings.shelfmark.hostname &&
+    settings.shelfmark.urlBase
+  ) {
+    const shelfmarkPermissions = [Permission.BOOKMARK, Permission.READER];
+
+    const shelfmarkProxy = createServiceProxy({
+      name: 'Shelfmark',
+      getTarget: () => {
+        const { shelfmark } = getSettings();
+        const protocol = shelfmark.useSsl ? 'https' : 'http';
+        return `${protocol}://${shelfmark.hostname}:${shelfmark.port}`;
+      },
+      pathPrefix: settings.shelfmark.urlBase,
+      webSocket: false,
+      suppressErrors: () => false,
+      onProxyReq: (proxyReq, req) => {
+        proxyReq.removeHeader('X-Auth-User');
+        proxyReq.removeHeader('X-Auth-Groups');
+        proxyReq.setHeader('X-Auth-User', req.user!.shelfmarkUsername!);
+        proxyReq.setHeader(
+          'X-Auth-Groups',
+          req.user?.hasPermission(Permission.ADMIN) ? 'streamarr-admin' : ''
+        );
+      },
+    });
+
+    registerProxy(
+      settings.shelfmark.urlBase,
+      shelfmarkProxy,
+      'Shelfmark',
+      false,
+      shelfmarkPermissions,
+      [
+        async (req, res, next) => {
+          try {
+            const settings = getSettings().shelfmark;
+            const user = req.user!;
+            if (await hasVerifiedShelfmarkAccount(user, settings)) {
+              return next();
+            }
+
+            await linkShelfmarkAccount(user, {
+              allowCreation: !!settings.enableNewUserSignIn,
+              allowExistingAccountLink: user.hasPermission(
+                Permission.MANAGE_USERS
+              ),
+            });
+            return next();
+          } catch (e) {
+            if (
+              e instanceof ShelfmarkAccountCreationDisabledError ||
+              e instanceof ShelfmarkAccountLinkRequiresManagerError
+            ) {
+              return res.status(403).json({
+                message:
+                  'Your Shelfmark account must be linked by an administrator before you can access it.',
+              });
+            }
+            if (e instanceof ShelfmarkUsernameConflictError) {
+              return res.status(409).json({
+                message:
+                  'This Shelfmark username is already linked to another user. Ask an administrator to link it for you.',
+              });
+            }
+            if (isShelfmarkUniqueConstraintError(e)) {
+              return res.status(409).json({
+                message:
+                  'This Shelfmark username was just linked by another user. Please try again.',
+              });
+            }
+            logger.error('Failed to provision Shelfmark proxy account', {
+              label: 'Shelfmark',
+              message: e instanceof Error ? e.message : String(e),
+              userId: req.user?.id,
+            });
+            return res.status(502).json({
+              message: 'Failed to connect to Shelfmark.',
+            });
+          }
+        },
+      ]
+    );
+
+    registerWebSocketHandler(
+      dispatcher,
+      sessionMiddleware,
+      settings.shelfmark.urlBase,
+      shelfmarkProxy,
+      (user) => user.hasPermission(shelfmarkPermissions, { type: 'or' })
+    );
+  }
+
+  // Register Calibre-Web proxy (requires READER or EBOOKS). Calibre-Web has
+  // no urlBase config of its own - it relies entirely on the X-Script-Name
+  // header (Flask/WSGI reverse-proxy convention) to scope its own routes,
+  // static assets, and session cookies under our base path. Its Flask routes
+  // are registered unprefixed, so the path Express already stripped down to
+  // (e.g. /login) is exactly what Calibre-Web expects on the wire - do not
+  // re-add the URL base here.
+  if (
+    settings.calibreweb.enabled &&
+    settings.calibreweb.hostname &&
+    settings.calibreweb.urlBase
+  ) {
+    const calibrewebProxy = createServiceProxy({
+      name: 'Calibre-Web',
+      getTarget: () => {
+        const { calibreweb } = getSettings();
+        const protocol = calibreweb.useSsl ? 'https' : 'http';
+        return `${protocol}://${calibreweb.hostname}:${calibreweb.port ?? 8083}`;
+      },
+      webSocket: false,
+      suppressErrors: () => false,
+      onProxyReq: (proxyReq, req) => {
+        const { calibreweb } = getSettings();
+        proxyReq.setHeader('X-Script-Name', calibreweb.urlBase ?? '');
+        proxyReq.setHeader('X-Forwarded-Prefix', calibreweb.urlBase ?? '');
+        proxyReq.setHeader('X-Scheme', req.protocol);
+        if (req.headers.host) {
+          proxyReq.setHeader('X-Forwarded-Host', req.headers.host);
+        }
+        const headerName = calibreweb.headerAuthName || 'X-Auth-User';
+        proxyReq.removeHeader(headerName);
+        proxyReq.removeHeader('X-Remote-Email');
+        if (calibreweb.headerAuthEnabled && req.user?.calibrewebUsername) {
+          proxyReq.setHeader(headerName, req.user.calibrewebUsername);
+          if (req.user.email) {
+            proxyReq.setHeader('X-Remote-Email', req.user.email);
+          }
+        }
+      },
+    });
+
+    registerProxy(
+      settings.calibreweb.urlBase,
+      calibrewebProxy,
+      'Calibre-Web',
+      false,
+      [Permission.READER, Permission.EBOOKS]
+    );
+
+    router.get(
+      '/user_profiles.json',
+      sessionMiddleware,
+      checkUser,
+      isAuthenticated([Permission.READER, Permission.EBOOKS], {
+        type: 'or',
+      }),
+      calibrewebProxy
     );
   }
 

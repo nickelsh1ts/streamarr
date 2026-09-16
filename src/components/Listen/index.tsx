@@ -24,7 +24,7 @@ interface AudiobookshelfIssue {
 
 const Listen = ({ children }: { children?: React.ReactNode }) => {
   const intl = useIntl();
-  useRouteGuard([Permission.LISTEN, Permission.STREAMARR], {
+  useRouteGuard([Permission.LISTEN, Permission.READER], {
     type: 'or',
   });
   const { user, hasPermission } = useUser();

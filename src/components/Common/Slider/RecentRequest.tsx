@@ -202,7 +202,7 @@ const RequestCard = ({ request }: { request: SeerrRequestItem }) => {
         <div className="absolute inset-0 z-0">
           <CachedImage
             alt=""
-            src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${title.backdropPath}`}
+            src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces${title.backdropPath}`}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />

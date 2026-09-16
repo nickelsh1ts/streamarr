@@ -27,6 +27,11 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/lidarr\/?/,
     },
     {
+      text: 'Chaptarr',
+      route: '/admin/settings/services/chaptarr',
+      regex: /^\/admin\/settings\/services\/chaptarr\/?/,
+    },
+    {
       text: 'Prowlarr',
       route: '/admin/settings/services/prowlarr',
       regex: /^\/admin\/settings\/services\/prowlarr\/?/,
@@ -47,9 +52,24 @@ const ServicesLayout = ({ children }: { children: React.ReactNode }) => {
       regex: /^\/admin\/settings\/services\/cleanuparr\/?/,
     },
     {
+      text: 'NeXroll',
+      route: '/admin/settings/services/nexroll',
+      regex: /^\/admin\/settings\/services\/nexroll\/?/,
+    },
+    {
       text: 'Audiobookshelf',
       route: '/admin/settings/services/audiobookshelf',
       regex: /^\/admin\/settings\/services\/audiobookshelf\/?/,
+    },
+    {
+      text: 'Shelfmark',
+      route: '/admin/settings/services/shelfmark',
+      regex: /^\/admin\/settings\/services\/shelfmark\/?/,
+    },
+    {
+      text: 'Calibre-Web',
+      route: '/admin/settings/services/calibreweb',
+      regex: /^\/admin\/settings\/services\/calibreweb\/?/,
     },
     {
       text: 'Tautulli',
