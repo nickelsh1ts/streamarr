@@ -1,3 +1,28 @@
+## [1.15.0](https://github.com/nickelsh1ts/streamarr/compare/v1.14.0...v1.15.0) (2026-09-16)
+
+### ✨ Features
+
+* add Calibre-Web service integration and settings management ([#631](https://github.com/nickelsh1ts/streamarr/issues/631)) ([f908879](https://github.com/nickelsh1ts/streamarr/commit/f908879ae0cb05df6499b37d60d70a5de07d1c24))
+* add NeXroll integration and settings management ([#634](https://github.com/nickelsh1ts/streamarr/issues/634)) ([603281b](https://github.com/nickelsh1ts/streamarr/commit/603281b2ab8b73b8259088c1b42b4a312bf1e400))
+* add Shelfmark service integration and settings management ([#627](https://github.com/nickelsh1ts/streamarr/issues/627)) ([c55a5af](https://github.com/nickelsh1ts/streamarr/commit/c55a5afc5b54f87f314b381df2a8ff0b2a18dc53))
+* **chaptarr:** add Chaptarr service integration and settings management ([d8c0ca7](https://github.com/nickelsh1ts/streamarr/commit/d8c0ca7d57d1e6fedb73c38979ee8f1ae281761f))
+* **chaptarr:** integrate Chaptarr health and update documentation ([aba2a3e](https://github.com/nickelsh1ts/streamarr/commit/aba2a3e797cfe8dff4207f7e5a986c0f7c1a9b23))
+
+### 🐛 Bug Fixes
+
+* **audiobooks:** apply background color to mobile menu ([3c58aea](https://github.com/nickelsh1ts/streamarr/commit/3c58aea7cf7f4aac8acfa32bc4560b4de92a5d4e))
+* **audiobooks:** correctly hide linking account when disabled ([2dd735d](https://github.com/nickelsh1ts/streamarr/commit/2dd735d65863fd5f9e2d318625f2505d6f207b6f))
+* **bookmark:** correct desktop navigation and loading state ([#629](https://github.com/nickelsh1ts/streamarr/issues/629)) ([cce2543](https://github.com/nickelsh1ts/streamarr/commit/cce2543e4fd6184e72387e25a7e741824a080265))
+* harden Shelfmark account linking & doc corrections ([#638](https://github.com/nickelsh1ts/streamarr/issues/638)) ([1ac8732](https://github.com/nickelsh1ts/streamarr/commit/1ac8732d5990633e717f11def454789807d3a7fd))
+* **imageproxy:** allow redirects for avatar proxy ([#632](https://github.com/nickelsh1ts/streamarr/issues/632)) ([5ebb517](https://github.com/nickelsh1ts/streamarr/commit/5ebb51731693f9856351b1c782dc3744dda5ca26))
+* **imageproxy:** harden image proxy against SSRF ([#630](https://github.com/nickelsh1ts/streamarr/issues/630)) ([5d10cb3](https://github.com/nickelsh1ts/streamarr/commit/5d10cb393a3fba406b5ded914c21560754a08f6e))
+* **proxy:** bypass auth for public abs routes for chromecast ([#628](https://github.com/nickelsh1ts/streamarr/issues/628)) ([d8a2a00](https://github.com/nickelsh1ts/streamarr/commit/d8a2a006614a5c889598213c1dd47fc553b9d177))
+* **shelfmark:** add WebSocket handler for Shelfmark service ([#635](https://github.com/nickelsh1ts/streamarr/issues/635)) ([ef43773](https://github.com/nickelsh1ts/streamarr/commit/ef43773144edb8867b74c2150631843ebc60bae9))
+
+### ♻️ Refactoring
+
+* **imageproxy:** simplify path normalization and response handling ([#633](https://github.com/nickelsh1ts/streamarr/issues/633)) ([c5efac2](https://github.com/nickelsh1ts/streamarr/commit/c5efac292d3150da4246e6392665e6d83be40db7))
+
 ## [1.14.0](https://github.com/nickelsh1ts/streamarr/compare/v1.13.1...v1.14.0) (2026-09-04)
 
 ### ✨ Features
