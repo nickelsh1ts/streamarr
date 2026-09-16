@@ -168,7 +168,8 @@ const PermissionEdit = ({
           }),
           description: intl.formatMessage({
             id: 'userPermissions.ebooks.description',
-            defaultMessage: 'Reserved for a future eBook service integration.',
+            defaultMessage:
+              'Grant permission to access eBooks through Calibre-Web.',
           }),
           permission: Permission.EBOOKS,
         },

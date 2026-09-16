@@ -103,7 +103,16 @@ export class User {
   @Column({ type: 'datetime', nullable: true })
   public audiobookshelfPwNotifiedAt?: Date | null;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+    unique: true,
+    transformer: {
+      from: (value: string | null): string | null => value,
+      to: (value: string | null): string | null =>
+        value ? value.toLowerCase() : null,
+    },
+  })
   public shelfmarkUsername?: string | null;
 
   @Column({

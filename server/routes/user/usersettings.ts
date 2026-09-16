@@ -42,9 +42,12 @@ import {
 import { getSettings } from '@server/lib/settings';
 import {
   getShelfmarkAPI,
+  invalidateShelfmarkAccountCache,
+  isShelfmarkUniqueConstraintError,
   linkShelfmarkAccount,
   ShelfmarkAccountCreationDisabledError,
   ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkUsernameConflictError,
 } from '@server/lib/shelfmark';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -534,6 +537,20 @@ userSettingsRoutes.post<{ id: string }, { linked: boolean; username: string }>(
             'An administrator must link this existing Shelfmark account.',
         });
       }
+      if (e instanceof ShelfmarkUsernameConflictError) {
+        return next({
+          status: 409,
+          message:
+            'This Shelfmark username is already linked to another user. Ask an administrator to link it for you.',
+        });
+      }
+      if (isShelfmarkUniqueConstraintError(e)) {
+        return next({
+          status: 409,
+          message:
+            'This Shelfmark username was just linked by another user. Please try again.',
+        });
+      }
       logger.error('Failed to provision Shelfmark linked account', {
         label: 'Shelfmark',
         message: e instanceof Error ? e.message : String(e),
@@ -566,6 +583,7 @@ userSettingsRoutes.delete<{ id: string }>(
     try {
       user.shelfmarkUsername = null;
       await userRepository.save(user);
+      invalidateShelfmarkAccountCache(user.id);
       logger.info('Unlinked Shelfmark account', {
         label: 'Shelfmark',
         userId: user.id,
