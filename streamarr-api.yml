@@ -7454,6 +7454,8 @@ paths:
           description: User does not have Shelfmark access, creation is disabled, or the caller cannot manage users
         '404':
           description: User not found
+        '409':
+          description: Shelfmark username is already linked to another user
         '502':
           description: Shelfmark request failed
         '503':
