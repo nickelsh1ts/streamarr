@@ -112,7 +112,7 @@ importers:
         version: 18.0.12
       moment:
         specifier: ^2.30.1
-        version: 2.30.1
+        version: 2.31.0
       moment-timezone:
         specifier: ^0.6.0
         version: 0.6.3
@@ -6211,8 +6211,8 @@ packages:
   moment-timezone@0.6.3:
     resolution: {integrity: sha512-pVEPA/HCFHHbwJ130ywnzYuZpkEGcP6Daa/OwNebpA18MybeFHmQilAGGovXgWijQ8vQtmud9jZrziUBgsykfg==}
 
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+  moment@2.31.0:
+    resolution: {integrity: sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==}
 
   moo@0.5.3:
     resolution: {integrity: sha512-m2fmM2dDm7GZQsY7KK2cme8agi+AAljILjQnof7p1ZMDe6dQ4bdnSMx0cPppudoeNv5hEFQirN6u+O4fDE0IWA==}
@@ -13430,7 +13430,7 @@ snapshots:
 
   file-stream-rotator@0.6.1:
     dependencies:
-      moment: 2.30.1
+      moment: 2.31.0
 
   fill-range@7.1.1:
     dependencies:
@@ -15263,13 +15263,13 @@ snapshots:
 
   moment-timezone@0.5.48:
     dependencies:
-      moment: 2.30.1
+      moment: 2.31.0
 
   moment-timezone@0.6.3:
     dependencies:
-      moment: 2.30.1
+      moment: 2.31.0
 
-  moment@2.30.1: {}
+  moment@2.31.0: {}
 
   moo@0.5.3: {}
 
@@ -16057,7 +16057,7 @@ snapshots:
       lodash-es: 4.18.1
       luxon: 3.7.2
       memoize-one: 6.0.0
-      moment: 2.30.1
+      moment: 2.31.0
       moment-timezone: 0.5.48
       prop-types: 15.8.1
       react: 19.2.8
