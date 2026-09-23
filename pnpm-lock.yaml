@@ -16,7 +16,7 @@ importers:
         version: 8.0.0
       '@ctrl/qbittorrent':
         specifier: ^9.11.2
-        version: 9.15.0
+        version: 9.16.0
       '@ctrl/shared-torrent':
         specifier: ^6.5.1
         version: 6.5.1(ofetch@1.5.1)
@@ -1166,8 +1166,8 @@ packages:
     resolution: {integrity: sha512-bu8ldZq8lzAyddqykTB/FnDFFPEYus+Eho/GQEydQxupvUS6osOSzBCphuyyoDmMqGHwVw3Uob6oPiOQ+w075A==}
     engines: {node: '>20'}
 
-  '@ctrl/qbittorrent@9.15.0':
-    resolution: {integrity: sha512-3dNCWH3/nkKK4s0cIcT8Acfx2sB3AmahvxOgnjutPFqU+c9vxZ+pJEhjFqcOg4uZI+d1O9cV8cdX4S5U04vCiQ==}
+  '@ctrl/qbittorrent@9.16.0':
+    resolution: {integrity: sha512-msgcBmepHyWkIMKoq51jmB8PWKYdnSGCNJKFoSHMNHgWXomBsvqnWgDDMbRqvpuwkiGnYqnkwd2d3XKi4inyig==}
     engines: {node: '>=22'}
 
   '@ctrl/shared-torrent@6.5.1':
@@ -9651,7 +9651,7 @@ snapshots:
       rfc4648: 1.5.4
       uint8array-extras: 1.5.0
 
-  '@ctrl/qbittorrent@9.15.0':
+  '@ctrl/qbittorrent@9.16.0':
     dependencies:
       '@ctrl/magnet-link': 5.0.0
       '@ctrl/shared-torrent': 6.5.1(ofetch@1.5.1)
