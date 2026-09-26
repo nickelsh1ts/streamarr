@@ -143,7 +143,7 @@ const buildPosterHtml = (
   // we never hit TMDB directly. `resourceBase` is the application URL for
   // delivered email and empty for the in-app preview (relative, same-host).
   if (item.posterPath) {
-    return `<img src="${resourceBase}/imageproxy/t/p/w300${item.posterPath}" alt="${escapeHtml(
+    return `<img src="${resourceBase}/imageproxy/tmdb/t/p/w300${item.posterPath}" alt="${escapeHtml(
       item.title
     )}" width="${POSTER_WIDTH}" height="${POSTER_HEIGHT}" style="display: block; margin: 0 auto; border-radius: 6px; width: 100%; min-width: 0; max-width: ${POSTER_WIDTH}px; height: auto; aspect-ratio: ${POSTER_WIDTH} / ${POSTER_HEIGHT}; object-fit: cover;" />`;
   }

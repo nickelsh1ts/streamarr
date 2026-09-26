@@ -198,6 +198,7 @@ class ImageProxy {
       defaultMaxAge?: number;
       validateResponse?: (headers: Record<string, unknown>) => void;
       maxRedirects?: number;
+      maxContentLength?: number;
       beforeRedirect?: (
         options: Record<string, unknown>,
         responseDetails: { headers: Record<string, unknown> }
@@ -213,6 +214,7 @@ class ImageProxy {
       withCredentials: false,
       headers: options.headers,
       maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
+      maxContentLength: options.maxContentLength,
       beforeRedirect: options.beforeRedirect,
     });
 

@@ -652,6 +652,15 @@ const JobsCacheSettings = () => {
                   </Table.TD>
                 </tr>
                 <tr>
+                  <Table.TD>TheTVDB</Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.tvdb.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.tvdb.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
                   <Table.TD>Plex</Table.TD>
                   <Table.TD>
                     {cacheData?.imageCache.plex?.imageCount ?? 0}

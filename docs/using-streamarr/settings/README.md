@@ -30,18 +30,19 @@ You must configure this setting to enable:
 
 ### Enable Image Caching
 
-When enabled, Streamarr will proxy and cache images from external sources. Two image proxies are active when this setting is on:
+When enabled, Streamarr will proxy and cache images from external sources. These image proxies are available:
 
 | Proxy    | Path                           | Source                                            |
 | -------- | ------------------------------ | ------------------------------------------------- |
-| **TMDB** | `/imageproxy/<path>`           | `image.tmdb.org` — movie/TV posters and backdrops |
+| **TMDB** | `/imageproxy/tmdb/<path>`      | `image.tmdb.org` — movie/TV posters and backdrops |
+| **TVDB** | `/imageproxy/tvdb/<path>`      | `artworks.thetvdb.com` — TV artwork               |
 | **Plex** | `/imageproxy/plex?path=<path>` | Your Plex server — library metadata thumbnails    |
 
-Images are saved in `config/cache/images/` under `tmdb/` and `plex/` subdirectories respectively. Stale images are cleared every 24 hours.
+Images are saved in `config/cache/images/` under provider-specific subdirectories. Stale images are cleared every 24 hours.
 
 The Plex image proxy is authenticated — requests are signed with the admin Plex token, restricted to `/library/metadata/<id>/thumb`, and rejected unless Plex responds with an `image/*` content type. Only signed-in users can access proxied Plex images.
 
-Cache statistics for both proxies (image count and total size) are visible on the **Jobs & Cache** page under **Settings → Jobs & Cache**.
+Cache statistics for TMDB, TVDB, and Plex (image count and total size) are visible on the **Jobs & Cache** page under **Settings → Jobs & Cache**.
 
 Enable this if you are having issues loading images directly from TMDB in your browser, or if you want Plex artwork to load reliably on the profile page.
 

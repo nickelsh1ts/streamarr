@@ -16,8 +16,18 @@ const CachedImage = ({ src, ...props }: ImageProps) => {
   if (typeof imageUrl === 'string' && imageUrl.startsWith('http')) {
     const parsedUrl = new URL(imageUrl);
 
-    if (parsedUrl.host === 'image.tmdb.org' && currentSettings.cacheImages) {
-      imageUrl = imageUrl.replace('https://image.tmdb.org', '/imageproxy');
+    if (currentSettings.cacheImages) {
+      if (parsedUrl.host === 'image.tmdb.org') {
+        imageUrl = imageUrl.replace(
+          'https://image.tmdb.org',
+          '/imageproxy/tmdb'
+        );
+      } else if (
+        parsedUrl.protocol === 'https:' &&
+        parsedUrl.host === 'artworks.thetvdb.com'
+      ) {
+        imageUrl = `/imageproxy/tvdb${parsedUrl.pathname}`;
+      }
     }
   }
 
