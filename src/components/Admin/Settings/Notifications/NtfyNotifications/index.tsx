@@ -105,6 +105,16 @@ const NtfyNotifications = () => {
           required: true,
         },
         {
+          name: 'tags',
+          label: (
+            <FormattedMessage
+              id="notifications.fields.tags"
+              defaultMessage="Tags"
+            />
+          ),
+          type: 'text',
+        },
+        {
           name: 'authMethod',
           label: (
             <FormattedMessage

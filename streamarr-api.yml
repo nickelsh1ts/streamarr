@@ -2338,6 +2338,9 @@ components:
               type: string
             topic:
               type: string
+            tags:
+              type: string
+              nullable: true
             authMethod:
               type: string
               enum: [none, usernamePassword, token]

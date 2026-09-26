@@ -4511,6 +4511,9 @@
   "notifications.fields.sound": {
     "defaultMessage": "Sound"
   },
+  "notifications.fields.tags": {
+    "defaultMessage": "Tags"
+  },
   "notifications.fields.telegramBotApi": {
     "defaultMessage": "Bot API Token or URL"
   },
