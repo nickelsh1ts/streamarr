@@ -147,6 +147,24 @@ function buildSeerrShim(base: string, nonce: string): string {
       return f.call(this,input,init);
     };
   }
+  var setAttribute=Element.prototype.setAttribute;
+  Element.prototype.setAttribute=function(name,value){
+    if(this instanceof HTMLImageElement&&String(name).toLowerCase()==='src')value=pre(value);
+    return setAttribute.call(this,name,value);
+  };
+  // Client-rendered fallback posters (including Next/Image) can assign a
+  // root-relative src after the HTML response has already been rewritten.
+  try{
+    var imageSrc=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
+    if(imageSrc&&imageSrc.get&&imageSrc.set){
+      Object.defineProperty(HTMLImageElement.prototype,'src',{
+        configurable:imageSrc.configurable,
+        enumerable:imageSrc.enumerable,
+        get:imageSrc.get,
+        set:function(u){imageSrc.set.call(this,pre(u));}
+      });
+    }
+  }catch(e){}
   // Prefix a root-relative path with BASE. No-op for relative, absolute,
   // protocol-relative, or already-prefixed URLs. Shared by the history and
   // window.open wraps below (unlike pre(), which only prefixes API/asset paths).
