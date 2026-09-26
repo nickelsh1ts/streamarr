@@ -7877,6 +7877,42 @@ paths:
                 $ref: '#/components/schemas/SeerrQuotaResponse'
         '404':
           description: Seerr is not configured or user has no linked Plex account
+  /user/{userId}/settings/seerr/permissions:
+    get:
+      summary: Get a user's Seerr permissions
+      description: Returns the specified user's Seerr permission bitmask, or null when Seerr is unconfigured, the Streamarr user has no Plex ID, or no Seerr user matches.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Seerr permission mask, or null if the user has no matching Seerr account
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - permissions
+                properties:
+                  permissions:
+                    type: integer
+                    nullable: true
+        '404':
+          description: Streamarr user not found
+        '500':
+          description: Seerr permission lookup failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /user/{userId}/requests:
     get:
       summary: Get recent requests for a user from Seerr

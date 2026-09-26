@@ -15,3 +15,8 @@ export enum MediaStatus {
   BLOCKLISTED,
   DELETED,
 }
+
+export enum SeerrPermission {
+  ADMIN = 2,
+  MANAGE_USERS = 8,
+}
