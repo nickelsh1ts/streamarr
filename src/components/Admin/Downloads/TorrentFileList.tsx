@@ -114,6 +114,7 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
   const intl = useIntl();
   const [updatingFiles, setUpdatingFiles] = useState<Set<number>>(new Set());
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [selectionAnchor, setSelectionAnchor] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(() =>
     computeDefaultExpanded(buildTree(files))
   );
@@ -322,6 +323,42 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
     return rows;
   }, [sortedTree, expanded]);
 
+  const getSelectionKey = (node: TreeNode) =>
+    node.type === 'folder' ? `folder:${node.path}` : `file:${node.file.index}`;
+
+  const getFileIndices = (node: TreeNode) =>
+    node.type === 'folder' ? node.fileIndices : [node.file.index];
+
+  const handleRowSelection = (
+    rowKey: string,
+    fileIndices: number[],
+    checked: boolean,
+    shiftKey: boolean
+  ) => {
+    const targetPosition = visibleRows.findIndex(
+      ({ node }) => getSelectionKey(node) === rowKey
+    );
+    const anchorPosition =
+      selectionAnchor !== null
+        ? visibleRows.findIndex(
+            ({ node }) => getSelectionKey(node) === selectionAnchor
+          )
+        : -1;
+
+    if (shiftKey && anchorPosition !== -1 && targetPosition !== -1) {
+      const rangeStart = Math.min(anchorPosition, targetPosition);
+      const rangeEnd = Math.max(anchorPosition, targetPosition);
+      const rangeFileIndices = visibleRows
+        .slice(rangeStart, rangeEnd + 1)
+        .flatMap(({ node }) => getFileIndices(node));
+      setSelected((previous) => new Set([...previous, ...rangeFileIndices]));
+      return;
+    }
+
+    setSelectionAnchor(rowKey);
+    toggleSelection(fileIndices, checked);
+  };
+
   const renderPriorityOptions = (
     includeMixed: boolean,
     currentValue?: number
@@ -391,7 +428,10 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
             <button
               type="button"
               className="btn btn-ghost btn-xs"
-              onClick={() => setSelected(new Set())}
+              onClick={() => {
+                setSelected(new Set());
+                setSelectionAnchor(null);
+              }}
             >
               <FormattedMessage
                 id="downloads.clearSelection"
@@ -413,11 +453,12 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
                   ref={(el) => {
                     if (el) el.indeterminate = !allSelected && someSelected;
                   }}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setSelectionAnchor(null);
                     setSelected(
                       e.target.checked ? new Set(allFileIndices) : new Set()
-                    )
-                  }
+                    );
+                  }}
                   aria-label={intl.formatMessage({
                     id: 'downloads.selectAllFiles',
                     defaultMessage: 'Select all files',
@@ -499,9 +540,14 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
                           if (el)
                             el.indeterminate = !folderSelected && folderSome;
                         }}
-                        onChange={(e) =>
-                          toggleSelection(node.fileIndices, e.target.checked)
-                        }
+                        onChange={(e) => {
+                          handleRowSelection(
+                            getSelectionKey(node),
+                            node.fileIndices,
+                            e.target.checked,
+                            (e.nativeEvent as MouseEvent).shiftKey
+                          );
+                        }}
                         aria-label={intl.formatMessage(
                           {
                             id: 'downloads.selectFolder',
@@ -591,7 +637,12 @@ const TorrentFileList: React.FC<TorrentFileListProps> = ({
                       className="checkbox checkbox-sm checkbox-primary"
                       checked={selected.has(file.index)}
                       onChange={(e) =>
-                        toggleSelection([file.index], e.target.checked)
+                        handleRowSelection(
+                          getSelectionKey(node),
+                          [file.index],
+                          e.target.checked,
+                          (e.nativeEvent as MouseEvent).shiftKey
+                        )
                       }
                       aria-label={intl.formatMessage(
                         {

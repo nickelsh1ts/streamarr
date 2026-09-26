@@ -827,9 +827,6 @@
   "common.transcodes": {
     "defaultMessage": "Transcodes"
   },
-  "common.tryAdjustingFilters": {
-    "defaultMessage": "Try adjusting your filters or add a new torrent."
-  },
   "common.tryAgain": {
     "defaultMessage": "Try Again"
   },
@@ -1019,6 +1016,9 @@
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
+  "downloads.clearFilters": {
+    "defaultMessage": "Clear Filters"
+  },
   "downloads.clearSelection": {
     "defaultMessage": "Clear"
   },
@@ -1088,6 +1088,12 @@
   "downloads.failedToUpdateSavePath": {
     "defaultMessage": "Failed to update save path"
   },
+  "downloads.filterCategories": {
+    "defaultMessage": "Categories"
+  },
+  "downloads.filterCategoriesAria": {
+    "defaultMessage": "Filter by categories"
+  },
   "downloads.filterIncomplete": {
     "defaultMessage": "Incomplete"
   },
@@ -1102,6 +1108,12 @@
   },
   "downloads.filterStalled": {
     "defaultMessage": "Stalled"
+  },
+  "downloads.filterTags": {
+    "defaultMessage": "Tags"
+  },
+  "downloads.filterTagsAria": {
+    "defaultMessage": "Filter by tags"
   },
   "downloads.forceRecheck": {
     "defaultMessage": "Force Re-check"
@@ -1135,6 +1147,9 @@
   },
   "downloads.noFilesFound": {
     "defaultMessage": "No files found"
+  },
+  "downloads.noMatchesForFilters": {
+    "defaultMessage": "No downloads match the current filters."
   },
   "downloads.openClient": {
     "defaultMessage": "Open {clientName}"
@@ -1183,6 +1198,9 @@
   },
   "downloads.savePathUpdated": {
     "defaultMessage": "Save path updated successfully"
+  },
+  "downloads.searchPlaceholder": {
+    "defaultMessage": "Search Downloads"
   },
   "downloads.selectAllFiles": {
     "defaultMessage": "Select all files"
