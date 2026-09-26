@@ -4442,6 +4442,9 @@
   "notifications.discord.idRequired": {
     "defaultMessage": "You must provide your Discord user ID"
   },
+  "notifications.discord.threadIdInvalid": {
+    "defaultMessage": "Enter a valid Discord thread ID"
+  },
   "notifications.discord.webhookUrlInvalid": {
     "defaultMessage": "You must provide a valid Discord webhook URL"
   },
@@ -4528,6 +4531,9 @@
   },
   "notifications.fields.topic": {
     "defaultMessage": "Topic"
+  },
+  "notifications.fields.webhookThreadId": {
+    "defaultMessage": "Thread ID"
   },
   "notifications.fields.webhookUrl": {
     "defaultMessage": "Webhook URL"

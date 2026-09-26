@@ -75,8 +75,16 @@ class DiscordAgent extends BroadcastAgent<NotificationAgentDiscord> {
   ): Promise<void> {
     const settings = this.getSettings();
     const mentionPrefix = this.resolveMentionPrefix(payload, context);
+    const webhookUrl = new URL(settings.options.webhookUrl);
 
-    await axios.post(settings.options.webhookUrl, {
+    if (settings.options.webhookThreadId) {
+      webhookUrl.searchParams.set(
+        'thread_id',
+        settings.options.webhookThreadId
+      );
+    }
+
+    await axios.post(webhookUrl.toString(), {
       username: settings.options.botUsername || 'Streamarr',
       avatar_url: settings.options.botAvatarUrl,
       content: this.buildContent(payload, mentionPrefix),

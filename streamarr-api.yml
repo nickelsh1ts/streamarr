@@ -2189,6 +2189,10 @@ components:
             webhookRoleId:
               type: string
               nullable: true
+            webhookThreadId:
+              type: string
+              pattern: '^$|^\d{17,20}$'
+              nullable: true
             enableMentions:
               type: boolean
             botUsername:
