@@ -35,6 +35,7 @@ describe('Authentication', () => {
 
       // Should remain on signin and show error
       cy.url().should('include', '/signin');
+      cy.contains('Invalid email or password.').should('be.visible');
     });
 
     it('should reject empty form submission', () => {

@@ -70,13 +70,19 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
           revalidate(authenticatedUser, false).then(() =>
             router.push('/watch')
           );
-        } catch {
-          setLoginError(
-            intl.formatMessage({
-              id: 'signIn.loginError',
-              defaultMessage: 'Something went wrong while trying to sign in.',
-            })
-          );
+        } catch (error) {
+          const errorMessage =
+            axios.isAxiosError(error) && error.response?.status === 401
+              ? intl.formatMessage({
+                  id: 'signIn.invalidCredentials',
+                  defaultMessage: 'Invalid email or password.',
+                })
+              : intl.formatMessage({
+                  id: 'signIn.loginError',
+                  defaultMessage:
+                    'Something went wrong while trying to sign in.',
+                });
+          setLoginError(errorMessage);
         }
       }}
     >
