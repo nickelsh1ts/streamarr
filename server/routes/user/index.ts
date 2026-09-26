@@ -58,6 +58,23 @@ router.get('/', async (req, res, next) => {
       .leftJoinAndSelect('user.redeemedInvite', 'redeemedInvite')
       .leftJoinAndSelect('redeemedInvite.createdBy', 'invitedBy');
 
+    const search = String(req.query.search ?? '')
+      .trim()
+      .toLowerCase();
+    if (search) {
+      const escapedSearch = search.replace(/[!%_]/g, '!$&');
+      const searchConditions = [
+        ...(req.user?.hasPermission(Permission.MANAGE_USERS)
+          ? ["LOWER(user.email) LIKE :search ESCAPE '!'"]
+          : []),
+        "LOWER(COALESCE(user.username, '')) LIKE :search ESCAPE '!'",
+        "LOWER(COALESCE(user.plexUsername, '')) LIKE :search ESCAPE '!'",
+      ];
+      query = query.andWhere(`(${searchConditions.join(' OR ')})`, {
+        search: `%${escapedSearch}%`,
+      });
+    }
+
     const sortDirection: 'ASC' | 'DESC' =
       req.query.sortDirection === 'asc' ? 'ASC' : 'DESC';
 
