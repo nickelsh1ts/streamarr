@@ -293,6 +293,23 @@ components:
         - email
         - createdAt
         - updatedAt
+    PlexImportResponse:
+      type: object
+      properties:
+        createdUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        refreshedUsers:
+          type: integer
+          description: Existing users whose Plex-linked details changed
+        unchangedUsers:
+          type: integer
+          description: Existing users already matching their Plex details
+      required:
+        - createdUsers
+        - refreshedUsers
+        - unchangedUsers
     UserSettings:
       type: object
       properties:
@@ -6432,7 +6449,7 @@ paths:
     post:
       summary: Import all users from Plex
       description: |
-        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the request body, only the specified users will be imported. Otherwise, all users will be imported.
+        Fetches users from Plex and imports only the specified Plex IDs when `plexIds` is provided. If `syncExisting` is true, refreshes existing matching Streamarr users without creating accounts and returns a synchronization summary. If the request body is omitted, preserves the legacy import-all behavior and response.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -6448,9 +6465,18 @@ paths:
                   type: array
                   items:
                     type: string
+                syncExisting:
+                  type: boolean
+                  default: false
       responses:
+        '200':
+          description: Existing Plex-linked users synchronized without creating accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlexImportResponse'
         '201':
-          description: A list of the newly created users
+          description: A list of newly created users (legacy response shape)
           content:
             application/json:
               schema:

@@ -852,7 +852,12 @@ router.post(
     try {
       const settings = getSettings();
       const userRepository = getRepository(User);
-      const body = req.body as { plexIds: string[] } | undefined;
+      const body = req.body as
+        { plexIds?: string[]; syncExisting?: boolean } | undefined;
+      const selectedPlexIds = Array.isArray(body?.plexIds)
+        ? new Set(body.plexIds)
+        : undefined;
+      const syncExisting = body?.syncExisting === true;
 
       // taken from auth.ts
       const mainUser = await userRepository.findOneOrFail({
@@ -868,50 +873,82 @@ router.post(
 
       const plexUsersResponse = await mainPlexTv.getUsers();
       const createdUsers: User[] = [];
+      let refreshedUsers = 0;
+      let unchangedUsers = 0;
       for (const rawUser of plexUsersResponse.MediaContainer.User) {
         const account = rawUser.$;
 
-        if (account.email) {
-          const user = await userRepository
-            .createQueryBuilder('user')
-            .where('user.plexId = :id', { id: account.id })
-            .orWhere('user.email = :email', {
-              email: account.email.toLowerCase(),
-            })
-            .getOne();
+        if (
+          !account.email ||
+          (selectedPlexIds && !selectedPlexIds.has(account.id))
+        ) {
+          continue;
+        }
 
-          if (user) {
-            // Update the user's avatar with their Plex thumbnail, in case it changed
-            const previousAvatar = user.avatar;
-            user.avatar = account.thumb;
-            user.email = account.email;
-            user.plexUsername = account.username;
+        const plexId = parseInt(account.id, 10);
+        const email = account.email.toLowerCase();
+        const user = await userRepository
+          .createQueryBuilder('user')
+          .where('user.plexId = :id', { id: account.id })
+          .orWhere('user.email = :email', { email })
+          .getOne();
 
-            // In case the user was previously a local account
-            if (user.userType === UserType.LOCAL) {
-              user.userType = UserType.PLEX;
-              user.plexId = parseInt(account.id);
-            }
-            await userRepository.save(user);
-            if (previousAvatar && previousAvatar !== user.avatar) {
-              void ImageProxy.clearCachedImage('avatar', previousAvatar);
-            }
-          } else if (!body || body.plexIds.includes(account.id)) {
-            if (await mainPlexTv.checkUserAccess(parseInt(account.id))) {
-              const newUser = new User({
-                plexUsername: account.username,
-                email: account.email,
-                permissions: settings.main.defaultPermissions,
-                plexId: parseInt(account.id),
-                plexToken: '',
-                avatar: account.thumb,
-                userType: UserType.PLEX,
-              });
-              await userRepository.save(newUser);
-              createdUsers.push(newUser);
-            }
+        if (user) {
+          if (!(await mainPlexTv.checkUserAccess(plexId))) {
+            continue;
+          }
+
+          const previousAvatar = user.avatar;
+          const wasLocalUser = user.userType === UserType.LOCAL;
+          const hasChanges =
+            user.avatar !== account.thumb ||
+            user.email !== email ||
+            user.plexUsername !== account.username ||
+            wasLocalUser;
+
+          if (!hasChanges) {
+            unchangedUsers += 1;
+            continue;
+          }
+
+          user.avatar = account.thumb;
+          user.email = email;
+          user.plexUsername = account.username;
+
+          // Preserve the existing email-match conversion when explicitly importing or syncing.
+          if (wasLocalUser) {
+            user.userType = UserType.PLEX;
+            user.plexId = plexId;
+          }
+
+          await userRepository.save(user);
+          refreshedUsers += 1;
+          if (previousAvatar && previousAvatar !== user.avatar) {
+            void ImageProxy.clearCachedImage('avatar', previousAvatar);
+          }
+        } else if (!syncExisting) {
+          if (await mainPlexTv.checkUserAccess(plexId)) {
+            const newUser = new User({
+              plexUsername: account.username,
+              email,
+              permissions: settings.main.defaultPermissions,
+              plexId,
+              plexToken: '',
+              avatar: account.thumb,
+              userType: UserType.PLEX,
+            });
+            await userRepository.save(newUser);
+            createdUsers.push(newUser);
           }
         }
+      }
+
+      if (syncExisting) {
+        return res.status(200).json({
+          createdUsers: User.filterMany(createdUsers),
+          refreshedUsers,
+          unchangedUsers,
+        });
       }
 
       res.status(201).json(User.filterMany(createdUsers));
