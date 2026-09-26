@@ -183,7 +183,18 @@ const ConfirmAccountForm = ({
   // Deletes/disables corresponding push subscription from database
   const disablePushNotifications = async (endpoint?: string) => {
     try {
-      await unsubscribeToPushNotifications(user?.id, endpoint);
+      const unsubscribedEndpoint = await unsubscribeToPushNotifications(
+        user?.id,
+        endpoint
+      );
+
+      if (unsubscribedEndpoint) {
+        await axios.delete(
+          `/api/v1/user/${user.id}/pushSubscription/${encodeURIComponent(
+            unsubscribedEndpoint
+          )}`
+        );
+      }
 
       localStorage.setItem('pushNotificationsEnabled', 'false');
       setWebPushEnabled(false);

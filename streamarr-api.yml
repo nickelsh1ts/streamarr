@@ -49,6 +49,13 @@ servers:
 
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
     PlexHealthState:
       type: object
       properties:
@@ -6472,24 +6479,47 @@ paths:
               properties:
                 endpoint:
                   type: string
+                  format: uri
+                  maxLength: 4096
+                previousEndpoint:
+                  type: string
+                  format: uri
+                  maxLength: 4096
                 auth:
                   type: string
+                  minLength: 22
+                  maxLength: 22
                 p256dh:
                   type: string
+                  minLength: 87
+                  maxLength: 87
                 userAgent:
                   type: string
+                  maxLength: 512
               required:
                 - endpoint
                 - auth
                 - p256dh
       responses:
+        '400':
+          description: Invalid or unsupported push endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Push subscription device limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '204':
           description: Successfully registered push subscription
   /user/{userId}/pushSubscriptions:
     get:
       summary: Get all web push notification settings for a user
       description: |
-        Returns all web push notification settings for a user in a JSON object.
+        Returns the device metadata for all web push subscriptions owned by a user.
       tags:
         - users
       parameters:
@@ -6504,21 +6534,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  endpoint:
-                    type: string
-                  p256dh:
-                    type: string
-                  auth:
-                    type: string
-                  userAgent:
-                    type: string
+                type: array
+                items:
+                  type: object
+                  properties:
+                    endpoint:
+                      type: string
+                    userAgent:
+                      type: string
+                      nullable: true
+                    createdAt:
+                      type: string
+                      format: date-time
+                      nullable: true
   /user/{userId}/pushSubscription/{key}:
     get:
-      summary: Get web push notification settings for a user
+      summary: Verify the authenticated user's web push subscription
       description: |
-        Returns web push notification settings for a user in a JSON object.
+        Returns the endpoint and encryption keys for the authenticated user's web push subscription.
       tags:
         - users
       parameters:
@@ -6545,8 +6578,6 @@ paths:
                   p256dh:
                     type: string
                   auth:
-                    type: string
-                  userAgent:
                     type: string
     delete:
       summary: Delete user push subscription by key

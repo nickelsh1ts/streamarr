@@ -6164,9 +6164,6 @@
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
   },
-  "userSettings.engine": {
-    "defaultMessage": "Engine"
-  },
   "userSettings.experimentalJwtAuth": {
     "defaultMessage": "Plex JWT Authentication"
   },
@@ -6196,6 +6193,30 @@
   },
   "userSettings.notifications.deleteSubscription": {
     "defaultMessage": "Delete Subscription"
+  },
+  "userSettings.notifications.deviceTypeConsole": {
+    "defaultMessage": "Game Console"
+  },
+  "userSettings.notifications.deviceTypeDesktop": {
+    "defaultMessage": "Desktop Computer"
+  },
+  "userSettings.notifications.deviceTypeEmbedded": {
+    "defaultMessage": "Embedded Device"
+  },
+  "userSettings.notifications.deviceTypeMobile": {
+    "defaultMessage": "Mobile Device"
+  },
+  "userSettings.notifications.deviceTypeSmartTv": {
+    "defaultMessage": "Smart TV"
+  },
+  "userSettings.notifications.deviceTypeTablet": {
+    "defaultMessage": "Tablet"
+  },
+  "userSettings.notifications.deviceTypeWearable": {
+    "defaultMessage": "Wearable Device"
+  },
+  "userSettings.notifications.deviceTypeXr": {
+    "defaultMessage": "VR/AR Device"
   },
   "userSettings.notifications.disableWebPush": {
     "defaultMessage": "Disable web push"

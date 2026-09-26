@@ -46,6 +46,7 @@ export default async function RootLayout({
             <ThemeSetter />
             <InteractionProvider>
               <UserContext initialUser={user}>
+                <ServiceWorkerSetup />
                 <NotificationProvider>
                   <NotificationSidebarProvider>
                     <Layout initialized={initialized}>{children}</Layout>
@@ -55,7 +56,6 @@ export default async function RootLayout({
             </InteractionProvider>
           </SettingsProvider>
         </LanguageProvider>
-        <ServiceWorkerSetup />
       </body>
     </html>
   );

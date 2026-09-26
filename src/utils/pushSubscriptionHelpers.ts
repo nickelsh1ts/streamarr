@@ -1,6 +1,11 @@
-import type { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type { PublicSettingsResponse } from '@server/interfaces/api/settingsInterfaces';
+import type { PushSubscriptionValidation } from '@server/interfaces/api/userInterfaces';
 import axios from 'axios';
+
+type PushSettings = Pick<
+  PublicSettingsResponse,
+  'enablePushRegistration' | 'vapidPublic'
+>;
 
 // Taken from https://www.npmjs.com/package/web-push
 function urlBase64ToUint8Array(base64String: string) {
@@ -19,14 +24,50 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export const getPushSubscription = async () => {
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await navigator.serviceWorker.getRegistration();
+  if (!registration) {
+    return { registration: null, subscription: null };
+  }
+
   const subscription = await registration.pushManager.getSubscription();
   return { registration, subscription };
 };
 
+const verifySubscription = async (
+  userId: number,
+  subscription: PushSubscription,
+  vapidPublic: string
+): Promise<boolean> => {
+  try {
+    const appServerKey = subscription.options?.applicationServerKey;
+    if (!(appServerKey instanceof ArrayBuffer)) {
+      return false;
+    }
+
+    const currentServerKey = new Uint8Array(appServerKey).toString();
+    const expectedServerKey = urlBase64ToUint8Array(vapidPublic).toString();
+
+    const endpoint = subscription.endpoint;
+
+    const { data } = await axios.get<PushSubscriptionValidation>(
+      `/api/v1/user/${userId}/pushSubscription/${encodeURIComponent(endpoint)}`
+    );
+    const keys = subscription.toJSON().keys;
+
+    return (
+      expectedServerKey === currentServerKey &&
+      data.endpoint === endpoint &&
+      keys?.p256dh === data.p256dh &&
+      keys.auth === data.auth
+    );
+  } catch {
+    return false;
+  }
+};
+
 export const verifyPushSubscription = async (
   userId: number | undefined,
-  currentSettings: PublicSettingsResponse
+  currentSettings: Pick<PublicSettingsResponse, 'vapidPublic'>
 ): Promise<boolean> => {
   if (!('serviceWorker' in navigator) || !userId) {
     return false;
@@ -34,63 +75,85 @@ export const verifyPushSubscription = async (
 
   try {
     const { subscription } = await getPushSubscription();
-
-    if (!subscription) {
-      return false;
-    }
-
-    const appServerKey = subscription.options?.applicationServerKey;
-    if (!(appServerKey instanceof ArrayBuffer)) {
-      return false;
-    }
-
-    const currentServerKey = new Uint8Array(appServerKey).toString();
-    const expectedServerKey = urlBase64ToUint8Array(
-      currentSettings.vapidPublic
-    ).toString();
-
-    const endpoint = subscription.endpoint;
-
-    const { data } = await axios.get<UserPushSubscription>(
-      `/api/v1/user/${userId}/pushSubscription/${encodeURIComponent(endpoint)}`
-    );
-
-    return expectedServerKey === currentServerKey && data.endpoint === endpoint;
+    return subscription
+      ? verifySubscription(userId, subscription, currentSettings.vapidPublic)
+      : false;
   } catch {
     return false;
   }
 };
 
-export const verifyAndResubscribePushSubscription = async (
-  userId: number | undefined,
-  currentSettings: PublicSettingsResponse
-): Promise<boolean> => {
-  const isValid = await verifyPushSubscription(userId, currentSettings);
+const usesCurrentVapidKey = (
+  subscription: PushSubscription,
+  currentSettings: Pick<PublicSettingsResponse, 'vapidPublic'>
+) => {
+  const appServerKey = subscription.options?.applicationServerKey;
+  if (!(appServerKey instanceof ArrayBuffer)) {
+    return false;
+  }
 
+  const currentServerKey = new Uint8Array(appServerKey).toString();
+  const expectedServerKey = urlBase64ToUint8Array(
+    currentSettings.vapidPublic
+  ).toString();
+
+  return currentServerKey === expectedServerKey;
+};
+
+const registerPushSubscription = async (
+  subscription: PushSubscription,
+  previousEndpoint?: string
+) => {
+  const { endpoint, keys } = subscription.toJSON();
+
+  if (!endpoint || !keys?.p256dh || !keys.auth) {
+    return false;
+  }
+
+  await axios.post('/api/v1/user/registerPushSubscription', {
+    endpoint,
+    ...(previousEndpoint && { previousEndpoint }),
+    p256dh: keys.p256dh,
+    auth: keys.auth,
+    userAgent: navigator.userAgent,
+  });
+
+  return true;
+};
+
+export const verifyAndRegisterPushSubscription = async (
+  userId: number | undefined,
+  currentSettings: PushSettings
+): Promise<boolean> => {
+  if (
+    !('serviceWorker' in navigator) ||
+    !('PushManager' in window) ||
+    !userId ||
+    !currentSettings.enablePushRegistration
+  ) {
+    return false;
+  }
+
+  const { subscription } = await getPushSubscription();
+  if (!subscription || !usesCurrentVapidKey(subscription, currentSettings)) {
+    return false;
+  }
+
+  const isValid = await verifySubscription(
+    userId,
+    subscription,
+    currentSettings.vapidPublic
+  );
   if (isValid) {
     return true;
   }
 
-  if (currentSettings.enablePushRegistration) {
-    try {
-      // Unsubscribe from the backend to clear the existing push subscription (keys and endpoint)
-      await unsubscribeToPushNotifications(userId);
-
-      // Subscribe again to generate a fresh push subscription with updated keys and endpoint
-      await subscribeToPushNotifications(userId, currentSettings);
-
-      return true;
-    } catch (error) {
-      throw new Error(`[SW] Resubscribe failed: ${error.message}`);
-    }
-  }
-
-  return false;
+  return registerPushSubscription(subscription);
 };
 
 export const subscribeToPushNotifications = async (
   userId: number | undefined,
-  currentSettings: PublicSettingsResponse
+  currentSettings: PushSettings
 ) => {
   if (
     !('serviceWorker' in navigator) ||
@@ -101,37 +164,31 @@ export const subscribeToPushNotifications = async (
   }
 
   try {
-    const { registration } = await getPushSubscription();
-
-    if (!registration) {
-      return false;
-    }
+    const registration =
+      (await navigator.serviceWorker.getRegistration()) ??
+      (await navigator.serviceWorker.register('/sw.js'));
+    const activeRegistration = registration.active
+      ? registration
+      : await navigator.serviceWorker.ready;
 
     const existingSubscription =
-      await registration.pushManager.getSubscription();
+      await activeRegistration.pushManager.getSubscription();
+    let previousEndpoint: string | undefined;
     if (existingSubscription) {
+      if (usesCurrentVapidKey(existingSubscription, currentSettings)) {
+        return registerPushSubscription(existingSubscription);
+      }
+
+      previousEndpoint = existingSubscription.endpoint;
       await existingSubscription.unsubscribe();
     }
 
-    const subscription = await registration.pushManager.subscribe({
+    const subscription = await activeRegistration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: currentSettings.vapidPublic,
+      applicationServerKey: urlBase64ToUint8Array(currentSettings.vapidPublic),
     });
 
-    const { endpoint, keys } = subscription.toJSON();
-
-    if (keys?.p256dh && keys?.auth) {
-      await axios.post('/api/v1/user/registerPushSubscription', {
-        endpoint,
-        p256dh: keys.p256dh,
-        auth: keys.auth,
-        userAgent: navigator.userAgent,
-      });
-
-      return true;
-    }
-
-    return false;
+    return registerPushSubscription(subscription, previousEndpoint);
   } catch (error) {
     throw new Error(
       `Issue subscribing to push notifications: ${error.message}`
@@ -148,7 +205,8 @@ export const unsubscribeToPushNotifications = async (
   }
 
   try {
-    const { subscription } = await getPushSubscription();
+    const registration = await navigator.serviceWorker.getRegistration();
+    const subscription = await registration?.pushManager.getSubscription();
 
     if (!subscription) {
       return null;

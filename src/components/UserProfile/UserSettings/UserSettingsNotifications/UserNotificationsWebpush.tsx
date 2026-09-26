@@ -23,6 +23,7 @@ import {
   InformationCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import type { PushSubscriptionDevice } from '@server/interfaces/api/userInterfaces';
 import type { UserSettingsNotificationsResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
 import { Form, Formik } from 'formik';
@@ -35,9 +36,14 @@ const UserWebPushSettings = () => {
   const intl = useIntl();
   const { userid } = useParams<{ userid: string }>();
   const { user } = useUser({ id: Number(userid) });
+  const { user: currentUser } = useUser();
   const { currentSettings } = useSettings();
+  const currentUserId = currentUser?.id;
+  const vapidPublic = currentSettings.vapidPublic;
   const [webPushEnabled, setWebPushEnabled] = useState(false);
   const [subEndpoint, setSubEndpoint] = useState<string | null>(null);
+  const activeSubscriptionEndpoint =
+    user?.id === currentUserId ? subEndpoint : null;
   const {
     data,
     error,
@@ -46,14 +52,10 @@ const UserWebPushSettings = () => {
     user ? `/api/v1/user/${user?.id}/settings/notifications` : null
   );
   const { data: dataDevices, mutate: revalidateDevices } = useSWR<
-    {
-      endpoint: string;
-      p256dh: string;
-      auth: string;
-      userAgent: string;
-      createdAt: Date;
-    }[]
-  >(`/api/v1/user/${user?.id}/pushSubscriptions`, { revalidateOnMount: true });
+    PushSubscriptionDevice[]
+  >(user?.id ? `/api/v1/user/${user.id}/pushSubscriptions` : null, {
+    revalidateOnMount: true,
+  });
 
   // Subscribes to the push manager
   // Will only add to the database if subscribing for the first time
@@ -104,7 +106,11 @@ const UserWebPushSettings = () => {
 
       const endpointToDelete = unsubscribedEndpoint || subEndpoint || endpoint;
       if (endpointToDelete) {
-        await deletePushSubscriptionFromBackend(endpointToDelete);
+        await axios.delete(
+          `/api/v1/user/${user?.id}/pushSubscription/${encodeURIComponent(
+            endpointToDelete
+          )}`
+        );
       }
 
       localStorage.setItem('pushNotificationsEnabled', 'false');
@@ -165,15 +171,51 @@ const UserWebPushSettings = () => {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const verifyWebPush = async () => {
-      const enabled = await verifyPushSubscription(user?.id, currentSettings);
-      setWebPushEnabled(enabled);
+      if (!user?.id || !currentUserId) {
+        return;
+      }
+
+      if (user.id !== currentUserId) {
+        if (!cancelled) {
+          setWebPushEnabled(false);
+        }
+        return;
+      }
+
+      try {
+        const enabled = await verifyPushSubscription(user.id, { vapidPublic });
+
+        if (!cancelled) {
+          setWebPushEnabled(enabled);
+        }
+
+        const { subscription } = await getPushSubscription();
+        if (
+          enabled &&
+          subscription &&
+          dataDevices &&
+          !dataDevices.some(
+            (device) => device.endpoint === subscription.endpoint
+          )
+        ) {
+          revalidateDevices();
+        }
+      } catch {
+        if (!cancelled) {
+          setWebPushEnabled(false);
+        }
+      }
     };
 
-    if (user?.id) {
-      verifyWebPush();
-    }
-  }, [user?.id, currentSettings, dataDevices]);
+    verifyWebPush();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, currentUserId, vapidPublic, dataDevices, revalidateDevices]);
 
   useEffect(() => {
     const getSubscriptionEndpoint = async () => {
@@ -191,26 +233,16 @@ const UserWebPushSettings = () => {
     getSubscriptionEndpoint();
   }, [webPushEnabled]);
 
-  useEffect(() => {
-    const checkActiveSubscription = async () => {
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
-        const { subscription } = await getPushSubscription();
-        setWebPushEnabled(!!subscription);
-      }
-    };
-    checkActiveSubscription();
-  }, [webPushEnabled]);
-
   const sortedDevices = useMemo(() => {
-    if (!dataDevices || !subEndpoint) {
+    if (!dataDevices || !activeSubscriptionEndpoint) {
       return dataDevices;
     }
 
     return [...dataDevices].sort((a, b) => {
-      if (a.endpoint === subEndpoint) {
+      if (a.endpoint === activeSubscriptionEndpoint) {
         return -1;
       }
-      if (b.endpoint === subEndpoint) {
+      if (b.endpoint === activeSubscriptionEndpoint) {
         return 1;
       }
 
@@ -218,7 +250,7 @@ const UserWebPushSettings = () => {
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return dateB - dateA;
     });
-  }, [dataDevices, subEndpoint]);
+  }, [dataDevices, activeSubscriptionEndpoint]);
 
   if (!data && !error) {
     return <LoadingEllipsis />;
@@ -294,37 +326,39 @@ const UserWebPushSettings = () => {
               />
               <div className="divider divider-primary col-span-full mb-0" />
               <div className="col-span-3 mt-4 flex justify-end">
-                <span className="ml-3 inline-flex rounded-md shadow-sm">
-                  <Button
-                    buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
-                    type="button"
-                    buttonSize="sm"
-                    onClick={() =>
-                      webPushEnabled
-                        ? disablePushNotifications()
-                        : enablePushNotifications()
-                    }
-                  >
-                    {webPushEnabled ? (
-                      <CloudArrowDownIcon className="mr-2 size-5" />
-                    ) : (
-                      <CloudArrowUpIcon className="mr-2 size-5" />
-                    )}
-                    <span>
+                {user?.id === currentUser?.id && (
+                  <span className="ml-3 inline-flex rounded-md shadow-sm">
+                    <Button
+                      buttonType={`${webPushEnabled ? 'error' : 'primary'}`}
+                      type="button"
+                      buttonSize="sm"
+                      onClick={() =>
+                        webPushEnabled
+                          ? disablePushNotifications()
+                          : enablePushNotifications()
+                      }
+                    >
                       {webPushEnabled ? (
-                        <FormattedMessage
-                          id="userSettings.notifications.disableWebPush"
-                          defaultMessage="Disable web push"
-                        />
+                        <CloudArrowDownIcon className="mr-2 size-5" />
                       ) : (
-                        <FormattedMessage
-                          id="userSettings.notifications.enableWebPush"
-                          defaultMessage="Enable web push"
-                        />
+                        <CloudArrowUpIcon className="mr-2 size-5" />
                       )}
-                    </span>
-                  </Button>
-                </span>
+                      <span>
+                        {webPushEnabled ? (
+                          <FormattedMessage
+                            id="userSettings.notifications.disableWebPush"
+                            defaultMessage="Disable web push"
+                          />
+                        ) : (
+                          <FormattedMessage
+                            id="userSettings.notifications.enableWebPush"
+                            defaultMessage="Enable web push"
+                          />
+                        )}
+                      </span>
+                    </Button>
+                  </span>
+                )}
                 <span className="ml-3 inline-flex rounded-md shadow-sm">
                   <Button
                     buttonType="primary"
@@ -369,7 +403,7 @@ const UserWebPushSettings = () => {
                     deletePushSubscriptionFromBackend
                   }
                   device={device}
-                  subEndpoint={subEndpoint}
+                  subEndpoint={activeSubscriptionEndpoint}
                 />
               </div>
             ))
