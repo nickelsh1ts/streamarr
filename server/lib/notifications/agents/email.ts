@@ -1,7 +1,7 @@
 import { NotificationType } from '@server/constants/notification';
 import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
-import PreparedEmail from '@server/lib/email';
+import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import type { NotificationAgentEmail } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -51,8 +51,8 @@ class EmailAgent
     recipientEmail: string,
     recipientName?: string
   ): EmailOptions | undefined {
-    const { applicationUrl, applicationTitle, customLogo } = getSettings().main;
-    const logoUrl = customLogo || '/logo_full.png';
+    const { applicationUrl, applicationTitle } = getSettings().main;
+    const logoUrl = getEmailLogo(this.getSettings().options.usePublicLogo);
 
     const TEMPLATE_MAP: Partial<Record<NotificationType, string>> = {
       [NotificationType.TEST_NOTIFICATION]: 'test-email',

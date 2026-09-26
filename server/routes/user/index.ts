@@ -30,7 +30,7 @@ import { Router } from 'express';
 import Invite from '@server/entity/Invite';
 import Notification from '@server/entity/Notification';
 import { UserSettings } from '@server/entity/UserSettings';
-import PreparedEmail from '@server/lib/email';
+import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
 import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
@@ -180,9 +180,8 @@ router.post(
       await userRepository.save(user);
 
       if (generatedPassword) {
-        const { applicationTitle, applicationUrl, customLogo } =
-          getSettings().main;
-        const logoUrl = customLogo || '/logo_full.png';
+        const { applicationTitle, applicationUrl } = getSettings().main;
+        const logoUrl = getEmailLogo();
 
         try {
           logger.info(`Sending generated password email for ${user.email}`, {

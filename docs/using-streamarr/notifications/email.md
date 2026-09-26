@@ -8,13 +8,16 @@ Navigate to **Settings → Notifications → Email** to configure email notifica
 
 ### Basic Settings
 
-| Setting         | Description                                     |
-| --------------- | ----------------------------------------------- |
-| **Enabled**     | Enable or disable email notifications           |
-| **Sender Name** | Name displayed in the "From" field              |
-| **Email From**  | Email address used as the sender                |
-| **SMTP Host**   | Hostname of your SMTP server                    |
-| **SMTP Port**   | Port for SMTP connection (typically 587 or 465) |
+| Setting         | Description                                       |
+| --------------- | ------------------------------------------------- |
+| **Enabled**     | Enable or disable email notifications             |
+| **Sender Name** | Name displayed in the "From" field                |
+| **Email From**  | Email address used as the sender                  |
+| **SMTP Host**   | Hostname of your SMTP server                      |
+| **SMTP Port**   | Port for SMTP connection (typically 587 or 465)   |
+| **Public Logo** | Use Streamarr's public logo for generated emails. |
+
+The public logo option applies to notification, newsletter, and account emails. It is useful when recipients cannot access your Streamarr instance from outside your network.
 
 ### Security Settings
 
