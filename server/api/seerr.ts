@@ -4,6 +4,7 @@ import type {
   SeerrRequestItem,
   SeerrRequestsResponse,
 } from '@server/interfaces/api/seerrInterfaces';
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import type { ServiceSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { AxiosInstance } from 'axios';
@@ -69,10 +70,12 @@ class SeerrAPI {
 
   constructor(settings: ServiceSettings) {
     this.baseURL = `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${settings.port}/api/v1`;
-    this.axios = axios.create({
-      baseURL: this.baseURL,
-      headers: { 'X-Api-Key': settings.apiKey ?? '' },
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: this.baseURL,
+        headers: { 'X-Api-Key': settings.apiKey ?? '' },
+      })
+    );
   }
 
   private mapRawRequest(r: RawSeerrRequest): SeerrRequestItem {

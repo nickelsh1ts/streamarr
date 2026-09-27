@@ -1,3 +1,4 @@
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { getPathUsedBytes } from '@server/utils/pathSize';
@@ -217,14 +218,16 @@ class ImageProxy {
     this.key = key;
     this.defaultMaxAge = options.defaultMaxAge ?? 0;
     this.validateResponse = options.validateResponse;
-    this.axios = axios.create({
-      baseURL: baseUrl,
-      withCredentials: false,
-      headers: options.headers,
-      maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
-      maxContentLength: options.maxContentLength,
-      beforeRedirect: options.beforeRedirect,
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: baseUrl,
+        withCredentials: false,
+        headers: options.headers,
+        maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
+        maxContentLength: options.maxContentLength,
+        beforeRedirect: options.beforeRedirect,
+      })
+    );
 
     if (options.rateLimitOptions) {
       this.axios = rateLimit(this.axios, options.rateLimitOptions);

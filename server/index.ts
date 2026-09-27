@@ -22,6 +22,7 @@ import {
   initializeOnboardingDefaults,
   onboardingImageService,
 } from '@server/lib/onboarding';
+import { initializeOutboundProxy } from '@server/lib/outboundProxy';
 import restartManager from '@server/lib/restartManager';
 import { getSettings } from '@server/lib/settings';
 import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
@@ -85,6 +86,7 @@ app
 
     // Load Settings
     const settings = await getSettings().load();
+    initializeOutboundProxy(settings.network.outboundProxy);
     initI18n();
     await initializeOnboardingDefaults();
 

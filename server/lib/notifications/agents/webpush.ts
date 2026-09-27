@@ -7,6 +7,7 @@ import {
   hasNotificationType,
   shouldSendAdminNotification,
 } from '@server/lib/notifications';
+import { getWebPushTransport } from '@server/lib/outboundProxy';
 import { isSupportedPushEndpoint } from '@server/lib/pushSubscription';
 import type { NotificationAgentConfig } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
@@ -107,7 +108,10 @@ class WebPushAgent
             keys: { auth: pushSub.auth, p256dh: pushSub.p256dh },
           },
           notificationPayload,
-          { timeout: WEB_PUSH_REQUEST_TIMEOUT_MS }
+          {
+            timeout: WEB_PUSH_REQUEST_TIMEOUT_MS,
+            ...getWebPushTransport(pushSub.endpoint),
+          }
         );
       } catch (e) {
         const webPushError = e as WebPushError;

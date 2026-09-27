@@ -1,6 +1,7 @@
 import type { AllSettings } from '@server/lib/settings';
 
-type SettingsMigrationInput = AllSettings & {
+type SettingsMigrationInput = Omit<AllSettings, 'network'> & {
+  network?: Omit<AllSettings['network'], 'outboundProxy'>;
   main: AllSettings['main'] & {
     trustProxy?: boolean;
     csrfProtection?: boolean;
@@ -11,7 +12,7 @@ const migrateNetworkProxyCsrf = (
   settings: SettingsMigrationInput
 ): AllSettings => {
   if (settings.network) {
-    return settings;
+    return settings as AllSettings;
   }
 
   settings.network = {
@@ -25,7 +26,7 @@ const migrateNetworkProxyCsrf = (
   delete settings.main.trustProxy;
   delete settings.main.csrfProtection;
 
-  return settings;
+  return settings as AllSettings;
 };
 
 export default migrateNetworkProxyCsrf;

@@ -162,7 +162,7 @@ To reset all colors to defaults, click the **"Reset to Default"** button in the 
 The Network page configures how Streamarr communicates over the network—proxy awareness, API access protection, and timeouts for outbound requests. Access it via **Settings → Network**.
 
 {% hint style="info" %}
-Changes to **Enable Proxy Support** and **Enable CSRF Protection** require a server restart to take effect. See [System → Restart System](system.md#restart-system).
+Changes to **Enable Proxy Support**, **Enable CSRF Protection**, and **Outbound HTTP(S) Proxy** require a server restart to take effect. See [System → Restart System](system.md#restart-system).
 {% endhint %}
 
 ### Enable Proxy Support
@@ -172,6 +172,16 @@ If you have Streamarr behind a [reverse proxy](../../extending-streamarr/reverse
 For details, please see the [Express documentation](http://expressjs.com/en/guide/behind-proxies.html).
 
 This setting is **disabled** by default.
+
+### Outbound HTTP(S) Proxy
+
+Use this setting to route supported outbound HTTP and HTTPS requests through an authenticated proxy. Configure the proxy hostname, port, whether the connection to the proxy itself uses HTTPS, and optional credentials. The saved password is loaded into a sensitive field and stays obscured until revealed with its visibility control. Clearing the username clears the saved password.
+
+Enable **Bypass Proxy for Local Addresses** to connect directly to loopback, private and link-local addresses, single-label/container hostnames, and `.localhost`, `.local`, `.internal`, and `.home.arpa` names. Public hostnames configured for services can use the proxy. Add internal service FQDNs to **Proxy Ignored Addresses** when they resolve to your private network. Use `,` as a separator, and `*.` as a wildcard for subdomains.
+
+The setting covers supported Axios requests, server-side service checks, and web-push delivery. It does not proxy SMTP, configured download-client connections, or inbound service iframe proxies. The setting itself is settings-only and does not configure `HTTP_PROXY`, `HTTPS_PROXY`, or `NO_PROXY`; when this proxy is disabled, Axios retains its existing behavior and may honor its standard environment-proxy settings. Native `fetch` and web-push do not inherit those Axios settings. When enabled, the saved proxy and bypass policy are used. Changes require a server restart.
+
+Use **Test** to send one HTTPS request to a fixed public endpoint through the current form values. This can test unsaved changes and does not save them. A successful test confirms that this proxy can relay that request; it does not guarantee access to every destination. Streamarr does not make a proxy test request during startup.
 
 ### Enable CSRF Protection
 
@@ -224,10 +234,11 @@ The time, in seconds, Streamarr waits between the scheduled retry attempts descr
 
 ## API Reference
 
-| Endpoint                   | Method | Description                       |
-| -------------------------- | ------ | --------------------------------- |
-| `/api/v1/settings/network` | GET    | Retrieve current network settings |
-| `/api/v1/settings/network` | POST   | Update network settings           |
+| Endpoint                                       | Method | Description                       |
+| ---------------------------------------------- | ------ | --------------------------------- |
+| `/api/v1/settings/network`                     | GET    | Retrieve current network settings |
+| `/api/v1/settings/network`                     | POST   | Update network settings           |
+| `/api/v1/settings/network/outbound-proxy/test` | POST   | Test the saved outbound proxy     |
 
 ---
 
