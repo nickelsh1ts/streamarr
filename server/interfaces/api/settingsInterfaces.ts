@@ -30,18 +30,23 @@ export interface SettingsAboutResponse {
 export interface SettingsAboutDiskSpaceResponse {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
+  cachedAt: number;
 }
 
+export type DiskSpaceItemKind = 'filesystem' | 'directory';
+
 export interface DiskSpaceItem {
+  kind: DiskSpaceItemKind;
   deviceId: string;
   name: string;
   path: string;
   mountPoint: string;
-  pathUsedBytes: number;
   totalBytes: number;
   freeBytes: number;
   usedBytes: number;
   usedPercent: number;
+  directoryBytes?: number;
+  directoryPercent?: number;
 }
 
 export interface DiskSpaceFailure {

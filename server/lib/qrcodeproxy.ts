@@ -100,6 +100,14 @@ class QRCodeProxy {
   public async getCacheStats(): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = this.getCacheDirectory();
 
+    try {
+      await fs.lstat(cacheDirectory);
+    } catch (e) {
+      if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+        return { size: 0, imageCount: 0 };
+      }
+    }
+
     const [size, entries] = await Promise.all([
       getPathUsedBytes(cacheDirectory).catch((e) => {
         logger.warn('Failed to calculate QR cache size', {
