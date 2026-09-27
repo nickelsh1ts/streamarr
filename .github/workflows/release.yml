@@ -12,8 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 env:
   DOCKER_HUB: nickelsh1ts/streamarr
@@ -22,6 +21,11 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
       new_release_published: ${{ steps.semantic.outputs.new_release_published }}
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
@@ -61,6 +65,9 @@ jobs:
             platform: linux/arm64
             arch: arm64
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -93,6 +100,7 @@ jobs:
     name: Publish multi-arch image
     needs: [release, build]
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     permissions:
       contents: read
       packages: write
@@ -152,7 +160,7 @@ jobs:
             type=gha,scope=linux/amd64
             type=gha,scope=linux/arm64
           cache-to: type=gha,mode=max
-          provenance: false
+          provenance: true
       - name: Resolve manifest digest
         id: digests
         run: |
@@ -163,6 +171,7 @@ jobs:
     name: Sign images and create SBOM attestations
     needs: [release, publish]
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     permissions:
       contents: read
       id-token: write
@@ -224,6 +233,7 @@ jobs:
     name: Verify signatures and attestations
     needs: [publish, sign]
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
     env:
@@ -240,12 +250,48 @@ jobs:
           cosign verify "${{ env.DOCKER_HUB }}@${{ env.IMAGE_DIGEST }}" \
             --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+      - name: Verify SBOM attestations
+        run: |
+          cosign verify-attestation --type cyclonedx \
+            --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "ghcr.io/${{ github.repository }}@${{ env.IMAGE_DIGEST }}"
+
+          cosign verify-attestation --type cyclonedx \
+            --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "${{ env.DOCKER_HUB }}@${{ env.IMAGE_DIGEST }}"
+
+  publish-release:
+    name: Publish verified GitHub Release
+    needs: [release, sign, verify]
+    if: needs.release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.release.outputs.new_release_version }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Download SBOMs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sboms-${{ needs.release.outputs.new_release_version }}
+      - name: Attach SBOMs and publish release
+        run: |
+          tag="v${VERSION}"
+          gh release upload "$tag" --clobber \
+            "streamarr-ghcr-image-${VERSION}.sbom" \
+            "streamarr-dockerhub-image-${VERSION}.sbom"
+          gh release edit "$tag" --draft=false
 
   discord:
     name: Send Discord Notification
-    needs: [release, verify]
+    needs: [release, publish-release]
     if: always() && (needs.release.outputs.new_release_published == 'true' || needs.release.result == 'failure')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Get Build Job Status
         uses: technote-space/workflow-conclusion-action@45ce8e0eb155657ab8ccf346ade734257fd196a5 # v3

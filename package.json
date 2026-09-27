@@ -286,7 +286,8 @@
       [
         "@semantic-release/github",
         {
-          "addReleases": "bottom"
+          "addReleases": "bottom",
+          "draftRelease": true
         }
       ]
     ]
