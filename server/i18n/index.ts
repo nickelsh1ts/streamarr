@@ -1,4 +1,5 @@
 import { createIntl, createIntlCache } from '@formatjs/intl';
+import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { AvailableLocale } from '@server/types/languages';
 import { availableLocales } from '@server/types/languages';
@@ -43,11 +44,18 @@ export const initI18n = (): void => {
 };
 
 export const getIntl = (locale?: string | null): IntlShape => {
-  const normalized = locale?.split('-')[0].toLowerCase() ?? DEFAULT_LOCALE;
-  const resolved = intlInstances.has(normalized) ? normalized : DEFAULT_LOCALE;
+  if (intlInstances.size === 0) {
+    return createIntl({ locale: DEFAULT_LOCALE, messages: {} }, cache);
+  }
+
+  const resolved = [
+    locale?.split('-')[0].toLowerCase(),
+    getSettings().main.locale?.split('-')[0].toLowerCase(),
+    DEFAULT_LOCALE,
+  ].find((candidate) => candidate && intlInstances.has(candidate));
 
   return (
-    intlInstances.get(resolved) ??
+    intlInstances.get(resolved ?? DEFAULT_LOCALE) ??
     intlInstances.get(DEFAULT_LOCALE) ??
     createIntl({ locale: DEFAULT_LOCALE, messages: {} }, cache)
   );
