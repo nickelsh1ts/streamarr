@@ -140,9 +140,10 @@ Admins can import existing Plex server users:
 
 1. Go to **Settings → Plex**
 2. Click **Import Plex Users**
-3. Select which users to import
-4. Configure default permissions for imported users
-5. Click **Import**
+3. Select the unimported users to add.
+4. Click **Import**. New accounts receive the default permissions configured under **Settings → Users**.
+
+Use **Sync Existing** to refresh the Plex username, email, and avatar for accounts already matched to Plex. Sync does not create accounts. A local account that matches a Plex account by email is converted to a Plex user when synchronized.
 
 {% hint style="info" %}
 Only users who have accepted their Plex server invite can be imported. Pending invites will not appear in the import list.

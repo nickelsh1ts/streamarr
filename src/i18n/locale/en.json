@@ -4736,6 +4736,9 @@
   "plexImport.import": {
     "defaultMessage": "Import"
   },
+  "plexImport.importComplete": {
+    "defaultMessage": "Plex import complete"
+  },
   "plexImport.importing": {
     "defaultMessage": "Importing…"
   },
@@ -4748,8 +4751,29 @@
   "plexImport.noUsersToImport": {
     "defaultMessage": "There are no Plex users to import."
   },
-  "plexImport.success": {
-    "defaultMessage": "{count, plural, one {# Plex user} other {# Plex users}} imported successfully!"
+  "plexImport.resultCreated": {
+    "defaultMessage": "Created {count, plural, one {# Plex user} other {# Plex users}}"
+  },
+  "plexImport.resultRefreshed": {
+    "defaultMessage": "Updated {count, plural, one {# existing user} other {# existing users}}"
+  },
+  "plexImport.resultUnchanged": {
+    "defaultMessage": "{count, plural, one {# existing Plex user is} other {# existing Plex users are}} already up to date."
+  },
+  "plexImport.syncComplete": {
+    "defaultMessage": "Plex sync complete"
+  },
+  "plexImport.syncExisting": {
+    "defaultMessage": "Sync Existing"
+  },
+  "plexImport.syncHint": {
+    "defaultMessage": "Use Sync Existing to refresh linked Plex users."
+  },
+  "plexImport.syncNoUsers": {
+    "defaultMessage": "No existing Plex users were found to sync."
+  },
+  "plexImport.syncing": {
+    "defaultMessage": "Syncing…"
   },
   "plexImport.title": {
     "defaultMessage": "Import Plex Users"

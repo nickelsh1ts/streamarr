@@ -6,7 +6,10 @@ import Modal from '@app/components/Common/Modal';
 import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
-import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+import {
+  CheckBadgeIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -18,12 +21,22 @@ interface PlexImportProps {
   show?: boolean;
 }
 
+interface PlexImportResponse {
+  createdUsers: { id: number }[];
+  refreshedUsers: number;
+  unchangedUsers: number;
+}
+
+type PlexImportResult = PlexImportResponse | { id: number }[];
+
 const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
   const { hasPermission } = useUser();
   const intl = useIntl();
   const isAdmin = hasPermission(Permission.ADMIN);
   const settings = useSettings();
-  const [isImporting, setImporting] = useState(false);
+  const [activeAction, setActiveAction] = useState<'import' | 'sync' | null>(
+    null
+  );
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const { data, error } = useSWR<
     {
@@ -37,40 +50,86 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
     revalidateOnMount: true,
   });
 
-  const importUsers = async () => {
-    setImporting(true);
+  const importUsers = async (syncExisting = false) => {
+    setActiveAction(syncExisting ? 'sync' : 'import');
 
     try {
-      const { data: createdUsers } = await axios.post(
+      const { data: result } = await axios.post<PlexImportResult>(
         '/api/v1/user/import-from-plex',
-        { plexIds: selectedUsers }
+        syncExisting ? { syncExisting: true } : { plexIds: selectedUsers }
       );
+      const summary = Array.isArray(result)
+        ? { createdUsers: result, refreshedUsers: 0, unchangedUsers: 0 }
+        : result;
 
-      if (!createdUsers.length) {
-        throw new Error(
-          intl.formatMessage({
-            id: 'plexImport.noUsers',
-            defaultMessage: 'No users were imported from Plex.',
-          })
+      const hasChanges =
+        summary.createdUsers.length > 0 || summary.refreshedUsers > 0;
+      const resultMessages = [
+        summary.createdUsers.length > 0
+          ? intl.formatMessage(
+              {
+                id: 'plexImport.resultCreated',
+                defaultMessage:
+                  'Created {count, plural, one {# Plex user} other {# Plex users}}',
+              },
+              { count: summary.createdUsers.length }
+            )
+          : null,
+        summary.refreshedUsers > 0
+          ? intl.formatMessage(
+              {
+                id: 'plexImport.resultRefreshed',
+                defaultMessage:
+                  'Updated {count, plural, one {# existing user} other {# existing users}}',
+              },
+              { count: summary.refreshedUsers }
+            )
+          : null,
+        summary.unchangedUsers > 0
+          ? intl.formatMessage(
+              {
+                id: 'plexImport.resultUnchanged',
+                defaultMessage:
+                  '{count, plural, one {# existing Plex user is} other {# existing Plex users are}} already up to date.',
+              },
+              { count: summary.unchangedUsers }
+            )
+          : null,
+      ].filter((message): message is string => message !== null);
+      if (resultMessages.length === 0) {
+        resultMessages.push(
+          syncExisting
+            ? intl.formatMessage({
+                id: 'plexImport.syncNoUsers',
+                defaultMessage: 'No existing Plex users were found to sync.',
+              })
+            : intl.formatMessage({
+                id: 'plexImport.noUsers',
+                defaultMessage: 'No users were imported from Plex.',
+              })
         );
       }
 
       Toast({
-        title: intl.formatMessage(
-          {
-            id: 'plexImport.success',
-            defaultMessage:
-              '{count, plural, one {# Plex user} other {# Plex users}} imported successfully!',
-          },
-          { count: createdUsers.length }
+        title: syncExisting
+          ? intl.formatMessage({
+              id: 'plexImport.syncComplete',
+              defaultMessage: 'Plex sync complete',
+            })
+          : intl.formatMessage({
+              id: 'plexImport.importComplete',
+              defaultMessage: 'Plex import complete',
+            }),
+        message: resultMessages.join('; '),
+        type: hasChanges ? 'success' : 'info',
+        icon: hasChanges ? (
+          <CheckBadgeIcon className="size-7" />
+        ) : (
+          <InformationCircleIcon className="size-7" />
         ),
-        type: 'success',
-        icon: <CheckBadgeIcon className="size-7" />,
       });
 
-      if (onComplete) {
-        onComplete();
-      }
+      onComplete?.();
     } catch {
       Toast({
         title: intl.formatMessage({
@@ -80,7 +139,7 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
         type: 'error',
       });
     } finally {
-      setImporting(false);
+      setActiveAction(null);
     }
   };
 
@@ -123,9 +182,9 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
       onOk={() => {
         importUsers();
       }}
-      okDisabled={isImporting || !selectedUsers.length}
+      okDisabled={activeAction !== null || !selectedUsers.length}
       okText={
-        isImporting
+        activeAction === 'import'
           ? intl.formatMessage({
               id: 'plexImport.importing',
               defaultMessage: 'Importing…',
@@ -135,6 +194,20 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
               defaultMessage: 'Import',
             })
       }
+      onSecondary={() => importUsers(true)}
+      secondaryDisabled={activeAction !== null}
+      secondaryText={
+        activeAction === 'sync'
+          ? intl.formatMessage({
+              id: 'plexImport.syncing',
+              defaultMessage: 'Syncing…',
+            })
+          : intl.formatMessage({
+              id: 'plexImport.syncExisting',
+              defaultMessage: 'Sync Existing',
+            })
+      }
+      secondaryButtonType="accent"
       onCancel={onCancel}
       show={show}
     >
@@ -272,7 +345,12 @@ const PlexImportModal = ({ onCancel, onComplete, show }: PlexImportProps) => {
             />
           }
           type="info"
-        />
+        >
+          <FormattedMessage
+            id="plexImport.syncHint"
+            defaultMessage="Use Sync Existing to refresh linked Plex users."
+          />
+        </Alert>
       )}
     </Modal>
   );
