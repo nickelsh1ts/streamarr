@@ -8,7 +8,9 @@ RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini && 
 
 FROM base AS builder
 
-RUN npm install -g corepack --force && corepack enable
+# Toolchain for node-gyp fallback when native prebuilds are unavailable
+RUN apk add --no-cache python3 make g++ \
+  && npm install -g corepack --force && corepack enable
 
 WORKDIR /app
 
