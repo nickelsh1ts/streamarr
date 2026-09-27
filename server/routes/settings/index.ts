@@ -1670,8 +1670,10 @@ settingsRoutes.get('/about', settingsAboutLimiter, async (req, res) => {
 settingsRoutes.get(
   '/about/diskspace',
   settingsAboutDiskSpaceLimiter,
-  async (_req, res) => {
-    const diskSpace = await getCachedConfigDiskSpace(appDataPath());
+  async (req, res) => {
+    const diskSpace = await getCachedConfigDiskSpace(appDataPath(), {
+      force: req.query.force === 'true',
+    });
     res.status(200).json(diskSpace as SettingsAboutDiskSpaceResponse);
   }
 );

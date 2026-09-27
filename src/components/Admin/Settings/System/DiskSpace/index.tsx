@@ -1,14 +1,21 @@
 import Alert from '@app/components/Common/Alert';
+import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import ProgressBar from '@app/components/Common/ProgressBar';
+import { momentWithLocale as moment } from '@app/utils/momentLocale';
 import { formatBytes } from '@app/utils/numberHelper';
 import {
+  ArrowPathIcon,
   ArrowTurnDownRightIcon,
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/solid';
-import type { SettingsAboutDiskSpaceResponse } from '@server/interfaces/api/settingsInterfaces';
-import { useCallback, useMemo, useState } from 'react';
+import type {
+  DiskSpaceItem,
+  SettingsAboutDiskSpaceResponse,
+} from '@server/interfaces/api/settingsInterfaces';
+import axios from 'axios';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 
@@ -16,7 +23,7 @@ interface DiskSpaceProps {
   appDataPath: string;
 }
 
-const ROOT_NODE_KEY = '__root__';
+const ROOT_KEY = 'root';
 
 const getDiskSpaceColor = (
   usedPercent: number
@@ -26,26 +33,24 @@ const getDiskSpaceColor = (
   return 'primary';
 };
 
-const normalizePath = (p: string): string => p.replace(/\/+$/, '') || '/';
-
-interface ExpandButtonProps {
-  hasChildren: boolean;
-  isExpanded: boolean;
-  onToggle: () => void;
-}
-
 const ExpandButton = ({
   hasChildren,
   isExpanded,
   onToggle,
-}: ExpandButtonProps) => {
+}: {
+  hasChildren: boolean;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) => {
   const intl = useIntl();
-  if (!hasChildren) return null;
+  if (!hasChildren) return <span className="size-5 shrink-0" />;
+
   return (
     <button
       type="button"
       className="text-neutral hover:text-base-content rounded p-0.5 transition hover:cursor-pointer"
       onClick={onToggle}
+      aria-expanded={isExpanded}
       aria-label={
         isExpanded
           ? intl.formatMessage({
@@ -67,17 +72,13 @@ const ExpandButton = ({
   );
 };
 
-interface DiskMetricsProps {
-  freeBytes: number;
-  usedBytes: number;
-  totalBytes: number;
-}
-
-const DiskMetrics = ({
-  freeBytes,
-  usedBytes,
-  totalBytes,
-}: DiskMetricsProps) => (
+const CapacityMetrics = ({
+  item,
+  isFilesystem,
+}: {
+  item: DiskSpaceItem;
+  isFilesystem: boolean;
+}) => (
   <div className="grid grid-cols-3 gap-2 text-sm md:col-span-6 md:text-right">
     <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
       <span className="text-neutral text-xs md:hidden">
@@ -86,7 +87,7 @@ const DiskMetrics = ({
           defaultMessage="Free Space"
         />
       </span>
-      <span className="text-base-content">{formatBytes(freeBytes)}</span>
+      <span className="text-base-content">{formatBytes(item.freeBytes)}</span>
     </div>
     <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
       <span className="text-neutral text-xs md:hidden">
@@ -95,7 +96,11 @@ const DiskMetrics = ({
           defaultMessage="Used Space"
         />
       </span>
-      <span className="text-base-content">{formatBytes(usedBytes)}</span>
+      <span className="text-base-content">
+        {formatBytes(
+          isFilesystem ? item.usedBytes : (item.directoryBytes ?? 0)
+        )}
+      </span>
     </div>
     <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
       <span className="text-neutral text-xs md:hidden">
@@ -104,141 +109,145 @@ const DiskMetrics = ({
           defaultMessage="Total Space"
         />
       </span>
-      <span className="text-base-content">{formatBytes(totalBytes)}</span>
+      <span className="text-base-content">{formatBytes(item.totalBytes)}</span>
     </div>
   </div>
 );
 
 const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
   const intl = useIntl();
-
-  const { data, error } = useSWR<SettingsAboutDiskSpaceResponse>(
+  const [now, setNow] = useState(() => Date.now());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data, error, mutate } = useSWR<SettingsAboutDiskSpaceResponse>(
     '/api/v1/settings/about/diskspace',
     { revalidateOnFocus: false }
   );
 
-  const diskSpaceItems = useMemo(() => data?.items ?? [], [data]);
-  const failedPaths = data?.failedPaths ?? [];
-  const appDataNorm = normalizePath(appDataPath);
-  const hasDiskSpaceWarning =
-    !!error ||
-    failedPaths.length > 0 ||
-    (!!data && diskSpaceItems.length === 0);
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(
-    () => new Set([ROOT_NODE_KEY])
+  const refreshDiskSpace = async () => {
+    setIsRefreshing(true);
+    try {
+      const { data: freshDiskSpace } =
+        await axios.get<SettingsAboutDiskSpaceResponse>(
+          '/api/v1/settings/about/diskspace?force=true'
+        );
+      mutate(freshDiskSpace, { revalidate: false });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const items = data?.items ?? [];
+  const rootItem = items.find((item) => item.kind === 'filesystem');
+  const configItem = items.find(
+    (item) => item.kind === 'directory' && item.path === appDataPath
   );
-
+  const childItems = items
+    .filter((item) => item.kind === 'directory' && item.path !== appDataPath)
+    .sort((a, b) => a.path.localeCompare(b.path));
+  const [expandedRows, setExpandedRows] = useState(() => new Set([ROOT_KEY]));
   const toggleRow = useCallback((key: string) => {
-    setExpandedRows((prev) => {
-      const next = new Set(prev);
-      if (!next.delete(key)) next.add(key);
+    setExpandedRows((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }, []);
+  const rows = useMemo(
+    () => [
+      ...(rootItem
+        ? [
+            {
+              item: rootItem,
+              key: ROOT_KEY,
+              label: '/',
+              parentKey: null,
+              isFilesystem: true,
+              usagePercent: rootItem.usedPercent,
+            },
+          ]
+        : []),
+      ...(configItem
+        ? [
+            {
+              item: configItem,
+              key: appDataPath,
+              label: 'config',
+              parentKey: ROOT_KEY,
+              isFilesystem: false,
+              usagePercent: configItem.directoryPercent ?? 0,
+            },
+          ]
+        : []),
+      ...childItems.map((item) => ({
+        item,
+        key: item.path,
+        label: `/${item.name === 'Database' ? 'db' : item.name.toLowerCase()}`,
+        parentKey: appDataPath,
+        isFilesystem: false,
+        usagePercent:
+          configItem?.directoryBytes && configItem.directoryBytes > 0
+            ? ((item.directoryBytes ?? 0) / configItem.directoryBytes) * 100
+            : 0,
+      })),
+    ],
+    [appDataPath, childItems, configItem, rootItem]
+  );
+  const hasDiskSpaceWarning =
+    !!error || (data?.failedPaths.length ?? 0) > 0 || (!!data && !rootItem);
 
-  const { rootDiskItem, diskRows, rootPath } = useMemo(() => {
-    const calculateRootPath = (
-      appDataPath: string,
-      mountPoint?: string
-    ): string => {
-      if (mountPoint === '/') return '/';
-      if (appDataPath === '/') return '/';
-      const parts = appDataPath.split('/').filter(Boolean);
-      return '/' + parts.slice(0, -1).join('/');
-    };
+  const isVisible = (row: (typeof rows)[number]): boolean => {
+    let parentKey = row.parentKey;
 
-    const appDataDirLabel =
-      appDataNorm === '/'
-        ? '/'
-        : `/${appDataNorm.split('/').pop() ?? 'config'}`;
+    while (parentKey) {
+      if (!expandedRows.has(parentKey)) return false;
 
-    const appDataItem =
-      diskSpaceItems.find((d) => normalizePath(d.path) === appDataNorm) ?? null;
-    const appDataUsedBytes = appDataItem?.pathUsedBytes ?? 0;
-    const rootDiskItem = appDataItem ?? diskSpaceItems[0] ?? null;
+      const parentRow = rows.find((candidate) => candidate.key === parentKey);
+      parentKey = parentRow?.parentKey ?? null;
+    }
 
-    const rootPath = calculateRootPath(appDataNorm, rootDiskItem?.mountPoint);
-
-    const diskRows = diskSpaceItems.map((disk) => {
-      const path = normalizePath(disk.path);
-      const isAppDataRow = path === appDataNorm;
-      // The backend only sends immediate subdirectories, so a direct prefix
-      // check is sufficient — no need to walk the full ancestor chain.
-      const isSubDir =
-        !isAppDataRow &&
-        appDataNorm !== '/' &&
-        path.startsWith(`${appDataNorm}/`);
-
-      const displayPath = isAppDataRow
-        ? appDataDirLabel
-        : isSubDir
-          ? `/${disk.name}`
-          : disk.mountPoint;
-
-      const usedBytes =
-        isAppDataRow || isSubDir ? disk.pathUsedBytes : disk.usedBytes;
-      const contextTotal = isAppDataRow
-        ? disk.usedBytes
-        : isSubDir
-          ? appDataUsedBytes
-          : disk.totalBytes;
-      const totalBytes = contextTotal > 0 ? contextTotal : disk.totalBytes;
-      const usedPercent =
-        totalBytes > 0 ? Math.min((usedBytes / totalBytes) * 100, 100) : 0;
-
-      const parentKey = isAppDataRow
-        ? ROOT_NODE_KEY
-        : isSubDir
-          ? appDataNorm
-          : null;
-
-      return {
-        disk,
-        rowKey: path,
-        parentKey,
-        isChild: isAppDataRow || isSubDir,
-        displayPath,
-        usedBytes,
-        totalBytes,
-        usedPercent,
-      };
-    });
-
-    return { rootDiskItem, diskRows, rootPath };
-  }, [diskSpaceItems, appDataNorm]);
-
-  const childCountByParent = useMemo(() => {
-    const map = new Map<string, number>();
-    diskRows.forEach(({ parentKey }) => {
-      if (parentKey) map.set(parentKey, (map.get(parentKey) ?? 0) + 1);
-    });
-    return map;
-  }, [diskRows]);
-
-  // Two-level hierarchy: ROOT_NODE_KEY → appData row → subDir rows.
-  // A row is visible iff every ancestor key is expanded.
-  const isRowVisible = (parentKey: string | null): boolean => {
-    if (!parentKey) return true;
-    if (!expandedRows.has(parentKey)) return false;
-    // subDir rows have appDataNorm as parent; also check ROOT_NODE_KEY
-    return parentKey === ROOT_NODE_KEY || expandedRows.has(ROOT_NODE_KEY);
+    return true;
   };
-
-  const rootUsedPercent =
-    rootDiskItem && rootDiskItem.totalBytes > 0
-      ? (rootDiskItem.usedBytes / rootDiskItem.totalBytes) * 100
-      : 0;
 
   return (
     <div className="mt-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-2xl font-extrabold">
+      <div className="flex flex-wrap items-center justify-between gap-x-2">
+        <h3 className="text-2xl font-extrabold">
           <FormattedMessage
             id="systemSettings.diskSpace.title"
             defaultMessage="Disk Space"
           />
         </h3>
+        <div className="flex items-center gap-3">
+          {data?.cachedAt && (
+            <span className="text-neutral text-xs">
+              <FormattedMessage
+                id="cache.lastUpdated"
+                defaultMessage="Updated {time}"
+                values={{ time: moment(data.cachedAt).from(now) }}
+              />
+            </span>
+          )}
+          <Button
+            type="button"
+            buttonSize="xs"
+            buttonType="ghost"
+            disabled={isRefreshing}
+            onClick={() => refreshDiskSpace()}
+          >
+            <ArrowPathIcon
+              className={`size-5 ${isRefreshing ? 'animate-spin' : ''}`}
+            />
+            <span className="sr-only">
+              <FormattedMessage id="cache.refresh" defaultMessage="Refresh" />
+            </span>
+          </Button>
+        </div>
       </div>
       {!data && !error && <LoadingEllipsis />}
       {hasDiskSpaceWarning && (
@@ -249,12 +258,10 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
             defaultMessage: 'Some disk metrics are unavailable',
           })}
         >
-          <span>
-            <FormattedMessage
-              id="systemSettings.diskSpace.warningBody"
-              defaultMessage="Streamarr could not read every configured local path. Available disk usage is shown below."
-            />
-          </span>
+          <FormattedMessage
+            id="systemSettings.diskSpace.warningBody"
+            defaultMessage="Streamarr could not read every configured local path. Available disk usage is shown below."
+          />
         </Alert>
       )}
       {(data || error) && (
@@ -286,91 +293,59 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
             </span>
             <span className="col-span-2" />
           </div>
-          <div>
-            {rootDiskItem && (
-              <div className="bg-base-200/50 hover:bg-base-200/30 grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
-                <div className="min-w-0 md:col-span-4">
-                  <span className="text-base-content flex items-center gap-2 text-sm">
-                    <ExpandButton
-                      hasChildren={childCountByParent.has(ROOT_NODE_KEY)}
-                      isExpanded={expandedRows.has(ROOT_NODE_KEY)}
-                      onToggle={() => toggleRow(ROOT_NODE_KEY)}
-                    />
-                    <span className="min-w-0 truncate font-mono">
-                      {rootPath}
-                    </span>
-                  </span>
-                </div>
-                <DiskMetrics
-                  freeBytes={rootDiskItem.freeBytes}
-                  usedBytes={rootDiskItem.usedBytes}
-                  totalBytes={rootDiskItem.totalBytes}
-                />
-                <div className="md:col-span-2">
-                  <ProgressBar
-                    progress={rootUsedPercent}
-                    color={getDiskSpaceColor(rootUsedPercent)}
-                    showPercentage={false}
-                    size="sm"
-                  />
-                </div>
-              </div>
-            )}
-            {diskRows.map((row) => {
-              const hasChildren = childCountByParent.has(row.rowKey);
-              const isExpanded = expandedRows.has(row.rowKey);
-              const isVisible = isRowVisible(row.parentKey);
-              return (
-                <div
-                  key={`${row.disk.deviceId}-${row.disk.path}`}
-                  className={`bg-base-200/50 hover:bg-base-200/30 overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
-                    isVisible
-                      ? 'border-base-content/10 max-h-40 translate-y-0 border-t opacity-100'
-                      : 'pointer-events-none max-h-0 -translate-y-1 opacity-0'
-                  }`}
-                >
-                  <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
-                    <div className="min-w-0 md:col-span-4">
-                      <span
-                        className={`text-base-content flex items-center gap-2 text-sm ${
-                          !row.isChild
-                            ? ''
-                            : row.parentKey === ROOT_NODE_KEY
-                              ? 'pl-4'
-                              : 'pl-16'
-                        }`}
-                      >
-                        <ExpandButton
-                          hasChildren={hasChildren}
-                          isExpanded={isExpanded}
-                          onToggle={() => toggleRow(row.rowKey)}
-                        />
-                        {row.isChild && (
-                          <ArrowTurnDownRightIcon className="text-neutral size-5 shrink-0" />
-                        )}
-                        <span className="min-w-0 truncate font-mono">
-                          {row.displayPath}
-                        </span>
-                      </span>
-                    </div>
-                    <DiskMetrics
-                      freeBytes={row.disk.freeBytes}
-                      usedBytes={row.usedBytes}
-                      totalBytes={row.totalBytes}
-                    />
-                    <div className="md:col-span-2">
-                      <ProgressBar
-                        progress={row.usedPercent}
-                        color={getDiskSpaceColor(row.usedPercent)}
-                        showPercentage={false}
-                        size="sm"
+          {rows.map((row) => {
+            const visible = isVisible(row);
+            const hasChildren = rows.some(
+              (child) => child.parentKey === row.key
+            );
+            const isExpanded = expandedRows.has(row.key);
+            return (
+              <div
+                key={row.key}
+                className={`bg-base-200/50 hover:bg-base-200/30 overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none ${
+                  visible
+                    ? 'border-base-content/10 max-h-40 translate-y-0 border-t opacity-100'
+                    : 'pointer-events-none max-h-0 -translate-y-1 opacity-0'
+                }`}
+              >
+                <div className="grid grid-cols-1 gap-3 px-3 py-3 md:grid-cols-12 md:items-center">
+                  <div className="min-w-0 md:col-span-4">
+                    <span
+                      className={`text-base-content flex items-center gap-2 truncate font-mono text-sm ${
+                        row.parentKey === appDataPath
+                          ? 'pl-8'
+                          : row.parentKey
+                            ? 'pl-4'
+                            : ''
+                      }`}
+                    >
+                      <ExpandButton
+                        hasChildren={hasChildren}
+                        isExpanded={isExpanded}
+                        onToggle={() => toggleRow(row.key)}
                       />
-                    </div>
+                      {row.parentKey === appDataPath && (
+                        <ArrowTurnDownRightIcon className="text-neutral size-5 shrink-0" />
+                      )}
+                      {row.label}
+                    </span>
+                  </div>
+                  <CapacityMetrics
+                    item={row.item}
+                    isFilesystem={row.isFilesystem}
+                  />
+                  <div className="md:col-span-2">
+                    <ProgressBar
+                      progress={Math.min(row.usagePercent, 100)}
+                      color={getDiskSpaceColor(row.usagePercent)}
+                      showPercentage={false}
+                      size="sm"
+                    />
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

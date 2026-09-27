@@ -19,8 +19,11 @@ export class PathSizeTimeoutError extends Error {
   }
 }
 
-export const getPathUsedBytes = (targetPath: string): Promise<number> =>
-  diskScanQueue.enqueue(() => getPathUsedBytesUnqueued(targetPath));
+export const getPathUsedBytes = (
+  targetPath: string,
+  maxWaitMs = RECURSIVE_WALK_TIMEOUT_MS
+): Promise<number> =>
+  diskScanQueue.enqueue(() => getPathUsedBytesUnqueued(targetPath), maxWaitMs);
 
 const getPathUsedBytesUnqueued = async (
   targetPath: string

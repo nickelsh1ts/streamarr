@@ -141,6 +141,14 @@ class ImageProxy {
   ): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
+    try {
+      await promises.lstat(cacheDirectory);
+    } catch (e) {
+      if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+        return { size: 0, imageCount: 0 };
+      }
+    }
+
     const [imageTotalSize, imageCount] = await Promise.all([
       getPathUsedBytes(cacheDirectory).catch((e) => {
         logger.warn('Failed to calculate image cache size', {

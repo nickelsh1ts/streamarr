@@ -5943,10 +5943,16 @@ paths:
     get:
       summary: Get disk space usage
       description: >-
-        Returns disk usage for the application data directory and its immediate
-        subdirectories. Results are cached server-side for a short period.
+        Returns root filesystem capacity and Streamarr config directory sizes.
+        Results are cached server-side for a short period unless forced.
       tags:
         - settings
+      parameters:
+        - in: query
+          name: force
+          schema:
+            type: boolean
+          description: Recalculate disk usage instead of using the cached result.
       responses:
         '200':
           description: Disk space usage
@@ -5955,11 +5961,17 @@ paths:
               schema:
                 type: object
                 properties:
+                  cachedAt:
+                    type: number
+                    example: 1760000000000
                   items:
                     type: array
                     items:
                       type: object
                       properties:
+                        kind:
+                          type: string
+                          enum: [filesystem, directory]
                         deviceId:
                           type: string
                           example: '2064'
@@ -5972,9 +5984,13 @@ paths:
                         mountPoint:
                           type: string
                           example: /
-                        pathUsedBytes:
+                        directoryBytes:
                           type: number
                           example: 104857600
+                        directoryPercent:
+                          type: number
+                          format: float
+                          example: 5
                         totalBytes:
                           type: number
                           example: 249108103168
