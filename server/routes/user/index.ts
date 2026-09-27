@@ -202,7 +202,9 @@ router.post(
         generatedPassword = await user.generatePassword();
       }
 
-      await userRepository.save(user);
+      await userRepository.save(user, {
+        data: { suppressCreatedNotification: true },
+      });
 
       if (generatedPassword) {
         const { applicationTitle, applicationUrl } = getSettings().main;
@@ -971,7 +973,9 @@ router.post(
               avatar: account.thumb,
               userType: UserType.PLEX,
             });
-            await userRepository.save(newUser);
+            await userRepository.save(newUser, {
+              data: { suppressCreatedNotification: true },
+            });
             createdUsers.push(newUser);
           }
         }
