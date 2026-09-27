@@ -36,7 +36,7 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Image Cache Cleanup', {
         label: 'Jobs',
       });
-      ImageProxy.clearCache(['tmdb', 'plex', 'avatar']);
+      ImageProxy.clearCache(['tmdb', 'tvdb', 'plex', 'avatar']);
     }),
     running: () => ImageProxy.status().running,
     cancelFn: () => ImageProxy.cancel(),
