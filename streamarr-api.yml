@@ -5227,6 +5227,15 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                      tvdb:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 123
                       plex:
                         type: object
                         properties:
