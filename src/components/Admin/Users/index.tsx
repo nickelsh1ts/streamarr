@@ -12,6 +12,7 @@ import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Table from '@app/components/Common/Table';
 import ToolTip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
+import useDebouncedState from '@app/hooks/useDebouncedState';
 import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
@@ -22,6 +23,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   InboxArrowDownIcon,
+  MagnifyingGlassIcon,
   PencilIcon,
   UserPlusIcon,
   XCircleIcon,
@@ -36,7 +38,7 @@ import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
 import validator from 'validator';
@@ -76,6 +78,8 @@ const AdminUsers = () => {
   const [currentPageSize, setCurrentPageSize] = useState<number>(
     () => getStoredUserFilterSettings().currentPageSize ?? 10
   );
+  const [searchFilter, debouncedSearchFilter, setSearchFilter] =
+    useDebouncedState('');
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageIndex = page - 1;
@@ -90,14 +94,26 @@ const AdminUsers = () => {
     [pathname, router, searchParams]
   );
 
+  const userQueryParams = new URLSearchParams({
+    take: currentPageSize.toString(),
+    skip: (pageIndex * currentPageSize).toString(),
+    sort: currentSort,
+    sortDirection: currentSortDirection,
+  });
+  const normalizedSearch = debouncedSearchFilter.trim();
+  if (normalizedSearch) {
+    userQueryParams.set('search', normalizedSearch);
+  }
+
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR<UserResultsResponse>(
-    `/api/v1/user?take=${currentPageSize}&skip=${
-      pageIndex * currentPageSize
-    }&sort=${currentSort}&sortDirection=${currentSortDirection}`
+    `/api/v1/user?${userQueryParams.toString()}`,
+    {
+      keepPreviousData: true,
+    }
   );
 
   const [isDeleting, setDeleting] = useState(false);
@@ -115,6 +131,19 @@ const AdminUsers = () => {
   });
   const [showBulkEditModal, setShowBulkEditModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const previousSearch = useRef(debouncedSearchFilter);
+
+  useEffect(() => {
+    if (previousSearch.current === debouncedSearchFilter) return;
+
+    previousSearch.current = debouncedSearchFilter;
+    setSelectedUsers([]);
+    if (page !== 1) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', '1');
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+  }, [debouncedSearchFilter, page, pathname, router, searchParams]);
 
   useEffect(() => {
     window.localStorage.setItem(
@@ -494,15 +523,15 @@ const AdminUsers = () => {
           revalidate();
         }}
       />
-      <div className="flex flex-col justify-between lg:flex-row lg:items-end">
+      <div className="flex flex-col flex-wrap justify-between gap-2 lg:flex-row lg:items-end">
         <Header>
           <FormattedMessage id="users.title" defaultMessage="User List" />
         </Header>
-        <div className="mt-2 flex grow flex-col lg:grow-0 lg:flex-row">
-          <div className="mb-2 flex grow flex-col justify-between sm:flex-row lg:mb-0 lg:grow-0">
+        <div className="mt-2 flex grow flex-col gap-2 lg:grow-0 lg:flex-row">
+          <div className="mb-2 flex grow flex-col justify-between gap-2 sm:flex-row lg:mb-0 lg:grow-0">
             <Button
               buttonSize="sm"
-              className="mb-2 grow sm:mr-2 sm:mb-0"
+              className="mb-2 grow sm:mb-0"
               buttonType="primary"
               data-testid="create-user-button"
               onClick={() => setCreateModal({ isOpen: true })}
@@ -518,7 +547,7 @@ const AdminUsers = () => {
             {currentHasPermission(Permission.ADMIN) && (
               <Button
                 buttonSize="sm"
-                className="grow lg:mr-2"
+                className="grow"
                 buttonType="primary"
                 data-testid="import-plex-button"
                 onClick={() => setShowImportModal(true)}
@@ -532,6 +561,28 @@ const AdminUsers = () => {
                 </span>
               </Button>
             )}
+          </div>
+          <div className="mb-2 flex grow lg:mb-0 lg:grow-0">
+            <label htmlFor="user-search" className="sr-only">
+              <FormattedMessage
+                id="users.searchUsers"
+                defaultMessage="Search Users"
+              />
+            </label>
+            <span className="border-primary bg-base-100 inline-flex cursor-default items-center rounded-l-md border border-r-0 px-3 text-sm">
+              <MagnifyingGlassIcon className="size-5" aria-hidden="true" />
+            </span>
+            <input
+              id="user-search"
+              type="search"
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              placeholder={intl.formatMessage({
+                id: 'users.searchUsers',
+                defaultMessage: 'Search Users',
+              })}
+              className="input input-primary input-sm w-full rounded-l-none"
+            />
           </div>
           <div className="mb-2 flex grow lg:mb-0 lg:grow-0">
             <ToolTip

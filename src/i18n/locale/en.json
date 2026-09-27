@@ -6410,6 +6410,9 @@
   "users.localSignInDisabled": {
     "defaultMessage": "The Enable Local Sign-In setting is currently disabled."
   },
+  "users.searchUsers": {
+    "defaultMessage": "Search Users"
+  },
   "users.sortInviteCount": {
     "defaultMessage": "Invite Count"
   },
