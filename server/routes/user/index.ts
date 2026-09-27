@@ -11,6 +11,8 @@ import { getRepository } from '@server/datasource';
 import { User } from '@server/entity/User';
 import { UserPushSubscription } from '@server/entity/UserPushSubscription';
 import type {
+  PushSubscriptionDevice,
+  PushSubscriptionValidation,
   QuotaResponse,
   UserBulkUpdateResponse,
   UserInvitesResponse,
@@ -22,6 +24,12 @@ import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import ImageProxy from '@server/lib/imageproxy';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
+import {
+  hasValidPushKeys,
+  isSupportedPushEndpoint,
+  MAX_PUSH_SUBSCRIPTIONS_PER_USER,
+  MAX_PUSH_USER_AGENT_LENGTH,
+} from '@server/lib/pushSubscription';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -42,7 +50,7 @@ import {
 } from '@server/utils/sharedLibraries';
 import crypto from 'crypto';
 import path from 'path';
-import { In, Not } from 'typeorm';
+import { In } from 'typeorm';
 import userOnboardingRoutes from './onboarding';
 import userSettingsRoutes from './usersettings';
 
@@ -239,102 +247,103 @@ router.post(
 router.post<
   never,
   unknown,
-  { endpoint: string; p256dh: string; auth: string; userAgent: string }
->('/registerPushSubscription', async (req, res, next) => {
+  {
+    endpoint: string;
+    previousEndpoint?: string;
+    p256dh: string;
+    auth: string;
+    userAgent?: string;
+  }
+>('/registerPushSubscription', isAuthenticated(), async (req, res, next) => {
   try {
-    await getRepository(UserPushSubscription).manager.transaction(
-      async (transactionalEntityManager) => {
-        const transactionalRepo =
-          transactionalEntityManager.getRepository(UserPushSubscription);
+    const { endpoint, previousEndpoint, p256dh, auth, userAgent } = req.body;
+    if (
+      !isSupportedPushEndpoint(endpoint) ||
+      (previousEndpoint && !isSupportedPushEndpoint(previousEndpoint)) ||
+      !hasValidPushKeys(p256dh, auth) ||
+      (userAgent !== undefined &&
+        (typeof userAgent !== 'string' ||
+          userAgent.length > MAX_PUSH_USER_AGENT_LENGTH))
+    ) {
+      return res.status(400).json({ message: 'Invalid push subscription.' });
+    }
 
-        const existingSubscription = await transactionalRepo.findOne({
-          relations: { user: true },
-          where: [
-            { auth: req.body.auth, user: { id: req.user?.id } },
-            { endpoint: req.body.endpoint, user: { id: req.user?.id } },
-          ],
-        });
+    const registrationResult = await getRepository(
+      UserPushSubscription
+    ).manager.transaction(async (transactionalEntityManager) => {
+      const transactionalRepo =
+        transactionalEntityManager.getRepository(UserPushSubscription);
+      const existingEndpointSubscriptions = await transactionalRepo.find({
+        relations: { user: true },
+        where: { endpoint },
+      });
+      const existingSubscription = existingEndpointSubscriptions.find(
+        (subscription) => subscription.user.id === req.user.id
+      );
+      const previousSubscription =
+        !existingSubscription && previousEndpoint
+          ? await transactionalRepo.findOne({
+              relations: { user: true },
+              where: { endpoint: previousEndpoint, user: { id: req.user.id } },
+            })
+          : null;
+      const authSubscription =
+        !existingSubscription && !previousSubscription
+          ? await transactionalRepo.findOne({
+              relations: { user: true },
+              where: { auth, user: { id: req.user.id } },
+            })
+          : null;
+      const subscriptionToUpdate =
+        existingSubscription ?? previousSubscription ?? authSubscription;
+      const subscriptionsOwnedByOtherUsers =
+        existingEndpointSubscriptions.filter(
+          (subscription) => subscription.user.id !== req.user.id
+        );
 
-        if (existingSubscription) {
-          const updateSubscription = async (
-            scenario: 'auth-rotated' | 'endpoint-rotated'
-          ) => {
-            if (scenario === 'auth-rotated') {
-              existingSubscription.auth = req.body.auth;
-            } else {
-              existingSubscription.endpoint = req.body.endpoint;
-            }
-
-            existingSubscription.p256dh = req.body.p256dh;
-            existingSubscription.userAgent = req.body.userAgent;
-
-            await transactionalRepo.save(existingSubscription);
-
-            const message =
-              scenario === 'auth-rotated'
-                ? 'Updated push subscription with new keys for same endpoint.'
-                : 'Updated push subscription with new endpoint for same auth key.';
-
-            logger.debug(message, { label: 'API' });
-          };
-
-          if (
-            existingSubscription.endpoint === req.body.endpoint &&
-            existingSubscription.auth !== req.body.auth
-          ) {
-            // Same endpoint, keys rotated — update auth/p256dh
-            await updateSubscription('auth-rotated');
-            return;
-          }
-
-          if (
-            existingSubscription.auth === req.body.auth &&
-            existingSubscription.endpoint !== req.body.endpoint
-          ) {
-            // Same auth key, endpoint URL rotated — update endpoint/p256dh
-            await updateSubscription('endpoint-rotated');
-            return;
-          }
-
-          logger.debug(
-            'Duplicate subscription detected. Skipping registration.',
-            {
-              label: 'API',
-            }
-          );
-          return;
+      if (subscriptionToUpdate) {
+        if (subscriptionsOwnedByOtherUsers.length > 0) {
+          await transactionalRepo.remove(subscriptionsOwnedByOtherUsers);
         }
 
-        if (req.body.userAgent) {
-          const staleSubscriptions = await transactionalRepo.find({
-            relations: { user: true },
-            where: {
-              userAgent: req.body.userAgent,
-              user: { id: req.user?.id },
-              endpoint: Not(req.body.endpoint),
-            },
-          });
+        subscriptionToUpdate.endpoint = endpoint;
+        subscriptionToUpdate.p256dh = p256dh;
+        subscriptionToUpdate.auth = auth;
+        subscriptionToUpdate.userAgent = userAgent ?? null;
+        await transactionalRepo.save(subscriptionToUpdate);
 
-          if (staleSubscriptions.length > 0) {
-            await transactionalRepo.remove(staleSubscriptions);
-            logger.debug(
-              `Removed ${staleSubscriptions.length} stale push subscription(s) from same device.`,
-              { label: 'API' }
-            );
-          }
-        }
-
-        const userPushSubscription = new UserPushSubscription({
-          auth: req.body.auth,
-          endpoint: req.body.endpoint,
-          p256dh: req.body.p256dh,
-          userAgent: req.body.userAgent,
-          user: req.user,
-        });
-
-        await transactionalRepo.save(userPushSubscription);
+        return 'registered' as const;
       }
-    );
+
+      const subscriptionCount = await transactionalRepo.count({
+        where: { user: { id: req.user.id } },
+      });
+      if (subscriptionCount >= MAX_PUSH_SUBSCRIPTIONS_PER_USER) {
+        return 'limit-reached' as const;
+      }
+
+      if (subscriptionsOwnedByOtherUsers.length > 0) {
+        await transactionalRepo.remove(subscriptionsOwnedByOtherUsers);
+      }
+
+      await transactionalRepo.save(
+        new UserPushSubscription({
+          endpoint,
+          p256dh,
+          auth,
+          userAgent: userAgent ?? null,
+          user: req.user,
+        })
+      );
+
+      return 'registered' as const;
+    });
+
+    if (registrationResult === 'limit-reached') {
+      return res.status(409).json({
+        message: `A user can have at most ${MAX_PUSH_SUBSCRIPTIONS_PER_USER} push subscriptions.`,
+      });
+    }
 
     return res.status(204).send();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -344,7 +353,7 @@ router.post<
   }
 });
 
-router.get<{ userId: number }>(
+router.get<{ userId: number }, PushSubscriptionDevice[]>(
   '/:userId/pushSubscriptions',
   async (req, res, next) => {
     try {
@@ -362,11 +371,17 @@ router.get<{ userId: number }>(
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSubs = await userPushSubRepository.find({
-        relations: { user: true },
-        where: { user: { id: req.params.userId } },
+        loadEagerRelations: false,
+        where: { user: { id: Number(req.params.userId) } },
       });
 
-      res.status(200).json(userPushSubs);
+      res.status(200).json(
+        userPushSubs.map(({ endpoint, userAgent, createdAt }) => ({
+          endpoint,
+          userAgent: userAgent ?? null,
+          createdAt: createdAt ?? null,
+        }))
+      );
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       next({ status: 404, message: 'User subscriptions not found.' });
@@ -374,29 +389,32 @@ router.get<{ userId: number }>(
   }
 );
 
-router.get<{ userId: number; key: string }>(
+router.get<{ userId: number; key: string }, PushSubscriptionValidation>(
   '/:userId/pushSubscription/:key',
   async (req, res, next) => {
     try {
-      if (
-        !req.user?.hasPermission(Permission.MANAGE_USERS) &&
-        req.user?.id !== Number(req.params.userId)
-      ) {
+      if (req.user?.id !== Number(req.params.userId)) {
         return next({
           status: 403,
-          message:
-            "You do not have permission to view this user's subscription.",
+          message: 'You can only verify your own push subscription.',
         });
       }
 
       const userPushSubRepository = getRepository(UserPushSubscription);
 
       const userPushSub = await userPushSubRepository.findOneOrFail({
-        relations: { user: true },
-        where: { user: { id: req.params.userId }, endpoint: req.params.key },
+        loadEagerRelations: false,
+        where: {
+          user: { id: Number(req.params.userId) },
+          endpoint: req.params.key,
+        },
       });
 
-      res.status(200).json(userPushSub);
+      res.status(200).json({
+        endpoint: userPushSub.endpoint,
+        p256dh: userPushSub.p256dh,
+        auth: userPushSub.auth,
+      });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       next({ status: 404, message: 'User subscription not found.' });
