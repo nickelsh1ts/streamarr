@@ -133,6 +133,7 @@
     "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
     "@types/node-schedule": "^2.1.8",
+    "@types/nodemailer": "^8.0.1",
     "@types/prop-types": "^15.7.14",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",
