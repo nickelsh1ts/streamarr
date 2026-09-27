@@ -5726,6 +5726,9 @@
   "signIn.forgotPassword": {
     "defaultMessage": "Wait, I forgot my password"
   },
+  "signIn.invalidCredentials": {
+    "defaultMessage": "Invalid email or password."
+  },
   "signIn.localAccount": {
     "defaultMessage": "Sign in with {applicationTitle}"
   },
