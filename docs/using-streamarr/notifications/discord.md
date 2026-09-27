@@ -26,16 +26,18 @@ You must have the **Manage Webhooks** permission on the Discord server to create
 
 Navigate to **Settings → Notifications → Discord**.
 
-| Setting             | Description                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| **Enabled**         | Enable or disable Discord notifications                            |
-| **Webhook URL**     | The Discord webhook URL copied above                               |
-| **Bot Username**    | Optional override for the name shown on posted messages            |
-| **Bot Avatar URL**  | Optional override for the avatar shown on posted messages          |
-| **Enable Mentions** | When enabled, includes a role mention with notifications           |
-| **Webhook Role ID** | The Discord role ID to mention when **Enable Mentions** is enabled |
+| Setting             | Description                                                                |
+| ------------------- | -------------------------------------------------------------------------- |
+| **Enabled**         | Enable or disable Discord notifications                                    |
+| **Webhook URL**     | The Discord webhook URL copied above                                       |
+| **Bot Username**    | Optional override for the name shown on posted messages                    |
+| **Bot Avatar URL**  | Optional override for the avatar shown on posted messages                  |
+| **Enable Mentions** | When enabled, includes a role mention with notifications                   |
+| **Webhook Role ID** | The Discord role ID to mention when **Enable Mentions** is enabled         |
+| **Thread ID**       | Optional thread ID to post notifications in instead of the webhook channel |
 
 To find a role ID, enable **Developer Mode** in Discord (**Settings → Advanced → Developer Mode**), then right-click the role and select **Copy ID**.
+To find a thread ID, enable **Developer Mode**, then right-click the thread and select **Copy ID**. The webhook must be able to post in that thread.
 
 ---
 

@@ -269,6 +269,7 @@ export interface NotificationAgentDiscord extends NotificationAgentConfig {
   options: {
     webhookUrl: string;
     webhookRoleId?: string;
+    webhookThreadId?: string;
     enableMentions: boolean;
     botUsername?: string;
     botAvatarUrl?: string;
@@ -318,6 +319,7 @@ export interface NotificationAgentNtfy extends NotificationAgentConfig {
   options: {
     url: string;
     topic: string;
+    tags?: string;
     authMethod?: 'none' | 'usernamePassword' | 'token';
     username?: string;
     password?: string;
@@ -574,6 +576,7 @@ class Settings {
             enabled: false,
             options: {
               webhookUrl: '',
+              webhookThreadId: '',
               enableMentions: false,
             },
           },
@@ -603,6 +606,7 @@ class Settings {
             options: {
               url: '',
               topic: '',
+              tags: '',
               priority: 3,
             },
           },

@@ -34,6 +34,10 @@ class NtfyAgent extends BroadcastAgent<NotificationAgentNtfy> {
   ): Promise<void> {
     const settings = this.getSettings();
     const baseUrl = settings.options.url.replace(/\/$/, '');
+    const tags = settings.options.tags
+      ?.split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -59,6 +63,7 @@ class NtfyAgent extends BroadcastAgent<NotificationAgentNtfy> {
         title: payload.subject,
         message: payload.message ?? payload.subject,
         priority: settings.options.priority ?? 3,
+        ...(tags?.length ? { tags } : {}),
       },
       { headers }
     );

@@ -23,6 +23,13 @@ const DiscordNotifications = () => {
         }),
         (value) => isValidHttpUrl(value)
       ),
+    webhookThreadId: Yup.string().matches(
+      /^$|^\d{17,20}$/,
+      intl.formatMessage({
+        id: 'notifications.discord.threadIdInvalid',
+        defaultMessage: 'Enter a valid Discord thread ID',
+      })
+    ),
   });
 
   return (
@@ -44,6 +51,16 @@ const DiscordNotifications = () => {
           ),
           type: 'text',
           required: true,
+        },
+        {
+          name: 'webhookThreadId',
+          label: (
+            <FormattedMessage
+              id="notifications.fields.webhookThreadId"
+              defaultMessage="Thread ID"
+            />
+          ),
+          type: 'text',
         },
         {
           name: 'enableMentions',

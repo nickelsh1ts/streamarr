@@ -17,6 +17,7 @@ Navigate to **Settings → Notifications → ntfy**.
 | **Enabled**        | Enable or disable ntfy notifications                                                      |
 | **Server URL**     | The ntfy server URL (for example, `https://ntfy.sh` or your self-hosted URL)              |
 | **Topic**          | The topic to publish notifications to                                                     |
+| **Tags**           | Optional comma-separated ntfy tags                                                        |
 | **Priority**       | Default message priority                                                                  |
 | **Authentication** | How to authenticate with the server: **None**, **Username/Password**, or **Access Token** |
 | **Username**       | Username (when using Username/Password authentication)                                    |
