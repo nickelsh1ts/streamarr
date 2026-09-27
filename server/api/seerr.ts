@@ -281,6 +281,39 @@ class SeerrAPI {
     }
   }
 
+  public async getUserPermissionsByPlexId(
+    plexId: number
+  ): Promise<number | null> {
+    try {
+      const seerrUser = await this.findSeerrUserByPlexId(plexId);
+      if (!seerrUser) {
+        return null;
+      }
+
+      const response = await this.axios.get<{ permissions?: number }>(
+        `/user/${seerrUser.id}/settings/permissions`
+      );
+      const permissions = response.data?.permissions;
+
+      if (
+        typeof permissions !== 'number' ||
+        !Number.isSafeInteger(permissions)
+      ) {
+        throw new Error('Seerr user permissions are missing or invalid.');
+      }
+
+      return permissions;
+    } catch (e) {
+      logger.error('Something went wrong fetching Seerr user permissions', {
+        label: 'Seerr API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error(
+        `[Seerr] Failed to fetch user permissions: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
   public async getRequestsByPlexId(
     plexId: number,
     take: number,
