@@ -71,7 +71,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   public async afterInsert(event: InsertEvent<User>): Promise<void> {
-    if (!event.entity) {
+    if (!event.entity || event.queryRunner.data?.suppressCreatedNotification) {
       return;
     }
 
