@@ -61,6 +61,10 @@ export interface DownloadClientStats {
 export interface DownloadsResponse extends PaginatedResponse {
   results: NormalizedDownloadItem[];
   stats: DownloadClientStats[];
+  filterOptions: {
+    categories: string[];
+    tags: string[];
+  };
 }
 
 export interface DownloadResultsResponse extends PaginatedResponse {

@@ -34,7 +34,7 @@ interface DownloadRowProps {
   torrent: NormalizedDownloadItem;
   onRefresh?: () => void;
   isSelected: boolean;
-  onToggleSelect: (hash: string) => void;
+  onToggleSelect: (torrent: NormalizedDownloadItem, shiftKey: boolean) => void;
   clients: DownloadClientSettings[];
   stats: DownloadClientStats[];
 }
@@ -227,7 +227,12 @@ const DownloadRow: React.FC<DownloadRowProps> = ({
             type="checkbox"
             className="checkbox checkbox-primary checkbox-sm"
             checked={isSelected}
-            onChange={() => onToggleSelect(torrent.hash)}
+            onChange={(event) =>
+              onToggleSelect(
+                torrent,
+                (event.nativeEvent as MouseEvent).shiftKey
+              )
+            }
             onClick={(e) => e.stopPropagation()}
           />
         </td>

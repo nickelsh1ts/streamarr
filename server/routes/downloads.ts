@@ -47,6 +47,15 @@ function getHealthStatus(
 
 const downloadsRoutes = Router();
 
+const getQueryValues = (value: unknown): string[] => {
+  const values = Array.isArray(value) ? value : [value];
+
+  return values
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
 downloadsRoutes.get('/', async (req, res, next) => {
   try {
     const settings = getSettings();
@@ -55,10 +64,15 @@ downloadsRoutes.get('/', async (req, res, next) => {
       pageSize = '25',
       sort = 'addedDate',
       sortDirection = 'desc',
-      filter = '',
+      search = '',
+      category,
+      tag,
       clientId,
       status,
     } = req.query;
+    const categoryFilters = getQueryValues(category);
+    const tagFilters = getQueryValues(tag);
+    const searchTerm = typeof search === 'string' ? search.trim() : '';
 
     const pageNum = parseInt(page as string, 10);
     const pageSizeNum = parseInt(pageSize as string, 10);
@@ -67,6 +81,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
       res.json({
         results: [],
         stats: [],
+        filterOptions: { categories: [], tags: [] },
         pageInfo: {
           pages: 0,
           pageSize: pageSizeNum,
@@ -177,6 +192,23 @@ downloadsRoutes.get('/', async (req, res, next) => {
       );
     }
 
+    const filterOptions = {
+      categories: [
+        ...new Set(
+          filteredTorrents
+            .map((torrent) => torrent.category?.trim())
+            .filter((value): value is string => !!value)
+        ),
+      ].sort((a, b) => a.localeCompare(b)),
+      tags: [
+        ...new Set(
+          filteredTorrents.flatMap((torrent) =>
+            (torrent.tags ?? []).map((value) => value.trim()).filter(Boolean)
+          )
+        ),
+      ].sort((a, b) => a.localeCompare(b)),
+    };
+
     // Filter by status if specified
     if (status) {
       if (status === 'incomplete') {
@@ -199,14 +231,30 @@ downloadsRoutes.get('/', async (req, res, next) => {
     }
 
     // Filter by search term if specified
-    if (filter && typeof filter === 'string' && filter.trim() !== '') {
-      const searchTerm = filter.toLowerCase();
+    if (searchTerm) {
+      const normalizedSearch = searchTerm.toLowerCase();
       filteredTorrents = filteredTorrents.filter(
         (t) =>
-          t.name.toLowerCase().includes(searchTerm) ||
-          t.category?.toLowerCase().includes(searchTerm) ||
-          t.savePath.toLowerCase().includes(searchTerm) ||
-          t.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
+          t.name.toLowerCase().includes(normalizedSearch) ||
+          t.category?.toLowerCase().includes(normalizedSearch) ||
+          t.savePath.toLowerCase().includes(normalizedSearch) ||
+          t.tags?.some((torrentTag) =>
+            torrentTag.toLowerCase().includes(normalizedSearch)
+          )
+      );
+    }
+
+    if (categoryFilters.length > 0) {
+      const categories = new Set(categoryFilters);
+      filteredTorrents = filteredTorrents.filter((torrent) =>
+        categories.has(torrent.category?.trim() ?? '')
+      );
+    }
+
+    if (tagFilters.length > 0) {
+      const tags = new Set(tagFilters);
+      filteredTorrents = filteredTorrents.filter((torrent) =>
+        torrent.tags?.some((torrentTag) => tags.has(torrentTag.trim()))
       );
     }
 
@@ -276,6 +324,7 @@ downloadsRoutes.get('/', async (req, res, next) => {
     res.json({
       results: paginatedTorrents,
       stats,
+      filterOptions,
       pageInfo: {
         pages: totalPages,
         pageSize: pageSizeNum,

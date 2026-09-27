@@ -4,6 +4,7 @@ import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SortableColumnHeader from '@app/components/Common/SortableColumnHeader';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
+import useDebouncedState from '@app/hooks/useDebouncedState';
 import { useDownloadActions, useDownloads } from '@app/hooks/useDownloads';
 import { momentWithLocale } from '@app/utils/momentLocale';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
@@ -27,10 +28,12 @@ import {
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import type { NormalizedDownloadItem } from '@server/interfaces/api/downloadsInterfaces';
 import type { DownloadClientSettings } from '@server/lib/settings';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import Select, { type StylesConfig } from 'react-select';
 import useSWR from 'swr';
 import AddTorrentModal from './AddTorrentModal';
 import DownloadRow from './DownloadRow';
@@ -63,6 +66,30 @@ type Sort =
   | 'speed'
   | 'priority'
   | 'client';
+
+interface DownloadFilterOption {
+  value: string;
+  label: string;
+}
+
+const getTorrentSelectionKey = (
+  torrent: Pick<NormalizedDownloadItem, 'clientId' | 'hash'>
+): string => `${torrent.clientId}:${torrent.hash}`;
+
+const downloadFilterSelectStyles: StylesConfig<DownloadFilterOption, true> = {
+  control: (base) => ({ ...base, minHeight: '36px', cursor: 'pointer' }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: '2px 8px',
+    cursor: 'pointer',
+  }),
+  multiValue: (base) => ({ ...base, margin: '2px' }),
+  multiValueLabel: (base) => ({ ...base, padding: '1px 4px' }),
+  multiValueRemove: (base) => ({ ...base, padding: '0 4px' }),
+  indicatorsContainer: (base) => ({ ...base, height: '36px' }),
+  dropdownIndicator: (base) => ({ ...base, cursor: 'pointer' }),
+  clearIndicator: (base) => ({ ...base, cursor: 'pointer' }),
+};
 
 const AdminDownloads = () => {
   const intl = useIntl();
@@ -142,8 +169,42 @@ const AdminDownloads = () => {
     return 2000;
   });
   const [isPaused, setIsPaused] = useState(false);
+  const [savedFilters] = useState(() => {
+    const savedSettings =
+      typeof window !== 'undefined'
+        ? window.localStorage.getItem('downloads-filter-settings')
+        : null;
+    const settings = savedSettings ? JSON.parse(savedSettings) : {};
+    return {
+      searchInput:
+        typeof settings.searchInput === 'string' ? settings.searchInput : '',
+      selectedCategories: Array.isArray(settings.selectedCategories)
+        ? settings.selectedCategories.filter(
+            (value: unknown): value is string => typeof value === 'string'
+          )
+        : [],
+      selectedTags: Array.isArray(settings.selectedTags)
+        ? settings.selectedTags.filter(
+            (value: unknown): value is string => typeof value === 'string'
+          )
+        : [],
+    };
+  });
+  const [searchInput, searchTerm, setSearchInput] = useDebouncedState(
+    savedFilters.searchInput,
+    300
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    savedFilters.selectedCategories
+  );
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    savedFilters.selectedTags
+  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedHashes, setSelectedHashes] = useState<Set<string>>(new Set());
+  const [selectedTorrentKeys, setSelectedTorrentKeys] = useState<Set<string>>(
+    new Set()
+  );
+  const [selectionAnchor, setSelectionAnchor] = useState<string | null>(null);
   const [isBulkActing, setIsBulkActing] = useState(false);
   const [showBulkRemoveModal, setShowBulkRemoveModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -177,27 +238,42 @@ const AdminDownloads = () => {
     [currentSort]
   );
 
-  // Handle individual checkbox toggle
-  const handleToggleSelect = useCallback((hash: string) => {
-    setSelectedHashes((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(hash)) {
-        newSet.delete(hash);
-      } else {
-        newSet.add(hash);
-      }
-      return newSet;
-    });
-  }, []);
-
-  // Clear selections when filter/page changes
-  const selectionResetKey = `${currentFilter}|${currentClient}|${page}`;
+  // Clear selections when the visible result set or ordering changes.
+  const selectionResetKey = JSON.stringify([
+    currentFilter,
+    currentClient,
+    page,
+    currentSort,
+    sortDirection,
+    currentPageSize,
+    searchTerm,
+    selectedCategories,
+    selectedTags,
+  ]);
   const [prevSelectionResetKey, setPrevSelectionResetKey] =
     useState(selectionResetKey);
   if (prevSelectionResetKey !== selectionResetKey) {
     setPrevSelectionResetKey(selectionResetKey);
-    setSelectedHashes(new Set());
+    setSelectedTorrentKeys(new Set());
+    setSelectionAnchor(null);
   }
+
+  const filterKey = JSON.stringify([
+    currentFilter,
+    currentClient,
+    searchTerm,
+    selectedCategories,
+    selectedTags,
+  ]);
+  const previousFilterKey = useRef(filterKey);
+  useEffect(() => {
+    if (previousFilterKey.current !== filterKey) {
+      previousFilterKey.current = filterKey;
+      if (page !== 1) {
+        updateQueryParams('page', '1');
+      }
+    }
+  }, [filterKey, page, updateQueryParams]);
 
   // Set filter values to local storage any time they are changed
   useEffect(() => {
@@ -210,6 +286,9 @@ const AdminDownloads = () => {
         currentPageSize,
         currentClient,
         refreshInterval,
+        searchInput,
+        selectedCategories,
+        selectedTags,
       })
     );
   }, [
@@ -219,6 +298,9 @@ const AdminDownloads = () => {
     currentPageSize,
     currentClient,
     refreshInterval,
+    searchInput,
+    selectedCategories,
+    selectedTags,
   ]);
 
   const {
@@ -231,6 +313,9 @@ const AdminDownloads = () => {
     pageSize: currentPageSize,
     sort: currentSort,
     sortDirection,
+    filter: searchTerm,
+    categories: selectedCategories,
+    tags: selectedTags,
     statusFilter: currentFilter !== 'all' ? currentFilter : undefined,
     clientFilter: currentClient !== 'all' ? Number(currentClient) : undefined,
     refreshInterval,
@@ -241,23 +326,111 @@ const AdminDownloads = () => {
     DownloadClientSettings[]
   >('/api/v1/settings/downloads');
 
-  // Whether every visible download is currently selected (derived state)
-  const isSelectAllChecked = useMemo(() => {
-    if (data?.results && selectedHashes.size > 0) {
-      return data.results.every((t) => selectedHashes.has(t.hash));
+  const visibleResultKey = JSON.stringify(
+    (data?.results ?? []).map(getTorrentSelectionKey)
+  );
+  const [prevVisibleResultKey, setPrevVisibleResultKey] =
+    useState(visibleResultKey);
+  if (prevVisibleResultKey !== visibleResultKey) {
+    setPrevVisibleResultKey(visibleResultKey);
+    const visibleKeys = new Set(data?.results?.map(getTorrentSelectionKey));
+    setSelectedTorrentKeys((previous) => {
+      const visibleSelection = new Set(
+        [...previous].filter((key) => visibleKeys.has(key))
+      );
+      return visibleSelection.size === previous.size
+        ? previous
+        : visibleSelection;
+    });
+    if (selectionAnchor && !visibleKeys.has(selectionAnchor)) {
+      setSelectionAnchor(null);
     }
-    return false;
-  }, [selectedHashes, data]);
+  }
+
+  const handleToggleSelect = useCallback(
+    (torrent: NormalizedDownloadItem, shiftKey: boolean) => {
+      const targetKey = getTorrentSelectionKey(torrent);
+      const visibleResults = data?.results ?? [];
+
+      if (shiftKey && selectionAnchor) {
+        const anchorIndex = visibleResults.findIndex(
+          (item) => getTorrentSelectionKey(item) === selectionAnchor
+        );
+        const targetIndex = visibleResults.findIndex(
+          (item) => getTorrentSelectionKey(item) === targetKey
+        );
+
+        if (anchorIndex !== -1 && targetIndex !== -1) {
+          const rangeStart = Math.min(anchorIndex, targetIndex);
+          const rangeEnd = Math.max(anchorIndex, targetIndex);
+          const rangeKeys = visibleResults
+            .slice(rangeStart, rangeEnd + 1)
+            .map(getTorrentSelectionKey);
+
+          setSelectedTorrentKeys(
+            (previous) => new Set([...previous, ...rangeKeys])
+          );
+          return;
+        }
+      }
+
+      setSelectionAnchor(targetKey);
+      setSelectedTorrentKeys((previous) => {
+        const next = new Set(previous);
+        if (next.has(targetKey)) {
+          next.delete(targetKey);
+        } else {
+          next.add(targetKey);
+        }
+        return next;
+      });
+    },
+    [data?.results, selectionAnchor]
+  );
+
+  const categoryOptions: DownloadFilterOption[] = (
+    data?.filterOptions.categories ?? []
+  ).map((category) => ({ value: category, label: category }));
+  const tagOptions: DownloadFilterOption[] = (
+    data?.filterOptions.tags ?? []
+  ).map((tag) => ({ value: tag, label: tag }));
+  const selectedCategoryOptions = selectedCategories.map(
+    (category) =>
+      categoryOptions.find((option) => option.value === category) ?? {
+        value: category,
+        label: category,
+      }
+  );
+  const selectedTagOptions = selectedTags.map(
+    (tag) =>
+      tagOptions.find((option) => option.value === tag) ?? {
+        value: tag,
+        label: tag,
+      }
+  );
+
+  // Whether every visible download is currently selected (derived state)
+  const isSelectAllChecked =
+    !!data?.results.length &&
+    data.results.every((torrent) =>
+      selectedTorrentKeys.has(getTorrentSelectionKey(torrent))
+    );
 
   // Handle select all checkbox
   const handleSelectAll = useCallback(() => {
+    const visibleKeys = (data?.results ?? []).map(getTorrentSelectionKey);
+    setSelectionAnchor(null);
+
     if (isSelectAllChecked) {
-      setSelectedHashes(new Set());
-    } else {
-      if (data?.results) {
-        const allHashes = new Set(data.results.map((t) => t.hash));
-        setSelectedHashes(allHashes);
-      }
+      const visibleKeySet = new Set(visibleKeys);
+      setSelectedTorrentKeys(
+        (previous) =>
+          new Set([...previous].filter((key) => !visibleKeySet.has(key)))
+      );
+    } else if (visibleKeys.length > 0) {
+      setSelectedTorrentKeys(
+        (previous) => new Set([...previous, ...visibleKeys])
+      );
     }
   }, [isSelectAllChecked, data]);
 
@@ -274,7 +447,7 @@ const AdminDownloads = () => {
         | 'topPriority'
         | 'bottomPriority'
     ) => {
-      if (selectedHashes.size === 0 || !data?.results) return;
+      if (selectedTorrentKeys.size === 0 || !data?.results) return;
 
       // Show confirmation modal for remove action
       if (action === 'remove') {
@@ -285,14 +458,17 @@ const AdminDownloads = () => {
       setIsBulkActing(true);
       try {
         const selectedTorrents = data.results
-          .filter((t) => selectedHashes.has(t.hash))
+          .filter((torrent) =>
+            selectedTorrentKeys.has(getTorrentSelectionKey(torrent))
+          )
           .map((t) => ({ hash: t.hash, clientId: t.clientId }));
 
         // Use bulk action API
         await performBulkAction(selectedTorrents, action);
 
         // Clear selection after action
-        setSelectedHashes(new Set());
+        setSelectedTorrentKeys(new Set());
+        setSelectionAnchor(null);
 
         // Refresh data
         refetch();
@@ -311,24 +487,27 @@ const AdminDownloads = () => {
         setIsBulkActing(false);
       }
     },
-    [selectedHashes, data, performBulkAction, refetch, intl]
+    [selectedTorrentKeys, data, performBulkAction, refetch, intl]
   );
 
   const handleBulkRemoveConfirm = useCallback(
     async (deleteFiles: boolean) => {
-      if (selectedHashes.size === 0 || !data?.results) return;
+      if (selectedTorrentKeys.size === 0 || !data?.results) return;
 
       setIsBulkActing(true);
       try {
         const selectedTorrents = data.results
-          .filter((t) => selectedHashes.has(t.hash))
+          .filter((torrent) =>
+            selectedTorrentKeys.has(getTorrentSelectionKey(torrent))
+          )
           .map((t) => ({ hash: t.hash, clientId: t.clientId }));
 
         // Use bulk action API with deleteFiles option
         await performBulkAction(selectedTorrents, 'remove', deleteFiles);
 
         // Clear selection after action
-        setSelectedHashes(new Set());
+        setSelectedTorrentKeys(new Set());
+        setSelectionAnchor(null);
         setShowBulkRemoveModal(false);
 
         // Refresh data
@@ -348,7 +527,7 @@ const AdminDownloads = () => {
         setIsBulkActing(false);
       }
     },
-    [selectedHashes, data, performBulkAction, refetch, intl]
+    [selectedTorrentKeys, data, performBulkAction, refetch, intl]
   );
 
   // Handle retry of unhealthy clients
@@ -388,6 +567,12 @@ const AdminDownloads = () => {
   }
 
   const hasClients = clients && clients.length > 0;
+  const hasActiveFilters =
+    currentFilter !== Filter.ALL ||
+    currentClient !== 'all' ||
+    searchTerm.length > 0 ||
+    selectedCategories.length > 0 ||
+    selectedTags.length > 0;
   const hasNextPage = (data?.pageInfo.pages ?? 0) > pageIndex + 1;
   const hasPrevPage = pageIndex > 0;
 
@@ -694,6 +879,80 @@ const AdminDownloads = () => {
               </div>
             );
           })()}
+        {hasClients && (
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder={intl.formatMessage({
+                id: 'downloads.searchPlaceholder',
+                defaultMessage: 'Search Downloads',
+              })}
+              aria-label={intl.formatMessage({
+                id: 'downloads.searchPlaceholder',
+                defaultMessage: 'Search Downloads',
+              })}
+              className="input input-sm input-primary w-full xl:col-span-2"
+            />
+            <Select<DownloadFilterOption, true>
+              inputId="download-categories"
+              aria-label={intl.formatMessage({
+                id: 'downloads.filterCategoriesAria',
+                defaultMessage: 'Filter by categories',
+              })}
+              options={categoryOptions}
+              value={selectedCategoryOptions}
+              onChange={(options) =>
+                setSelectedCategories(options.map((option) => option.value))
+              }
+              styles={downloadFilterSelectStyles}
+              isMulti
+              unstyled
+              closeMenuOnSelect={false}
+              className="react-select-container min-w-0"
+              classNamePrefix="react-select"
+              placeholder={intl.formatMessage({
+                id: 'downloads.filterCategories',
+                defaultMessage: 'Categories',
+              })}
+              menuPortalTarget={
+                typeof window !== 'undefined' ? document.body : undefined
+              }
+              menuPosition="fixed"
+              menuPlacement="auto"
+              maxMenuHeight={240}
+            />
+            <Select<DownloadFilterOption, true>
+              inputId="download-tags"
+              aria-label={intl.formatMessage({
+                id: 'downloads.filterTagsAria',
+                defaultMessage: 'Filter by tags',
+              })}
+              options={tagOptions}
+              value={selectedTagOptions}
+              onChange={(options) =>
+                setSelectedTags(options.map((option) => option.value))
+              }
+              styles={downloadFilterSelectStyles}
+              isMulti
+              unstyled
+              closeMenuOnSelect={false}
+              className="react-select-container min-w-0"
+              classNamePrefix="react-select"
+              placeholder={intl.formatMessage({
+                id: 'downloads.filterTags',
+                defaultMessage: 'Tags',
+              })}
+              menuPortalTarget={
+                typeof window !== 'undefined' ? document.body : undefined
+              }
+              menuPosition="fixed"
+              menuPlacement="auto"
+              maxMenuHeight={240}
+            />
+          </div>
+        )}
         {!hasClients ? (
           <div className="card bg-base-200">
             <div className="card-body items-center py-12 text-center">
@@ -729,10 +988,10 @@ const AdminDownloads = () => {
         ) : data?.results && data.results.length > 0 ? (
           <div className="card bg-base-200">
             <div className="mb-2 flex min-h-10 items-end justify-between px-4 pt-4">
-              {selectedHashes.size > 0 && (
+              {selectedTorrentKeys.size > 0 && (
                 <>
                   <span className="text-sm font-semibold whitespace-nowrap">
-                    {selectedHashes.size}{' '}
+                    {selectedTorrentKeys.size}{' '}
                     <FormattedMessage
                       id="downloads.selected"
                       defaultMessage="selected"
@@ -742,7 +1001,11 @@ const AdminDownloads = () => {
                     {(() => {
                       // Check if any selected torrent has valid priority for queue management
                       const hasValidPriority = data.results
-                        .filter((t) => selectedHashes.has(t.hash))
+                        .filter((torrent) =>
+                          selectedTorrentKeys.has(
+                            getTorrentSelectionKey(torrent)
+                          )
+                        )
                         .some(
                           (t) => t.priority !== undefined && t.priority > 0
                         );
@@ -1092,7 +1355,9 @@ const AdminDownloads = () => {
                       key={torrent.id}
                       torrent={torrent}
                       onRefresh={refetch}
-                      isSelected={selectedHashes.has(torrent.hash)}
+                      isSelected={selectedTorrentKeys.has(
+                        getTorrentSelectionKey(torrent)
+                      )}
                       onToggleSelect={handleToggleSelect}
                       clients={clients ?? []}
                       stats={data.stats}
@@ -1113,10 +1378,10 @@ const AdminDownloads = () => {
                 />
               </h2>
               <p className="text-neutral max-w-md">
-                {currentFilter !== 'all' || currentClient !== 'all' ? (
+                {hasActiveFilters ? (
                   <FormattedMessage
-                    id="common.tryAdjustingFilters"
-                    defaultMessage="Try adjusting your filters or add a new torrent."
+                    id="downloads.noMatchesForFilters"
+                    defaultMessage="No downloads match the current filters."
                   />
                 ) : (
                   <FormattedMessage
@@ -1126,6 +1391,27 @@ const AdminDownloads = () => {
                 )}
               </p>
               <div className="card-actions mt-4">
+                {hasActiveFilters && (
+                  <Button
+                    buttonSize="sm"
+                    buttonType="ghost"
+                    onClick={() => {
+                      setCurrentFilter(Filter.ALL);
+                      setCurrentClient('all');
+                      setSearchInput('');
+                      setSelectedCategories([]);
+                      setSelectedTags([]);
+                      if (page !== 1) {
+                        updateQueryParams('page', '1');
+                      }
+                    }}
+                  >
+                    <FormattedMessage
+                      id="downloads.clearFilters"
+                      defaultMessage="Clear Filters"
+                    />
+                  </Button>
+                )}
                 <Button
                   buttonSize="sm"
                   buttonType="primary"
@@ -1156,9 +1442,9 @@ const AdminDownloads = () => {
               defaultMessage:
                 '{count} selected {count, plural, one {torrent} other {torrents}}',
             },
-            { count: selectedHashes.size }
+            { count: selectedTorrentKeys.size }
           )}
-          torrentCount={selectedHashes.size}
+          torrentCount={selectedTorrentKeys.size}
           isProcessing={isBulkActing}
         />
       </div>

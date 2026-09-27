@@ -1496,6 +1496,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TorrentStats'
+        filterOptions:
+          type: object
+          description: Distinct category and tag values for the selected client scope
+          properties:
+            categories:
+              type: array
+              items:
+                type: string
+            tags:
+              type: array
+              items:
+                type: string
         pageInfo:
           type: object
           properties:
@@ -8146,13 +8158,22 @@ paths:
         - in: query
           name: category
           schema:
-            type: string
-          description: Filter by category/label
+            type: array
+            items:
+              type: string
+          description: Filter by one or more categories/labels (OR within this facet)
+        - in: query
+          name: tag
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by one or more tags (OR within this facet)
         - in: query
           name: search
           schema:
             type: string
-          description: Search in torrent names
+          description: Search torrent names, categories, save paths, and tags
         - in: query
           name: sort
           schema:

@@ -15,6 +15,8 @@ interface UseDownloadsOptions {
   sort?: string;
   sortDirection?: 'asc' | 'desc';
   filter?: string;
+  categories?: string[];
+  tags?: string[];
   clientFilter?: number;
   statusFilter?: string;
   enabled?: boolean;
@@ -29,6 +31,8 @@ export const useDownloads = (options: UseDownloadsOptions) => {
     sort,
     sortDirection = 'desc',
     filter,
+    categories,
+    tags,
     clientFilter,
     statusFilter,
     enabled = true,
@@ -42,19 +46,34 @@ export const useDownloads = (options: UseDownloadsOptions) => {
       pageSize: pageSize.toString(),
       ...(sort && { sort }),
       ...(sortDirection && { sortDirection }),
-      ...(filter && { filter }),
+      ...(filter && { search: filter }),
       ...(clientFilter !== undefined && {
         clientId: clientFilter.toString(),
       }),
       ...(statusFilter && { status: statusFilter }),
     });
+
+    categories?.forEach((category) => params.append('category', category));
+    tags?.forEach((tag) => params.append('tag', tag));
+
     return params.toString();
-  }, [page, pageSize, sort, sortDirection, filter, clientFilter, statusFilter]);
+  }, [
+    page,
+    pageSize,
+    sort,
+    sortDirection,
+    filter,
+    categories,
+    tags,
+    clientFilter,
+    statusFilter,
+  ]);
 
   const swrKey = enabled ? `/api/v1/downloads?${queryString}` : null;
 
   const { data, error, isLoading, isValidating, mutate } =
     useSWR<DownloadsResponse>(swrKey, {
+      keepPreviousData: true,
       refreshInterval: isPaused ? 0 : refreshInterval,
       revalidateOnFocus: !isPaused,
       dedupingInterval: 1000,
