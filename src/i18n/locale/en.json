@@ -1331,6 +1331,12 @@
   "emailNotifications.testSuccess": {
     "defaultMessage": "Email test notification sent!"
   },
+  "emailNotifications.usePublicLogo": {
+    "defaultMessage": "Use public Streamarr logo"
+  },
+  "emailNotifications.usePublicLogoDescription": {
+    "defaultMessage": "Use the public GitHub logo. Useful when your instance is not publicly accessible."
+  },
   "emailNotifications.validation.pgpPassword.keyRequired": {
     "defaultMessage": "You must provide a PGP private key if you set a password"
   },

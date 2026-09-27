@@ -2189,6 +2189,9 @@ components:
             allowSelfSigned:
               type: boolean
               example: false
+            usePublicLogo:
+              type: boolean
+              example: false
     NotificationDiscordSettings:
       type: object
       properties:

@@ -5,6 +5,20 @@ import nodemailer from 'nodemailer';
 import { URL } from 'url';
 import { openpgpEncrypt } from './openpgpEncrypt';
 
+const PUBLIC_LOGO_URL =
+  'https://raw.githubusercontent.com/nickelsh1ts/streamarr/refs/heads/develop/public/logo_full.png';
+
+export const getEmailLogo = (
+  usePublicLogo = getSettings().notifications.agents.email.options
+    .usePublicLogo ?? false
+): string => {
+  const { applicationUrl, customLogo } = getSettings().main;
+
+  return usePublicLogo
+    ? PUBLIC_LOGO_URL
+    : `${applicationUrl}${customLogo || '/logo_full.png'}`;
+};
+
 class PreparedEmail {
   private email: Email;
   public constructor(settings: NotificationAgentEmail, pgpKey?: string) {

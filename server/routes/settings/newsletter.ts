@@ -10,7 +10,7 @@ import type {
   NewsletterSendResult,
   NewsletterVariablesResponse,
 } from '@server/interfaces/api/newsletterInterfaces';
-import PreparedEmail from '@server/lib/email';
+import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import type { NewsletterBlockData } from '@server/lib/newsletters/dataProviders';
 import { resolveBlockData } from '@server/lib/newsletters/dataProviders';
 import {
@@ -97,7 +97,7 @@ const renderPreview = async (
   user?: User
 ): Promise<string> => {
   const settings = getSettings();
-  const { applicationTitle, customLogo } = settings.main;
+  const { applicationTitle } = settings.main;
   const intl = getIntl(user?.settings?.locale ?? settings.main.locale);
 
   const blockData = await resolvePreviewBlockData(newsletter);
@@ -124,7 +124,7 @@ const renderPreview = async (
       recipientName: user?.displayName,
       recipientEmail: user?.email,
       isImportant: newsletter.isImportant,
-      logoUrl: customLogo || '/logo_full.png',
+      logoUrl: getEmailLogo(),
       ...getNewsletterEmailStrings(intl, applicationTitle),
     }
   );
