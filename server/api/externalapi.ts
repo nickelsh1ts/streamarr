@@ -1,3 +1,4 @@
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import rateLimit from 'axios-rate-limit';
@@ -49,17 +50,19 @@ class ExternalAPI {
       // URL is malformed; use baseUrl as-is
     }
 
-    this.axios = axios.create({
-      baseURL: cleanedUrl,
-      params,
-      timeout: options.timeout ?? 10000,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        ...authHeaders,
-        ...options.headers,
-      },
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: cleanedUrl,
+        params,
+        timeout: options.timeout ?? 10000,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...authHeaders,
+          ...options.headers,
+        },
+      })
+    );
 
     if (options.rateLimit) {
       this.axios = rateLimit(this.axios, {

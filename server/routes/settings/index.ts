@@ -25,6 +25,11 @@ import {
   getCalibreWebAPI,
   validateHeaderAuthName,
 } from '@server/lib/calibreweb';
+import {
+  outboundFetch,
+  resolveOutboundProxyUpdate,
+  testOutboundProxy,
+} from '@server/lib/outboundProxy';
 import { Permission } from '@server/lib/permissions';
 import {
   markPlexHealthy,
@@ -139,13 +144,25 @@ settingsRoutes.get('/network', (_req, res) => {
   res.status(200).json(settings.network);
 });
 
-settingsRoutes.post<undefined, NetworkSettings, NetworkSettings>(
+settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
   '/network',
   (req, res, next) => {
     try {
       const settings = getSettings();
+      const { outboundProxy, ...rest } = req.body;
+      const proxyUpdate = resolveOutboundProxyUpdate(
+        settings.network.outboundProxy,
+        outboundProxy
+      );
 
-      settings.network = { ...settings.network, ...req.body };
+      if ('error' in proxyUpdate) {
+        return next({ status: 400, message: proxyUpdate.error });
+      }
+
+      settings.network = { ...settings.network, ...rest };
+      // Assigned directly: the settings merge skips undefined, which would
+      // otherwise prevent clearing stored credentials.
+      settings.network.outboundProxy = proxyUpdate.value;
 
       settings.save();
       res.status(200).json(settings.network);
@@ -158,6 +175,42 @@ settingsRoutes.post<undefined, NetworkSettings, NetworkSettings>(
     }
   }
 );
+
+settingsRoutes.post('/network/outbound-proxy/test', async (req, res, next) => {
+  const settings = getSettings();
+  const proxyUpdate = resolveOutboundProxyUpdate(
+    settings.network.outboundProxy,
+    req.body
+  );
+
+  if ('error' in proxyUpdate) {
+    return next({ status: 400, message: proxyUpdate.error });
+  }
+
+  const proxy = proxyUpdate.value;
+  if (!proxy.enabled || !proxy.hostname) {
+    return next({
+      status: 400,
+      message: 'Enable and configure the outbound proxy before testing it',
+    });
+  }
+
+  try {
+    const status = await testOutboundProxy(
+      proxy,
+      settings.network.requestTimeout
+    );
+    res.status(200).json({ status });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Proxy test failed';
+    logger.warn('Outbound proxy test failed', {
+      label: 'Outbound Proxy',
+      proxy: `${proxy.hostname}:${proxy.port}`,
+      message,
+    });
+    next({ status: 502, message });
+  }
+});
 
 settingsRoutes.get('/plex', (_req, res) => {
   const settings = getSettings();
@@ -489,7 +542,7 @@ settingsRoutes.post('/nexroll/test', async (req, res, next) => {
     }
 
     const protocol = useSsl ? 'https' : 'http';
-    const response = await fetch(
+    const response = await outboundFetch(
       `${protocol}://${hostname}:${portNumber}/health`,
       { signal: AbortSignal.timeout(getSettings().network.requestTimeout) }
     );
@@ -565,7 +618,7 @@ settingsRoutes.post('/cleanuparr/test', async (req, res, next) => {
     );
     url.searchParams.set('hours', '1');
 
-    const response = await fetch(url, {
+    const response = await outboundFetch(url, {
       headers: { 'X-Api-Key': apiKey },
       signal: AbortSignal.timeout(getSettings().network.requestTimeout),
     });

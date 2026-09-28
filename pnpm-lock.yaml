@@ -253,9 +253,15 @@ importers:
       formik:
         specifier: ^2.4.9
         version: 2.4.9(@types/react@19.3.0)(react@19.3.0)
+      http-proxy-agent:
+        specifier: ^7.0.2
+        version: 7.0.2(supports-color@5.5.0)
       http-proxy-middleware:
         specifier: ^4.0.0
         version: 4.2.0(supports-color@5.5.0)
+      https-proxy-agent:
+        specifier: ^7.0.6
+        version: 7.0.6(supports-color@5.5.0)
       ical:
         specifier: ^0.8.0
         version: 0.8.0
@@ -373,6 +379,9 @@ importers:
       ua-parser-js:
         specifier: ^2.0.9
         version: 2.0.10
+      undici:
+        specifier: ^7.29.0
+        version: 7.29.0
       validator:
         specifier: ^13.15.35
         version: 13.15.35
@@ -5265,6 +5274,10 @@ packages:
   http-errors@2.0.1:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
+
+  http-proxy-agent@7.0.2:
+    resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
+    engines: {node: '>= 14'}
 
   http-proxy-agent@9.1.0:
     resolution: {integrity: sha512-2NxoveTT58mjYT4n3RPTEfCZGLMbidoO8XEieXfpSYxu+PQJ1qpx4ypwH6N+uF9twBPIvRRgvkvW5HUTYWENig==}
@@ -14094,6 +14107,13 @@ snapshots:
       setprototypeof: 1.2.0
       statuses: 2.0.2
       toidentifier: 1.0.1
+
+  http-proxy-agent@7.0.2(supports-color@5.5.0):
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.3(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
 
   http-proxy-agent@9.1.0(supports-color@5.5.0):
     dependencies:

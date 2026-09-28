@@ -4001,6 +4001,66 @@
   "networkSettings.description": {
     "defaultMessage": "Configure global network settings for your Streamarr instance."
   },
+  "networkSettings.outboundProxy.bypassFilter": {
+    "defaultMessage": "Proxy Ignored Addresses"
+  },
+  "networkSettings.outboundProxy.bypassHelp": {
+    "defaultMessage": "Use ',' as a separator, and '*.' as a wildcard for subdomains."
+  },
+  "networkSettings.outboundProxy.bypassLocalAddresses": {
+    "defaultMessage": "Bypass Proxy for Local Addresses"
+  },
+  "networkSettings.outboundProxy.description": {
+    "defaultMessage": "Route supported outbound HTTP requests through a proxy. SMTP and download-client connections are not proxied."
+  },
+  "networkSettings.outboundProxy.host": {
+    "defaultMessage": "Proxy Hostname"
+  },
+  "networkSettings.outboundProxy.password": {
+    "defaultMessage": "Proxy Password"
+  },
+  "networkSettings.outboundProxy.port": {
+    "defaultMessage": "Proxy port"
+  },
+  "networkSettings.outboundProxy.test": {
+    "defaultMessage": "Test"
+  },
+  "networkSettings.outboundProxy.testError": {
+    "defaultMessage": "Proxy test failed"
+  },
+  "networkSettings.outboundProxy.testSuccess": {
+    "defaultMessage": "Proxy test succeeded"
+  },
+  "networkSettings.outboundProxy.title": {
+    "defaultMessage": "Outbound HTTP(S) Proxy"
+  },
+  "networkSettings.outboundProxy.useSsl": {
+    "defaultMessage": "Use SSL for Proxy"
+  },
+  "networkSettings.outboundProxy.username": {
+    "defaultMessage": "Proxy Username"
+  },
+  "networkSettings.outboundProxy.validation.bypassInvalid": {
+    "defaultMessage": "Enter valid hostnames or IP addresses separated by commas"
+  },
+  "networkSettings.outboundProxy.validation.hostnameInvalid": {
+    "defaultMessage": "Enter a valid hostname or IP address"
+  },
+  "networkSettings.outboundProxy.validation.hostnameRequired": {
+    "defaultMessage": "Proxy hostname is required"
+  },
+  "networkSettings.outboundProxy.validation.portInteger": {
+    "defaultMessage": "Proxy port must be a whole number"
+  },
+  "networkSettings.outboundProxy.validation.portNumber": {
+    "defaultMessage": "Proxy port must be a number"
+  },
+  "networkSettings.outboundProxy.validation.portRange": {
+    "defaultMessage": "Proxy port must be between 1 and 65535"
+  },
+  "networkSettings.outboundProxy.validation.portRequired": {
+    "defaultMessage": "Proxy port is required"
+  },
   "networkSettings.requestTimeout": {
     "defaultMessage": "API Request Timeout"
   },

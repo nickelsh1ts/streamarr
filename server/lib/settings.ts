@@ -75,12 +75,24 @@ export interface CalibreWebSettings extends Omit<ServiceSettings, 'apiKey'> {
 
 export interface ChaptarrSettings extends ServiceSettings {}
 
+export interface OutboundProxySettings {
+  enabled: boolean;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  username?: string;
+  password?: string;
+  bypassFilter: string;
+  bypassLocalAddresses: boolean;
+}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
   csrfProtection: boolean;
   scheduledRetryAttempts: number;
   scheduledRetryInterval: number;
+  outboundProxy: OutboundProxySettings;
 }
 
 export interface DVRSettings {
@@ -509,6 +521,14 @@ class Settings {
         csrfProtection: false,
         scheduledRetryAttempts: 3,
         scheduledRetryInterval: 300000,
+        outboundProxy: {
+          enabled: false,
+          hostname: '',
+          port: 8080,
+          useSsl: false,
+          bypassFilter: '',
+          bypassLocalAddresses: true,
+        },
       },
       tautulli: {
         enabled: false,

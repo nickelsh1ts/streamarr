@@ -996,6 +996,64 @@ components:
             Delay in milliseconds between scheduled task retry attempts
             when an external service is unreachable.
           example: 300000
+        outboundProxy:
+          $ref: '#/components/schemas/OutboundProxySettings'
+    OutboundProxySettings:
+      type: object
+      description: >-
+        Settings-driven outbound HTTP(S) proxy. Changes require a server
+        restart. Covers Axios, server-side fetch, and web push; SMTP and
+        download-client connections are not proxied. Loopback, private,
+        single-label, and local-domain hosts can be bypassed with
+        bypassLocalAddresses. Add internal FQDNs to bypassFilter when they
+        resolve to a private network.
+      required:
+        - enabled
+        - hostname
+        - port
+        - useSsl
+        - bypassFilter
+        - bypassLocalAddresses
+      properties:
+        enabled:
+          type: boolean
+          example: false
+        hostname:
+          type: string
+          maxLength: 253
+          example: proxy.example.com
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          example: 8080
+        useSsl:
+          type: boolean
+          description: Connect to the proxy itself over HTTPS.
+          example: false
+        username:
+          type: string
+          maxLength: 255
+          example: proxyuser
+        password:
+          type: string
+          maxLength: 1024
+          description: >-
+            Returned only by the admin-authenticated Network Settings
+            endpoint. The UI masks the value by default. An empty submitted
+            password keeps the stored password; clearing the username clears it.
+        bypassFilter:
+          type: string
+          maxLength: 2048
+          description: >-
+            Comma-separated hostnames or IP addresses that bypass the proxy.
+            Prefix with `*.` to match a domain and its subdomains.
+          example: '*.example.com, api.example.org'
+        bypassLocalAddresses:
+          type: boolean
+          description: Bypass loopback, private, link-local, container-local, and local-domain destinations.
+          default: true
+          example: true
     SeerrQuotaResponse:
       type: object
       properties:
@@ -3209,7 +3267,10 @@ paths:
                 $ref: '#/components/schemas/NetworkSettings'
     post:
       summary: Update network settings
-      description: Updates global network settings with the provided values.
+      description: >-
+        Updates global network settings with the provided values. For the
+        outbound proxy, an omitted or empty password keeps the saved password;
+        clearing the username clears the password. Changes require a restart.
       tags:
         - settings
       requestBody:
@@ -3225,6 +3286,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkSettings'
+        '400':
+          description: Invalid network or outbound proxy settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /settings/network/outbound-proxy/test:
+    post:
+      summary: Test outbound proxy settings
+      description: >-
+        Sends one HTTPS request to a fixed public endpoint through the supplied
+        proxy settings. Unsaved settings can be tested; this endpoint does not
+        save changes. Success verifies this proxy path only, not every
+        destination.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutboundProxySettings'
+      responses:
+        '200':
+          description: The proxy relayed the test request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status returned through the proxy
+                    example: 200
+        '400':
+          description: The outbound proxy is not enabled or configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The proxy test request failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /settings/plex:
     get:
       summary: Get Plex settings

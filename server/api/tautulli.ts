@@ -1,4 +1,5 @@
 import type { User } from '@server/entity/User';
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import type { TautulliSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { AxiosInstance } from 'axios';
@@ -129,12 +130,14 @@ class TautulliAPI {
   private axios: AxiosInstance;
 
   constructor(settings: TautulliSettings) {
-    this.axios = axios.create({
-      baseURL: `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${
-        settings.port
-      }${settings.urlBase ?? ''}`,
-      params: { apikey: settings.apiKey },
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${
+          settings.port
+        }${settings.urlBase ?? ''}`,
+        params: { apikey: settings.apiKey },
+      })
+    );
   }
 
   public async getInfo(): Promise<TautulliInfo> {

@@ -37,7 +37,11 @@ interface ProxyAffectingSettings {
     useSsl?: boolean;
     urlBase?: string;
   };
-  network: { trustProxy: boolean; csrfProtection: boolean };
+  network: {
+    trustProxy: boolean;
+    csrfProtection: boolean;
+    outboundProxy: string;
+  };
 }
 
 interface ServiceEntry {
@@ -114,6 +118,7 @@ class RestartManager {
       network: {
         trustProxy: settings.network.trustProxy,
         csrfProtection: settings.network.csrfProtection,
+        outboundProxy: this.serializeOutboundProxy(),
       },
       shelfmark: this.pickService(settings.shelfmark),
       calibreweb: this.pickService(settings.calibreweb),
@@ -235,7 +240,26 @@ class RestartManager {
       changed.push('CSRF Protection');
     }
 
+    if (this.serializeOutboundProxy() !== this.snapshot.network.outboundProxy) {
+      changed.push('Outbound Proxy');
+    }
+
     return { required: changed.length > 0, services: changed };
+  }
+
+  private serializeOutboundProxy(): string {
+    const proxy = getSettings().network.outboundProxy;
+
+    return JSON.stringify([
+      proxy.enabled,
+      proxy.hostname,
+      proxy.port,
+      proxy.useSsl,
+      proxy.username ?? '',
+      proxy.password ?? '',
+      proxy.bypassFilter,
+      proxy.bypassLocalAddresses,
+    ]);
   }
 
   private hasServiceChanged(

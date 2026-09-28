@@ -15,6 +15,7 @@ import type {
 import { getAudiobookshelfAPI } from '@server/lib/audiobookshelf';
 import { getCalibreWebAPI } from '@server/lib/calibreweb';
 import { resetClientHealth } from '@server/lib/healthCheck';
+import { outboundFetch } from '@server/lib/outboundProxy';
 import { getPlexHealth, refreshPlexVersion } from '@server/lib/plexHealthCheck';
 import type {
   AudiobookshelfSettings,
@@ -109,7 +110,7 @@ async function checkCleanuparr(service: ServiceSettings): Promise<CheckResult> {
     const url = buildUrl(service, 'api/v2/stats', 11011);
     url.searchParams.set('hours', '1');
 
-    const response = await fetch(url, {
+    const response = await outboundFetch(url, {
       headers: { 'X-Api-Key': service.apiKey ?? '' },
       signal: AbortSignal.timeout(getSettings().network.requestTimeout),
     });
@@ -147,13 +148,16 @@ interface BazarrStatus {
 
 async function checkBazarr(service: ServiceSettings): Promise<CheckResult> {
   try {
-    const response = await fetch(buildUrl(service, 'api/system/status', 6767), {
-      headers: {
-        'X-API-KEY': service.apiKey ?? '',
-        Accept: 'application/json',
-      },
-      signal: AbortSignal.timeout(timeout()),
-    });
+    const response = await outboundFetch(
+      buildUrl(service, 'api/system/status', 6767),
+      {
+        headers: {
+          'X-API-KEY': service.apiKey ?? '',
+          Accept: 'application/json',
+        },
+        signal: AbortSignal.timeout(timeout()),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Bazarr responded with HTTP ${response.status}`);
@@ -183,7 +187,7 @@ async function checkTdarr(service: ServiceSettings): Promise<CheckResult> {
       headers['x-api-key'] = service.apiKey;
     }
 
-    const response = await fetch(
+    const response = await outboundFetch(
       `${service.useSsl ? 'https' : 'http'}://${service.hostname}:${
         service.port ?? 8265
       }/api/v2/status`,
@@ -207,7 +211,7 @@ async function checkTdarr(service: ServiceSettings): Promise<CheckResult> {
 async function checkNexroll(service: ServiceSettings): Promise<CheckResult> {
   try {
     const protocol = service.useSsl ? 'https' : 'http';
-    const response = await fetch(
+    const response = await outboundFetch(
       `${protocol}://${service.hostname}:${service.port ?? 9393}/health`,
       { signal: AbortSignal.timeout(timeout()) }
     );
