@@ -229,7 +229,11 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
               <FormattedMessage
                 id="cache.lastUpdated"
                 defaultMessage="Updated {time}"
-                values={{ time: moment(data.cachedAt).from(now) }}
+                values={{
+                  time: moment(data.cachedAt).from(
+                    Math.max(now, data.cachedAt)
+                  ),
+                }}
               />
             </span>
           )}

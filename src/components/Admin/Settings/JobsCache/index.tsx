@@ -580,7 +580,11 @@ const JobsCacheSettings = () => {
                 <FormattedMessage
                   id="cache.lastUpdated"
                   defaultMessage="Updated {time}"
-                  values={{ time: moment(cacheData.cachedAt).from(now) }}
+                  values={{
+                    time: moment(cacheData.cachedAt).from(
+                      Math.max(now, cacheData.cachedAt)
+                    ),
+                  }}
                 />
               </span>
             )}
