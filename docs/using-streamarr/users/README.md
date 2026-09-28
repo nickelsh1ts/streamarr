@@ -38,7 +38,7 @@ The user list displays all registered users with:
 - Account creation date
 - Last activity
 
-Users can be sorted and filtered by various criteria.
+Users can be searched by name or email, then sorted and filtered by the available criteria. Sort and page-size preferences are remembered in this browser.
 
 ### Editing Users
 

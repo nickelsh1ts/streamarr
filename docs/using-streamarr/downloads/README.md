@@ -124,10 +124,15 @@ For each torrent:
 
 ### Filtering
 
-Filter torrents by:
+Use the client and status menus to narrow the list, and use the search and facet controls to find specific torrents:
 
-- **Client** — Show torrents from specific clients
-- **Status** — Downloading, seeding, paused, completed, incomplete
+- **Client** — Show torrents from one configured client or all clients.
+- **Status** — Downloading, seeding, incomplete, completed, paused, error, stalled, moving, or fetching metadata.
+- **Search Downloads** — Case-insensitive search across torrent name, category, save path, and tags.
+- **Categories** — Select one or more categories available for the selected client(s).
+- **Tags** — Select one or more tags available for the selected client(s).
+
+Multiple selected categories match torrents in **any** selected category; likewise, a torrent can match **any** selected tag. The category and tag facets are combined with each other, the client/status filters, and text search, so a torrent must satisfy every active filter group. Filter choices are remembered in this browser.
 
 {% hint style="info" %}
 The **Incomplete** status filter is a composite filter that matches all non-finished states: downloading, paused, stalled, queued, checking, error, moving, and metadata.
@@ -135,13 +140,10 @@ The **Incomplete** status filter is a composite filter that matches all non-fini
 
 ### Sorting
 
-Sort by:
+Click a sortable column heading to sort by:
 
-- Name
-- Size
-- Progress
-- Added date
-- Speed
+- Name, progress, size, speed, ETA, ratio, status, client, or priority.
+- Click the active heading again to reverse the sort direction.
 
 ---
 
@@ -161,11 +163,9 @@ Click on a torrent to access actions:
 
 ### Bulk Actions
 
-Select multiple torrents to perform bulk actions:
+Select torrents with the row checkboxes. The header checkbox selects or clears all rows on the current page. Use **Shift-click** on a row checkbox to select the visible range from the last selected row. Changing filters, sorting, or pages clears the selection.
 
-- Pause all selected
-- Resume all selected
-- Delete all selected
+With rows selected, bulk actions can resume, pause, force recheck, or remove them. When the selected client supports queue priorities, additional controls move eligible torrents to the top, bottom, or one position up/down. Removing torrents opens a confirmation where you can choose whether to delete downloaded files.
 
 ---
 
