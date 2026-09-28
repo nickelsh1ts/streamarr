@@ -2,6 +2,7 @@ import type { NotificationAgentEmail } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import Email from 'email-templates';
 import net from 'node:net';
+import tls from 'node:tls';
 import nodemailer from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { URL } from 'url';
@@ -28,7 +29,14 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
     return;
   }
 
-  const socket = net.connect({ host: options.host, port: options.port });
+  const socket = options.secure
+    ? tls.connect({
+        host: options.host,
+        port: options.port,
+        servername: options.host,
+        ...options.tls,
+      })
+    : net.connect({ host: options.host, port: options.port });
   let settled = false;
   const connectionTimeout = setTimeout(() => {
     if (settled) {
