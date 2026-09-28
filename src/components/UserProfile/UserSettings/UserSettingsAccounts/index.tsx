@@ -6,6 +6,7 @@ import ShelfmarkLogo from '@app/assets/services/shelfmark.png';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
+import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import PlexOAuth from '@app/utils/plex';
@@ -46,42 +47,54 @@ interface CalibreWebLinkedAccountResponse {
 
 const UserSettingsAccounts = () => {
   const intl = useIntl();
-  const { user: currentUser, hasPermission: currentUserHasPermission } =
-    useUser();
+  const {
+    user: currentUser,
+    loading: currentUserLoading,
+    hasPermission: currentUserHasPermission,
+  } = useUser();
   const searchParams = useParams<{ userid: string }>();
-  const { user, revalidate: revalidateUser } = useUser({
-    id: Number(searchParams.userid),
-  });
+  const {
+    user,
+    loading: userLoading,
+    revalidate: revalidateUser,
+  } = useUser({ id: Number(searchParams.userid) });
   const { data: passwordInfo } = useSWR<{ hasPassword: boolean }>(
     user ? `/api/v1/user/${user?.id}/settings/password` : null
   );
-  const { data: userSettings } = useSWR<UserSettingsGeneralResponse>(
-    user ? `/api/v1/user/${user.id}/settings/main` : null
-  );
+  const { data: userSettings, isLoading: userSettingsLoading } =
+    useSWR<UserSettingsGeneralResponse>(
+      user ? `/api/v1/user/${user.id}/settings/main` : null
+    );
   const hasShelfmarkAccess =
     !!userSettings?.shelfmarkEnabled &&
     !!user &&
     hasPermission([Permission.BOOKMARK, Permission.READER], user.permissions, {
       type: 'or',
     });
-  const { data: shelfmarkAccount, mutate: revalidateShelfmarkAccount } =
-    useSWR<ShelfmarkLinkedAccountResponse>(
-      hasShelfmarkAccess
-        ? `/api/v1/user/${user.id}/settings/linked-accounts/shelfmark`
-        : null
-    );
+  const {
+    data: shelfmarkAccount,
+    isLoading: shelfmarkAccountLoading,
+    mutate: revalidateShelfmarkAccount,
+  } = useSWR<ShelfmarkLinkedAccountResponse>(
+    hasShelfmarkAccess
+      ? `/api/v1/user/${user.id}/settings/linked-accounts/shelfmark`
+      : null
+  );
   const hasCalibrewebAccess =
     !!userSettings?.calibrewebEnabled &&
     !!user &&
     hasPermission([Permission.READER, Permission.EBOOKS], user.permissions, {
       type: 'or',
     });
-  const { data: calibrewebAccount, mutate: revalidateCalibrewebAccount } =
-    useSWR<CalibreWebLinkedAccountResponse>(
-      hasCalibrewebAccess
-        ? `/api/v1/user/${user.id}/settings/linked-accounts/calibreweb`
-        : null
-    );
+  const {
+    data: calibrewebAccount,
+    isLoading: calibrewebAccountLoading,
+    mutate: revalidateCalibrewebAccount,
+  } = useSWR<CalibreWebLinkedAccountResponse>(
+    hasCalibrewebAccess
+      ? `/api/v1/user/${user.id}/settings/linked-accounts/calibreweb`
+      : null
+  );
   const { currentSettings } = useSettings();
   const [error, setError] = useState<string | null>(null);
   const [showAudiobookshelfModal, setShowAudiobookshelfModal] = useState(false);
@@ -248,6 +261,13 @@ const UserSettingsAccounts = () => {
     },
   ].filter((l) => !l.hide);
 
+  const isLoadingLinkedAccounts =
+    currentUserLoading ||
+    userLoading ||
+    userSettingsLoading ||
+    shelfmarkAccountLoading ||
+    calibrewebAccountLoading;
+
   const deleteRequest = async () => {
     try {
       await axios.delete(
@@ -279,6 +299,10 @@ const UserSettingsAccounts = () => {
       );
     }
   };
+
+  if (isLoadingLinkedAccounts) {
+    return <LoadingEllipsis />;
+  }
 
   if (
     currentUser?.id !== user?.id &&
