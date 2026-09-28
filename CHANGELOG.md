@@ -1,3 +1,55 @@
+## [1.16.0](https://github.com/nickelsh1ts/streamarr/compare/v1.15.0...v1.16.0) (2026-09-28)
+
+### ✨ Features
+
+* **downloads:** add filtering and range selection ([#691](https://github.com/nickelsh1ts/streamarr/issues/691)) ([b1b5a27](https://github.com/nickelsh1ts/streamarr/commit/b1b5a2735cef755f69bab0ce1685d23fb8fdf1a4))
+* **downloads:** support qBittorrent API key auth ([#721](https://github.com/nickelsh1ts/streamarr/issues/721)) ([b6a212f](https://github.com/nickelsh1ts/streamarr/commit/b6a212f4253261292aa6da979a72b61e8dd76bae))
+* **email:** support public logo fallback ([#687](https://github.com/nickelsh1ts/streamarr/issues/687)) ([7033485](https://github.com/nickelsh1ts/streamarr/commit/7033485b3feadaa68be561115ab023f3ca47968e))
+* **imageproxy:** support public TVDB artwork ([#690](https://github.com/nickelsh1ts/streamarr/issues/690)) ([d2a3712](https://github.com/nickelsh1ts/streamarr/commit/d2a371243afc15ab8e943ddc17ace0c0606d3a51))
+* **network:** add authenticated outbound HTTP proxy ([#698](https://github.com/nickelsh1ts/streamarr/issues/698)) ([b253e1e](https://github.com/nickelsh1ts/streamarr/commit/b253e1e5680238f1d90f2b427115eea0c9f00f3a))
+* **notifications:** additional notification delivery options ([#684](https://github.com/nickelsh1ts/streamarr/issues/684)) ([ff78ae9](https://github.com/nickelsh1ts/streamarr/commit/ff78ae97898ddc5d976a02a2548675011d08714e))
+* **profile:** show account email in user settings ([#682](https://github.com/nickelsh1ts/streamarr/issues/682)) ([7298e06](https://github.com/nickelsh1ts/streamarr/commit/7298e0659298c980af8a02a4ac1214ef6c208f9e))
+* **seerr:** link to permission-gated user management ([#689](https://github.com/nickelsh1ts/streamarr/issues/689)) ([7e62233](https://github.com/nickelsh1ts/streamarr/commit/7e62233eab472a8f8de37ee235aac54a0981ef7e))
+* **users:** refreshed Plex imports with Sync Existing ([#686](https://github.com/nickelsh1ts/streamarr/issues/686)) ([b60cbbe](https://github.com/nickelsh1ts/streamarr/commit/b60cbbe3793817db6e649b546a3bec485b36e3d1))
+* **users:** search users by name and email ([#685](https://github.com/nickelsh1ts/streamarr/issues/685)) ([4bd4f90](https://github.com/nickelsh1ts/streamarr/commit/4bd4f90ffa238eee1bcbc60ec72f80747ad221a2))
+
+### 🐛 Bug Fixes
+
+* **auth:** distinguish local credential errors ([#688](https://github.com/nickelsh1ts/streamarr/issues/688)) ([2f7fcc9](https://github.com/nickelsh1ts/streamarr/commit/2f7fcc9d7ddaea1fe3c8d671c6bd3482b57619df))
+* **disk-space:** cancel timed-out scans ([#713](https://github.com/nickelsh1ts/streamarr/issues/713)) ([86cc5a1](https://github.com/nickelsh1ts/streamarr/commit/86cc5a1e26401373299329c3bb02c22c018e5966))
+* **docker:** install native build toolchain in builder stage ([#699](https://github.com/nickelsh1ts/streamarr/issues/699)) ([fed5f49](https://github.com/nickelsh1ts/streamarr/commit/fed5f49c0ec271773c1e89360d0df1276c19bba7))
+* **email:** honor Docker host mappings for SMTP ([#695](https://github.com/nickelsh1ts/streamarr/issues/695)) ([012fa93](https://github.com/nickelsh1ts/streamarr/commit/012fa9359ef61fc72bb81295e6f4934ea6ff67c0))
+* **email:** use TLS for secure SMTP connections ([#710](https://github.com/nickelsh1ts/streamarr/issues/710)) ([1f40f72](https://github.com/nickelsh1ts/streamarr/commit/1f40f724c06dfc231b7b2730bebc531589158822))
+* **i18n:** fall back to configured server locale ([#683](https://github.com/nickelsh1ts/streamarr/issues/683)) ([d73b6cf](https://github.com/nickelsh1ts/streamarr/commit/d73b6cfb9a1d6ba0d1e323136beceb3b4988690d))
+* **i18n:** pluralization for newsletter recipient count ([#707](https://github.com/nickelsh1ts/streamarr/issues/707)) ([52bd244](https://github.com/nickelsh1ts/streamarr/commit/52bd2449be79c93274d4158b55ff85da74546bf6))
+* **notifications:** limit user-created alerts to self-service creation ([#693](https://github.com/nickelsh1ts/streamarr/issues/693)) ([ad46a53](https://github.com/nickelsh1ts/streamarr/commit/ad46a53f6621d522c17d5cc29d40107f30101d1d))
+* **profile:** wait for linked accounts to load ([#718](https://github.com/nickelsh1ts/streamarr/issues/718)) ([2e820ae](https://github.com/nickelsh1ts/streamarr/commit/2e820aee1adaf061c3d4384b05c8afb9adcb0fda))
+* **seerr:** proxy Next Image srcset URLs ([#716](https://github.com/nickelsh1ts/streamarr/issues/716)) ([7186b85](https://github.com/nickelsh1ts/streamarr/commit/7186b85747fd535029ca699c0da3dfc5f611dcb6))
+* **seerr:** route missing poster through request proxy ([#681](https://github.com/nickelsh1ts/streamarr/issues/681)) ([aee36bc](https://github.com/nickelsh1ts/streamarr/commit/aee36bcbe4715025fd6745de8f1c9b9cce3729e5))
+* **settings:** prevent future cache timestamps ([#717](https://github.com/nickelsh1ts/streamarr/issues/717)) ([149c851](https://github.com/nickelsh1ts/streamarr/commit/149c851ca01289b5105a87b95199c78c7f331a35))
+* **settings:** update the current user's email logic ([#712](https://github.com/nickelsh1ts/streamarr/issues/712)) ([1196510](https://github.com/nickelsh1ts/streamarr/commit/1196510fd1bfbbfb310a00d8775fde8aa1dbc088))
+* stabilize Plex setup flow and proxy handling ([32bd386](https://github.com/nickelsh1ts/streamarr/commit/32bd386f6721819eaf63dd75e6aa13c4f62f1f50))
+* **system:** improve disk-space reporting and cache scans ([#697](https://github.com/nickelsh1ts/streamarr/issues/697)) ([826998b](https://github.com/nickelsh1ts/streamarr/commit/826998bd8cafbaace39cf679614199112af07f95))
+* **webpush:** harden subscription lifecycle ([#692](https://github.com/nickelsh1ts/streamarr/issues/692)) ([2457416](https://github.com/nickelsh1ts/streamarr/commit/24574161a9637af8c50ad5e837d51bb69121520f))
+
+### ⚡ Performance
+
+* **auth:** disable user polling on public routes ([#714](https://github.com/nickelsh1ts/streamarr/issues/714)) ([9361395](https://github.com/nickelsh1ts/streamarr/commit/93613957c2fe96817f1d4c11f429598211317a63))
+
+### 📚 Documentation
+
+* clarify outbound proxy testing ([#711](https://github.com/nickelsh1ts/streamarr/issues/711)) ([992d659](https://github.com/nickelsh1ts/streamarr/commit/992d65942a513e6deaa6823156840db8064f1c4c))
+* update feature, system, downloads, and security docs ([#706](https://github.com/nickelsh1ts/streamarr/issues/706)) ([e3e5b9c](https://github.com/nickelsh1ts/streamarr/commit/e3e5b9c539f73ebe4790dc097f2fda8e594fbdf5))
+
+### ♻️ Refactoring
+
+* **token:** aggregate Plex JWT refresh logs ([#719](https://github.com/nickelsh1ts/streamarr/issues/719)) ([34fcdd8](https://github.com/nickelsh1ts/streamarr/commit/34fcdd8362bb1f67f2d6873e3f36a33beda56786))
+
+### 🤖 CI/CD
+
+* **release:** build multi-arch images on native runners ([#696](https://github.com/nickelsh1ts/streamarr/issues/696)) ([65b1956](https://github.com/nickelsh1ts/streamarr/commit/65b1956546b2dcbbde89d4cf1dbbe5e210917b04))
+* **release:** publish release only after image build, sign, and verify succeed ([#694](https://github.com/nickelsh1ts/streamarr/issues/694)) ([f117734](https://github.com/nickelsh1ts/streamarr/commit/f11773496de9c5d682319a16e603d97b544486f1))
+
 ## [1.15.0](https://github.com/nickelsh1ts/streamarr/compare/v1.14.0...v1.15.0) (2026-09-16)
 
 ### ✨ Features
