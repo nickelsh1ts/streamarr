@@ -16,12 +16,16 @@ const TARGET_TIMEOUT_MS = 45 * 1000;
 const withTimeout = async <T>(
   promise: Promise<T>,
   timeoutMs: number,
-  message: string
+  message: string,
+  onTimeout?: () => void
 ): Promise<T> => {
   let timeout: NodeJS.Timeout;
 
   const timeoutPromise = new Promise<never>((_, reject) => {
-    timeout = setTimeout(() => reject(new Error(message)), timeoutMs);
+    timeout = setTimeout(() => {
+      onTimeout?.();
+      reject(new Error(message));
+    }, timeoutMs);
   });
 
   try {
@@ -132,22 +136,12 @@ export const getConfigDiskSpace = async (
   configPath: string
 ): Promise<{ items: DiskSpaceItem[]; failedPaths: DiskSpaceFailure[] }> => {
   const cachePath = path.join(configPath, 'cache');
-  let includeCache = true;
-
-  try {
-    await fsPromises.lstat(cachePath);
-  } catch (e) {
-    if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
-      includeCache = false;
-    }
-  }
-
-  const diskPaths = [
-    { kind: 'filesystem' as const, name: 'Root filesystem', path: '/' },
-    { kind: 'directory' as const, name: 'Streamarr config', path: configPath },
-    ...(includeCache
-      ? [{ kind: 'directory' as const, name: 'Cache', path: cachePath }]
-      : []),
+  const optionalPaths = [
+    {
+      kind: 'directory' as const,
+      name: 'Cache',
+      path: cachePath,
+    },
     {
       kind: 'directory' as const,
       name: 'Logs',
@@ -158,6 +152,28 @@ export const getConfigDiskSpace = async (
       name: 'Database',
       path: path.join(configPath, 'db'),
     },
+  ];
+  const existingOptionalPaths = await Promise.all(
+    optionalPaths.map(async (target) => {
+      try {
+        await fsPromises.lstat(target.path);
+        return target;
+      } catch (e) {
+        if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+          return undefined;
+        }
+
+        return target;
+      }
+    })
+  );
+
+  const diskPaths = [
+    { kind: 'filesystem' as const, name: 'Root filesystem', path: '/' },
+    { kind: 'directory' as const, name: 'Streamarr config', path: configPath },
+    ...existingOptionalPaths.filter(
+      (target): target is (typeof optionalPaths)[number] => target !== undefined
+    ),
   ];
 
   const results = await Promise.all(
@@ -170,11 +186,19 @@ export const getConfigDiskSpace = async (
         );
         const directoryBytes =
           kind === 'directory'
-            ? await withTimeout(
-                getPathUsedBytes(diskPath),
-                TARGET_TIMEOUT_MS,
-                `Timed out calculating directory size for path: ${diskPath}`
-              )
+            ? await (() => {
+                const controller = new AbortController();
+                return withTimeout(
+                  getPathUsedBytes(
+                    diskPath,
+                    TARGET_TIMEOUT_MS,
+                    controller.signal
+                  ),
+                  TARGET_TIMEOUT_MS,
+                  `Timed out calculating directory size for path: ${diskPath}`,
+                  () => controller.abort()
+                );
+              })()
             : undefined;
 
         return {

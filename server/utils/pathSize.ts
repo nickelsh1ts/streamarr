@@ -21,18 +21,26 @@ export class PathSizeTimeoutError extends Error {
 
 export const getPathUsedBytes = (
   targetPath: string,
-  maxWaitMs = RECURSIVE_WALK_TIMEOUT_MS
+  maxWaitMs = RECURSIVE_WALK_TIMEOUT_MS,
+  signal?: AbortSignal
 ): Promise<number> =>
-  diskScanQueue.enqueue(() => getPathUsedBytesUnqueued(targetPath), maxWaitMs);
+  diskScanQueue.enqueue(
+    () => getPathUsedBytesUnqueued(targetPath, signal),
+    maxWaitMs,
+    signal
+  );
 
 const getPathUsedBytesUnqueued = async (
-  targetPath: string
+  targetPath: string,
+  signal?: AbortSignal
 ): Promise<number> => {
   try {
+    signal?.throwIfAborted();
     // -s: summarize to a single total; -k: report in 1024-byte block units.
     // `--` guards against a path that begins with `-` being read as a flag.
     const { stdout } = await execFileAsync('du', ['-sk', '--', targetPath], {
       timeout: DU_TIMEOUT_MS,
+      signal,
     });
     const blocksKb = Number(stdout.trim().split(/\s+/)[0]);
 
@@ -42,22 +50,25 @@ const getPathUsedBytesUnqueued = async (
 
     throw new Error(`Unable to parse du output for path: ${targetPath}`);
   } catch (e) {
+    signal?.throwIfAborted();
     logger.warn('Falling back to recursive path size calculation', {
       label: 'PathSize',
       targetPath,
       errorMessage: e instanceof Error ? e.message : 'Unknown error',
     });
 
-    return getPathUsedBytesRecursive(targetPath);
+    return getPathUsedBytesRecursive(targetPath, signal);
   }
 };
 
 const getPathUsedBytesRecursive = async (
-  targetPath: string
+  targetPath: string,
+  signal?: AbortSignal
 ): Promise<number> => {
   const deadline = Date.now() + RECURSIVE_WALK_TIMEOUT_MS;
 
   try {
+    signal?.throwIfAborted();
     const rootStats = await fsPromises.lstat(targetPath);
 
     if (rootStats.isFile()) {
@@ -68,6 +79,7 @@ const getPathUsedBytesRecursive = async (
       return 0;
     }
   } catch {
+    signal?.throwIfAborted();
     return 0;
   }
 
@@ -76,6 +88,7 @@ const getPathUsedBytesRecursive = async (
   const stack = [targetPath];
 
   while (stack.length > 0) {
+    signal?.throwIfAborted();
     if (Date.now() > deadline) {
       throw new PathSizeTimeoutError(targetPath);
     }
@@ -91,10 +104,12 @@ const getPathUsedBytesRecursive = async (
     try {
       dir = await fsPromises.opendir(currentPath);
     } catch {
+      signal?.throwIfAborted();
       continue;
     }
 
     for await (const entry of dir) {
+      signal?.throwIfAborted();
       entriesSinceDeadlineCheck += 1;
       if (entriesSinceDeadlineCheck >= DEADLINE_CHECK_INTERVAL) {
         entriesSinceDeadlineCheck = 0;
@@ -118,9 +133,12 @@ const getPathUsedBytesRecursive = async (
           totalBytes += entryStats.size;
         }
       } catch {
+        signal?.throwIfAborted();
         // Ignore unreadable entries and continue calculating what we can.
       }
     }
+
+    signal?.throwIfAborted();
   }
 
   return totalBytes;
