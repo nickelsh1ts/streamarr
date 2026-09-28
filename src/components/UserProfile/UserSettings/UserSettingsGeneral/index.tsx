@@ -533,7 +533,11 @@ const UserSettingsGeneral = () => {
                     <input
                       id="email"
                       type="email"
-                      value={user?.email ?? ''}
+                      value={
+                        (user?.id === currentUser?.id
+                          ? currentUser?.email
+                          : user?.email) ?? ''
+                      }
                       className="input input-primary input-sm w-full"
                       disabled
                     />
