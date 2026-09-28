@@ -692,9 +692,6 @@
   "common.transcodes": {
     "defaultMessage": "Transcodificaciones"
   },
-  "common.tryAdjustingFilters": {
-    "defaultMessage": "Intenta ajustar tus filtros o añadir un nuevo torrent."
-  },
   "common.tvShows": {
     "defaultMessage": "Series de TV"
   },
@@ -3815,9 +3812,6 @@
   "plexImport.noUsersToImport": {
     "defaultMessage": "No hay usuarios para importar de Plex."
   },
-  "plexImport.success": {
-    "defaultMessage": "¡{count, plural, one {# usuario de Plex} other {# usuarios de Plex}} importado(s) exitosamente!"
-  },
   "plexImport.title": {
     "defaultMessage": "Importar Usuarios de Plex"
   },
@@ -4903,9 +4897,6 @@
   },
   "userSettings.description": {
     "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
-  },
-  "userSettings.engine": {
-    "defaultMessage": "Motor"
   },
   "userSettings.inviteLimit": {
     "defaultMessage": "Límite de invitaciones predeterminado"
