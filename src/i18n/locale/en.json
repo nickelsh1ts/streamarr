@@ -5270,12 +5270,6 @@
   "servicesSettings.nexroll.title": {
     "defaultMessage": "NeXroll Settings"
   },
-  "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
-  },
-  "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Remove any external Seerr reverse proxy"
-  },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Optionally configure the settings for your Seerr server."
   },
