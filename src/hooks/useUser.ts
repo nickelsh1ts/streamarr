@@ -2,6 +2,7 @@ import { UserType } from '@server/constants/user';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import type { NotificationAgentKey } from '@server/lib/settings';
+import { usePathname } from 'next/navigation';
 import type { MutatorCallback } from 'swr';
 import useSWR from 'swr';
 
@@ -94,16 +95,25 @@ export const useUser = ({
   initialData?: User;
   disableAutoRevalidation?: boolean;
 } = {}): UserHookResponse => {
+  const pathname = usePathname();
+  const isPublicRoute =
+    pathname === '/' ||
+    /^\/(?:signin(?:\/plex\/loading)?|signup|resetpassword(?:\/.*)?|setup|help(?:\/.*)?)$/.test(
+      pathname || ''
+    );
+  const shouldDisableAutoRevalidation =
+    disableAutoRevalidation ?? (!id && isPublicRoute);
+
   const {
     data,
     error,
     mutate: revalidate,
   } = useSWR<User>(id ? `/api/v1/user/${id}` : `/api/v1/auth/me`, {
     fallbackData: initialData,
-    refreshInterval: !disableAutoRevalidation ? 30000 : 0,
-    revalidateOnFocus: !disableAutoRevalidation,
-    revalidateOnMount: !disableAutoRevalidation,
-    revalidateOnReconnect: !disableAutoRevalidation,
+    refreshInterval: shouldDisableAutoRevalidation ? 0 : 30000,
+    revalidateOnFocus: !shouldDisableAutoRevalidation,
+    revalidateOnMount: !shouldDisableAutoRevalidation,
+    revalidateOnReconnect: !shouldDisableAutoRevalidation,
     errorRetryInterval: 30000,
     shouldRetryOnError: false,
   });
