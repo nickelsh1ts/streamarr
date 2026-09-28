@@ -4,7 +4,7 @@ import type { NewsletterTrigger } from '@server/entity/NewsletterHistory';
 import NewsletterHistory from '@server/entity/NewsletterHistory';
 import { User } from '@server/entity/User';
 import { getIntl } from '@server/i18n';
-import PreparedEmail from '@server/lib/email';
+import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import path from 'path';
@@ -175,8 +175,8 @@ export const sendNewsletter = async (
       throw new NewsletterEmptyError(configuredBlocks);
     }
 
-    const { applicationUrl, applicationTitle, customLogo } = settings.main;
-    const logoUrl = customLogo || '/logo_full.png';
+    const { applicationUrl, applicationTitle } = settings.main;
+    const logoUrl = getEmailLogo();
 
     const byLocale = new Map<
       string,

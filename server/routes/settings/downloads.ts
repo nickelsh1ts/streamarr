@@ -1,4 +1,4 @@
-import { testConnection } from '@server/api/downloads/base';
+import { clearClientCache, testConnection } from '@server/api/downloads/base';
 import type {
   DownloadClientSettings,
   DownloadClientType,
@@ -50,6 +50,7 @@ downloadsRoutes.post('/', (req, res, next) => {
       useSsl: newClient.useSsl ?? false,
       username: newClient.username,
       password: newClient.password,
+      apiKey: newClient.apiKey,
       externalUrl: newClient.externalUrl,
     };
 
@@ -100,6 +101,7 @@ downloadsRoutes.put<{ id: string }>('/:id', (req, res, next) => {
 
     settings.downloads[clientIndex] = updatedClient;
     settings.save();
+    clearClientCache(clientId);
 
     logger.debug(`Download client updated: ${updatedClient.name}`, {
       label: 'Downloads',
@@ -162,12 +164,20 @@ downloadsRoutes.post('/test', async (req, res, next) => {
       return next({ status: 400, message: 'Port is required' });
     }
 
-    // Username is not required for Deluge (Web UI uses password only)
-    if (testSettings.client !== 'deluge' && !testSettings.username) {
+    const usesQbittorrentApiKey =
+      testSettings.client === 'qbittorrent' && !!testSettings.apiKey;
+
+    // Username is not required for Deluge; qBittorrent API-key auth is also
+    // valid without username/password.
+    if (
+      !usesQbittorrentApiKey &&
+      testSettings.client !== 'deluge' &&
+      !testSettings.username
+    ) {
       return next({ status: 400, message: 'Username is required' });
     }
 
-    if (!testSettings.password) {
+    if (!usesQbittorrentApiKey && !testSettings.password) {
       return next({ status: 400, message: 'Password is required' });
     }
 
@@ -181,6 +191,7 @@ downloadsRoutes.post('/test', async (req, res, next) => {
       useSsl: testSettings.useSsl ?? false,
       username: testSettings.username,
       password: testSettings.password,
+      apiKey: testSettings.apiKey,
     };
 
     const result = await testConnection(clientSettings);

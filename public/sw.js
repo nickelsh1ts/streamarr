@@ -103,7 +103,7 @@ self.addEventListener(
     event.notification.close();
 
     if (notificationData.actionUrl) {
-      clients.openWindow(notificationData.actionUrl);
+      event.waitUntil(clients.openWindow(notificationData.actionUrl));
     }
   },
   false

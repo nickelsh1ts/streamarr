@@ -49,6 +49,13 @@ servers:
 
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
     PlexHealthState:
       type: object
       properties:
@@ -293,6 +300,23 @@ components:
         - email
         - createdAt
         - updatedAt
+    PlexImportResponse:
+      type: object
+      properties:
+        createdUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        refreshedUsers:
+          type: integer
+          description: Existing users whose Plex-linked details changed
+        unchangedUsers:
+          type: integer
+          description: Existing users already matching their Plex details
+      required:
+        - createdUsers
+        - refreshedUsers
+        - unchangedUsers
     UserSettings:
       type: object
       properties:
@@ -972,6 +996,64 @@ components:
             Delay in milliseconds between scheduled task retry attempts
             when an external service is unreachable.
           example: 300000
+        outboundProxy:
+          $ref: '#/components/schemas/OutboundProxySettings'
+    OutboundProxySettings:
+      type: object
+      description: >-
+        Settings-driven outbound HTTP(S) proxy. Changes require a server
+        restart. Covers Axios, server-side fetch, and web push; SMTP and
+        download-client connections are not proxied. Loopback, private,
+        single-label, and local-domain hosts can be bypassed with
+        bypassLocalAddresses. Add internal FQDNs to bypassFilter when they
+        resolve to a private network.
+      required:
+        - enabled
+        - hostname
+        - port
+        - useSsl
+        - bypassFilter
+        - bypassLocalAddresses
+      properties:
+        enabled:
+          type: boolean
+          example: false
+        hostname:
+          type: string
+          maxLength: 253
+          example: proxy.example.com
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          example: 8080
+        useSsl:
+          type: boolean
+          description: Connect to the proxy itself over HTTPS.
+          example: false
+        username:
+          type: string
+          maxLength: 255
+          example: proxyuser
+        password:
+          type: string
+          maxLength: 1024
+          description: >-
+            Returned only by the admin-authenticated Network Settings
+            endpoint. The UI masks the value by default. An empty submitted
+            password keeps the stored password; clearing the username clears it.
+        bypassFilter:
+          type: string
+          maxLength: 2048
+          description: >-
+            Comma-separated hostnames or IP addresses that bypass the proxy.
+            Prefix with `*.` to match a domain and its subdomains.
+          example: '*.example.com, api.example.org'
+        bypassLocalAddresses:
+          type: boolean
+          description: Bypass loopback, private, link-local, container-local, and local-domain destinations.
+          default: true
+          example: true
     SeerrQuotaResponse:
       type: object
       properties:
@@ -1146,6 +1228,10 @@ components:
         password:
           type: string
           nullable: true
+        apiKey:
+          type: string
+          nullable: true
+          description: qBittorrent Web API key (requires qBittorrent 5.2.0 or later)
         isDefault:
           type: boolean
           example: true
@@ -1479,6 +1565,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TorrentStats'
+        filterOptions:
+          type: object
+          description: Distinct category and tag values for the selected client scope
+          properties:
+            categories:
+              type: array
+              items:
+                type: string
+            tags:
+              type: array
+              items:
+                type: string
         pageInfo:
           type: object
           properties:
@@ -2172,6 +2270,9 @@ components:
             allowSelfSigned:
               type: boolean
               example: false
+            usePublicLogo:
+              type: boolean
+              example: false
     NotificationDiscordSettings:
       type: object
       properties:
@@ -2188,6 +2289,10 @@ components:
               type: string
             webhookRoleId:
               type: string
+              nullable: true
+            webhookThreadId:
+              type: string
+              pattern: '^$|^\d{17,20}$'
               nullable: true
             enableMentions:
               type: boolean
@@ -2334,6 +2439,9 @@ components:
               type: string
             topic:
               type: string
+            tags:
+              type: string
+              nullable: true
             authMethod:
               type: string
               enum: [none, usernamePassword, token]
@@ -3163,7 +3271,10 @@ paths:
                 $ref: '#/components/schemas/NetworkSettings'
     post:
       summary: Update network settings
-      description: Updates global network settings with the provided values.
+      description: >-
+        Updates global network settings with the provided values. For the
+        outbound proxy, an omitted or empty password keeps the saved password;
+        clearing the username clears the password. Changes require a restart.
       tags:
         - settings
       requestBody:
@@ -3179,6 +3290,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkSettings'
+        '400':
+          description: Invalid network or outbound proxy settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /settings/network/outbound-proxy/test:
+    post:
+      summary: Test outbound proxy settings
+      description: >-
+        Sends one HTTPS request to a fixed public endpoint through the supplied
+        proxy settings. Unsaved settings can be tested; this endpoint does not
+        save changes. Success verifies this proxy path only, not every
+        destination.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutboundProxySettings'
+      responses:
+        '200':
+          description: The proxy relayed the test request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status returned through the proxy
+                    example: 200
+        '400':
+          description: The outbound proxy is not enabled or configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: The proxy test request failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /settings/plex:
     get:
       summary: Get Plex settings
@@ -3567,6 +3724,9 @@ paths:
                   nullable: true
                   example: 'admin'
                 password:
+                  type: string
+                  nullable: true
+                apiKey:
                   type: string
                   nullable: true
               required:
@@ -5188,6 +5348,15 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                      tvdb:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 123
                       plex:
                         type: object
                         properties:
@@ -5888,10 +6057,16 @@ paths:
     get:
       summary: Get disk space usage
       description: >-
-        Returns disk usage for the application data directory and its immediate
-        subdirectories. Results are cached server-side for a short period.
+        Returns root filesystem capacity and Streamarr config directory sizes.
+        Results are cached server-side for a short period unless forced.
       tags:
         - settings
+      parameters:
+        - in: query
+          name: force
+          schema:
+            type: boolean
+          description: Recalculate disk usage instead of using the cached result.
       responses:
         '200':
           description: Disk space usage
@@ -5900,11 +6075,17 @@ paths:
               schema:
                 type: object
                 properties:
+                  cachedAt:
+                    type: number
+                    example: 1760000000000
                   items:
                     type: array
                     items:
                       type: object
                       properties:
+                        kind:
+                          type: string
+                          enum: [filesystem, directory]
                         deviceId:
                           type: string
                           example: '2064'
@@ -5917,9 +6098,13 @@ paths:
                         mountPoint:
                           type: string
                           example: /
-                        pathUsedBytes:
+                        directoryBytes:
                           type: number
                           example: 104857600
+                        directoryPercent:
+                          type: number
+                          format: float
+                          example: 5
                         totalBytes:
                           type: number
                           example: 249108103168
@@ -6153,6 +6338,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
       requestBody:
         required: true
         content:
@@ -6331,6 +6525,11 @@ paths:
             enum: [asc, desc]
             default: desc
           description: Sort direction (ascending or descending)
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Case-insensitive literal substring search by email, username, or Plex username
       responses:
         '200':
           description: A JSON array of all users
@@ -6432,7 +6631,7 @@ paths:
     post:
       summary: Import all users from Plex
       description: |
-        Fetches and imports users from the Plex server. If a list of Plex IDs is provided in the request body, only the specified users will be imported. Otherwise, all users will be imported.
+        Fetches users from Plex and imports only the specified Plex IDs when `plexIds` is provided. If `syncExisting` is true, refreshes existing matching Streamarr users without creating accounts and returns a synchronization summary. If the request body is omitted, preserves the legacy import-all behavior and response.
 
         Requires the `MANAGE_USERS` permission.
       tags:
@@ -6448,9 +6647,18 @@ paths:
                   type: array
                   items:
                     type: string
+                syncExisting:
+                  type: boolean
+                  default: false
       responses:
+        '200':
+          description: Existing Plex-linked users synchronized without creating accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlexImportResponse'
         '201':
-          description: A list of the newly created users
+          description: A list of newly created users (legacy response shape)
           content:
             application/json:
               schema:
@@ -6472,24 +6680,47 @@ paths:
               properties:
                 endpoint:
                   type: string
+                  format: uri
+                  maxLength: 4096
+                previousEndpoint:
+                  type: string
+                  format: uri
+                  maxLength: 4096
                 auth:
                   type: string
+                  minLength: 22
+                  maxLength: 22
                 p256dh:
                   type: string
+                  minLength: 87
+                  maxLength: 87
                 userAgent:
                   type: string
+                  maxLength: 512
               required:
                 - endpoint
                 - auth
                 - p256dh
       responses:
+        '400':
+          description: Invalid or unsupported push endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Push subscription device limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '204':
           description: Successfully registered push subscription
   /user/{userId}/pushSubscriptions:
     get:
       summary: Get all web push notification settings for a user
       description: |
-        Returns all web push notification settings for a user in a JSON object.
+        Returns the device metadata for all web push subscriptions owned by a user.
       tags:
         - users
       parameters:
@@ -6504,21 +6735,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  endpoint:
-                    type: string
-                  p256dh:
-                    type: string
-                  auth:
-                    type: string
-                  userAgent:
-                    type: string
+                type: array
+                items:
+                  type: object
+                  properties:
+                    endpoint:
+                      type: string
+                    userAgent:
+                      type: string
+                      nullable: true
+                    createdAt:
+                      type: string
+                      format: date-time
+                      nullable: true
   /user/{userId}/pushSubscription/{key}:
     get:
-      summary: Get web push notification settings for a user
+      summary: Verify the authenticated user's web push subscription
       description: |
-        Returns web push notification settings for a user in a JSON object.
+        Returns the endpoint and encryption keys for the authenticated user's web push subscription.
       tags:
         - users
       parameters:
@@ -6545,8 +6779,6 @@ paths:
                   p256dh:
                     type: string
                   auth:
-                    type: string
-                  userAgent:
                     type: string
     delete:
       summary: Delete user push subscription by key
@@ -7877,6 +8109,42 @@ paths:
                 $ref: '#/components/schemas/SeerrQuotaResponse'
         '404':
           description: Seerr is not configured or user has no linked Plex account
+  /user/{userId}/settings/seerr/permissions:
+    get:
+      summary: Get a user's Seerr permissions
+      description: Returns the specified user's Seerr permission bitmask, or null when Seerr is unconfigured, the Streamarr user has no Plex ID, or no Seerr user matches.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Seerr permission mask, or null if the user has no matching Seerr account
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - permissions
+                properties:
+                  permissions:
+                    type: integer
+                    nullable: true
+        '404':
+          description: Streamarr user not found
+        '500':
+          description: Seerr permission lookup failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /user/{userId}/requests:
     get:
       summary: Get recent requests for a user from Seerr
@@ -8060,13 +8328,22 @@ paths:
         - in: query
           name: category
           schema:
-            type: string
-          description: Filter by category/label
+            type: array
+            items:
+              type: string
+          description: Filter by one or more categories/labels (OR within this facet)
+        - in: query
+          name: tag
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by one or more tags (OR within this facet)
         - in: query
           name: search
           schema:
             type: string
-          description: Search in torrent names
+          description: Search torrent names, categories, save paths, and tags
         - in: query
           name: sort
           schema:

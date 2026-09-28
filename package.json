@@ -2,7 +2,7 @@
   "name": "streamarr",
   "version": "1.15.0",
   "private": true,
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
     "dev": "nodemon -e ts --watch server --watch streamarr-api.yml -e .json,.ts,.yml -x tsx --tsconfig server/tsconfig.json server/index.ts",
     "build:next": "next build",
@@ -45,7 +45,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@dr.pogodin/csurf": "^1.16.9",
-    "@formatjs/intl": "^4.1.9",
+    "@formatjs/intl": "^6.0.0",
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
     "ace-builds": "^1.44.0",
@@ -65,9 +65,11 @@
     "express-rate-limit": "^8.3.2",
     "express-session": "^1.19.0",
     "formik": "^2.4.9",
+    "http-proxy-agent": "^7.0.2",
     "http-proxy-middleware": "^4.0.0",
+    "https-proxy-agent": "^7.0.6",
     "ical": "^0.8.0",
-    "isomorphic-dompurify": "^3.8.0",
+    "isomorphic-dompurify": "^4.0.0",
     "lodash": "^4.18.1",
     "marked": "^18.0.5",
     "moment": "^2.30.1",
@@ -89,7 +91,7 @@
     "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.5",
     "react-hot-toast": "^2.6.0",
-    "react-intl": "^10.1.2",
+    "react-intl": "^12.0.0",
     "react-markdown": "^10.1.0",
     "react-popper-tooltip": "^4.4.2",
     "react-select": "^5.10.2",
@@ -105,6 +107,7 @@
     "swr": "^2.4.1",
     "typeorm": "^1.0.0",
     "ua-parser-js": "^2.0.9",
+    "undici": "^7.29.0",
     "validator": "^13.15.35",
     "web-push": "^3.6.7",
     "winston": "^3.19.0",
@@ -133,6 +136,7 @@
     "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
     "@types/node-schedule": "^2.1.8",
+    "@types/nodemailer": "^8.0.1",
     "@types/prop-types": "^15.7.14",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",
@@ -147,14 +151,14 @@
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "copyfiles": "^2.4.1",
     "cy-mobile-commands": "^0.3.0",
-    "cypress": "^15.13.1",
+    "cypress": "^16.0.0",
     "cz-conventional-changelog": "3.3.0",
-    "daisyui": "5.7.28",
+    "daisyui": "5.7.42",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-formatjs": "^6.4.5",
-    "eslint-plugin-no-relative-import-paths": "1.6.1",
+    "eslint-plugin-no-relative-import-paths": "1.7.3",
     "globals": "^17.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.0",
@@ -172,7 +176,7 @@
   },
   "engines": {
     "node": ">=24.0.0",
-    "pnpm": "^11.0.0"
+    "pnpm": "^12.0.0"
   },
   "config": {
     "commitizen": {
@@ -286,7 +290,8 @@
       [
         "@semantic-release/github",
         {
-          "addReleases": "bottom"
+          "addReleases": "bottom",
+          "draftRelease": true
         }
       ]
     ]

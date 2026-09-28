@@ -75,12 +75,24 @@ export interface CalibreWebSettings extends Omit<ServiceSettings, 'apiKey'> {
 
 export interface ChaptarrSettings extends ServiceSettings {}
 
+export interface OutboundProxySettings {
+  enabled: boolean;
+  hostname: string;
+  port: number;
+  useSsl: boolean;
+  username?: string;
+  password?: string;
+  bypassFilter: string;
+  bypassLocalAddresses: boolean;
+}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
   csrfProtection: boolean;
   scheduledRetryAttempts: number;
   scheduledRetryInterval: number;
+  outboundProxy: OutboundProxySettings;
 }
 
 export interface DVRSettings {
@@ -124,6 +136,7 @@ export interface DownloadClientSettings {
   useSsl: boolean;
   username?: string;
   password?: string;
+  apiKey?: string;
   externalUrl?: string;
 }
 
@@ -250,6 +263,7 @@ export interface NotificationAgentEmail extends NotificationAgentConfig {
     authPass?: string;
     allowSelfSigned: boolean;
     senderName: string;
+    usePublicLogo?: boolean;
     pgpPrivateKey?: string;
     pgpPassword?: string;
   };
@@ -269,6 +283,7 @@ export interface NotificationAgentDiscord extends NotificationAgentConfig {
   options: {
     webhookUrl: string;
     webhookRoleId?: string;
+    webhookThreadId?: string;
     enableMentions: boolean;
     botUsername?: string;
     botAvatarUrl?: string;
@@ -318,6 +333,7 @@ export interface NotificationAgentNtfy extends NotificationAgentConfig {
   options: {
     url: string;
     topic: string;
+    tags?: string;
     authMethod?: 'none' | 'usernamePassword' | 'token';
     username?: string;
     password?: string;
@@ -506,6 +522,14 @@ class Settings {
         csrfProtection: false,
         scheduledRetryAttempts: 3,
         scheduledRetryInterval: 300000,
+        outboundProxy: {
+          enabled: false,
+          hostname: '',
+          port: 8080,
+          useSsl: false,
+          bypassFilter: '',
+          bypassLocalAddresses: true,
+        },
       },
       tautulli: {
         enabled: false,
@@ -574,6 +598,7 @@ class Settings {
             enabled: false,
             options: {
               webhookUrl: '',
+              webhookThreadId: '',
               enableMentions: false,
             },
           },
@@ -588,6 +613,7 @@ class Settings {
               requireTls: false,
               allowSelfSigned: false,
               senderName: 'Streamarr',
+              usePublicLogo: false,
             },
           },
           gotify: {
@@ -603,6 +629,7 @@ class Settings {
             options: {
               url: '',
               topic: '',
+              tags: '',
               priority: 3,
             },
           },

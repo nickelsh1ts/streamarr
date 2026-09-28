@@ -580,7 +580,11 @@ const JobsCacheSettings = () => {
                 <FormattedMessage
                   id="cache.lastUpdated"
                   defaultMessage="Updated {time}"
-                  values={{ time: moment(cacheData.cachedAt).from(now) }}
+                  values={{
+                    time: moment(cacheData.cachedAt).from(
+                      Math.max(now, cacheData.cachedAt)
+                    ),
+                  }}
                 />
               </span>
             )}
@@ -649,6 +653,15 @@ const JobsCacheSettings = () => {
                   </Table.TD>
                   <Table.TD>
                     {formatBytes(cacheData?.imageCache.tmdb.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
+                  <Table.TD>TheTVDB</Table.TD>
+                  <Table.TD>
+                    {cacheData?.imageCache.tvdb.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.imageCache.tvdb.size ?? 0)}
                   </Table.TD>
                 </tr>
                 <tr>

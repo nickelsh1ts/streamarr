@@ -4,7 +4,7 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import { XCircleIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface LoginWithPlexProps {
@@ -14,18 +14,23 @@ interface LoginWithPlexProps {
 const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
   const intl = useIntl();
   const [pinId, setPinId] = useState<string | undefined>(undefined);
+  const loginAttempt = useRef<string | undefined>(undefined);
   const { user, revalidate } = useUser();
   const { currentSettings } = useSettings();
 
   useEffect(() => {
+    if (!pinId || loginAttempt.current === pinId) {
+      return;
+    }
+
+    loginAttempt.current = pinId;
+
     const login = async () => {
       try {
         const response = await axios.post('/api/v1/auth/plex', { pinId });
 
         if (response.data?.id) {
-          const { data: authenticatedUser } =
-            await axios.get('/api/v1/auth/me');
-          await revalidate(authenticatedUser, false);
+          await revalidate(response.data, false);
           onComplete();
         }
       } catch (error) {
@@ -38,12 +43,11 @@ const LoginWithPlex = ({ onComplete }: LoginWithPlexProps) => {
           type: 'error',
           icon: <XCircleIcon className="size-7" />,
         });
+        loginAttempt.current = undefined;
         setPinId(undefined);
       }
     };
-    if (pinId) {
-      login();
-    }
+    login();
   }, [pinId, intl, onComplete, revalidate]);
 
   useEffect(() => {

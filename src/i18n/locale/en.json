@@ -827,9 +827,6 @@
   "common.transcodes": {
     "defaultMessage": "Transcodes"
   },
-  "common.tryAdjustingFilters": {
-    "defaultMessage": "Try adjusting your filters or add a new torrent."
-  },
   "common.tryAgain": {
     "defaultMessage": "Try Again"
   },
@@ -1019,6 +1016,9 @@
   "downloads.categoryUpdated": {
     "defaultMessage": "Category updated successfully"
   },
+  "downloads.clearFilters": {
+    "defaultMessage": "Clear Filters"
+  },
   "downloads.clearSelection": {
     "defaultMessage": "Clear"
   },
@@ -1088,6 +1088,12 @@
   "downloads.failedToUpdateSavePath": {
     "defaultMessage": "Failed to update save path"
   },
+  "downloads.filterCategories": {
+    "defaultMessage": "Categories"
+  },
+  "downloads.filterCategoriesAria": {
+    "defaultMessage": "Filter by categories"
+  },
   "downloads.filterIncomplete": {
     "defaultMessage": "Incomplete"
   },
@@ -1102,6 +1108,12 @@
   },
   "downloads.filterStalled": {
     "defaultMessage": "Stalled"
+  },
+  "downloads.filterTags": {
+    "defaultMessage": "Tags"
+  },
+  "downloads.filterTagsAria": {
+    "defaultMessage": "Filter by tags"
   },
   "downloads.forceRecheck": {
     "defaultMessage": "Force Re-check"
@@ -1135,6 +1147,9 @@
   },
   "downloads.noFilesFound": {
     "defaultMessage": "No files found"
+  },
+  "downloads.noMatchesForFilters": {
+    "defaultMessage": "No downloads match the current filters."
   },
   "downloads.openClient": {
     "defaultMessage": "Open {clientName}"
@@ -1183,6 +1198,9 @@
   },
   "downloads.savePathUpdated": {
     "defaultMessage": "Save path updated successfully"
+  },
+  "downloads.searchPlaceholder": {
+    "defaultMessage": "Search Downloads"
   },
   "downloads.selectAllFiles": {
     "defaultMessage": "Select all files"
@@ -1330,6 +1348,12 @@
   },
   "emailNotifications.testSuccess": {
     "defaultMessage": "Email test notification sent!"
+  },
+  "emailNotifications.usePublicLogo": {
+    "defaultMessage": "Use public Streamarr logo"
+  },
+  "emailNotifications.usePublicLogoDescription": {
+    "defaultMessage": "Use the public GitHub logo. Useful when your instance is not publicly accessible."
   },
   "emailNotifications.validation.pgpPassword.keyRequired": {
     "defaultMessage": "You must provide a PGP private key if you set a password"
@@ -3977,6 +4001,66 @@
   "networkSettings.description": {
     "defaultMessage": "Configure global network settings for your Streamarr instance."
   },
+  "networkSettings.outboundProxy.bypassFilter": {
+    "defaultMessage": "Proxy Ignored Addresses"
+  },
+  "networkSettings.outboundProxy.bypassHelp": {
+    "defaultMessage": "Use ',' as a separator, and '*.' as a wildcard for subdomains."
+  },
+  "networkSettings.outboundProxy.bypassLocalAddresses": {
+    "defaultMessage": "Bypass Proxy for Local Addresses"
+  },
+  "networkSettings.outboundProxy.description": {
+    "defaultMessage": "Route supported outbound HTTP requests through a proxy. SMTP and download-client connections are not proxied."
+  },
+  "networkSettings.outboundProxy.host": {
+    "defaultMessage": "Proxy Hostname"
+  },
+  "networkSettings.outboundProxy.password": {
+    "defaultMessage": "Proxy Password"
+  },
+  "networkSettings.outboundProxy.port": {
+    "defaultMessage": "Proxy port"
+  },
+  "networkSettings.outboundProxy.test": {
+    "defaultMessage": "Test"
+  },
+  "networkSettings.outboundProxy.testError": {
+    "defaultMessage": "Proxy test failed"
+  },
+  "networkSettings.outboundProxy.testSuccess": {
+    "defaultMessage": "Proxy test succeeded"
+  },
+  "networkSettings.outboundProxy.title": {
+    "defaultMessage": "Outbound HTTP(S) Proxy"
+  },
+  "networkSettings.outboundProxy.useSsl": {
+    "defaultMessage": "Use SSL for Proxy"
+  },
+  "networkSettings.outboundProxy.username": {
+    "defaultMessage": "Proxy Username"
+  },
+  "networkSettings.outboundProxy.validation.bypassInvalid": {
+    "defaultMessage": "Enter valid hostnames or IP addresses separated by commas"
+  },
+  "networkSettings.outboundProxy.validation.hostnameInvalid": {
+    "defaultMessage": "Enter a valid hostname or IP address"
+  },
+  "networkSettings.outboundProxy.validation.hostnameRequired": {
+    "defaultMessage": "Proxy hostname is required"
+  },
+  "networkSettings.outboundProxy.validation.portInteger": {
+    "defaultMessage": "Proxy port must be a whole number"
+  },
+  "networkSettings.outboundProxy.validation.portNumber": {
+    "defaultMessage": "Proxy port must be a number"
+  },
+  "networkSettings.outboundProxy.validation.portRange": {
+    "defaultMessage": "Proxy port must be between 1 and 65535"
+  },
+  "networkSettings.outboundProxy.validation.portRequired": {
+    "defaultMessage": "Proxy port is required"
+  },
   "networkSettings.requestTimeout": {
     "defaultMessage": "API Request Timeout"
   },
@@ -4215,7 +4299,7 @@
     "defaultMessage": "Newsletter sent"
   },
   "newsletters.sentSummary": {
-    "defaultMessage": "Delivered to {count} recipient(s){failures, plural, =0 {} other {, # failed}}."
+    "defaultMessage": "Delivered to {count, plural, one {# recipient} other {# recipients}}{failures, plural, =0 {} other {, # failed}}."
   },
   "newsletters.sonarrTag": {
     "defaultMessage": "Sonarr Tag"
@@ -4442,6 +4526,9 @@
   "notifications.discord.idRequired": {
     "defaultMessage": "You must provide your Discord user ID"
   },
+  "notifications.discord.threadIdInvalid": {
+    "defaultMessage": "Enter a valid Discord thread ID"
+  },
   "notifications.discord.webhookUrlInvalid": {
     "defaultMessage": "You must provide a valid Discord webhook URL"
   },
@@ -4508,6 +4595,9 @@
   "notifications.fields.sound": {
     "defaultMessage": "Sound"
   },
+  "notifications.fields.tags": {
+    "defaultMessage": "Tags"
+  },
   "notifications.fields.telegramBotApi": {
     "defaultMessage": "Bot API Token or URL"
   },
@@ -4528,6 +4618,9 @@
   },
   "notifications.fields.topic": {
     "defaultMessage": "Topic"
+  },
+  "notifications.fields.webhookThreadId": {
+    "defaultMessage": "Thread ID"
   },
   "notifications.fields.webhookUrl": {
     "defaultMessage": "Webhook URL"
@@ -4727,6 +4820,9 @@
   "plexImport.import": {
     "defaultMessage": "Import"
   },
+  "plexImport.importComplete": {
+    "defaultMessage": "Plex import complete"
+  },
   "plexImport.importing": {
     "defaultMessage": "Importing…"
   },
@@ -4739,8 +4835,29 @@
   "plexImport.noUsersToImport": {
     "defaultMessage": "There are no Plex users to import."
   },
-  "plexImport.success": {
-    "defaultMessage": "{count, plural, one {# Plex user} other {# Plex users}} imported successfully!"
+  "plexImport.resultCreated": {
+    "defaultMessage": "Created {count, plural, one {# Plex user} other {# Plex users}}"
+  },
+  "plexImport.resultRefreshed": {
+    "defaultMessage": "Updated {count, plural, one {# existing user} other {# existing users}}"
+  },
+  "plexImport.resultUnchanged": {
+    "defaultMessage": "{count, plural, one {# existing Plex user is} other {# existing Plex users are}} already up to date."
+  },
+  "plexImport.syncComplete": {
+    "defaultMessage": "Plex sync complete"
+  },
+  "plexImport.syncExisting": {
+    "defaultMessage": "Sync Existing"
+  },
+  "plexImport.syncHint": {
+    "defaultMessage": "Use Sync Existing to refresh linked Plex users."
+  },
+  "plexImport.syncNoUsers": {
+    "defaultMessage": "No existing Plex users were found to sync."
+  },
+  "plexImport.syncing": {
+    "defaultMessage": "Syncing…"
   },
   "plexImport.title": {
     "defaultMessage": "Import Plex Users"
@@ -5117,6 +5234,12 @@
   "servicesSettings.downloads.addClient": {
     "defaultMessage": "Add Download Client"
   },
+  "servicesSettings.downloads.apiKeyVersionHint": {
+    "defaultMessage": "qBittorrent 5.2.0+ required."
+  },
+  "servicesSettings.downloads.authType": {
+    "defaultMessage": "Authentication"
+  },
   "servicesSettings.downloads.clientType": {
     "defaultMessage": "Client Type"
   },
@@ -5141,6 +5264,9 @@
   "servicesSettings.downloads.title": {
     "defaultMessage": "Downloads Settings"
   },
+  "servicesSettings.downloads.usernamePasswordAuth": {
+    "defaultMessage": "Username / Password"
+  },
   "servicesSettings.lidarr.description": {
     "defaultMessage": "Optionally configure the settings for your Lidarr server."
   },
@@ -5152,12 +5278,6 @@
   },
   "servicesSettings.nexroll.title": {
     "defaultMessage": "NeXroll Settings"
-  },
-  "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
-  },
-  "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Remove any external Seerr reverse proxy"
   },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Optionally configure the settings for your Seerr server."
@@ -5240,6 +5360,9 @@
   "servicesSettings.validation.hostname": {
     "defaultMessage": "You must provide a valid hostname or IP address"
   },
+  "servicesSettings.validation.password": {
+    "defaultMessage": "You must provide a valid password"
+  },
   "servicesSettings.validation.servername": {
     "defaultMessage": "You must provide a valid server name"
   },
@@ -5248,6 +5371,9 @@
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "URL must not end in a trailing slash"
+  },
+  "servicesSettings.validation.username": {
+    "defaultMessage": "You must provide a valid username"
   },
   "settings.ExpiredTrialPeriodDescriptionPromote": {
     "defaultMessage": "Cannot create invites until after this date (Default: {count, plural, one {# day} other {# days}})"
@@ -5726,6 +5852,9 @@
   "signIn.forgotPassword": {
     "defaultMessage": "Wait, I forgot my password"
   },
+  "signIn.invalidCredentials": {
+    "defaultMessage": "Invalid email or password."
+  },
   "signIn.localAccount": {
     "defaultMessage": "Sign in with {applicationTitle}"
   },
@@ -6164,9 +6293,6 @@
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
   },
-  "userSettings.engine": {
-    "defaultMessage": "Engine"
-  },
   "userSettings.experimentalJwtAuth": {
     "defaultMessage": "Plex JWT Authentication"
   },
@@ -6196,6 +6322,30 @@
   },
   "userSettings.notifications.deleteSubscription": {
     "defaultMessage": "Delete Subscription"
+  },
+  "userSettings.notifications.deviceTypeConsole": {
+    "defaultMessage": "Game Console"
+  },
+  "userSettings.notifications.deviceTypeDesktop": {
+    "defaultMessage": "Desktop Computer"
+  },
+  "userSettings.notifications.deviceTypeEmbedded": {
+    "defaultMessage": "Embedded Device"
+  },
+  "userSettings.notifications.deviceTypeMobile": {
+    "defaultMessage": "Mobile Device"
+  },
+  "userSettings.notifications.deviceTypeSmartTv": {
+    "defaultMessage": "Smart TV"
+  },
+  "userSettings.notifications.deviceTypeTablet": {
+    "defaultMessage": "Tablet"
+  },
+  "userSettings.notifications.deviceTypeWearable": {
+    "defaultMessage": "Wearable Device"
+  },
+  "userSettings.notifications.deviceTypeXr": {
+    "defaultMessage": "VR/AR Device"
   },
   "userSettings.notifications.disableWebPush": {
     "defaultMessage": "Disable web push"
@@ -6397,6 +6547,9 @@
   },
   "users.localSignInDisabled": {
     "defaultMessage": "The Enable Local Sign-In setting is currently disabled."
+  },
+  "users.searchUsers": {
+    "defaultMessage": "Search Users"
   },
   "users.sortInviteCount": {
     "defaultMessage": "Invite Count"

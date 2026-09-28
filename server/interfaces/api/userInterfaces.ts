@@ -32,6 +32,18 @@ export interface UserNotificationsResponse extends PaginatedResponse {
   results: Notification[];
 }
 
+export interface PushSubscriptionDevice {
+  endpoint: string;
+  userAgent: string | null;
+  createdAt: Date | null;
+}
+
+export interface PushSubscriptionValidation {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+}
+
 export interface WatchHistoryItem {
   ratingKey: number;
   grandparentRatingKey: number | null;

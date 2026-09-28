@@ -18,12 +18,8 @@ interface UserContextProps {
  */
 export const UserContext = ({ initialUser, children }: UserContextProps) => {
   const pathname = usePathname();
-  const isAuthPage = /^\/(signin|signup|setup|resetpassword(?:\/|$))/.test(
-    pathname || ''
-  );
   const { user, error } = useUser({
     initialData: initialUser,
-    disableAutoRevalidation: isAuthPage,
   });
   const routing = useRef(false);
   const router = useRouter();

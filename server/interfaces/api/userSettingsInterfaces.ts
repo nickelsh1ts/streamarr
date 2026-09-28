@@ -44,6 +44,10 @@ export interface UserSettingsGeneralResponse {
   plexSync?: 'synced' | 'removed' | 'failed' | 'skipped';
 }
 
+export interface SeerrUserPermissionsResponse {
+  permissions: number | null;
+}
+
 export type NotificationAgentTypes = Record<NotificationAgentKey, number>;
 export interface UserSettingsNotificationsResponse {
   discordEnabled?: boolean;

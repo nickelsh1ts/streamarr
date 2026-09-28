@@ -41,6 +41,7 @@ When reporting a vulnerability, please provide as much of the following as possi
 - **Use a reverse proxy** (e.g., Nginx, Caddy, Traefik) with HTTPS in front of Streamarr.
 - **Do not expose Streamarr directly to the internet** without a reverse proxy and proper firewall rules.
 - **Restrict access** to the `CONFIG_DIRECTORY` — it contains the database, settings, and session data.
+- **Use only a trusted outbound proxy.** Proxy credentials are stored in `settings.json` under `CONFIG_DIRECTORY`. An HTTP connection to the proxy does not encrypt proxy credentials or HTTP destination traffic; use HTTPS to the proxy or a trusted private network. The proxy is not a replacement for firewall or egress controls.
 - **Use strong, unique passwords** for all integrated services (Plex, Sonarr, Radarr, etc.).
 - **Review permissions** — Streamarr uses granular, bitwise permissions. Grant users only the access they need.
 

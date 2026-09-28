@@ -4,6 +4,7 @@ import type {
   SeerrRequestItem,
   SeerrRequestsResponse,
 } from '@server/interfaces/api/seerrInterfaces';
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import type { ServiceSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import type { AxiosInstance } from 'axios';
@@ -69,10 +70,12 @@ class SeerrAPI {
 
   constructor(settings: ServiceSettings) {
     this.baseURL = `${settings.useSsl ? 'https' : 'http'}://${settings.hostname}:${settings.port}/api/v1`;
-    this.axios = axios.create({
-      baseURL: this.baseURL,
-      headers: { 'X-Api-Key': settings.apiKey ?? '' },
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: this.baseURL,
+        headers: { 'X-Api-Key': settings.apiKey ?? '' },
+      })
+    );
   }
 
   private mapRawRequest(r: RawSeerrRequest): SeerrRequestItem {
@@ -277,6 +280,39 @@ class SeerrAPI {
       );
       throw new Error(
         `[Seerr] Failed to fetch user quota with usage: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
+  public async getUserPermissionsByPlexId(
+    plexId: number
+  ): Promise<number | null> {
+    try {
+      const seerrUser = await this.findSeerrUserByPlexId(plexId);
+      if (!seerrUser) {
+        return null;
+      }
+
+      const response = await this.axios.get<{ permissions?: number }>(
+        `/user/${seerrUser.id}/settings/permissions`
+      );
+      const permissions = response.data?.permissions;
+
+      if (
+        typeof permissions !== 'number' ||
+        !Number.isSafeInteger(permissions)
+      ) {
+        throw new Error('Seerr user permissions are missing or invalid.');
+      }
+
+      return permissions;
+    } catch (e) {
+      logger.error('Something went wrong fetching Seerr user permissions', {
+        label: 'Seerr API',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      throw new Error(
+        `[Seerr] Failed to fetch user permissions: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }

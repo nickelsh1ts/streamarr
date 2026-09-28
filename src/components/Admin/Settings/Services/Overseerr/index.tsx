@@ -1,6 +1,5 @@
 'use client';
 import RestartRequiredAlert from '@app/components/Admin/Settings/RestartRequiredAlert';
-import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
@@ -107,20 +106,6 @@ const ServicesOverseerr = () => {
     <div className="mb-10 max-w-6xl">
       {header}
       <RestartRequiredAlert filterServices={['Seerr']} />
-      <Alert
-        title={intl.formatMessage({
-          id: 'servicesSettings.overseerr.alertTitle',
-          defaultMessage: 'Remove any external Seerr reverse proxy',
-        })}
-        type="warning"
-      >
-        <p>
-          <FormattedMessage
-            id="servicesSettings.overseerr.alertDescription"
-            defaultMessage="Streamarr now serves Seerr through its own built-in reverse proxy at the URL Base below, so no external reverse proxy is required. If you previously configured one (such as the legacy Nginx rewrite) to serve Seerr at this path, you must remove it — a leftover rule will intercept these requests and the built-in proxy will not work. Changing the URL Base takes effect after a server restart."
-          />
-        </p>
-      </Alert>
       <Formik
         initialValues={{
           hostname: dataOverseerr?.hostname ?? '',

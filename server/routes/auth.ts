@@ -334,7 +334,7 @@ authRoutes.post('/local', async (req, res, next) => {
         email: normalizedEmail,
         userId: user?.id,
       });
-      return next({ status: 403, message: 'Access denied.' });
+      return next({ status: 401, message: 'Invalid email or password.' });
     }
 
     const mainUser = await userRepository.findOneOrFail({

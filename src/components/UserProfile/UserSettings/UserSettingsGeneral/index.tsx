@@ -523,6 +523,27 @@ const UserSettingsGeneral = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="email" className="col-span-1">
+                    <FormattedMessage
+                      id="common.email"
+                      defaultMessage="Email"
+                    />
+                  </label>
+                  <div className="col-span-2">
+                    <input
+                      id="email"
+                      type="email"
+                      value={
+                        (user?.id === currentUser?.id
+                          ? currentUser?.email
+                          : user?.email) ?? ''
+                      }
+                      className="input input-primary input-sm w-full"
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="locale" className="col-span-1">
                     <FormattedMessage
                       id="common.displayLanguage"

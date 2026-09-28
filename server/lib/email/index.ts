@@ -1,9 +1,82 @@
 import type { NotificationAgentEmail } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import Email from 'email-templates';
+import net from 'node:net';
+import tls from 'node:tls';
 import nodemailer from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { URL } from 'url';
 import { openpgpEncrypt } from './openpgpEncrypt';
+
+const PUBLIC_LOGO_URL =
+  'https://raw.githubusercontent.com/nickelsh1ts/streamarr/refs/heads/develop/public/logo_full.png';
+const SMTP_CONNECTION_TIMEOUT = 30_000;
+
+export const getEmailLogo = (
+  usePublicLogo = getSettings().notifications.agents.email.options
+    .usePublicLogo ?? false
+): string => {
+  const { applicationUrl, customLogo } = getSettings().main;
+
+  return usePublicLogo
+    ? PUBLIC_LOGO_URL
+    : `${applicationUrl}${customLogo || '/logo_full.png'}`;
+};
+
+const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
+  if (!options.host || typeof options.port !== 'number') {
+    callback(new Error('SMTP host and port are required'), undefined);
+    return;
+  }
+
+  const socket = options.secure
+    ? tls.connect({
+        host: options.host,
+        port: options.port,
+        servername: options.host,
+        ...options.tls,
+      })
+    : net.connect({ host: options.host, port: options.port });
+  const connectEvent = options.secure ? 'secureConnect' : 'connect';
+  let settled = false;
+  const connectionTimeout = setTimeout(() => {
+    if (settled) {
+      return;
+    }
+
+    settled = true;
+    cleanup();
+    socket.destroy();
+    callback(new Error('SMTP connection timed out'), undefined);
+  }, options.connectionTimeout ?? SMTP_CONNECTION_TIMEOUT);
+
+  const cleanup = () => {
+    clearTimeout(connectionTimeout);
+    socket.removeListener('error', onError);
+    socket.removeListener(connectEvent, onConnect);
+  };
+  const onError = (error: Error) => {
+    if (settled) {
+      return;
+    }
+
+    settled = true;
+    cleanup();
+    callback(error, undefined);
+  };
+  const onConnect = () => {
+    if (settled) {
+      return;
+    }
+
+    settled = true;
+    cleanup();
+    callback(null, { connection: socket });
+  };
+
+  socket.once('error', onError);
+  socket.once(connectEvent, onConnect);
+};
 
 class PreparedEmail {
   private email: Email;
@@ -14,6 +87,7 @@ class PreparedEmail {
       name: applicationUrl ? new URL(applicationUrl).hostname : undefined,
       host: settings.options.smtpHost,
       port: settings.options.smtpPort,
+      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
       secure: settings.options.secure,
       ignoreTLS: settings.options.ignoreTls,
       requireTLS: settings.options.requireTls,
@@ -29,6 +103,7 @@ class PreparedEmail {
               pass: settings.options.authPass,
             }
           : undefined,
+      getSocket: net.isIP(settings.options.smtpHost) ? undefined : getSocket,
     });
 
     if (pgpKey) {

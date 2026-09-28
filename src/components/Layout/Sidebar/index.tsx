@@ -20,10 +20,15 @@ import {
   MicrophoneIcon,
   PaperAirplaneIcon,
   TvIcon,
+  UsersIcon,
   WrenchIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
-import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { SeerrPermission } from '@server/constants/seerr';
+import type {
+  SeerrUserPermissionsResponse,
+  UserSettingsGeneralResponse,
+} from '@server/interfaces/api/userSettingsInterfaces';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { SetStateAction } from 'react';
@@ -489,7 +494,9 @@ export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
                     </li>
                   </div>
                   <AccordionContent isOpen={openIndexes.includes(1)}>
-                    <RequestMenu onClick={onClick} url={url} />
+                    {openIndexes.includes(1) && (
+                      <RequestMenu onClick={onClick} url={url} />
+                    )}
                   </AccordionContent>
                 </>
               )}
@@ -613,6 +620,11 @@ export const RequestMenu = ({
   url,
 }: RequestMenuProps & { url: string }) => {
   const intl = useIntl();
+  const { user } = useUser();
+  const { data: seerrPermissions, error: seerrPermissionsError } =
+    useSWR<SeerrUserPermissionsResponse>(
+      user ? `/api/v1/user/${user.id}/settings/seerr/permissions` : null
+    );
   const RequestLinks: MenuLinksProps[] = [
     {
       href: '/request/discover/movies',
@@ -651,6 +663,28 @@ export const RequestMenu = ({
       regExp: /\/request\/issues/,
     },
   ];
+
+  if (
+    user &&
+    !seerrPermissionsError &&
+    seerrPermissions?.permissions !== null &&
+    seerrPermissions?.permissions !== undefined &&
+    !!(
+      seerrPermissions.permissions &
+      (SeerrPermission.ADMIN | SeerrPermission.MANAGE_USERS)
+    )
+  ) {
+    RequestLinks.push({
+      href: '/request/users',
+      title: intl.formatMessage({
+        id: 'common.users',
+        defaultMessage: 'Users',
+      }),
+      icon: <UsersIcon className="h-7 w-7" />,
+      regExp: /\/request\/users/,
+    });
+  }
+
   return (
     <ul className="menu m-0 my-1 w-full space-y-1 p-0">
       {RequestLinks.map((link) => {

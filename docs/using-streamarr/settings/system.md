@@ -76,6 +76,7 @@ Streamarr tracks changes to settings that affect the internal proxy system and s
 | Seerr connection       | Seerr           |
 | Proxy support toggle   | Proxy Support   |
 | CSRF protection toggle | CSRF Protection |
+| Outbound HTTP(S) proxy | Outbound Proxy  |
 
 For Radarr and Sonarr, changes to hostname, base URL, API key, or adding/removing instances all trigger a restart requirement.
 
@@ -88,7 +89,7 @@ When a restart is needed, a warning banner appears across admin settings pages:
 The banner includes a **"Restart Now"** button with a confirmation prompt.
 
 {% hint style="info" %}
-Some pages show a filtered version of this alert. For example, the General Settings page only shows restart alerts for Proxy Support and CSRF Protection changes.
+Some pages show a filtered version of this alert. For example, the Network Settings page shows restart alerts for Proxy Support, CSRF Protection, and Outbound Proxy changes.
 {% endhint %}
 
 ### How Restart Works
@@ -115,19 +116,19 @@ The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it 
 
 ## Disk Space
 
-The System page displays disk usage for your configuration directory and the filesystem it lives on, so you can keep an eye on available storage at a glance.
+The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. The values are cached briefly; use **Refresh** to request a fresh scan. The **Updated** label shows when the displayed results were collected.
 
 ### What Is Shown
 
-Disk usage is presented as an expandable, hierarchical list:
+Disk usage is presented as an expandable hierarchy:
 
-| Level              | Represents                                                                   |
-| ------------------ | ---------------------------------------------------------------------------- |
-| **Mount point**    | The physical filesystem that holds your configuration directory (e.g. `/`)   |
-| **App Data**       | Your Streamarr configuration directory (the volume mounted to `/app/config`) |
-| **Subdirectories** | Each immediate subfolder of the configuration directory (logs, cache, etc.)  |
+| Row                      | Represents                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| `/`                      | Capacity of the root filesystem, independent of where the config directory is mounted |
+| `config`                 | Total size of the Streamarr configuration directory                                   |
+| `/cache`, `/logs`, `/db` | Sizes of the image cache, logs, and database directories, when present                |
 
-Each row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. Use the chevron to expand or collapse the App Data row and reveal its subdirectories.
+The root row starts expanded. Expand `config` to show its child directories; child rows are collapsed until `config` is expanded. Every row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. On filesystem rows, Used Space and the bar represent filesystem usage. On directory rows, Used Space is the directory's size; the bar shows the directory's share of the config directory for children, or its share of the containing filesystem for `config`. Free and Total Space refer to the filesystem containing that directory. The optional `/cache` row is omitted if the cache directory does not exist.
 
 ### Usage Bar Colours
 
@@ -136,19 +137,15 @@ The usage bar changes colour as space fills up:
 | Usage         | Colour           |
 | ------------- | ---------------- |
 | Below 75%     | Normal (primary) |
-| 75% – 84.9%   | Warning (amber)  |
-| 85% and above | Critical (red)   |
-
-{% hint style="info" %}
-Subdirectory rows show how much space each folder consumes within your configuration directory, while the mount point row reflects the entire underlying filesystem. This makes it easy to spot whether it is Streamarr's data—or the host disk overall—that is running low.
-{% endhint %}
+| 75% – 84.9%   | Warning          |
+| 85% and above | Critical         |
 
 ### Unavailable Metrics
 
 If Streamarr cannot read one or more local paths (for example, due to permissions), a warning banner reads **"Some disk metrics are unavailable."** The paths that could be read are still shown; only the unreadable ones are omitted.
 
 {% hint style="info" %}
-Disk statistics are gathered using the system `df` utility, with an internal filesystem fallback when `df` is not available. Symbolic links are skipped when calculating folder sizes.
+Filesystem capacity is gathered with `df`, with a `statfs` fallback. Directory sizes are calculated only for the config directory and its selected children; `/` is never recursively scanned. Symbolic links are skipped. A missing optional cache directory is omitted; unreadable or timed-out paths are reported in the warning while other results remain visible.
 {% endhint %}
 
 ---
@@ -205,23 +202,24 @@ This helps you see what has changed between versions and what is included in ava
 
 ## API Reference
 
-| Endpoint                            | Method | Description                                                                                       |
-| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
-| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                                                    |
-| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                                                          |
-| `/api/v1/settings/health`           | GET    | Health of all enabled and configured services (Admin only)                                        |
-| `/api/v1/settings/health/retry`     | POST   | Reset and re-check a single service by id, then recompute all (Admin only)                        |
-| `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users)                                    |
-| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                     |
-| `/api/v1/status`                    | GET    | Get version, update availability                                                                  |
-| `/api/v1/settings/about`            | GET    | Get version, uptime, user/invite counts, data path, Node/Python/database versions, and disk space |
+| Endpoint                            | Method | Description                                                                                      |
+| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| `/api/v1/settings/restart-required` | GET    | Check if a restart is required                                                                   |
+| `/api/v1/settings/restart`          | POST   | Trigger a server restart                                                                         |
+| `/api/v1/settings/health`           | GET    | Health of all enabled and configured services (Admin only)                                       |
+| `/api/v1/settings/health/retry`     | POST   | Reset and re-check a single service by id, then recompute all (Admin only)                       |
+| `/api/v1/plex/health`               | GET    | Get current Plex connection health state (authenticated users)                                   |
+| `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                    |
+| `/api/v1/status`                    | GET    | Get version, update availability                                                                 |
+| `/api/v1/settings/about`            | GET    | Get version, uptime, user/invite counts, data path, Node and database versions                   |
+| `/api/v1/settings/about/diskspace`  | GET    | Get root filesystem and config-directory disk usage; add `?force=true` to bypass the short cache |
 
 ### Restart Status Response
 
 ```json
 {
   "required": true,
-  "services": ["Radarr", "Proxy Support"]
+  "services": ["Radarr", "Outbound Proxy"]
 }
 ```
 
@@ -246,24 +244,36 @@ This helps you see what has changed between versions and what is included in ava
   "totalInvites": 17,
   "tz": "America/New_York",
   "appDataPath": "/app/config",
-  "nodeVersion": "v24.0.0",
-  "database": { "type": "sqlite", "version": "3.45.0" },
-  "diskSpace": {
-    "items": [
-      {
-        "deviceId": "/dev/sda1",
-        "name": "App Data",
-        "path": "/app/config",
-        "mountPoint": "/",
-        "pathUsedBytes": 524288000,
-        "totalBytes": 107374182400,
-        "freeBytes": 96636764160,
-        "usedBytes": 10737418240,
-        "usedPercent": 10.0
-      }
-    ],
-    "failedPaths": []
-  }
+  "nodeVersion": "26.0.0",
+  "database": { "type": "SQLite", "version": "3.45.0" }
+}
+```
+
+### Disk Space Response (excerpt)
+
+```json
+{
+  "cachedAt": 1790000000000,
+  "items": [
+    {
+      "kind": "filesystem",
+      "name": "Root filesystem",
+      "path": "/",
+      "mountPoint": "/",
+      "totalBytes": 107374182400,
+      "freeBytes": 96636764160,
+      "usedBytes": 10737418240,
+      "usedPercent": 10
+    },
+    {
+      "kind": "directory",
+      "name": "Streamarr config",
+      "path": "/app/config",
+      "directoryBytes": 524288000,
+      "directoryPercent": 0.49
+    }
+  ],
+  "failedPaths": []
 }
 ```
 

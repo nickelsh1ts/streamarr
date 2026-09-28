@@ -1,3 +1,4 @@
+import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { getPathUsedBytes } from '@server/utils/pathSize';
@@ -141,6 +142,14 @@ class ImageProxy {
   ): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
+    try {
+      await promises.lstat(cacheDirectory);
+    } catch (e) {
+      if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+        return { size: 0, imageCount: 0 };
+      }
+    }
+
     const [imageTotalSize, imageCount] = await Promise.all([
       getPathUsedBytes(cacheDirectory).catch((e) => {
         logger.warn('Failed to calculate image cache size', {
@@ -198,6 +207,7 @@ class ImageProxy {
       defaultMaxAge?: number;
       validateResponse?: (headers: Record<string, unknown>) => void;
       maxRedirects?: number;
+      maxContentLength?: number;
       beforeRedirect?: (
         options: Record<string, unknown>,
         responseDetails: { headers: Record<string, unknown> }
@@ -208,13 +218,16 @@ class ImageProxy {
     this.key = key;
     this.defaultMaxAge = options.defaultMaxAge ?? 0;
     this.validateResponse = options.validateResponse;
-    this.axios = axios.create({
-      baseURL: baseUrl,
-      withCredentials: false,
-      headers: options.headers,
-      maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
-      beforeRedirect: options.beforeRedirect,
-    });
+    this.axios = applyOutboundProxy(
+      axios.create({
+        baseURL: baseUrl,
+        withCredentials: false,
+        headers: options.headers,
+        maxRedirects: options.maxRedirects ?? (baseUrl ? 0 : 5),
+        maxContentLength: options.maxContentLength,
+        beforeRedirect: options.beforeRedirect,
+      })
+    );
 
     if (options.rateLimitOptions) {
       this.axios = rateLimit(this.axios, options.rateLimitOptions);

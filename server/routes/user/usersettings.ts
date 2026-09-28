@@ -11,6 +11,7 @@ import Newsletter from '@server/entity/Newsletter';
 import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
+  SeerrUserPermissionsResponse,
   UserSettingsGeneralResponse,
   UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
@@ -2262,6 +2263,50 @@ userSettingsRoutes.post<{ id: string }>(
       return next({
         status: 500,
         message: `Failed to pin libraries: ${e?.message || 'Unknown error'}`,
+      });
+    }
+  }
+);
+
+userSettingsRoutes.get<{ id: string }, SeerrUserPermissionsResponse>(
+  '/seerr/permissions',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const seerrSettings = getSettings().overseerr;
+
+    if (!seerrSettings.enabled || !seerrSettings.hostname) {
+      return res.status(200).json({ permissions: null });
+    }
+
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+        select: { id: true, plexId: true },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!user.plexId) {
+        return res.status(200).json({ permissions: null });
+      }
+
+      const permissions = await new SeerrAPI(
+        seerrSettings
+      ).getUserPermissionsByPlexId(user.plexId);
+
+      return res.status(200).json({ permissions });
+    } catch (e) {
+      logger.error('Failed to fetch Seerr user permissions', {
+        label: 'User Settings',
+        userId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+
+      return next({
+        status: 500,
+        message: 'Failed to fetch Seerr user permissions.',
       });
     }
   }

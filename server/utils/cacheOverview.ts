@@ -3,6 +3,7 @@ import QRCodeProxy from '@server/lib/qrcodeproxy';
 
 export type ImageCacheOverview = {
   tmdb: { size: number; imageCount: number };
+  tvdb: { size: number; imageCount: number };
   plex: { size: number; imageCount: number };
   avatar: { size: number; imageCount: number };
   qrcode: { size: number; imageCount: number };
@@ -23,15 +24,16 @@ let imageCacheOverviewCache: {
 const computeImageCacheOverview = async (): Promise<CacheOverviewResult> => {
   const qrProxy = new QRCodeProxy();
 
-  const [tmdb, plex, avatar, qrcode] = await Promise.all([
+  const [tmdb, tvdb, plex, avatar, qrcode] = await Promise.all([
     ImageProxy.getImageStats('tmdb'),
+    ImageProxy.getImageStats('tvdb'),
     ImageProxy.getImageStats('plex'),
     ImageProxy.getImageStats('avatar'),
     qrProxy.getCacheStats(),
   ]);
 
   return {
-    imageCache: { tmdb, plex, avatar, qrcode },
+    imageCache: { tmdb, tvdb, plex, avatar, qrcode },
     cachedAt: Date.now(),
   };
 };

@@ -10,6 +10,30 @@ import path from 'path';
 import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
+const DF_TIMEOUT_MS = 10 * 1000;
+const TARGET_TIMEOUT_MS = 45 * 1000;
+
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string,
+  onTimeout?: () => void
+): Promise<T> => {
+  let timeout: NodeJS.Timeout;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => {
+      onTimeout?.();
+      reject(new Error(message));
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    clearTimeout(timeout!);
+  }
+};
 
 /**
  * Walks up the directory tree from `targetPath` until it finds a path that
@@ -45,7 +69,9 @@ export const getDiskSpaceStats = async (diskPath: string) => {
   const statsPath = await getNearestExistingPath(diskPath);
 
   try {
-    const { stdout } = await execFileAsync('df', ['-Pk', statsPath]);
+    const { stdout } = await execFileAsync('df', ['-Pk', statsPath], {
+      timeout: DF_TIMEOUT_MS,
+    });
     const lines = stdout
       .split('\n')
       .map((line) => line.trim())
@@ -102,55 +128,96 @@ export const getDiskSpaceStats = async (diskPath: string) => {
 };
 
 /**
- * Collects disk usage stats for the app config directory and all of its
- * immediate subdirectories. Failures per-path are collected rather than
- * thrown so callers always receive a partial result.
+ * Collects root filesystem capacity and explicit Streamarr directory sizes.
+ * Failures per target are collected rather than thrown so callers always
+ * receive a partial result.
  */
 export const getConfigDiskSpace = async (
   configPath: string
 ): Promise<{ items: DiskSpaceItem[]; failedPaths: DiskSpaceFailure[] }> => {
-  let subfolderPaths: { name: string; path: string }[] = [];
+  const cachePath = path.join(configPath, 'cache');
+  const optionalPaths = [
+    {
+      kind: 'directory' as const,
+      name: 'Cache',
+      path: cachePath,
+    },
+    {
+      kind: 'directory' as const,
+      name: 'Logs',
+      path: path.join(configPath, 'logs'),
+    },
+    {
+      kind: 'directory' as const,
+      name: 'Database',
+      path: path.join(configPath, 'db'),
+    },
+  ];
+  const existingOptionalPaths = await Promise.all(
+    optionalPaths.map(async (target) => {
+      try {
+        await fsPromises.lstat(target.path);
+        return target;
+      } catch (e) {
+        if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+          return undefined;
+        }
 
-  try {
-    const entries = await fsPromises.readdir(configPath, {
-      withFileTypes: true,
-    });
-    subfolderPaths = entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => ({
-        name: entry.name,
-        path: path.join(configPath, entry.name),
-      }))
-      .sort((a, b) => a.path.localeCompare(b.path));
-  } catch (e) {
-    logger.warn('Failed to enumerate config subfolders for disk stats', {
-      label: 'Settings',
-      configPath,
-      errorMessage: e instanceof Error ? e.message : 'Unknown error',
-    });
-  }
+        return target;
+      }
+    })
+  );
 
-  const diskPaths = [{ name: 'App Data', path: configPath }, ...subfolderPaths];
+  const diskPaths = [
+    { kind: 'filesystem' as const, name: 'Root filesystem', path: '/' },
+    { kind: 'directory' as const, name: 'Streamarr config', path: configPath },
+    ...existingOptionalPaths.filter(
+      (target): target is (typeof optionalPaths)[number] => target !== undefined
+    ),
+  ];
 
   const results = await Promise.all(
-    diskPaths.map(async ({ name, path: diskPath }) => {
+    diskPaths.map(async ({ kind, name, path: diskPath }) => {
       try {
-        const [diskStats, pathUsedBytes] = await Promise.all([
+        const diskStats = await withTimeout(
           getDiskSpaceStats(diskPath),
-          getPathUsedBytes(diskPath),
-        ]);
+          TARGET_TIMEOUT_MS,
+          `Timed out collecting filesystem stats for path: ${diskPath}`
+        );
+        const directoryBytes =
+          kind === 'directory'
+            ? await (() => {
+                const controller = new AbortController();
+                return withTimeout(
+                  getPathUsedBytes(
+                    diskPath,
+                    TARGET_TIMEOUT_MS,
+                    controller.signal
+                  ),
+                  TARGET_TIMEOUT_MS,
+                  `Timed out calculating directory size for path: ${diskPath}`,
+                  () => controller.abort()
+                );
+              })()
+            : undefined;
+
         return {
           ok: true as const,
           value: {
+            kind,
             deviceId: diskStats.deviceId,
             name,
             path: diskPath,
             mountPoint: diskStats.mountPoint,
-            pathUsedBytes,
             totalBytes: diskStats.totalBytes,
             freeBytes: diskStats.freeBytes,
             usedBytes: diskStats.usedBytes,
             usedPercent: diskStats.usedPercent,
+            directoryBytes,
+            directoryPercent:
+              directoryBytes !== undefined && diskStats.totalBytes > 0
+                ? (directoryBytes / diskStats.totalBytes) * 100
+                : undefined,
           },
         };
       } catch (e) {
@@ -182,6 +249,7 @@ const DISK_SPACE_CACHE_TTL_MS = 30 * 1000;
 type DiskSpaceResult = {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
+  cachedAt: number;
 };
 
 let diskSpaceCache: {
@@ -191,11 +259,13 @@ let diskSpaceCache: {
 } | null = null;
 
 export const getCachedConfigDiskSpace = async (
-  configPath: string
+  configPath: string,
+  { force = false }: { force?: boolean } = {}
 ): Promise<DiskSpaceResult> => {
   const now = Date.now();
 
   if (
+    !force &&
     diskSpaceCache &&
     diskSpaceCache.key === configPath &&
     diskSpaceCache.expiresAt > now
@@ -203,7 +273,10 @@ export const getCachedConfigDiskSpace = async (
     return diskSpaceCache.promise;
   }
 
-  const promise = getConfigDiskSpace(configPath);
+  const promise = getConfigDiskSpace(configPath).then((result) => ({
+    ...result,
+    cachedAt: Date.now(),
+  }));
   diskSpaceCache = {
     key: configPath,
     expiresAt: now + DISK_SPACE_CACHE_TTL_MS,

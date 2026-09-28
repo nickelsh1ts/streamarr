@@ -7,12 +7,17 @@ import {
   hasNotificationType,
   shouldSendAdminNotification,
 } from '@server/lib/notifications';
+import { getWebPushTransport } from '@server/lib/outboundProxy';
+import { isSupportedPushEndpoint } from '@server/lib/pushSubscription';
 import type { NotificationAgentConfig } from '@server/lib/settings';
 import { getSettings, NotificationAgentKey } from '@server/lib/settings';
 import logger from '@server/logger';
 import webpush from 'web-push';
 import type { NotificationAgent, NotificationPayload } from './agent';
 import { BaseAgent } from './agent';
+
+const WEB_PUSH_REQUEST_TIMEOUT_MS = 10_000;
+const WEB_PUSH_BATCH_SIZE = 20;
 
 interface PushNotificationPayload {
   notificationType: string;
@@ -81,6 +86,14 @@ class WebPushAgent
       pushSub: UserPushSubscription,
       notificationPayload: Buffer
     ) => {
+      if (!isSupportedPushEndpoint(pushSub.endpoint)) {
+        logger.warn('Skipping unsupported web push endpoint', {
+          label: 'Notifications',
+          subscriptionId: pushSub.id,
+        });
+        return;
+      }
+
       logger.debug('Sending web push notification', {
         label: 'Notifications',
         recipient: pushSub.user.displayName,
@@ -94,7 +107,11 @@ class WebPushAgent
             endpoint: pushSub.endpoint,
             keys: { auth: pushSub.auth, p256dh: pushSub.p256dh },
           },
-          notificationPayload
+          notificationPayload,
+          {
+            timeout: WEB_PUSH_REQUEST_TIMEOUT_MS,
+            ...getWebPushTransport(pushSub.endpoint),
+          }
         );
       } catch (e) {
         const webPushError = e as WebPushError;
@@ -192,9 +209,21 @@ class WebPushAgent
         ...new Map(pushSubs.map((sub) => [sub.id, sub])).values(),
       ];
 
-      await Promise.all(
-        uniqueSubs.map((sub) => webPushNotification(sub, notificationPayload))
-      );
+      for (
+        let startIndex = 0;
+        startIndex < uniqueSubs.length;
+        startIndex += WEB_PUSH_BATCH_SIZE
+      ) {
+        const subscriptionBatch = uniqueSubs.slice(
+          startIndex,
+          startIndex + WEB_PUSH_BATCH_SIZE
+        );
+        await Promise.all(
+          subscriptionBatch.map((sub) =>
+            webPushNotification(sub, notificationPayload)
+          )
+        );
+      }
     }
 
     return true;

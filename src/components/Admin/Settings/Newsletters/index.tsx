@@ -181,7 +181,7 @@ const Newsletters = () => {
           {
             id: 'newsletters.sentSummary',
             defaultMessage:
-              'Delivered to {count} recipient(s){failures, plural, =0 {} other {, # failed}}.',
+              'Delivered to {count, plural, one {# recipient} other {# recipients}}{failures, plural, =0 {} other {, # failed}}.',
           },
           {
             count: response.data.recipientCount,

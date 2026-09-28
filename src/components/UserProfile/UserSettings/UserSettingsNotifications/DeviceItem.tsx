@@ -9,18 +9,13 @@ import {
   LockClosedIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
+import type { PushSubscriptionDevice } from '@server/interfaces/api/userInterfaces';
 import { FormattedMessage } from 'react-intl';
 import { UAParser } from 'ua-parser-js';
 
 interface DeviceItemProps {
   deletePushSubscriptionFromBackend: (endpoint: string) => void;
-  device: {
-    endpoint: string;
-    p256dh: string;
-    auth: string;
-    userAgent: string;
-    createdAt: Date;
-  };
+  device: PushSubscriptionDevice;
   subEndpoint: string | null;
 }
 
@@ -31,6 +26,56 @@ const DeviceItem = ({
 }: DeviceItemProps) => {
   const { locale } = useLocale();
   const parsedUserAgent = UAParser(device.userAgent);
+  const { vendor, model, type: deviceType } = parsedUserAgent.device;
+  const deviceTypeLabel = {
+    mobile: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeMobile"
+        defaultMessage="Mobile Device"
+      />
+    ),
+    tablet: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeTablet"
+        defaultMessage="Tablet"
+      />
+    ),
+    smarttv: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeSmartTv"
+        defaultMessage="Smart TV"
+      />
+    ),
+    wearable: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeWearable"
+        defaultMessage="Wearable Device"
+      />
+    ),
+    console: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeConsole"
+        defaultMessage="Game Console"
+      />
+    ),
+    xr: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeXr"
+        defaultMessage="VR/AR Device"
+      />
+    ),
+    embedded: (
+      <FormattedMessage
+        id="userSettings.notifications.deviceTypeEmbedded"
+        defaultMessage="Embedded Device"
+      />
+    ),
+  }[deviceType ?? ''] ?? (
+    <FormattedMessage
+      id="userSettings.notifications.deviceTypeDesktop"
+      defaultMessage="Desktop Computer"
+    />
+  );
 
   return (
     <div className="ring-primary relative flex w-full flex-col justify-between overflow-hidden rounded-xl bg-[#161616] py-4 shadow-md ring-1 xl:h-28 xl:flex-row">
@@ -50,14 +95,7 @@ const DeviceItem = ({
                 : 'N/A'}
             </div>
             <div className="mr-2 min-w-0 truncate text-lg font-bold text-white hover:underline xl:text-xl">
-              {device.userAgent && parsedUserAgent.device.model ? (
-                parsedUserAgent.device.model
-              ) : (
-                <FormattedMessage
-                  id="common.unknown"
-                  defaultMessage="Unknown"
-                />
-              )}
+              {vendor && model ? `${vendor} ${model}` : deviceTypeLabel}
             </div>
           </div>
         </div>
@@ -82,17 +120,6 @@ const DeviceItem = ({
             </span>
             <span className="flex truncate text-sm text-gray-300">
               {device.userAgent ? parsedUserAgent.browser.name : 'N/A'}
-            </span>
-          </div>
-          <div className="align-items-center my-1 flex overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="mr-2">
-              <FormattedMessage
-                id="userSettings.engine"
-                defaultMessage="Engine"
-              />
-            </span>
-            <span className="flex truncate text-sm text-gray-300">
-              {device.userAgent ? parsedUserAgent.engine.name : 'N/A'}
             </span>
           </div>
         </div>

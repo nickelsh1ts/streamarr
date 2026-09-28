@@ -24,6 +24,7 @@ Primary configuration for your Streamarr instance:
 - **Users** — Default permissions, sign-in options, trial periods
 - **Plex** — Server connection and library management
 - **Services** — \*Arr integrations, download clients, Tautulli
+- **Network** — Proxy awareness, outbound HTTP(S) proxy, CSRF protection, and request timeouts
 - **Notifications** — Email, Web Push, In-App notification setup
 - **Onboarding** — Welcome modal and tutorial configuration
 - **Jobs & Cache** — Scheduled tasks and cache management

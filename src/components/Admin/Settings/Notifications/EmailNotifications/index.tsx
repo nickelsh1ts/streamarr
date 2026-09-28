@@ -143,6 +143,7 @@ const EmailNotifications = () => {
         authPass: data?.options?.authPass,
         allowSelfSigned: data?.options?.allowSelfSigned ?? false,
         senderName: data?.options?.senderName,
+        usePublicLogo: data?.options?.usePublicLogo ?? false,
         pgpPrivateKey: data?.options?.pgpPrivateKey,
         pgpPassword: data?.options?.pgpPassword,
       }}
@@ -162,6 +163,7 @@ const EmailNotifications = () => {
               authPass: values.authPass,
               allowSelfSigned: values.allowSelfSigned,
               senderName: values.senderName,
+              usePublicLogo: values.usePublicLogo,
               pgpPrivateKey: values.pgpPrivateKey,
               pgpPassword: values.pgpPassword,
             },
@@ -215,6 +217,7 @@ const EmailNotifications = () => {
                 authPass: values.authPass,
                 allowSelfSigned: values.allowSelfSigned,
                 senderName: values.senderName,
+                usePublicLogo: values.usePublicLogo,
                 pgpPrivateKey: values.pgpPrivateKey,
                 pgpPassword: values.pgpPassword,
               },
@@ -415,6 +418,28 @@ const EmailNotifications = () => {
                     type="checkbox"
                     id="allowSelfSigned"
                     name="allowSelfSigned"
+                    className="checkbox checkbox-sm checkbox-primary rounded-md"
+                  />
+                </div>
+                <label htmlFor="usePublicLogo" className="checkbox-label">
+                  <span>
+                    <FormattedMessage
+                      id="emailNotifications.usePublicLogo"
+                      defaultMessage="Use public Streamarr logo"
+                    />
+                  </span>
+                  <span className="text-neutral block text-sm">
+                    <FormattedMessage
+                      id="emailNotifications.usePublicLogoDescription"
+                      defaultMessage="Use the public GitHub logo. Useful when your instance is not publicly accessible."
+                    />
+                  </span>
+                </label>
+                <div className="mt-2 sm:col-span-2 sm:mt-0">
+                  <Field
+                    type="checkbox"
+                    id="usePublicLogo"
+                    name="usePublicLogo"
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
                 </div>

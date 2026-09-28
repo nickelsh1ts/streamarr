@@ -122,7 +122,7 @@ Or revoke permission in your browser settings.
 
 ## Multiple Devices
 
-Users can subscribe to push notifications on multiple devices/browsers. Each subscription is stored separately, and notifications are sent to all subscribed endpoints.
+Users can subscribe to push notifications on multiple devices/browsers, up to 50 subscriptions per account. Each subscription is stored separately, and notifications are sent to all subscribed endpoints.
 
 To manage subscriptions:
 

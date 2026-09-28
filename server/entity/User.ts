@@ -6,7 +6,7 @@ import Event from '@server/entity/Event';
 import Invite from '@server/entity/Invite';
 import { Notification } from '@server/entity/Notification';
 import type { QuotaResponse } from '@server/interfaces/api/userInterfaces';
-import PreparedEmail from '@server/lib/email';
+import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import type { PermissionCheckOptions } from '@server/lib/permissions';
 import { hasPermission, Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -269,8 +269,7 @@ export class User {
         label: 'User Management',
       });
       const email = new PreparedEmail(getSettings().notifications.agents.email);
-      const { customLogo } = getSettings().main;
-      const logoUrl = customLogo || '/logo_full.png';
+      const logoUrl = getEmailLogo();
 
       await email.send({
         template: path.join(__dirname, '../templates/email/resetpassword'),
