@@ -12,9 +12,10 @@ Welcome to the Streamarr Documentation.
 - **Media Service Integration** — Connect Radarr, Sonarr, Lidarr, Prowlarr, Bazarr, Tdarr, NeXroll, and more
 - **Powerful Invite System** — Generate invite codes with usage limits, expiry dates, library access controls, and QR codes
 - **Release Calendar** — View upcoming releases from Sonarr and Radarr, plus create custom events
-- **Download Client Management** — Monitor and manage qBittorrent, Deluge, and Transmission with health monitoring and automatic connection testing
+- **Download Management** — Monitor qBittorrent, Deluge, and Transmission with health monitoring, category/tag filters, search, and bulk actions
 - **Flexible Notifications** — Email (with PGP encryption support), Web Push, In-App, Telegram, Pushover, Pushbullet, Discord, Slack, Gotify, ntfy, and custom Webhook notifications, with swipe-to-dismiss on mobile
 - **Internal Proxy** — Securely access embedded \*Arr services and Plex Web through Streamarr
+- **Outbound HTTP(S) Proxy** — Route supported integrations through an authenticated proxy with configurable local-address bypass
 - **Granular Permissions** — Fine-grained permission system to control user access
 - **Trial Periods** — Optionally restrict new users during a configurable trial period
 - **Interactive Onboarding** — Welcome modals and interactive tutorials for both new users and administrators
