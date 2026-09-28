@@ -37,6 +37,7 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
         ...options.tls,
       })
     : net.connect({ host: options.host, port: options.port });
+  const connectEvent = options.secure ? 'secureConnect' : 'connect';
   let settled = false;
   const connectionTimeout = setTimeout(() => {
     if (settled) {
@@ -52,7 +53,7 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
   const cleanup = () => {
     clearTimeout(connectionTimeout);
     socket.removeListener('error', onError);
-    socket.removeListener('connect', onConnect);
+    socket.removeListener(connectEvent, onConnect);
   };
   const onError = (error: Error) => {
     if (settled) {
@@ -74,7 +75,7 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
   };
 
   socket.once('error', onError);
-  socket.once('connect', onConnect);
+  socket.once(connectEvent, onConnect);
 };
 
 class PreparedEmail {
