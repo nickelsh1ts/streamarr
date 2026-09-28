@@ -4299,7 +4299,7 @@
     "defaultMessage": "Newsletter sent"
   },
   "newsletters.sentSummary": {
-    "defaultMessage": "Delivered to {count} recipient(s){failures, plural, =0 {} other {, # failed}}."
+    "defaultMessage": "Delivered to {count, plural, one {# recipient} other {# recipients}}{failures, plural, =0 {} other {, # failed}}."
   },
   "newsletters.sonarrTag": {
     "defaultMessage": "Sonarr Tag"
