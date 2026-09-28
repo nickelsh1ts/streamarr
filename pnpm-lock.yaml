@@ -463,7 +463,7 @@ importers:
         version: 2.1.8
       '@types/nodemailer':
         specifier: ^8.0.1
-        version: 8.0.1
+        version: 8.0.2
       '@types/prop-types':
         specifier: ^15.7.14
         version: 15.7.15
@@ -2993,8 +2993,8 @@ packages:
   '@types/node@25.9.7':
     resolution: {integrity: sha512-Y+axoNWOFLvDNFxNbDA+kqqV05imHwTu5bZWWO6tQM3Y2NX1jvzUJkYlf4nYnMCnvu4wQBKW6Nr+ok6yHWA9aQ==}
 
-  '@types/nodemailer@8.0.1':
-    resolution: {integrity: sha512-PxpaInm8V1JQDd4j0ds5HfvWQk8JupS1C0Picb96QJsrrRDjBH+DlK7L4ZdNSqNULhiZRQHc40nLVShaGxXAMw==}
+  '@types/nodemailer@8.0.2':
+    resolution: {integrity: sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -11252,7 +11252,7 @@ snapshots:
   '@types/email-templates@10.0.4':
     dependencies:
       '@types/html-to-text': 9.0.4
-      '@types/nodemailer': 8.0.1
+      '@types/nodemailer': 8.0.2
       juice: 8.1.0
     transitivePeerDependencies:
       - encoding
@@ -11337,7 +11337,7 @@ snapshots:
     dependencies:
       undici-types: 7.24.6
 
-  '@types/nodemailer@8.0.1':
+  '@types/nodemailer@8.0.2':
     dependencies:
       '@types/node': 25.9.7
 
