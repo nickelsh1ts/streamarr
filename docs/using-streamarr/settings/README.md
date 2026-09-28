@@ -234,11 +234,11 @@ The time, in seconds, Streamarr waits between the scheduled retry attempts descr
 
 ## API Reference
 
-| Endpoint                                       | Method | Description                       |
-| ---------------------------------------------- | ------ | --------------------------------- |
-| `/api/v1/settings/network`                     | GET    | Retrieve current network settings |
-| `/api/v1/settings/network`                     | POST   | Update network settings           |
-| `/api/v1/settings/network/outbound-proxy/test` | POST   | Test the saved outbound proxy     |
+| Endpoint                                       | Method | Description                               |
+| ---------------------------------------------- | ------ | ----------------------------------------- |
+| `/api/v1/settings/network`                     | GET    | Retrieve current network settings         |
+| `/api/v1/settings/network`                     | POST   | Update network settings                   |
+| `/api/v1/settings/network/outbound-proxy/test` | POST   | Test the supplied outbound proxy settings |
 
 ---
 
