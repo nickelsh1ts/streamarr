@@ -2,6 +2,7 @@ import type { NotificationAgentEmail } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import Email from 'email-templates';
 import net from 'node:net';
+import tls from 'node:tls';
 import nodemailer from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { URL } from 'url';
@@ -28,7 +29,15 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
     return;
   }
 
-  const socket = net.connect({ host: options.host, port: options.port });
+  const socket = options.secure
+    ? tls.connect({
+        host: options.host,
+        port: options.port,
+        servername: options.host,
+        ...options.tls,
+      })
+    : net.connect({ host: options.host, port: options.port });
+  const connectEvent = options.secure ? 'secureConnect' : 'connect';
   let settled = false;
   const connectionTimeout = setTimeout(() => {
     if (settled) {
@@ -44,7 +53,7 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
   const cleanup = () => {
     clearTimeout(connectionTimeout);
     socket.removeListener('error', onError);
-    socket.removeListener('connect', onConnect);
+    socket.removeListener(connectEvent, onConnect);
   };
   const onError = (error: Error) => {
     if (settled) {
@@ -66,7 +75,7 @@ const getSocket: SMTPTransport.Options['getSocket'] = (options, callback) => {
   };
 
   socket.once('error', onError);
-  socket.once('connect', onConnect);
+  socket.once(connectEvent, onConnect);
 };
 
 class PreparedEmail {
