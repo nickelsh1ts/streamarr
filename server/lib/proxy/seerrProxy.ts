@@ -131,6 +131,11 @@ function buildSeerrShim(base: string, nonce: string): string {
     if(prefixed(u))return u;                                   // already prefixed
     return isApp(u)?BASE+u:u;
   }
+  // Keep Next/Image srcset candidates under the Seerr proxy.
+  function preSrcset(value){
+    if(typeof value!=='string'||!value)return value;
+    return value.replace(/(^|,\\s*)(\\/[^,\\s]+)/g,function(match,prefix,url){return prefix+pre(url);});
+  }
   // axios uses XHR in the browser -> covers every Seerr API call (GET/POST/...)
   var open=XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open=function(m,u){
@@ -149,7 +154,11 @@ function buildSeerrShim(base: string, nonce: string): string {
   }
   var setAttribute=Element.prototype.setAttribute;
   Element.prototype.setAttribute=function(name,value){
-    if(this instanceof HTMLImageElement&&String(name).toLowerCase()==='src')value=pre(value);
+    if(this instanceof HTMLImageElement){
+      var attr=String(name).toLowerCase();
+      if(attr==='src')value=pre(value);
+      else if(attr==='srcset')value=preSrcset(value);
+    }
     return setAttribute.call(this,name,value);
   };
   // Client-rendered fallback posters (including Next/Image) can assign a
@@ -162,6 +171,18 @@ function buildSeerrShim(base: string, nonce: string): string {
         enumerable:imageSrc.enumerable,
         get:imageSrc.get,
         set:function(u){imageSrc.set.call(this,pre(u));}
+      });
+    }
+  }catch(e){}
+  // React may assign srcset through the DOM property instead of setAttribute.
+  try{
+    var imageSrcset=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'srcset');
+    if(imageSrcset&&imageSrcset.get&&imageSrcset.set){
+      Object.defineProperty(HTMLImageElement.prototype,'srcset',{
+        configurable:imageSrcset.configurable,
+        enumerable:imageSrcset.enumerable,
+        get:imageSrcset.get,
+        set:function(value){imageSrcset.set.call(this,preSrcset(value));}
       });
     }
   }catch(e){}
