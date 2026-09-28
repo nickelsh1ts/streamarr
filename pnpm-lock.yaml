@@ -412,7 +412,7 @@ importers:
         version: 21.2.2
       '@formatjs/cli':
         specifier: ^6.14.2
-        version: 6.16.30
+        version: 6.16.31
       '@semantic-release/changelog':
         specifier: 6.0.3
         version: 6.0.3(semantic-release@25.0.9(supports-color@5.5.0)(typescript@6.0.3))
@@ -1679,42 +1679,42 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@formatjs/cli-native-darwin-arm64@1.1.24':
-    resolution: {integrity: sha512-2i/fKUcawvTe022vN1LcpCJMBHcN2pFgOzg3Hr24jV0QMpoZVpB5RuM8fhZCy9E/STnOTP+P5W9uuPhg5eCGUA==}
+  '@formatjs/cli-native-darwin-arm64@1.1.25':
+    resolution: {integrity: sha512-yO0OPjQ1lnwdLxMAtvabSp3QbCjstAP5Vb94tFK25gBBEQFPJoCt+wiUii83RWb30y+n/yMG2G87Hn6JxarPLQ==}
     cpu: [arm64]
     os: [darwin]
 
-  '@formatjs/cli-native-linux-arm64-musl@1.0.22':
-    resolution: {integrity: sha512-YUJ1ArreQGEdr2VaBIvpUVx3242YRFAwaKljlm0bOAckdk1JogzGnxIb5OJzFxlKiZkXWGFlO+erpRB6q0+kHg==}
+  '@formatjs/cli-native-linux-arm64-musl@1.0.23':
+    resolution: {integrity: sha512-RfJwhO7KRKpfuIC/7pCdveq6lImBK+97xcsEIAdGuJCtfYTT/XtetDeMHlpxXdrUQThS+w5bFHtx1oKM8sZO8w==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@formatjs/cli-native-linux-arm64@1.2.24':
-    resolution: {integrity: sha512-L0hFov7dgC6m9WM2cqolaL3zA48vpwe/gqd7MKILt+TrHR4ZlVv9CXvzXMDucn//FcTZw0NFBKgVXcHvlimY2g==}
+  '@formatjs/cli-native-linux-arm64@1.2.25':
+    resolution: {integrity: sha512-Kz1sNGzqTobN9GrZDPcsvAi61yVNtpviciinlERvhRzQQtnTSGyWHwy6lEPbQddFEevQT7MQkjCtmK31+0ZlTg==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@formatjs/cli-native-linux-x64-musl@1.0.22':
-    resolution: {integrity: sha512-hUwkDw47LQ0ESJvKsbZOWI50w/NP1hATfRrUy9mGRCRqKj1YTJ/HQxOjVfnrpiVEImjs4Ptws69RuIgxB5QGOA==}
+  '@formatjs/cli-native-linux-x64-musl@1.0.23':
+    resolution: {integrity: sha512-R6kNCmN10CmeVlj5HLjneG3elmEe8y8p0ApQ2nrHul0knpcGuWHwA/QHvHXMveaJ9HXyoJy9HFqnWM6fUZPoTg==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@formatjs/cli-native-linux-x64@1.1.24':
-    resolution: {integrity: sha512-bp6FKYz8AQaHdeNI6rvMSk49ni4/uS+6AoxL/GiKXv2fL8zc459mkctTnwGR9Ol2in71Gq+nFKoZGFS50EHWCA==}
+  '@formatjs/cli-native-linux-x64@1.1.25':
+    resolution: {integrity: sha512-d+O5gzxBK+7r4iBVD0y0aqpHvaHiBCyFmQax/gBhJosl4kTb7rUBf8JiVHez/CSWToQdW2bN5jroTZuDOkQRiQ==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@formatjs/cli-native-win32-x64@1.1.25':
-    resolution: {integrity: sha512-tYjaYxtfBoGClwnBMtGuMQV/hbXY3mrGR5QRo9Tzk9Uwpa573gojtI8sqhn5jkzqjKPG1Ob3vVIJxcJmSnqemg==}
+  '@formatjs/cli-native-win32-x64@1.1.26':
+    resolution: {integrity: sha512-b1Qjot3ZaWjS7cCNEEuH4IyylXnx57idJ9yqf9y/BsVAykpiSEsq+4ZRFpMTSRNuvYNSYUsBMhYBTMZSPFemig==}
     cpu: [x64]
     os: [win32]
 
-  '@formatjs/cli@6.16.30':
-    resolution: {integrity: sha512-9pHgUriIJAsHfkoYuShydq5jHMp0IMQk7sdIkXgqD3m5UKTZIDfOyuJyuqJM5T55HOxz97y4iSSoWp7rfgdvNA==}
+  '@formatjs/cli@6.16.31':
+    resolution: {integrity: sha512-ZUFC7yl8kAG7/R/VklrwM+wrNJgLMJ8ssAl29WYaigYwWRr/twa1FJkAda6PLtGybJ1RRYAkKgSmSjqk6dgyOw==}
     engines: {node: '>= 20.12.0'}
     hasBin: true
     peerDependencies:
@@ -10174,32 +10174,32 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@formatjs/cli-native-darwin-arm64@1.1.24':
+  '@formatjs/cli-native-darwin-arm64@1.1.25':
     optional: true
 
-  '@formatjs/cli-native-linux-arm64-musl@1.0.22':
+  '@formatjs/cli-native-linux-arm64-musl@1.0.23':
     optional: true
 
-  '@formatjs/cli-native-linux-arm64@1.2.24':
+  '@formatjs/cli-native-linux-arm64@1.2.25':
     optional: true
 
-  '@formatjs/cli-native-linux-x64-musl@1.0.22':
+  '@formatjs/cli-native-linux-x64-musl@1.0.23':
     optional: true
 
-  '@formatjs/cli-native-linux-x64@1.1.24':
+  '@formatjs/cli-native-linux-x64@1.1.25':
     optional: true
 
-  '@formatjs/cli-native-win32-x64@1.1.25':
+  '@formatjs/cli-native-win32-x64@1.1.26':
     optional: true
 
-  '@formatjs/cli@6.16.30':
+  '@formatjs/cli@6.16.31':
     optionalDependencies:
-      '@formatjs/cli-native-darwin-arm64': 1.1.24
-      '@formatjs/cli-native-linux-arm64': 1.2.24
-      '@formatjs/cli-native-linux-arm64-musl': 1.0.22
-      '@formatjs/cli-native-linux-x64': 1.1.24
-      '@formatjs/cli-native-linux-x64-musl': 1.0.22
-      '@formatjs/cli-native-win32-x64': 1.1.25
+      '@formatjs/cli-native-darwin-arm64': 1.1.25
+      '@formatjs/cli-native-linux-arm64': 1.2.25
+      '@formatjs/cli-native-linux-arm64-musl': 1.0.23
+      '@formatjs/cli-native-linux-x64': 1.1.25
+      '@formatjs/cli-native-linux-x64-musl': 1.0.23
+      '@formatjs/cli-native-win32-x64': 1.1.26
 
   '@formatjs/fast-memoize@3.1.7': {}
 
