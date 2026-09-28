@@ -136,6 +136,7 @@ export interface DownloadClientSettings {
   useSsl: boolean;
   username?: string;
   password?: string;
+  apiKey?: string;
   externalUrl?: string;
 }
 

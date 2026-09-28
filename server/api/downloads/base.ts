@@ -99,6 +99,7 @@ async function getClient(
       const { QBittorrent } = await import('@ctrl/qbittorrent');
       client = new QBittorrent({
         baseUrl,
+        apiKey: settings.apiKey,
         username: settings.username,
         password: settings.password,
       });

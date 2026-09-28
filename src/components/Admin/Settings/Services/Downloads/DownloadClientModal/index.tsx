@@ -19,6 +19,8 @@ interface DownloadClientModalProps {
   show: boolean;
 }
 
+type QbittorrentAuthType = 'password' | 'apiKey';
+
 const DEFAULT_PORTS: Record<DownloadClientType, number> = {
   qbittorrent: 8080,
   deluge: 8112,
@@ -78,9 +80,42 @@ const DownloadClientModal = ({
           defaultMessage: 'You must provide a valid port number',
         })
       ),
-    username: Yup.string().when('client', {
-      is: (client: string) => client !== 'deluge',
-      then: (schema) => schema.required(),
+    authType: Yup.string().oneOf(['password', 'apiKey']).required(),
+    username: Yup.string().when(['client', 'authType'], {
+      is: (client: string, authType: QbittorrentAuthType) =>
+        client !== 'deluge' &&
+        !(client === 'qbittorrent' && authType === 'apiKey'),
+      then: (schema) =>
+        schema.required(
+          intl.formatMessage({
+            id: 'servicesSettings.validation.username',
+            defaultMessage: 'You must provide a valid username',
+          })
+        ),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    password: Yup.string().when(['client', 'authType'], {
+      is: (client: string, authType: QbittorrentAuthType) =>
+        client !== 'qbittorrent' || authType !== 'apiKey',
+      then: (schema) =>
+        schema.required(
+          intl.formatMessage({
+            id: 'servicesSettings.validation.password',
+            defaultMessage: 'You must provide a valid password',
+          })
+        ),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    apiKey: Yup.string().when(['client', 'authType'], {
+      is: (client: string, authType: QbittorrentAuthType) =>
+        client === 'qbittorrent' && authType === 'apiKey',
+      then: (schema) =>
+        schema.required(
+          intl.formatMessage({
+            id: 'servicesSettings.validation.apiKey',
+            defaultMessage: 'You must provide a valid API key',
+          })
+        ),
       otherwise: (schema) => schema.notRequired(),
     }),
   });
@@ -92,6 +127,7 @@ const DownloadClientModal = ({
       port,
       username,
       password,
+      apiKey,
       client,
       useSsl,
     }: {
@@ -100,6 +136,7 @@ const DownloadClientModal = ({
       port: number;
       username?: string;
       password?: string;
+      apiKey?: string;
       client: DownloadClientType;
       useSsl: boolean;
     }) => {
@@ -110,6 +147,7 @@ const DownloadClientModal = ({
           port,
           username,
           password,
+          apiKey,
           client,
           useSsl,
         })
@@ -172,6 +210,7 @@ const DownloadClientModal = ({
       port: number;
       username?: string;
       password?: string;
+      apiKey?: string;
       client: DownloadClientType;
       useSsl: boolean;
     }) => {
@@ -189,6 +228,7 @@ const DownloadClientModal = ({
         port: downloadClient.port,
         username: downloadClient.username,
         password: downloadClient.password,
+        apiKey: downloadClient.apiKey,
         client: downloadClient.client,
         useSsl: downloadClient.useSsl,
       });
@@ -206,19 +246,24 @@ const DownloadClientModal = ({
         useSsl: downloadClient?.useSsl ?? false,
         username: downloadClient?.username ?? '',
         password: downloadClient?.password ?? '',
+        apiKey: downloadClient?.apiKey ?? '',
+        authType: downloadClient?.apiKey ? 'apiKey' : 'password',
         externalUrl: downloadClient?.externalUrl ?? '',
       }}
       validationSchema={DownloadClientSchema}
       onSubmit={async (values) => {
         try {
+          const usesApiKey =
+            values.client === 'qbittorrent' && values.authType === 'apiKey';
           const submission = {
             name: values.name,
             client: values.client,
             hostname: values.hostname,
             port: Number(values.port),
             useSsl: values.useSsl,
-            username: values.username || undefined,
-            password: values.password || undefined,
+            username: usesApiKey ? '' : values.username || '',
+            password: usesApiKey ? '' : values.password || '',
+            apiKey: usesApiKey ? values.apiKey : '',
             externalUrl: values.externalUrl.trim() || '',
           };
 
@@ -257,6 +302,13 @@ const DownloadClientModal = ({
         isSubmitting,
         isValid,
       }) => {
+        const usesApiKey =
+          values.client === 'qbittorrent' && values.authType === 'apiKey';
+        const hasValidCredentials = usesApiKey
+          ? !!values.apiKey
+          : (values.client === 'deluge' || !!values.username) &&
+            !!values.password;
+
         return (
           <Modal
             onCancel={onClose}
@@ -295,15 +347,15 @@ const DownloadClientModal = ({
                 values.hostname &&
                 values.port &&
                 values.client &&
-                (values.client === 'deluge' || values.username) &&
-                values.password
+                hasValidCredentials
               ) {
                 testConnection({
                   name: values.name,
                   hostname: values.hostname,
                   port: Number(values.port),
-                  username: values.username,
-                  password: values.password,
+                  username: usesApiKey ? undefined : values.username,
+                  password: usesApiKey ? undefined : values.password,
+                  apiKey: usesApiKey ? values.apiKey : undefined,
                   client: values.client,
                   useSsl: values.useSsl,
                 });
@@ -314,8 +366,7 @@ const DownloadClientModal = ({
               !values.hostname ||
               !values.port ||
               !values.client ||
-              (values.client !== 'deluge' && !values.username) ||
-              !values.password
+              !hasValidCredentials
             }
             okDisabled={isSubmitting || !isValidated || isTesting || !isValid}
             onOk={() => handleSubmit()}
@@ -349,6 +400,8 @@ const DownloadClientModal = ({
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                       const newClient = e.target.value as DownloadClientType;
                       setFieldValue('client', newClient);
+                      setFieldValue('authType', 'password');
+                      setFieldValue('apiKey', '');
                       // Update port to default for the selected client
                       setFieldValue('port', DEFAULT_PORTS[newClient]);
                     }}
@@ -458,7 +511,42 @@ const DownloadClientModal = ({
                   />
                 </div>
               </div>
-              {values.client !== 'deluge' && (
+              {values.client === 'qbittorrent' && (
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="authType">
+                    <FormattedMessage
+                      id="servicesSettings.downloads.authType"
+                      defaultMessage="Authentication"
+                    />
+                  </label>
+                  <div className="sm:col-span-2">
+                    <Field
+                      as="select"
+                      id="authType"
+                      name="authType"
+                      className="select select-primary select-sm w-full rounded-md"
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        setFieldValue('authType', e.target.value);
+                        setIsValidated(false);
+                      }}
+                    >
+                      <option value="password">
+                        {intl.formatMessage({
+                          id: 'servicesSettings.downloads.usernamePasswordAuth',
+                          defaultMessage: 'Username / Password',
+                        })}
+                      </option>
+                      <option value="apiKey">
+                        {intl.formatMessage({
+                          id: 'common.apiKey',
+                          defaultMessage: 'API Key',
+                        })}
+                      </option>
+                    </Field>
+                  </div>
+                </div>
+              )}
+              {values.client !== 'deluge' && !usesApiKey && (
                 <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                   <label htmlFor="username">
                     <FormattedMessage
@@ -477,39 +565,86 @@ const DownloadClientModal = ({
                       data-1pignore="true"
                       data-lpignore="true"
                       data-bwignore="true"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setIsValidated(false);
+                        setFieldValue('username', e.target.value);
+                      }}
                     />
+                    {errors.username &&
+                      touched.username &&
+                      typeof errors.username === 'string' && (
+                        <div className="text-error">{errors.username}</div>
+                      )}
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
-                <label htmlFor="password">
-                  <FormattedMessage
-                    id="common.password"
-                    defaultMessage="Password"
-                  />
-                  <span className="text-error ml-2">*</span>
-                </label>
-                <div className="sm:col-span-2">
-                  <div className="flex">
-                    <SensitiveInput
-                      as="field"
-                      id="password"
-                      name="password"
-                      buttonSize="sm"
-                      className="input input-primary input-sm w-full rounded-md"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setIsValidated(false);
-                        setFieldValue('password', e.target.value);
-                      }}
+              {usesApiKey ? (
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="apiKey">
+                    <FormattedMessage
+                      id="common.apiKey"
+                      defaultMessage="API Key"
                     />
+                    <span className="text-error ml-2">*</span>
+                    <p className="text-neutral mt-1 text-sm font-light">
+                      <FormattedMessage
+                        id="servicesSettings.downloads.apiKeyVersionHint"
+                        defaultMessage="qBittorrent 5.2.0+ required."
+                      />
+                    </p>
+                  </label>
+                  <div className="sm:col-span-2">
+                    <div className="flex">
+                      <SensitiveInput
+                        as="field"
+                        id="apiKey"
+                        name="apiKey"
+                        buttonSize="sm"
+                        className="input input-primary input-sm w-full rounded-md"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setIsValidated(false);
+                          setFieldValue('apiKey', e.target.value);
+                        }}
+                      />{' '}
+                    </div>
+                    {errors.apiKey &&
+                      touched.apiKey &&
+                      typeof errors.apiKey === 'string' && (
+                        <div className="text-error">{errors.apiKey}</div>
+                      )}
                   </div>
-                  {errors.password &&
-                    touched.password &&
-                    typeof errors.password === 'string' && (
-                      <div className="text-error">{errors.password}</div>
-                    )}
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="password">
+                    <FormattedMessage
+                      id="common.password"
+                      defaultMessage="Password"
+                    />
+                    <span className="text-error ml-2">*</span>
+                  </label>
+                  <div className="sm:col-span-2">
+                    <div className="flex">
+                      <SensitiveInput
+                        as="field"
+                        id="password"
+                        name="password"
+                        buttonSize="sm"
+                        className="input input-primary input-sm w-full rounded-md"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setIsValidated(false);
+                          setFieldValue('password', e.target.value);
+                        }}
+                      />
+                    </div>
+                    {errors.password &&
+                      touched.password &&
+                      typeof errors.password === 'string' && (
+                        <div className="text-error">{errors.password}</div>
+                      )}
+                  </div>
+                </div>
+              )}
               <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
                 <label htmlFor="externalUrl">
                   <FormattedMessage

@@ -596,15 +596,17 @@ Configure download clients for torrent management. Supported clients:
 
 For each client:
 
-| Setting               | Description                          |
-| --------------------- | ------------------------------------ |
-| **Client Name**       | Friendly name                        |
-| **Client Type**       | qBittorrent, Deluge, or Transmission |
-| **Hostname or IP**    | Address of the client                |
-| **Port**              | Client web UI port                   |
-| **Use SSL**           | Enable for HTTPS                     |
-| **Username/Password** | Credentials for authentication       |
-| **External URL**      | External URL for direct access       |
+| Setting            | Description                          |
+| ------------------ | ------------------------------------ |
+| **Client Name**    | Friendly name                        |
+| **Client Type**    | qBittorrent, Deluge, or Transmission |
+| **Hostname or IP** | Address of the client                |
+| **Port**           | Client web UI port                   |
+| **Use SSL**        | Enable for HTTPS                     |
+| **Authentication** | Credentials for the selected client  |
+| **External URL**   | External URL for direct access       |
+
+qBittorrent supports username/password or an API key (qBittorrent 5.2.0+). Deluge and Transmission use their respective Web UI credentials.
 
 See [Downloads](../downloads/README.md) for usage details.
 
