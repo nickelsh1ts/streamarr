@@ -1,95 +1,77 @@
-import { rateLimit } from 'express-rate-limit';
+import { rateLimit, type Options } from 'express-rate-limit';
 
-export const arrAuthLimiter = rateLimit({
+const createRateLimiter = (options: Partial<Options>) =>
+  rateLimit({
+    standardHeaders: true,
+    legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
+    ...options,
+  });
+
+export const arrAuthLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 5, // limit each IP to 5 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const plexPinLimiter = rateLimit({
+export const plexPinLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const plexAuthLimiter = rateLimit({
+export const plexAuthLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const plexPinStatusLimiter = rateLimit({
+export const plexPinStatusLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   // The client polls this endpoint roughly every 2s during an active
   // sign-in (~30/min). 120/min/IP leaves ample headroom for legitimate
   // polling while bounding abuse of this outbound-request-triggering route.
   max: 120,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const resetPasswordLimiter = rateLimit({
+export const resetPasswordLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const audiobookshelfLinkLimiter = rateLimit({
+export const audiobookshelfLinkLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const avatarLimiter = rateLimit({
+export const avatarLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 120, // 2 req/sec per IP — covers page loads, blocks bulk enumeration
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const settingsAboutLimiter = rateLimit({
+export const settingsAboutLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30, // limit expensive settings/about introspection per IP
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const settingsAboutDiskSpaceLimiter = rateLimit({
+export const settingsAboutDiskSpaceLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30, // limit expensive disk space introspection per IP
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const settingsCacheLimiter = rateLimit({
+export const settingsCacheLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const newsletterPreviewLimiter = rateLimit({
+export const newsletterPreviewLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const newsletterTestLimiter = rateLimit({
+export const newsletterTestLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-export const trialExtensionRequestLimiter = rateLimit({
+export const trialExtensionRequestLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
 });

@@ -30,7 +30,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useSWR, { mutate } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 const Setup = () => {
   const router = useRouter();
@@ -42,6 +42,7 @@ const Setup = () => {
   const { locale } = useLocale();
   const { revalidate } = useUser();
   const { currentSettings } = useSettings();
+  const { mutate } = useSWRConfig();
   const intl = useIntl();
   const logoSrc = currentSettings.customLogo || '/logo_full.png';
 
@@ -54,24 +55,25 @@ const Setup = () => {
       );
 
       if (initResponse.data.initialized) {
-        // Update main settings and refresh data
+        // Persist the selected locale before checking whether the server needs
+        // to restart for any configured services.
         await axios.post('/api/v1/settings/main', { locale });
-        await Promise.all([mutate('/api/v1/settings/public'), revalidate()]);
+        await revalidate();
 
-        // Check if restart is required for any services
-        try {
-          const restartStatus = await axios.get<RestartStatusResponse>(
-            RESTART_REQUIRED_SWR_KEY
-          );
+        // Check restart status before refreshing public settings. Refreshing
+        // initialized=true here would make Layout redirect away from Setup
+        // before this modal has a chance to render.
+        const restartStatus = await axios.get<RestartStatusResponse>(
+          RESTART_REQUIRED_SWR_KEY
+        );
 
-          if (restartStatus.data.required) {
-            setRestartServices(restartStatus.data.services);
-            setShowRestartModal(true);
-            return;
-          }
-        } catch {
-          // If check fails, just proceed to admin
+        if (restartStatus.data.required) {
+          setRestartServices(restartStatus.data.services);
+          setShowRestartModal(true);
+          return;
         }
+
+        await mutate('/api/v1/settings/public');
 
         // Redirect to admin page
         router.push('/admin');
@@ -278,9 +280,10 @@ const Setup = () => {
       </div>
       <RestartModal
         show={showRestartModal}
-        onSkip={() => {
+        onSkip={async () => {
           setShowRestartModal(false);
-          router.refresh();
+          await mutate('/api/v1/settings/public');
+          router.push('/admin');
         }}
         services={restartServices}
       />

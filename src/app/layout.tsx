@@ -8,6 +8,7 @@ import { LanguageProvider } from '@app/context/LanguageContext';
 import NotificationProvider from '@app/context/NotificationContext';
 import { NotificationSidebarProvider } from '@app/context/NotificationSidebarContext';
 import { SettingsProvider } from '@app/context/SettingsContext';
+import SWRProvider from '@app/context/SWRProvider';
 import { UserContext } from '@app/context/UserContext';
 import {
   getPublicSettings,
@@ -45,14 +46,16 @@ export default async function RootLayout({
           <SettingsProvider currentSettings={currentSettings}>
             <ThemeSetter />
             <InteractionProvider>
-              <UserContext initialUser={user}>
-                <ServiceWorkerSetup />
-                <NotificationProvider>
-                  <NotificationSidebarProvider>
-                    <Layout initialized={initialized}>{children}</Layout>
-                  </NotificationSidebarProvider>
-                </NotificationProvider>
-              </UserContext>
+              <SWRProvider initialUser={user}>
+                <UserContext initialUser={user}>
+                  <ServiceWorkerSetup />
+                  <NotificationProvider>
+                    <NotificationSidebarProvider>
+                      <Layout initialized={initialized}>{children}</Layout>
+                    </NotificationSidebarProvider>
+                  </NotificationProvider>
+                </UserContext>
+              </SWRProvider>
             </InteractionProvider>
           </SettingsProvider>
         </LanguageProvider>

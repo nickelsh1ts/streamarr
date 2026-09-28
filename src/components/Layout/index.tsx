@@ -20,7 +20,7 @@ import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import useSWR, { SWRConfig } from 'swr';
+import useSWR from 'swr';
 
 const Layout = ({
   children,
@@ -84,16 +84,6 @@ const Layout = ({
       ),
     [user, pathname]
   );
-  const swrConfigValue = useMemo(
-    () => ({
-      fetcher: (url: string) => axios.get(url).then((res) => res.data),
-      fallback: {
-        '/api/v1/auth/me': user,
-      },
-    }),
-    [user]
-  );
-
   // Keep the Plex Web token in localStorage in sync with the user's current
   // server-side token. Plex rotates tokens on re-authentication (one token
   // per account + client identifier), so "set only if absent" can leave a
@@ -203,40 +193,38 @@ const Layout = ({
   }
 
   return (
-    <SWRConfig value={swrConfigValue}>
-      <OnboardingProvider>
-        {notificationSettings?.inAppEnabled && user && <Notifications />}
-        <WelcomeModal />
-        <TutorialSpotlight />
-        <TutorialWizard />
-        {isMainLayout ? (
-          <main className="relative flex h-full min-h-full min-w-0 flex-col">
-            <Header />
-            {user && <MobileMenu />}
-            {isAuthLayout && <FaderBackground />}
-            <div className={`${isSidebar && 'lg:ms-56'} relative`}>
-              <div
-                className={`${
-                  isFooterLayout
-                    ? 'min-h-[calc(100dvh-4rem)]'
-                    : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
-                } relative flex grow flex-col`}
-              >
-                {children}
-              </div>
-              {isFooterLayout && <Footer />}
+    <OnboardingProvider>
+      {notificationSettings?.inAppEnabled && user && <Notifications />}
+      <WelcomeModal />
+      <TutorialSpotlight />
+      <TutorialWizard />
+      {isMainLayout ? (
+        <main className="relative flex h-full min-h-full min-w-0 flex-col">
+          <Header />
+          {user && <MobileMenu />}
+          {isAuthLayout && <FaderBackground />}
+          <div className={`${isSidebar && 'lg:ms-56'} relative`}>
+            <div
+              className={`${
+                isFooterLayout
+                  ? 'min-h-[calc(100dvh-4rem)]'
+                  : 'min-h-[calc(100dvh-7.7rem)] sm:min-h-[calc(100dvh-4rem)]'
+              } relative flex grow flex-col`}
+            >
+              {children}
             </div>
-          </main>
-        ) : (
-          children
-        )}
-        {shouldShowExpiredOverlay && (
-          <ExpiredAccessOverlay
-            isTrialExpiry={user?.accessRevokedReason !== 'plex_removed'}
-          />
-        )}
-      </OnboardingProvider>
-    </SWRConfig>
+            {isFooterLayout && <Footer />}
+          </div>
+        </main>
+      ) : (
+        children
+      )}
+      {shouldShowExpiredOverlay && (
+        <ExpiredAccessOverlay
+          isTrialExpiry={user?.accessRevokedReason !== 'plex_removed'}
+        />
+      )}
+    </OnboardingProvider>
   );
 };
 export default Layout;
