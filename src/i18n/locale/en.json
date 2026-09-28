@@ -5234,6 +5234,12 @@
   "servicesSettings.downloads.addClient": {
     "defaultMessage": "Add Download Client"
   },
+  "servicesSettings.downloads.apiKeyVersionHint": {
+    "defaultMessage": "qBittorrent 5.2.0+ required."
+  },
+  "servicesSettings.downloads.authType": {
+    "defaultMessage": "Authentication"
+  },
   "servicesSettings.downloads.clientType": {
     "defaultMessage": "Client Type"
   },
@@ -5257,6 +5263,9 @@
   },
   "servicesSettings.downloads.title": {
     "defaultMessage": "Downloads Settings"
+  },
+  "servicesSettings.downloads.usernamePasswordAuth": {
+    "defaultMessage": "Username / Password"
   },
   "servicesSettings.lidarr.description": {
     "defaultMessage": "Optionally configure the settings for your Lidarr server."
@@ -5351,6 +5360,9 @@
   "servicesSettings.validation.hostname": {
     "defaultMessage": "You must provide a valid hostname or IP address"
   },
+  "servicesSettings.validation.password": {
+    "defaultMessage": "You must provide a valid password"
+  },
   "servicesSettings.validation.servername": {
     "defaultMessage": "You must provide a valid server name"
   },
@@ -5359,6 +5371,9 @@
   },
   "servicesSettings.validation.urlNoTrailingSlash": {
     "defaultMessage": "URL must not end in a trailing slash"
+  },
+  "servicesSettings.validation.username": {
+    "defaultMessage": "You must provide a valid username"
   },
   "settings.ExpiredTrialPeriodDescriptionPromote": {
     "defaultMessage": "Cannot create invites until after this date (Default: {count, plural, one {# day} other {# days}})"

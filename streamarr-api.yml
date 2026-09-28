@@ -1228,6 +1228,10 @@ components:
         password:
           type: string
           nullable: true
+        apiKey:
+          type: string
+          nullable: true
+          description: qBittorrent Web API key (requires qBittorrent 5.2.0 or later)
         isDefault:
           type: boolean
           example: true
@@ -3720,6 +3724,9 @@ paths:
                   nullable: true
                   example: 'admin'
                 password:
+                  type: string
+                  nullable: true
+                apiKey:
                   type: string
                   nullable: true
               required:

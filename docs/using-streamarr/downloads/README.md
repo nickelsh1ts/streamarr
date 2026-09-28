@@ -29,12 +29,13 @@ Configure download clients in **Settings → Downloads**.
 | **Hostname or IP** | Address of the download client            |
 | **Port**           | Web UI port                               |
 | **Use SSL**        | Enable HTTPS connection                   |
-| **Username**       | Authentication username                   |
-| **Password**       | Authentication password                   |
+| **Authentication** | Credentials for the selected client       |
 | **External URL**   | External URL for direct access (optional) |
 
 4. Click **Test** to verify connection
 5. Click **Save**
+
+For qBittorrent, choose username/password or an API key. Deluge and Transmission use their respective Web UI credentials.
 
 ### Connection Testing
 
@@ -60,13 +61,16 @@ All configured clients are tested in parallel on page load for faster feedback. 
 1. Enable the Web UI in qBittorrent:
    - Go to **Tools → Options → Web UI**
    - Check **Enable the Web UI**
-   - Set a username and password
    - Default port: `8080`
 
 2. Configure in Streamarr:
    - Hostname: Your qBittorrent server address
    - Port: `8080` (or your configured port)
-   - Username/Password: Your Web UI credentials
+   - Choose **Username and password** and enter your Web UI credentials, or choose **API key** and enter a key generated in **Preferences → Web UI**.
+
+{% hint style="info" %}
+API-key authentication requires qBittorrent 5.2.0 or later. Older versions should use username/password authentication.
+{% endhint %}
 
 {% endtab %}
 
@@ -334,9 +338,10 @@ Access to the Downloads page requires **Admin** permission.
 
 ### Authentication failed
 
-1. Verify username and password
-2. Check the client's authentication settings
-3. For Deluge, ensure you're using the Web UI password
+1. Verify the selected authentication method and credentials
+2. For qBittorrent API keys, confirm the server is version 5.2.0 or later and the key is current
+3. Check the client's authentication settings
+4. For Deluge, ensure you're using the Web UI password
 
 ### Torrents not appearing
 
