@@ -120,20 +120,22 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
 
   const syncLibraries = async () => {
     setIsSyncing(true);
-
-    const params: { sync: boolean; enable?: string } = {
-      sync: true,
-    };
-
-    if (activeLibraries.length > 0) {
-      params.enable = activeLibraries.join(',');
+    try {
+      await axios.post('/api/v1/settings/plex/library/sync');
+    } catch {
+      Toast({
+        title: intl.formatMessage({
+          id: 'plexSettings.syncLibrariesError',
+          defaultMessage:
+            'Failed to sync libraries. Check that your Plex server is reachable.',
+        }),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsSyncing(false);
+      revalidate();
     }
-
-    await axios.get('/api/v1/settings/plex/library', {
-      params,
-    });
-    setIsSyncing(false);
-    revalidate();
   };
 
   const refreshPresetServers = async () => {
@@ -186,27 +188,24 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
 
   const toggleLibrary = async (libraryId: string) => {
     setIsSyncing(true);
-    if (activeLibraries.includes(libraryId)) {
-      const params: { enable?: string } = {};
-
-      if (activeLibraries.length > 1) {
-        params.enable = activeLibraries
-          .filter((id) => id !== libraryId)
-          .join(',');
-      }
-
-      await axios.get('/api/v1/settings/plex/library', {
-        params,
+    try {
+      await axios.put(
+        `/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`,
+        { enabled: !activeLibraries.includes(libraryId) }
+      );
+    } catch {
+      Toast({
+        title: intl.formatMessage({
+          id: 'plexSettings.toggleLibraryError',
+          defaultMessage: 'Failed to update library.',
+        }),
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
       });
-    } else {
-      await axios.get('/api/v1/settings/plex/library', {
-        params: {
-          enable: [...activeLibraries, libraryId].join(','),
-        },
-      });
+    } finally {
+      setIsSyncing(false);
+      revalidate();
     }
-    setIsSyncing(false);
-    revalidate();
   };
 
   const handleRetry = async () => {

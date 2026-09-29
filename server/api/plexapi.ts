@@ -1,6 +1,6 @@
 import ExternalAPI from '@server/api/externalapi';
 import cacheManager from '@server/lib/cache';
-import type { Library, PlexSettings } from '@server/lib/settings';
+import type { PlexSettings } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -102,6 +102,8 @@ interface PlexPlaylistsResponse {
   MediaContainer: { size?: number };
 }
 
+export class PlexLibraryFetchError extends Error {}
+
 class PlexAPI extends ExternalAPI {
   constructor({
     plexToken,
@@ -152,44 +154,40 @@ class PlexAPI extends ExternalAPI {
   public async getLibraries(): Promise<PlexLibrary[]> {
     try {
       const response =
-        await this.get<PlexLibrariesResponse>('/library/sections');
+        await this.getFresh<PlexLibrariesResponse>('/library/sections');
       return response.MediaContainer.Directory;
     } catch (e) {
       logger.error('Failed to fetch Plex libraries', {
         label: 'Plex API',
         errorMessage: e instanceof Error ? e.message : String(e),
       });
-      throw new Error('Failed to fetch Plex libraries');
+      throw new PlexLibraryFetchError('Failed to fetch Plex libraries');
     }
   }
 
   public async syncLibraries(): Promise<void> {
     const settings = getSettings();
-    try {
-      const libraries = await this.getLibraries();
-      const newLibraries: Library[] = libraries
-        .filter((library) => library.agent !== 'com.plexapp.agents.none')
-        .map((library) => {
-          const existing = settings.plex.libraries.find(
-            (l) => l.id === library.key && l.name === library.title
-          );
-          return {
-            id: library.key,
-            name: library.title,
-            enabled: existing?.enabled ?? false,
-            type: library.type,
-            lastScan: existing?.lastScan,
-          };
-        });
-      settings.plex.libraries = newLibraries;
-    } catch (e) {
-      logger.error('Failed to fetch Plex libraries', {
-        label: 'Plex API',
-        errorMessage: e instanceof Error ? e.message : String(e),
+    const libraries = await this.getLibraries();
+    const previousLibraries = settings.plex.libraries;
+    const nextLibraries = libraries
+      .filter((library) => library.agent !== 'com.plexapp.agents.none')
+      .map((library) => {
+        const existing = previousLibraries.find((l) => l.id === library.key);
+        return {
+          id: library.key,
+          name: library.title,
+          enabled: existing?.enabled ?? false,
+          type: library.type,
+          lastScan: existing?.lastScan,
+        };
       });
-      settings.plex.libraries = [];
+    settings.plex.libraries = nextLibraries;
+    try {
+      settings.save();
+    } catch (e) {
+      settings.plex.libraries = previousLibraries;
+      throw e;
     }
-    settings.save();
   }
 
   public async getLibraryContents(

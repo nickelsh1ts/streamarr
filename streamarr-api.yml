@@ -3373,21 +3373,6 @@ paths:
       description: Returns a list of Plex libraries in a JSON array.
       tags:
         - settings
-      parameters:
-        - in: query
-          name: sync
-          description: Syncs the current libraries with the current Plex server
-          schema:
-            type: string
-            nullable: true
-        - in: query
-          name: enable
-          explode: false
-          allowReserved: true
-          description: Comma separated list of libraries to enable. Any libraries not passed will be disabled!
-          schema:
-            type: string
-            nullable: true
       responses:
         '200':
           description: 'Plex libraries returned'
@@ -3397,6 +3382,72 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PlexLibrary'
+  /settings/plex/library/sync:
+    post:
+      summary: Sync Plex libraries
+      description: Syncs the library list with the current Plex server, preserving each library's enabled state.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: 'Plex libraries synced'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlexLibrary'
+        '502':
+          description: 'Plex server could not be reached; existing libraries are unchanged'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: 'Failed to save the synchronized libraries'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /settings/plex/library/{libraryId}:
+    put:
+      summary: Enable or disable a Plex library
+      description: Updates the enabled state of a single Plex library.
+      tags:
+        - settings
+      parameters:
+        - in: path
+          name: libraryId
+          required: true
+          schema:
+            type: string
+          description: Plex library ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+              required:
+                - enabled
+      responses:
+        '200':
+          description: 'Plex libraries returned'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlexLibrary'
+        '404':
+          description: 'Library not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /settings/plex/sync:
     get:
       summary: Get status of full Plex library scan
