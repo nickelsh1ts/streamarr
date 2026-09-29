@@ -176,7 +176,12 @@ jobs:
             for digest in "${digests[@]}"; do
               sources+=("${image}@sha256:${digest}")
             done
-            docker buildx imagetools create --tag "${image}:latest" --tag "${image}:${VERSION}" "${sources[@]}"
+            docker buildx imagetools create \
+              --tag "${image}:latest" \
+              --tag "${image}:${VERSION%%.*}" \
+              --tag "${image}:${VERSION%.*}" \
+              --tag "${image}:${VERSION}" \
+              "${sources[@]}"
             index=$(docker buildx imagetools inspect "${image}:${VERSION}" --format '{{json .Manifest.Digest}}' | tr -d '"')
             test -n "$index"
             images+=("${image}@${index}")
