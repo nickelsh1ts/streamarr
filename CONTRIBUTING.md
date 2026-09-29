@@ -86,7 +86,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
    This runs formatting, linting, CSS linting, and type checking. Prettier and ESLint also run automatically on staged files via Husky when you commit (but not type checking — run `pnpm check` manually before opening a PR).
 
-   Commit messages are also validated against [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `feat: add X`, `fix: correct Y`). Use `fix(security): …` for vulnerability fixes so they appear under **Security** in the release notes. To bypass the commit message check in exceptional cases (e.g. a WIP merge commit):
+   Commit messages are also validated against [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `feat: add X`, `fix: correct Y`). Use `security(scope): …` for vulnerability fixes so they appear under **Security** in the release notes. Security fixes trigger a patch release unless marked as breaking. To bypass the commit message check in exceptional cases (e.g. a WIP merge commit):
 
    ```bash
    HUSKY_BYPASS=1 git commit -m "your message"
