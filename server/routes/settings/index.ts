@@ -1,5 +1,5 @@
 import GithubAPI from '@server/api/github';
-import PlexAPI from '@server/api/plexapi';
+import PlexAPI, { PlexLibraryFetchError } from '@server/api/plexapi';
 import PlexTvAPI from '@server/api/plextv';
 import ChaptarrAPI from '@server/api/servarr/chaptarr';
 import LidarrAPI from '@server/api/servarr/lidarr';
@@ -329,30 +329,50 @@ settingsRoutes.get('/plex/devices/servers', async (req, res, next) => {
   }
 });
 
-settingsRoutes.get('/plex/library', async (req, res) => {
-  const settings = getSettings();
-
-  if (req.query.sync) {
-    const userRepository = getRepository(User);
-    const admin = await userRepository.findOneOrFail({
-      select: { id: true, plexToken: true },
-      where: { id: 1 },
-    });
-    const plexapi = new PlexAPI({ plexToken: admin.plexToken });
-
-    await plexapi.syncLibraries();
-  }
-
-  const enabledLibraries = req.query.enable
-    ? (req.query.enable as string).split(',')
-    : [];
-  settings.plex.libraries = settings.plex.libraries.map((library) => ({
-    ...library,
-    enabled: enabledLibraries.includes(library.id),
-  }));
-  settings.save();
-  res.status(200).json(settings.plex.libraries);
+settingsRoutes.get('/plex/library', (_req, res) => {
+  res.status(200).json(getSettings().plex.libraries);
 });
+
+settingsRoutes.post('/plex/library/sync', async (_req, res, next) => {
+  const userRepository = getRepository(User);
+  const admin = await userRepository.findOneOrFail({
+    select: { id: true, plexToken: true },
+    where: { id: 1 },
+  });
+  const plexapi = new PlexAPI({ plexToken: admin.plexToken });
+
+  try {
+    await plexapi.syncLibraries();
+  } catch (e) {
+    if (e instanceof PlexLibraryFetchError) {
+      return next({ status: 502, message: 'Unable to sync Plex libraries.' });
+    }
+    logger.error('Failed to save Plex libraries', {
+      label: 'Settings',
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    return next({ status: 500, message: 'Failed to save Plex libraries.' });
+  }
+  res.status(200).json(getSettings().plex.libraries);
+});
+
+settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
+  '/plex/library/:libraryId',
+  (req, res, next) => {
+    const settings = getSettings();
+    const library = settings.plex.libraries.find(
+      (l) => l.id === req.params.libraryId
+    );
+
+    if (!library) {
+      return next({ status: 404, message: 'Library not found.' });
+    }
+
+    library.enabled = req.body.enabled;
+    settings.save();
+    res.status(200).json(settings.plex.libraries);
+  }
+);
 
 settingsRoutes.get('/plex/sync', (_req, res) => {
   res.status(200).json(plexFullScanner.status());

@@ -92,6 +92,17 @@ class ExternalAPI {
     return response.data;
   }
 
+  protected async getFresh<T>(
+    endpoint: string,
+    config?: AxiosRequestConfig,
+    ttl?: number
+  ): Promise<T> {
+    const cacheKey = this.serializeCacheKey(endpoint, config?.params);
+    const response = await this.axios.get<T>(endpoint, config);
+    this.cache?.set(cacheKey, response.data, ttl ?? DEFAULT_TTL);
+    return response.data;
+  }
+
   protected async post<T>(
     endpoint: string,
     data: Record<string, unknown>,

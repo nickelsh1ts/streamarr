@@ -387,6 +387,8 @@ Select which libraries Streamarr should have access to. These libraries will be:
 - Synced for media counts
 - Available in the internal Plex proxy
 
+Use **Sync Libraries** to refresh the list from your Plex server. Libraries keep their enabled state, even if renamed in Plex. If the server can't be reached, the current list is left unchanged.
+
 ### Shared Libraries (Default)
 
 Configure which libraries are shared with users by default. Options:
