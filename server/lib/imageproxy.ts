@@ -329,9 +329,13 @@ class ImageProxy {
       const knownExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
       const contentType = response.headers['content-type'] as
         string | undefined;
-      const extension = knownExts.includes(pathExt)
-        ? pathExt
-        : (contentType?.split('/')[1]?.split(';')[0]?.trim() ?? 'jpg');
+      const subtype = contentType
+        ?.split('/')[1]
+        ?.split(';')[0]
+        ?.trim()
+        .toLowerCase();
+      const extension =
+        [pathExt, subtype].find((ext) => knownExts.includes(ext)) ?? 'jpg';
       const maxAgeMatch = (
         (response.headers['cache-control'] as string | undefined) ?? ''
       ).match(/max-age=(\d+)/);
@@ -341,7 +345,10 @@ class ImageProxy {
         maxAge = TMDB_MAX_AGE_SECONDS;
       }
       const expireAt = Date.now() + maxAge * 1000;
-      const etag = (response.headers.etag ?? '').replace(/"/g, '');
+      const upstreamEtag = String(response.headers.etag ?? '');
+      const etag = createHash('sha256')
+        .update(upstreamEtag || buffer)
+        .digest('hex');
 
       const settings = getSettings();
       if (settings.main.cacheImages) {
@@ -385,7 +392,6 @@ class ImageProxy {
     etag: string
   ) {
     const filename = join(dir, `${maxAge}.${expireAt}.${etag}.${extension}`);
-
     await promises.rm(dir, { force: true, recursive: true }).catch(() => {
       // do nothing
     });
