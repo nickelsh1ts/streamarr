@@ -4094,12 +4094,6 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Configuración de Lidarr"
   },
-  "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Streamarr ahora ofrece Seerr a través de su propio proxy inverso integrado en la URL base a continuación, por lo que no se requiere ningún proxy inverso externo. Si configuraste uno anteriormente (such as the legacy Nginx rewrite)para ofrecer Seerr en esta ruta, debes eliminarlo; una regla restante interceptará estas solicitudes y el proxy integrado no funcionará. Cambiar la URL base surtirá efecto después de reiniciar el servidor."
-  },
-  "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Elimina cualquier proxy inverso externo de Seerr"
-  },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
   },
