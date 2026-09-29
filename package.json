@@ -197,7 +197,27 @@
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
-    ]
+    ],
+    "rules": {
+      "type-enum": [
+        2,
+        "always",
+        [
+          "build",
+          "chore",
+          "ci",
+          "docs",
+          "feat",
+          "fix",
+          "perf",
+          "refactor",
+          "revert",
+          "security",
+          "style",
+          "test"
+        ]
+      ]
+    }
   },
   "release": {
     "branches": [
@@ -207,7 +227,18 @@
       [
         "@semantic-release/commit-analyzer",
         {
-          "preset": "conventionalcommits"
+          "preset": "conventionalcommits",
+          "releaseRules": [
+            {
+              "type": "security",
+              "breaking": true,
+              "release": "major"
+            },
+            {
+              "type": "security",
+              "release": "patch"
+            }
+          ]
         }
       ],
       [
@@ -217,13 +248,12 @@
           "presetConfig": {
             "types": [
               {
-                "type": "feat",
-                "section": "✨ Features"
+                "type": "security",
+                "section": "🔒 Security"
               },
               {
-                "type": "fix",
-                "scope": "security",
-                "section": "🔒 Security"
+                "type": "feat",
+                "section": "✨ Features"
               },
               {
                 "type": "fix",
