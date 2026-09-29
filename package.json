@@ -222,6 +222,11 @@
               },
               {
                 "type": "fix",
+                "scope": "security",
+                "section": "🔒 Security"
+              },
+              {
+                "type": "fix",
                 "section": "🐛 Bug Fixes"
               },
               {
