@@ -192,7 +192,7 @@ importers:
         version: 3.2.2(react@19.3.0)
       '@dr.pogodin/csurf':
         specifier: ^1.16.9
-        version: 1.17.1
+        version: 1.18.1
       '@formatjs/intl':
         specifier: ^6.0.0
         version: 6.1.2
@@ -1386,8 +1386,8 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
 
-  '@dr.pogodin/csurf@1.17.1':
-    resolution: {integrity: sha512-Yn+WUd8N2PVCyF0kENq2zmUUSATqN/b0ZuKFIv2PJMw/Fu2ahiqnc/RWwlwT3gmqJZ5fjIuoz+kuY7F8rXnZaQ==}
+  '@dr.pogodin/csurf@1.18.1':
+    resolution: {integrity: sha512-3jtSsJq6GqC0XbufqYsdA850DJo2qS/4408VZPjWrgSyu3W+auLt6QoN/uMdRX3aH8njbckrmpUUuDw7IxTVrA==}
     engines: {node: '>=22'}
 
   '@emnapi/core@1.10.0':
@@ -4054,10 +4054,6 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
-
-  cookie@1.1.1:
-    resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
-    engines: {node: '>=18'}
 
   cookie@2.0.1:
     resolution: {integrity: sha512-yuToqVvRrj6pfDXREyQAAv8SkAEk/8GS3jQRTiUMm66TVtBYmqQeoEjL2Lmq8Rpo6271vH76InTChTitEAm65w==}
@@ -9918,10 +9914,9 @@ snapshots:
       react: 19.3.0
       tslib: 2.8.1
 
-  '@dr.pogodin/csurf@1.17.1':
+  '@dr.pogodin/csurf@1.18.1':
     dependencies:
-      '@babel/runtime': 7.29.7
-      cookie: 1.1.1
+      cookie: 2.0.1
       cookie-signature: 1.2.2
       http-errors: 2.0.1
 
@@ -12429,8 +12424,6 @@ snapshots:
   cookie-signature@1.2.2: {}
 
   cookie@0.7.2: {}
-
-  cookie@1.1.1: {}
 
   cookie@2.0.1: {}
 
