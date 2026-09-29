@@ -1,3 +1,23 @@
+## [1.16.1](https://github.com/nickelsh1ts/streamarr/compare/v1.16.0...v1.16.1) (2026-09-29)
+
+### 🔒 Security
+
+* **imageproxy:** prevent cache path traversal ([#729](https://github.com/nickelsh1ts/streamarr/issues/729)) ([c94c946](https://github.com/nickelsh1ts/streamarr/commit/c94c946ae50d27e4a6ab38e3fda75839b9fda7f2))
+* **users:** hide notification credentials ([#730](https://github.com/nickelsh1ts/streamarr/issues/730)) ([58c53a4](https://github.com/nickelsh1ts/streamarr/commit/58c53a48bb13cbd1b07b95a2e570a635bcfaa742))
+
+### 🐛 Bug Fixes
+
+* **ci:** verify release signatures by digest and push images by digest ([#722](https://github.com/nickelsh1ts/streamarr/issues/722)) ([37c2088](https://github.com/nickelsh1ts/streamarr/commit/37c208886012ecc8e31ea019985658ef2a22066d))
+* **plex:** harden library sync and toggle endpoints ([#725](https://github.com/nickelsh1ts/streamarr/issues/725)) ([b2e6713](https://github.com/nickelsh1ts/streamarr/commit/b2e6713771a83446bbe632fd0be1e0634b02e79c))
+* **pwa:** inline offline page styles ([#728](https://github.com/nickelsh1ts/streamarr/issues/728)) ([aa65859](https://github.com/nickelsh1ts/streamarr/commit/aa658596b7aae69016a21b0e66b5e35c166aba64))
+* **server:** skip error responses after headers are sent ([#727](https://github.com/nickelsh1ts/streamarr/issues/727)) ([ece6c4c](https://github.com/nickelsh1ts/streamarr/commit/ece6c4ce93e9ebc7e4d4acf54f23763df2f68597))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#639](https://github.com/nickelsh1ts/streamarr/issues/639)) ([f813479](https://github.com/nickelsh1ts/streamarr/commit/f813479b9dffa66ec774a8e592fdfc93edf7b743))
+* **release:** add dedicated security commit type ([#733](https://github.com/nickelsh1ts/streamarr/issues/733)) ([3ec9904](https://github.com/nickelsh1ts/streamarr/commit/3ec99045320fdc4aee7ab68663da02652adf5772))
+* **release:** publish rolling major and minor image tags ([#732](https://github.com/nickelsh1ts/streamarr/issues/732)) ([eabf149](https://github.com/nickelsh1ts/streamarr/commit/eabf14998b52504c990fbfae3ad0734a882d0e42))
+
 ## [1.16.0](https://github.com/nickelsh1ts/streamarr/compare/v1.15.0...v1.16.0) (2026-09-28)
 
 ### ✨ Features
