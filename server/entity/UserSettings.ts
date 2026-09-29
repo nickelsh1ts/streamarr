@@ -179,4 +179,28 @@ export class UserSettings {
       this.notificationTypes[key] ?? ALL_NOTIFICATIONS
     );
   }
+
+  public toJSON(): Partial<UserSettings> {
+    return {
+      id: this.id,
+      locale: this.locale,
+      region: this.region,
+      originalLanguage: this.originalLanguage,
+      pgpKey: this.pgpKey,
+      discordId: this.discordId,
+      pushoverSound: this.pushoverSound,
+      telegramMessageThreadId: this.telegramMessageThreadId,
+      telegramSendSilently: this.telegramSendSilently,
+      sharedLibraries: this.sharedLibraries,
+      allowDownloads: this.allowDownloads,
+      allowLiveTv: this.allowLiveTv,
+      allowPlexHome: this.allowPlexHome,
+      trialPeriodEndsAt: this.trialPeriodEndsAt,
+      trialPeriodOutcome: this.trialPeriodOutcome,
+      trialExtensionRequested: this.trialExtensionRequested,
+      trialExtensionRequestedAt: this.trialExtensionRequestedAt,
+      unsubscribedNewsletters: this.unsubscribedNewsletters,
+      notificationTypes: this.notificationTypes,
+    };
+  }
 }

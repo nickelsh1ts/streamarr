@@ -4961,8 +4961,14 @@
   "plexSettings.somethingWentWrong": {
     "defaultMessage": "Something went wrong attempting to reconnect."
   },
+  "plexSettings.syncLibrariesError": {
+    "defaultMessage": "Failed to sync libraries. Check that your Plex server is reachable."
+  },
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
+  },
+  "plexSettings.toggleLibraryError": {
+    "defaultMessage": "Failed to update library."
   },
   "profile.accountDeactivatedMessage": {
     "defaultMessage": "Your account has been deactivated. {trialPeriodEnabled, select, true {You can request an access extension {link}.} other {Contact an administrator to restore your access.}}"

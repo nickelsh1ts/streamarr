@@ -276,14 +276,10 @@ app
     server.use('/api/v1', routes);
     server.get('/{*splat}', (req, res) => handle(req, res));
     server.use(
-      (
-        err: unknown,
-        _req: Request,
-        res: Response,
-        // We must provide a next function for the function signature here even though its not used
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _next: NextFunction
-      ) => {
+      (err: unknown, _req: Request, res: Response, next: NextFunction) => {
+        if (res.headersSent) {
+          return next(err);
+        }
         const errorInfo = err as {
           status?: number;
           message?: string;

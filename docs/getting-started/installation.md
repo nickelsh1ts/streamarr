@@ -12,6 +12,15 @@ Be sure to replace `/path/to/appdata/config` in the examples below with a valid 
 The `TZ` environment variable should be set to the [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of your time zone.
 {% endhint %}
 
+{% hint style="info" %}
+Images are published to `ghcr.io/nickelsh1ts/streamarr` and `nickelsh1ts/streamarr` (Docker Hub) with these tags:
+
+- `latest` – the newest release
+- `1`, `1.16` – the newest release in that major or minor series
+- `1.16.0` – a specific release
+- `develop` – unreleased builds from the `develop` branch
+{% endhint %}
+
 {% tabs %}
 {% tab title="Docker CLI" %}
 

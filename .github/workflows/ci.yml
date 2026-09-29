@@ -26,6 +26,7 @@ jobs:
     name: i18n Check
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       pull-requests: write
@@ -39,8 +40,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Install and Enable Corepack
-        run: npm install -g corepack --force && corepack enable
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 26
+          cache: pnpm
       - name: Install dependencies
         env:
           CYPRESS_INSTALL_BINARY: '0'
@@ -75,6 +81,7 @@ jobs:
     name: Prepare & Test Build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     container: node:26-alpine@sha256:2d984a15c9b54fd0aeb608b8e0d0d83529eb34d2966db27a1fb4f1edc3d298a3
     steps:
       - name: Checkout
@@ -83,8 +90,8 @@ jobs:
           persist-credentials: false
       - name: Install build prerequisites
         run: apk add --no-cache python3 make g++ libc6-compat
-      - name: Install and Enable Corepack
-        run: npm install -g corepack --force && corepack enable
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - name: Install dependencies
         env:
           CYPRESS_INSTALL_BINARY: '0'
@@ -96,7 +103,7 @@ jobs:
 
   build:
     name: Build (${{ matrix.arch }})
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/develop'
     strategy:
       matrix:
         include:
@@ -107,6 +114,7 @@ jobs:
             platform: linux/arm64
             arch: arm64
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
     permissions:
       contents: read
       packages: write
@@ -118,8 +126,16 @@ jobs:
       - name: Commit timestamp
         id: ts
         run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: |
+            ${{ env.DOCKER_HUB }}
+            ghcr.io/${{ github.repository }}
+          labels: org.opencontainers.image.created={{commit_date 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'}}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
       - name: Log in to Docker Hub
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
         with:
@@ -131,39 +147,52 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push ${{ matrix.platform }}
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
+      - name: Build and push ${{ matrix.platform }} by digest
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
-          push: true
-          tags: |
-            ${{ env.DOCKER_HUB }}:build-${{ github.sha }}-${{ matrix.arch }}
-            ghcr.io/${{ github.repository }}:build-${{ github.sha }}-${{ matrix.arch }}
+          outputs: type=image,"name=${{ env.DOCKER_HUB }},ghcr.io/${{ github.repository }}",push-by-digest=true,name-canonical=true,push=true
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             COMMIT_TAG=${{ github.sha }}
             SOURCE_DATE_EPOCH=${{ steps.ts.outputs.TIMESTAMP }}
-          labels: |
-            org.opencontainers.image.created=${{ steps.ts.outputs.TIMESTAMP }}
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
           provenance: false
+      - name: Export digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/digests"
+          touch "${RUNNER_TEMP}/digests/${DIGEST#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: digests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   publish:
     name: Publish multi-arch image
     needs: build
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
       packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Download digests
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          persist-credentials: false
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
       - name: Log in to Docker Hub
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
         with:
@@ -175,51 +204,30 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Docker Hub manifests
+      - name: Create and push manifest lists
+        working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create \
-            --tag "${{ env.DOCKER_HUB }}:develop" \
-            "${{ env.DOCKER_HUB }}:build-${{ github.sha }}-amd64" \
-            "${{ env.DOCKER_HUB }}:build-${{ github.sha }}-arm64"
-          docker buildx imagetools create \
-            --tag "${{ env.DOCKER_HUB }}:sha-${{ github.sha }}" \
-            "${{ env.DOCKER_HUB }}:build-${{ github.sha }}-amd64" \
-            "${{ env.DOCKER_HUB }}:build-${{ github.sha }}-arm64"
-      - name: Create GHCR manifests
-        run: |
-          docker buildx imagetools create \
-            --tag "ghcr.io/${{ github.repository }}:develop" \
-            "ghcr.io/${{ github.repository }}:build-${{ github.sha }}-amd64" \
-            "ghcr.io/${{ github.repository }}:build-${{ github.sha }}-arm64"
-          docker buildx imagetools create \
-            --tag "ghcr.io/${{ github.repository }}:sha-${{ github.sha }}" \
-            "ghcr.io/${{ github.repository }}:build-${{ github.sha }}-amd64" \
-            "ghcr.io/${{ github.repository }}:build-${{ github.sha }}-arm64"
+          digests=(*)
+          test "${#digests[@]}" -eq 2
+          for image in "ghcr.io/${{ github.repository }}" "${{ env.DOCKER_HUB }}"; do
+            sources=()
+            for digest in "${digests[@]}"; do
+              sources+=("${image}@sha256:${digest}")
+            done
+            docker buildx imagetools create --tag "${image}:develop" --tag "${image}:sha-${GITHUB_SHA}" "${sources[@]}"
+          done
 
   discord:
     name: Send Discord Notification
-    needs: publish
-    if: always() && github.event_name != 'pull_request'
+    needs: [build, publish]
+    if: always() && github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Get Build Job Status
-        uses: technote-space/workflow-conclusion-action@45ce8e0eb155657ab8ccf346ade734257fd196a5 # v3
-      - name: Combine Job Status
-        id: status
-        run: |
-          failures=(neutral skipped timed_out action_required)
-          status="$WORKFLOW_CONCLUSION"
-          for failure in "${failures[@]}"; do
-            if [ "$WORKFLOW_CONCLUSION" = "$failure" ]; then
-              status="failure"
-              break
-            fi
-          done
-          echo "status=$status" >> "$GITHUB_OUTPUT"
       - name: Post Status to Discord
         uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ steps.status.outputs.status }}
+          status: ${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}
           title: ${{ github.workflow }}
           nofail: true
