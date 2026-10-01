@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Merge Conflict Labeler
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request_target:
+    branches:
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    name: Label Conflicts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Apply merge conflict label
+        uses: eps1lon/actions-label-merge-conflict@0273be72a0bbd58fcd71d0d6c02c209b50d1e5e1 # v3.1.0
+        with:
+          dirtyLabel: merge conflict
+          commentOnDirty: This pull request has merge conflicts with its base branch. Please resolve them so the PR can be reviewed and merged.
+          retryAfter: 30
+          retryMax: 5
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
