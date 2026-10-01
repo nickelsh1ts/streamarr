@@ -1,0 +1,191 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: PR Validation
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# pull_request_target runs with base-branch code and a write token: never check out or execute PR head code here.
+jobs:
+  semantic-title:
+    name: Validate PR Title
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Lint PR title
+        id: lint
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            build
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            revert
+            security
+            style
+            test
+      - name: Update title comment
+        if: always()
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          ERROR_MESSAGE: ${{ steps.lint.outputs.error_message }}
+        with:
+          script: |
+            const MARKER = '<!-- pr-validation:title -->';
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              ...context.repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body?.includes(MARKER)
+            );
+            const message = process.env.ERROR_MESSAGE;
+
+            if (!message) {
+              if (existing) {
+                await github.rest.issues.deleteComment({ ...context.repo, comment_id: existing.id });
+              }
+              return;
+            }
+
+            const body = [
+              MARKER,
+              '### PR Title Validation Failed',
+              '',
+              message,
+              '',
+              '---',
+              'PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) because the squash-merge title drives semantic-release.',
+              '*This check re-runs when the PR title is edited.*',
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+  template-check:
+    name: Validate PR Template
+    # Skip bots and release PRs (develop -> main), whose bodies are release notes.
+    if: >-
+      github.event.pull_request.user.type != 'Bot' &&
+      !(github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: bin/check-pr-template.mjs
+          sparse-checkout-cone-mode: false
+      - name: Run template check
+        id: check
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          set +e
+          issues=$(node bin/check-pr-template.mjs "$RUNNER_TEMP/pr-body.md")
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          echo "issues=$issues" >> "$GITHUB_OUTPUT"
+      - name: Update template comment and label
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          EXIT_CODE: ${{ steps.check.outputs.exit_code }}
+          ISSUES_JSON: ${{ steps.check.outputs.issues }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        with:
+          script: |
+            const MARKER = '<!-- pr-validation:template -->';
+            const LABEL = 'blocked:template';
+            const issue_number = context.payload.pull_request.number;
+            const passed = process.env.EXIT_CODE === '0';
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              ...context.repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body?.includes(MARKER)
+            );
+
+            if (passed) {
+              if (existing) {
+                await github.rest.issues.deleteComment({ ...context.repo, comment_id: existing.id });
+              }
+              try {
+                await github.rest.issues.removeLabel({ ...context.repo, issue_number, name: LABEL });
+              } catch (e) {
+                if (e.status !== 404) throw e;
+              }
+              return;
+            }
+
+            if (process.env.EXIT_CODE !== '1') {
+              core.setFailed(`Template check script failed (exit ${process.env.EXIT_CODE}).`);
+              return;
+            }
+
+            const issues = JSON.parse(process.env.ISSUES_JSON || '[]');
+            const { owner, repo } = context.repo;
+            const body = [
+              MARKER,
+              `Hey @${process.env.PR_AUTHOR}, thanks for the PR! The description doesn't fully follow the PR template yet.`,
+              '',
+              '### Issues found:',
+              '',
+              ...issues.map((i) => `- ${i}`),
+              '',
+              '---',
+              `Please update the description to follow the [PR template](https://github.com/${owner}/${repo}/blob/develop/.github/PULL_REQUEST_TEMPLATE.md). See the [contributing guide](https://github.com/${owner}/${repo}/blob/develop/CONTRIBUTING.md) for details.`,
+              '*This check re-runs when the PR description is edited.*',
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+            try {
+              await github.rest.issues.getLabel({ ...context.repo, name: LABEL });
+            } catch (e) {
+              if (e.status !== 404) throw e;
+              await github.rest.issues.createLabel({
+                ...context.repo,
+                name: LABEL,
+                color: 'B60205',
+                description: 'PR template not properly filled out',
+              });
+            }
+            await github.rest.issues.addLabels({ ...context.repo, issue_number, labels: [LABEL] });
+
+            core.setFailed('PR template is not properly filled out.');
