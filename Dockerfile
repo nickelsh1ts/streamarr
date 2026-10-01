@@ -61,7 +61,7 @@ RUN mkdir -p /app/config && chown -R nextjs:nodejs /app/config
 
 USER nextjs
 
-EXPOSE 3000 5005
+EXPOSE 3000
 ENV PORT=3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
