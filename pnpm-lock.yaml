@@ -513,8 +513,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@types/node@25.9.8)(typescript@6.0.3)
       daisyui:
-        specifier: 5.7.44
-        version: 5.7.44
+        specifier: 5.7.46
+        version: 5.7.46
       eslint:
         specifier: ^9.39.4
         version: 9.39.5(jiti@2.7.0)(supports-color@5.5.0)
@@ -4177,8 +4177,8 @@ packages:
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
     engines: {node: '>= 10'}
 
-  daisyui@5.7.44:
-    resolution: {integrity: sha512-6lI20/C6tv3t52cVTffFALou6bStVq6miGeZ35H/2/L3JxabpnDiqnBsa7MLRFRc0JEZr4MQdrw8weUUC0puig==}
+  daisyui@5.7.46:
+    resolution: {integrity: sha512-z/tfVXLpLRe1ojGeokzxauHA9Ij5CGfk+83EdatQbFSVr02h5mUcp4nkgQJOw68wH1wAAPu/SY+MWbDdJG2R4w==}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -12607,7 +12607,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  daisyui@5.7.44: {}
+  daisyui@5.7.46: {}
 
   damerau-levenshtein@1.0.8: {}
 
