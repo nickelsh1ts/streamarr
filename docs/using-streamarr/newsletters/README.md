@@ -47,6 +47,39 @@ Tokens are replaced when the newsletter is rendered. They work in the subject an
 | `{{recipientEmail}}`   | The recipient's email address     |
 | `{{date}}`             | The date the newsletter is sent   |
 
+### Images
+
+You can put your own images in the body. Paste an image straight into the body box, drop a file onto it, or use **Add image**. The file is uploaded to Streamarr, and a reference to it is inserted wherever your cursor is — as Markdown or an `<img>` tag, matching your chosen body format.
+
+Every image attached to the newsletter is listed beneath the body box, where you can **Insert** it again elsewhere or remove it. Removing an image also takes its reference out of the body.
+
+- **Supported formats:** PNG, JPEG, GIF, and WebP, up to 10MB. Animated GIFs keep their animation. SVG is not accepted, as it is unsafe to serve to readers. Note that the Outlook desktop app cannot display WebP, so prefer PNG or JPEG if your readers are likely to use it.
+- **Large images are resized** to fit within 1600×1600 pixels, and location data is stripped from photos.
+- **Images always fit the email.** However large the original, it is scaled down to the width of the email content when the newsletter is rendered, keeping its proportions — so a full-size screenshot will not overflow the layout.
+- **Your Application URL must be reachable by your recipients.** Images are loaded from your Streamarr server when someone opens the email, so if the URL is wrong or the server is only reachable on your local network, images will appear broken in their inbox. Set it under **Settings → General**.
+- Most email clients block remote images until the reader allows them; this is normal and applies to newsletter posters too.
+
+#### How long images are kept
+
+Images stay for as long as anything uses them, and are only removed once they are certainly no longer needed:
+
+| Situation                                                               | What happens                                     |
+| ----------------------------------------------------------------------- | ------------------------------------------------ |
+| Used by any newsletter, sent or not                                     | Kept indefinitely                                |
+| Removed from, or belonging to a deleted, newsletter that was never sent | Deleted straight away                            |
+| Still used by another newsletter                                        | Kept for that one                                |
+| Added but the newsletter was closed without saving                      | Deleted after a day                              |
+| Uploaded but never added to a newsletter                                | Deleted after a day                              |
+| Removed from — or belonging to a deleted — newsletter that **was** sent | Kept for one year from the last time it was sent |
+
+That last rule matters: deleting a file that an already-delivered email points at would leave a broken image in your recipients' inboxes, so those files outlive the newsletter itself. Test sends do not count — only a real send starts the one-year clock.
+
+The same image can be used by several newsletters at once, which happens naturally if you copy body text between them. Removing it from one leaves the others untouched.
+
+The one-day delay covers images you pasted but have not saved yet, so a newsletter left open while you work on it will not lose them.
+
+Tidying up runs automatically once a day. You can also run it on demand from **Settings → Jobs & Cache → Newsletter Image Cleanup**, where the total size of your uploaded images is shown under **Uploaded Images**.
+
 ---
 
 ## Content blocks

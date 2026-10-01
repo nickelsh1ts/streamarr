@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
-import { mkdir, unlink, writeFile } from 'fs/promises';
+import { mkdir, readdir, unlink, writeFile } from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
 
@@ -32,13 +32,28 @@ export interface ImageUploadServiceConfig {
 export interface RouterConfig {
   requireAuth?: boolean;
   permissions?: Permission | Permission[];
+  /**
+   * Requests per window allowed when serving images. Raise this for images
+   * embedded in email: mailbox providers (Gmail, Apple MPP) fetch through
+   * shared proxy IPs, and `trustProxy` is off by default, so recipients can
+   * collapse into a single bucket.
+   */
+  maxRequestsPerWindow?: number;
 }
 
 const DEFAULT_MAX_WIDTH = 1200;
 const DEFAULT_MAX_HEIGHT = 1200;
 const DEFAULT_QUALITY = 85;
+const DEFAULT_SERVE_MAX_REQUESTS = 100;
 
-export class ImageUploadService {
+// Decoding an animated image costs `pages * width * pageHeight` pixels of work
+// on a libuv thread. A 336-frame 800x600 GIF is ~161MP and takes ~18s, which
+// starves other sharp work, so anything above this budget is rejected.
+const MAX_ANIMATED_PIXELS = 50_000_000;
+
+export class InvalidImageError extends Error {}
+
+class ImageUploadService {
   private uploadsDir: string;
   private urlPrefix: string;
   private label: string;
@@ -78,7 +93,7 @@ export class ImageUploadService {
   }
 
   private getOutputFormat(mimetype: string): {
-    format: 'jpeg' | 'png' | 'webp';
+    format: 'jpeg' | 'png' | 'webp' | 'gif';
     extension: string;
   } {
     switch (mimetype) {
@@ -86,6 +101,8 @@ export class ImageUploadService {
         return { format: 'png', extension: '.png' };
       case 'image/webp':
         return { format: 'webp', extension: '.webp' };
+      case 'image/gif':
+        return { format: 'gif', extension: '.gif' };
       case 'image/jpeg':
       case 'image/jpg':
       default:
@@ -98,13 +115,32 @@ export class ImageUploadService {
     mimetype: string
   ): Promise<{ buffer: Buffer; extension: string }> {
     const { format, extension } = this.getOutputFormat(mimetype);
+    const isGif = format === 'gif';
 
-    let sharpInstance = sharp(buffer);
+    let sharpInstance = sharp(buffer, isGif ? { animated: true } : undefined);
     const metadata = await sharpInstance.metadata();
+
+    // With `animated: true`, `height` is every frame stacked vertically, so the
+    // per-frame height must come from `pageHeight` or the resize below would
+    // squash the whole strip into the bounding box.
+    const pages = metadata.pages ?? 1;
+    const frameHeight = isGif
+      ? (metadata.pageHeight ?? metadata.height)
+      : metadata.height;
+
+    if (isGif && metadata.width && frameHeight) {
+      const totalPixels = metadata.width * frameHeight * pages;
+
+      if (totalPixels > MAX_ANIMATED_PIXELS) {
+        throw new Error(
+          'Animated image is too large to process. Reduce its dimensions or frame count.'
+        );
+      }
+    }
 
     if (
       (metadata.width && metadata.width > this.maxWidth) ||
-      (metadata.height && metadata.height > this.maxHeight)
+      (frameHeight && frameHeight > this.maxHeight)
     ) {
       sharpInstance = sharpInstance.resize(this.maxWidth, this.maxHeight, {
         fit: 'inside',
@@ -124,6 +160,9 @@ export class ImageUploadService {
           .webp({ quality: this.quality })
           .toBuffer();
         break;
+      case 'gif':
+        processedBuffer = await sharpInstance.gif().toBuffer();
+        break;
       case 'jpeg':
       default:
         processedBuffer = await sharpInstance
@@ -139,10 +178,16 @@ export class ImageUploadService {
     await this.ensureUploadsDir();
 
     try {
-      const { buffer: processedBuffer, extension } = await this.processImage(
-        file.buffer,
-        file.mimetype
-      );
+      let processedImage: { buffer: Buffer; extension: string };
+      try {
+        processedImage = await this.processImage(file.buffer, file.mimetype);
+      } catch (e) {
+        throw new InvalidImageError(
+          e instanceof Error ? e.message : 'Invalid image.'
+        );
+      }
+
+      const { buffer: processedBuffer, extension } = processedImage;
 
       const filename = this.generateFilename(processedBuffer, extension);
       const filePath = path.join(this.uploadsDir, filename);
@@ -154,12 +199,12 @@ export class ImageUploadService {
         url: `${this.urlPrefix}/${filename}?v=${timestamp}`,
         filename,
       };
-    } catch (error) {
+    } catch (e) {
       logger.error('Failed to upload image', {
         label: this.label,
-        error: error.message,
+        error: e instanceof Error ? e.message : String(e),
       });
-      throw error;
+      throw e;
     }
   }
 
@@ -177,13 +222,13 @@ export class ImageUploadService {
           label: this.label,
         });
       }
-    } catch (error) {
+    } catch (e) {
       logger.error('Failed to delete image', {
         label: this.label,
-        error: error.message,
+        error: e instanceof Error ? e.message : String(e),
         filename,
       });
-      throw error;
+      throw e;
     }
   }
 
@@ -204,6 +249,18 @@ export class ImageUploadService {
     return fs.existsSync(filePath);
   }
 
+  public get directory(): string {
+    return this.uploadsDir;
+  }
+
+  public async listFilenames(): Promise<string[]> {
+    try {
+      return await readdir(this.uploadsDir);
+    } catch {
+      return [];
+    }
+  }
+
   public getFilenameFromUrl(url: string): string | null {
     if (!url) {
       return null;
@@ -222,7 +279,11 @@ export class ImageUploadService {
 
   public createRouter(config: RouterConfig = {}): Router {
     const router = Router();
-    const { requireAuth = true, permissions } = config;
+    const {
+      requireAuth = true,
+      permissions,
+      maxRequestsPerWindow = DEFAULT_SERVE_MAX_REQUESTS,
+    } = config;
 
     const authMiddleware = requireAuth
       ? permissions
@@ -232,7 +293,7 @@ export class ImageUploadService {
 
     const imageRateLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 image requests per windowMs
+      max: maxRequestsPerWindow,
       standardHeaders: true,
       legacyHeaders: false,
     });
@@ -263,9 +324,27 @@ export class ImageUploadService {
         else if (ext === '.gif') contentType = 'image/gif';
 
         res.setHeader('Content-Type', contentType);
-        res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
 
         const stream = fs.createReadStream(filePath);
+
+        // Cleanup can delete a file between the check above and the read, and
+        // an unhandled stream error would take the process down.
+        stream.on('error', (error) => {
+          logger.error('Failed to read image', {
+            label: this.label,
+            filename: sanitizedFilename,
+            errorMessage: error.message,
+          });
+
+          if (!res.headersSent) {
+            res.status(500).end();
+          } else {
+            res.destroy();
+          }
+        });
+
         stream.pipe(res);
       }
     );

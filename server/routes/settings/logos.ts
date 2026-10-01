@@ -1,4 +1,4 @@
-import LogoUpload from '@server/lib/logoUpload';
+import { logoUpload } from '@server/lib/logoUpload';
 import { Permission } from '@server/lib/permissions';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -7,7 +7,6 @@ import multer from 'multer';
 import path from 'path';
 
 const logoSettingsRoutes = Router();
-const logoUpload = new LogoUpload();
 
 const upload = multer({
   storage: multer.memoryStorage(),

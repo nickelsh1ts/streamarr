@@ -4133,6 +4133,9 @@
   "newsletterSettings.title": {
     "defaultMessage": "Newsletter Subscriptions"
   },
+  "newsletters.addImage": {
+    "defaultMessage": "Add image"
+  },
   "newsletters.allSubscribers": {
     "defaultMessage": "All subscribed users"
   },
@@ -4190,6 +4193,27 @@
   "newsletters.historyTitle": {
     "defaultMessage": "Newsletter History"
   },
+  "newsletters.imageDelivered": {
+    "defaultMessage": "Delivered"
+  },
+  "newsletters.imageHint": {
+    "defaultMessage": "You can also paste or drop an image into the body."
+  },
+  "newsletters.imageInsert": {
+    "defaultMessage": "Insert"
+  },
+  "newsletters.imageMissing": {
+    "defaultMessage": "File missing — can't be sent"
+  },
+  "newsletters.imageRemove": {
+    "defaultMessage": "Remove image"
+  },
+  "newsletters.imageUploadError": {
+    "defaultMessage": "There was an error uploading the image"
+  },
+  "newsletters.imageUploading": {
+    "defaultMessage": "Uploading image"
+  },
   "newsletters.important": {
     "defaultMessage": "Important"
   },
@@ -4210,6 +4234,12 @@
   },
   "newsletters.maxItems": {
     "defaultMessage": "Max Items"
+  },
+  "newsletters.noApplicationUrl": {
+    "defaultMessage": "Images and content blocks cannot be referenced externally without one."
+  },
+  "newsletters.noApplicationUrlTitle": {
+    "defaultMessage": "Public Application URL required"
   },
   "newsletters.noLibraries": {
     "defaultMessage": "No enabled Plex libraries were found."
@@ -6130,6 +6160,30 @@
   },
   "tutorial.wizard.routeHint": {
     "defaultMessage": "This feature is available at: {route}"
+  },
+  "uploads.description": {
+    "defaultMessage": "Images you have uploaded to Streamarr, saved in <code>{uploadsPath}</code>. Unlike the caches above these are not regenerated, so removing newsletter images by hand will break any newsletter you have already sent."
+  },
+  "uploads.logos": {
+    "defaultMessage": "Custom Logos"
+  },
+  "uploads.newsletter": {
+    "defaultMessage": "Newsletters"
+  },
+  "uploads.onboarding": {
+    "defaultMessage": "Onboarding"
+  },
+  "uploads.table.files": {
+    "defaultMessage": "Images Stored"
+  },
+  "uploads.table.name": {
+    "defaultMessage": "Upload Type"
+  },
+  "uploads.table.totalSize": {
+    "defaultMessage": "Total Size"
+  },
+  "uploads.title": {
+    "defaultMessage": "Uploaded Images"
   },
   "userDropdown.account": {
     "defaultMessage": "Account"

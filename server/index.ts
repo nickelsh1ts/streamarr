@@ -123,6 +123,7 @@ app
     server.use((req, res, next) => {
       if (
         req.path.includes('/settings/logos/upload') ||
+        req.path.includes('/settings/newsletter/images/upload') ||
         isProxyPath(req.path)
       ) {
         return next();
@@ -133,6 +134,7 @@ app
     server.use((req, res, next) => {
       if (
         req.path.includes('/settings/logos/upload') ||
+        req.path.includes('/settings/newsletter/images/upload') ||
         isProxyPath(req.path)
       ) {
         return next();
@@ -262,6 +264,7 @@ app
         validateRequests: true,
         ignorePaths: (path) =>
           path.includes('/settings/logos/upload') ||
+          path.includes('/settings/newsletter/images/upload') ||
           (path.includes('/settings/onboarding/') && path.includes('/image')) ||
           isProxyPath(path),
       })

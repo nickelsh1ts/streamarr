@@ -1,11 +1,10 @@
-import LogoUpload from '@server/lib/logoUpload';
+import { logoUpload } from '@server/lib/logoUpload';
 import logger from '@server/logger';
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 
 const logoRoutes = Router();
-const logoUpload = new LogoUpload();
 
 logoRoutes.get('/:filename', async (req, res) => {
   try {

@@ -71,6 +71,11 @@ export const newsletterTestLimiter = createRateLimiter({
   max: 10,
 });
 
+export const newsletterImageUploadLimiter = createRateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20, // pasting several images into one body is normal; bulk uploads are not
+});
+
 export const trialExtensionRequestLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,

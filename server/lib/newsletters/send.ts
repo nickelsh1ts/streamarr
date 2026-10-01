@@ -12,6 +12,7 @@ import { In } from 'typeorm';
 import validator from 'validator';
 import type { NewsletterDataFailure } from './dataProviders';
 import { getConfiguredBlocks, resolveBlockData } from './dataProviders';
+import { markNewsletterImagesDelivered } from './images';
 import type { RenderedNewsletter } from './render';
 import {
   getNewsletterEmailStrings,
@@ -257,6 +258,9 @@ export const sendNewsletter = async (
         }
 
         await manager.save(newsletter);
+        if (recipients.length > failureCount) {
+          await markNewsletterImagesDelivered(manager, newsletter);
+        }
       }
     });
 
