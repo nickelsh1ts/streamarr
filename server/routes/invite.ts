@@ -4,7 +4,7 @@ import Invite from '@server/entity/Invite';
 import type { User } from '@server/entity/User';
 import type { InviteResultsResponse } from '@server/interfaces/api/inviteInterfaces';
 import { Permission } from '@server/lib/permissions';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { qrProxy } from '@server/lib/qrcodeproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -608,7 +608,6 @@ inviteRoutes.get<{ inviteId: string }>(
           message: 'You do not have permission to view this QR Code.',
         });
       }
-      const qrProxy = new QRCodeProxy();
       const inviteUrl = `${getSettings().main.applicationUrl}/signup?icode=${invite.icode}`;
       await qrProxy.getQRCode(invite.id, invite.icode, inviteUrl);
       const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
@@ -716,7 +715,6 @@ inviteRoutes.delete(
           message: 'You do not have permission to delete this QR Code.',
         });
       }
-      const qrProxy = new QRCodeProxy();
       const cacheKey = qrProxy.getCacheKey(invite.id, invite.icode);
       await qrProxy.deleteImage(cacheKey);
       res.status(204).send();

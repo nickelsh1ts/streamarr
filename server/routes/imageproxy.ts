@@ -1,5 +1,6 @@
 import { getAdminPlexToken } from '@server/lib/adminPlexToken';
 import ImageProxy, { type ImageResponse } from '@server/lib/imageproxy';
+import { createNewsletterImageRouter } from '@server/lib/newsletters/images';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -245,5 +246,7 @@ router.get<{ path: string[] }>('/image/t/p/*path', (req, res) => {
 router.get<{ path: string[] }>('/t/p/*path', (req, res) => {
   return proxyTmdbImage(res, `/t/p/${req.params.path.join('/')}`);
 });
+
+router.use('/newsletter', createNewsletterImageRouter());
 
 export default router;

@@ -102,6 +102,13 @@ export class Newsletter {
   })
   public recipientIds: number[];
 
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: jsonColumnTransformer<string[]>([]),
+  })
+  public imageFilenames: string[];
+
   @Column({ type: 'boolean', default: false })
   public isImportant: boolean;
 

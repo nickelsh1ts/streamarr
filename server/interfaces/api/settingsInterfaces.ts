@@ -115,6 +115,12 @@ export interface CacheResponse {
     avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
   };
+  /** User-supplied files. Unlike the caches above, these are not regenerable. */
+  uploads: {
+    logos: { size: number; imageCount: number };
+    onboarding: { size: number; imageCount: number };
+    newsletter: { size: number; imageCount: number };
+  };
   cachedAt: number;
 }
 

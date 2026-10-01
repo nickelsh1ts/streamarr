@@ -106,6 +106,9 @@
   "image-cache-cleanup": {
    "schedule": "0 0 5 * * *"
   },
+  "newsletter-image-cleanup": {
+   "schedule": "0 0 3 * * *"
+  },
   "invites-qrcode-cleanup": {
    "schedule": "0 0 1 * * *"
   }
