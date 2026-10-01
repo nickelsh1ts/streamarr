@@ -65,9 +65,10 @@ jobs:
           build: pnpm cypress:build
           start: pnpm start
           wait-on: 'http://localhost:3000'
-          record: true
+          browser: chrome
+          record: ${{ github.event_name == 'push' }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ github.event_name == 'push' && secrets.CYPRESS_RECORD_KEY || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_MIGRATIONS: true
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
