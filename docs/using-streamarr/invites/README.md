@@ -258,5 +258,5 @@ When a user redeems an invite:
 
 ### User not appearing on Plex server
 
-- Plex invite operations require the internal Python service
+- Plex invite operations are handled by the main Streamarr service
 - Check application logs for 'Plex Sync' errors

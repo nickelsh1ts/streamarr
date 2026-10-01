@@ -223,17 +223,6 @@ This helps you see what has changed between versions and what is included in ava
 }
 ```
 
-### Python Service Status Response
-
-```json
-{
-  "status": "healthy",
-  "lastChecked": "2026-02-19T12:00:00.000Z",
-  "lastHealthy": "2026-02-19T12:00:00.000Z",
-  "consecutiveFailures": 0
-}
-```
-
 ### About Response (excerpt)
 
 ```json

@@ -73,8 +73,6 @@ See [How can I share my logs?](./need-help.md#how-can-i-share-my-logs) for instr
 | ------ | -------------------------- |
 | `3000` | Main web interface and API |
 
-The Python service for Plex invites runs internally on port 5005 and does not need to be exposed.
-
 ---
 
 ## Users
@@ -112,13 +110,13 @@ Check the following:
 1. **Sign Up Enabled** — Verify **Enable Sign Up** is turned on in Settings
 2. **Invite Active** — Check the invite status isn't Expired or Inactive
 3. **Usage Limit** — Verify the invite hasn't reached its usage limit
-4. **Python Service** — Check the application logs for Python service errors
+4. **Plex connectivity** — Check the application logs for Plex synchronization errors
 
 ### Why don't invited users appear on my Plex server?
 
-The internal Python service handles Plex invite operations:
+Plex invite operations are handled by the main Streamarr service:
 
-1. Check the application logs for Python service errors
+1. Check the application logs for Plex synchronization errors
 2. Look for errors in `config/logs/.machinelogs.json`
 3. Verify your Plex token is valid
 
