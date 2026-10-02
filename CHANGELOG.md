@@ -1,3 +1,33 @@
+## [1.17.0](https://github.com/nickelsh1ts/streamarr/compare/v1.16.1...v1.17.0) (2026-10-02)
+
+### ✨ Features
+
+* add newsletter image uploads and cleanup ([#745](https://github.com/nickelsh1ts/streamarr/issues/745)) ([335a413](https://github.com/nickelsh1ts/streamarr/commit/335a413021ad787045807e7bf7dc8edfbe26957a))
+* **api:** send a Streamarr user agent on outbound requests ([#726](https://github.com/nickelsh1ts/streamarr/issues/726)) ([f3b9545](https://github.com/nickelsh1ts/streamarr/commit/f3b95450be63cdc0d020adb8feb2fd2e3eba7cae))
+
+### 🐛 Bug Fixes
+
+* **newsletters:** fix image drop and bare URL removal in editor ([#766](https://github.com/nickelsh1ts/streamarr/issues/766)) ([eef49e4](https://github.com/nickelsh1ts/streamarr/commit/eef49e41a4e74bc24477ed00184630cb47e08d84))
+* **newsletters:** only rate-limit missing public newsletter images ([#765](https://github.com/nickelsh1ts/streamarr/issues/765)) ([72e06c3](https://github.com/nickelsh1ts/streamarr/commit/72e06c3ad411814eda4dc3e2e345ff8035a12bc1))
+* **newsletters:** protect images during send ([#759](https://github.com/nickelsh1ts/streamarr/issues/759)) ([6f3b41f](https://github.com/nickelsh1ts/streamarr/commit/6f3b41f463259a027d797eee9aaf554cd51392a5))
+* **newsletters:** return 500 when newsletter image lookup fails ([#764](https://github.com/nickelsh1ts/streamarr/issues/764)) ([61a9b27](https://github.com/nickelsh1ts/streamarr/commit/61a9b2788d9f373d8964b6a98529891b0994709d))
+
+### ⚡ Performance
+
+* **diskspace:** statfs & single du with background refresh ([#756](https://github.com/nickelsh1ts/streamarr/issues/756)) ([8a723db](https://github.com/nickelsh1ts/streamarr/commit/8a723db7e4a201e74a1cf763b9c80457f54190ae))
+
+### 📦 Build System
+
+* **docker:** update node.js runtime to 0b36e8c ([#739](https://github.com/nickelsh1ts/streamarr/issues/739)) ([8c53bf1](https://github.com/nickelsh1ts/streamarr/commit/8c53bf128d18b9759a5823e2902a5eff1e91fc80))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#740](https://github.com/nickelsh1ts/streamarr/issues/740)) ([c02e945](https://github.com/nickelsh1ts/streamarr/commit/c02e94542b5fb60db67823af909b0f46f70c5667))
+* add PR title and template validation ([#753](https://github.com/nickelsh1ts/streamarr/issues/753)) ([3fa08e4](https://github.com/nickelsh1ts/streamarr/commit/3fa08e4ca9cd3c6fc5056f25e47314f976e4c29d))
+* check server i18n and enforce formatting in CI ([#752](https://github.com/nickelsh1ts/streamarr/issues/752)) ([166b7b3](https://github.com/nickelsh1ts/streamarr/commit/166b7b3143fc37c4a082ee6da134337e7b232983))
+* **cypress:** record to Cypress Cloud only on develop pushes ([#748](https://github.com/nickelsh1ts/streamarr/issues/748)) ([612701e](https://github.com/nickelsh1ts/streamarr/commit/612701ee2d626b5b2ecbefd931fc88b474183243))
+* label pull requests with merge conflicts ([#754](https://github.com/nickelsh1ts/streamarr/issues/754)) ([388f1b2](https://github.com/nickelsh1ts/streamarr/commit/388f1b20395d8e5a54e6888536f61796752749ef))
+
 ## [1.16.1](https://github.com/nickelsh1ts/streamarr/compare/v1.16.0...v1.16.1) (2026-09-29)
 
 ### 🔒 Security
