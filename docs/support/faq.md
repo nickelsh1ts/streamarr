@@ -265,8 +265,8 @@ recursive path size walk` — this is usually disk I/O contention:
 To reduce this:
 
 1. Update to the latest version — recent releases read filesystem capacity
-   with a single `statfs` call and measure the config directory in one `du`
-   walk.
+   with a single `statfs` call, measure the config directory in one `du`
+   walk, and refresh directory sizes in the background.
 2. If `config` is on a NAS/network share, moving it to local/faster storage
    will help the most.
 3. Try raising `UV_THREADPOOL_SIZE` (e.g. to `8`) — see

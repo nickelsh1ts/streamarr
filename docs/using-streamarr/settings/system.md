@@ -116,7 +116,7 @@ The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it 
 
 ## Disk Space
 
-The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. The values are cached briefly; use **Refresh** to request a fresh scan. The **Updated** label shows when the displayed results were collected.
+The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes are cached and, once older than five minutes, refreshed in the background while the previous values stay visible; the refresh icon spins until the new values arrive. Use **Refresh** to force a fresh scan. The **Updated** label shows when the displayed directory sizes were collected.
 
 ### What Is Shown
 
@@ -212,7 +212,7 @@ This helps you see what has changed between versions and what is included in ava
 | `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                    |
 | `/api/v1/status`                    | GET    | Get version, update availability                                                                 |
 | `/api/v1/settings/about`            | GET    | Get version, uptime, user/invite counts, data path, Node and database versions                   |
-| `/api/v1/settings/about/diskspace`  | GET    | Get root filesystem and config-directory disk usage; add `?force=true` to bypass the short cache |
+| `/api/v1/settings/about/diskspace`  | GET    | Get root filesystem and config-directory disk usage; add `?force=true` to rescan directory sizes |
 
 ### Restart Status Response
 
@@ -243,6 +243,7 @@ This helps you see what has changed between versions and what is included in ava
 ```json
 {
   "cachedAt": 1790000000000,
+  "refreshing": false,
   "items": [
     {
       "kind": "filesystem",

@@ -3,7 +3,7 @@ import type {
   DiskSpaceItem,
 } from '@server/interfaces/api/settingsInterfaces';
 import logger from '@server/logger';
-import { getDirectoryUsage } from '@server/utils/pathSize';
+import { getDirectoryUsage, type DirectoryUsage } from '@server/utils/pathSize';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 
@@ -122,7 +122,7 @@ const getMountPointByDevice = async (statsPath: string, dev: number) => {
 
 /**
  * Returns disk usage statistics for the filesystem that contains `diskPath`
- * using a single `statfs` syscall, as Sonarr/Radarr do.
+ * using a single `statfs` syscall.
  */
 export const getDiskSpaceStats = async (diskPath: string) => {
   const statsPath = await getNearestExistingPath(diskPath);
@@ -154,7 +154,8 @@ export const getDiskSpaceStats = async (diskPath: string) => {
  * receive a partial result.
  */
 export const getConfigDiskSpace = async (
-  configPath: string
+  configPath: string,
+  directoryUsage: DirectoryUsage | null
 ): Promise<{ items: DiskSpaceItem[]; failedPaths: DiskSpaceFailure[] }> => {
   const optionalPaths = [
     {
@@ -173,35 +174,20 @@ export const getConfigDiskSpace = async (
       path: path.join(configPath, 'db'),
     },
   ];
-  const [existingOptionalPaths, directoryUsage] = await Promise.all([
-    Promise.all(
-      optionalPaths.map(async (target) => {
-        try {
-          await fsPromises.lstat(target.path);
-          return target;
-        } catch (e) {
-          if (
-            e &&
-            typeof e === 'object' &&
-            'code' in e &&
-            e.code === 'ENOENT'
-          ) {
-            return undefined;
-          }
-
-          return target;
+  const existingOptionalPaths = await Promise.all(
+    optionalPaths.map(async (target) => {
+      try {
+        await fsPromises.lstat(target.path);
+        return target;
+      } catch (e) {
+        if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
+          return undefined;
         }
-      })
-    ),
-    getDirectoryUsage(configPath, QUEUE_WAIT_MS).catch((e) => {
-      logger.warn('Failed to calculate config directory sizes', {
-        label: 'Settings',
-        diskPath: configPath,
-        errorMessage: e instanceof Error ? e.message : 'Unknown error',
-      });
-      return null;
-    }),
-  ]);
+
+        return target;
+      }
+    })
+  );
 
   const getDirectoryBytes = (diskPath: string) => {
     if (!directoryUsage) return undefined;
@@ -282,50 +268,94 @@ export const getConfigDiskSpace = async (
   );
 };
 
-const DISK_SPACE_CACHE_TTL_MS = 30 * 1000;
+const DIRECTORY_USAGE_TTL_MS = 5 * 60 * 1000;
 
 type DiskSpaceResult = {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
   cachedAt: number;
+  refreshing: boolean;
 };
 
-let diskSpaceCache: {
+let directoryUsageCache: {
   key: string;
-  expiresAt: number;
-  promise: Promise<DiskSpaceResult>;
+  usage: DirectoryUsage;
+  measuredAt: number;
 } | null = null;
 
+let directoryUsageRefresh: { key: string; promise: Promise<void> } | null =
+  null;
+
+// Tracked apart from measuredAt so failed scans back off instead of retrying on every poll.
+let lastDirectoryUsageAttempt: { key: string; startedAt: number } | null = null;
+
+const refreshDirectoryUsage = (configPath: string): Promise<void> => {
+  if (directoryUsageRefresh?.key === configPath) {
+    return directoryUsageRefresh.promise;
+  }
+
+  lastDirectoryUsageAttempt = { key: configPath, startedAt: Date.now() };
+
+  const promise = getDirectoryUsage(configPath, QUEUE_WAIT_MS)
+    .then((usage) => {
+      directoryUsageCache = {
+        key: configPath,
+        usage,
+        measuredAt: Date.now(),
+      };
+    })
+    .catch((e) => {
+      // Keep serving the last good measurement rather than dropping it.
+      logger.warn('Failed to calculate config directory sizes', {
+        label: 'Settings',
+        diskPath: configPath,
+        errorMessage: e instanceof Error ? e.message : 'Unknown error',
+      });
+    })
+    .finally(() => {
+      if (directoryUsageRefresh?.promise === promise) {
+        directoryUsageRefresh = null;
+      }
+    });
+
+  directoryUsageRefresh = { key: configPath, promise };
+  return promise;
+};
+
+/**
+ * Filesystem stats are read live on every call; directory sizes are served
+ * from cache and refreshed in the background once stale.
+ */
 export const getCachedConfigDiskSpace = async (
   configPath: string,
   { force = false }: { force?: boolean } = {}
 ): Promise<DiskSpaceResult> => {
-  const now = Date.now();
+  const cached =
+    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
+  const isRefreshing = directoryUsageRefresh?.key === configPath;
+  const canAutoRefresh =
+    lastDirectoryUsageAttempt?.key !== configPath ||
+    Date.now() - lastDirectoryUsageAttempt.startedAt > DIRECTORY_USAGE_TTL_MS;
 
-  if (
-    !force &&
-    diskSpaceCache &&
-    diskSpaceCache.key === configPath &&
-    diskSpaceCache.expiresAt > now
+  if (force || (!cached && (isRefreshing || canAutoRefresh))) {
+    await refreshDirectoryUsage(configPath);
+  } else if (
+    cached &&
+    canAutoRefresh &&
+    Date.now() - cached.measuredAt > DIRECTORY_USAGE_TTL_MS
   ) {
-    return diskSpaceCache.promise;
+    void refreshDirectoryUsage(configPath);
   }
 
-  const promise = getConfigDiskSpace(configPath).then((result) => ({
+  // Snapshot together so a refresh finishing mid-request still triggers a follow-up poll.
+  const current =
+    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
+  const refreshing = directoryUsageRefresh?.key === configPath;
+  const result = await getConfigDiskSpace(configPath, current?.usage ?? null);
+
+  return {
     ...result,
-    cachedAt: Date.now(),
-  }));
-  diskSpaceCache = {
-    key: configPath,
-    expiresAt: now + DISK_SPACE_CACHE_TTL_MS,
-    promise,
+    cachedAt: current?.measuredAt ?? Date.now(),
+    refreshing,
   };
-
-  promise.catch(() => {
-    if (diskSpaceCache?.promise === promise) {
-      diskSpaceCache = null;
-    }
-  });
-
-  return promise;
 };

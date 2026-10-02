@@ -122,7 +122,10 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { data, error, mutate } = useSWR<SettingsAboutDiskSpaceResponse>(
     '/api/v1/settings/about/diskspace',
-    { revalidateOnFocus: false }
+    {
+      revalidateOnFocus: false,
+      refreshInterval: (latest) => (latest?.refreshing ? 3000 : 0),
+    }
   );
 
   useEffect(() => {
@@ -246,11 +249,11 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
             type="button"
             buttonSize="xs"
             buttonType="ghost"
-            disabled={isRefreshing}
+            disabled={isRefreshing || data?.refreshing}
             onClick={() => refreshDiskSpace()}
           >
             <ArrowPathIcon
-              className={`size-5 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`size-5 ${isRefreshing || data?.refreshing ? 'animate-spin' : ''}`}
             />
             <span className="sr-only">
               <FormattedMessage id="cache.refresh" defaultMessage="Refresh" />
