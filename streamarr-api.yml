@@ -9705,6 +9705,8 @@ paths:
                   $ref: '#/components/schemas/NewsletterImage'
         '404':
           description: Newsletter not found
+        '500':
+          description: Failed to load newsletter images
   /regions:
     get:
       summary: Regions supported by TMDB
