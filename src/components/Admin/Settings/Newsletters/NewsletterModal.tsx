@@ -352,7 +352,14 @@ const NewsletterModal = ({
     values: FormValues,
     setFieldValue: (field: string, value: unknown) => void
   ) => {
-    const file = Array.from(event.dataTransfer?.files ?? []).find((item) =>
+    if (!event.dataTransfer.types.includes('Files')) {
+      return;
+    }
+
+    // Cancel every file drop so a skipped one can't navigate away from the editor.
+    event.preventDefault();
+
+    const file = Array.from(event.dataTransfer.files).find((item) =>
       item.type.startsWith('image/')
     );
 
@@ -360,7 +367,6 @@ const NewsletterModal = ({
       return;
     }
 
-    event.preventDefault();
     uploadAndInsert(file, values, setFieldValue);
   };
 
@@ -385,6 +391,14 @@ const NewsletterModal = ({
         )
         // Any remaining tag pointing at it, such as <img> or an unclosed <a>.
         .replace(new RegExp(`<[a-z][^>]*${escaped}[^>]*>`, 'gi'), '')
+        // Bare relative or absolute URL, which the server also counts as a reference.
+        .replace(
+          new RegExp(
+            `(?:[a-z][a-z0-9+.-]*://[^/\\s"'<>()]+)?/imageproxy/newsletter/${escaped}(?:[?#][^\\s"'<>(),]*)?`,
+            'gi'
+          ),
+          ''
+        )
     );
   };
 
@@ -915,6 +929,11 @@ const NewsletterModal = ({
                         onPaste={(e) =>
                           handleBodyPaste(e, values, setFieldValue)
                         }
+                        onDragOver={(e) => {
+                          if (e.dataTransfer.types.includes('Files')) {
+                            e.preventDefault();
+                          }
+                        }}
                         onDrop={(e) => handleBodyDrop(e, values, setFieldValue)}
                         className="textarea textarea-sm textarea-primary w-full font-mono"
                       />
