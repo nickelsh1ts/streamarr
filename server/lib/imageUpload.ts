@@ -32,13 +32,9 @@ export interface ImageUploadServiceConfig {
 export interface RouterConfig {
   requireAuth?: boolean;
   permissions?: Permission | Permission[];
-  /**
-   * Requests per window allowed when serving images. Raise this for images
-   * embedded in email: mailbox providers (Gmail, Apple MPP) fetch through
-   * shared proxy IPs, and `trustProxy` is off by default, so recipients can
-   * collapse into a single bucket.
-   */
-  maxRequestsPerWindow?: number;
+  /** Count only requests for missing files, so filename probing is throttled
+   * without letting a shared IP bucket block existing public images. */
+  limitMissesOnly?: boolean;
 }
 
 const DEFAULT_MAX_WIDTH = 1200;
@@ -279,11 +275,7 @@ class ImageUploadService {
 
   public createRouter(config: RouterConfig = {}): Router {
     const router = Router();
-    const {
-      requireAuth = true,
-      permissions,
-      maxRequestsPerWindow = DEFAULT_SERVE_MAX_REQUESTS,
-    } = config;
+    const { requireAuth = true, permissions, limitMissesOnly = false } = config;
 
     const authMiddleware = requireAuth
       ? permissions
@@ -293,9 +285,11 @@ class ImageUploadService {
 
     const imageRateLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: maxRequestsPerWindow,
+      max: DEFAULT_SERVE_MAX_REQUESTS,
       standardHeaders: true,
       legacyHeaders: false,
+      skip: (req) =>
+        limitMissesOnly && this.imageExists(req.params.filename as string),
     });
 
     router.get(

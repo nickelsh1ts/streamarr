@@ -23,11 +23,6 @@ export const ALLOWED_NEWSLETTER_IMAGE_MIME_TYPES = [
 
 export const MAX_NEWSLETTER_IMAGE_BYTES = 10 * 1024 * 1024;
 
-// Recipients fetch these through mailbox-provider proxies (Gmail, Apple MPP)
-// that share a small pool of IPs, and `trustProxy` is off by default, so a
-// per-IP limit near the default would throttle a large send.
-const SERVE_MAX_REQUESTS_PER_WINDOW = 1000;
-
 // Matches the `<md5>-<timestamp>.<ext>` names produced by ImageUploadService.
 const NEWSLETTER_IMAGE_REFERENCE_SOURCE = `${NEWSLETTER_IMAGE_URL_PREFIX}/([a-f0-9]{32}-\\d+\\.(?:png|jpe?g|gif|webp))`;
 
@@ -49,10 +44,12 @@ export const newsletterImageService = new ImageUploadService({
   maxHeight: 1600,
 });
 
+// Recipients fetch through mailbox-provider proxies (Gmail, Apple MPP) that
+// share IPs, so only misses are limited; delivered images must never 429.
 export const createNewsletterImageRouter = () =>
   newsletterImageService.createRouter({
     requireAuth: false,
-    maxRequestsPerWindow: SERVE_MAX_REQUESTS_PER_WINDOW,
+    limitMissesOnly: true,
   });
 
 // Filenames are content-hashed, so the service's own `?v=` cache buster would
