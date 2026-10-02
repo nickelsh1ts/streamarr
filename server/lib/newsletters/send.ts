@@ -1,5 +1,5 @@
 import dataSource, { getRepository } from '@server/datasource';
-import type Newsletter from '@server/entity/Newsletter';
+import Newsletter from '@server/entity/Newsletter';
 import type { NewsletterTrigger } from '@server/entity/NewsletterHistory';
 import NewsletterHistory from '@server/entity/NewsletterHistory';
 import { User } from '@server/entity/User';
@@ -12,7 +12,12 @@ import { In } from 'typeorm';
 import validator from 'validator';
 import type { NewsletterDataFailure } from './dataProviders';
 import { getConfiguredBlocks, resolveBlockData } from './dataProviders';
-import { markNewsletterImagesDelivered } from './images';
+import {
+  markNewsletterImagesDelivered,
+  newsletterImageLock,
+  protectNewsletterImages,
+  releaseNewsletterImages,
+} from './images';
 import type { RenderedNewsletter } from './render';
 import {
   getNewsletterEmailStrings,
@@ -44,6 +49,13 @@ export class NewsletterEmptyError extends Error {
     super('There is no content to send — all configured blocks are empty.');
     this.name = 'NewsletterEmptyError';
     this.blocks = blocks;
+  }
+}
+
+export class NewsletterNotFoundError extends Error {
+  constructor() {
+    super('Newsletter not found.');
+    this.name = 'NewsletterNotFoundError';
   }
 }
 
@@ -127,31 +139,46 @@ export const recordNewsletterAbort = async (
  * important newsletters override).
  */
 export const sendNewsletter = async (
-  newsletter: Newsletter,
+  newsletterId: number,
   triggeredBy: NewsletterTrigger,
   options: { testUser?: User } = {}
 ): Promise<{ recipientCount: number; failureCount: number }> => {
-  const settings = getSettings();
-  const emailSettings = settings.notifications.agents.email;
-
-  if (
-    !emailSettings.enabled ||
-    !emailSettings.options.emailFrom ||
-    !emailSettings.options.smtpHost ||
-    !emailSettings.options.smtpPort
-  ) {
-    throw new Error(
-      'Email notifications are not configured. Configure the email agent before sending newsletters.'
-    );
-  }
-
-  if (runningNewsletters.has(newsletter.id)) {
+  if (runningNewsletters.has(newsletterId)) {
     throw new Error('This newsletter is already being sent.');
   }
 
-  runningNewsletters.add(newsletter.id);
+  runningNewsletters.add(newsletterId);
+  const sendState: { newsletter?: Newsletter } = {};
 
   try {
+    await newsletterImageLock.dispatch('newsletter-images', async () => {
+      const newsletter = await getRepository(Newsletter).findOne({
+        where: { id: newsletterId },
+      });
+
+      if (!newsletter) return;
+
+      protectNewsletterImages(newsletter);
+      sendState.newsletter = newsletter;
+    });
+
+    const newsletter = sendState.newsletter;
+    if (!newsletter) throw new NewsletterNotFoundError();
+
+    const settings = getSettings();
+    const emailSettings = settings.notifications.agents.email;
+
+    if (
+      !emailSettings.enabled ||
+      !emailSettings.options.emailFrom ||
+      !emailSettings.options.smtpHost ||
+      !emailSettings.options.smtpPort
+    ) {
+      throw new Error(
+        'Email notifications are not configured. Configure the email agent before sending newsletters.'
+      );
+    }
+
     const recipients: User[] =
       triggeredBy === 'test' && options.testUser
         ? [options.testUser].filter((user) =>
@@ -239,30 +266,52 @@ export const sendNewsletter = async (
       }
     }
 
-    // Record the run and update the newsletter's send state atomically.
-    await dataSource.transaction(async (manager) => {
-      await manager.save(
-        new NewsletterHistory({
-          newsletter,
-          triggeredBy,
-          recipientCount: recipients.length,
-          failureCount,
-        })
-      );
-
-      if (triggeredBy !== 'test') {
-        newsletter.lastSentAt = new Date();
-
-        if (newsletter.scheduleType === 'once') {
-          newsletter.enabled = false;
-        }
-
-        await manager.save(newsletter);
-        if (recipients.length > failureCount) {
-          await markNewsletterImagesDelivered(manager, newsletter);
-        }
+    let newsletterDeleted = false;
+    await newsletterImageLock.dispatch('newsletter-images', async () => {
+      if (triggeredBy !== 'test' && recipients.length > failureCount) {
+        await markNewsletterImagesDelivered(newsletter);
       }
+
+      await dataSource.transaction(async (manager) => {
+        const currentNewsletter = await manager.findOne(Newsletter, {
+          where: { id: newsletterId },
+        });
+
+        if (!currentNewsletter) {
+          newsletterDeleted = true;
+          return;
+        }
+
+        await manager.save(
+          new NewsletterHistory({
+            newsletter: currentNewsletter,
+            triggeredBy,
+            recipientCount: recipients.length,
+            failureCount,
+          })
+        );
+
+        if (triggeredBy !== 'test') {
+          currentNewsletter.lastSentAt = new Date();
+
+          if (currentNewsletter.scheduleType === 'once') {
+            currentNewsletter.enabled = false;
+          }
+
+          await manager.save(currentNewsletter);
+        }
+      });
     });
+
+    if (newsletterDeleted) {
+      logger.warn(
+        'Newsletter was deleted while sending; send history was skipped',
+        {
+          label: 'Newsletters',
+          newsletterId,
+        }
+      );
+    }
 
     logger.info('Newsletter sent', {
       label: 'Newsletters',
@@ -275,6 +324,12 @@ export const sendNewsletter = async (
 
     return { recipientCount: recipients.length, failureCount };
   } finally {
-    runningNewsletters.delete(newsletter.id);
+    try {
+      await newsletterImageLock.dispatch('newsletter-images', async () => {
+        releaseNewsletterImages(newsletterId);
+      });
+    } finally {
+      runningNewsletters.delete(newsletterId);
+    }
   }
 };

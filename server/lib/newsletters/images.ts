@@ -6,12 +6,12 @@ import ImageUploadService from '@server/lib/imageUpload';
 import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
 import { stat } from 'fs/promises';
-import type { EntityManager } from 'typeorm';
 import { In } from 'typeorm';
 
 const NEWSLETTER_IMAGE_URL_PREFIX = '/imageproxy/newsletter';
 
 export const newsletterImageLock = new AsyncLock();
+const inFlightNewsletterImages = new Map<number, Set<string>>();
 
 export const ALLOWED_NEWSLETTER_IMAGE_MIME_TYPES = [
   'image/png',
@@ -187,6 +187,19 @@ export const getNewsletterImageFilenames = (
   return filenames;
 };
 
+export const protectNewsletterImages = (
+  newsletter: Pick<Newsletter, 'id' | 'body' | 'imageFilenames'>
+): void => {
+  inFlightNewsletterImages.set(
+    newsletter.id,
+    getNewsletterImageFilenames(newsletter)
+  );
+};
+
+export const releaseNewsletterImages = (newsletterId: number): void => {
+  inFlightNewsletterImages.delete(newsletterId);
+};
+
 /** Every filename any newsletter still uses, via its body or its attachments. */
 export const collectUsedNewsletterImages = async (): Promise<Set<string>> => {
   const newsletters = await getRepository(Newsletter).find({
@@ -197,6 +210,12 @@ export const collectUsedNewsletterImages = async (): Promise<Set<string>> => {
 
   for (const newsletter of newsletters) {
     for (const filename of getNewsletterImageFilenames(newsletter)) {
+      used.add(filename);
+    }
+  }
+
+  for (const filenames of inFlightNewsletterImages.values()) {
+    for (const filename of filenames) {
       used.add(filename);
     }
   }
@@ -273,7 +292,6 @@ export const reclaimNewsletterImages = async (
  * not call this, or previewing a draft would grant it full retention.
  */
 export const markNewsletterImagesDelivered = async (
-  manager: EntityManager,
   newsletter: Newsletter
 ): Promise<void> => {
   const filenames = [...extractNewsletterImageFilenames(newsletter.body)];
@@ -282,8 +300,7 @@ export const markNewsletterImagesDelivered = async (
     return;
   }
 
-  await manager.update(
-    NewsletterImage,
+  await getRepository(NewsletterImage).update(
     { filename: In(filenames) },
     { lastDeliveredAt: new Date() }
   );

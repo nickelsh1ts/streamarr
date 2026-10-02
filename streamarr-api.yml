@@ -9585,6 +9585,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewsletterSendResult'
+        '404':
+          description: Newsletter not found
         '409':
           description: The newsletter is already being sent
         '422':
@@ -9613,6 +9615,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewsletterSendResult'
+        '404':
+          description: Newsletter not found
         '422':
           description: All configured content blocks are empty; nothing to send
         '500':
