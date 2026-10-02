@@ -1,33 +1,53 @@
 class ScanQueue {
   private tail: Promise<unknown> = Promise.resolve();
 
+  /** `maxWaitMs` bounds time spent queued; it does not limit the task's own runtime. */
   enqueue<T>(
     task: () => Promise<T>,
     maxWaitMs?: number,
     signal?: AbortSignal
   ): Promise<T> {
-    const deadline = maxWaitMs ? Date.now() + maxWaitMs : undefined;
-    const run = () => {
+    return new Promise<T>((resolve, reject) => {
+      let abandoned = false;
+      let timer: NodeJS.Timeout | undefined;
+
+      const abandon = (message: string) => {
+        abandoned = true;
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+        reject(new Error(message));
+      };
+      const onAbort = () => abandon('Disk scan was cancelled');
+
       if (signal?.aborted) {
-        return Promise.reject(new Error('Disk scan was cancelled'));
+        abandon('Disk scan was cancelled');
+        return;
       }
 
-      if (deadline && Date.now() >= deadline) {
-        return Promise.reject(
-          new Error('Timed out waiting for disk scan queue')
+      signal?.addEventListener('abort', onAbort, { once: true });
+
+      if (maxWaitMs) {
+        timer = setTimeout(
+          () => abandon('Timed out waiting for disk scan queue'),
+          maxWaitMs
         );
       }
 
-      return task();
-    };
-    const result = this.tail.then(run, run);
+      const run = async () => {
+        if (abandoned) return;
 
-    this.tail = result.then(
-      () => undefined,
-      () => undefined
-    );
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
 
-    return result;
+        try {
+          resolve(await task());
+        } catch (e) {
+          reject(e);
+        }
+      };
+
+      this.tail = this.tail.then(run, run);
+    });
   }
 }
 

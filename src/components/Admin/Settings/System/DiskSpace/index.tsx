@@ -75,9 +75,11 @@ const ExpandButton = ({
 const CapacityMetrics = ({
   item,
   isFilesystem,
+  totalBytes,
 }: {
   item: DiskSpaceItem;
   isFilesystem: boolean;
+  totalBytes: number;
 }) => (
   <div className="grid grid-cols-3 gap-2 text-sm md:col-span-6 md:text-right">
     <div className="flex flex-wrap items-center gap-x-4 max-sm:flex-col md:block">
@@ -109,7 +111,7 @@ const CapacityMetrics = ({
           defaultMessage="Total Space"
         />
       </span>
-      <span className="text-base-content">{formatBytes(item.totalBytes)}</span>
+      <span className="text-base-content">{formatBytes(totalBytes)}</span>
     </div>
   </div>
 );
@@ -169,6 +171,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
               parentKey: null,
               isFilesystem: true,
               usagePercent: rootItem.usedPercent,
+              totalBytes: rootItem.totalBytes,
             },
           ]
         : []),
@@ -181,6 +184,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
               parentKey: ROOT_KEY,
               isFilesystem: false,
               usagePercent: configItem.directoryPercent ?? 0,
+              totalBytes: configItem.totalBytes,
             },
           ]
         : []),
@@ -194,6 +198,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
           configItem?.directoryBytes && configItem.directoryBytes > 0
             ? ((item.directoryBytes ?? 0) / configItem.directoryBytes) * 100
             : 0,
+        totalBytes: configItem?.directoryBytes ?? item.totalBytes,
       })),
     ],
     [appDataPath, childItems, configItem, rootItem]
@@ -337,6 +342,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
                   <CapacityMetrics
                     item={row.item}
                     isFilesystem={row.isFilesystem}
+                    totalBytes={row.totalBytes}
                   />
                   <div className="md:col-span-2">
                     <ProgressBar

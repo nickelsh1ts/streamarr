@@ -128,7 +128,7 @@ Disk usage is presented as an expandable hierarchy:
 | `config`                 | Total size of the Streamarr configuration directory                                   |
 | `/cache`, `/logs`, `/db` | Sizes of the image cache, logs, and database directories, when present                |
 
-The root row starts expanded. Expand `config` to show its child directories; child rows are collapsed until `config` is expanded. Every row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. On filesystem rows, Used Space and the bar represent filesystem usage. On directory rows, Used Space is the directory's size; the bar shows the directory's share of the config directory for children, or its share of the containing filesystem for `config`. Free and Total Space refer to the filesystem containing that directory. The optional `/cache` row is omitted if the cache directory does not exist.
+The root row starts expanded. Expand `config` to show its child directories; child rows are collapsed until `config` is expanded. Every row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. On filesystem rows, Used Space and the bar represent filesystem usage. On directory rows, Used Space is the directory's size; the bar shows the directory's share of the config directory for children, or its share of the containing filesystem for `config`. Free Space refers to the filesystem containing that directory. Total Space is the filesystem's capacity for `/` and `config`, and the config directory's total size for its children. The optional `/cache` row is omitted if the cache directory does not exist.
 
 ### Usage Bar Colours
 
