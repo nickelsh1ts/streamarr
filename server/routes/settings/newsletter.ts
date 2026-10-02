@@ -478,9 +478,13 @@ newsletterRoutes.get<{ id: string }, NewsletterImageResponse[]>(
   '/:id/images',
   async (req, res, next) => {
     try {
-      const newsletter = await getRepository(Newsletter).findOneOrFail({
+      const newsletter = await getRepository(Newsletter).findOne({
         where: { id: Number(req.params.id) },
       });
+
+      if (!newsletter) {
+        return next({ status: 404, message: 'Newsletter not found.' });
+      }
 
       const filenames = [...getNewsletterImageFilenames(newsletter)];
 
@@ -494,8 +498,13 @@ newsletterRoutes.get<{ id: string }, NewsletterImageResponse[]>(
       res
         .status(200)
         .json(await Promise.all(images.map(describeNewsletterImage)));
-    } catch {
-      next({ status: 404, message: 'Newsletter not found.' });
+    } catch (e) {
+      logger.error('Failed to load newsletter images', {
+        label: 'Newsletters',
+        newsletterId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to load newsletter images.' });
     }
   }
 );
