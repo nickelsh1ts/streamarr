@@ -381,7 +381,7 @@ importers:
         version: 2.0.10
       undici:
         specifier: ^7.29.0
-        version: 7.29.0
+        version: 7.29.1
       validator:
         specifier: ^13.15.35
         version: 13.15.35
@@ -8419,8 +8419,8 @@ packages:
     resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.0:
-    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
+  undici@7.29.1:
+    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
     engines: {node: '>=20.18.1'}
 
   undici@8.10.1:
@@ -10942,7 +10942,7 @@ snapshots:
       p-filter: 4.1.0
       semantic-release: 25.0.9(supports-color@5.5.0)(typescript@6.0.3)
       tinyglobby: 0.2.17
-      undici: 7.29.0
+      undici: 7.29.1
       url-join: 5.0.0
     transitivePeerDependencies:
       - kerberos
@@ -17662,7 +17662,7 @@ snapshots:
 
   undici@6.28.0: {}
 
-  undici@7.29.0: {}
+  undici@7.29.1: {}
 
   undici@8.10.1: {}
 
