@@ -6188,7 +6188,8 @@ paths:
       summary: Get disk space usage
       description: >-
         Returns root filesystem capacity and Streamarr config directory sizes.
-        Results are cached server-side for a short period unless forced.
+        Filesystem capacity is read live; directory sizes are cached and
+        refreshed in the background once stale unless forced.
       tags:
         - settings
       parameters:
@@ -6196,7 +6197,7 @@ paths:
           name: force
           schema:
             type: boolean
-          description: Recalculate disk usage instead of using the cached result.
+          description: Recalculate directory sizes instead of using the cached result.
       responses:
         '200':
           description: Disk space usage
@@ -6208,6 +6209,10 @@ paths:
                   cachedAt:
                     type: number
                     example: 1760000000000
+                  refreshing:
+                    type: boolean
+                    description: A background refresh of directory sizes is in progress.
+                    example: false
                   items:
                     type: array
                     items:
