@@ -3,29 +3,23 @@ import type {
   DiskSpaceItem,
 } from '@server/interfaces/api/settingsInterfaces';
 import logger from '@server/logger';
-import { getPathUsedBytes } from '@server/utils/pathSize';
-import { execFile } from 'child_process';
+import { getDirectoryUsage, type DirectoryUsage } from '@server/utils/pathSize';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { promisify } from 'util';
 
-const execFileAsync = promisify(execFile);
-const DF_TIMEOUT_MS = 10 * 1000;
-const TARGET_TIMEOUT_MS = 45 * 1000;
+const STATFS_TIMEOUT_MS = 10 * 1000;
+// Bounds time spent behind other disk scans; du itself has its own timeout.
+const QUEUE_WAIT_MS = 15 * 1000;
 
 const withTimeout = async <T>(
   promise: Promise<T>,
   timeoutMs: number,
-  message: string,
-  onTimeout?: () => void
+  message: string
 ): Promise<T> => {
   let timeout: NodeJS.Timeout;
 
   const timeoutPromise = new Promise<never>((_, reject) => {
-    timeout = setTimeout(() => {
-      onTimeout?.();
-      reject(new Error(message));
-    }, timeoutMs);
+    timeout = setTimeout(() => reject(new Error(message)), timeoutMs);
   });
 
   try {
@@ -61,70 +55,97 @@ export const getNearestExistingPath = async (
   }
 };
 
+const unescapeMountPath = (value: string) =>
+  value.replace(/\\([0-7]{3})/g, (_, octal: string) =>
+    String.fromCharCode(parseInt(octal, 8))
+  );
+
 /**
- * Returns disk usage statistics for the filesystem that contains `diskPath`.
- * Uses `df -Pk` for accuracy and falls back to `statfs` if unavailable.
+ * Returns the longest mount-table entry containing `statsPath`, as df does,
+ * so same-device bind mounts resolve to their own mount point.
+ */
+const getMountPointFromTable = async (statsPath: string) => {
+  let mountinfo: string;
+
+  try {
+    mountinfo = await fsPromises.readFile('/proc/self/mountinfo', 'utf8');
+  } catch {
+    return undefined;
+  }
+
+  const realPath = await fsPromises.realpath(statsPath).catch(() => statsPath);
+  let bestMatch: string | undefined;
+
+  for (const line of mountinfo.split('\n')) {
+    const rawMountPoint = line.split(' ')[4];
+
+    if (!rawMountPoint) continue;
+
+    const mountPoint = unescapeMountPath(rawMountPoint);
+    const contains =
+      mountPoint === '/' ||
+      realPath === mountPoint ||
+      realPath.startsWith(`${mountPoint}/`);
+
+    if (contains && (!bestMatch || mountPoint.length > bestMatch.length)) {
+      bestMatch = mountPoint;
+    }
+  }
+
+  return bestMatch;
+};
+
+/**
+ * Returns the highest ancestor of `statsPath` that is still on device `dev`.
+ */
+const getMountPointByDevice = async (statsPath: string, dev: number) => {
+  let currentPath = statsPath;
+
+  while (true) {
+    const parentPath = path.dirname(currentPath);
+
+    if (parentPath === currentPath) {
+      return currentPath;
+    }
+
+    try {
+      if ((await fsPromises.stat(parentPath)).dev !== dev) {
+        return currentPath;
+      }
+    } catch {
+      return currentPath;
+    }
+
+    currentPath = parentPath;
+  }
+};
+
+/**
+ * Returns disk usage statistics for the filesystem that contains `diskPath`
+ * using a single `statfs` syscall.
  */
 export const getDiskSpaceStats = async (diskPath: string) => {
   const statsPath = await getNearestExistingPath(diskPath);
+  const [stat, statfs] = await Promise.all([
+    fsPromises.stat(statsPath),
+    fsPromises.statfs(statsPath),
+  ]);
 
-  try {
-    const { stdout } = await execFileAsync('df', ['-Pk', statsPath], {
-      timeout: DF_TIMEOUT_MS,
-    });
-    const lines = stdout
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean);
-    const statsLine = lines[lines.length - 1];
+  const totalBytes = statfs.bsize * statfs.blocks;
+  const freeBytes = statfs.bsize * statfs.bavail;
+  // Matches df: reserved blocks count as neither used nor free.
+  const usedBytes = statfs.bsize * (statfs.blocks - statfs.bfree);
 
-    const match = statsLine.match(
-      /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+\d+%\s+(.+)$/
-    );
-
-    if (!match) {
-      throw new Error(`Unable to parse df output for path: ${diskPath}`);
-    }
-
-    const [, filesystem, totalKb, usedKb, freeKb, mountPoint] = match;
-    const totalBytes = Number(totalKb) * 1024;
-    const usedBytes = Number(usedKb) * 1024;
-    const freeBytes = Number(freeKb) * 1024;
-
-    return {
-      deviceId: filesystem,
-      mountPoint,
-      totalBytes,
-      freeBytes,
-      usedBytes,
-      usedPercent: totalBytes > 0 ? (usedBytes / totalBytes) * 100 : 0,
-    };
-  } catch (e) {
-    logger.warn('Falling back to statfs disk calculation', {
-      label: 'Settings',
-      diskPath,
-      statsPath,
-      errorMessage: e instanceof Error ? e.message : 'Unknown error',
-    });
-
-    const [stat, statfs] = await Promise.all([
-      fsPromises.stat(statsPath),
-      fsPromises.statfs(statsPath),
-    ]);
-
-    const totalBytes = statfs.bsize * statfs.blocks;
-    const freeBytes = statfs.bsize * statfs.bavail;
-    const usedBytes = totalBytes - freeBytes;
-
-    return {
-      deviceId: String(stat.dev),
-      mountPoint: statsPath,
-      totalBytes,
-      freeBytes,
-      usedBytes,
-      usedPercent: totalBytes > 0 ? (usedBytes / totalBytes) * 100 : 0,
-    };
-  }
+  return {
+    deviceId: String(stat.dev),
+    mountPoint:
+      (await getMountPointFromTable(statsPath)) ??
+      (await getMountPointByDevice(statsPath, stat.dev)),
+    totalBytes,
+    freeBytes,
+    usedBytes,
+    usedPercent: totalBytes > 0 ? (usedBytes / totalBytes) * 100 : 0,
+  };
 };
 
 /**
@@ -133,14 +154,14 @@ export const getDiskSpaceStats = async (diskPath: string) => {
  * receive a partial result.
  */
 export const getConfigDiskSpace = async (
-  configPath: string
+  configPath: string,
+  directoryUsage: DirectoryUsage | null
 ): Promise<{ items: DiskSpaceItem[]; failedPaths: DiskSpaceFailure[] }> => {
-  const cachePath = path.join(configPath, 'cache');
   const optionalPaths = [
     {
       kind: 'directory' as const,
       name: 'Cache',
-      path: cachePath,
+      path: path.join(configPath, 'cache'),
     },
     {
       kind: 'directory' as const,
@@ -168,6 +189,19 @@ export const getConfigDiskSpace = async (
     })
   );
 
+  const getDirectoryBytes = (diskPath: string) => {
+    if (!directoryUsage) return undefined;
+
+    const resolvedPath = path.resolve(diskPath);
+
+    if (resolvedPath === path.resolve(configPath)) {
+      return directoryUsage.totalBytes;
+    }
+
+    // Entries du does not list (e.g. symlinks) consume no space under config.
+    return directoryUsage.children.get(resolvedPath) ?? 0;
+  };
+
   const diskPaths = [
     { kind: 'filesystem' as const, name: 'Root filesystem', path: '/' },
     { kind: 'directory' as const, name: 'Streamarr config', path: configPath },
@@ -181,25 +215,15 @@ export const getConfigDiskSpace = async (
       try {
         const diskStats = await withTimeout(
           getDiskSpaceStats(diskPath),
-          TARGET_TIMEOUT_MS,
+          STATFS_TIMEOUT_MS,
           `Timed out collecting filesystem stats for path: ${diskPath}`
         );
         const directoryBytes =
-          kind === 'directory'
-            ? await (() => {
-                const controller = new AbortController();
-                return withTimeout(
-                  getPathUsedBytes(
-                    diskPath,
-                    TARGET_TIMEOUT_MS,
-                    controller.signal
-                  ),
-                  TARGET_TIMEOUT_MS,
-                  `Timed out calculating directory size for path: ${diskPath}`,
-                  () => controller.abort()
-                );
-              })()
-            : undefined;
+          kind === 'directory' ? getDirectoryBytes(diskPath) : undefined;
+
+        if (kind === 'directory' && directoryBytes === undefined) {
+          throw new Error(`Directory size unavailable for path: ${diskPath}`);
+        }
 
         return {
           ok: true as const,
@@ -244,50 +268,94 @@ export const getConfigDiskSpace = async (
   );
 };
 
-const DISK_SPACE_CACHE_TTL_MS = 30 * 1000;
+const DIRECTORY_USAGE_TTL_MS = 5 * 60 * 1000;
 
 type DiskSpaceResult = {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
   cachedAt: number;
+  refreshing: boolean;
 };
 
-let diskSpaceCache: {
+let directoryUsageCache: {
   key: string;
-  expiresAt: number;
-  promise: Promise<DiskSpaceResult>;
+  usage: DirectoryUsage;
+  measuredAt: number;
 } | null = null;
 
+let directoryUsageRefresh: { key: string; promise: Promise<void> } | null =
+  null;
+
+// Tracked apart from measuredAt so failed scans back off instead of retrying on every poll.
+let lastDirectoryUsageAttempt: { key: string; startedAt: number } | null = null;
+
+const refreshDirectoryUsage = (configPath: string): Promise<void> => {
+  if (directoryUsageRefresh?.key === configPath) {
+    return directoryUsageRefresh.promise;
+  }
+
+  lastDirectoryUsageAttempt = { key: configPath, startedAt: Date.now() };
+
+  const promise = getDirectoryUsage(configPath, QUEUE_WAIT_MS)
+    .then((usage) => {
+      directoryUsageCache = {
+        key: configPath,
+        usage,
+        measuredAt: Date.now(),
+      };
+    })
+    .catch((e) => {
+      // Keep serving the last good measurement rather than dropping it.
+      logger.warn('Failed to calculate config directory sizes', {
+        label: 'Settings',
+        diskPath: configPath,
+        errorMessage: e instanceof Error ? e.message : 'Unknown error',
+      });
+    })
+    .finally(() => {
+      if (directoryUsageRefresh?.promise === promise) {
+        directoryUsageRefresh = null;
+      }
+    });
+
+  directoryUsageRefresh = { key: configPath, promise };
+  return promise;
+};
+
+/**
+ * Filesystem stats are read live on every call; directory sizes are served
+ * from cache and refreshed in the background once stale.
+ */
 export const getCachedConfigDiskSpace = async (
   configPath: string,
   { force = false }: { force?: boolean } = {}
 ): Promise<DiskSpaceResult> => {
-  const now = Date.now();
+  const cached =
+    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
+  const isRefreshing = directoryUsageRefresh?.key === configPath;
+  const canAutoRefresh =
+    lastDirectoryUsageAttempt?.key !== configPath ||
+    Date.now() - lastDirectoryUsageAttempt.startedAt > DIRECTORY_USAGE_TTL_MS;
 
-  if (
-    !force &&
-    diskSpaceCache &&
-    diskSpaceCache.key === configPath &&
-    diskSpaceCache.expiresAt > now
+  if (force || (!cached && (isRefreshing || canAutoRefresh))) {
+    await refreshDirectoryUsage(configPath);
+  } else if (
+    cached &&
+    canAutoRefresh &&
+    Date.now() - cached.measuredAt > DIRECTORY_USAGE_TTL_MS
   ) {
-    return diskSpaceCache.promise;
+    void refreshDirectoryUsage(configPath);
   }
 
-  const promise = getConfigDiskSpace(configPath).then((result) => ({
+  // Snapshot together so a refresh finishing mid-request still triggers a follow-up poll.
+  const current =
+    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
+  const refreshing = directoryUsageRefresh?.key === configPath;
+  const result = await getConfigDiskSpace(configPath, current?.usage ?? null);
+
+  return {
     ...result,
-    cachedAt: Date.now(),
-  }));
-  diskSpaceCache = {
-    key: configPath,
-    expiresAt: now + DISK_SPACE_CACHE_TTL_MS,
-    promise,
+    cachedAt: current?.measuredAt ?? Date.now(),
+    refreshing,
   };
-
-  promise.catch(() => {
-    if (diskSpaceCache?.promise === promise) {
-      diskSpaceCache = null;
-    }
-  });
-
-  return promise;
 };

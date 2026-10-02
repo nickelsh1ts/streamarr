@@ -31,6 +31,7 @@ export interface SettingsAboutDiskSpaceResponse {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
   cachedAt: number;
+  refreshing: boolean;
 }
 
 export type DiskSpaceItemKind = 'filesystem' | 'directory';

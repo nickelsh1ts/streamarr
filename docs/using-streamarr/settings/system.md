@@ -116,7 +116,7 @@ The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it 
 
 ## Disk Space
 
-The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. The values are cached briefly; use **Refresh** to request a fresh scan. The **Updated** label shows when the displayed results were collected.
+The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes are cached and, once older than five minutes, refreshed in the background while the previous values stay visible; the refresh icon spins until the new values arrive. Use **Refresh** to force a fresh scan. The **Updated** label shows when the displayed directory sizes were collected.
 
 ### What Is Shown
 
@@ -128,7 +128,7 @@ Disk usage is presented as an expandable hierarchy:
 | `config`                 | Total size of the Streamarr configuration directory                                   |
 | `/cache`, `/logs`, `/db` | Sizes of the image cache, logs, and database directories, when present                |
 
-The root row starts expanded. Expand `config` to show its child directories; child rows are collapsed until `config` is expanded. Every row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. On filesystem rows, Used Space and the bar represent filesystem usage. On directory rows, Used Space is the directory's size; the bar shows the directory's share of the config directory for children, or its share of the containing filesystem for `config`. Free and Total Space refer to the filesystem containing that directory. The optional `/cache` row is omitted if the cache directory does not exist.
+The root row starts expanded. Expand `config` to show its child directories; child rows are collapsed until `config` is expanded. Every row shows **Free Space**, **Used Space**, **Total Space**, and a usage bar. On filesystem rows, Used Space and the bar represent filesystem usage. On directory rows, Used Space is the directory's size; the bar shows the directory's share of the config directory for children, or its share of the containing filesystem for `config`. Free Space refers to the filesystem containing that directory. Total Space is the filesystem's capacity for `/` and `config`, and the config directory's total size for its children. The optional `/cache` row is omitted if the cache directory does not exist.
 
 ### Usage Bar Colours
 
@@ -212,7 +212,7 @@ This helps you see what has changed between versions and what is included in ava
 | `/api/v1/plex/health/retry`         | POST   | Reset Plex health and trigger an immediate retry (Admin only)                                    |
 | `/api/v1/status`                    | GET    | Get version, update availability                                                                 |
 | `/api/v1/settings/about`            | GET    | Get version, uptime, user/invite counts, data path, Node and database versions                   |
-| `/api/v1/settings/about/diskspace`  | GET    | Get root filesystem and config-directory disk usage; add `?force=true` to bypass the short cache |
+| `/api/v1/settings/about/diskspace`  | GET    | Get root filesystem and config-directory disk usage; add `?force=true` to rescan directory sizes |
 
 ### Restart Status Response
 
@@ -243,6 +243,7 @@ This helps you see what has changed between versions and what is included in ava
 ```json
 {
   "cachedAt": 1790000000000,
+  "refreshing": false,
   "items": [
     {
       "kind": "filesystem",
