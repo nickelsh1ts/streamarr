@@ -6,6 +6,7 @@ import schedule from 'node-schedule';
 import {
   NewsletterDataUnavailableError,
   NewsletterEmptyError,
+  NewsletterNotFoundError,
   recordNewsletterAbort,
   sendNewsletter,
 } from './send';
@@ -105,13 +106,22 @@ class NewsletterScheduler {
           return;
         }
 
-        await sendNewsletter(fresh, 'schedule');
+        await sendNewsletter(fresh.id, 'schedule');
         this.retries.delete(fresh.id);
 
-        if (fresh.scheduleType === 'once') {
+        const current = await getRepository(Newsletter).findOne({
+          where: { id: fresh.id },
+        });
+
+        if (!current?.enabled) {
           this.cancel(fresh.id);
         }
       } catch (e) {
+        if (e instanceof NewsletterNotFoundError) {
+          this.retries.delete(newsletter.id);
+          return;
+        }
+
         if (e instanceof NewsletterDataUnavailableError) {
           await this.handleDataUnavailable(fresh ?? newsletter, e, run);
           return;

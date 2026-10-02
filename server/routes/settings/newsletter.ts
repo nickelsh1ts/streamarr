@@ -36,6 +36,7 @@ import {
   isNewsletterSending,
   NewsletterDataUnavailableError,
   NewsletterEmptyError,
+  NewsletterNotFoundError,
   sendNewsletter,
 } from '@server/lib/newsletters/send';
 import {
@@ -616,21 +617,19 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
   '/:id/send',
   async (req, res, next) => {
     try {
-      const newsletter = await getRepository(Newsletter).findOneOrFail({
-        where: { id: Number(req.params.id) },
-      });
+      const newsletterId = Number(req.params.id);
 
-      if (isNewsletterSending(newsletter.id)) {
+      if (isNewsletterSending(newsletterId)) {
         return next({
           status: 409,
           message: 'This newsletter is already being sent.',
         });
       }
 
-      const result = await sendNewsletter(newsletter, 'manual');
+      const result = await sendNewsletter(newsletterId, 'manual');
 
       res.status(200).json({
-        newsletterId: newsletter.id,
+        newsletterId,
         ...result,
       });
     } catch (e) {
@@ -642,6 +641,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
 
       if (e instanceof NewsletterDataUnavailableError) {
         return next({ status: 503, message: e.message });
+      }
+
+      if (e instanceof NewsletterNotFoundError) {
+        return next({ status: 404, message: e.message });
       }
 
       if (e instanceof NewsletterEmptyError) {
@@ -661,9 +664,7 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
   newsletterTestLimiter,
   async (req, res, next) => {
     try {
-      const newsletter = await getRepository(Newsletter).findOneOrFail({
-        where: { id: Number(req.params.id) },
-      });
+      const newsletterId = Number(req.params.id);
 
       const testUser = await getRepository(User).findOneOrFail({
         where: { id: req.user?.id },
@@ -672,10 +673,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
         },
       });
 
-      const result = await sendNewsletter(newsletter, 'test', { testUser });
+      const result = await sendNewsletter(newsletterId, 'test', { testUser });
 
       res.status(200).json({
-        newsletterId: newsletter.id,
+        newsletterId,
         ...result,
       });
     } catch (e) {
@@ -687,6 +688,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
 
       if (e instanceof NewsletterEmptyError) {
         return next({ status: 422, message: e.message });
+      }
+
+      if (e instanceof NewsletterNotFoundError) {
+        return next({ status: 404, message: e.message });
       }
 
       next({
