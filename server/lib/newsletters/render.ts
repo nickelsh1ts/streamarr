@@ -12,6 +12,11 @@ import type {
   NewsletterRecentlyAddedSection,
 } from './dataProviders';
 import { resolveBlockData } from './dataProviders';
+import {
+  absolutizeNewsletterImageUrls,
+  constrainNewsletterImages,
+  stripMissingNewsletterImages,
+} from './images';
 
 marked.use({ gfm: true, breaks: true });
 
@@ -273,6 +278,9 @@ export const renderNewsletter = async (
   }
 
   body = sanitizeHtml(body);
+  body = stripMissingNewsletterImages(body);
+  body = absolutizeNewsletterImageUrls(body, resourceBase);
+  body = constrainNewsletterImages(body);
 
   // A block token placed on its own line becomes a paragraph (e.g.
   // `<p>{{recentlyAdded}}</p>`) after markdown conversion. Unwrap those so the

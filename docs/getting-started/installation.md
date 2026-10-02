@@ -135,10 +135,6 @@ If you change `PORT`, update your container port mapping (e.g. `-p 8080:8080`) a
 | ------ | -------------------------- |
 | `3000` | Main web interface and API |
 
-{% hint style="info" %}
-Streamarr also runs an internal Python service on port 5005 for Plex invite operations. This service is called internally by the Streamarr API and does **not** need to be exposed publicly.
-{% endhint %}
-
 ## Volume Mounts
 
 | Path          | Description                                    |

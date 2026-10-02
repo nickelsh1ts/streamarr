@@ -1,5 +1,9 @@
 import type { OutboundProxySettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import {
+  USER_AGENT,
+  userAgentRequestInterceptor,
+} from '@server/utils/userAgent';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import http from 'http';
@@ -234,12 +238,13 @@ const outboundProxyInterceptor = (
 };
 
 /**
- * Route an Axios instance through the outbound proxy policy. Instances from
- * `axios.create()` do not inherit the default instance's interceptors, so each
- * one must be registered explicitly.
+ * Route an Axios instance through the outbound proxy policy and tag it with the
+ * Streamarr user agent. Instances from `axios.create()` do not inherit the
+ * default instance's interceptors, so each one must be registered explicitly.
  */
 export const applyOutboundProxy = <T extends AxiosInstance>(instance: T): T => {
   instance.interceptors.request.use(outboundProxyInterceptor);
+  instance.interceptors.request.use(userAgentRequestInterceptor);
   return instance;
 };
 
@@ -254,10 +259,13 @@ export const outboundFetch = (
   input: string | URL,
   init: RequestInit = {}
 ): Promise<Response> => {
-  if (!state) return fetch(input, init);
+  const headers = new Headers(init.headers);
+  if (!headers.has('User-Agent')) {
+    headers.set('User-Agent', USER_AGENT);
+  }
+  if (!state) return fetch(input, { ...init, headers });
 
   const redirectMode = init.redirect ?? 'follow';
-  const headers = new Headers(init.headers);
   let currentUrl = new URL(input);
   let currentInit = { ...init, redirect: 'manual' as RequestRedirect };
   const initialBypass = shouldBypassProxy(currentUrl.hostname);
@@ -476,6 +484,7 @@ export const testOutboundProxy = async (
     const response = await fetch(OUTBOUND_PROXY_TEST_URL, {
       method: 'HEAD',
       redirect: 'manual',
+      headers: { 'User-Agent': USER_AGENT },
       dispatcher,
       signal: AbortSignal.timeout(timeoutMs),
     } as RequestInit);

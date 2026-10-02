@@ -143,4 +143,6 @@ class QRCodeProxy {
   }
 }
 
+export const qrProxy = new QRCodeProxy();
+
 export default QRCodeProxy;

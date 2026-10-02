@@ -65,7 +65,7 @@ jobs:
           retry() { n=0; until "$@"; do n=$((n+1)); [ $n -ge 3 ] && break; echo "retry $n: $*" >&2; sleep 2; done; }
           check_failed=0; pnpm i18n:extract || check_failed=$?
           if [ "$check_failed" -eq 0 ]; then
-            git diff --exit-code src/i18n/locale/en.json || check_failed=1
+            git diff --exit-code src/i18n/locale/en.json server/i18n/locale/en.json || check_failed=1
           fi
           pr_labels=$(gh pr view "$NUMBER" -R "$GH_REPO" --json labels -q '.labels[].name' 2>/dev/null) || true
           has_label=0
@@ -82,7 +82,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    container: node:26-alpine@sha256:2d984a15c9b54fd0aeb608b8e0d0d83529eb34d2966db27a1fb4f1edc3d298a3
+    container: node:26-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -96,8 +96,12 @@ jobs:
         env:
           CYPRESS_INSTALL_BINARY: '0'
         run: pnpm install --frozen-lockfile
-      - name: Prepare
-        run: pnpm check
+      - name: Formatting
+        run: pnpm format:check
+      - name: Lint
+        run: pnpm lint && pnpm css-lint
+      - name: Typecheck
+        run: pnpm typecheck
       - name: Build
         run: pnpm build
 

@@ -11,8 +11,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) **v24 or higher** (required by `engines` in `package.json`; the official Docker images build on Node 26)
-- [pnpm](https://pnpm.io/) **v11** (the repo pins a specific version via the `packageManager` field — enable it with `corepack enable`)
-- [Python 3](https://www.python.org/) (for the Plex invite service)
+- [pnpm](https://pnpm.io/) **v12** (the repo pins `pnpm@12.6.0` via the `packageManager` field — enable it with `corepack enable`)
 - [Git](https://git-scm.com/)
 
 ### Setting Up the Development Environment
@@ -40,13 +39,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
    pnpm dev
    ```
 
-   This starts the Node.js server with hot reloading via `nodemon`. The Node.js server also starts and monitors the Python Plex invite service. The app will be available at `http://localhost:3000`.
-
-   To start the Python Plex invite service independently:
-
-   ```bash
-   pnpm start:python
-   ```
+   This starts the Node.js server with hot reloading via `nodemon`. The app will be available at `http://localhost:3000`.
 
 5. **Verify everything works:**
 

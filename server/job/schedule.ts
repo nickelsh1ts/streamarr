@@ -1,6 +1,7 @@
 import cleanUpNotifications from '@server/lib/cleanUpNotifications';
 import expiredInvites from '@server/lib/expiredInvites';
 import ImageProxy from '@server/lib/imageproxy';
+import NewsletterImageCleanup from '@server/lib/newsletters/imageCleanup';
 import { plexAccess } from '@server/lib/plexAccessLost';
 import refreshToken from '@server/lib/refreshToken';
 import type { JobId } from '@server/lib/settings';
@@ -36,6 +37,8 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Image Cache Cleanup', {
         label: 'Jobs',
       });
+      // Upload directories (logos, onboarding, newsletter) also live under
+      // cache/images but hold irreplaceable files — never add them here.
       ImageProxy.clearCache(['tmdb', 'tvdb', 'plex', 'avatar']);
     }),
     running: () => ImageProxy.status().running,
@@ -73,6 +76,25 @@ export const startJobs = (): void => {
     }),
     running: () => expiredInvites.status().running,
     cancelFn: () => expiredInvites.cancel(),
+  });
+
+  scheduledJobs.push({
+    id: 'newsletter-image-cleanup',
+    name: 'Newsletter Image Cleanup',
+    type: 'process',
+    interval: 'hours',
+    cronSchedule: jobs['newsletter-image-cleanup']?.schedule,
+    job: schedule.scheduleJob(
+      jobs['newsletter-image-cleanup']?.schedule,
+      () => {
+        logger.info('Starting scheduled job: Newsletter Image Cleanup', {
+          label: 'Jobs',
+        });
+        NewsletterImageCleanup.run();
+      }
+    ),
+    running: () => NewsletterImageCleanup.status().running,
+    cancelFn: () => NewsletterImageCleanup.cancel(),
   });
 
   scheduledJobs.push({

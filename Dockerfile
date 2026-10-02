@@ -1,4 +1,4 @@
-FROM node:26-alpine@sha256:2d984a15c9b54fd0aeb608b8e0d0d83529eb34d2966db27a1fb4f1edc3d298a3 AS base
+FROM node:26-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production
 
@@ -61,7 +61,7 @@ RUN mkdir -p /app/config && chown -R nextjs:nodejs /app/config
 
 USER nextjs
 
-EXPOSE 3000 5005
+EXPOSE 3000
 ENV PORT=3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \

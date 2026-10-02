@@ -1,24 +1,31 @@
 'use client';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
+import CachedImage from '@app/components/Common/CachedImage';
 import Modal from '@app/components/Common/Modal';
 import Toggle from '@app/components/Common/Toggle';
 import Tooltip from '@app/components/Common/ToolTip';
 import UserSelector from '@app/components/Common/UserSelector';
 import Toast from '@app/components/Toast';
 import useLocale from '@app/hooks/useLocale';
+import useSettings from '@app/hooks/useSettings';
 import type { User } from '@app/hooks/useUser';
 import { registerDatePickerLocale } from '@app/utils/datepickerLocale';
+import { formatBytes } from '@app/utils/numberHelper';
+import { PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { ClockIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import type Newsletter from '@server/entity/Newsletter';
 import type { RecentlyAddedTypeConfig } from '@server/entity/Newsletter';
-import type { NewsletterVariablesResponse } from '@server/interfaces/api/newsletterInterfaces';
+import type {
+  NewsletterImageResponse,
+  NewsletterVariablesResponse,
+} from '@server/interfaces/api/newsletterInterfaces';
 import type { UserResultsResponse } from '@server/interfaces/api/userInterfaces';
 import type { Library, PlexSettings } from '@server/lib/settings';
 import axios from 'axios';
 import cronstrue from 'cronstrue';
 import { Field, Form, Formik } from 'formik';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -91,14 +98,38 @@ const NewsletterModal = ({
 }: NewsletterModalProps) => {
   const intl = useIntl();
   const { locale } = useLocale();
+  const { currentSettings } = useSettings();
+  // Images and content blocks are loaded from this server when a recipient
+  // opens the email, so without an absolute base URL they are all broken.
+  const remoteContentEnabled = !!currentSettings.applicationUrl;
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadCounter = useRef(0);
+  const uploadGeneration = useRef(0);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  // Uploads made before the newsletter exists have nothing to attach to, so
+  // they are held here and claimed on save.
+  const [pendingImages, setPendingImages] = useState<NewsletterImageResponse[]>(
+    []
+  );
+  // Removals are staged rather than applied, so cancelling an edit leaves the
+  // files alone.
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
 
   useEffect(() => {
     registerDatePickerLocale(locale);
   }, [locale]);
   const datePickerLocale = locale !== 'en' ? locale : undefined;
+
+  const handleClose = () => {
+    uploadGeneration.current += 1;
+    setUploadingImage(false);
+    setPendingImages([]);
+    setRemovedImages([]);
+    onClose();
+  };
 
   // Static (literal) labels so FormatJS can extract them.
   const recentlyAddedLabel = (key: string): string => {
@@ -160,6 +191,25 @@ const NewsletterModal = ({
   const { data: plexSettings } = useSWR<PlexSettings>(
     show ? '/api/v1/settings/plex' : null
   );
+  const { data: savedImages } = useSWR<NewsletterImageResponse[]>(
+    show && newsletter
+      ? `/api/v1/settings/newsletter/${newsletter.id}/images`
+      : null
+  );
+
+  const attachedImages = useMemo(() => {
+    const byFilename = new Map<string, NewsletterImageResponse>();
+
+    for (const image of [...(savedImages ?? []), ...pendingImages]) {
+      byFilename.set(image.filename, image);
+    }
+
+    for (const filename of removedImages) {
+      byFilename.delete(filename);
+    }
+
+    return [...byFilename.values()];
+  }, [savedImages, pendingImages, removedImages]);
 
   const libraries = plexSettings?.libraries.filter((l) => l.enabled) ?? [];
 
@@ -202,6 +252,186 @@ const NewsletterModal = ({
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = start + token.length;
     });
+  };
+
+  const imageMarkup = (url: string, format: 'markdown' | 'html') =>
+    format === 'html' ? `<img src="${url}" alt="" />` : `![](${url})`;
+
+  // The textarea's live value avoids a stale `values.body` closure while an
+  // upload is in flight.
+  const currentBody = (fallback: string) => bodyRef.current?.value ?? fallback;
+
+  const uploadImage = async (
+    file: File,
+    generation: number
+  ): Promise<NewsletterImageResponse | null> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const { data } = await axios.post<NewsletterImageResponse>(
+        '/api/v1/settings/newsletter/images/upload',
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+
+      return data;
+    } catch (e) {
+      if (uploadGeneration.current === generation) {
+        Toast({
+          title: intl.formatMessage({
+            id: 'newsletters.imageUploadError',
+            defaultMessage: 'There was an error uploading the image',
+          }),
+          message:
+            e?.response?.data?.message ?? (e instanceof Error ? e.message : ''),
+          type: 'error',
+          icon: <XCircleIcon className="size-7" />,
+        });
+      }
+
+      return null;
+    }
+  };
+
+  const uploadAndInsert = async (
+    file: File,
+    values: FormValues,
+    setFieldValue: (field: string, value: unknown) => void
+  ) => {
+    const generation = uploadGeneration.current;
+    const placeholder = `![${intl.formatMessage({
+      id: 'newsletters.imageUploading',
+      defaultMessage: 'Uploading image',
+    })}](uploading-${(uploadCounter.current += 1)})`;
+
+    setUploadingImage(true);
+    insertToken(placeholder, { body: currentBody(values.body) }, setFieldValue);
+
+    const image = await uploadImage(file, generation);
+
+    if (uploadGeneration.current !== generation) {
+      return;
+    }
+
+    if (image) {
+      setPendingImages((images) => [...images, image]);
+    }
+
+    setFieldValue(
+      'body',
+      currentBody(values.body).replace(
+        placeholder,
+        image ? imageMarkup(image.url, values.bodyFormat) : ''
+      )
+    );
+    setUploadingImage(false);
+  };
+
+  const handleBodyPaste = (
+    event: React.ClipboardEvent<HTMLTextAreaElement>,
+    values: FormValues,
+    setFieldValue: (field: string, value: unknown) => void
+  ) => {
+    const file = Array.from(event.clipboardData?.items ?? [])
+      .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+      .map((item) => item.getAsFile())
+      .find((item): item is File => !!item);
+
+    // Overlapping uploads would each rewrite the body from a stale snapshot.
+    if (!file || uploadingImage || !remoteContentEnabled) {
+      return;
+    }
+
+    event.preventDefault();
+    uploadAndInsert(file, values, setFieldValue);
+  };
+
+  const handleBodyDrop = (
+    event: React.DragEvent<HTMLTextAreaElement>,
+    values: FormValues,
+    setFieldValue: (field: string, value: unknown) => void
+  ) => {
+    if (!event.dataTransfer.types.includes('Files')) {
+      return;
+    }
+
+    // Cancel every file drop so a skipped one can't navigate away from the editor.
+    event.preventDefault();
+
+    const file = Array.from(event.dataTransfer.files).find((item) =>
+      item.type.startsWith('image/')
+    );
+
+    if (!file || uploadingImage || !remoteContentEnabled) {
+      return;
+    }
+
+    uploadAndInsert(file, values, setFieldValue);
+  };
+
+  /** Strips markdown and HTML references to a filename from the body.
+   * Strips every form a reference can take, including hand-written markup —
+   * anything left behind would be re-attached by the next save.
+   */
+  const stripImageReference = (body: string, filename: string) => {
+    const escaped = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    return (
+      body
+        // Markdown image or link.
+        .replace(
+          new RegExp(`!?\\[[^\\]]*\\]\\([^)]*${escaped}[^)]*\\)`, 'g'),
+          ''
+        )
+        // Anchors go with their contents, since the link target is the image.
+        .replace(
+          new RegExp(`<a\\b[^>]*${escaped}[^>]*>[\\s\\S]*?</a>`, 'gi'),
+          ''
+        )
+        // Any remaining tag pointing at it, such as <img> or an unclosed <a>.
+        .replace(new RegExp(`<[a-z][^>]*${escaped}[^>]*>`, 'gi'), '')
+        // Bare relative or absolute URL, which the server also counts as a reference.
+        .replace(
+          new RegExp(
+            `(?:[a-z][a-z0-9+.-]*://[^/\\s"'<>()]+)?/imageproxy/newsletter/${escaped}(?:[?#][^\\s"'<>(),]*)?`,
+            'gi'
+          ),
+          ''
+        )
+    );
+  };
+
+  const removeImage = (
+    image: NewsletterImageResponse,
+    values: FormValues,
+    setFieldValue: (field: string, value: unknown) => void
+  ) => {
+    setFieldValue(
+      'body',
+      stripImageReference(currentBody(values.body), image.filename)
+    );
+    setPendingImages((images) =>
+      images.filter((pending) => pending.filename !== image.filename)
+    );
+    setRemovedImages((filenames) => [...filenames, image.filename]);
+  };
+
+  /** Splits so the tail stays pinned and the name ellipsises in the middle. */
+  const splitFilename = (filename: string) => {
+    const dot = filename.lastIndexOf('.');
+    const name = dot === -1 ? filename : filename.slice(0, dot);
+    const extension = dot === -1 ? '' : filename.slice(dot);
+    const tailLength = 6;
+
+    if (name.length <= tailLength) {
+      return { head: name, tail: extension };
+    }
+
+    return {
+      head: name.slice(0, -tailLength),
+      tail: name.slice(-tailLength) + extension,
+    };
   };
 
   const newsletterSchema = Yup.object().shape({
@@ -329,6 +559,12 @@ const NewsletterModal = ({
       values.scheduleType === 'once' && values.sendAt
         ? values.sendAt.toISOString()
         : null,
+    imageFilenames: [
+      ...new Set([
+        ...(newsletter?.imageFilenames ?? []),
+        ...attachedImages.map((image) => image.filename),
+      ]),
+    ].filter((filename) => !removedImages.includes(filename)),
   });
 
   interface FormValues {
@@ -386,6 +622,12 @@ const NewsletterModal = ({
       }}
       validationSchema={newsletterSchema}
       onSubmit={async (values) => {
+        // The Save button is disabled mid-upload, but pressing Enter in a field
+        // still submits, which would persist the placeholder text.
+        if (uploadingImage) {
+          return;
+        }
+
         try {
           const submission = buildSubmission(values);
 
@@ -399,6 +641,8 @@ const NewsletterModal = ({
           }
 
           onSave();
+          setPendingImages([]);
+          setRemovedImages([]);
         } catch (e) {
           Toast({
             title: intl.formatMessage({
@@ -423,6 +667,7 @@ const NewsletterModal = ({
         isValid,
         setFieldValue,
         setFieldTouched,
+        resetForm,
       }) => {
         let cronPreview = '';
         if (values.scheduleType === 'recurring' && values.cronSchedule) {
@@ -486,7 +731,10 @@ const NewsletterModal = ({
           <>
             <Modal
               show={show && !previewHtml}
-              onCancel={onClose}
+              onCancel={() => {
+                resetForm();
+                handleClose();
+              }}
               cancelText={intl.formatMessage({
                 id: 'common.cancel',
                 defaultMessage: 'Cancel',
@@ -505,9 +753,11 @@ const NewsletterModal = ({
                     })
               }
               onOk={() => handleSubmit()}
-              okDisabled={isSubmitting || !isValid}
+              okDisabled={isSubmitting || !isValid || uploadingImage}
               secondaryButtonType="default"
-              secondaryDisabled={previewLoading || isSubmitting}
+              secondaryDisabled={
+                previewLoading || isSubmitting || uploadingImage
+              }
               secondaryText={
                 previewLoading
                   ? intl.formatMessage({
@@ -534,6 +784,20 @@ const NewsletterModal = ({
             >
               <Form className="space-y-3">
                 <div className="border-primary border-t pt-4">
+                  {!remoteContentEnabled && (
+                    <Alert
+                      type="warning"
+                      title={intl.formatMessage({
+                        id: 'newsletters.noApplicationUrlTitle',
+                        defaultMessage: 'Public Application URL required',
+                      })}
+                    >
+                      <FormattedMessage
+                        id="newsletters.noApplicationUrl"
+                        defaultMessage="Images and content blocks cannot be referenced externally without one."
+                      />
+                    </Alert>
+                  )}
                   <label
                     htmlFor="name"
                     className="block text-left text-sm leading-6 font-medium"
@@ -662,493 +926,644 @@ const NewsletterModal = ({
                         id="body"
                         ref={bodyRef}
                         rows={6}
+                        onPaste={(e) =>
+                          handleBodyPaste(e, values, setFieldValue)
+                        }
+                        onDragOver={(e) => {
+                          if (e.dataTransfer.types.includes('Files')) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onDrop={(e) => handleBodyDrop(e, values, setFieldValue)}
                         className="textarea textarea-sm textarea-primary w-full font-mono"
                       />
                     )}
                   </Field>
-                </div>
+                  {remoteContentEnabled && (
+                    <>
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          ref={imageInputRef}
+                          type="file"
+                          accept="image/png,image/jpeg,image/gif,image/webp"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = '';
 
-                <div className="border-primary space-y-3 rounded-md border p-3">
-                  <p className="text-sm font-semibold">
-                    <FormattedMessage
-                      id="newsletters.recentlyAdded"
-                      defaultMessage="Recently Added"
-                    />
-                  </p>
-                  {availableTypes.length === 0 && (
-                    <p className="text-neutral text-sm">
-                      <FormattedMessage
-                        id="newsletters.noLibraries"
-                        defaultMessage="No enabled Plex libraries were found."
-                      />
-                    </p>
-                  )}
-                  {availableTypes.map((type) => {
-                    const config = values.recentlyAdded[type.key];
-                    const typeLibraries = librariesForType(type);
-                    return (
-                      <div key={type.key}>
-                        <Toggle
-                          id={`recentlyAdded-${type.key}`}
-                          valueOf={config.enabled}
-                          onClick={() =>
-                            setRecentlyAdded(type.key, {
-                              enabled: !config.enabled,
-                            })
-                          }
-                          title={recentlyAddedLabel(type.key)}
+                            if (file) {
+                              uploadAndInsert(file, values, setFieldValue);
+                            }
+                          }}
                         />
-                        {config.enabled && (
-                          <div className="mt-2 ml-2 space-y-2">
-                            <div className="flex gap-4">
-                              <div>
-                                <label
-                                  htmlFor={`recentlyAdded-${type.key}-days`}
-                                  className="block"
-                                >
-                                  <FormattedMessage
-                                    id="newsletters.pastDays"
-                                    defaultMessage="Past Days"
-                                  />
-                                </label>
-                                <input
-                                  id={`recentlyAdded-${type.key}-days`}
-                                  type="number"
-                                  min={1}
-                                  value={config.days ?? 7}
-                                  onChange={(e) =>
-                                    setRecentlyAdded(type.key, {
-                                      days: Number(e.target.value),
-                                    })
-                                  }
-                                  className="input input-sm input-primary w-24 rounded-md"
+                        <Button
+                          type="button"
+                          buttonType="ghost"
+                          buttonSize="xs"
+                          className="btn-neutral"
+                          disabled={uploadingImage}
+                          onClick={() => imageInputRef.current?.click()}
+                        >
+                          <PhotoIcon className="mr-1 size-4" />
+                          <FormattedMessage
+                            id="newsletters.addImage"
+                            defaultMessage="Add image"
+                          />
+                        </Button>
+                        <span className="text-neutral text-xs">
+                          <FormattedMessage
+                            id="newsletters.imageHint"
+                            defaultMessage="You can also paste or drop an image into the body."
+                          />
+                        </span>
+                      </div>
+                      {attachedImages.length > 0 && (
+                        <ul className="border-primary mt-2 divide-y divide-current/20 rounded-md border">
+                          {attachedImages.map((image) => (
+                            <li
+                              key={image.filename}
+                              className="flex items-center gap-3 p-2"
+                            >
+                              <div className="relative size-10 shrink-0 overflow-hidden rounded">
+                                <CachedImage
+                                  src={image.url}
+                                  alt=""
+                                  fill
+                                  sizes="40px"
+                                  className="object-cover"
                                 />
                               </div>
-                              <div>
-                                <label
-                                  htmlFor={`recentlyAdded-${type.key}-count`}
-                                  className="block"
+                              <div className="min-w-0 grow">
+                                <p
+                                  className="flex font-mono text-xs"
+                                  title={image.filename}
                                 >
-                                  <FormattedMessage
-                                    id="newsletters.maxItems"
-                                    defaultMessage="Max Items"
-                                  />
-                                </label>
-                                <input
-                                  id={`recentlyAdded-${type.key}-count`}
-                                  type="number"
-                                  min={1}
-                                  max={24}
-                                  value={config.count ?? 6}
-                                  onChange={(e) =>
-                                    setRecentlyAdded(type.key, {
-                                      count: Number(e.target.value),
-                                    })
-                                  }
-                                  className="input input-sm input-primary w-24 rounded-md"
-                                />
+                                  <span className="truncate">
+                                    {splitFilename(image.filename).head}
+                                  </span>
+                                  <span className="shrink-0">
+                                    {splitFilename(image.filename).tail}
+                                  </span>
+                                </p>
+                                <p className="text-neutral text-xs">
+                                  {image.missing ? (
+                                    <span className="text-error">
+                                      <FormattedMessage
+                                        id="newsletters.imageMissing"
+                                        defaultMessage="File missing — can't be sent"
+                                      />
+                                    </span>
+                                  ) : (
+                                    formatBytes(image.size)
+                                  )}
+                                  {image.delivered && (
+                                    <>
+                                      {' · '}
+                                      <FormattedMessage
+                                        id="newsletters.imageDelivered"
+                                        defaultMessage="Delivered"
+                                      />
+                                    </>
+                                  )}
+                                </p>
                               </div>
-                            </div>
-                            {typeLibraries.length > 1 && (
-                              <div className="flex flex-wrap gap-2 pt-1">
-                                {typeLibraries
-                                  .sort((a, b) => Number(a.id) - Number(b.id))
-                                  .map((library) => {
-                                    const checked = (
-                                      config.libraries ?? []
-                                    ).includes(library.id);
-                                    return (
-                                      <label
-                                        key={library.id}
-                                        className="flex items-center gap-1"
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          className="checkbox checkbox-sm checkbox-primary"
-                                          checked={checked}
-                                          onChange={() =>
-                                            setRecentlyAdded(type.key, {
-                                              libraries: checked
-                                                ? (
-                                                    config.libraries ?? []
-                                                  ).filter(
-                                                    (id) => id !== library.id
-                                                  )
-                                                : [
-                                                    ...(config.libraries ?? []),
-                                                    library.id,
-                                                  ],
-                                            })
-                                          }
-                                        />
-                                        {library.name}
-                                      </label>
-                                    );
-                                  })}
-                              </div>
-                            )}
-                            <div>
-                              <label
-                                htmlFor={`recentlyAdded-${type.key}-header`}
-                                className="block"
+                              <Button
+                                type="button"
+                                buttonType="ghost"
+                                buttonSize="xs"
+                                className="btn-neutral disabled:pointer-events-auto disabled:hover:cursor-not-allowed"
+                                disabled={image.missing}
+                                onClick={() =>
+                                  insertToken(
+                                    imageMarkup(image.url, values.bodyFormat),
+                                    { body: currentBody(values.body) },
+                                    setFieldValue
+                                  )
+                                }
                               >
                                 <FormattedMessage
-                                  id="newsletters.sectionHeader"
-                                  defaultMessage="Section Header"
+                                  id="newsletters.imageInsert"
+                                  defaultMessage="Insert"
                                 />
-                              </label>
-                              <input
-                                id={`recentlyAdded-${type.key}-header`}
-                                type="text"
-                                value={config.header ?? ''}
-                                placeholder={recentlyAddedLabel(type.key)}
-                                onChange={(e) =>
-                                  setRecentlyAdded(type.key, {
-                                    header: e.target.value,
+                              </Button>
+                              <Button
+                                type="button"
+                                buttonType="ghost"
+                                buttonSize="xs"
+                                className="btn-error btn-circle"
+                                title={intl.formatMessage({
+                                  id: 'newsletters.imageRemove',
+                                  defaultMessage: 'Remove image',
+                                })}
+                                onClick={() =>
+                                  removeImage(image, values, setFieldValue)
+                                }
+                              >
+                                <TrashIcon className="size-4" />
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
+                {remoteContentEnabled && (
+                  <>
+                    <div className="border-primary space-y-3 rounded-md border p-3">
+                      <p className="text-sm font-semibold">
+                        <FormattedMessage
+                          id="newsletters.recentlyAdded"
+                          defaultMessage="Recently Added"
+                        />
+                      </p>
+                      {availableTypes.length === 0 && (
+                        <p className="text-neutral text-sm">
+                          <FormattedMessage
+                            id="newsletters.noLibraries"
+                            defaultMessage="No enabled Plex libraries were found."
+                          />
+                        </p>
+                      )}
+                      {availableTypes.map((type) => {
+                        const config = values.recentlyAdded[type.key];
+                        const typeLibraries = librariesForType(type);
+                        return (
+                          <div key={type.key}>
+                            <Toggle
+                              id={`recentlyAdded-${type.key}`}
+                              valueOf={config.enabled}
+                              onClick={() =>
+                                setRecentlyAdded(type.key, {
+                                  enabled: !config.enabled,
+                                })
+                              }
+                              title={recentlyAddedLabel(type.key)}
+                            />
+                            {config.enabled && (
+                              <div className="mt-2 ml-2 space-y-2">
+                                <div className="flex gap-4">
+                                  <div>
+                                    <label
+                                      htmlFor={`recentlyAdded-${type.key}-days`}
+                                      className="block"
+                                    >
+                                      <FormattedMessage
+                                        id="newsletters.pastDays"
+                                        defaultMessage="Past Days"
+                                      />
+                                    </label>
+                                    <input
+                                      id={`recentlyAdded-${type.key}-days`}
+                                      type="number"
+                                      min={1}
+                                      value={config.days ?? 7}
+                                      onChange={(e) =>
+                                        setRecentlyAdded(type.key, {
+                                          days: Number(e.target.value),
+                                        })
+                                      }
+                                      className="input input-sm input-primary w-24 rounded-md"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label
+                                      htmlFor={`recentlyAdded-${type.key}-count`}
+                                      className="block"
+                                    >
+                                      <FormattedMessage
+                                        id="newsletters.maxItems"
+                                        defaultMessage="Max Items"
+                                      />
+                                    </label>
+                                    <input
+                                      id={`recentlyAdded-${type.key}-count`}
+                                      type="number"
+                                      min={1}
+                                      max={24}
+                                      value={config.count ?? 6}
+                                      onChange={(e) =>
+                                        setRecentlyAdded(type.key, {
+                                          count: Number(e.target.value),
+                                        })
+                                      }
+                                      className="input input-sm input-primary w-24 rounded-md"
+                                    />
+                                  </div>
+                                </div>
+                                {typeLibraries.length > 1 && (
+                                  <div className="flex flex-wrap gap-2 pt-1">
+                                    {typeLibraries
+                                      .sort(
+                                        (a, b) => Number(a.id) - Number(b.id)
+                                      )
+                                      .map((library) => {
+                                        const checked = (
+                                          config.libraries ?? []
+                                        ).includes(library.id);
+                                        return (
+                                          <label
+                                            key={library.id}
+                                            className="flex items-center gap-1"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              className="checkbox checkbox-sm checkbox-primary"
+                                              checked={checked}
+                                              onChange={() =>
+                                                setRecentlyAdded(type.key, {
+                                                  libraries: checked
+                                                    ? (
+                                                        config.libraries ?? []
+                                                      ).filter(
+                                                        (id) =>
+                                                          id !== library.id
+                                                      )
+                                                    : [
+                                                        ...(config.libraries ??
+                                                          []),
+                                                        library.id,
+                                                      ],
+                                                })
+                                              }
+                                            />
+                                            {library.name}
+                                          </label>
+                                        );
+                                      })}
+                                  </div>
+                                )}
+                                <div>
+                                  <label
+                                    htmlFor={`recentlyAdded-${type.key}-header`}
+                                    className="block"
+                                  >
+                                    <FormattedMessage
+                                      id="newsletters.sectionHeader"
+                                      defaultMessage="Section Header"
+                                    />
+                                  </label>
+                                  <input
+                                    id={`recentlyAdded-${type.key}-header`}
+                                    type="text"
+                                    value={config.header ?? ''}
+                                    placeholder={recentlyAddedLabel(type.key)}
+                                    onChange={(e) =>
+                                      setRecentlyAdded(type.key, {
+                                        header: e.target.value,
+                                      })
+                                    }
+                                    className="input input-sm input-primary w-full rounded-md"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="border-primary space-y-3 rounded-md border p-3">
+                      <div className="space-y-3">
+                        <p className="text-sm font-semibold">
+                          <FormattedMessage
+                            id="newsletters.topStreams"
+                            defaultMessage="Top Streams"
+                          />
+                        </p>
+                        {availableTopStreamTypes.length === 0 && (
+                          <p className="text-neutral text-sm">
+                            <FormattedMessage
+                              id="newsletters.noLibraries"
+                              defaultMessage="No enabled Plex libraries were found."
+                            />
+                          </p>
+                        )}
+                        {availableTopStreamTypes.map((type) => {
+                          const config = values.topStreams[type.key];
+                          const typeLibraries = librariesForType(type);
+                          return (
+                            <div key={type.key}>
+                              <Toggle
+                                id={`topStreams-${type.key}`}
+                                valueOf={config.enabled}
+                                onClick={() =>
+                                  setTopStreams(type.key, {
+                                    enabled: !config.enabled,
                                   })
                                 }
+                                title={topStreamsLabel(type.key)}
+                              />
+                              {config.enabled && (
+                                <div className="mt-2 ml-2 space-y-2">
+                                  <div className="flex gap-4">
+                                    <div>
+                                      <label
+                                        htmlFor={`topStreams-${type.key}-days`}
+                                        className="block"
+                                      >
+                                        <FormattedMessage
+                                          id="newsletters.pastDays"
+                                          defaultMessage="Past Days"
+                                        />
+                                      </label>
+                                      <input
+                                        id={`topStreams-${type.key}-days`}
+                                        type="number"
+                                        min={1}
+                                        value={config.days ?? 7}
+                                        onChange={(e) =>
+                                          setTopStreams(type.key, {
+                                            days: Number(e.target.value),
+                                          })
+                                        }
+                                        className="input input-sm input-primary w-24 rounded-md"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label
+                                        htmlFor={`topStreams-${type.key}-count`}
+                                        className="block"
+                                      >
+                                        <FormattedMessage
+                                          id="newsletters.maxItems"
+                                          defaultMessage="Max Items"
+                                        />
+                                      </label>
+                                      <input
+                                        id={`topStreams-${type.key}-count`}
+                                        type="number"
+                                        min={1}
+                                        max={24}
+                                        value={config.count ?? 5}
+                                        onChange={(e) =>
+                                          setTopStreams(type.key, {
+                                            count: Number(e.target.value),
+                                          })
+                                        }
+                                        className="input input-sm input-primary w-24 rounded-md"
+                                      />
+                                    </div>
+                                  </div>
+                                  {typeLibraries.length > 1 && (
+                                    <div className="flex flex-wrap gap-2 pt-1">
+                                      {typeLibraries
+                                        .sort(
+                                          (a, b) => Number(a.id) - Number(b.id)
+                                        )
+                                        .map((library) => {
+                                          const checked = (
+                                            config.libraries ?? []
+                                          ).includes(library.id);
+                                          return (
+                                            <label
+                                              key={library.id}
+                                              className="flex items-center gap-1"
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                className="checkbox checkbox-sm checkbox-primary"
+                                                checked={checked}
+                                                onChange={() =>
+                                                  setTopStreams(type.key, {
+                                                    libraries: checked
+                                                      ? (
+                                                          config.libraries ?? []
+                                                        ).filter(
+                                                          (id) =>
+                                                            id !== library.id
+                                                        )
+                                                      : [
+                                                          ...(config.libraries ??
+                                                            []),
+                                                          library.id,
+                                                        ],
+                                                  })
+                                                }
+                                              />
+                                              {library.name}
+                                            </label>
+                                          );
+                                        })}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <label
+                                      htmlFor={`topStreams-${type.key}-header`}
+                                      className="block"
+                                    >
+                                      <FormattedMessage
+                                        id="newsletters.sectionHeader"
+                                        defaultMessage="Section Header"
+                                      />
+                                    </label>
+                                    <input
+                                      id={`topStreams-${type.key}-header`}
+                                      type="text"
+                                      value={config.header ?? ''}
+                                      placeholder={topStreamsLabel(type.key)}
+                                      onChange={(e) =>
+                                        setTopStreams(type.key, {
+                                          header: e.target.value,
+                                        })
+                                      }
+                                      className="input input-sm input-primary w-full rounded-md"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="border-primary space-y-3 rounded-md border p-3">
+                      <p className="text-sm font-semibold">
+                        <FormattedMessage
+                          id="newsletters.byTag"
+                          defaultMessage="By Tag"
+                        />
+                      </p>
+                      <div>
+                        <Toggle
+                          id="byTagPlexEnabled"
+                          valueOf={values.byTagPlexEnabled}
+                          onClick={() =>
+                            setFieldValue(
+                              'byTagPlexEnabled',
+                              !values.byTagPlexEnabled
+                            )
+                          }
+                          title={intl.formatMessage({
+                            id: 'newsletters.byPlexLabel',
+                            defaultMessage: 'By Plex Label',
+                          })}
+                        />
+                        {values.byTagPlexEnabled && (
+                          <div className="mt-2 ml-2 space-y-2">
+                            <div>
+                              <label htmlFor="byTagPlexLabel" className="block">
+                                <FormattedMessage
+                                  id="newsletters.plexLabel"
+                                  defaultMessage="Plex Label"
+                                />
+                              </label>
+                              <Field
+                                id="byTagPlexLabel"
+                                type="text"
+                                name="byTagPlexLabel"
+                                className="input input-sm input-primary w-full rounded-md"
+                              />
+                            </div>
+                            {(() => {
+                              const byTagLibraries = libraries.filter(
+                                (library) =>
+                                  library.type === 'movie' ||
+                                  library.type === 'show'
+                              );
+                              if (byTagLibraries.length <= 1) {
+                                return null;
+                              }
+                              return (
+                                <div>
+                                  <p className="block">
+                                    <FormattedMessage
+                                      id="newsletters.plexLabelLibraries"
+                                      defaultMessage="Plex Label Libraries"
+                                    />
+                                  </p>
+                                  <div className="flex flex-wrap gap-2 pt-1">
+                                    {byTagLibraries
+                                      .sort(
+                                        (a, b) => Number(a.id) - Number(b.id)
+                                      )
+                                      .map((library) => {
+                                        const checked =
+                                          values.byTagPlexLibraries.includes(
+                                            library.id
+                                          );
+                                        return (
+                                          <label
+                                            key={library.id}
+                                            className="flex items-center gap-1"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              className="checkbox checkbox-sm checkbox-primary"
+                                              checked={checked}
+                                              onChange={() =>
+                                                setFieldValue(
+                                                  'byTagPlexLibraries',
+                                                  checked
+                                                    ? values.byTagPlexLibraries.filter(
+                                                        (id) =>
+                                                          id !== library.id
+                                                      )
+                                                    : [
+                                                        ...values.byTagPlexLibraries,
+                                                        library.id,
+                                                      ]
+                                                )
+                                              }
+                                            />
+                                            {library.name}
+                                          </label>
+                                        );
+                                      })}
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <Toggle
+                          id="byTagServarrEnabled"
+                          valueOf={values.byTagServarrEnabled}
+                          onClick={() =>
+                            setFieldValue(
+                              'byTagServarrEnabled',
+                              !values.byTagServarrEnabled
+                            )
+                          }
+                          title={intl.formatMessage({
+                            id: 'newsletters.byServarrTag',
+                            defaultMessage: 'By Radarr/Sonarr Tag',
+                          })}
+                        />
+                        {values.byTagServarrEnabled && (
+                          <div className="mt-2 ml-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            <div>
+                              <label htmlFor="byTagRadarrTag" className="block">
+                                <FormattedMessage
+                                  id="newsletters.radarrTag"
+                                  defaultMessage="Radarr Tag"
+                                />
+                              </label>
+                              <Field
+                                id="byTagRadarrTag"
+                                type="text"
+                                name="byTagRadarrTag"
+                                className="input input-sm input-primary w-full rounded-md"
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="byTagSonarrTag" className="block">
+                                <FormattedMessage
+                                  id="newsletters.sonarrTag"
+                                  defaultMessage="Sonarr Tag"
+                                />
+                              </label>
+                              <Field
+                                id="byTagSonarrTag"
+                                type="text"
+                                name="byTagSonarrTag"
                                 className="input input-sm input-primary w-full rounded-md"
                               />
                             </div>
                           </div>
                         )}
                       </div>
-                    );
-                  })}
-                </div>
-
-                <div className="border-primary space-y-3 rounded-md border p-3">
-                  <div className="space-y-3">
-                    <p className="text-sm font-semibold">
-                      <FormattedMessage
-                        id="newsletters.topStreams"
-                        defaultMessage="Top Streams"
-                      />
-                    </p>
-                    {availableTopStreamTypes.length === 0 && (
-                      <p className="text-neutral text-sm">
-                        <FormattedMessage
-                          id="newsletters.noLibraries"
-                          defaultMessage="No enabled Plex libraries were found."
-                        />
-                      </p>
-                    )}
-                    {availableTopStreamTypes.map((type) => {
-                      const config = values.topStreams[type.key];
-                      const typeLibraries = librariesForType(type);
-                      return (
-                        <div key={type.key}>
-                          <Toggle
-                            id={`topStreams-${type.key}`}
-                            valueOf={config.enabled}
-                            onClick={() =>
-                              setTopStreams(type.key, {
-                                enabled: !config.enabled,
-                              })
-                            }
-                            title={topStreamsLabel(type.key)}
-                          />
-                          {config.enabled && (
-                            <div className="mt-2 ml-2 space-y-2">
-                              <div className="flex gap-4">
-                                <div>
-                                  <label
-                                    htmlFor={`topStreams-${type.key}-days`}
-                                    className="block"
-                                  >
-                                    <FormattedMessage
-                                      id="newsletters.pastDays"
-                                      defaultMessage="Past Days"
-                                    />
-                                  </label>
-                                  <input
-                                    id={`topStreams-${type.key}-days`}
-                                    type="number"
-                                    min={1}
-                                    value={config.days ?? 7}
-                                    onChange={(e) =>
-                                      setTopStreams(type.key, {
-                                        days: Number(e.target.value),
-                                      })
-                                    }
-                                    className="input input-sm input-primary w-24 rounded-md"
-                                  />
-                                </div>
-                                <div>
-                                  <label
-                                    htmlFor={`topStreams-${type.key}-count`}
-                                    className="block"
-                                  >
-                                    <FormattedMessage
-                                      id="newsletters.maxItems"
-                                      defaultMessage="Max Items"
-                                    />
-                                  </label>
-                                  <input
-                                    id={`topStreams-${type.key}-count`}
-                                    type="number"
-                                    min={1}
-                                    max={24}
-                                    value={config.count ?? 5}
-                                    onChange={(e) =>
-                                      setTopStreams(type.key, {
-                                        count: Number(e.target.value),
-                                      })
-                                    }
-                                    className="input input-sm input-primary w-24 rounded-md"
-                                  />
-                                </div>
-                              </div>
-                              {typeLibraries.length > 1 && (
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                  {typeLibraries
-                                    .sort((a, b) => Number(a.id) - Number(b.id))
-                                    .map((library) => {
-                                      const checked = (
-                                        config.libraries ?? []
-                                      ).includes(library.id);
-                                      return (
-                                        <label
-                                          key={library.id}
-                                          className="flex items-center gap-1"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            className="checkbox checkbox-sm checkbox-primary"
-                                            checked={checked}
-                                            onChange={() =>
-                                              setTopStreams(type.key, {
-                                                libraries: checked
-                                                  ? (
-                                                      config.libraries ?? []
-                                                    ).filter(
-                                                      (id) => id !== library.id
-                                                    )
-                                                  : [
-                                                      ...(config.libraries ??
-                                                        []),
-                                                      library.id,
-                                                    ],
-                                              })
-                                            }
-                                          />
-                                          {library.name}
-                                        </label>
-                                      );
-                                    })}
-                                </div>
-                              )}
-                              <div>
-                                <label
-                                  htmlFor={`topStreams-${type.key}-header`}
-                                  className="block"
-                                >
-                                  <FormattedMessage
-                                    id="newsletters.sectionHeader"
-                                    defaultMessage="Section Header"
-                                  />
-                                </label>
-                                <input
-                                  id={`topStreams-${type.key}-header`}
-                                  type="text"
-                                  value={config.header ?? ''}
-                                  placeholder={topStreamsLabel(type.key)}
-                                  onChange={(e) =>
-                                    setTopStreams(type.key, {
-                                      header: e.target.value,
-                                    })
-                                  }
-                                  className="input input-sm input-primary w-full rounded-md"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="border-primary space-y-3 rounded-md border p-3">
-                  <p className="text-sm font-semibold">
-                    <FormattedMessage
-                      id="newsletters.byTag"
-                      defaultMessage="By Tag"
-                    />
-                  </p>
-                  <div>
-                    <Toggle
-                      id="byTagPlexEnabled"
-                      valueOf={values.byTagPlexEnabled}
-                      onClick={() =>
-                        setFieldValue(
-                          'byTagPlexEnabled',
-                          !values.byTagPlexEnabled
-                        )
-                      }
-                      title={intl.formatMessage({
-                        id: 'newsletters.byPlexLabel',
-                        defaultMessage: 'By Plex Label',
-                      })}
-                    />
-                    {values.byTagPlexEnabled && (
-                      <div className="mt-2 ml-2 space-y-2">
-                        <div>
-                          <label htmlFor="byTagPlexLabel" className="block">
-                            <FormattedMessage
-                              id="newsletters.plexLabel"
-                              defaultMessage="Plex Label"
+                      {(values.byTagPlexEnabled ||
+                        values.byTagServarrEnabled) && (
+                        <div className="flex flex-wrap gap-4">
+                          <div>
+                            <label htmlFor="byTagCount" className="block">
+                              <FormattedMessage
+                                id="newsletters.maxItems"
+                                defaultMessage="Max Items"
+                              />
+                            </label>
+                            <Field
+                              id="byTagCount"
+                              type="number"
+                              name="byTagCount"
+                              min={1}
+                              max={24}
+                              className="input input-sm input-primary w-24 rounded-md"
                             />
-                          </label>
-                          <Field
-                            id="byTagPlexLabel"
-                            type="text"
-                            name="byTagPlexLabel"
-                            className="input input-sm input-primary w-full rounded-md"
-                          />
-                        </div>
-                        {(() => {
-                          const byTagLibraries = libraries.filter(
-                            (library) =>
-                              library.type === 'movie' ||
-                              library.type === 'show'
-                          );
-                          if (byTagLibraries.length <= 1) {
-                            return null;
-                          }
-                          return (
-                            <div>
-                              <p className="block">
-                                <FormattedMessage
-                                  id="newsletters.plexLabelLibraries"
-                                  defaultMessage="Plex Label Libraries"
-                                />
-                              </p>
-                              <div className="flex flex-wrap gap-2 pt-1">
-                                {byTagLibraries
-                                  .sort((a, b) => Number(a.id) - Number(b.id))
-                                  .map((library) => {
-                                    const checked =
-                                      values.byTagPlexLibraries.includes(
-                                        library.id
-                                      );
-                                    return (
-                                      <label
-                                        key={library.id}
-                                        className="flex items-center gap-1"
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          className="checkbox checkbox-sm checkbox-primary"
-                                          checked={checked}
-                                          onChange={() =>
-                                            setFieldValue(
-                                              'byTagPlexLibraries',
-                                              checked
-                                                ? values.byTagPlexLibraries.filter(
-                                                    (id) => id !== library.id
-                                                  )
-                                                : [
-                                                    ...values.byTagPlexLibraries,
-                                                    library.id,
-                                                  ]
-                                            )
-                                          }
-                                        />
-                                        {library.name}
-                                      </label>
-                                    );
-                                  })}
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <Toggle
-                      id="byTagServarrEnabled"
-                      valueOf={values.byTagServarrEnabled}
-                      onClick={() =>
-                        setFieldValue(
-                          'byTagServarrEnabled',
-                          !values.byTagServarrEnabled
-                        )
-                      }
-                      title={intl.formatMessage({
-                        id: 'newsletters.byServarrTag',
-                        defaultMessage: 'By Radarr/Sonarr Tag',
-                      })}
-                    />
-                    {values.byTagServarrEnabled && (
-                      <div className="mt-2 ml-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        <div>
-                          <label htmlFor="byTagRadarrTag" className="block">
-                            <FormattedMessage
-                              id="newsletters.radarrTag"
-                              defaultMessage="Radarr Tag"
+                          </div>
+                          <div className="grow">
+                            <label htmlFor="byTagHeader" className="block">
+                              <FormattedMessage
+                                id="newsletters.sectionHeader"
+                                defaultMessage="Section Header"
+                              />
+                            </label>
+                            <Field
+                              id="byTagHeader"
+                              type="text"
+                              name="byTagHeader"
+                              className="input input-sm input-primary w-full rounded-md"
                             />
-                          </label>
-                          <Field
-                            id="byTagRadarrTag"
-                            type="text"
-                            name="byTagRadarrTag"
-                            className="input input-sm input-primary w-full rounded-md"
-                          />
+                          </div>
                         </div>
-                        <div>
-                          <label htmlFor="byTagSonarrTag" className="block">
-                            <FormattedMessage
-                              id="newsletters.sonarrTag"
-                              defaultMessage="Sonarr Tag"
-                            />
-                          </label>
-                          <Field
-                            id="byTagSonarrTag"
-                            type="text"
-                            name="byTagSonarrTag"
-                            className="input input-sm input-primary w-full rounded-md"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {(values.byTagPlexEnabled || values.byTagServarrEnabled) && (
-                    <div className="flex flex-wrap gap-4">
-                      <div>
-                        <label htmlFor="byTagCount" className="block">
-                          <FormattedMessage
-                            id="newsletters.maxItems"
-                            defaultMessage="Max Items"
-                          />
-                        </label>
-                        <Field
-                          id="byTagCount"
-                          type="number"
-                          name="byTagCount"
-                          min={1}
-                          max={24}
-                          className="input input-sm input-primary w-24 rounded-md"
-                        />
-                      </div>
-                      <div className="grow">
-                        <label htmlFor="byTagHeader" className="block">
-                          <FormattedMessage
-                            id="newsletters.sectionHeader"
-                            defaultMessage="Section Header"
-                          />
-                        </label>
-                        <Field
-                          id="byTagHeader"
-                          type="text"
-                          name="byTagHeader"
-                          className="input input-sm input-primary w-full rounded-md"
-                        />
-                      </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
 
                 <div>
                   <label

@@ -402,6 +402,7 @@ export type JobId =
   | 'plex-refresh-token'
   | 'invites-qrcode-cleanup'
   | 'image-cache-cleanup'
+  | 'newsletter-image-cleanup'
   | 'notification-cleanup'
   | 'trial-expiry'
   | 'plex-membership-check';
@@ -687,6 +688,7 @@ class Settings {
         'plex-full-scan': { schedule: '0 0 3 * * *' },
         'plex-refresh-token': { schedule: '0 0 5 * * *' },
         'image-cache-cleanup': { schedule: '0 0 5 * * *' },
+        'newsletter-image-cleanup': { schedule: '0 0 3 * * *' },
         'invites-qrcode-cleanup': { schedule: '0 0 1 * * *' },
         'notification-cleanup': { schedule: '0 30 1 * * *' },
         'trial-expiry': { schedule: '0 0 0 * * *' },

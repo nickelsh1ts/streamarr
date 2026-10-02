@@ -31,6 +31,7 @@ export interface SettingsAboutDiskSpaceResponse {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
   cachedAt: number;
+  refreshing: boolean;
 }
 
 export type DiskSpaceItemKind = 'filesystem' | 'directory';
@@ -114,6 +115,12 @@ export interface CacheResponse {
     plex: { size: number; imageCount: number };
     avatar: { size: number; imageCount: number };
     qrcode: { size: number; imageCount: number };
+  };
+  /** User-supplied files. Unlike the caches above, these are not regenerable. */
+  uploads: {
+    logos: { size: number; imageCount: number };
+    onboarding: { size: number; imageCount: number };
+    newsletter: { size: number; imageCount: number };
   };
   cachedAt: number;
 }

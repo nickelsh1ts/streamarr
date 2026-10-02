@@ -1956,6 +1956,13 @@ components:
           type: string
           nullable: true
           format: date-time
+        imageFilenames:
+          type: array
+          description: >-
+            Images this newsletter uses, including any uploaded but not yet
+            inserted into the body.
+          items:
+            type: string
         lastSentAt:
           type: string
           nullable: true
@@ -2083,6 +2090,13 @@ components:
           type: string
           nullable: true
           format: date-time
+        imageFilenames:
+          type: array
+          description: >-
+            Images uploaded while composing, which had no newsletter to attach
+            to yet. They are claimed by the newsletter on save.
+          items:
+            type: string
     NewsletterHistory:
       type: object
       properties:
@@ -2109,6 +2123,38 @@ components:
           type: number
         failureCount:
           type: number
+    NewsletterImage:
+      type: object
+      properties:
+        filename:
+          type: string
+          readOnly: true
+          example: 'd41d8cd98f00b204e9800998ecf8427e-1790745811045.png'
+        url:
+          type: string
+          readOnly: true
+          example: '/imageproxy/newsletter/d41d8cd98f00b204e9800998ecf8427e-1790745811045.png'
+        size:
+          type: number
+          readOnly: true
+          description: File size on disk, in bytes.
+        missing:
+          type: boolean
+          readOnly: true
+          description: >-
+            The record exists but its file is gone, so it is dropped when the
+            newsletter is rendered.
+        delivered:
+          type: boolean
+          readOnly: true
+          description: >-
+            Whether this image has been included in a newsletter that was
+            actually sent. Delivered images are retained far longer, because
+            deleting them breaks email already in recipients' inboxes.
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
     NewsletterVariable:
       type: object
       properties:
@@ -5435,6 +5481,39 @@ paths:
                           imageCount:
                             type: number
                             example: 123
+                  uploads:
+                    type: object
+                    description: >-
+                      User-supplied files. Unlike the image caches, these are
+                      not regenerable and are never swept by cache cleanup.
+                    properties:
+                      logos:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 2
+                      onboarding:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 5
+                      newsletter:
+                        type: object
+                        properties:
+                          size:
+                            type: number
+                            example: 123456
+                          imageCount:
+                            type: number
+                            example: 12
                   apiCaches:
                     type: array
                     items:
@@ -6109,7 +6188,8 @@ paths:
       summary: Get disk space usage
       description: >-
         Returns root filesystem capacity and Streamarr config directory sizes.
-        Results are cached server-side for a short period unless forced.
+        Filesystem capacity is read live; directory sizes are cached and
+        refreshed in the background once stale unless forced.
       tags:
         - settings
       parameters:
@@ -6117,7 +6197,7 @@ paths:
           name: force
           schema:
             type: boolean
-          description: Recalculate disk usage instead of using the cached result.
+          description: Recalculate directory sizes instead of using the cached result.
       responses:
         '200':
           description: Disk space usage
@@ -6129,6 +6209,10 @@ paths:
                   cachedAt:
                     type: number
                     example: 1760000000000
+                  refreshing:
+                    type: boolean
+                    description: A background refresh of directory sizes is in progress.
+                    example: false
                   items:
                     type: array
                     items:
@@ -9393,6 +9477,41 @@ paths:
                 type: string
         '500':
           description: Server error
+  /settings/newsletter/images/upload:
+    post:
+      summary: Upload a newsletter image
+      description: >-
+        Uploads an image for use in a newsletter body. The image is re-encoded
+        and capped at 1600x1600. Uploads are served publicly so that email
+        recipients can load them.
+      tags:
+        - newsletter
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: PNG, JPEG, GIF or WebP image, up to 10MB.
+      responses:
+        '201':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterImage'
+        '400':
+          description: Bad request - unsupported, malformed or oversized image
+        '403':
+          description: Forbidden - insufficient permissions
+        '500':
+          description: Server error
   /settings/newsletter/{id}:
     parameters:
       - name: id
@@ -9466,6 +9585,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewsletterSendResult'
+        '404':
+          description: Newsletter not found
         '409':
           description: The newsletter is already being sent
         '422':
@@ -9494,6 +9615,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewsletterSendResult'
+        '404':
+          description: Newsletter not found
         '422':
           description: All configured content blocks are empty; nothing to send
         '500':
@@ -9559,6 +9682,31 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/NewsletterHistory'
+  /settings/newsletter/{id}/images:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: The newsletter ID.
+    get:
+      summary: List images attached to a newsletter
+      tags:
+        - newsletter
+      responses:
+        '200':
+          description: The images attached to this newsletter
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewsletterImage'
+        '404':
+          description: Newsletter not found
+        '500':
+          description: Failed to load newsletter images
   /regions:
     get:
       summary: Regions supported by TMDB

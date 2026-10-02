@@ -707,6 +707,110 @@ const JobsCacheSettings = () => {
           </Table.TBody>
         </Table>
       </div>
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-x-2">
+          <h3 className="text-2xl font-extrabold">
+            <FormattedMessage
+              id="uploads.title"
+              defaultMessage="Uploaded Images"
+            />
+          </h3>
+        </div>
+        <p className="mb-5 w-full overflow-hidden">
+          <FormattedMessage
+            id="uploads.description"
+            defaultMessage="Images you have uploaded to Streamarr, saved in <code>{uploadsPath}</code>. Unlike the caches above these are not regenerated, so removing newsletter images by hand will break any newsletter you have already sent."
+            values={{
+              uploadsPath: `${appData ? appData.appDataPath : '/app/config'}/cache/images`,
+              code: (chunks: React.ReactNode) => (
+                <code className="overflow-hidden text-ellipsis max-sm:block">
+                  {chunks}
+                </code>
+              ),
+            }}
+          />
+        </p>
+      </div>
+      <div className="mb-10">
+        <Table>
+          <thead>
+            <tr>
+              <Table.TH>
+                <FormattedMessage
+                  id="uploads.table.name"
+                  defaultMessage="Upload Type"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="uploads.table.files"
+                  defaultMessage="Images Stored"
+                />
+              </Table.TH>
+              <Table.TH>
+                <FormattedMessage
+                  id="uploads.table.totalSize"
+                  defaultMessage="Total Size"
+                />
+              </Table.TH>
+            </tr>
+          </thead>
+          <Table.TBody>
+            {!isLoading ? (
+              <>
+                <tr>
+                  <Table.TD>
+                    <FormattedMessage
+                      id="uploads.logos"
+                      defaultMessage="Custom Logos"
+                    />
+                  </Table.TD>
+                  <Table.TD>
+                    {cacheData?.uploads?.logos?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.uploads?.logos?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
+                  <Table.TD>
+                    <FormattedMessage
+                      id="uploads.onboarding"
+                      defaultMessage="Onboarding"
+                    />
+                  </Table.TD>
+                  <Table.TD>
+                    {cacheData?.uploads?.onboarding?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.uploads?.onboarding?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+                <tr>
+                  <Table.TD>
+                    <FormattedMessage
+                      id="uploads.newsletter"
+                      defaultMessage="Newsletters"
+                    />
+                  </Table.TD>
+                  <Table.TD>
+                    {cacheData?.uploads?.newsletter?.imageCount ?? 0}
+                  </Table.TD>
+                  <Table.TD>
+                    {formatBytes(cacheData?.uploads?.newsletter?.size ?? 0)}
+                  </Table.TD>
+                </tr>
+              </>
+            ) : (
+              <tr>
+                <Table.TD colSpan={3} className="text-center">
+                  <LoadingEllipsis />
+                </Table.TD>
+              </tr>
+            )}
+          </Table.TBody>
+        </Table>
+      </div>
     </>
   );
 };

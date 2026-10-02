@@ -1,7 +1,7 @@
 import { InviteStatus } from '@server/constants/invite';
 import { getRepository } from '@server/datasource';
 import Invite from '@server/entity/Invite';
-import QRCodeProxy from '@server/lib/qrcodeproxy';
+import { qrProxy } from '@server/lib/qrcodeproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import fs from 'fs/promises';
@@ -33,7 +33,6 @@ class ExpiredInvites {
 
     try {
       const inviteRepository = getRepository(Invite);
-      const qrProxy = new QRCodeProxy();
       const now = new Date();
       const expiredInvites = await inviteRepository.find({
         where: {

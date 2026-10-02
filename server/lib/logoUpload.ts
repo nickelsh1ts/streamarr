@@ -37,6 +37,10 @@ class LogoUpload {
     }
   }
 
+  public get directory(): string {
+    return this.uploadsDir;
+  }
+
   public async uploadLogos(files: LogoFile[]): Promise<LogoUploadResult> {
     await this.ensureUploadsDir();
 
@@ -101,5 +105,7 @@ class LogoUpload {
     return path.join(this.uploadsDir, filename);
   }
 }
+
+export const logoUpload = new LogoUpload();
 
 export default LogoUpload;

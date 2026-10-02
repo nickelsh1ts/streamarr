@@ -1,18 +1,31 @@
 import { getRepository } from '@server/datasource';
 import Newsletter from '@server/entity/Newsletter';
 import NewsletterHistory from '@server/entity/NewsletterHistory';
+import NewsletterImage from '@server/entity/NewsletterImage';
 import { User } from '@server/entity/User';
 import { getIntl } from '@server/i18n';
 import type {
   NewsletterBody,
   NewsletterHistoryResultsResponse,
+  NewsletterImageResponse,
   NewsletterResultsResponse,
   NewsletterSendResult,
   NewsletterVariablesResponse,
 } from '@server/interfaces/api/newsletterInterfaces';
 import PreparedEmail, { getEmailLogo } from '@server/lib/email';
+import { InvalidImageError } from '@server/lib/imageUpload';
 import type { NewsletterBlockData } from '@server/lib/newsletters/dataProviders';
 import { resolveBlockData } from '@server/lib/newsletters/dataProviders';
+import {
+  ALLOWED_NEWSLETTER_IMAGE_MIME_TYPES,
+  describeNewsletterImage,
+  extractNewsletterImageFilenames,
+  getNewsletterImageFilenames,
+  MAX_NEWSLETTER_IMAGE_BYTES,
+  newsletterImageLock,
+  newsletterImageService,
+  reclaimNewsletterImages,
+} from '@server/lib/newsletters/images';
 import {
   getNewsletterEmailStrings,
   renderForRecipient,
@@ -23,18 +36,53 @@ import {
   isNewsletterSending,
   NewsletterDataUnavailableError,
   NewsletterEmptyError,
+  NewsletterNotFoundError,
   sendNewsletter,
 } from '@server/lib/newsletters/send';
 import {
+  newsletterImageUploadLimiter,
   newsletterPreviewLimiter,
   newsletterTestLimiter,
 } from '@server/lib/rateLimiters';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import type { RequestHandler } from 'express';
 import { Router } from 'express';
+import multer from 'multer';
 import path from 'path';
+import { In } from 'typeorm';
 
 const newsletterRoutes = Router();
+
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_NEWSLETTER_IMAGE_BYTES },
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_NEWSLETTER_IMAGE_MIME_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PNG, JPEG, GIF and WebP images are allowed.'));
+    }
+  },
+});
+
+// Multer rejections surface as plain Errors with no `status`, which the global
+// handler would report as a 500.
+const acceptImageUpload: RequestHandler = (req, res, next) => {
+  imageUpload.single('image')(req, res, (err) => {
+    if (!err) {
+      return next();
+    }
+
+    next({
+      status: 400,
+      message:
+        err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE'
+          ? 'Image is too large. Maximum size is 10MB.'
+          : err.message,
+    });
+  });
+};
 
 // Maximum page size for paginated list/history endpoints.
 const MAX_PAGE_SIZE = 100;
@@ -236,6 +284,12 @@ const assignNewsletterBody = (
   newsletter.scheduleType = body.scheduleType ?? 'recurring';
   newsletter.cronSchedule = body.cronSchedule ?? null;
   newsletter.sendAt = body.sendAt ? new Date(body.sendAt) : null;
+  newsletter.imageFilenames = [
+    ...new Set([
+      ...extractNewsletterImageFilenames(newsletter.body),
+      ...(body.imageFilenames ?? []),
+    ]),
+  ];
 };
 
 newsletterRoutes.get<Record<string, string>, NewsletterResultsResponse>(
@@ -357,8 +411,11 @@ newsletterRoutes.post<Record<string, string>, Newsletter, NewsletterBody>(
       });
       assignNewsletterBody(newsletter, req.body);
 
-      const created = await getRepository(Newsletter).save(newsletter);
-      newsletterScheduler.schedule(created);
+      let created: Newsletter;
+      await newsletterImageLock.dispatch('newsletter-images', async () => {
+        created = await getRepository(Newsletter).save(newsletter);
+        newsletterScheduler.schedule(created);
+      });
 
       res.status(201).json(created);
     } catch (e) {
@@ -367,6 +424,87 @@ newsletterRoutes.post<Record<string, string>, Newsletter, NewsletterBody>(
         errorMessage: e.message,
       });
       next({ status: 500, message: 'Failed to create newsletter.' });
+    }
+  }
+);
+
+newsletterRoutes.post<Record<string, string>, NewsletterImageResponse>(
+  '/images/upload',
+  newsletterImageUploadLimiter,
+  acceptImageUpload,
+  async (req, res, next) => {
+    const file = req.file;
+
+    if (!file) {
+      return next({ status: 400, message: 'No image uploaded.' });
+    }
+
+    try {
+      const { filename } = await newsletterImageService.uploadImage({
+        buffer: file.buffer,
+        originalname: file.originalname,
+        mimetype: file.mimetype,
+      });
+
+      // Left unattached deliberately: newsletters claim their images on save,
+      // so abandoning the edit leaves this as an orphan for the cleanup sweep.
+      const image = await getRepository(NewsletterImage).save(
+        new NewsletterImage({ filename })
+      );
+
+      logger.debug('Newsletter image uploaded', {
+        label: 'Newsletters',
+        filename,
+      });
+
+      res.status(201).json(await describeNewsletterImage(image));
+    } catch (e) {
+      logger.error('Failed to upload newsletter image', {
+        label: 'Newsletters',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({
+        status: e instanceof InvalidImageError ? 400 : 500,
+        message:
+          e instanceof InvalidImageError
+            ? e.message
+            : 'Failed to upload newsletter image.',
+      });
+    }
+  }
+);
+
+newsletterRoutes.get<{ id: string }, NewsletterImageResponse[]>(
+  '/:id/images',
+  async (req, res, next) => {
+    try {
+      const newsletter = await getRepository(Newsletter).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!newsletter) {
+        return next({ status: 404, message: 'Newsletter not found.' });
+      }
+
+      const filenames = [...getNewsletterImageFilenames(newsletter)];
+
+      const images = filenames.length
+        ? await getRepository(NewsletterImage).find({
+            where: { filename: In(filenames) },
+            order: { createdAt: 'ASC' },
+          })
+        : [];
+
+      res
+        .status(200)
+        .json(await Promise.all(images.map(describeNewsletterImage)));
+    } catch (e) {
+      logger.error('Failed to load newsletter images', {
+        label: 'Newsletters',
+        newsletterId: req.params.id,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      next({ status: 500, message: 'Failed to load newsletter images.' });
     }
   }
 );
@@ -397,24 +535,46 @@ newsletterRoutes.put<{ id: string }, Newsletter, NewsletterBody>(
 
     try {
       const newsletterRepository = getRepository(Newsletter);
-      const newsletter = await newsletterRepository.findOneOrFail({
-        where: { id: Number(req.params.id) },
+      let updated: Newsletter | null = null;
+      await newsletterImageLock.dispatch('newsletter-images', async () => {
+        const newsletter = await newsletterRepository.findOne({
+          where: { id: Number(req.params.id) },
+        });
+        if (!newsletter) {
+          return;
+        }
+
+        // Captured before the body is reassigned, so dropped images can be
+        // reclaimed once the newsletter no longer claims them.
+        const previousImages = newsletter.imageFilenames ?? [];
+        assignNewsletterBody(newsletter, req.body);
+        newsletter.updatedBy = req.user as User;
+
+        updated = await newsletterRepository.save(newsletter);
+        newsletterScheduler.schedule(updated);
+        try {
+          await reclaimNewsletterImages(previousImages);
+        } catch (e) {
+          logger.error('Failed to reclaim newsletter images after update', {
+            label: 'Newsletters',
+            newsletterId: newsletter.id,
+            errorMessage: e instanceof Error ? e.message : String(e),
+          });
+        }
       });
 
-      assignNewsletterBody(newsletter, req.body);
-      newsletter.updatedBy = req.user as User;
-
-      const updated = await newsletterRepository.save(newsletter);
-      newsletterScheduler.schedule(updated);
+      if (!updated) {
+        return next({ status: 404, message: 'Newsletter not found.' });
+      }
 
       res.status(200).json(updated);
     } catch (e) {
       logger.error('Failed to update newsletter', {
         label: 'Newsletters',
         newsletterId: req.params.id,
-        errorMessage: e.message,
+        errorMessage: e instanceof Error ? e.message : String(e),
       });
-      next({ status: 404, message: 'Newsletter not found.' });
+      next({ status: 500, message: 'Failed to update newsletter.' });
     }
   }
 );
@@ -422,16 +582,43 @@ newsletterRoutes.put<{ id: string }, Newsletter, NewsletterBody>(
 newsletterRoutes.delete<{ id: string }>('/:id', async (req, res, next) => {
   try {
     const newsletterRepository = getRepository(Newsletter);
-    const newsletter = await newsletterRepository.findOneOrFail({
-      where: { id: Number(req.params.id) },
+    let removed = false;
+    await newsletterImageLock.dispatch('newsletter-images', async () => {
+      const newsletter = await newsletterRepository.findOne({
+        where: { id: Number(req.params.id) },
+      });
+      if (!newsletter) {
+        return;
+      }
+
+      const previousImages = newsletter.imageFilenames ?? [];
+      newsletterScheduler.cancel(newsletter.id);
+      await newsletterRepository.remove(newsletter);
+      removed = true;
+      // Runs after removal so the deleted newsletter no longer counts as a user.
+      try {
+        await reclaimNewsletterImages(previousImages);
+      } catch (e) {
+        logger.error('Failed to reclaim newsletter images after delete', {
+          label: 'Newsletters',
+          newsletterId: newsletter.id,
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+      }
     });
 
-    newsletterScheduler.cancel(newsletter.id);
-    await newsletterRepository.remove(newsletter);
+    if (!removed) {
+      return next({ status: 404, message: 'Newsletter not found.' });
+    }
 
     res.status(204).send();
-  } catch {
-    next({ status: 404, message: 'Newsletter not found.' });
+  } catch (e) {
+    logger.error('Failed to delete newsletter', {
+      label: 'Newsletters',
+      newsletterId: req.params.id,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
+    next({ status: 500, message: 'Failed to delete newsletter.' });
   }
 });
 
@@ -439,21 +626,19 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
   '/:id/send',
   async (req, res, next) => {
     try {
-      const newsletter = await getRepository(Newsletter).findOneOrFail({
-        where: { id: Number(req.params.id) },
-      });
+      const newsletterId = Number(req.params.id);
 
-      if (isNewsletterSending(newsletter.id)) {
+      if (isNewsletterSending(newsletterId)) {
         return next({
           status: 409,
           message: 'This newsletter is already being sent.',
         });
       }
 
-      const result = await sendNewsletter(newsletter, 'manual');
+      const result = await sendNewsletter(newsletterId, 'manual');
 
       res.status(200).json({
-        newsletterId: newsletter.id,
+        newsletterId,
         ...result,
       });
     } catch (e) {
@@ -465,6 +650,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
 
       if (e instanceof NewsletterDataUnavailableError) {
         return next({ status: 503, message: e.message });
+      }
+
+      if (e instanceof NewsletterNotFoundError) {
+        return next({ status: 404, message: e.message });
       }
 
       if (e instanceof NewsletterEmptyError) {
@@ -484,9 +673,7 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
   newsletterTestLimiter,
   async (req, res, next) => {
     try {
-      const newsletter = await getRepository(Newsletter).findOneOrFail({
-        where: { id: Number(req.params.id) },
-      });
+      const newsletterId = Number(req.params.id);
 
       const testUser = await getRepository(User).findOneOrFail({
         where: { id: req.user?.id },
@@ -495,10 +682,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
         },
       });
 
-      const result = await sendNewsletter(newsletter, 'test', { testUser });
+      const result = await sendNewsletter(newsletterId, 'test', { testUser });
 
       res.status(200).json({
-        newsletterId: newsletter.id,
+        newsletterId,
         ...result,
       });
     } catch (e) {
@@ -510,6 +697,10 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
 
       if (e instanceof NewsletterEmptyError) {
         return next({ status: 422, message: e.message });
+      }
+
+      if (e instanceof NewsletterNotFoundError) {
+        return next({ status: 404, message: e.message });
       }
 
       next({

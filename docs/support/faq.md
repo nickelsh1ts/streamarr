@@ -73,8 +73,6 @@ See [How can I share my logs?](./need-help.md#how-can-i-share-my-logs) for instr
 | ------ | -------------------------- |
 | `3000` | Main web interface and API |
 
-The Python service for Plex invites runs internally on port 5005 and does not need to be exposed.
-
 ---
 
 ## Users
@@ -112,13 +110,13 @@ Check the following:
 1. **Sign Up Enabled** — Verify **Enable Sign Up** is turned on in Settings
 2. **Invite Active** — Check the invite status isn't Expired or Inactive
 3. **Usage Limit** — Verify the invite hasn't reached its usage limit
-4. **Python Service** — Check the application logs for Python service errors
+4. **Plex connectivity** — Check the application logs for Plex synchronization errors
 
 ### Why don't invited users appear on my Plex server?
 
-The internal Python service handles Plex invite operations:
+Plex invite operations are handled by the main Streamarr service:
 
-1. Check the application logs for Python service errors
+1. Check the application logs for Plex synchronization errors
 2. Look for errors in `config/logs/.machinelogs.json`
 3. Verify your Plex token is valid
 
@@ -252,8 +250,8 @@ Counts refresh automatically once Plex is reachable. To force an immediate refre
 
 If the app briefly freezes or becomes unresponsive — often noticeable when
 opening **System Settings** (Disk Space) or **Jobs & Cache**, and
-occasionally paired with a log entry like `Falling back to recursive path
-size calculation` — this is usually disk I/O contention:
+occasionally paired with a log entry like `du is unavailable; falling back to
+recursive path size walk` — this is usually disk I/O contention:
 
 - Streamarr's SQLite database is synchronous and lives in `config/db/`,
   alongside `config/cache`. When something scans a large `cache` directory
@@ -266,8 +264,9 @@ size calculation` — this is usually disk I/O contention:
 
 To reduce this:
 
-1. Update to the latest version — recent releases cache disk-space and
-   image-cache stats server-side and cap how long a filesystem scan can run.
+1. Update to the latest version — recent releases read filesystem capacity
+   with a single `statfs` call, measure the config directory in one `du`
+   walk, and refresh directory sizes in the background.
 2. If `config` is on a NAS/network share, moving it to local/faster storage
    will help the most.
 3. Try raising `UV_THREADPOOL_SIZE` (e.g. to `8`) — see
