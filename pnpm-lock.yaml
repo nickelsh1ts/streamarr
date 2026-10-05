@@ -267,7 +267,7 @@ importers:
         version: 0.8.0
       isomorphic-dompurify:
         specifier: ^4.0.0
-        version: 4.3.0
+        version: 4.4.0
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -5654,8 +5654,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  isomorphic-dompurify@4.3.0:
-    resolution: {integrity: sha512-prq6x6sxb/da0HP4S81hiK2Hc444CIvNeZ+gj7A9oDE0r6tqUmQ90ylb9BwhP44ZSCxwUAcTPNoQY0mmjpRHcA==}
+  isomorphic-dompurify@4.4.0:
+    resolution: {integrity: sha512-8F6m5CqcxtY3TLBOKibiPMmSIDa6bMAiiLKZ0ksQad1liA8ZtOnBhjoLFGkBB3noVwj5NeCR9p8vD3uXuudF+Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
   isstream@0.1.2:
@@ -14477,7 +14477,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isomorphic-dompurify@4.3.0:
+  isomorphic-dompurify@4.4.0:
     dependencies:
       dompurify: 3.4.14
       jsdom: 30.0.1
