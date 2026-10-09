@@ -559,7 +559,7 @@ importers:
         version: 25.0.9(supports-color@5.5.0)(typescript@6.0.3)
       stylelint:
         specifier: ^17.7.0
-        version: 17.15.0(supports-color@5.5.0)(typescript@6.0.3)
+        version: 17.16.0(supports-color@5.5.0)(typescript@6.0.3)
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
@@ -7959,8 +7959,8 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  stylelint@17.15.0:
-    resolution: {integrity: sha512-mWIkesYQvQjf4Kvdeu9ns0IL8/K/wtjaGxPqsPd6DlLZvaQxGysJsocxUDrBcyHQ5VleAk4uSMat4yMrVED7PA==}
+  stylelint@17.16.0:
+    resolution: {integrity: sha512-ejlWnbJ13x1GU32+zZXa6sYQJsKKkwSdv2B4rAdO3OWdEmvhSJKcXi5pOphQYSzyaj1kXpuGJr7pcMBNfDIuPw==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -17216,7 +17216,7 @@ snapshots:
       '@babel/core': 7.29.7(supports-color@5.5.0)
       babel-plugin-macros: 3.1.0
 
-  stylelint@17.15.0(supports-color@5.5.0)(typescript@6.0.3):
+  stylelint@17.16.0(supports-color@5.5.0)(typescript@6.0.3):
     dependencies:
       '@csstools/css-calc': 3.3.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
