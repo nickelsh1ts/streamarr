@@ -279,7 +279,7 @@ importers:
         version: 2.31.0
       moment-timezone:
         specifier: ^0.6.0
-        version: 0.6.4
+        version: 0.6.5
       multer:
         specifier: ^2.1.1
         version: 2.4.0
@@ -6368,8 +6368,8 @@ packages:
   moment-timezone@0.5.48:
     resolution: {integrity: sha512-f22b8LV1gbTO2ms2j2z13MuPogNoh5UzxL3nzNAYKGraILnbGc9NEE6dyiiiLv46DGRb8A4kg8UKWLjPthxBHw==}
 
-  moment-timezone@0.6.4:
-    resolution: {integrity: sha512-JHUK8Mgheach4uMQmIV/pIfrv0ubPiDCPPqc7Mi604je1UblP6Gbm+FfV+Oh88KP03rZqGCZG3t0wmpfdlDv+w==}
+  moment-timezone@0.6.5:
+    resolution: {integrity: sha512-KKzZAxGv2Qx4cnk6eSlvf4C+DLFW52vmMY5MN7UARY7GONbozkutylQG3DrrtmLCTXdQ5XZrqao9cI16bLFzXA==}
 
   moment@2.31.0:
     resolution: {integrity: sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==}
@@ -15425,7 +15425,7 @@ snapshots:
     dependencies:
       moment: 2.31.0
 
-  moment-timezone@0.6.4:
+  moment-timezone@0.6.5:
     dependencies:
       moment: 2.31.0
 
