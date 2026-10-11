@@ -3,13 +3,15 @@ import type {
   DiskSpaceItem,
 } from '@server/interfaces/api/settingsInterfaces';
 import logger from '@server/logger';
-import { getDirectoryUsage, type DirectoryUsage } from '@server/utils/pathSize';
+import {
+  getConfigDirectorySizes,
+  getMeasuredDirectorySize,
+  type DirectorySizes,
+} from '@server/utils/directorySize';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 
 const STATFS_TIMEOUT_MS = 10 * 1000;
-// Bounds time spent behind other disk scans; du itself has its own timeout.
-const QUEUE_WAIT_MS = 15 * 1000;
 
 const withTimeout = async <T>(
   promise: Promise<T>,
@@ -155,7 +157,8 @@ export const getDiskSpaceStats = async (diskPath: string) => {
  */
 export const getConfigDiskSpace = async (
   configPath: string,
-  directoryUsage: DirectoryUsage | null
+  directorySizes: DirectorySizes | null,
+  { directoriesPending = false }: { directoriesPending?: boolean } = {}
 ): Promise<{ items: DiskSpaceItem[]; failedPaths: DiskSpaceFailure[] }> => {
   const optionalPaths = [
     {
@@ -189,25 +192,27 @@ export const getConfigDiskSpace = async (
     })
   );
 
-  const getDirectoryBytes = (diskPath: string) => {
-    if (!directoryUsage) return undefined;
-
-    const resolvedPath = path.resolve(diskPath);
-
-    if (resolvedPath === path.resolve(configPath)) {
-      return directoryUsage.totalBytes;
-    }
-
-    // Entries du does not list (e.g. symlinks) consume no space under config.
-    return directoryUsage.children.get(resolvedPath) ?? 0;
-  };
+  const getDirectoryBytes = (diskPath: string) =>
+    directorySizes && !directorySizes.failed.has(path.resolve(diskPath))
+      ? getMeasuredDirectorySize(directorySizes, diskPath)
+      : undefined;
 
   const diskPaths = [
     { kind: 'filesystem' as const, name: 'Root filesystem', path: '/' },
-    { kind: 'directory' as const, name: 'Streamarr config', path: configPath },
-    ...existingOptionalPaths.filter(
-      (target): target is (typeof optionalPaths)[number] => target !== undefined
-    ),
+    // Directory rows appear once the first background walk completes.
+    ...(directoriesPending
+      ? []
+      : [
+          {
+            kind: 'directory' as const,
+            name: 'Streamarr config',
+            path: configPath,
+          },
+          ...existingOptionalPaths.filter(
+            (target): target is (typeof optionalPaths)[number] =>
+              target !== undefined
+          ),
+        ]),
   ];
 
   const results = await Promise.all(
@@ -268,94 +273,29 @@ export const getConfigDiskSpace = async (
   );
 };
 
-const DIRECTORY_USAGE_TTL_MS = 5 * 60 * 1000;
-
-type DiskSpaceResult = {
-  items: DiskSpaceItem[];
-  failedPaths: DiskSpaceFailure[];
-  cachedAt: number;
-  refreshing: boolean;
-};
-
-let directoryUsageCache: {
-  key: string;
-  usage: DirectoryUsage;
-  measuredAt: number;
-} | null = null;
-
-let directoryUsageRefresh: { key: string; promise: Promise<void> } | null =
-  null;
-
-// Tracked apart from measuredAt so failed scans back off instead of retrying on every poll.
-let lastDirectoryUsageAttempt: { key: string; startedAt: number } | null = null;
-
-const refreshDirectoryUsage = (configPath: string): Promise<void> => {
-  if (directoryUsageRefresh?.key === configPath) {
-    return directoryUsageRefresh.promise;
-  }
-
-  lastDirectoryUsageAttempt = { key: configPath, startedAt: Date.now() };
-
-  const promise = getDirectoryUsage(configPath, QUEUE_WAIT_MS)
-    .then((usage) => {
-      directoryUsageCache = {
-        key: configPath,
-        usage,
-        measuredAt: Date.now(),
-      };
-    })
-    .catch((e) => {
-      // Keep serving the last good measurement rather than dropping it.
-      logger.warn('Failed to calculate config directory sizes', {
-        label: 'Settings',
-        diskPath: configPath,
-        errorMessage: e instanceof Error ? e.message : 'Unknown error',
-      });
-    })
-    .finally(() => {
-      if (directoryUsageRefresh?.promise === promise) {
-        directoryUsageRefresh = null;
-      }
-    });
-
-  directoryUsageRefresh = { key: configPath, promise };
-  return promise;
-};
-
 /**
- * Filesystem stats are read live on every call; directory sizes are served
- * from cache and refreshed in the background once stale.
+ * Filesystem stats are read live on every call; directory sizes come from the
+ * last background walk so the request never waits on a directory scan.
  */
 export const getCachedConfigDiskSpace = async (
   configPath: string,
   { force = false }: { force?: boolean } = {}
-): Promise<DiskSpaceResult> => {
-  const cached =
-    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
-  const isRefreshing = directoryUsageRefresh?.key === configPath;
-  const canAutoRefresh =
-    lastDirectoryUsageAttempt?.key !== configPath ||
-    Date.now() - lastDirectoryUsageAttempt.startedAt > DIRECTORY_USAGE_TTL_MS;
+) => {
+  const { measured, measuredAt, refreshing } = getConfigDirectorySizes({
+    force,
+  });
+  const result = await getConfigDiskSpace(configPath, measured, {
+    directoriesPending: !measured,
+  });
 
-  if (force || (!cached && (isRefreshing || canAutoRefresh))) {
-    await refreshDirectoryUsage(configPath);
-  } else if (
-    cached &&
-    canAutoRefresh &&
-    Date.now() - cached.measuredAt > DIRECTORY_USAGE_TTL_MS
-  ) {
-    void refreshDirectoryUsage(configPath);
+  // Report a missing measurement once rather than as a failure per directory row.
+  if (!measured && !refreshing) {
+    result.failedPaths.push({ name: 'Streamarr config', path: configPath });
   }
-
-  // Snapshot together so a refresh finishing mid-request still triggers a follow-up poll.
-  const current =
-    directoryUsageCache?.key === configPath ? directoryUsageCache : null;
-  const refreshing = directoryUsageRefresh?.key === configPath;
-  const result = await getConfigDiskSpace(configPath, current?.usage ?? null);
 
   return {
     ...result,
-    cachedAt: current?.measuredAt ?? Date.now(),
+    cachedAt: measuredAt,
     refreshing,
   };
 };

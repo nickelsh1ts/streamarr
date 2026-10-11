@@ -30,7 +30,7 @@ export interface SettingsAboutResponse {
 export interface SettingsAboutDiskSpaceResponse {
   items: DiskSpaceItem[];
   failedPaths: DiskSpaceFailure[];
-  cachedAt: number;
+  cachedAt: number | null;
   refreshing: boolean;
 }
 
@@ -122,7 +122,8 @@ export interface CacheResponse {
     onboarding: { size: number; imageCount: number };
     newsletter: { size: number; imageCount: number };
   };
-  cachedAt: number;
+  cachedAt: number | null;
+  refreshing: boolean;
 }
 
 export interface StatusResponse {

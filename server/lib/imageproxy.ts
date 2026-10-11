@@ -1,7 +1,10 @@
 import { applyOutboundProxy } from '@server/lib/outboundProxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import { getPathUsedBytes } from '@server/utils/pathSize';
+import {
+  getMeasuredDirectorySize,
+  type DirectorySizes,
+} from '@server/utils/directorySize';
 import axios from 'axios';
 import rateLimit, { type rateLimitOptions } from 'axios-rate-limit';
 import { createHash } from 'crypto';
@@ -138,31 +141,15 @@ class ImageProxy {
   }
 
   public static async getImageStats(
-    key: string
+    key: string,
+    directorySizes: DirectorySizes | null
   ): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = path.join(baseCacheDirectory, key);
 
-    try {
-      await promises.lstat(cacheDirectory);
-    } catch (e) {
-      if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
-        return { size: 0, imageCount: 0 };
-      }
-    }
-
-    const [imageTotalSize, imageCount] = await Promise.all([
-      getPathUsedBytes(cacheDirectory).catch((e) => {
-        logger.warn('Failed to calculate image cache size', {
-          label: 'Image Cache',
-          cacheDirectory,
-          errorMessage: e instanceof Error ? e.message : 'Unknown error',
-        });
-        return 0;
-      }),
-      ImageProxy.getImageCount(cacheDirectory),
-    ]);
-
-    return { size: imageTotalSize, imageCount };
+    return {
+      size: getMeasuredDirectorySize(directorySizes, cacheDirectory),
+      imageCount: await ImageProxy.getImageCount(cacheDirectory),
+    };
   }
 
   private static async getImageCount(dir: string) {
