@@ -1651,15 +1651,15 @@ settingsRoutes.get('/cache', settingsCacheLimiter, async (req, res) => {
   }));
 
   const force = req.query.force === 'true';
-  const { imageCache, uploads, cachedAt } = await getCachedImageCacheOverview({
-    force,
-  });
+  const { imageCache, uploads, cachedAt, refreshing } =
+    await getCachedImageCacheOverview({ force });
 
   res.status(200).json({
     apiCaches,
     imageCache,
     uploads,
     cachedAt,
+    refreshing,
   } as CacheResponse);
 });
 

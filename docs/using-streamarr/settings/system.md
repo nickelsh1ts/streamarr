@@ -116,7 +116,7 @@ The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it 
 
 ## Disk Space
 
-The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes are cached and, once older than five minutes, refreshed in the background while the previous values stay visible; the refresh icon spins until the new values arrive. Use **Refresh** to force a fresh scan. The **Updated** label shows when the displayed directory sizes were collected.
+The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes come from a background walk of the config directory that runs once the last result is older than five minutes; the page never waits for it, previous values stay visible, and the refresh icon spins until new values arrive. Directory rows appear once the first walk after a restart completes. Use **Refresh** to start a new walk. The **Updated** label shows when the displayed directory sizes were collected. The same walk supplies the image cache and upload sizes on **Jobs & Cache**.
 
 ### What Is Shown
 
@@ -145,7 +145,7 @@ The usage bar changes colour as space fills up:
 If Streamarr cannot read one or more local paths (for example, due to permissions), a warning banner reads **"Some disk metrics are unavailable."** The paths that could be read are still shown; only the unreadable ones are omitted.
 
 {% hint style="info" %}
-Filesystem capacity is gathered with `df`, with a `statfs` fallback. Directory sizes are calculated only for the config directory and its selected children; `/` is never recursively scanned. Symbolic links are skipped. A missing optional cache directory is omitted; unreadable or timed-out paths are reported in the warning while other results remain visible.
+Filesystem capacity is read with `statfs`. Directory sizes are the total apparent size of files under the config directory and its selected children; `/` is never recursively scanned. Symbolic links are skipped. A missing optional cache directory is omitted; unreadable paths are reported in the warning while other results remain visible.
 {% endhint %}
 
 ---

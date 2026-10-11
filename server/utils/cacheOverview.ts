@@ -3,7 +3,11 @@ import { logoUpload } from '@server/lib/logoUpload';
 import { newsletterImageService } from '@server/lib/newsletters/images';
 import { onboardingImageService } from '@server/lib/onboarding';
 import { qrProxy } from '@server/lib/qrcodeproxy';
-import { getPathUsedBytes } from '@server/utils/pathSize';
+import {
+  getConfigDirectorySizes,
+  getMeasuredDirectorySize,
+  type DirectorySizes,
+} from '@server/utils/directorySize';
 import { readdir } from 'fs/promises';
 
 export type ImageCacheOverview = {
@@ -23,78 +27,47 @@ export type UploadsOverview = {
 export type CacheOverviewResult = {
   imageCache: ImageCacheOverview;
   uploads: UploadsOverview;
-  cachedAt: number;
+  /** Null until the first background walk completes; sizes read as 0 until then. */
+  cachedAt: number | null;
+  refreshing: boolean;
 };
 
-const IMAGE_CACHE_TTL_MS = 60 * 1000;
-
-const EMPTY_STATS = { size: 0, imageCount: 0 };
-
-// Upload directories are created lazily on first upload, so measuring one that
-// does not exist yet is expected rather than an error.
+// Upload directories are created lazily on first upload, so a missing one is expected.
 const getDirectoryStats = async (
-  directory: string
+  directory: string,
+  measured: DirectorySizes | null
 ): Promise<{ size: number; imageCount: number }> => {
-  const filenames = await readdir(directory).catch(() => null);
+  const filenames = await readdir(directory).catch(() => [] as string[]);
 
-  if (!filenames) {
-    return EMPTY_STATS;
-  }
-
-  const size = await getPathUsedBytes(directory).catch(() => 0);
-
-  return { size, imageCount: filenames.length };
+  return {
+    size: getMeasuredDirectorySize(measured, directory),
+    imageCount: filenames.length,
+  };
 };
 
-let imageCacheOverviewCache: {
-  expiresAt: number;
-  promise: Promise<CacheOverviewResult>;
-} | null = null;
-
-const computeImageCacheOverview = async (): Promise<CacheOverviewResult> => {
+/** Counts are read live; sizes come from the last background config walk. */
+export const getCachedImageCacheOverview = async ({
+  force = false,
+}: { force?: boolean } = {}): Promise<CacheOverviewResult> => {
+  const { measured, measuredAt, refreshing } = getConfigDirectorySizes({
+    force,
+  });
   const [tmdb, tvdb, plex, avatar, qrcode, logos, onboarding, newsletter] =
     await Promise.all([
-      ImageProxy.getImageStats('tmdb'),
-      ImageProxy.getImageStats('tvdb'),
-      ImageProxy.getImageStats('plex'),
-      ImageProxy.getImageStats('avatar'),
-      qrProxy.getCacheStats(),
-      getDirectoryStats(logoUpload.directory),
-      getDirectoryStats(onboardingImageService.directory),
-      getDirectoryStats(newsletterImageService.directory),
+      ImageProxy.getImageStats('tmdb', measured),
+      ImageProxy.getImageStats('tvdb', measured),
+      ImageProxy.getImageStats('plex', measured),
+      ImageProxy.getImageStats('avatar', measured),
+      qrProxy.getCacheStats(measured),
+      getDirectoryStats(logoUpload.directory, measured),
+      getDirectoryStats(onboardingImageService.directory, measured),
+      getDirectoryStats(newsletterImageService.directory, measured),
     ]);
 
   return {
     imageCache: { tmdb, tvdb, plex, avatar, qrcode },
     uploads: { logos, onboarding, newsletter },
-    cachedAt: Date.now(),
+    cachedAt: measuredAt,
+    refreshing,
   };
-};
-
-export const getCachedImageCacheOverview = async ({
-  force = false,
-}: { force?: boolean } = {}): Promise<CacheOverviewResult> => {
-  const now = Date.now();
-
-  if (
-    !force &&
-    imageCacheOverviewCache &&
-    imageCacheOverviewCache.expiresAt > now
-  ) {
-    return imageCacheOverviewCache.promise;
-  }
-
-  const promise = computeImageCacheOverview();
-  imageCacheOverviewCache = {
-    expiresAt: now + IMAGE_CACHE_TTL_MS,
-    promise,
-  };
-
-  promise.catch(() => {
-    if (imageCacheOverviewCache?.promise === promise) {
-      imageCacheOverviewCache = null;
-    }
-  });
-
-  return promise;
 };

@@ -1,5 +1,8 @@
 import logger from '@server/logger';
-import { getPathUsedBytes } from '@server/utils/pathSize';
+import {
+  getMeasuredDirectorySize,
+  type DirectorySizes,
+} from '@server/utils/directorySize';
 import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -97,32 +100,18 @@ class QRCodeProxy {
     }
   }
 
-  public async getCacheStats(): Promise<{ size: number; imageCount: number }> {
+  public async getCacheStats(
+    directorySizes: DirectorySizes | null
+  ): Promise<{ size: number; imageCount: number }> {
     const cacheDirectory = this.getCacheDirectory();
+    const entries = await fs
+      .readdir(cacheDirectory)
+      .catch(() => [] as string[]);
 
-    try {
-      await fs.lstat(cacheDirectory);
-    } catch (e) {
-      if (e && typeof e === 'object' && 'code' in e && e.code === 'ENOENT') {
-        return { size: 0, imageCount: 0 };
-      }
-    }
-
-    const [size, entries] = await Promise.all([
-      getPathUsedBytes(cacheDirectory).catch((e) => {
-        logger.warn('Failed to calculate QR cache size', {
-          label: 'QRCodeProxy',
-          cacheDirectory,
-          errorMessage: e instanceof Error ? e.message : 'Unknown error',
-        });
-        return 0;
-      }),
-      fs.readdir(cacheDirectory).catch(() => [] as string[]),
-    ]);
-
-    const imageCount = entries.filter((file) => file.endsWith('.png')).length;
-
-    return { size, imageCount };
+    return {
+      size: getMeasuredDirectorySize(directorySizes, cacheDirectory),
+      imageCount: entries.filter((file) => file.endsWith('.png')).length,
+    };
   }
 
   public async deleteImage(cacheKey: string) {

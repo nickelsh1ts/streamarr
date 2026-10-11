@@ -5408,8 +5408,8 @@ paths:
       summary: Get a list of active caches
       description: >-
         Retrieves a list of all active caches and their current stats.
-        Image/QR cache size stats are cached server-side for a short period;
-        pass `force=true` to bypass that cache and recompute immediately.
+        Image counts are read live; sizes come from a background directory
+        walk that refreshes once stale. Pass `force=true` to start a new walk.
       tags:
         - settings
       parameters:
@@ -5419,8 +5419,8 @@ paths:
             type: boolean
             default: false
           description: >-
-            Bypass the server-side cache and recompute image/QR cache stats
-            immediately.
+            Start a background recalculation of image/upload sizes without
+            waiting for it to finish.
       responses:
         '200':
           description: Caches returned
@@ -5431,8 +5431,15 @@ paths:
                 properties:
                   cachedAt:
                     type: number
-                    description: Epoch ms when the imageCache stats were computed.
+                    nullable: true
+                    description: >-
+                      Epoch ms when the sizes were last measured; null (with
+                      sizes reported as 0) until the first measurement completes.
                     example: 1735689600000
+                  refreshing:
+                    type: boolean
+                    description: A background size recalculation is in progress.
+                    example: false
                   imageCache:
                     type: object
                     properties:
@@ -6188,8 +6195,9 @@ paths:
       summary: Get disk space usage
       description: >-
         Returns root filesystem capacity and Streamarr config directory sizes.
-        Filesystem capacity is read live; directory sizes are cached and
-        refreshed in the background once stale unless forced.
+        Filesystem capacity is read live; directory sizes come from a
+        background walk that refreshes once stale, so the request never waits
+        on a directory scan.
       tags:
         - settings
       parameters:
@@ -6197,7 +6205,7 @@ paths:
           name: force
           schema:
             type: boolean
-          description: Recalculate directory sizes instead of using the cached result.
+          description: Start a background recalculation of directory sizes.
       responses:
         '200':
           description: Disk space usage
@@ -6208,6 +6216,8 @@ paths:
                 properties:
                   cachedAt:
                     type: number
+                    nullable: true
+                    description: Epoch ms when directory sizes were last measured; null until the first measurement completes.
                     example: 1760000000000
                   refreshing:
                     type: boolean

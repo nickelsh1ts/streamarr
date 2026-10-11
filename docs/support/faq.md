@@ -249,9 +249,8 @@ Counts refresh automatically once Plex is reachable. To force an immediate refre
 ### Streamarr is slow or freezes briefly
 
 If the app briefly freezes or becomes unresponsive — often noticeable when
-opening **System Settings** (Disk Space) or **Jobs & Cache**, and
-occasionally paired with a log entry like `du is unavailable; falling back to
-recursive path size walk` — this is usually disk I/O contention:
+opening **System Settings** (Disk Space) or **Jobs & Cache** — this is
+usually disk I/O contention:
 
 - Streamarr's SQLite database is synchronous and lives in `config/db/`,
   alongside `config/cache`. When something scans a large `cache` directory
@@ -265,8 +264,8 @@ recursive path size walk` — this is usually disk I/O contention:
 To reduce this:
 
 1. Update to the latest version — recent releases read filesystem capacity
-   with a single `statfs` call, measure the config directory in one `du`
-   walk, and refresh directory sizes in the background.
+   with a single `statfs` call and measure directory sizes in one background
+   walk that pages never wait on.
 2. If `config` is on a NAS/network share, moving it to local/faster storage
    will help the most.
 3. Try raising `UV_THREADPOOL_SIZE` (e.g. to `8`) — see
