@@ -248,7 +248,8 @@ class AudiobookshelfAPI extends ExternalAPI {
       };
     } catch (e) {
       throw new Error(
-        `[Audiobookshelf] Failed to log in as "${username}": ${e instanceof Error ? e.message : String(e)}`
+        `[Audiobookshelf] Failed to log in as "${username}": ${e instanceof Error ? e.message : String(e)}`,
+        { cause: e }
       );
     }
   }
