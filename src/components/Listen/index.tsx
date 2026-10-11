@@ -2,6 +2,7 @@
 import Button from '@app/components/Common/Button';
 import DynamicFrame from '@app/components/Common/DynamicFrame';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import { ServiceUnavailable } from '@app/components/Common/ServiceError';
 import AudiobookshelfModal from '@app/components/UserProfile/UserSettings/UserSettingsAccounts/AudiobookshelfModal';
 import useRouteGuard from '@app/hooks/useRouteGuard';
 import { Permission, useUser } from '@app/hooks/useUser';
@@ -78,6 +79,19 @@ const Listen = ({ children }: { children?: React.ReactNode }) => {
 
   if (isLoading) {
     return <LoadingEllipsis />;
+  }
+
+  if (
+    isConfigured &&
+    authIssue &&
+    (!authIssue.status || authIssue.status >= 500)
+  ) {
+    return (
+      <ServiceUnavailable
+        serviceName="Audiobookshelf"
+        onRetry={() => window.location.reload()}
+      />
+    );
   }
 
   if (isConfigured && authIssue) {

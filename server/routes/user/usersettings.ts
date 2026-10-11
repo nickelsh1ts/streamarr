@@ -64,6 +64,7 @@ import {
   normalizeSharedLibrariesValue,
   resolveSharedLibraryKeys,
 } from '@server/utils/sharedLibraries';
+import axios from 'axios';
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 
@@ -80,8 +81,12 @@ async function signInAudiobookshelf(
 ) {
   try {
     return await api.login(username, password);
-  } catch {
-    return null;
+  } catch (e) {
+    const cause = e instanceof Error ? e.cause : e;
+    if (axios.isAxiosError(cause) && cause.response?.status === 401) {
+      return null;
+    }
+    throw e;
   }
 }
 
