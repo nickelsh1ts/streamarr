@@ -122,7 +122,7 @@ const LocalSignupForm = ({
           <div className="bg-secondary/50 border-secondary place-content-center rounded-b-lg border p-4">
             <Form className="mt-4">
               <div>
-                <div className="input input-primary mb-2 flex items-center">
+                <div className="input input-primary mb-2 flex w-full items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -147,7 +147,7 @@ const LocalSignupForm = ({
                     {errors.username}
                   </div>
                 )}
-                <div className="input input-primary mb-2 flex items-center">
+                <div className="input input-primary mb-2 flex w-full items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -174,7 +174,7 @@ const LocalSignupForm = ({
                     {errors.email}
                   </div>
                 )}
-                <div className="input input-primary mt-5 mb-2 flex items-center pr-0">
+                <div className="input input-primary mt-5 mb-2 flex w-full items-center pr-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -203,7 +203,7 @@ const LocalSignupForm = ({
                     {errors.password}
                   </div>
                 )}
-                <div className="input input-primary mb-2 flex items-center pr-0">
+                <div className="input input-primary mb-2 flex w-full items-center pr-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
