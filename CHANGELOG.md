@@ -1,3 +1,9 @@
+## [1.17.1](https://github.com/nickelsh1ts/streamarr/compare/v1.17.0...v1.17.1) (2026-10-11)
+
+### 🐛 Bug Fixes
+
+* **audiobookshelf:** add service unavailable handler to login ([54cbc12](https://github.com/nickelsh1ts/streamarr/commit/54cbc1245776dba80122bd616f3a454abb83fa96))
+
 ## [1.17.0](https://github.com/nickelsh1ts/streamarr/compare/v1.16.1...v1.17.0) (2026-10-02)
 
 ### ✨ Features
