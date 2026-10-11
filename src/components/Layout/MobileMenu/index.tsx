@@ -287,7 +287,7 @@ const MobileMenu = () => {
       <Transition
         show={isOpen}
         as="div"
-        className="border-primary bg-primary/30 absolute top-0 right-0 left-0 flex max-h-[85dvh] w-full -translate-y-full flex-col border-t px-6 pt-6 font-semibold opacity-100 backdrop-blur transition duration-500 ease-out data-closed:translate-y-0 data-closed:opacity-0 data-leave:translate-y-0 data-leave:opacity-0 data-leave:duration-500"
+        className="border-primary bg-primary/30 absolute top-0 right-0 left-0 flex max-h-[min(85dvh,calc(100dvh-3rem-env(safe-area-inset-bottom,0px)))] w-full -translate-y-full flex-col overflow-y-auto border-t px-6 pt-6 font-semibold opacity-100 backdrop-blur transition duration-500 ease-out *:shrink-0 data-closed:translate-y-0 data-closed:opacity-0 data-leave:translate-y-0 data-leave:opacity-0 data-leave:duration-500"
       >
         {menuType === 'nav' ? (
           filteredLinks.map((link) => {
@@ -394,7 +394,7 @@ const MobileMenu = () => {
           </>
         )}
       </Transition>
-      <div className="padding-bottom-safe border-primary bg-primary/30 border-t backdrop-blur">
+      <div className="border-primary bg-primary/30 border-t pb-[env(safe-area-inset-bottom,0px)] backdrop-blur">
         <div className="text-primary-content flex h-full items-center justify-between px-6 py-2 backdrop-filter-none">
           <button
             data-tutorial="mobile-menu-toggle"
