@@ -115,7 +115,7 @@ const SignIn = () => {
                     ? 'text-primary-content cursor-not-allowed'
                     : 'cursor-pointer'
                 }`}
-                disabled={openIndexes.includes(0)}
+                aria-disabled={openIndexes.includes(0)}
                 data-testid="signin-plex-accordion-toggle"
                 onClick={() => handleClick(0)}
               >
@@ -153,7 +153,7 @@ const SignIn = () => {
                         ? 'text-primary-content cursor-not-allowed'
                         : 'cursor-pointer rounded-b-lg'
                     }`}
-                    disabled={openIndexes.includes(1)}
+                    aria-disabled={openIndexes.includes(1)}
                     data-testid="signin-local-accordion-toggle"
                     onClick={() => handleClick(1)}
                   >
