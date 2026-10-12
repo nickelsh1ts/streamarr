@@ -114,7 +114,7 @@ const SignUpAuthForm = ({
                 ? 'text-primary-content cursor-not-allowed'
                 : 'cursor-pointer'
             }`}
-            disabled={openIndexes.includes(0)}
+            aria-disabled={openIndexes.includes(0)}
             onClick={() => handleClick(0)}
           >
             <FormattedMessage
@@ -172,7 +172,7 @@ const SignUpAuthForm = ({
                     ? 'text-primary-content cursor-not-allowed'
                     : 'cursor-pointer rounded-b-lg'
                 }`}
-                disabled={openIndexes.includes(1)}
+                aria-disabled={openIndexes.includes(1)}
                 onClick={() => handleClick(1)}
               >
                 <FormattedMessage
