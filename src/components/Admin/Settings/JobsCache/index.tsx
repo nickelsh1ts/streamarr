@@ -98,12 +98,15 @@ const JobsCacheSettings = () => {
     refreshInterval: 5000,
   });
   const { data: appData } = useSWR('/api/v1/status/appdata');
+  const [isCachePolling, setIsCachePolling] = useState(false);
   const {
     data: cacheData,
     mutate: cacheRevalidate,
     isLoading,
   } = useSWR<CacheResponse>('/api/v1/settings/cache', {
-    refreshInterval: (latest) => (latest?.refreshing ? 3000 : 60000),
+    // A function interval restarts SWR's timer on every render, which can starve polling.
+    refreshInterval: isCachePolling ? 3000 : 60000,
+    onSuccess: (latest) => setIsCachePolling(latest.refreshing),
   });
   const [isRefreshingCache, setIsRefreshingCache] = useState(false);
 
@@ -188,6 +191,7 @@ const JobsCacheSettings = () => {
         '/api/v1/settings/cache?force=true'
       );
       cacheRevalidate(freshCacheData, { revalidate: false });
+      setIsCachePolling(freshCacheData.refreshing);
     } finally {
       setIsRefreshingCache(false);
     }

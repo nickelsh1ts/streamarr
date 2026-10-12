@@ -1650,7 +1650,7 @@ settingsRoutes.get('/cache', settingsCacheLimiter, async (req, res) => {
     stats: cache.getStats(),
   }));
 
-  const force = req.query.force === 'true';
+  const force = String(req.query.force) === 'true';
   const { imageCache, uploads, cachedAt, refreshing } =
     await getCachedImageCacheOverview({ force });
 
@@ -1746,7 +1746,7 @@ settingsRoutes.get(
   settingsAboutDiskSpaceLimiter,
   async (req, res) => {
     const diskSpace = await getCachedConfigDiskSpace(appDataPath(), {
-      force: req.query.force === 'true',
+      force: String(req.query.force) === 'true',
     });
     res.status(200).json(diskSpace as SettingsAboutDiskSpaceResponse);
   }
