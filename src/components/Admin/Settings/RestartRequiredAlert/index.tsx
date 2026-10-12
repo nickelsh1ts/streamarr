@@ -12,14 +12,18 @@ export const RESTART_REQUIRED_SWR_KEY = '/api/v1/settings/restart-required';
 
 interface RestartRequiredAlertProps {
   filterServices?: string[];
+  restartController?: ReturnType<typeof useServerRestart>;
 }
 
 const RestartRequiredAlert = ({
   filterServices,
+  restartController,
 }: RestartRequiredAlertProps) => {
   const intl = useIntl();
   const pathname = usePathname();
-  const { isRestarting, isReconnecting, restart } = useServerRestart();
+  const defaultRestart = useServerRestart();
+  const { isRestarting, isReconnecting, restart } =
+    restartController ?? defaultRestart;
 
   const { data, error } = useSWR<RestartStatusResponse>(
     RESTART_REQUIRED_SWR_KEY,
