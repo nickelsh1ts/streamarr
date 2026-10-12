@@ -37,10 +37,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ctrl/deluge": "^8.0.0",
-    "@ctrl/qbittorrent": "^9.11.2",
+    "@ctrl/deluge": "^9.0.0",
+    "@ctrl/qbittorrent": "^10.0.0",
     "@ctrl/shared-torrent": "^6.5.1",
-    "@ctrl/transmission": "^7.4.0",
+    "@ctrl/transmission": "^8.0.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
