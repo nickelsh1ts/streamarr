@@ -120,11 +120,14 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
   const intl = useIntl();
   const [now, setNow] = useState(() => Date.now());
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
   const { data, error, mutate } = useSWR<SettingsAboutDiskSpaceResponse>(
     '/api/v1/settings/about/diskspace',
     {
       revalidateOnFocus: false,
-      refreshInterval: (latest) => (latest?.refreshing ? 3000 : 0),
+      // Function intervals reset on each render; the System page re-renders every second.
+      refreshInterval: isPolling ? 3000 : 0,
+      onSuccess: (latest) => setIsPolling(latest.refreshing),
     }
   );
 
@@ -141,6 +144,7 @@ const DiskSpace = ({ appDataPath }: DiskSpaceProps) => {
           '/api/v1/settings/about/diskspace?force=true'
         );
       mutate(freshDiskSpace, { revalidate: false });
+      setIsPolling(freshDiskSpace.refreshing);
     } finally {
       setIsRefreshing(false);
     }

@@ -264,15 +264,16 @@ jobs:
         run: |
           identity=(--certificate-identity "$CERT_IDENTITY" --certificate-oidc-issuer https://token.actions.githubusercontent.com)
           images=("ghcr.io/${GITHUB_REPOSITORY}@${GHCR_DIGEST}" "${DOCKER_HUB}@${DOCKER_HUB_DIGEST}")
+          # Discard stdout: verify-attestation prints the full SBOM as one multi-MB line, which stalls runner log masking.
           for image in "${images[@]}"; do
-            cosign verify "${identity[@]}" "$image"
-            cosign verify-attestation --type cyclonedx "${identity[@]}" "$image"
+            cosign verify "${identity[@]}" "$image" > /dev/null
+            cosign verify-attestation --type cyclonedx "${identity[@]}" "$image" > /dev/null
             # Platform manifests are signed via --recursive; verify each one listed in the index.
             index=$(docker buildx imagetools inspect "$image" --raw)
             for platform in linux/amd64 linux/arm64; do
               digest=$(jq -er --arg p "$platform" \
                 '.manifests[] | select("\(.platform.os)/\(.platform.architecture)" == $p) | .digest' <<< "$index")
-              cosign verify "${identity[@]}" "${image%@*}@${digest}"
+              cosign verify "${identity[@]}" "${image%@*}@${digest}" > /dev/null
             done
           done
 

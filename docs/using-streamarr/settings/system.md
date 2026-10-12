@@ -14,25 +14,24 @@ The System page requires **Admin** permission.
 
 ## Health Monitoring
 
-The System page displays a health card for the Streamarr server and for **every enabled and configured service**, giving administrators a real-time view of the whole stack.
+The System page features an issue-first health dashboard and restart controls for the Streamarr server process and **every enabled and configured service**.
 
-### Streamarr Server
+### Server Controls
 
-The main server process that handles the web interface, API, and all integrations.
+Administrators can manually restart the server at any time using the **Restart Server** button in the Health section header. Clicking the button prompts for confirmation, then smoothly displays a spinning restart/reconnecting indicator while the process restarts.
 
-| Status               | Description                                                   |
-| -------------------- | ------------------------------------------------------------- |
-| **Healthy**          | Server is running normally                                    |
-| **Restart Required** | Settings changes require a restart to take effect (see below) |
-| **Unknown**          | Status could not be determined                                |
+When settings changes require a restart (such as proxy or connection adjustments), the standard **Restart Required** alert appears at the top of the System page with a **Restart Now** action.
 
-When the status shows **Restart Required**, a restart button is available directly on the health card.
+### Issue-First Service Health
 
-### Service Health
+To keep the page uncluttered when many services are configured, the health section uses an issue-first layout:
 
-Below the Streamarr card, a card is shown for each configured service — Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Cleanuparr, NeXroll, Audiobookshelf, Tautulli, Seerr, and download clients. Only services that are **enabled and configured** appear; disabled services are hidden.
+- **All Healthy**: When every service is operational, a single compact status row displays **All {total} services operational**. Click **Show details** to expand and view individual service cards.
+- **Issues Detected**: When one or more services report an issue or are retrying, those services appear directly at the top with their error details and **Retry** buttons. Multi-instance services with a failing child automatically expand so the issue is immediately visible. All healthy services collapse into a **{count} healthy services** accordion below.
 
-Each card shows a status badge and, where the service exposes it, the running **version**:
+Only services that are **enabled and configured** appear (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Cleanuparr, NeXroll, Audiobookshelf, Shelfmark, Calibre-Web, Tautulli, Seerr, and download clients).
+
+Each service card displays a status badge and, where reported, the running **version**:
 
 | Status        | Description                                                                     |
 | ------------- | ------------------------------------------------------------------------------- |
@@ -42,12 +41,12 @@ Each card shows a status badge and, where the service exposes it, the running **
 | **Unknown**   | Status has not yet been determined                                              |
 
 - **Plex** reflects Streamarr's existing connection-health state, including its retry cooldown. The other services are actively probed when the page loads.
-- **Version** is shown for services that report one (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Audiobookshelf, Tautulli, Seerr, and download clients). **Cleanuparr** does not expose a version, so its card shows how many services it is monitoring instead.
-- Each card has a **Retry** button that re-checks that service immediately.
+- **Version** is shown for services that report one (Plex, Radarr, Sonarr, Prowlarr, Lidarr, Chaptarr, Bazarr, Tdarr, Audiobookshelf, Shelfmark, Tautulli, Seerr, and download clients). **Cleanuparr** does not expose a version, so its card shows how many services it is monitoring instead.
+- Each service card has a **Retry** button that re-checks that service immediately.
 
 ### Multi-instance Services
 
-Radarr, Sonarr, and download clients can have multiple instances. These render as a **collapsible parent card** with an aggregated status (unhealthy if any instance is unhealthy) and an "{healthy} of {total} healthy" summary. Expand the card to see a row per instance, each with its own status, version, and Retry button.
+Radarr, Sonarr, and download clients can have multiple instances. These render as a **collapsible parent card** with an aggregated status (unhealthy if any instance is unhealthy) and an "{healthy} of {total} healthy" summary. When healthy, they can be manually toggled to view per-instance details. When an instance fails, the card automatically expands to show the affected instance, error message, and Retry button.
 
 {% hint style="info" %}
 Service health is checked when the System page loads and revalidated when the browser tab regains focus. Use a card's **Retry** button to force an immediate re-check.
@@ -116,7 +115,7 @@ The UI shows a "Restarting..." indicator followed by "Reconnecting..." while it 
 
 ## Disk Space
 
-The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes are cached and, once older than five minutes, refreshed in the background while the previous values stay visible; the refresh icon spins until the new values arrive. Use **Refresh** to force a fresh scan. The **Updated** label shows when the displayed directory sizes were collected.
+The System page reports capacity for the root filesystem (`/`) and the size of Streamarr's configuration directory and selected subdirectories. Filesystem capacity is read live on every load. Directory sizes come from a background walk of the config directory that runs once the last result is older than five minutes; the page never waits for it, previous values stay visible, and the refresh icon spins until new values arrive. Directory rows appear once the first walk after a restart completes. Use **Refresh** to start a new walk. The **Updated** label shows when the displayed directory sizes were collected. The same walk supplies the image cache and upload sizes on **Jobs & Cache**.
 
 ### What Is Shown
 
@@ -145,7 +144,7 @@ The usage bar changes colour as space fills up:
 If Streamarr cannot read one or more local paths (for example, due to permissions), a warning banner reads **"Some disk metrics are unavailable."** The paths that could be read are still shown; only the unreadable ones are omitted.
 
 {% hint style="info" %}
-Filesystem capacity is gathered with `df`, with a `statfs` fallback. Directory sizes are calculated only for the config directory and its selected children; `/` is never recursively scanned. Symbolic links are skipped. A missing optional cache directory is omitted; unreadable or timed-out paths are reported in the warning while other results remain visible.
+Filesystem capacity is read with `statfs`. Directory sizes are the total apparent size of files under the config directory and its selected children; `/` is never recursively scanned. Symbolic links are skipped. A missing optional cache directory is omitted; unreadable paths are reported in the warning while other results remain visible.
 {% endhint %}
 
 ---

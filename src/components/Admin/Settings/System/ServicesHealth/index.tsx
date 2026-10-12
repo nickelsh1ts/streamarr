@@ -136,16 +136,23 @@ const ServiceCard = ({
   service,
   onRetry,
   retryingId,
+  defaultExpanded,
 }: {
   service: ServiceHealth;
   onRetry: (id: string) => void;
   retryingId: string | null;
+  defaultExpanded?: boolean;
 }) => {
   const intl = useIntl();
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const hasMultipleInstances =
     !!service.instances && service.instances.length > 1;
+
+  const hasInstanceIssue =
+    service.instances?.some((i) => i.status !== 'healthy') ?? false;
+
+  const [isExpanded, setIsExpanded] = useState(
+    defaultExpanded ?? hasInstanceIssue
+  );
 
   // Single-instance multi-capable services render flat using their one child.
   const singleInstance =
@@ -263,6 +270,7 @@ const ServicesHealth = () => {
   );
 
   const [retryingId, setRetryingId] = useState<string | null>(null);
+  const [showHealthy, setShowHealthy] = useState(false);
 
   const handleRetry = useCallback(
     async (id: string) => {
@@ -298,17 +306,137 @@ const ServicesHealth = () => {
     return null;
   }
 
-  return (
-    <>
-      {data.services.map((service) => (
-        <ServiceCard
-          key={service.id}
-          service={service}
-          onRetry={handleRetry}
-          retryingId={retryingId}
+  if (data.services.length === 0) {
+    return (
+      <div className="border-base-content/10 bg-base-200/50 text-neutral rounded-lg border px-4 py-3 text-center text-sm">
+        <FormattedMessage
+          id="system.health.noServices"
+          defaultMessage="No services configured."
         />
-      ))}
-    </>
+      </div>
+    );
+  }
+
+  const isServiceHealthy = (s: ServiceHealth) =>
+    s.status === 'healthy' &&
+    (!s.instances || s.instances.every((i) => i.status === 'healthy'));
+
+  const issueServices = data.services.filter((s) => !isServiceHealthy(s));
+  const healthyServices = data.services.filter((s) => isServiceHealthy(s));
+
+  return (
+    <div className="flex flex-col gap-2">
+      {issueServices.length === 0 ? (
+        <>
+          <div className="border-base-content/10 bg-base-200/50 hover:bg-base-200/30 flex flex-row items-center justify-between rounded-lg border px-4 py-2.5">
+            <div className="flex items-center gap-2">
+              <StatusBadge status="healthy" />
+              <span className="font-semibold">
+                <FormattedMessage
+                  id="system.health.allHealthy"
+                  defaultMessage="All {total} services operational"
+                  values={{ total: data.services.length }}
+                />
+              </span>
+            </div>
+            <Button
+              buttonType="ghost"
+              buttonSize="sm"
+              onClick={() => setShowHealthy((prev) => !prev)}
+              aria-expanded={showHealthy}
+              className="border-base-content/10 text-neutral hover:text-base-content border"
+            >
+              {showHealthy ? (
+                <>
+                  <FormattedMessage
+                    id="system.health.hideDetails"
+                    defaultMessage="Hide details"
+                  />
+                  <ChevronDownIcon className="ml-1 size-4" />
+                </>
+              ) : (
+                <>
+                  <FormattedMessage
+                    id="system.health.showDetails"
+                    defaultMessage="Show details"
+                  />
+                  <ChevronRightIcon className="ml-1 size-4" />
+                </>
+              )}
+            </Button>
+          </div>
+          {showHealthy &&
+            healthyServices.map((service) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                onRetry={handleRetry}
+                retryingId={retryingId}
+              />
+            ))}
+        </>
+      ) : (
+        <>
+          {issueServices.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onRetry={handleRetry}
+              retryingId={retryingId}
+            />
+          ))}
+          {healthyServices.length > 0 && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowHealthy((prev) => !prev)}
+                aria-expanded={showHealthy}
+                className="border-base-content/10 bg-base-200/50 hover:bg-base-200/30 text-base-content/80 hover:text-base-content flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-semibold transition hover:cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <StatusBadge status="healthy" />
+                  <span>
+                    <FormattedMessage
+                      id="system.health.healthyCount"
+                      defaultMessage="{count} healthy {count, plural, one {service} other {services}}"
+                      values={{ count: healthyServices.length }}
+                    />
+                  </span>
+                </div>
+                <span className="text-neutral flex items-center gap-1 text-xs font-normal">
+                  {showHealthy ? (
+                    <>
+                      <FormattedMessage
+                        id="system.health.hideHealthy"
+                        defaultMessage="Hide"
+                      />
+                      <ChevronDownIcon className="size-4" />
+                    </>
+                  ) : (
+                    <>
+                      <FormattedMessage
+                        id="system.health.showHealthy"
+                        defaultMessage="Show"
+                      />
+                      <ChevronRightIcon className="size-4" />
+                    </>
+                  )}
+                </span>
+              </button>
+              {showHealthy &&
+                healthyServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    onRetry={handleRetry}
+                    retryingId={retryingId}
+                  />
+                ))}
+            </>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 

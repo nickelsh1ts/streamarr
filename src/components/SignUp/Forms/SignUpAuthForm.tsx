@@ -110,9 +110,11 @@ const SignUpAuthForm = ({
         <div className="text-primary-content my-4 backdrop-blur-md">
           <button
             className={`collapse-title border-primary bg-primary/40 mb-px w-full rounded-t-lg border text-start ${
-              openIndexes.includes(0) &&
-              'text-primary-content cursor-not-allowed'
+              openIndexes.includes(0)
+                ? 'text-primary-content cursor-not-allowed'
+                : 'cursor-pointer'
             }`}
+            aria-disabled={openIndexes.includes(0)}
             onClick={() => handleClick(0)}
           >
             <FormattedMessage
@@ -168,8 +170,9 @@ const SignUpAuthForm = ({
                 className={`collapse-title border-primary bg-primary/40 w-full border text-start ${
                   openIndexes.includes(1)
                     ? 'text-primary-content cursor-not-allowed'
-                    : 'rounded-b-lg'
+                    : 'cursor-pointer rounded-b-lg'
                 }`}
+                aria-disabled={openIndexes.includes(1)}
                 onClick={() => handleClick(1)}
               >
                 <FormattedMessage

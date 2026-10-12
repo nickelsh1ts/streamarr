@@ -98,12 +98,15 @@ const JobsCacheSettings = () => {
     refreshInterval: 5000,
   });
   const { data: appData } = useSWR('/api/v1/status/appdata');
+  const [isCachePolling, setIsCachePolling] = useState(false);
   const {
     data: cacheData,
     mutate: cacheRevalidate,
     isLoading,
   } = useSWR<CacheResponse>('/api/v1/settings/cache', {
-    refreshInterval: 60000,
+    // A function interval restarts SWR's timer on every render, which can starve polling.
+    refreshInterval: isCachePolling ? 3000 : 60000,
+    onSuccess: (latest) => setIsCachePolling(latest.refreshing),
   });
   const [isRefreshingCache, setIsRefreshingCache] = useState(false);
 
@@ -188,6 +191,7 @@ const JobsCacheSettings = () => {
         '/api/v1/settings/cache?force=true'
       );
       cacheRevalidate(freshCacheData, { revalidate: false });
+      setIsCachePolling(freshCacheData.refreshing);
     } finally {
       setIsRefreshingCache(false);
     }
@@ -592,11 +596,11 @@ const JobsCacheSettings = () => {
               type="button"
               buttonSize="xs"
               buttonType="ghost"
-              disabled={isRefreshingCache}
+              disabled={isRefreshingCache || cacheData?.refreshing}
               onClick={() => refreshCache()}
             >
               <ArrowPathIcon
-                className={`size-5 ${isRefreshingCache ? 'animate-spin' : ''}`}
+                className={`size-5 ${isRefreshingCache || cacheData?.refreshing ? 'animate-spin' : ''}`}
               />
               <span className="sr-only">
                 <FormattedMessage id="cache.refresh" defaultMessage="Refresh" />

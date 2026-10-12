@@ -701,9 +701,6 @@
   "common.resetToDefault": {
     "defaultMessage": "Reset to Default"
   },
-  "common.restart": {
-    "defaultMessage": "Restart"
-  },
   "common.restartRequired": {
     "defaultMessage": "Restart Required"
   },
@@ -6005,17 +6002,38 @@
   "sonarrSettings.title": {
     "defaultMessage": "Sonarr Settings"
   },
+  "system.health.allHealthy": {
+    "defaultMessage": "All {total} services operational"
+  },
   "system.health.collapseInstances": {
     "defaultMessage": "Hide instances"
   },
   "system.health.expandInstances": {
     "defaultMessage": "Show instances"
   },
+  "system.health.healthyCount": {
+    "defaultMessage": "{count} healthy {count, plural, one {service} other {services}}"
+  },
+  "system.health.hideDetails": {
+    "defaultMessage": "Hide details"
+  },
+  "system.health.hideHealthy": {
+    "defaultMessage": "Hide"
+  },
   "system.health.instanceSummary": {
     "defaultMessage": "{healthy} of {total} healthy"
   },
+  "system.health.noServices": {
+    "defaultMessage": "No services configured."
+  },
   "system.health.retryFailed": {
     "defaultMessage": "Failed to retry service health check."
+  },
+  "system.health.showDetails": {
+    "defaultMessage": "Show details"
+  },
+  "system.health.showHealthy": {
+    "defaultMessage": "Show"
   },
   "system.health.title": {
     "defaultMessage": "Health"
@@ -6026,8 +6044,8 @@
   "system.restartNow": {
     "defaultMessage": "Restart Now"
   },
-  "system.restartRequiredDescription": {
-    "defaultMessage": "A restart is required to apply recent changes. Please restart the server as soon as possible."
+  "system.restartServer": {
+    "defaultMessage": "Restart Server"
   },
   "system.restarting": {
     "defaultMessage": "Restarting…"
@@ -6049,12 +6067,6 @@
   },
   "system.status.unknown": {
     "defaultMessage": "Unknown"
-  },
-  "system.streamarr.description": {
-    "defaultMessage": "Main server process for Streamarr."
-  },
-  "system.streamarr.title": {
-    "defaultMessage": "Streamarr"
   },
   "systemSettings.betaWarning": {
     "defaultMessage": "This is BETA software and currently under active development. Features may be broken and/or unstable. Please check GitHub for status updates."

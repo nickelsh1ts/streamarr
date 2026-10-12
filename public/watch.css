@@ -155,6 +155,9 @@ svg {
   [class*="Player-miniPlayerContainer-"] {
     margin-bottom: 4rem;
   }
+  [role*="dialog"] {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 /*Mobile Friendly*/
 @media (max-width: 769.98px) {
@@ -217,6 +220,7 @@ svg {
   }
   [class*="GuideTab-container-"] {
     padding: 20px 0 0;
+    margin-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
 }
 @media (max-width: 452px) {
