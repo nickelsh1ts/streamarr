@@ -45,6 +45,19 @@ const createLimit = (max: number): Limit => {
 const isErrorCode = (e: unknown, code: string) =>
   !!e && typeof e === 'object' && 'code' in e && e.code === code;
 
+const markFailedAncestors = (
+  dir: string,
+  depth: number,
+  failed: Set<string>
+) => {
+  let currentDir = dir;
+
+  for (let currentDepth = depth; currentDepth >= 0; currentDepth -= 1) {
+    if (currentDepth <= TRACKED_DEPTH) failed.add(currentDir);
+    currentDir = path.dirname(currentDir);
+  }
+};
+
 const measureEntry = async (
   entryPath: string,
   entry: Dirent,
@@ -67,7 +80,10 @@ const measureEntry = async (
     const stat = await ctx.limit(() => fsPromises.lstat(entryPath));
     if (stat.isDirectory()) return walk(entryPath, depth + 1, ctx);
     return stat.isFile() ? stat.size : 0;
-  } catch {
+  } catch (e) {
+    if (!isErrorCode(e, 'ENOENT')) {
+      markFailedAncestors(path.dirname(entryPath), depth, ctx.failed);
+    }
     return 0;
   }
 };
@@ -87,8 +103,8 @@ const walk = async (
   } catch (e) {
     if (depth === 0) throw e;
     // A directory removed mid-walk is genuinely empty; anything else is unmeasured.
-    if (depth <= TRACKED_DEPTH && !isErrorCode(e, 'ENOENT')) {
-      ctx.failed.add(dir);
+    if (!isErrorCode(e, 'ENOENT')) {
+      markFailedAncestors(dir, depth, ctx.failed);
     }
     return 0;
   }
@@ -174,7 +190,7 @@ export const getConfigDirectorySizes = ({
   return {
     measured: latest,
     measuredAt: latest?.measuredAt ?? null,
-    refreshing: !!running && !isStalled,
+    refreshing: !!running,
   };
 };
 
