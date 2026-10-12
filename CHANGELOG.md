@@ -1,3 +1,24 @@
+## [1.17.2](https://github.com/nickelsh1ts/streamarr/compare/v1.17.1...v1.17.2) (2026-10-12)
+
+### 🐛 Bug Fixes
+
+* **auth:** keep accordion headers focusable ([#804](https://github.com/nickelsh1ts/streamarr/issues/804)) ([68d488f](https://github.com/nickelsh1ts/streamarr/commit/68d488f65428f697bd17be9bfe2adc8877ce04bd))
+* **directory-size:** preserve incomplete scan status ([#803](https://github.com/nickelsh1ts/streamarr/issues/803)) ([639beef](https://github.com/nickelsh1ts/streamarr/commit/639beef17cc29958544b2f101a040ebdb7dd49a8))
+* **diskspace:** honor force query on refresh ([#794](https://github.com/nickelsh1ts/streamarr/issues/794)) ([c973341](https://github.com/nickelsh1ts/streamarr/commit/c97334116e6805def9d5909582c1c8db762d527e))
+* **diskspace:** measure directory sizes in a background walk ([#793](https://github.com/nickelsh1ts/streamarr/issues/793)) ([ad4538c](https://github.com/nickelsh1ts/streamarr/commit/ad4538cc3356033361521463c16cfff0999dbb3e))
+* **localAuth:** adjust spacing and cursors for SignIn-SignUp ([#790](https://github.com/nickelsh1ts/streamarr/issues/790)) ([c7b6c5b](https://github.com/nickelsh1ts/streamarr/commit/c7b6c5b0727b8e8ad197058af8080de44cdc9295))
+* **mobile:** improve mobile menu safe area ([#791](https://github.com/nickelsh1ts/streamarr/issues/791)) ([6fecfab](https://github.com/nickelsh1ts/streamarr/commit/6fecfab7256c8194255531dbd01b41d2d9029007))
+
+### ♻️ Refactoring
+
+* **settings:** streamline health section to issue-first layout ([#800](https://github.com/nickelsh1ts/streamarr/issues/800)) ([a39b4f8](https://github.com/nickelsh1ts/streamarr/commit/a39b4f8c7e71328984d959134149aa28d7b59620))
+
+### 🤖 CI/CD
+
+* **actions:** update cypress-io/github-action action to v7.4.5 ([#778](https://github.com/nickelsh1ts/streamarr/issues/778)) ([29c4c1a](https://github.com/nickelsh1ts/streamarr/commit/29c4c1aaa7053f31cf6d7af0e0b6f26aab399044))
+* **actions:** update cypress-io/github-action action to v7.4.6 ([#782](https://github.com/nickelsh1ts/streamarr/issues/782)) ([e702474](https://github.com/nickelsh1ts/streamarr/commit/e702474547316efe2bf1c3ef1833327793d8b334))
+* **release:** suppress cosign verify stdout ([#767](https://github.com/nickelsh1ts/streamarr/issues/767)) ([6d22ad3](https://github.com/nickelsh1ts/streamarr/commit/6d22ad38bd66dd990b94dcb3bf2523772c3716c7))
+
 ## [1.17.1](https://github.com/nickelsh1ts/streamarr/compare/v1.17.0...v1.17.1) (2026-10-11)
 
 ### 🐛 Bug Fixes
