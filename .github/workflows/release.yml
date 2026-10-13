@@ -295,8 +295,8 @@ jobs:
           name: sbom
       - name: Attach SBOM and publish release
         run: |
-          gh release upload "v${VERSION}" --clobber "streamarr-image-${VERSION}.sbom"
-          gh release edit "v${VERSION}" --draft=false
+          gh release upload "v${VERSION}" --repo "$GITHUB_REPOSITORY" --clobber "streamarr-image-${VERSION}.sbom"
+          gh release edit "v${VERSION}" --repo "$GITHUB_REPOSITORY" --draft=false
 
   discord:
     name: Send Discord Notification
