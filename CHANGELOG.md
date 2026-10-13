@@ -1,3 +1,9 @@
+## [1.17.3](https://github.com/nickelsh1ts/streamarr/compare/v1.17.2...v1.17.3) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* **ci:** pass repository to gh release commands ([#805](https://github.com/nickelsh1ts/streamarr/issues/805)) ([9a4c48d](https://github.com/nickelsh1ts/streamarr/commit/9a4c48d9c025ff0e69d58370e4a8916bc3221a5a))
+
 ## [1.17.2](https://github.com/nickelsh1ts/streamarr/compare/v1.17.1...v1.17.2) (2026-10-12)
 
 ### 🐛 Bug Fixes

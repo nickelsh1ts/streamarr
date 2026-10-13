@@ -1,6 +1,6 @@
 {
   "name": "streamarr",
-  "version": "1.17.2",
+  "version": "1.17.3",
   "private": true,
   "packageManager": "pnpm@12.9.1",
   "scripts": {
