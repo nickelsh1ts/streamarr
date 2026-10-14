@@ -153,6 +153,15 @@ export function createServiceProxyRouter(
   const router = Router();
   const settings = getSettings();
   const registeredRoutes: { name: string; path: string }[] = [];
+  const proxyPaths = getActiveProxyPaths();
+
+  // Connection is hop-by-hop (RFC 9110 §7.6.1); never forward the client's upstream.
+  router.use((req, _res, next) => {
+    if (proxyPaths.some((p) => req.path.startsWith(p))) {
+      delete req.headers.connection;
+    }
+    next();
+  });
 
   const authMiddleware = [sessionMiddleware, checkUser, isAuthenticated()];
   const adminMiddleware = [
