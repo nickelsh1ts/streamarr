@@ -23,6 +23,12 @@ For full functionality behind a reverse proxy:
 ### Basic Configuration
 
 ```nginx
+# Only send "Connection: upgrade" for actual WebSocket requests
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
 server {
     listen 80;
     server_name streamarr.example.com;
@@ -42,7 +48,7 @@ server {
 
         # WebSocket support
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_set_header Connection $connection_upgrade;
 
         # Proxy headers
         proxy_set_header Host $host;
@@ -57,6 +63,10 @@ server {
     }
 }
 ```
+
+{% hint style="info" %}
+The `map` block must be in the `http` context (files in `conf.d/` are included there). Avoid hard-coding `proxy_set_header Connection "upgrade";` — it sends the header on every request, which can stall form submissions in some embedded services.
+{% endhint %}
 
 ### With Subdirectory
 
@@ -247,6 +257,18 @@ Solutions:
 1. Verify WebSocket support is enabled in your proxy
 2. Check that Upgrade headers are being passed
 3. Increase proxy timeout values
+
+### Embedded Service Actions Hang
+
+Symptoms:
+
+- Pages inside an embedded service load, but saving forms or searching (for example, Calibre-Web's **Fetch Metadata**) stays loading indefinitely
+- The same action works when accessing Streamarr directly by IP and port
+
+Solutions:
+
+1. Replace a hard-coded `proxy_set_header Connection "upgrade";` with the `$connection_upgrade` map shown in [Basic Configuration](#basic-configuration)
+2. Update Streamarr — current versions no longer forward the client's `Connection` header to embedded services
 
 ### Mixed Content Errors
 

@@ -2,7 +2,7 @@
   "name": "streamarr",
   "version": "1.17.3",
   "private": true,
-  "packageManager": "pnpm@12.9.1",
+  "packageManager": "pnpm@12.10.1",
   "scripts": {
     "dev": "nodemon -e ts --watch server --watch streamarr-api.yml -e .json,.ts,.yml -x tsx --tsconfig server/tsconfig.json server/index.ts",
     "build:next": "next build",

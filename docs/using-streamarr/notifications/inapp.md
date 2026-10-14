@@ -140,11 +140,17 @@ If using a reverse proxy, ensure WebSocket support is enabled:
 {% tab title="Nginx" %}
 
 ```nginx
+# In the http context
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
 location / {
     proxy_pass http://localhost:3000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+    proxy_set_header Connection $connection_upgrade;
     proxy_set_header Host $host;
 }
 ```
