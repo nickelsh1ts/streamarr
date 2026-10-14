@@ -1,3 +1,9 @@
+## [1.17.4](https://github.com/nickelsh1ts/streamarr/compare/v1.17.3...v1.17.4) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* **proxy:** stop forwarding hop-by-hop Connection header ([#809](https://github.com/nickelsh1ts/streamarr/issues/809)) ([457e5d1](https://github.com/nickelsh1ts/streamarr/commit/457e5d1080524421c5b84851a72321929593a1ec))
+
 ## [1.17.3](https://github.com/nickelsh1ts/streamarr/compare/v1.17.2...v1.17.3) (2026-10-13)
 
 ### 🐛 Bug Fixes
