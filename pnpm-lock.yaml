@@ -380,8 +380,8 @@ importers:
         specifier: ^2.0.9
         version: 2.0.10
       undici:
-        specifier: ^7.29.0
-        version: 7.30.0
+        specifier: ^8.0.0
+        version: 8.10.1
       validator:
         specifier: ^13.15.35
         version: 13.15.35
