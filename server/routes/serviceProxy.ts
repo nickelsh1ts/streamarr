@@ -41,6 +41,27 @@ import { checkUser, isAuthenticated } from '@server/middleware/auth';
 import type { Request, RequestHandler } from 'express';
 import { Router } from 'express';
 
+// CWA templates/JS call these at the domain root instead of under SCRIPT_NAME.
+const CALIBREWEB_ROOT_PATH_PREFIXES = [
+  '/user_profiles.json',
+  '/cwa-library-refresh',
+  '/cwa-stats-show',
+  '/cwa-stats-export-csv/',
+  '/ajax/listbooks',
+  '/magicshelf/',
+  '/duplicates/',
+];
+const CALIBREWEB_ROOT_ROUTES = [
+  '/user_profiles.json',
+  '/cwa-library-refresh',
+  '/cwa-library-refresh/messages',
+  '/cwa-stats-show',
+  '/cwa-stats-export-csv/:type',
+  '/ajax/listbooks',
+  '/magicshelf/:shelfId/:action',
+  '/duplicates/:action{/:groupHash}',
+];
+
 /**
  * Returns active proxy paths for OpenAPI validator to ignore.
  */
@@ -112,7 +133,7 @@ export function getActiveProxyPaths(): string[] {
     settings.calibreweb.hostname &&
     settings.calibreweb.urlBase
   ) {
-    paths.push(settings.calibreweb.urlBase);
+    paths.push(settings.calibreweb.urlBase, ...CALIBREWEB_ROOT_PATH_PREFIXES);
   }
 
   // Tdarr (hardcoded paths - no custom base URL support)
@@ -526,8 +547,9 @@ export function createServiceProxyRouter(
       [Permission.READER, Permission.EBOOKS]
     );
 
-    router.get(
-      '/user_profiles.json',
+    // .all() (not .use()) so req.url keeps the full path for the upstream.
+    router.all(
+      CALIBREWEB_ROOT_ROUTES,
       sessionMiddleware,
       checkUser,
       isAuthenticated([Permission.READER, Permission.EBOOKS], {
