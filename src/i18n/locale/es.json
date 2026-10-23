@@ -572,9 +572,6 @@
   "common.resetToDefault": {
     "defaultMessage": "Restablecer a Predeterminado"
   },
-  "common.restart": {
-    "defaultMessage": "Reiniciar"
-  },
   "common.restartRequired": {
     "defaultMessage": "Reinicio Requerido"
   },
@@ -4094,12 +4091,6 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Configuración de Lidarr"
   },
-  "servicesSettings.overseerr.alertDescription": {
-    "defaultMessage": "Streamarr ahora ofrece Seerr a través de su propio proxy inverso integrado en la URL base a continuación, por lo que no se requiere ningún proxy inverso externo. Si configuraste uno anteriormente (such as the legacy Nginx rewrite)para ofrecer Seerr en esta ruta, debes eliminarlo; una regla restante interceptará estas solicitudes y el proxy integrado no funcionará. Cambiar la URL base surtirá efecto después de reiniciar el servidor."
-  },
-  "servicesSettings.overseerr.alertTitle": {
-    "defaultMessage": "Elimina cualquier proxy inverso externo de Seerr"
-  },
   "servicesSettings.overseerr.description": {
     "defaultMessage": "Opcionalmente configura los ajustes para tu servidor Seerr."
   },
@@ -4700,9 +4691,6 @@
   "system.restartNow": {
     "defaultMessage": "Reiniciar Ahora"
   },
-  "system.restartRequiredDescription": {
-    "defaultMessage": "Se requiere un reinicio para aplicar los cambios recientes. Por favor, reinicie el servidor lo antes posible."
-  },
   "system.restarting": {
     "defaultMessage": "Reiniciando…"
   },
@@ -4720,12 +4708,6 @@
   },
   "system.status.unknown": {
     "defaultMessage": "Desconocido"
-  },
-  "system.streamarr.description": {
-    "defaultMessage": "Proceso principal del servidor de Streamarr."
-  },
-  "system.streamarr.title": {
-    "defaultMessage": "Streamarr"
   },
   "systemSettings.betaWarning": {
     "defaultMessage": "Este es un software BETA y actualmente está en desarrollo activo. Las funciones pueden estar rotas y/o inestables. Consulte GitHub para actualizaciones de estado."
@@ -6018,7 +6000,7 @@
     "defaultMessage": "{count, plural, one {Año} other {Años}}"
   },
   "newsletters.sentSummary": {
-    "defaultMessage": "Enviado a {count} destinatario(s){failures, plural, =0 {} other {, # con errores}}."
+    "defaultMessage": "Entregado a {count, plural, one {# destinatario} other {# destinatarios}}{failures, plural, =0 {} other {, # fallidos}}."
   },
   "system.health.retryFailed": {
     "defaultMessage": "Error al reintentar la comprobación del estado del servicio."
@@ -6310,5 +6292,161 @@
   },
   "userPermissions.audiobooks.description": {
     "defaultMessage": "Conceder permiso para escuchar audiolibros."
+  },
+  "bookmark.shelfmarkNotLinkedMessage": {
+    "defaultMessage": "Su cuenta de Shelfmark debe ser vinculada por un administrador antes de poder acceder a ella."
+  },
+  "bookmark.shelfmarkNotLinkedTitle": {
+    "defaultMessage": "Se requiere una cuenta de Shelfmark"
+  },
+  "common.bookmark": {
+    "defaultMessage": "Marcadores"
+  },
+  "common.ebooks": {
+    "defaultMessage": "Libros electrónicos"
+  },
+  "common.prerolls": {
+    "defaultMessage": "Prerolls"
+  },
+  "downloads.clearFilters": {
+    "defaultMessage": "Limpiar filtros"
+  },
+  "downloads.filterCategories": {
+    "defaultMessage": "Categorias"
+  },
+  "downloads.filterCategoriesAria": {
+    "defaultMessage": "Filtrar por categorías"
+  },
+  "downloads.filterTags": {
+    "defaultMessage": "Etiquetas"
+  },
+  "downloads.filterTagsAria": {
+    "defaultMessage": "Filtrar por etiquetas"
+  },
+  "downloads.noMatchesForFilters": {
+    "defaultMessage": "Ninguna descarga coincide con los filtros actuales."
+  },
+  "downloads.searchPlaceholder": {
+    "defaultMessage": "Buscar Descargas"
+  },
+  "emailNotifications.usePublicLogo": {
+    "defaultMessage": "Use el logo público de Streamarr"
+  },
+  "emailNotifications.usePublicLogoDescription": {
+    "defaultMessage": "Usar el logo público de GitHub. Útil cuando su instancia no es accesible públicamente."
+  },
+  "linkedAccounts.calibrewebLinkFailed": {
+    "defaultMessage": "Error al vincular la cuenta de Calibre-Web"
+  },
+  "linkedAccounts.calibrewebUnlinkFailed": {
+    "defaultMessage": "Error al desvincular la cuenta de Calibre-Web"
+  },
+  "linkedAccounts.shelfmarkLinkFailed": {
+    "defaultMessage": "Error al vincular la cuenta de Shelfmark"
+  },
+  "linkedAccounts.shelfmarkUnlinkFailed": {
+    "defaultMessage": "Error al desvincular la cuenta de Shelfmark"
+  },
+  "networkSettings.outboundProxy.bypassFilter": {
+    "defaultMessage": "Direcciones ignoradas por el proxy"
+  },
+  "networkSettings.outboundProxy.bypassHelp": {
+    "defaultMessage": "Use ',' como separador y '*.' como comodín para subdominios."
+  },
+  "networkSettings.outboundProxy.bypassLocalAddresses": {
+    "defaultMessage": "Omitir el proxy para direcciones locales"
+  },
+  "networkSettings.outboundProxy.description": {
+    "defaultMessage": "Redirigir las solicitudes HTTP salientes compatibles a través de un proxy. Las conexiones SMTP y de clientes de descarga no utilizan proxy."
+  },
+  "networkSettings.outboundProxy.host": {
+    "defaultMessage": "Nombre de host del proxy"
+  },
+  "networkSettings.outboundProxy.password": {
+    "defaultMessage": "Contraseña del proxy"
+  },
+  "networkSettings.outboundProxy.port": {
+    "defaultMessage": "Puerto del proxy"
+  },
+  "networkSettings.outboundProxy.test": {
+    "defaultMessage": "Prueba"
+  },
+  "networkSettings.outboundProxy.testError": {
+    "defaultMessage": "Falló la prueba del proxy"
+  },
+  "networkSettings.outboundProxy.testSuccess": {
+    "defaultMessage": "Prueba de proxy exitosa"
+  },
+  "networkSettings.outboundProxy.title": {
+    "defaultMessage": "Proxy HTTP(S) saliente"
+  },
+  "networkSettings.outboundProxy.useSsl": {
+    "defaultMessage": "Usar SSL para el proxy"
+  },
+  "networkSettings.outboundProxy.username": {
+    "defaultMessage": "Nombre de usuario del proxy"
+  },
+  "networkSettings.outboundProxy.validation.bypassInvalid": {
+    "defaultMessage": "Ingrese nombres de host o direcciones IP válidos separados por comas"
+  },
+  "networkSettings.outboundProxy.validation.hostnameInvalid": {
+    "defaultMessage": "Ingrese un nombre de host o una dirección IP válida"
+  },
+  "networkSettings.outboundProxy.validation.hostnameRequired": {
+    "defaultMessage": "Se requiere el nombre de host del proxy"
+  },
+  "networkSettings.outboundProxy.validation.portInteger": {
+    "defaultMessage": "El puerto del proxy debe ser un número entero"
+  },
+  "networkSettings.outboundProxy.validation.portNumber": {
+    "defaultMessage": "El puerto del proxy debe ser un número"
+  },
+  "networkSettings.outboundProxy.validation.portRange": {
+    "defaultMessage": "El puerto del proxy debe estar entre 1 y 65535"
+  },
+  "networkSettings.outboundProxy.validation.portRequired": {
+    "defaultMessage": "Se requiere el puerto del proxy"
+  },
+  "newsletters.addImage": {
+    "defaultMessage": "Añadir imagen"
+  },
+  "newsletters.imageDelivered": {
+    "defaultMessage": "Entregado"
+  },
+  "newsletters.imageHint": {
+    "defaultMessage": "También puedes pegar o arrastrar una imagen en el cuerpo."
+  },
+  "newsletters.imageInsert": {
+    "defaultMessage": "Inserte"
+  },
+  "newsletters.imageMissing": {
+    "defaultMessage": "Falta el archivo — no se puede enviar"
+  },
+  "newsletters.imageRemove": {
+    "defaultMessage": "Remover Imagen"
+  },
+  "newsletters.imageUploadError": {
+    "defaultMessage": "Ocurrió un error al cargar la imagen"
+  },
+  "newsletters.imageUploading": {
+    "defaultMessage": "Cargando imagen"
+  },
+  "newsletters.noApplicationUrl": {
+    "defaultMessage": "Las imágenes y los bloques de contenido no se pueden referenciar externamente sin uno."
+  },
+  "newsletters.noApplicationUrlTitle": {
+    "defaultMessage": "La URL pública de la aplicación es requerida"
+  },
+  "notifications.fields.tags": {
+    "defaultMessage": "Etiquetas"
+  },
+  "notifications.fields.webhookThreadId": {
+    "defaultMessage": "ID de hilo"
+  },
+  "plexImport.importComplete": {
+    "defaultMessage": "Importación de Plex completada"
+  },
+  "plexImport.resultUnchanged": {
+    "defaultMessage": "{count, plural, one {# usuario existente de Plex ya está} other {# usuarios existentes de Plex ya están}} actualizados."
   }
 }
