@@ -204,7 +204,7 @@ importers:
         version: 2.2.0(react@19.3.0)
       ace-builds:
         specifier: ^1.44.0
-        version: 1.44.0
+        version: 1.45.0
       axios:
         specifier: ^1.15.2
         version: 1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
@@ -3292,8 +3292,8 @@ packages:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
 
-  ace-builds@1.44.0:
-    resolution: {integrity: sha512-PFNMSYqFdEUkul2Ntud0HvA09AgY+F1ag0UYdpMH60wNI/qOA8cB8tlTgoALMEwIdUPJK2CjrIQ7OnbiSS/ugQ==}
+  ace-builds@1.45.0:
+    resolution: {integrity: sha512-tAAorvbQRlsdDeuf4RnBLgaRk4HVT9td2D4QKEqXyuQkZmFoqHxl9JuV2o1XkuDT+zOreooGPiG1tU/Y+pNFkg==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -11584,7 +11584,7 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.1.0
 
-  ace-builds@1.44.0: {}
+  ace-builds@1.45.0: {}
 
   acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:
@@ -16160,7 +16160,7 @@ snapshots:
 
   react-ace@15.0.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      ace-builds: 1.44.0
+      ace-builds: 1.45.0
       diff-match-patch: 1.0.5
       fast-equals: 5.4.1
       prop-types: 15.8.1
