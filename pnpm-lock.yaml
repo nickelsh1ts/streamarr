@@ -231,7 +231,7 @@ importers:
         version: 1.4.7
       cronstrue:
         specifier: ^3.14.0
-        version: 3.33.0
+        version: 3.37.0
       date-fns:
         specifier: ^4.1.0
         version: 4.4.0
@@ -4098,8 +4098,8 @@ packages:
     engines: {node: '>=12.0.0'}
     deprecated: v4 is no longer maintained, upgrade to v5
 
-  cronstrue@3.33.0:
-    resolution: {integrity: sha512-vyatYcfUXxPZxv8/zwC+j9LZNfSdn1k5t3sCLFZrLw+HvU6H4pNhUulPKgtji9tLTTAUCJs45z2+rJrPsbPxlw==}
+  cronstrue@3.37.0:
+    resolution: {integrity: sha512-Nc5PL23nz3HjRcHRc6O7ikCc3lnFM2SQg5nwSDMGOi0jv0g178mUMClgfT6WuOevrEsPOTQCWOaGFV5PKFYymg==}
     hasBin: true
 
   cross-spawn@7.0.6:
@@ -12442,7 +12442,7 @@ snapshots:
     dependencies:
       luxon: 3.7.2
 
-  cronstrue@3.33.0: {}
+  cronstrue@3.37.0: {}
 
   cross-spawn@7.0.6:
     dependencies:
