@@ -95,6 +95,8 @@ function buildNexrollShim(base: string, nonce: string): string {
       });
     }catch(e){}
   }
+  patchUrlProperty(HTMLScriptElement.prototype,'src');
+  patchUrlProperty(HTMLLinkElement.prototype,'href');
   patchUrlProperty(HTMLImageElement.prototype,'src');
   patchUrlProperty(HTMLMediaElement.prototype,'src');
   function csrf(){
