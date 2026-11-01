@@ -294,7 +294,7 @@ importers:
         version: 5.1.2
       node-schedule:
         specifier: ^2.1.1
-        version: 2.1.1
+        version: 2.1.2
       nodemailer:
         specifier: ^9.0.0
         version: 9.1.1
@@ -6498,8 +6498,8 @@ packages:
     resolution: {integrity: sha512-YHs7BmmcsdAI5Ozuf8JZo6PT0mv2GIWC9vMfvUC3dp65M8hn7Ux8CPL+2oBI7juNuj9d0ndhTcznq2ODBps9cQ==}
     engines: {node: '>=18'}
 
-  node-schedule@2.1.1:
-    resolution: {integrity: sha512-OXdegQq03OmXEjt2hZP33W2YPs/E5BcFQks46+G2gAxs4gHOIVD1u7EqlYLYSKsaIpyKCK9Gbk0ta1/gjRSMRQ==}
+  node-schedule@2.1.2:
+    resolution: {integrity: sha512-JuKopr93W+WP+TaK5yoHJGpzPF9fpkH8Vcc9CXGE993BNeRKsb3L4Wy6FzL0VxkEa6U+8M4Ni0HEm9rMMnwurg==}
     engines: {node: '>=6'}
 
   nodemailer@7.0.13:
@@ -15517,7 +15517,7 @@ snapshots:
 
   node-releases@2.0.54: {}
 
-  node-schedule@2.1.1:
+  node-schedule@2.1.2:
     dependencies:
       cron-parser: 4.9.0
       long-timeout: 0.1.1
