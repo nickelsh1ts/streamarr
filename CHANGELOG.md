@@ -1,3 +1,14 @@
+## [1.17.5](https://github.com/nickelsh1ts/streamarr/compare/v1.17.4...v1.17.5) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **calibreweb:** proxy CWA root-absolute endpoints ([#820](https://github.com/nickelsh1ts/streamarr/issues/820)) ([f6221cb](https://github.com/nickelsh1ts/streamarr/commit/f6221cb4a5606ab08febc70e05c40dac706c7f61))
+* **nexroll:** proxy lazy-loaded scripts and stylesheets ([#861](https://github.com/nickelsh1ts/streamarr/issues/861)) ([53075c6](https://github.com/nickelsh1ts/streamarr/commit/53075c653552908f866b1a1baf619f8fefe5f017))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#815](https://github.com/nickelsh1ts/streamarr/issues/815)) ([c380220](https://github.com/nickelsh1ts/streamarr/commit/c380220cb0bbd45a53b434b56d40093ef5c17123))
+
 ## [1.17.4](https://github.com/nickelsh1ts/streamarr/compare/v1.17.3...v1.17.4) (2026-10-14)
 
 ### 🐛 Bug Fixes
