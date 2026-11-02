@@ -189,12 +189,20 @@ Use **Test** to send one HTTPS request to a fixed public endpoint through the cu
 **This is an advanced setting.** We do not recommend enabling it unless you understand the implications of doing so.
 {% endhint %}
 
-CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When this setting is enabled, all external API access that alters Streamarr application data is blocked (external API access becomes read-only).
+CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When enabled, requests that change Streamarr data must include a valid CSRF token and its matching cookie. Streamarr's browser interface handles these automatically.
 
-If you do not use Streamarr integrations with third-party applications to modify data, you can enable this setting for additional security.
+This setting does **not** make API keys read-only. External API clients can still modify data, but must first make a GET request to a Streamarr API endpoint, retain the returned cookies, and send the `XSRF-TOKEN` cookie value in the `X-XSRF-TOKEN` header alongside their API key. Clients that only send an API key cannot make state-changing requests while this setting is enabled.
+
+Production uses a Secure, HttpOnly, host-only `__Host-streamarr.csrf` secret cookie with `Path=/`. Browsers prohibit parent-domain and non-root-path variants of this cookie. Development HTTP uses an unprefixed cookie and does not provide these production cookie protections. Reload browser pages and repeat the API bootstrap request after an upgrade to obtain current CSRF cookies.
+
+Embedded service requests use a same-origin check instead of rewriting their forms or uploads. State-changing browser requests must have an `Origin` matching Streamarr's public origin. Clients without an `Origin` header must provide the CSRF cookies and the `X-XSRF-TOKEN` header instead; upstream body and query CSRF fields are not interpreted as Streamarr tokens. Service permissions and each service's own authentication and CSRF checks still apply.
+
+WebSocket and Socket.IO requests with an `Origin` header must also match Streamarr's origin. Non-browser clients without an `Origin` header retain the existing session and permission requirements.
 
 {% hint style="warning" %}
 **HTTPS is required** when CSRF protection is enabled. You will no longer be able to access Streamarr over HTTP.
+
+When HTTPS terminates at a reverse proxy, enable **Proxy Support** and configure that proxy to replace forwarded host and protocol headers with the public host and scheme. Do not expose a trusted-proxy configuration directly to untrusted clients.
 
 If you enable this setting and find yourself unable to access Streamarr, you can disable it by editing `settings.json` in your config directory.
 {% endhint %}

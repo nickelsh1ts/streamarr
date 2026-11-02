@@ -139,6 +139,18 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
   pnpm migration:generate server/migration/MigrationName
   ```
 
+### CSRF Verification
+
+The normal Cypress fixture disables CSRF. To exercise the CSRF regression cases, use a disposable, production-mode HTTPS instance with CSRF enabled and the expected Cypress fixture users:
+
+```bash
+pnpm exec cypress run --spec cypress/e2e/api.cy.ts --config baseUrl=https://localhost:3000 --env CSRF_ENABLED=true
+```
+
+Explicit enabled mode requires the token cookie and production `__Host-streamarr.csrf` cookie; missing cookies fail the run rather than skipping protection checks. It also checks browser rejection of invalid domain/path variants of the private secret cookie. Without `CSRF_ENABLED=true`, the CSRF-specific cases are intentionally skipped.
+
+Keep verification separate from normal configuration and user data. Do not run `cypress:prepare` against a live installation; its setup script replaces the normal settings file.
+
 ## Reporting Bugs
 
 - Search [existing issues](https://github.com/nickelsh1ts/streamarr/issues) before opening a new one.

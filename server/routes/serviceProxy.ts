@@ -38,6 +38,10 @@ import {
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
+import {
+  matchesProxyPath,
+  scopeProxyCsrfCookies,
+} from '@server/middleware/csrf';
 import type { Request, RequestHandler } from 'express';
 import { Router } from 'express';
 
@@ -175,10 +179,12 @@ export function createServiceProxyRouter(
   const settings = getSettings();
   const registeredRoutes: { name: string; path: string }[] = [];
   const proxyPaths = getActiveProxyPaths();
+  const csrfCookieMiddleware = (base: string): RequestHandler[] =>
+    settings.network.csrfProtection ? [scopeProxyCsrfCookies(base)] : [];
 
   // Connection is hop-by-hop (RFC 9110 §7.6.1); never forward the client's upstream.
   router.use((req, _res, next) => {
-    if (proxyPaths.some((p) => req.path.startsWith(p))) {
+    if (matchesProxyPath(req.path, proxyPaths)) {
       delete req.headers.connection;
     }
     next();
@@ -218,7 +224,13 @@ export function createServiceProxyRouter(
         )
       : rawGuard;
 
-    router.use(path, ...guard, ...middleware, proxy);
+    router.use(
+      path,
+      ...guard,
+      ...csrfCookieMiddleware(path),
+      ...middleware,
+      proxy
+    );
     registeredRoutes.push({ name: label, path });
   };
 
@@ -354,6 +366,7 @@ export function createServiceProxyRouter(
     router.use(
       settings.nexroll.urlBase,
       ...adminMiddleware,
+      ...csrfCookieMiddleware(settings.nexroll.urlBase),
       createNexrollDocumentProxy(nexrollConfig),
       createNexrollStreamingProxy(nexrollConfig)
     );
@@ -555,6 +568,7 @@ export function createServiceProxyRouter(
       isAuthenticated([Permission.READER, Permission.EBOOKS], {
         type: 'or',
       }),
+      ...csrfCookieMiddleware(settings.calibreweb.urlBase),
       calibrewebProxy
     );
   }
@@ -571,7 +585,11 @@ export function createServiceProxyRouter(
     registerTdarrWebSocketHandler(dispatcher, sessionMiddleware, tdarrProxy);
 
     // Static assets (no auth - loaded as resources after authenticated page loads)
-    router.use(TDARR_STATIC_PATH, createTdarrStaticProxy(tdarrConfig));
+    router.use(
+      TDARR_STATIC_PATH,
+      ...csrfCookieMiddleware(TDARR_PROXY_PATH),
+      createTdarrStaticProxy(tdarrConfig)
+    );
     registeredRoutes.push({ name: 'Tdarr Static', path: TDARR_STATIC_PATH });
   }
 
@@ -618,6 +636,7 @@ export function createServiceProxyRouter(
       isAuthenticated([Permission.REQUEST, Permission.STREAMARR], {
         type: 'or',
       }),
+      ...csrfCookieMiddleware(settings.overseerr.urlBase),
       createSeerrProxy(seerrConfig),
       createSeerrRuntimeProxy(seerrConfig),
       createSeerrAssetProxy(seerrConfig)

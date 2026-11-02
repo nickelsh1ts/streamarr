@@ -1,4 +1,3 @@
-import csurf from '@dr.pogodin/csurf';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
 import { initI18n } from '@server/i18n';
@@ -29,6 +28,11 @@ import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher
 import logger from '@server/logger';
 import { checkUser } from '@server/middleware/auth';
 import clearCookies from '@server/middleware/clearcookies';
+import {
+  createCsrfProtection,
+  isSameOrigin,
+  matchesProxyPath,
+} from '@server/middleware/csrf';
 import routes from '@server/routes';
 import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
@@ -116,8 +120,7 @@ app
 
     // Get proxy paths to skip body parsing for proxied services
     const proxyPaths = getActiveProxyPaths();
-    const isProxyPath = (path: string) =>
-      proxyPaths.some((p) => path.startsWith(p));
+    const isProxyPath = (path: string) => matchesProxyPath(path, proxyPaths);
 
     // Conditional body parsing - skip for file upload and proxy routes
     server.use((req, res, next) => {
@@ -143,23 +146,12 @@ app
     });
     if (settings.network.csrfProtection) {
       server.use(
-        csurf({
-          cookie: {
-            key: '_csrf',
-            path: '/',
-            httpOnly: true,
-            sameSite: true,
-            secure: !dev,
-          },
+        createCsrfProtection({
+          isProxyPath,
+          trustProxy: settings.network.trustProxy,
+          secure: !dev,
         })
       );
-      server.use((req, res, next) => {
-        res.cookie('XSRF-TOKEN', req.csrfToken(), {
-          sameSite: true,
-          secure: !dev,
-        });
-        next();
-      });
     }
     // Set up sessions
     const sessionRepository = getRepository(Session);
@@ -181,14 +173,30 @@ app
     });
     server.use('/api', sessionMiddleware);
     const httpServer = createServer(server);
+    const csrfEnabled = settings.network.csrfProtection;
+    const trustProxy = settings.network.trustProxy;
+    const allowSocketRequest = (req: IncomingMessage) =>
+      !csrfEnabled ||
+      req.headers.origin === undefined ||
+      isSameOrigin(req, trustProxy);
     const io = new SocketIOServer(httpServer, {
       destroyUpgrade: false,
+    });
+    io.engine.use((req, _res, next) => {
+      next(
+        allowSocketRequest(req)
+          ? undefined
+          : new Error('Invalid request origin.')
+      );
     });
     io.engine.use(sessionMiddleware);
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
-    const upgradeDispatcher = createUpgradeDispatcher(httpServer);
+    const upgradeDispatcher = createUpgradeDispatcher(
+      httpServer,
+      allowSocketRequest
+    );
 
     // Next.js lazily attaches a catch-all `upgrade` listener (via
     // getRequestHandler) that hijacks the /socket.io/ upgrade and corrupts the
