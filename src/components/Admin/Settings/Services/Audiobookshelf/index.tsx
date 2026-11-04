@@ -10,16 +10,85 @@ import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
+  ArrowPathIcon,
   CheckBadgeIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import { AUDIOBOOKSHELF_DEFAULT_PERMISSIONS } from '@server/constants/audiobookshelf';
 import type { AudiobookshelfSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
+import { isEqual, pickBy } from 'lodash';
 import { useCallback, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import Select, { type CSSObjectWithLabel } from 'react-select';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
+
+const permissionMessages = defineMessages({
+  download: {
+    id: 'servicesSettings.absDefaults.download',
+    defaultMessage: 'Allow Downloads',
+  },
+  update: {
+    id: 'servicesSettings.absDefaults.update',
+    defaultMessage: 'Allow Metadata Updates',
+  },
+  delete: {
+    id: 'servicesSettings.absDefaults.delete',
+    defaultMessage: 'Allow Deleting Media',
+  },
+  upload: {
+    id: 'servicesSettings.absDefaults.upload',
+    defaultMessage: 'Allow Uploads',
+  },
+  accessAllLibraries: {
+    id: 'servicesSettings.absDefaults.accessAllLibraries',
+    defaultMessage: 'Access All Libraries',
+  },
+  accessAllTags: {
+    id: 'servicesSettings.absDefaults.accessAllTags',
+    defaultMessage: 'Access All Tags',
+  },
+  accessExplicitContent: {
+    id: 'servicesSettings.absDefaults.accessExplicitContent',
+    defaultMessage: 'Access Explicit Content',
+  },
+});
+
+const selectStyles = {
+  menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }),
+  menu: (base: CSSObjectWithLabel) => ({ ...base, marginBottom: 8 }),
+};
+
+const getDefaultUserSettings = (settings?: AudiobookshelfSettings) => ({
+  permissions: {
+    ...AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+    ...settings?.defaultUserSettings?.permissions,
+  },
+  librariesAccessible: settings?.defaultUserSettings?.librariesAccessible ?? [],
+  itemTagsSelected: settings?.defaultUserSettings?.itemTagsSelected ?? [],
+});
+
+const getChangedDefaultUserSettings = (
+  current: ReturnType<typeof getDefaultUserSettings>,
+  previous: ReturnType<typeof getDefaultUserSettings>
+): NonNullable<AudiobookshelfSettings['defaultUserSettings']> => {
+  const permissions = pickBy(
+    current.permissions,
+    (value, permission) => value !== previous.permissions[permission]
+  );
+
+  return {
+    ...(Object.keys(permissions).length > 0 && { permissions }),
+    ...(!isEqual(current.librariesAccessible, previous.librariesAccessible) && {
+      librariesAccessible: current.librariesAccessible,
+    }),
+    ...(!isEqual(current.itemTagsSelected, previous.itemTagsSelected) && {
+      itemTagsSelected: current.itemTagsSelected,
+    }),
+  };
+};
 
 const ServicesAudiobookshelf = () => {
   const intl = useIntl();
@@ -27,10 +96,24 @@ const ServicesAudiobookshelf = () => {
   const {
     data,
     error,
+    isValidating,
     mutate: revalidate,
   } = useSWR<AudiobookshelfSettings>('/api/v1/settings/audiobookshelf');
+  const {
+    data: userOptions,
+    error: optionsError,
+    isLoading: optionsLoading,
+    mutate: revalidateOptions,
+  } = useSWR<{
+    libraries: { id: string; name: string }[];
+    tags: string[];
+  }>(
+    data?.hostname && data?.apiKey
+      ? '/api/v1/settings/audiobookshelf/options'
+      : null
+  );
+  const defaultUserSettings = getDefaultUserSettings(data);
   const [isTesting, setIsTesting] = useState(false);
-
   const SettingsSchema = Yup.object().shape({
     urlBase: Yup.string()
       .required(
@@ -121,11 +204,33 @@ const ServicesAudiobookshelf = () => {
     </div>
   );
 
-  if (!data && !error) {
+  if (!data) {
     return (
       <div className="mb-10 max-w-6xl">
         {header}
-        <LoadingEllipsis />
+        {error ? (
+          <Alert
+            type="error"
+            title={intl.formatMessage({
+              id: 'servicesSettings.audiobookshelf.loadError',
+              defaultMessage: 'Unable to load Audiobookshelf settings.',
+            })}
+          >
+            <Button
+              buttonType="error"
+              buttonSize="sm"
+              disabled={isValidating}
+              onClick={() => revalidate()}
+            >
+              <ArrowPathIcon
+                className={`mr-1 size-5 ${isValidating ? 'animate-spin' : ''}`}
+              />
+              <FormattedMessage id="common.retry" defaultMessage="Retry" />
+            </Button>
+          </Alert>
+        ) : (
+          <LoadingEllipsis />
+        )}
       </div>
     );
   }
@@ -157,9 +262,17 @@ const ServicesAudiobookshelf = () => {
           urlBase: data?.urlBase ?? '/audiobookshelf',
           apiKey: data?.apiKey || '',
           enableNewUserSignIn: data?.enableNewUserSignIn || false,
+          defaultUserSettings,
+          defaultUserSettingsBaseline: defaultUserSettings,
         }}
         validationSchema={SettingsSchema}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { setFieldValue }) => {
+          const defaultUserSettings = getChangedDefaultUserSettings(
+            values.defaultUserSettings,
+            values.defaultUserSettingsBaseline
+          );
+          const defaultUserSettingsChanged =
+            Object.keys(defaultUserSettings).length > 0;
           try {
             await axios.post('/api/v1/settings/audiobookshelf', {
               enabled: values.enabled,
@@ -169,7 +282,17 @@ const ServicesAudiobookshelf = () => {
               urlBase: values.urlBase,
               apiKey: values.apiKey,
               enableNewUserSignIn: values.enableNewUserSignIn,
-            } as AudiobookshelfSettings);
+              ...(defaultUserSettingsChanged && {
+                defaultUserSettings,
+              }),
+            });
+            if (defaultUserSettingsChanged) {
+              await setFieldValue(
+                'defaultUserSettingsBaseline',
+                values.defaultUserSettings,
+                false
+              );
+            }
 
             Toast({
               title: intl.formatMessage(
@@ -199,7 +322,8 @@ const ServicesAudiobookshelf = () => {
               icon: <XCircleIcon className="size-7" />,
             });
           } finally {
-            revalidate();
+            await revalidate();
+            await revalidateOptions();
           }
         }}
       >
@@ -388,6 +512,178 @@ const ServicesAudiobookshelf = () => {
                     className="checkbox checkbox-sm checkbox-primary rounded-md"
                   />
                 </div>
+              </div>
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <span className="block font-bold">
+                    <FormattedMessage
+                      id="servicesSettings.defaultUserSettings"
+                      defaultMessage="Default User Settings"
+                    />
+                  </span>
+                  <div className="sm:col-span-2">
+                    <div className="max-w-lg">
+                      {(
+                        Object.keys(
+                          permissionMessages
+                        ) as (keyof typeof permissionMessages)[]
+                      ).map((permission) => (
+                        <div
+                          key={permission}
+                          className="relative mt-4 flex items-start first:mt-0"
+                        >
+                          <div className="flex h-6 items-center">
+                            <Field
+                              type="checkbox"
+                              id={`default-${permission}`}
+                              name={`defaultUserSettings.permissions.${permission}`}
+                              disabled={isSubmitting}
+                              className="checkbox checkbox-primary rounded-md"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm leading-6">
+                            <label
+                              htmlFor={`default-${permission}`}
+                              className="block font-bold"
+                            >
+                              {intl.formatMessage(
+                                permissionMessages[permission]
+                              )}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {(!values.defaultUserSettings.permissions.accessAllLibraries ||
+                  !values.defaultUserSettings.permissions.accessAllTags) &&
+                  (optionsLoading ? (
+                    <div className="w-fit" role="status">
+                      <LoadingEllipsis />
+                    </div>
+                  ) : (
+                    <div className="space-y-5">
+                      {(optionsError || !userOptions) && (
+                        <div role="status">
+                          <Alert
+                            type="error"
+                            title={intl.formatMessage({
+                              id: 'servicesSettings.absDefaults.optionsUnavailable',
+                              defaultMessage:
+                                'Library and tag options are currently unavailable. Audiobookshelf may be unreachable.',
+                            })}
+                          ></Alert>
+                        </div>
+                      )}
+                      {!values.defaultUserSettings.permissions
+                        .accessAllLibraries && (
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                          <label htmlFor="default-libraries">
+                            <FormattedMessage
+                              id="servicesSettings.absDefaults.libraries"
+                              defaultMessage="Allowed Libraries"
+                            />
+                          </label>
+                          <div className="sm:col-span-2">
+                            <Select<{ value: string; label: string }, true>
+                              inputId="default-libraries"
+                              isMulti
+                              unstyled
+                              styles={selectStyles}
+                              menuPortalTarget={
+                                typeof window !== 'undefined'
+                                  ? document.body
+                                  : undefined
+                              }
+                              menuPosition="fixed"
+                              menuPlacement="auto"
+                              minMenuHeight={300}
+                              className="react-select-container"
+                              classNamePrefix="react-select"
+                              isDisabled={
+                                isSubmitting ||
+                                optionsLoading ||
+                                !!optionsError ||
+                                !userOptions?.libraries.length
+                              }
+                              options={
+                                userOptions?.libraries.map((library) => ({
+                                  value: library.id,
+                                  label: library.name,
+                                })) ?? []
+                              }
+                              value={values.defaultUserSettings.librariesAccessible.map(
+                                (id) => ({
+                                  value: id,
+                                  label:
+                                    userOptions?.libraries.find(
+                                      (library) => library.id === id
+                                    )?.name ?? id,
+                                })
+                              )}
+                              onChange={(selected) =>
+                                setFieldValue(
+                                  'defaultUserSettings.librariesAccessible',
+                                  selected.map((option) => option.value)
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {!values.defaultUserSettings.permissions
+                        .accessAllTags && (
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                          <label htmlFor="default-tags">
+                            <FormattedMessage
+                              id="servicesSettings.absDefaults.tags"
+                              defaultMessage="Allowed Tags"
+                            />
+                          </label>
+                          <div className="sm:col-span-2">
+                            <Select<{ value: string; label: string }, true>
+                              inputId="default-tags"
+                              isMulti
+                              unstyled
+                              styles={selectStyles}
+                              menuPortalTarget={
+                                typeof window !== 'undefined'
+                                  ? document.body
+                                  : undefined
+                              }
+                              menuPosition="fixed"
+                              menuPlacement="auto"
+                              minMenuHeight={300}
+                              className="react-select-container"
+                              classNamePrefix="react-select"
+                              isDisabled={
+                                isSubmitting ||
+                                optionsLoading ||
+                                !!optionsError ||
+                                !userOptions?.tags.length
+                              }
+                              options={
+                                userOptions?.tags.map((tag) => ({
+                                  value: tag,
+                                  label: tag,
+                                })) ?? []
+                              }
+                              value={values.defaultUserSettings.itemTagsSelected.map(
+                                (tag) => ({ value: tag, label: tag })
+                              )}
+                              onChange={(selected) =>
+                                setFieldValue(
+                                  'defaultUserSettings.itemTagsSelected',
+                                  selected.map((option) => option.value)
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
               </div>
               <div className="divider divider-primary col-span-full mb-0" />
               <div className="col-span-3 mt-4 flex justify-end">

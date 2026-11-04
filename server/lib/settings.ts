@@ -1,3 +1,4 @@
+import type { Permissions as AudiobookshelfPermissions } from '@server/api/audiobookshelf';
 import { runMigrations } from '@server/lib/migrator';
 import { randomBytes, randomUUID } from 'crypto';
 import fs from 'fs';
@@ -61,10 +62,32 @@ export interface ServiceSettings {
 
 export interface AudiobookshelfSettings extends ServiceSettings {
   enableNewUserSignIn?: boolean;
+  defaultUserSettings?: {
+    permissions?: Partial<
+      Omit<AudiobookshelfPermissions, 'selectedTagsNotAccessible'>
+    >;
+    librariesAccessible?: string[];
+    itemTagsSelected?: string[];
+  };
+}
+
+export type ShelfmarkPolicyMode =
+  'download' | 'request_release' | 'request_book' | 'blocked';
+
+export interface ShelfmarkUserDefaults {
+  ebookPolicy?: ShelfmarkPolicyMode;
+  audiobookPolicy?: ShelfmarkPolicyMode;
+}
+
+export interface ShelfmarkGlobalRequestSettings {
+  requestsEnabled?: boolean;
+  requestLimit?: number;
+  requestsAllowNotes?: boolean;
 }
 
 export interface ShelfmarkSettings extends Omit<ServiceSettings, 'apiKey'> {
   enableNewUserSignIn?: boolean;
+  defaultUserSettings?: ShelfmarkUserDefaults;
 }
 
 export interface CalibreWebSettings extends Omit<ServiceSettings, 'apiKey'> {

@@ -332,6 +332,24 @@
   @apply bg-primary! text-primary-content;
 }
 
+.react-select-container .react-select__control--is-disabled {
+  @apply border-base-200 bg-base-200 text-base-content/40 hover:border-base-200 cursor-not-allowed;
+}
+
+:has(> .react-select-container .react-select__control--is-disabled) {
+  @apply cursor-not-allowed;
+}
+
+.react-select__control--is-disabled .react-select__multi-value {
+  @apply border-base-content/20 bg-base-200;
+}
+
+.react-select__control--is-disabled .react-select__input,
+.react-select__control--is-disabled .react-select__multi-value__label,
+.react-select__control--is-disabled .react-select__indicator {
+  @apply text-base-content/40!;
+}
+
 .custom-range {
   -webkit-appearance: none;
   appearance: none;

@@ -2,6 +2,7 @@ import AudiobookshelfAPI, {
   type AudiobookshelfConnection,
   type User as AudiobookshelfUser,
 } from '@server/api/audiobookshelf';
+import { AUDIOBOOKSHELF_DEFAULT_PERMISSIONS } from '@server/constants/audiobookshelf';
 import type { User } from '@server/entity/User';
 import { Permission } from '@server/lib/permissions';
 import { getSettings } from '@server/lib/settings';
@@ -122,13 +123,20 @@ export async function findAudiobookshelfAccount(
   return users.find((existingUser) => existingUser.type === 'root');
 }
 
-/** Default Audiobookshelf permissions granted to accounts Streamarr creates. */
-export const AUDIOBOOKSHELF_DEFAULT_PERMISSIONS = {
-  download: false,
-  update: false,
-  delete: false,
-  upload: false,
-  accessAllLibraries: true,
-  accessAllTags: true,
-  accessExplicitContent: true,
-} as const;
+export function getAudiobookshelfUserDefaults() {
+  const defaults = getSettings().audiobookshelf.defaultUserSettings;
+  const permissions = {
+    ...AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+    ...defaults?.permissions,
+    selectedTagsNotAccessible: false,
+  };
+  return {
+    permissions,
+    librariesAccessible: permissions.accessAllLibraries
+      ? []
+      : (defaults?.librariesAccessible ?? []),
+    itemTagsSelected: permissions.accessAllTags
+      ? []
+      : (defaults?.itemTagsSelected ?? []),
+  };
+}

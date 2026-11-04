@@ -39,6 +39,22 @@ Go to **Admin → Settings → Services → Shelfmark**.
 
 Use **Test** to verify the Shelfmark health endpoint before saving. The [System](settings/system.md) health dashboard reports Shelfmark's release version.
 
+### Default User Settings
+
+**New User Settings** sets the initial Ebook and Audiobook policies for new accounts, using Shelfmark's modes: **Download**, **Request Release**, **Request Book**, or **Blocked**. Selecting **Default** inherits Shelfmark's native policy. Other policies and per-source rules are managed by administrators in Shelfmark.
+
+Streamarr applies only explicitly configured values, once during new-account initialization. Existing Shelfmark accounts keep their settings when linked, and changing the template does not update previously created accounts. Administrator roles continue to follow Streamarr's Admin permission. Changing these defaults does not require restarting Streamarr. This integration targets Shelfmark 1.6.1.
+
+If initialization fails, Streamarr shows an error and does not save the account link. Shelfmark's proxy-auth API does not report whether authentication created or adopted an account, so Streamarr does not automatically delete an account after a failure. An administrator must verify the account and its permissions in Shelfmark before retrying. Streamarr does not store provisioning state or automatically recognize incomplete accounts on later attempts.
+
+### Global Request Settings
+
+**Enable Requests**, **Allow Notes on Requests**, and **Max Pending Requests Per User** update Shelfmark's global settings, not individual users. The toggles and limit show values read from the saved Shelfmark connection. Saving sends only values changed from the form's initial state; toggling back to the initial value makes no global update. Environment-managed fields cannot be edited here; explicit user overrides in Shelfmark may take precedence over global settings.
+
+When requests are disabled, policy defaults, notes, and the limit are hidden. Hidden notes and limit values are not submitted or validated, so they cannot prevent disabling requests.
+
+Use the existing **Save Changes** button for both sections. Streamarr saves its connection and new-user defaults first, then updates only the selected global request settings directly in Shelfmark. If the remote update cannot be confirmed, an error explains that Streamarr settings were saved but the global update was not confirmed. Global values are not stored in Streamarr's settings file.
+
 ## Access And Accounts
 
 The Bookmark page requires either the **Bookmark** permission or the **Reader** permission. Give users access under **Users → (select a user) → Permissions → Reader** or **Bookmark**.

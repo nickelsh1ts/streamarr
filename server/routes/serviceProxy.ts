@@ -33,7 +33,10 @@ import {
   linkShelfmarkAccount,
   ShelfmarkAccountCreationDisabledError,
   ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkPersistenceError,
+  ShelfmarkProvisioningError,
   ShelfmarkUsernameConflictError,
+  ShelfmarkUserNotFoundError,
 } from '@server/lib/shelfmark';
 import type { UpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
@@ -446,8 +449,11 @@ export function createServiceProxyRouter(
             if (await hasVerifiedShelfmarkAccount(user, settings)) {
               return next();
             }
+            if (req.method === 'HEAD') {
+              return res.sendStatus(405);
+            }
 
-            await linkShelfmarkAccount(user, {
+            user.shelfmarkUsername = await linkShelfmarkAccount(user, {
               allowCreation: !!settings.enableNewUserSignIn,
               allowExistingAccountLink: user.hasPermission(
                 Permission.MANAGE_USERS
@@ -455,6 +461,15 @@ export function createServiceProxyRouter(
             });
             return next();
           } catch (e) {
+            if (e instanceof ShelfmarkUserNotFoundError) {
+              return res.status(404).json({ message: e.message });
+            }
+            if (e instanceof ShelfmarkPersistenceError) {
+              return res.status(500).json({ message: e.message });
+            }
+            if (e instanceof ShelfmarkProvisioningError) {
+              return res.status(502).json({ message: e.message });
+            }
             if (
               e instanceof ShelfmarkAccountCreationDisabledError ||
               e instanceof ShelfmarkAccountLinkRequiresManagerError

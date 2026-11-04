@@ -939,6 +939,40 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Audiobookshelf account.
+            defaultUserSettings:
+              type: object
+              additionalProperties: false
+              properties:
+                permissions:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    download:
+                      type: boolean
+                    update:
+                      type: boolean
+                    delete:
+                      type: boolean
+                    upload:
+                      type: boolean
+                    accessAllLibraries:
+                      type: boolean
+                    accessAllTags:
+                      type: boolean
+                    accessExplicitContent:
+                      type: boolean
+                librariesAccessible:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: string
+                    minLength: 1
+                itemTagsSelected:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: string
+                    minLength: 1
     ShelfmarkSettings:
       allOf:
         - $ref: '#/components/schemas/ServiceSettings'
@@ -947,6 +981,28 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Shelfmark account.
+            defaultUserSettings:
+              type: object
+              additionalProperties: false
+              properties:
+                ebookPolicy:
+                  type: string
+                  enum: [download, request_release, request_book, blocked]
+                audiobookPolicy:
+                  type: string
+                  enum: [download, request_release, request_book, blocked]
+    ShelfmarkGlobalRequestSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        requestsEnabled:
+          type: boolean
+        requestLimit:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        requestsAllowNotes:
+          type: boolean
     CalibreWebSettings:
       allOf:
         - $ref: '#/components/schemas/ServiceSettings'
@@ -3966,6 +4022,36 @@ paths:
                 $ref: '#/components/schemas/AudiobookshelfSettings'
         '400':
           description: Invalid URL Base (bad format, reserved path, or already in use)
+  /settings/audiobookshelf/options:
+    get:
+      summary: Get Audiobookshelf libraries and tags for new-user defaults
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Options from the saved Audiobookshelf connection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  libraries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string
+        '503':
+          description: Audiobookshelf is not configured
+        '502':
+          description: Failed to retrieve Audiobookshelf options
   /settings/audiobookshelf/test:
     post:
       summary: Test Audiobookshelf configuration
@@ -4032,7 +4118,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ShelfmarkSettings'
+              allOf:
+                - $ref: '#/components/schemas/ShelfmarkSettings'
+                - type: object
+                  properties:
+                    globalRequestSettings:
+                      $ref: '#/components/schemas/ShelfmarkGlobalRequestSettings'
       responses:
         '200':
           description: 'Values were successfully updated'
@@ -4041,7 +4132,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/ShelfmarkSettings'
         '400':
-          description: Invalid URL Base (bad format, reserved path, or already in use)
+          description: Invalid URL Base or default/request settings
+        '500':
+          description: Failed to save Streamarr settings; no global settings changed
+        '502':
+          description: Streamarr settings saved, but the Shelfmark global update could not be confirmed
+  /settings/shelfmark/requests:
+    get:
+      summary: Get Shelfmark global request settings
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Current global values and environment-managed fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    $ref: '#/components/schemas/ShelfmarkGlobalRequestSettings'
+                  locked:
+                    type: array
+                    items:
+                      type: string
+        '503':
+          description: Shelfmark is not configured
+        '502':
+          description: Failed to read Shelfmark global request settings
   /settings/shelfmark/test:
     post:
       summary: Test Shelfmark configuration

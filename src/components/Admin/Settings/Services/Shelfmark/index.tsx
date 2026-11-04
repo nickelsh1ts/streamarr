@@ -6,19 +6,66 @@ import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Toggle from '@app/components/Common/Toggle';
 import Toast from '@app/components/Toast';
 import {
   ArrowDownTrayIcon,
+  ArrowPathIcon,
   CheckBadgeIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
+import type { ShelfmarkGlobalRequestSettingsResponse } from '@server/api/shelfmark';
 import type { ShelfmarkSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
+import { isEqual } from 'lodash';
 import { useCallback, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import useSWR, { mutate } from 'swr';
 import * as Yup from 'yup';
+
+const defaultMessages = defineMessages({
+  ebookPolicy: {
+    id: 'servicesSettings.shelfmarkDefaults.ebook',
+    defaultMessage: 'Ebook',
+  },
+  audiobookPolicy: {
+    id: 'servicesSettings.shelfmarkDefaults.audiobook',
+    defaultMessage: 'Audiobook',
+  },
+});
+const policyMessages = defineMessages({
+  download: {
+    id: 'servicesSettings.shelfmarkDefaults.download',
+    defaultMessage: 'Download',
+  },
+  request_release: {
+    id: 'servicesSettings.shelfmarkDefaults.requestRelease',
+    defaultMessage: 'Request Release',
+  },
+  request_book: {
+    id: 'servicesSettings.shelfmarkDefaults.requestBook',
+    defaultMessage: 'Request Book',
+  },
+  blocked: {
+    id: 'servicesSettings.shelfmarkDefaults.blocked',
+    defaultMessage: 'Blocked',
+  },
+});
+
+const hasShelfmarkConnectionChanged = (
+  values: {
+    hostname: string;
+    port: number;
+    useSsl: boolean;
+    urlBase: string;
+  },
+  settings?: ShelfmarkSettings
+) =>
+  values.hostname !== (settings?.hostname ?? '') ||
+  Number(values.port) !== (settings?.port ?? 13378) ||
+  values.useSsl !== (settings?.useSsl ?? false) ||
+  values.urlBase !== (settings?.urlBase ?? '/shelfmark');
 
 const ServicesShelfmark = () => {
   const intl = useIntl();
@@ -26,11 +73,41 @@ const ServicesShelfmark = () => {
   const {
     data,
     error,
+    isValidating,
     mutate: revalidate,
   } = useSWR<ShelfmarkSettings>('/api/v1/settings/shelfmark');
+  const {
+    data: requestSettings,
+    error: requestSettingsError,
+    isLoading: requestSettingsLoading,
+    mutate: revalidateRequestSettings,
+  } = useSWR<ShelfmarkGlobalRequestSettingsResponse>(
+    data?.hostname && data?.port && data?.urlBase
+      ? '/api/v1/settings/shelfmark/requests'
+      : null
+  );
+  const userDefaults = {
+    ebookPolicy: data?.defaultUserSettings?.ebookPolicy ?? 'inherit',
+    audiobookPolicy: data?.defaultUserSettings?.audiobookPolicy ?? 'inherit',
+  };
   const [isTesting, setIsTesting] = useState(false);
 
   const SettingsSchema = Yup.object().shape({
+    requestLimit: Yup.string().when('requestsEnabled', {
+      is: true,
+      then: (schema) =>
+        schema.test(
+          'request-limit',
+          intl.formatMessage({
+            id: 'servicesSettings.shelfmarkDefaults.limitInvalid',
+            defaultMessage: 'Enter a whole number between 1 and 1000.',
+          }),
+          (value) =>
+            /^\d+$/.test(value ?? '') &&
+            Number(value) >= 1 &&
+            Number(value) <= 1000
+        ),
+    }),
     urlBase: Yup.string()
       .required(
         intl.formatMessage({
@@ -118,7 +195,38 @@ const ServicesShelfmark = () => {
     </div>
   );
 
-  if (!data && !error) {
+  if (!data) {
+    return (
+      <div className="mb-10 max-w-6xl">
+        {header}
+        {error ? (
+          <Alert
+            type="error"
+            title={intl.formatMessage({
+              id: 'servicesSettings.shelfmark.loadError',
+              defaultMessage: 'Unable to load Shelfmark settings.',
+            })}
+          >
+            <Button
+              buttonType="error"
+              buttonSize="sm"
+              onClick={() => revalidate()}
+              disabled={isValidating}
+            >
+              <ArrowPathIcon
+                className={`mr-1 size-5 ${isValidating ? 'animate-spin' : ''}`}
+              />
+              <FormattedMessage id="common.retry" defaultMessage="Retry" />
+            </Button>
+          </Alert>
+        ) : (
+          <LoadingEllipsis />
+        )}
+      </div>
+    );
+  }
+
+  if (requestSettingsLoading) {
     return (
       <div className="mb-10 max-w-6xl">
         {header}
@@ -153,9 +261,41 @@ const ServicesShelfmark = () => {
           useSsl: data?.useSsl || false,
           urlBase: data?.urlBase ?? '/shelfmark',
           enableNewUserSignIn: data?.enableNewUserSignIn || false,
+          userDefaults,
+          userDefaultsSnapshot: userDefaults,
+          requestsEnabled: requestSettings?.values.requestsEnabled ?? false,
+          requestsAllowNotes:
+            requestSettings?.values.requestsAllowNotes ?? false,
+          requestLimit: requestSettings?.values.requestLimit?.toString() ?? '',
+          globalSnapshot: { ...requestSettings?.values },
         }}
         validationSchema={SettingsSchema}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { resetForm, setFieldValue }) => {
+          const userDefaultsChanged = !isEqual(
+            values.userDefaults,
+            values.userDefaultsSnapshot
+          );
+          const hasRequestSettings = !!requestSettings && !requestSettingsError;
+          const globalRequestSettings = hasRequestSettings
+            ? {
+                ...(values.requestsEnabled !==
+                  values.globalSnapshot.requestsEnabled && {
+                  requestsEnabled: values.requestsEnabled,
+                }),
+                ...(values.requestsEnabled &&
+                  values.requestsAllowNotes !==
+                    values.globalSnapshot.requestsAllowNotes && {
+                    requestsAllowNotes: values.requestsAllowNotes,
+                  }),
+                ...(values.requestsEnabled &&
+                  values.requestLimit &&
+                  Number(values.requestLimit) !==
+                    values.globalSnapshot.requestLimit && {
+                    requestLimit: Number(values.requestLimit),
+                  }),
+              }
+            : {};
+          let saveSucceeded = false;
           try {
             await axios.post('/api/v1/settings/shelfmark', {
               enabled: values.enabled,
@@ -164,7 +304,26 @@ const ServicesShelfmark = () => {
               useSsl: values.useSsl,
               urlBase: values.urlBase,
               enableNewUserSignIn: values.enableNewUserSignIn,
-            } as ShelfmarkSettings);
+              ...(userDefaultsChanged && {
+                defaultUserSettings: {
+                  ...(values.userDefaults.ebookPolicy !== 'inherit' && {
+                    ebookPolicy: values.userDefaults.ebookPolicy,
+                  }),
+                  ...(values.userDefaults.audiobookPolicy !== 'inherit' && {
+                    audiobookPolicy: values.userDefaults.audiobookPolicy,
+                  }),
+                },
+              }),
+              globalRequestSettings,
+            });
+            saveSucceeded = true;
+            if (userDefaultsChanged) {
+              await setFieldValue(
+                'userDefaultsSnapshot',
+                values.userDefaults,
+                false
+              );
+            }
 
             Toast({
               title: intl.formatMessage(
@@ -194,7 +353,34 @@ const ServicesShelfmark = () => {
               icon: <XCircleIcon className="size-7" />,
             });
           } finally {
-            revalidate();
+            const refreshedSettings = await revalidate();
+            if (refreshedSettings && refreshedSettings !== data) {
+              await setFieldValue(
+                'userDefaultsSnapshot',
+                {
+                  ebookPolicy:
+                    refreshedSettings.defaultUserSettings?.ebookPolicy ??
+                    'inherit',
+                  audiobookPolicy:
+                    refreshedSettings.defaultUserSettings?.audiobookPolicy ??
+                    'inherit',
+                },
+                false
+              );
+            }
+            const refreshed = await revalidateRequestSettings();
+            if (saveSucceeded && refreshed && refreshed !== requestSettings) {
+              resetForm({
+                values: {
+                  ...values,
+                  userDefaultsSnapshot: values.userDefaults,
+                  globalSnapshot: refreshed.values,
+                  requestsEnabled: refreshed.values.requestsEnabled,
+                  requestsAllowNotes: refreshed.values.requestsAllowNotes,
+                  requestLimit: String(refreshed.values.requestLimit),
+                },
+              });
+            }
           }
         }}
       >
@@ -207,6 +393,7 @@ const ServicesShelfmark = () => {
           isSubmitting,
           isValid,
         }) => {
+          const connectionChanged = hasShelfmarkConnectionChanged(values, data);
           return (
             <form className="mt-5 max-w-6xl space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
@@ -359,6 +546,192 @@ const ServicesShelfmark = () => {
                   />
                 </div>
               </div>
+              {requestSettings &&
+                !requestSettingsError &&
+                values.requestsEnabled && (
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    <span className="block">
+                      <FormattedMessage
+                        id="servicesSettings.newUserSettings"
+                        defaultMessage="New User Settings"
+                      />
+                      <span className="text-neutral block text-sm font-light">
+                        <FormattedMessage
+                          id="servicesSettings.newUserSettings.description"
+                          defaultMessage="Settings applied when a new user is created."
+                        />
+                      </span>
+                    </span>
+                    <div className="grid grid-cols-1 gap-2 sm:col-span-2 sm:grid-cols-2">
+                      {(
+                        Object.keys(
+                          defaultMessages
+                        ) as (keyof typeof defaultMessages)[]
+                      ).map((key) => (
+                        <div key={key} className="">
+                          <label
+                            htmlFor={`default-${key}`}
+                            className={`block text-sm sm:row-start-1 ${key === 'ebookPolicy' ? 'sm:col-start-2' : 'sm:col-start-3'}`}
+                          >
+                            {intl.formatMessage(defaultMessages[key])}
+                          </label>
+                          <Field
+                            as="select"
+                            id={`default-${key}`}
+                            name={`userDefaults.${key}`}
+                            disabled={isSubmitting}
+                            className={`select select-sm select-primary w-full sm:row-start-2 ${key === 'ebookPolicy' ? 'sm:col-start-2' : 'sm:col-start-3'}`}
+                          >
+                            <option value="inherit">
+                              {intl.formatMessage({
+                                id: 'servicesSettings.shelfmarkDefaults.default',
+                                defaultMessage: 'Default',
+                              })}
+                            </option>
+                            {Object.entries(policyMessages).map(
+                              ([mode, message]) => (
+                                <option key={mode} value={mode}>
+                                  {intl.formatMessage(message)}
+                                </option>
+                              )
+                            )}
+                          </Field>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              {!connectionChanged &&
+                (requestSettings || requestSettingsError) && (
+                  <div className="space-y-5">
+                    <span className="block font-bold">
+                      <FormattedMessage
+                        id="servicesSettings.shelfmarkRequests.global"
+                        defaultMessage="Global Request Settings"
+                      />
+                    </span>
+                    {requestSettingsError ? (
+                      <Alert>
+                        <FormattedMessage
+                          id="servicesSettings.shelfmarkRequests.unavailable"
+                          defaultMessage="Shelfmark is currently unavailable..."
+                        />
+                      </Alert>
+                    ) : (
+                      requestSettings && (
+                        <>
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                            <label htmlFor="requestsEnabled">
+                              <FormattedMessage
+                                id="servicesSettings.shelfmarkRequests.enabled"
+                                defaultMessage="Enable Requests"
+                              />
+                            </label>
+                            <div
+                              className={`sm:col-span-2 ${requestSettings.locked.includes('requestsEnabled') ? 'opacity-50' : ''}`}
+                              inert={
+                                isSubmitting ||
+                                requestSettings.locked.includes(
+                                  'requestsEnabled'
+                                )
+                              }
+                            >
+                              <Toggle
+                                id="requestsEnabled"
+                                valueOf={values.requestsEnabled}
+                                onClick={() =>
+                                  setFieldValue(
+                                    'requestsEnabled',
+                                    !values.requestsEnabled
+                                  )
+                                }
+                                ariaLabel={intl.formatMessage({
+                                  id: 'servicesSettings.shelfmarkRequests.enabled',
+                                  defaultMessage: 'Enable Requests',
+                                })}
+                              />
+                            </div>
+                          </div>
+                          {values.requestsEnabled && (
+                            <>
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                <label htmlFor="requestsAllowNotes">
+                                  <FormattedMessage
+                                    id="servicesSettings.shelfmarkRequests.notes"
+                                    defaultMessage="Allow Notes on Requests"
+                                  />
+                                </label>
+                                <div
+                                  className={`sm:col-span-2 ${requestSettings.locked.includes('requestsAllowNotes') ? 'opacity-50' : ''}`}
+                                  inert={
+                                    isSubmitting ||
+                                    requestSettings.locked.includes(
+                                      'requestsAllowNotes'
+                                    )
+                                  }
+                                >
+                                  <Toggle
+                                    id="requestsAllowNotes"
+                                    valueOf={values.requestsAllowNotes}
+                                    onClick={() =>
+                                      setFieldValue(
+                                        'requestsAllowNotes',
+                                        !values.requestsAllowNotes
+                                      )
+                                    }
+                                    ariaLabel={intl.formatMessage({
+                                      id: 'servicesSettings.shelfmarkRequests.notes',
+                                      defaultMessage: 'Allow Notes on Requests',
+                                    })}
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                <label htmlFor="requestLimit">
+                                  <FormattedMessage
+                                    id="servicesSettings.shelfmarkRequests.limit"
+                                    defaultMessage="Max Pending Requests Per User"
+                                  />
+                                </label>
+                                <div className="sm:col-span-2">
+                                  <Field
+                                    type="number"
+                                    min="1"
+                                    max="1000"
+                                    step="1"
+                                    id="requestLimit"
+                                    name="requestLimit"
+                                    disabled={
+                                      isSubmitting ||
+                                      requestSettings.locked.includes(
+                                        'requestLimit'
+                                      )
+                                    }
+                                    className="input input-sm input-primary w-1/6"
+                                  />
+                                  {errors.requestLimit &&
+                                    touched.requestLimit && (
+                                      <p className="text-error">
+                                        {errors.requestLimit}
+                                      </p>
+                                    )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                          {requestSettings.locked.length > 0 && (
+                            <p className="text-neutral text-sm">
+                              <FormattedMessage
+                                id="servicesSettings.shelfmarkRequests.envLocked"
+                                defaultMessage="Some request settings are managed by Shelfmark environment variables."
+                              />
+                            </p>
+                          )}
+                        </>
+                      )
+                    )}
+                  </div>
+                )}
               <div className="divider divider-primary col-span-full mb-0" />
               <div className="col-span-3 mt-4 flex justify-end">
                 <div className="flex gap-2">
