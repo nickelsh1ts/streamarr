@@ -30,6 +30,14 @@ Go to **Admin → Settings → Services → Audiobookshelf**.
 
 Use **Test** to verify the connection before saving. Once configured, Audiobookshelf appears on the [System](settings/system.md) health dashboard with its reported version.
 
+### Default User Settings
+
+Choose the download, upload, metadata-update, delete, explicit-content, library, and tag permissions for accounts Streamarr creates. The initial values preserve Streamarr's previous permissions: no downloads or media changes, with access to all libraries, tags, and explicit content.
+
+Disable **Access All Libraries** or **Access All Tags** to select an allowlist. An empty restricted list grants access to no libraries or no tagged items respectively; untagged items are also excluded when tag restrictions are enabled. Options come from the saved server connection. If loading fails, existing selections are preserved.
+
+These defaults apply only when Streamarr creates an Audiobookshelf account, including creation by a user manager. Saving defaults does not change existing accounts, account links, sessions, or password resets, and does not require restarting Streamarr.
+
 ---
 
 ## Access Control

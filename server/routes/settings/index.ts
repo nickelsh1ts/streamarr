@@ -1132,6 +1132,7 @@ settingsRoutes.get('/audiobookshelf', async (_req, res) => {
 
 settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
   const settings = getSettings();
+  const { defaultUserSettings } = req.body;
 
   const validation = validateBaseUrl(
     req.body.urlBase,
@@ -1142,9 +1143,57 @@ settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
     return next({ status: 400, message: validation.error });
   }
 
-  Object.assign(settings.audiobookshelf, req.body);
-  settings.save();
-  res.status(200).json(settings.audiobookshelf);
+  const previous = settings.audiobookshelf;
+  try {
+    settings.audiobookshelf = {
+      ...settings.audiobookshelf,
+      enabled: req.body.enabled,
+      hostname: req.body.hostname,
+      port: req.body.port,
+      useSsl: req.body.useSsl,
+      externalUrl: req.body.externalUrl,
+      urlBase: req.body.urlBase,
+      id: req.body.id,
+      apiKey: req.body.apiKey,
+      enableNewUserSignIn: req.body.enableNewUserSignIn,
+      defaultUserSettings,
+    };
+    settings.save();
+    res.status(200).json(settings.audiobookshelf);
+  } catch {
+    Object.keys(settings.audiobookshelf).forEach(
+      (key) => delete settings.audiobookshelf[key]
+    );
+    Object.assign(settings.audiobookshelf, previous);
+    next({ status: 500, message: 'Failed to save Audiobookshelf settings.' });
+  }
+});
+
+settingsRoutes.get('/audiobookshelf/options', async (_req, res, next) => {
+  const settings = getSettings().audiobookshelf;
+  if (!settings.hostname || !settings.port || !settings.apiKey) {
+    return next({ status: 503, message: 'Audiobookshelf is not configured.' });
+  }
+  try {
+    const api = getAudiobookshelfAPI(settings);
+    const libraries = await api.getAllLibraries();
+    const libraryTags = await Promise.all(
+      libraries.map((library) => api.getLibraryTags(library.id))
+    );
+    res.json({
+      libraries: libraries.map(({ id, name }) => ({ id, name })),
+      tags: [...new Set(libraryTags.flat())].sort(),
+    });
+  } catch (e) {
+    logger.error('Failed to retrieve Audiobookshelf libraries and tags', {
+      label: 'Audiobookshelf',
+      message: e instanceof Error ? e.message : String(e),
+    });
+    return next({
+      status: 502,
+      message: 'Failed to retrieve Audiobookshelf libraries and tags.',
+    });
+  }
 });
 
 settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
@@ -1194,6 +1243,8 @@ settingsRoutes.get('/shelfmark', async (_req, res) => {
 
 settingsRoutes.post('/shelfmark', async (req, res, next) => {
   const settings = getSettings();
+  const { defaultUserSettings } = req.body;
+  const { globalRequestSettings } = req.body;
 
   const validation = validateBaseUrl(
     req.body.urlBase,
@@ -1204,9 +1255,67 @@ settingsRoutes.post('/shelfmark', async (req, res, next) => {
     return next({ status: 400, message: validation.error });
   }
 
-  Object.assign(settings.shelfmark, req.body);
-  settings.save();
+  const previous = settings.shelfmark;
+  try {
+    settings.shelfmark = {
+      ...settings.shelfmark,
+      enabled: req.body.enabled,
+      hostname: req.body.hostname,
+      port: req.body.port,
+      useSsl: req.body.useSsl,
+      externalUrl: req.body.externalUrl,
+      urlBase: req.body.urlBase,
+      id: req.body.id,
+      enableNewUserSignIn: req.body.enableNewUserSignIn,
+    };
+    if (defaultUserSettings !== undefined) {
+      settings.shelfmark.defaultUserSettings = defaultUserSettings;
+    }
+    settings.save();
+  } catch {
+    Object.keys(settings.shelfmark).forEach(
+      (key) => delete settings.shelfmark[key]
+    );
+    Object.assign(settings.shelfmark, previous);
+    return next({
+      status: 500,
+      message:
+        'Failed to save Shelfmark settings. No global request settings were changed.',
+    });
+  }
+
+  if (globalRequestSettings && Object.keys(globalRequestSettings).length > 0) {
+    try {
+      await getShelfmarkAPI(settings.shelfmark).updateGlobalRequestSettings(
+        globalRequestSettings
+      );
+    } catch (e) {
+      logger.error('Failed to update Shelfmark global request settings', {
+        label: 'Shelfmark',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return next({
+        status: 502,
+        message: `Streamarr settings were saved, but Shelfmark global request settings could not be confirmed: ${e instanceof Error ? e.message : String(e)}`,
+      });
+    }
+  }
   res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.get('/shelfmark/requests', async (_req, res, next) => {
+  const settings = getSettings().shelfmark;
+  if (!settings.hostname || !settings.port || !settings.urlBase) {
+    return next({ status: 503, message: 'Shelfmark is not configured.' });
+  }
+  try {
+    res.json(await getShelfmarkAPI(settings).getGlobalRequestSettings());
+  } catch {
+    next({
+      status: 502,
+      message: 'Failed to read Shelfmark global request settings.',
+    });
+  }
 });
 
 settingsRoutes.post('/shelfmark/test', async (req, res, next) => {

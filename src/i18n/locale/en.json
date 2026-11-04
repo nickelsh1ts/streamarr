@@ -5165,6 +5165,36 @@
   "serviceUnavailable.unreachableMessage": {
     "defaultMessage": "Unable to connect to {serviceName}. Service is unreachable."
   },
+  "servicesSettings.absDefaults.accessAllLibraries": {
+    "defaultMessage": "Access All Libraries"
+  },
+  "servicesSettings.absDefaults.accessAllTags": {
+    "defaultMessage": "Access All Tags"
+  },
+  "servicesSettings.absDefaults.accessExplicitContent": {
+    "defaultMessage": "Access Explicit Content"
+  },
+  "servicesSettings.absDefaults.delete": {
+    "defaultMessage": "Allow Deleting Media"
+  },
+  "servicesSettings.absDefaults.download": {
+    "defaultMessage": "Allow Downloads"
+  },
+  "servicesSettings.absDefaults.libraries": {
+    "defaultMessage": "Allowed Libraries"
+  },
+  "servicesSettings.absDefaults.optionsUnavailable": {
+    "defaultMessage": "Library and tag options are currently unavailable. Audiobookshelf may be unreachable."
+  },
+  "servicesSettings.absDefaults.tags": {
+    "defaultMessage": "Allowed Tags"
+  },
+  "servicesSettings.absDefaults.update": {
+    "defaultMessage": "Allow Metadata Updates"
+  },
+  "servicesSettings.absDefaults.upload": {
+    "defaultMessage": "Allow Uploads"
+  },
   "servicesSettings.audiobookshelf.alertDescription": {
     "defaultMessage": "Audiobookshelf must be started with its ROUTER_BASE_PATH environment variable set to the same value as the URL Base below (e.g. /audiobookshelf). Without it, Audiobookshelf serves its assets from the root and they will fail to load inside Streamarr. Restart Audiobookshelf after changing ROUTER_BASE_PATH."
   },
@@ -5179,6 +5209,9 @@
   },
   "servicesSettings.audiobookshelf.enableNewUserSignIn.description": {
     "defaultMessage": "Allow users to create an Audiobookshelf account."
+  },
+  "servicesSettings.audiobookshelf.loadError": {
+    "defaultMessage": "Unable to load Audiobookshelf settings."
   },
   "servicesSettings.audiobookshelf.title": {
     "defaultMessage": "Audiobookshelf Settings"
@@ -5255,6 +5288,9 @@
   "servicesSettings.cleanuparr.title": {
     "defaultMessage": "Cleanuparr Settings"
   },
+  "servicesSettings.defaultUserSettings": {
+    "defaultMessage": "Default User Settings"
+  },
   "servicesSettings.disableAuth": {
     "defaultMessage": "Authentication"
   },
@@ -5306,6 +5342,12 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Lidarr Settings"
   },
+  "servicesSettings.newUserSettings": {
+    "defaultMessage": "New User Settings"
+  },
+  "servicesSettings.newUserSettings.description": {
+    "defaultMessage": "Settings applied when a new user is created."
+  },
   "servicesSettings.nexroll.description": {
     "defaultMessage": "Optionally configure the settings for your NeXroll server."
   },
@@ -5339,8 +5381,53 @@
   "servicesSettings.shelfmark.enableNewUserSignIn.description": {
     "defaultMessage": "Allow users to create and manage their own Shelfmark accounts."
   },
+  "servicesSettings.shelfmark.loadError": {
+    "defaultMessage": "Unable to load Shelfmark settings."
+  },
   "servicesSettings.shelfmark.title": {
     "defaultMessage": "Shelfmark Settings"
+  },
+  "servicesSettings.shelfmarkDefaults.audiobook": {
+    "defaultMessage": "Audiobook"
+  },
+  "servicesSettings.shelfmarkDefaults.blocked": {
+    "defaultMessage": "Blocked"
+  },
+  "servicesSettings.shelfmarkDefaults.default": {
+    "defaultMessage": "Default"
+  },
+  "servicesSettings.shelfmarkDefaults.download": {
+    "defaultMessage": "Download"
+  },
+  "servicesSettings.shelfmarkDefaults.ebook": {
+    "defaultMessage": "Ebook"
+  },
+  "servicesSettings.shelfmarkDefaults.limitInvalid": {
+    "defaultMessage": "Enter a whole number between 1 and 1000."
+  },
+  "servicesSettings.shelfmarkDefaults.requestBook": {
+    "defaultMessage": "Request Book"
+  },
+  "servicesSettings.shelfmarkDefaults.requestRelease": {
+    "defaultMessage": "Request Release"
+  },
+  "servicesSettings.shelfmarkRequests.enabled": {
+    "defaultMessage": "Enable Requests"
+  },
+  "servicesSettings.shelfmarkRequests.envLocked": {
+    "defaultMessage": "Some request settings are managed by Shelfmark environment variables."
+  },
+  "servicesSettings.shelfmarkRequests.global": {
+    "defaultMessage": "Global Request Settings"
+  },
+  "servicesSettings.shelfmarkRequests.limit": {
+    "defaultMessage": "Max Pending Requests Per User"
+  },
+  "servicesSettings.shelfmarkRequests.notes": {
+    "defaultMessage": "Allow Notes on Requests"
+  },
+  "servicesSettings.shelfmarkRequests.unavailable": {
+    "defaultMessage": "Shelfmark is currently unavailable..."
   },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."

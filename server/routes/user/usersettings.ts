@@ -17,11 +17,11 @@ import type {
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import {
-  AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
   decryptSecret,
   encryptSecret,
   findAudiobookshelfAccount,
   getAudiobookshelfAPI,
+  getAudiobookshelfUserDefaults,
   getAudiobookshelfUsernameCandidate,
 } from '@server/lib/audiobookshelf';
 import {
@@ -48,7 +48,11 @@ import {
   linkShelfmarkAccount,
   ShelfmarkAccountCreationDisabledError,
   ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkPersistenceError,
+  ShelfmarkProvisioningError,
   ShelfmarkUsernameConflictError,
+  ShelfmarkUserNotFoundError,
+  withShelfmarkAccountLock,
 } from '@server/lib/shelfmark';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -288,7 +292,7 @@ const audiobookshelfLinkHandler =
             email: user.email,
             type: 'user',
             isActive: true,
-            permissions: AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+            ...getAudiobookshelfUserDefaults(),
           });
           targetId = created.id;
           targetUsername = created.username;
@@ -530,6 +534,15 @@ userSettingsRoutes.post<{ id: string }, { linked: boolean; username: string }>(
         username,
       });
     } catch (e) {
+      if (e instanceof ShelfmarkUserNotFoundError) {
+        return next({ status: 404, message: e.message });
+      }
+      if (e instanceof ShelfmarkPersistenceError) {
+        return next({ status: 500, message: e.message });
+      }
+      if (e instanceof ShelfmarkProvisioningError) {
+        return next({ status: 502, message: e.message });
+      }
       if (e instanceof ShelfmarkAccountCreationDisabledError) {
         return next({
           status: 403,
@@ -587,8 +600,11 @@ userSettingsRoutes.delete<{ id: string }>(
     }
 
     try {
-      user.shelfmarkUsername = null;
-      await userRepository.save(user);
+      await withShelfmarkAccountLock(user, (currentUser) =>
+        userRepository.update(currentUser.id, {
+          shelfmarkUsername: null,
+        })
+      );
       invalidateShelfmarkAccountCache(user.id);
       logger.info('Unlinked Shelfmark account', {
         label: 'Shelfmark',

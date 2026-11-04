@@ -72,7 +72,7 @@ What happens next depends on whether Streamarr finds a matching Audiobookshelf a
 Streamarr stores the password encrypted at rest so it can renew your Audiobookshelf session silently on each visit to the Audiobooks page.
 
 {% hint style="info" %}
-Accounts Streamarr creates are given read-only Audiobookshelf permissions: no download, upload, update, or delete. Administrators can adjust these in Audiobookshelf directly.
+Accounts Streamarr creates receive the defaults configured in **Admin → Settings → Services → Audiobookshelf → Default User Settings**. Initially these allow browsing and playback, but no download, upload, update, or delete. Changing those defaults does not modify existing Audiobookshelf accounts; administrators can adjust existing accounts in Audiobookshelf directly.
 {% endhint %}
 
 ---
