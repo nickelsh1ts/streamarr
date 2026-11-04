@@ -430,7 +430,7 @@ const NetworkSettings = () => {
                 <p className="text-neutral block text-sm font-light">
                   <FormattedMessage
                     id="generalSettings.csrfProtection.description"
-                    defaultMessage="Set external API access to read-only (requires HTTPS)"
+                    defaultMessage="Protect browser requests against forgery (requires HTTPS and token-aware API clients)"
                   />
                 </p>
               </label>

@@ -19,32 +19,40 @@ describe('API Health', () => {
     it('POST /auth/local should authenticate with valid credentials', () => {
       cy.env(['ADMIN_EMAIL', 'ADMIN_PASSWORD']).then(
         ({ ADMIN_EMAIL, ADMIN_PASSWORD }) => {
-          cy.request({
-            method: 'POST',
-            url: '/api/v1/auth/local',
-            body: {
-              email: ADMIN_EMAIL,
-              password: ADMIN_PASSWORD,
-            },
-          }).then((resp) => {
-            expect(resp.status).to.eq(200);
-            expect(resp.body).to.have.property('id');
+          cy.request('/api/v1/settings/public');
+          cy.getCookie('XSRF-TOKEN').then((cookie) => {
+            cy.request({
+              method: 'POST',
+              url: '/api/v1/auth/local',
+              headers: cookie ? { 'X-XSRF-TOKEN': cookie.value } : {},
+              body: {
+                email: ADMIN_EMAIL,
+                password: ADMIN_PASSWORD,
+              },
+            }).then((resp) => {
+              expect(resp.status).to.eq(200);
+              expect(resp.body).to.have.property('id');
+            });
           });
         }
       );
     });
 
     it('POST /auth/local should reject invalid credentials', () => {
-      cy.request({
-        method: 'POST',
-        url: '/api/v1/auth/local',
-        body: {
-          email: 'invalid@test.com',
-          password: 'wrongpassword',
-        },
-        failOnStatusCode: false,
-      }).then((resp) => {
-        expect(resp.status).to.eq(401);
+      cy.request('/api/v1/settings/public');
+      cy.getCookie('XSRF-TOKEN').then((cookie) => {
+        cy.request({
+          method: 'POST',
+          url: '/api/v1/auth/local',
+          headers: cookie ? { 'X-XSRF-TOKEN': cookie.value } : {},
+          body: {
+            email: 'invalid@test.com',
+            password: 'wrongpassword',
+          },
+          failOnStatusCode: false,
+        }).then((resp) => {
+          expect(resp.status).to.eq(401);
+        });
       });
     });
 
@@ -56,6 +64,107 @@ describe('API Health', () => {
         expect(resp.body).to.have.property('id');
         expect(resp.body).to.have.property('email');
         expect(resp.body).to.have.property('username');
+      });
+    });
+  });
+
+  describe('CSRF Protection', () => {
+    beforeEach(function () {
+      cy.env(['CSRF_ENABLED']).then(({ CSRF_ENABLED }) => {
+        if (CSRF_ENABLED !== true) {
+          this.skip();
+          return;
+        }
+        expect(Cypress.config('baseUrl'), 'CSRF-enabled target').to.match(
+          /^https:\/\//
+        );
+        cy.request('/api/v1/settings/public');
+        cy.getCookie('XSRF-TOKEN').should('exist');
+        cy.getCookie('__Host-streamarr.csrf').should('include', {
+          secure: true,
+          httpOnly: true,
+          path: '/',
+        });
+      });
+    });
+
+    it('rejects domain and path injection of the production secret cookie', () => {
+      cy.visit('/');
+      cy.window().then((window) => {
+        window.document.cookie =
+          '__Host-streamarr.csrf=path-injection; Path=/api/v1; Secure';
+        window.document.cookie = `__Host-streamarr.csrf=domain-injection; Domain=${window.location.hostname}; Path=/; Secure`;
+        window.document.cookie = `__Host-csrf-domain-probe=present; Domain=${window.location.hostname}; Path=/; Secure`;
+        window.document.cookie = `csrf-domain-probe=present; Domain=${window.location.hostname}; Path=/; Secure`;
+        window.document.cookie =
+          'csrf-path-probe=present; Path=/api/v1; Secure';
+      });
+      cy.getAllCookies().then((cookies) => {
+        const secrets = cookies.filter(
+          (cookie) => cookie.name === '__Host-streamarr.csrf'
+        );
+        expect(secrets).to.have.length(1);
+        expect(secrets[0].path).to.eq('/');
+        expect(secrets[0].value).not.to.be.oneOf([
+          'path-injection',
+          'domain-injection',
+        ]);
+        const domainProbe = cookies.find(
+          (cookie) => cookie.name === '__Host-csrf-domain-probe'
+        );
+        expect(
+          domainProbe?.hostOnly ?? true,
+          'host-prefixed cookies cannot become domain-scoped'
+        ).to.eq(true);
+        expect(
+          cookies.some((cookie) => cookie.name === 'csrf-domain-probe'),
+          'ordinary cookies can use Domain'
+        ).to.eq(true);
+        expect(
+          cookies.some(
+            (cookie) =>
+              cookie.name === 'csrf-path-probe' && cookie.path === '/api/v1'
+          ),
+          'ordinary cookies can use a non-root path'
+        ).to.eq(true);
+      });
+    });
+
+    for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      it(`rejects ${method} requests without a token`, () => {
+        cy.request({
+          method,
+          url: '/api/v1/auth/local',
+          failOnStatusCode: false,
+        })
+          .its('status')
+          .should('eq', 403);
+      });
+    }
+
+    it('rejects invalid tokens', () => {
+      cy.request({
+        method: 'POST',
+        url: '/api/v1/auth/local',
+        headers: { 'X-XSRF-TOKEN': 'invalid-token' },
+        failOnStatusCode: false,
+      })
+        .its('status')
+        .should('eq', 403);
+    });
+
+    it('allows valid tokens through to authentication', () => {
+      cy.getCookie('XSRF-TOKEN').then((cookie) => {
+        expect(cookie).not.to.be.null;
+        cy.request({
+          method: 'POST',
+          url: '/api/v1/auth/local',
+          headers: { 'X-XSRF-TOKEN': cookie?.value ?? '' },
+          body: { email: 'invalid@test.com', password: 'wrongpassword' },
+          failOnStatusCode: false,
+        })
+          .its('status')
+          .should('eq', 401);
       });
     });
   });

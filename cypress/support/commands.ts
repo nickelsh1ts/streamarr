@@ -14,13 +14,17 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   cy.session(
     [email, password],
     () => {
-      cy.request({
-        method: 'POST',
-        url: '/api/v1/auth/local',
-        body: { email, password },
-      }).then((resp) => {
-        expect(resp.status).to.eq(200);
-        expect(resp.body).to.have.property('id');
+      cy.request('/api/v1/settings/public');
+      cy.getCookie('XSRF-TOKEN').then((cookie) => {
+        cy.request({
+          method: 'POST',
+          url: '/api/v1/auth/local',
+          headers: cookie ? { 'X-XSRF-TOKEN': cookie.value } : {},
+          body: { email, password },
+        }).then((resp) => {
+          expect(resp.status).to.eq(200);
+          expect(resp.body).to.have.property('id');
+        });
       });
     },
     {

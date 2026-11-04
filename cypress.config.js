@@ -8,6 +8,7 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.ts',
   },
   env: {
+    CSRF_ENABLED: false,
     ADMIN_EMAIL: 'admin@streamarr.dev',
     ADMIN_PASSWORD: 'test1234',
     USER_EMAIL: 'friend@streamarr.dev',
