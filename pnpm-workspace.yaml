@@ -9,3 +9,5 @@ allowBuilds:
   better-sqlite3: true
 overrides:
   eslint-config-next>typescript-eslint: ^8.58.2
+patchedDependencies:
+  daisyui@5.7.50: patches/daisyui@5.7.50.patch
