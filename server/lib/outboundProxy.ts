@@ -11,7 +11,15 @@ import { HttpProxyAgent } from 'http-proxy-agent';
 import https from 'https';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import net from 'net';
-import { Agent, ProxyAgent } from 'undici';
+import {
+  Agent,
+  fetch,
+  Headers,
+  ProxyAgent,
+  type RequestInit,
+  type RequestRedirect,
+  type Response,
+} from 'undici';
 
 interface ProxyState {
   proxyUrl: string;
@@ -151,6 +159,7 @@ export const createProxyDispatcher = (
   return new ProxyAgent({
     uri: proxyUrl.toString(),
     token: buildProxyToken(settings),
+    allowH2: false,
     // Forward plain-HTTP requests instead of tunneling them; many proxies only
     // allow CONNECT to port 443. HTTPS targets still use CONNECT.
     proxyTunnel: false,
@@ -174,7 +183,7 @@ export const initializeOutboundProxy = (
     dispatcher: createProxyDispatcher(settings),
     directHttpAgent: new http.Agent({ keepAlive: true }),
     directHttpsAgent: new https.Agent({ keepAlive: true }),
-    directDispatcher: new Agent(),
+    directDispatcher: new Agent({ allowH2: false }),
     bypassEntries: parseBypassFilter(settings.bypassFilter),
     bypassLocalAddresses: settings.bypassLocalAddresses,
   };
@@ -280,7 +289,7 @@ export const outboundFetch = (
       ...currentInit,
       headers,
       dispatcher,
-    } as RequestInit);
+    });
 
     if (![301, 302, 303, 307, 308].includes(response.status)) {
       return response;
@@ -487,7 +496,7 @@ export const testOutboundProxy = async (
       headers: { 'User-Agent': USER_AGENT },
       dispatcher,
       signal: AbortSignal.timeout(timeoutMs),
-    } as RequestInit);
+    });
 
     if (response.status === 407) {
       throw new Error('Proxy returned HTTP 407');
