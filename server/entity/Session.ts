@@ -19,6 +19,7 @@ export class Session implements ISession {
   @Column('text')
   public json = '';
 
-  @DeleteDateColumn()
-  public deletedAt?: Date;
+  // connect-typeorm filters on `destroyedAt`; the column keeps its original name
+  @DeleteDateColumn({ name: 'deletedAt' })
+  public destroyedAt?: Date;
 }
