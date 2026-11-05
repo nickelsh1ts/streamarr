@@ -160,6 +160,7 @@ export const createProxyDispatcher = (
     uri: proxyUrl.toString(),
     token: buildProxyToken(settings),
     allowH2: false,
+    proxyTls: { allowH2: false },
     // Forward plain-HTTP requests instead of tunneling them; many proxies only
     // allow CONNECT to port 443. HTTPS targets still use CONNECT.
     proxyTunnel: false,
