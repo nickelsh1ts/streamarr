@@ -28,13 +28,13 @@ interface ProxyState {
   dispatcher: ProxyAgent;
   directHttpAgent: http.Agent;
   directHttpsAgent: https.Agent;
-  directDispatcher: Agent;
   bypassEntries: string[];
   bypassLocalAddresses: boolean;
 }
 
 // Proxy settings require a restart, so the state is built once at startup.
 let state: ProxyState | null = null;
+const directDispatcher = new Agent({ allowH2: false });
 
 const LOCAL_SUFFIXES = ['.localhost', '.local', '.internal', '.home.arpa'];
 
@@ -183,7 +183,6 @@ export const initializeOutboundProxy = (
     dispatcher: createProxyDispatcher(settings),
     directHttpAgent: new http.Agent({ keepAlive: true }),
     directHttpsAgent: new https.Agent({ keepAlive: true }),
-    directDispatcher: new Agent({ allowH2: false }),
     bypassEntries: parseBypassFilter(settings.bypassFilter),
     bypassLocalAddresses: settings.bypassLocalAddresses,
   };
@@ -272,8 +271,10 @@ export const outboundFetch = (
   if (!headers.has('User-Agent')) {
     headers.set('User-Agent', USER_AGENT);
   }
-  if (!state) return fetch(input, { ...init, headers });
+  if (!state)
+    return fetch(input, { ...init, headers, dispatcher: directDispatcher });
 
+  const proxyState = state;
   const redirectMode = init.redirect ?? 'follow';
   let currentUrl = new URL(input);
   let currentInit = { ...init, redirect: 'manual' as RequestRedirect };
@@ -283,8 +284,8 @@ export const outboundFetch = (
   const request = async (): Promise<Response> => {
     const host = currentUrl.hostname;
     const dispatcher = shouldBypassProxy(host)
-      ? state?.directDispatcher
-      : state?.dispatcher;
+      ? directDispatcher
+      : proxyState.dispatcher;
     const response = await fetch(currentUrl, {
       ...currentInit,
       headers,
