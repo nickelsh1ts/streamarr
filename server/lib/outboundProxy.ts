@@ -11,7 +11,15 @@ import { HttpProxyAgent } from 'http-proxy-agent';
 import https from 'https';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import net from 'net';
-import { Agent, ProxyAgent } from 'undici';
+import {
+  Agent,
+  fetch,
+  Headers,
+  ProxyAgent,
+  type RequestInit,
+  type RequestRedirect,
+  type Response,
+} from 'undici';
 
 interface ProxyState {
   proxyUrl: string;
@@ -20,13 +28,13 @@ interface ProxyState {
   dispatcher: ProxyAgent;
   directHttpAgent: http.Agent;
   directHttpsAgent: https.Agent;
-  directDispatcher: Agent;
   bypassEntries: string[];
   bypassLocalAddresses: boolean;
 }
 
 // Proxy settings require a restart, so the state is built once at startup.
 let state: ProxyState | null = null;
+const directDispatcher = new Agent({ allowH2: false });
 
 const LOCAL_SUFFIXES = ['.localhost', '.local', '.internal', '.home.arpa'];
 
@@ -151,6 +159,8 @@ export const createProxyDispatcher = (
   return new ProxyAgent({
     uri: proxyUrl.toString(),
     token: buildProxyToken(settings),
+    allowH2: false,
+    proxyTls: { allowH2: false },
     // Forward plain-HTTP requests instead of tunneling them; many proxies only
     // allow CONNECT to port 443. HTTPS targets still use CONNECT.
     proxyTunnel: false,
@@ -174,7 +184,6 @@ export const initializeOutboundProxy = (
     dispatcher: createProxyDispatcher(settings),
     directHttpAgent: new http.Agent({ keepAlive: true }),
     directHttpsAgent: new https.Agent({ keepAlive: true }),
-    directDispatcher: new Agent(),
     bypassEntries: parseBypassFilter(settings.bypassFilter),
     bypassLocalAddresses: settings.bypassLocalAddresses,
   };
@@ -263,8 +272,10 @@ export const outboundFetch = (
   if (!headers.has('User-Agent')) {
     headers.set('User-Agent', USER_AGENT);
   }
-  if (!state) return fetch(input, { ...init, headers });
+  if (!state)
+    return fetch(input, { ...init, headers, dispatcher: directDispatcher });
 
+  const proxyState = state;
   const redirectMode = init.redirect ?? 'follow';
   let currentUrl = new URL(input);
   let currentInit = { ...init, redirect: 'manual' as RequestRedirect };
@@ -274,13 +285,13 @@ export const outboundFetch = (
   const request = async (): Promise<Response> => {
     const host = currentUrl.hostname;
     const dispatcher = shouldBypassProxy(host)
-      ? state?.directDispatcher
-      : state?.dispatcher;
+      ? directDispatcher
+      : proxyState.dispatcher;
     const response = await fetch(currentUrl, {
       ...currentInit,
       headers,
       dispatcher,
-    } as RequestInit);
+    });
 
     if (![301, 302, 303, 307, 308].includes(response.status)) {
       return response;
@@ -487,7 +498,7 @@ export const testOutboundProxy = async (
       headers: { 'User-Agent': USER_AGENT },
       dispatcher,
       signal: AbortSignal.timeout(timeoutMs),
-    } as RequestInit);
+    });
 
     if (response.status === 407) {
       throw new Error('Proxy returned HTTP 407');
