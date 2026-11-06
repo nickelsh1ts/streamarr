@@ -239,7 +239,7 @@ Administrators with **Manage Users** can view and sign out another user's device
 
 Each user can have up to 50 signed-in devices. Signing in beyond that signs out the least recently active device.
 
-Signed-out devices that are still open return to the sign-in page right away, and any web push subscription registered from that device is removed, unless another signed-in session in the same browser still uses it.
+Signed-out devices that are still open return to the sign-in page right away, and any web push subscription registered from that device is removed, unless another signed-in session in the same browser still uses it. Subscriptions from before device tracking was added are only removed once every device is signed out.
 
 Deleting a user signs them out on every device.
 

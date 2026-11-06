@@ -104,7 +104,7 @@ const softDeleteSessions = async (
         select: { id: true, endpoint: true },
         where: { user: { id: userId } },
       });
-      // Unlinked subscriptions can only be attributed when every other device is signed out
+      // Unlinked subscriptions can only be attributed when no session remains
       const orphaned = subscriptions.filter(
         ({ endpoint }) =>
           !inUse.has(endpoint) &&
@@ -155,7 +155,7 @@ export const revokeUserSessions = async (
         (!publicIds || publicIds.includes(toPublicSessionId(id)))
     ),
     io,
-    { removeUnlinkedPush: !publicIds }
+    { removeUnlinkedPush: !publicIds && !exceptSid }
   );
 
   if (revoked) {
