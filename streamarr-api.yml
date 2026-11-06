@@ -1020,6 +1020,7 @@ components:
               example: X-Auth-User
     NetworkSettings:
       type: object
+      additionalProperties: false
       required:
         - requestTimeout
       properties:
@@ -1032,6 +1033,8 @@ components:
         trustProxy:
           type: boolean
           example: true
+        trustedProxies:
+          $ref: '#/components/schemas/TrustedProxySettings'
         csrfProtection:
           type: boolean
           example: false
@@ -1054,8 +1057,42 @@ components:
           example: 300000
         outboundProxy:
           $ref: '#/components/schemas/OutboundProxySettings'
+    TrustedProxySettings:
+      type: object
+      additionalProperties: false
+      description: >-
+        Proxies trusted to report the client IP when trustProxy is enabled.
+        With nothing selected, only the proxy connecting to Streamarr is
+        trusted. Changes require a restart.
+      properties:
+        localNetworks:
+          type: boolean
+          description: Trust loopback, link-local and private network addresses.
+          example: true
+        cloudflare:
+          type: boolean
+          description: Trust Cloudflare's edge IP ranges.
+          example: false
+        cloudflareRanges:
+          type: array
+          nullable: true
+          readOnly: true
+          description: >-
+            Accepted Cloudflare ranges. Null uses the built-in list. Updated
+            only through /settings/network/cloudflare.
+          items:
+            type: string
+        additional:
+          type: array
+          maxItems: 100
+          description: Extra trusted proxy IP addresses or CIDR ranges.
+          items:
+            type: string
+            maxLength: 50
+          example: ['203.0.113.10', '198.51.100.0/24']
     OutboundProxySettings:
       type: object
+      additionalProperties: false
       description: >-
         Settings-driven outbound HTTP(S) proxy. Changes require a server
         restart. Covers Axios, server-side fetch, and web push; SMTP and
@@ -3394,6 +3431,80 @@ paths:
                 $ref: '#/components/schemas/NetworkSettings'
         '400':
           description: Invalid network or outbound proxy settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /settings/network/cloudflare:
+    get:
+      summary: Check Cloudflare IP ranges
+      description: >-
+        Fetches Cloudflare's current published IP ranges and compares them
+        with the ranges Streamarr trusts. Nothing is saved.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Current and latest Cloudflare ranges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current:
+                    type: array
+                    items:
+                      type: string
+                  latest:
+                    type: array
+                    items:
+                      type: string
+                  added:
+                    type: array
+                    items:
+                      type: string
+                  removed:
+                    type: array
+                    items:
+                      type: string
+        '502':
+          description: Cloudflare's IP list could not be fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Accept Cloudflare IP ranges
+      description: >-
+        Replaces the trusted Cloudflare ranges with the reviewed list.
+        Changes require a restart.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ranges
+              properties:
+                ranges:
+                  type: array
+                  minItems: 1
+                  maxItems: 200
+                  items:
+                    type: string
+                    maxLength: 50
+      responses:
+        '200':
+          description: Ranges saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkSettings'
+        '400':
+          description: Invalid IP range
           content:
             application/json:
               schema:
