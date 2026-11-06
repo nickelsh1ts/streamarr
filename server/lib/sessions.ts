@@ -44,7 +44,7 @@ const getLiveSessions = async (userId: number) => {
     });
 };
 
-const disconnectSessionSockets = async (
+export const disconnectSessionSockets = async (
   io: SocketIOServer | undefined,
   userId: number,
   sids: string[]

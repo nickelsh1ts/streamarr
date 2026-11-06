@@ -231,7 +231,7 @@ When an administrator sets another user's password, **Sign Out All Devices** is 
 
 **Profile → Settings → Devices** lists every device signed in to your account, with its browser, operating system, sign-in method, when it signed in, and when it was last active. If an administrator has enabled [Record Device IP Addresses](../settings/README.md#record-device-ip-addresses), each device also shows its IP address.
 
-- **Revoke** next to a device signs it out. The device you are using is marked **This Device**; use the normal sign-out to end it.
+- **Revoke** next to a device signs it out. The device you are using shows **Current Device** instead; use the normal sign-out to end it.
 - **Sign Out Other Devices** signs out every device except this one.
 - **Sign Out All Devices** signs out every device, including this one.
 

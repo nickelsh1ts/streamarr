@@ -54,9 +54,16 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
   }, [router]);
 
   useEffect(() => {
-    const handleSessionRevoked = () => {
+    const handleSessionRevoked = async () => {
       routing.current = true;
-      router.replace('/logout');
+      try {
+        // A newer sign-in in this browser is still valid; just reconnect
+        await axios.get('/api/v1/auth/me');
+        routing.current = false;
+        socket.connect();
+      } catch {
+        router.replace('/logout');
+      }
     };
 
     socket.on('sessionRevoked', handleSessionRevoked);

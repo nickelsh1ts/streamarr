@@ -20,7 +20,11 @@ import {
   plexPinStatusLimiter,
   resetPasswordLimiter,
 } from '@server/lib/rateLimiters';
-import { revokeUserSessions, startUserSession } from '@server/lib/sessions';
+import {
+  disconnectSessionSockets,
+  revokeUserSessions,
+  startUserSession,
+} from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -414,6 +418,8 @@ authRoutes.post('/local', async (req, res, next) => {
 
 authRoutes.post('/logout', (req, res, next) => {
   const audiobookshelfRefreshToken = req.cookies?.refresh_token;
+  const { sessionID } = req;
+  const userId = req.session?.userId;
 
   req.session?.destroy((err) => {
     if (err) {
@@ -421,6 +427,10 @@ authRoutes.post('/logout', (req, res, next) => {
         status: 500,
         message: 'Something went wrong.',
       });
+    }
+    // Other tabs sharing this session would otherwise keep receiving events
+    if (userId) {
+      void disconnectSessionSockets(req.app.get('io'), userId, [sessionID]);
     }
     const settings = getSettings();
     res.clearCookie('streamarr.sid', {

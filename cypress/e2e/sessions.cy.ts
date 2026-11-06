@@ -75,9 +75,9 @@ describe('User Sessions', () => {
 
     it('lists the current session', () => {
       cy.visit('/profile/settings/devices');
-      cy.get('[data-testid="session-item"]')
-        .contains('This Device')
-        .should('exist');
+      cy.contains('[data-testid="session-item"]', 'Current Device').should(
+        'exist'
+      );
     });
 
     it('signs out another session', () => {
