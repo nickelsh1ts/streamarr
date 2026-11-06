@@ -120,4 +120,4 @@ If Streamarr runs in Docker, make sure the log file is mounted to the host where
 
 ### Reverse proxy setups
 
-To ensure real client IPs are logged, enable Trust Proxy in Streamarr settings when running behind a reverse proxy.
+To ensure real client IPs are logged, enable **Proxy Support** in Streamarr's Network settings when running behind a reverse proxy, and select the [trusted proxies](../using-streamarr/settings/README.md#trusted-proxies) in front of Streamarr. Behind Cloudflare, select **Trust Cloudflare** so bans target the client rather than Cloudflare's edge.

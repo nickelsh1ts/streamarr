@@ -38,6 +38,22 @@ describe('Admin Pages', () => {
       cy.visit('/admin/settings/notifications');
       cy.url().should('include', '/admin/settings/notifications');
     });
+
+    it('should show trusted proxy options only with proxy support', () => {
+      cy.visit('/admin/settings/network');
+      cy.get('#trustProxy').then(($toggle) => {
+        if (!$toggle.is(':checked')) {
+          cy.wrap($toggle).click();
+        }
+      });
+      cy.get('#trustedProxies\\.localNetworks').should('exist');
+      cy.get('#trustedProxies\\.additional').clear().type('example.com').blur();
+      cy.contains(
+        'Enter IP addresses or CIDR ranges separated by commas'
+      ).should('be.visible');
+      cy.get('#trustProxy').click();
+      cy.get('#trustedProxies\\.localNetworks').should('not.exist');
+    });
   });
 
   describe('Service Settings', () => {

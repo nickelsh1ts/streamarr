@@ -56,6 +56,11 @@ import type {
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import { getShelfmarkAPI } from '@server/lib/shelfmark';
+import {
+  fetchCloudflareRanges,
+  getCloudflareRanges,
+  isValidProxyAddress,
+} from '@server/lib/trustedProxies';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -149,7 +154,7 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
   (req, res, next) => {
     try {
       const settings = getSettings();
-      const { outboundProxy, ...rest } = req.body;
+      const { outboundProxy, trustedProxies, ...rest } = req.body;
       const proxyUpdate = resolveOutboundProxyUpdate(
         settings.network.outboundProxy,
         outboundProxy
@@ -159,12 +164,49 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
         return next({ status: 400, message: proxyUpdate.error });
       }
 
-      settings.network = { ...settings.network, ...rest };
+      const additional = [
+        ...new Set(
+          (
+            trustedProxies?.additional ??
+            settings.network.trustedProxies.additional
+          )
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+        ),
+      ];
+      if (!additional.every(isValidProxyAddress)) {
+        return next({
+          status: 400,
+          message: 'Trusted proxies must be IP addresses or CIDR ranges',
+        });
+      }
+
+      const previous = { ...settings.network };
+      settings.network = {
+        ...settings.network,
+        ...rest,
+        trustedProxies: {
+          ...settings.network.trustedProxies,
+          localNetworks:
+            trustedProxies?.localNetworks ??
+            settings.network.trustedProxies.localNetworks,
+          cloudflare:
+            trustedProxies?.cloudflare ??
+            settings.network.trustedProxies.cloudflare,
+          additional,
+        },
+      };
       // Assigned directly: the settings merge skips undefined, which would
       // otherwise prevent clearing stored credentials.
       settings.network.outboundProxy = proxyUpdate.value;
 
-      settings.save();
+      try {
+        settings.save();
+      } catch (e) {
+        // Restored in place because the setter merges rather than replaces
+        Object.assign(settings.network, previous);
+        throw e;
+      }
       res.status(200).json(settings.network);
     } catch (e) {
       logger.error('Error saving network settings:', {
@@ -173,6 +215,64 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
       });
       next({ status: 500, message: 'Failed to save network settings' });
     }
+  }
+);
+
+settingsRoutes.get('/network/cloudflare', async (_req, res, next) => {
+  const current = getCloudflareRanges(getSettings().network);
+
+  try {
+    const latest = await fetchCloudflareRanges();
+    res.status(200).json({
+      current,
+      latest,
+      added: latest.filter((range) => !current.includes(range)),
+      removed: current.filter((range) => !latest.includes(range)),
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    logger.warn('Failed to fetch Cloudflare IP ranges', {
+      label: 'Settings',
+      message,
+    });
+    next({ status: 502, message: 'Unable to fetch Cloudflare IP ranges' });
+  }
+});
+
+settingsRoutes.post<undefined, unknown, { ranges: string[] }>(
+  '/network/cloudflare',
+  (req, res, next) => {
+    const ranges = [...new Set(req.body.ranges.map((range) => range.trim()))];
+    if (!ranges.length || !ranges.every(isValidProxyAddress)) {
+      return next({
+        status: 400,
+        message: 'Cloudflare ranges must be IP addresses or CIDR ranges',
+      });
+    }
+
+    const settings = getSettings();
+    const { trustedProxies } = settings.network;
+    const previousRanges = trustedProxies.cloudflareRanges;
+    trustedProxies.cloudflareRanges = ranges;
+    try {
+      settings.save();
+    } catch (e) {
+      trustedProxies.cloudflareRanges = previousRanges;
+      logger.error('Failed to save Cloudflare IP ranges', {
+        label: 'Settings',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return next({
+        status: 500,
+        message: 'Failed to save Cloudflare IP ranges',
+      });
+    }
+    logger.warn('Updated trusted Cloudflare IP ranges', {
+      label: 'Settings',
+      count: ranges.length,
+    });
+
+    res.status(200).json(settings.network);
   }
 );
 

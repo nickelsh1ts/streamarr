@@ -5,6 +5,7 @@ import RestartRequiredAlert, {
 import SettingsBadge from '@app/components/Admin/Settings/SettingsBadge';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Modal from '@app/components/Common/Modal';
 import SensitiveInput from '@app/components/Common/SensitiveInput';
 import Tooltip from '@app/components/Common/ToolTip';
 import Toast from '@app/components/Toast';
@@ -61,9 +62,44 @@ const isValidProxyHost = (value: string): boolean => {
 const isValidProxyBypassEntry = (value: string): boolean =>
   isValidProxyHost(value.trim().replace(/^(?:\*\.|\.)/, ''));
 
+const isValidTrustedProxy = (value: string): boolean => {
+  const [address, prefix, ...rest] = value.split('/');
+  const isIpv6 = address.includes(':');
+  if (
+    rest.length ||
+    value.length > 50 ||
+    /[[\]]/.test(address) ||
+    (!isIpv6 && !/^\d+(?:\.\d+){3}$/.test(address)) ||
+    !isValidProxyHost(address)
+  ) {
+    return false;
+  }
+  return (
+    prefix === undefined ||
+    (/^\d{1,3}$/.test(prefix) &&
+      Number(prefix) >= 1 &&
+      Number(prefix) <= (isIpv6 ? 128 : 32))
+  );
+};
+
+const splitList = (value: string): string[] =>
+  value
+    .split(/[\n,]/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+interface CloudflareRangeCheck {
+  latest: string[];
+  added: string[];
+  removed: string[];
+}
+
 const NetworkSettings = () => {
   const intl = useIntl();
   const [isTestingProxy, setIsTestingProxy] = useState(false);
+  const [isCheckingCloudflare, setIsCheckingCloudflare] = useState(false);
+  const [cloudflareCheck, setCloudflareCheck] =
+    useState<CloudflareRangeCheck | null>(null);
   const {
     data,
     error,
@@ -105,6 +141,22 @@ const NetworkSettings = () => {
         })
       ),
     trustProxy: Yup.boolean(),
+    trustedProxies: Yup.object({
+      localNetworks: Yup.boolean(),
+      cloudflare: Yup.boolean(),
+      additional: Yup.string().test(
+        'valid-trusted-proxies',
+        intl.formatMessage({
+          id: 'networkSettings.trustedProxies.validation.additional',
+          defaultMessage:
+            'Enter IP addresses or CIDR ranges separated by commas',
+        }),
+        (value) => {
+          const entries = splitList(value ?? '');
+          return entries.length <= 100 && entries.every(isValidTrustedProxy);
+        }
+      ),
+    }),
     csrfProtection: Yup.boolean(),
     scheduledRetryAttempts: Yup.number()
       .typeError(
@@ -290,6 +342,72 @@ const NetworkSettings = () => {
     }
   };
 
+  const checkCloudflareRanges = async () => {
+    setIsCheckingCloudflare(true);
+    try {
+      const { data: check } = await axios.get<CloudflareRangeCheck>(
+        '/api/v1/settings/network/cloudflare'
+      );
+      if (check.added.length || check.removed.length) {
+        setCloudflareCheck(check);
+      } else {
+        Toast({
+          title: intl.formatMessage({
+            id: 'networkSettings.trustedProxies.cloudflareUpToDate',
+            defaultMessage: 'Cloudflare IP ranges are up to date',
+          }),
+          type: 'success',
+          icon: <CheckBadgeIcon className="size-7" />,
+        });
+      }
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'networkSettings.trustedProxies.cloudflareCheckError',
+          defaultMessage: 'Unable to check Cloudflare IP ranges',
+        }),
+        message: e.response?.data?.message || e.message,
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setIsCheckingCloudflare(false);
+    }
+  };
+
+  const acceptCloudflareRanges = async () => {
+    if (!cloudflareCheck) {
+      return;
+    }
+    try {
+      await axios.post('/api/v1/settings/network/cloudflare', {
+        ranges: cloudflareCheck.latest,
+      });
+      revalidate();
+      mutate(RESTART_REQUIRED_SWR_KEY);
+      Toast({
+        title: intl.formatMessage({
+          id: 'networkSettings.trustedProxies.cloudflareUpdated',
+          defaultMessage: 'Cloudflare IP ranges updated',
+        }),
+        type: 'success',
+        icon: <CheckBadgeIcon className="size-7" />,
+      });
+    } catch (e) {
+      Toast({
+        title: intl.formatMessage({
+          id: 'networkSettings.trustedProxies.cloudflareUpdateError',
+          defaultMessage: 'Unable to update Cloudflare IP ranges',
+        }),
+        message: e.response?.data?.message || e.message,
+        type: 'error',
+        icon: <XCircleIcon className="size-7" />,
+      });
+    } finally {
+      setCloudflareCheck(null);
+    }
+  };
+
   const header = (
     <div className="mb-6">
       <h3 className="text-2xl font-extrabold">
@@ -326,6 +444,11 @@ const NetworkSettings = () => {
         initialValues={{
           requestTimeout: data ? data.requestTimeout / 1000 : 10,
           trustProxy: data?.trustProxy ?? false,
+          trustedProxies: {
+            localNetworks: data?.trustedProxies.localNetworks ?? true,
+            cloudflare: data?.trustedProxies.cloudflare ?? false,
+            additional: data?.trustedProxies.additional.join(', ') ?? '',
+          },
           csrfProtection: data?.csrfProtection ?? false,
           scheduledRetryAttempts: data?.scheduledRetryAttempts ?? 3,
           scheduledRetryInterval: data
@@ -350,6 +473,11 @@ const NetworkSettings = () => {
             await axios.post('/api/v1/settings/network', {
               requestTimeout: Number(values.requestTimeout) * 1000,
               trustProxy: values.trustProxy,
+              trustedProxies: {
+                localNetworks: values.trustedProxies.localNetworks,
+                cloudflare: values.trustedProxies.cloudflare,
+                additional: splitList(values.trustedProxies.additional),
+              },
               csrfProtection: values.csrfProtection,
               scheduledRetryAttempts: Number(values.scheduledRetryAttempts),
               scheduledRetryInterval:
@@ -412,11 +540,177 @@ const NetworkSettings = () => {
                   name="trustProxy"
                   onChange={() => {
                     setFieldValue('trustProxy', !values.trustProxy);
+                    // A hidden invalid draft would otherwise block saving
+                    if (values.trustProxy) {
+                      setFieldValue(
+                        'trustedProxies.additional',
+                        data?.trustedProxies.additional.join(', ') ?? ''
+                      );
+                    }
                   }}
                   className="checkbox-primary checkbox"
                 />
               </div>
             </div>
+            {values.trustProxy && (
+              <>
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label
+                    htmlFor="trustedProxies.localNetworks"
+                    className="col-span-1"
+                  >
+                    <FormattedMessage
+                      id="networkSettings.trustedProxies.localNetworks"
+                      defaultMessage="Trust Local Networks"
+                    />
+                    <p className="text-neutral block text-sm font-light">
+                      <FormattedMessage
+                        id="networkSettings.trustedProxies.localNetworks.description"
+                        defaultMessage="Loopback and private network addresses, such as a reverse proxy or Cloudflare Tunnel on the same host or Docker network"
+                      />
+                    </p>
+                  </label>
+                  <div className="col-span-2">
+                    <Field
+                      type="checkbox"
+                      id="trustedProxies.localNetworks"
+                      name="trustedProxies.localNetworks"
+                      className="checkbox-primary checkbox"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label
+                    htmlFor="trustedProxies.cloudflare"
+                    className="col-span-1"
+                  >
+                    <FormattedMessage
+                      id="networkSettings.trustedProxies.cloudflare"
+                      defaultMessage="Trust Cloudflare"
+                    />
+                    <p className="text-neutral block text-sm font-light">
+                      <FormattedMessage
+                        id="networkSettings.trustedProxies.cloudflare.description"
+                        defaultMessage="Cloudflare's edge IP ranges, for sites proxied through Cloudflare. Not needed for Cloudflare Tunnel."
+                      />
+                    </p>
+                  </label>
+                  <div className="col-span-2 flex flex-wrap items-center gap-2">
+                    <Field
+                      type="checkbox"
+                      id="trustedProxies.cloudflare"
+                      name="trustedProxies.cloudflare"
+                      className="checkbox-primary checkbox"
+                    />
+                    {values.trustedProxies.cloudflare && (
+                      <Button
+                        buttonType="ghost"
+                        buttonSize="sm"
+                        type="button"
+                        disabled={isCheckingCloudflare}
+                        onClick={checkCloudflareRanges}
+                      >
+                        <ArrowPathIcon
+                          className={`mr-1 size-4 ${isCheckingCloudflare ? 'animate-spin' : ''}`}
+                        />
+                        <FormattedMessage
+                          id="networkSettings.trustedProxies.cloudflareCheck"
+                          defaultMessage="Check for Updates"
+                        />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label
+                    htmlFor="trustedProxies.additional"
+                    className="col-span-1"
+                  >
+                    <FormattedMessage
+                      id="networkSettings.trustedProxies.additional"
+                      defaultMessage="Additional Trusted Proxies"
+                    />
+                    <p className="text-neutral block text-sm font-light">
+                      <FormattedMessage
+                        id="networkSettings.trustedProxies.additional.description"
+                        defaultMessage="IP addresses or CIDR ranges separated by commas. With nothing selected, only the proxy connecting to Streamarr is trusted."
+                      />
+                    </p>
+                  </label>
+                  <div className="col-span-2">
+                    <Field
+                      id="trustedProxies.additional"
+                      name="trustedProxies.additional"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="203.0.113.10, 198.51.100.0/24"
+                      className="input input-primary input-sm w-full rounded-md"
+                    />
+                    {errors.trustedProxies?.additional &&
+                      touched.trustedProxies?.additional && (
+                        <div className="text-error">
+                          {errors.trustedProxies.additional}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              </>
+            )}
+            <Modal
+              show={cloudflareCheck !== null}
+              title={intl.formatMessage({
+                id: 'networkSettings.trustedProxies.cloudflareReviewTitle',
+                defaultMessage: 'Update Cloudflare IP Ranges?',
+              })}
+              onOk={acceptCloudflareRanges}
+              okText={intl.formatMessage({
+                id: 'common.accept',
+                defaultMessage: 'Accept',
+              })}
+              okButtonType="primary"
+              onCancel={() => setCloudflareCheck(null)}
+              cancelText={intl.formatMessage({
+                id: 'common.cancel',
+                defaultMessage: 'Cancel',
+              })}
+            >
+              <p className="mb-3">
+                <FormattedMessage
+                  id="networkSettings.trustedProxies.cloudflareReviewDescription"
+                  defaultMessage="Cloudflare's published IP ranges have changed. Accepting replaces the trusted Cloudflare ranges and requires a restart."
+                />
+              </p>
+              {!!cloudflareCheck?.added.length && (
+                <div className="mb-3">
+                  <p className="font-semibold">
+                    <FormattedMessage
+                      id="common.added"
+                      defaultMessage="Added"
+                    />
+                  </p>
+                  <ul className="text-success font-mono text-sm">
+                    {cloudflareCheck.added.map((range) => (
+                      <li key={range}>+ {range}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {!!cloudflareCheck?.removed.length && (
+                <div>
+                  <p className="font-semibold">
+                    <FormattedMessage
+                      id="common.removed"
+                      defaultMessage="Removed"
+                    />
+                  </p>
+                  <ul className="text-error font-mono text-sm">
+                    {cloudflareCheck.removed.map((range) => (
+                      <li key={range}>- {range}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </Modal>
             <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="csrfProtection" className="col-span-1">
                 <span className="mr-2">
