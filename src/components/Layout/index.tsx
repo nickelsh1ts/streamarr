@@ -12,12 +12,13 @@ import { OnboardingProvider } from '@app/context/OnboardingContext';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import { publicRoutes } from '@app/proxy';
+import { getSafeRedirect } from '@app/utils/safeRedirect';
 import type {
   UserSettingsGeneralResponse,
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import axios from 'axios';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -31,6 +32,7 @@ const Layout = ({
 }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading } = useUser();
   const { currentSettings } = useSettings();
   const tokenRef = useRef(false);
@@ -143,7 +145,12 @@ const Layout = ({
 
     // Authenticated users on signin/home go to watch
     if (pathname.match(/(signin|\/$)/) && user && !loading) {
-      return isExpiredUser ? '/profile' : '/watch';
+      if (isExpiredUser) {
+        return '/profile';
+      }
+      return pathname.startsWith('/signin')
+        ? getSafeRedirect(searchParams.get('redirect_url'))
+        : '/watch';
     }
 
     // Signup disabled redirect
@@ -180,13 +187,14 @@ const Layout = ({
     userSettings,
     userSettingsLoading,
     isExpiredUser,
+    searchParams,
   ]);
 
   useEffect(() => {
     if (redirectTarget && redirectTarget !== pathname) {
       router.replace(redirectTarget);
     }
-  }, [redirectTarget, pathname, router]);
+  }, [redirectTarget, pathname, router, searchParams]);
 
   if (redirectTarget && redirectTarget !== pathname) {
     return null;
