@@ -3,11 +3,11 @@
 import Tooltip from '@app/components/Common/ToolTip';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
+import useLocationPath from '@app/hooks/useLocationPath';
 import { withProperties } from '@app/utils/typeHelpers';
 import { Transition } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -33,7 +33,7 @@ const DropdownItem = ({
   ...props
 }: DropdownItemProps) => {
   let styleClass = 'hover:bg-base-content/10 text-base-content';
-  const url = usePathname() + useHash();
+  const url = useLocationPath() + useHash();
 
   switch (buttonType) {
     case 'ghost':

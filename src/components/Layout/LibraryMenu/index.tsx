@@ -1,5 +1,6 @@
 import useHash from '@app/hooks/useHash';
 import useLibraryLinks from '@app/hooks/useLibraryLinks';
+import useLocationPath from '@app/hooks/useLocationPath';
 import { Permission, useUser } from '@app/hooks/useUser';
 import {
   BookmarkIcon,
@@ -16,7 +17,6 @@ import {
 } from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useCallback, type SetStateAction } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -70,7 +70,7 @@ const LibraryMenu = ({
   isMobile = false,
 }: LibraryMenuProps) => {
   const intl = useIntl();
-  const pathname = usePathname();
+  const pathname = useLocationPath();
   const hash = useHash();
   const url =
     pathname === '/watch/web/index.html' ? pathname + (hash || '') : pathname;

@@ -69,8 +69,13 @@ const DynamicFrame = ({
   const currentIframePathRef = useRef<string>('');
 
   // Get the initial hash from browser URL (for hash-based routing like Tdarr)
+  // During client navigation this runs before Next commits the new URL, so
+  // ignore a hash left over from the previous route (e.g. Plex's `#!`).
   const [initialHash] = useState(() =>
-    typeof window !== 'undefined' ? window.location.hash : ''
+    typeof window !== 'undefined' &&
+    (!newBase || window.location.pathname.startsWith(newBase))
+      ? window.location.hash
+      : ''
   );
 
   // Calculate the sub-path (path after the newBase)

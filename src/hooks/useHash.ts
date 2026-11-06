@@ -1,32 +1,22 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
-const getHash = () =>
-  typeof window !== 'undefined' ? window.location.hash : '';
+// Polling covers iframe-driven replaceState, which fires no hashchange.
+const subscribe = (onChange: () => void) => {
+  window.addEventListener('hashchange', onChange);
+  const interval = setInterval(onChange, 100);
+  return () => {
+    window.removeEventListener('hashchange', onChange);
+    clearInterval(interval);
+  };
+};
 
 const useHash = () => {
-  const [hash, setHash] = useState(getHash);
-
-  useEffect(() => {
-    const handleHashChange = () => setHash(getHash());
-    // Listen to hash changes
-    window.addEventListener('hashchange', handleHashChange);
-
-    // Polling fallback for iframe navigation that may not trigger hashchange
-    let lastHash = getHash();
-    const interval = setInterval(() => {
-      const newHash = getHash();
-      if (newHash !== lastHash) {
-        lastHash = newHash;
-        setHash(newHash);
-      }
-    }, 100);
-
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      clearInterval(interval);
-    };
-  }, []);
+  const hash = useSyncExternalStore(
+    subscribe,
+    () => window.location.hash,
+    () => ''
+  );
 
   return hash || null;
 };
