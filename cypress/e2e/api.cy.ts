@@ -32,6 +32,7 @@ describe('API Health', () => {
             }).then((resp) => {
               expect(resp.status).to.eq(200);
               expect(resp.body).to.have.property('id');
+              expect(resp.body).not.to.have.property('password');
             });
           });
         }
