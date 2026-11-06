@@ -1,7 +1,8 @@
 // Placeholder origin so parsing works the same on the server and the client
 const BASE = 'http://streamarr.invalid';
 
-const BLOCKED_PATHS = /^\/(signin|signup|logout|setup|api)(\/|$)/;
+// Case-insensitive because Express routes match /API the same as /api
+const BLOCKED_PATHS = /^\/(signin|signup|logout|setup|api)(\/|$)/i;
 
 export const getSafeRedirect = (
   value: string | null | undefined,
