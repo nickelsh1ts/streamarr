@@ -46,8 +46,11 @@ export const isValidProxyAddress = (value: string): boolean => {
   if (prefix === undefined) {
     return true;
   }
+  // proxy-addr rejects /0, which would otherwise stop startup
   return (
-    /^\d{1,3}$/.test(prefix) && Number(prefix) <= (version === 4 ? 32 : 128)
+    /^\d{1,3}$/.test(prefix) &&
+    Number(prefix) >= 1 &&
+    Number(prefix) <= (version === 4 ? 32 : 128)
   );
 };
 

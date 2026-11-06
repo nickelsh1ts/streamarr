@@ -181,6 +181,7 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
         });
       }
 
+      const previous = { ...settings.network };
       settings.network = {
         ...settings.network,
         ...rest,
@@ -199,7 +200,13 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
       // otherwise prevent clearing stored credentials.
       settings.network.outboundProxy = proxyUpdate.value;
 
-      settings.save();
+      try {
+        settings.save();
+      } catch (e) {
+        // Restored in place because the setter merges rather than replaces
+        Object.assign(settings.network, previous);
+        throw e;
+      }
       res.status(200).json(settings.network);
     } catch (e) {
       logger.error('Error saving network settings:', {
@@ -244,8 +251,22 @@ settingsRoutes.post<undefined, unknown, { ranges: string[] }>(
     }
 
     const settings = getSettings();
-    settings.network.trustedProxies.cloudflareRanges = ranges;
-    settings.save();
+    const { trustedProxies } = settings.network;
+    const previousRanges = trustedProxies.cloudflareRanges;
+    trustedProxies.cloudflareRanges = ranges;
+    try {
+      settings.save();
+    } catch (e) {
+      trustedProxies.cloudflareRanges = previousRanges;
+      logger.error('Failed to save Cloudflare IP ranges', {
+        label: 'Settings',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return next({
+        status: 500,
+        message: 'Failed to save Cloudflare IP ranges',
+      });
+    }
     logger.warn('Updated trusted Cloudflare IP ranges', {
       label: 'Settings',
       count: ranges.length,

@@ -67,6 +67,8 @@ const isValidTrustedProxy = (value: string): boolean => {
   const isIpv6 = address.includes(':');
   if (
     rest.length ||
+    value.length > 50 ||
+    /[[\]]/.test(address) ||
     (!isIpv6 && !/^\d+(?:\.\d+){3}$/.test(address)) ||
     !isValidProxyHost(address)
   ) {
@@ -74,7 +76,9 @@ const isValidTrustedProxy = (value: string): boolean => {
   }
   return (
     prefix === undefined ||
-    (/^\d{1,3}$/.test(prefix) && Number(prefix) <= (isIpv6 ? 128 : 32))
+    (/^\d{1,3}$/.test(prefix) &&
+      Number(prefix) >= 1 &&
+      Number(prefix) <= (isIpv6 ? 128 : 32))
   );
 };
 
@@ -140,17 +144,18 @@ const NetworkSettings = () => {
     trustedProxies: Yup.object({
       localNetworks: Yup.boolean(),
       cloudflare: Yup.boolean(),
-      additional: Yup.string()
-        .max(2048)
-        .test(
-          'valid-trusted-proxies',
-          intl.formatMessage({
-            id: 'networkSettings.trustedProxies.validation.additional',
-            defaultMessage:
-              'Enter IP addresses or CIDR ranges separated by commas',
-          }),
-          (value) => !value || splitList(value).every(isValidTrustedProxy)
-        ),
+      additional: Yup.string().test(
+        'valid-trusted-proxies',
+        intl.formatMessage({
+          id: 'networkSettings.trustedProxies.validation.additional',
+          defaultMessage:
+            'Enter IP addresses or CIDR ranges separated by commas',
+        }),
+        (value) => {
+          const entries = splitList(value ?? '');
+          return entries.length <= 100 && entries.every(isValidTrustedProxy);
+        }
+      ),
     }),
     csrfProtection: Yup.boolean(),
     scheduledRetryAttempts: Yup.number()
@@ -378,6 +383,7 @@ const NetworkSettings = () => {
       await axios.post('/api/v1/settings/network/cloudflare', {
         ranges: cloudflareCheck.latest,
       });
+      revalidate();
       mutate(RESTART_REQUIRED_SWR_KEY);
       Toast({
         title: intl.formatMessage({
@@ -534,6 +540,13 @@ const NetworkSettings = () => {
                   name="trustProxy"
                   onChange={() => {
                     setFieldValue('trustProxy', !values.trustProxy);
+                    // A hidden invalid draft would otherwise block saving
+                    if (values.trustProxy) {
+                      setFieldValue(
+                        'trustedProxies.additional',
+                        data?.trustedProxies.additional.join(', ') ?? ''
+                      );
+                    }
                   }}
                   className="checkbox-primary checkbox"
                 />

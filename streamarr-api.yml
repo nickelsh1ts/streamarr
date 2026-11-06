@@ -1020,6 +1020,7 @@ components:
               example: X-Auth-User
     NetworkSettings:
       type: object
+      additionalProperties: false
       required:
         - requestTimeout
       properties:
@@ -1058,6 +1059,7 @@ components:
           $ref: '#/components/schemas/OutboundProxySettings'
     TrustedProxySettings:
       type: object
+      additionalProperties: false
       description: >-
         Proxies trusted to report the client IP when trustProxy is enabled.
         With nothing selected, only the proxy connecting to Streamarr is
@@ -1090,6 +1092,7 @@ components:
           example: ['203.0.113.10', '198.51.100.0/24']
     OutboundProxySettings:
       type: object
+      additionalProperties: false
       description: >-
         Settings-driven outbound HTTP(S) proxy. Changes require a server
         restart. Covers Axios, server-side fetch, and web push; SMTP and
