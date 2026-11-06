@@ -1,5 +1,6 @@
 import dataSource from '@server/datasource';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
+import newsletterScheduler from '@server/lib/newsletters/scheduler';
 import { getTrustProxyValue } from '@server/lib/trustedProxies';
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
@@ -327,7 +328,10 @@ class RestartManager {
 
   private async productionRestart(): Promise<void> {
     try {
-      await schedule.gracefulShutdown();
+      await Promise.all([
+        newsletterScheduler.shutdown(),
+        schedule.gracefulShutdown(),
+      ]);
 
       if (this.io) {
         this.io.disconnectSockets(true);
