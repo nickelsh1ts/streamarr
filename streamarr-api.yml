@@ -9949,7 +9949,7 @@ paths:
         '500':
           description: Server error
         '503':
-          description: One or more external services are unavailable
+          description: Server is restarting or one or more external services are unavailable
   /settings/newsletter/{id}/test:
     parameters:
       - name: id
@@ -9976,6 +9976,8 @@ paths:
           description: All configured content blocks are empty; nothing to send
         '500':
           description: Server error
+        '503':
+          description: Server is restarting
   /settings/newsletter/{id}/preview:
     parameters:
       - name: id
