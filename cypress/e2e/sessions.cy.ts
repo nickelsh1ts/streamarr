@@ -67,6 +67,31 @@ const signInAgainInThisBrowser = () => {
   );
 };
 
+// Matches the server's toPublicSessionId for a signed `streamarr.sid` cookie
+const publicSessionId = (cookieValue: string) => {
+  const signed = decodeURIComponent(cookieValue).replace(/^s:/, '');
+  const sid = signed.slice(0, signed.lastIndexOf('.'));
+  return cy.wrap(
+    crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(sid))
+      .then((digest) =>
+        Array.from(new Uint8Array(digest), (byte) =>
+          byte.toString(16).padStart(2, '0')
+        )
+          .join('')
+          .slice(0, 32)
+      )
+  );
+};
+
+const replaySession = (cookieValue: string) => {
+  cy.clearCookies();
+  cy.setCookie('streamarr.sid', cookieValue);
+  return cy
+    .request({ url: '/api/v1/auth/me', failOnStatusCode: false })
+    .its('status');
+};
+
 describe('User Sessions', () => {
   describe('Own sessions', () => {
     beforeEach(() => {
@@ -136,9 +161,54 @@ describe('User Sessions', () => {
       );
     });
 
-    it('defaults to signing out other devices on password change', () => {
-      cy.visit('/profile/settings/password');
-      cy.get('#endOtherSessions').should('be.checked');
+    it('rejects the cookie of a signed-out session', () => {
+      cy.getCookie('streamarr.sid').then((cookie) => {
+        signInAgainInThisBrowser();
+        publicSessionId(cookie.value).then((sessionId) =>
+          cy
+            .request('/api/v1/auth/me')
+            .then(({ body }) =>
+              cy
+                .request(
+                  'DELETE',
+                  `/api/v1/user/${body.id}/settings/sessions/${sessionId}`
+                )
+                .its('status')
+                .should('eq', 204)
+            )
+        );
+        replaySession(cookie.value).should('eq', 401);
+      });
+    });
+
+    it('signs out other devices on password change by default', () => {
+      cy.getCookie('streamarr.sid').then((cookie) => {
+        signInAgainInThisBrowser();
+        cy.env(['USER_PASSWORD']).then(({ USER_PASSWORD }) => {
+          const changed = `${USER_PASSWORD}-changed`;
+          cy.intercept('POST', '/api/v1/user/*/settings/password').as(
+            'changePassword'
+          );
+          cy.visit('/profile/settings/password');
+          cy.get('#endOtherSessions').should('be.checked');
+          cy.get('#currentPassword').type(USER_PASSWORD);
+          cy.get('#newPassword').type(changed);
+          cy.get('#confirmPassword').type(changed);
+          cy.get('button[type="submit"]').click();
+          cy.wait('@changePassword')
+            .its('response.statusCode')
+            .should('eq', 204);
+
+          cy.request('/api/v1/auth/me').then(({ body, status }) => {
+            expect(status).to.eq(200);
+            cy.request('POST', `/api/v1/user/${body.id}/settings/password`, {
+              currentPassword: changed,
+              newPassword: USER_PASSWORD,
+            });
+          });
+          replaySession(cookie.value).should('eq', 401);
+        });
+      });
     });
 
     it('signs out everywhere straight to the sign-in page', () => {

@@ -1515,8 +1515,7 @@ userSettingsRoutes.post<
         req.user?.hasPermission(Permission.MANAGE_USERS) &&
         req.user?.id !== user.id
       ) {
-        await user.setPassword(req.body.newPassword);
-        await userRepository.save(user);
+        // Revoked first so a failure leaves the old password and devices unchanged
         if (endOtherSessions) {
           await revokeUserSessions(
             user.id,
@@ -1524,6 +1523,8 @@ userSettingsRoutes.post<
             req.app.get('io')
           );
         }
+        await user.setPassword(req.body.newPassword);
+        await userRepository.save(user);
         logger.debug('Password overriden by user.', {
           label: 'User Settings',
           userEmail: user.email,
@@ -1545,8 +1546,6 @@ userSettingsRoutes.post<
         return next({ status: 403, message: 'Current password is invalid.' });
       }
 
-      await user.setPassword(req.body.newPassword);
-      await userRepository.save(user);
       if (endOtherSessions) {
         await revokeUserSessions(
           user.id,
@@ -1558,6 +1557,8 @@ userSettingsRoutes.post<
           req.app.get('io')
         );
       }
+      await user.setPassword(req.body.newPassword);
+      await userRepository.save(user);
 
       res.status(204).send();
     } catch (e) {

@@ -419,7 +419,6 @@ authRoutes.post('/local', async (req, res, next) => {
 authRoutes.post('/logout', (req, res, next) => {
   const audiobookshelfRefreshToken = req.cookies?.refresh_token;
   const { sessionID } = req;
-  const userId = req.session?.userId;
 
   req.session?.destroy((err) => {
     if (err) {
@@ -429,9 +428,7 @@ authRoutes.post('/logout', (req, res, next) => {
       });
     }
     // Other tabs sharing this session would otherwise keep receiving events
-    if (userId) {
-      void disconnectSessionSockets(req.app.get('io'), userId, [sessionID]);
-    }
+    disconnectSessionSockets(req.app.get('io'), [sessionID]);
     const settings = getSettings();
     res.clearCookie('streamarr.sid', {
       httpOnly: true,
@@ -581,14 +578,15 @@ authRoutes.post<{ guid: string }>(
         return next({ status: 400, message: 'Invalid password reset link.' });
       }
 
-      await user.setPassword(req.body.password);
-      user.recoveryLinkExpirationDate = null;
-      await userRepository.save(user);
+      // Revoked first so a failure leaves the link usable for a retry
       await revokeUserSessions(
         user.id,
         { reason: 'password-reset' },
         req.app.get('io')
       );
+      await user.setPassword(req.body.password);
+      user.recoveryLinkExpirationDate = null;
+      await userRepository.save(user);
       logger.info('Successfully reset password', {
         label: 'API',
         ip: req.ip,

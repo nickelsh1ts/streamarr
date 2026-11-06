@@ -7185,7 +7185,7 @@ paths:
                     type: string
                   linkedToSession:
                     type: boolean
-                    description: Whether signing out the current session also removes this subscription
+                    description: Whether this subscription is linked to the current session. Revoking the session removes it unless another live session uses the same endpoint.
     delete:
       summary: Delete user push subscription by key
       description: Deletes the user push subscription with the provided key.

@@ -20,6 +20,8 @@ export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
 export const toPublicSessionId = (sid: string): string =>
   createHash('sha256').update(sid).digest('hex').slice(0, 32);
 
+export const sessionRoom = (sid: string): string => `session:${sid}`;
+
 const parseSessionData = (json: string): Partial<SessionData> => {
   try {
     return JSON.parse(json) ?? {};
@@ -29,51 +31,56 @@ const parseSessionData = (json: string): Partial<SessionData> => {
 };
 
 const getLiveSessions = async (userId: number) => {
-  const now = Date.now();
   const sessions = await getRepository(Session).find({
-    where: { userId, expiredAt: MoreThan(now) },
+    where: { userId, expiredAt: MoreThan(Date.now()) },
     order: { expiredAt: 'DESC' },
   });
 
-  // The store slides expiredAt on every request but the cookie expiry is fixed
-  return sessions
-    .map((session) => ({ session, data: parseSessionData(session.json) }))
-    .filter(({ data }) => {
-      const expires = data.cookie?.expires;
-      return !expires || new Date(expires).getTime() > now;
-    });
+  return sessions.map((session) => ({
+    session,
+    data: parseSessionData(session.json),
+  }));
 };
 
-export const disconnectSessionSockets = async (
+export const disconnectSessionSockets = (
   io: SocketIOServer | undefined,
-  userId: number,
   sids: string[]
-): Promise<void> => {
+): void => {
   if (!io || !sids.length) {
     return;
   }
 
-  try {
-    const sockets = await io.in(String(userId)).fetchSockets();
-    for (const socket of sockets) {
-      if (sids.includes(socket.data?.sid)) {
-        socket.emit('sessionRevoked');
-        socket.disconnect(true);
-      }
-    }
-  } catch (e) {
-    logger.debug('Failed to disconnect sockets for revoked sessions', {
-      label: 'Sessions',
-      userId,
-      errorMessage: e instanceof Error ? e.message : String(e),
-    });
+  const sockets = io.in(sids.map(sessionRoom));
+  sockets.emit('sessionRevoked');
+  sockets.disconnectSockets(true);
+};
+
+type SessionRef = { sid: string; userId: number };
+
+// Sockets authenticate once at connect, so follow this browser to its new session
+const moveSessionSockets = (
+  io: SocketIOServer | undefined,
+  previous: SessionRef,
+  next: SessionRef
+): void => {
+  if (!io) {
+    return;
   }
+
+  const sockets = io.in(sessionRoom(previous.sid));
+  if (previous.userId !== next.userId) {
+    sockets.disconnectSockets(true);
+    return;
+  }
+  sockets.socketsJoin(sessionRoom(next.sid));
+  sockets.socketsLeave(sessionRoom(previous.sid));
 };
 
 const softDeleteSessions = async (
   userId: number,
   sessions: Pick<Session, 'id' | 'json'>[],
-  io?: SocketIOServer
+  io?: SocketIOServer,
+  { removeUnlinkedPush = false } = {}
 ): Promise<number> => {
   if (!sessions.length) {
     return 0;
@@ -85,22 +92,34 @@ const softDeleteSessions = async (
     .filter((endpoint): endpoint is string => !!endpoint);
 
   await getRepository(Session).softDelete({ id: In(sids) });
-  // Revoked devices can't unsubscribe themselves, so stop pushing to them here
-  if (pushEndpoints.length) {
-    // A browser keeps its endpoint across sign-ins, so spare ones still in use
-    const inUse = new Set(
-      (await getLiveSessions(userId)).map(({ data }) => data.pushEndpoint)
-    );
-    const orphaned = pushEndpoints.filter((endpoint) => !inUse.has(endpoint));
-
-    if (orphaned.length) {
-      await getRepository(UserPushSubscription).delete({
-        user: { id: userId },
-        endpoint: In(orphaned),
+  try {
+    // Revoked devices can't unsubscribe themselves, so stop pushing to them here
+    if (pushEndpoints.length || removeUnlinkedPush) {
+      // A browser keeps its endpoint across sign-ins, so spare ones still in use
+      const inUse = new Set(
+        (await getLiveSessions(userId)).map(({ data }) => data.pushEndpoint)
+      );
+      const subscriptionRepository = getRepository(UserPushSubscription);
+      const subscriptions = await subscriptionRepository.find({
+        select: { id: true, endpoint: true },
+        where: { user: { id: userId } },
       });
+      // Unlinked subscriptions can only be attributed when every other device is signed out
+      const orphaned = subscriptions.filter(
+        ({ endpoint }) =>
+          !inUse.has(endpoint) &&
+          (removeUnlinkedPush || pushEndpoints.includes(endpoint))
+      );
+
+      if (orphaned.length) {
+        await subscriptionRepository.delete({
+          id: In(orphaned.map(({ id }) => id)),
+        });
+      }
     }
+  } finally {
+    disconnectSessionSockets(io, sids);
   }
-  await disconnectSessionSockets(io, userId, sids);
 
   return sids.length;
 };
@@ -135,7 +154,8 @@ export const revokeUserSessions = async (
         id !== exceptSid &&
         (!publicIds || publicIds.includes(toPublicSessionId(id)))
     ),
-    io
+    io,
+    { removeUnlinkedPush: !publicIds }
   );
 
   if (revoked) {
@@ -181,12 +201,18 @@ export const startUserSession = async (
   user: User,
   loginMethod: SessionLoginMethod
 ): Promise<void> => {
+  const previous = { sid: req.sessionID, userId: req.session.userId };
   await new Promise<void>((resolve, reject) =>
     req.session.regenerate((e) => (e ? reject(e) : resolve()))
   );
   req.session.userId = user.id;
 
-  await enforceSessionCap(user.id, req.app.get('io'));
+  const io: SocketIOServer | undefined = req.app.get('io');
+  if (previous.userId) {
+    moveSessionSockets(io, previous, { sid: req.sessionID, userId: user.id });
+  }
+
+  await enforceSessionCap(user.id, io);
 
   // Saved now so the row exists for the device details below
   await new Promise<void>((resolve, reject) =>

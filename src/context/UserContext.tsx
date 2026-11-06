@@ -58,19 +58,28 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
       routing.current = true;
       try {
         // A newer sign-in in this browser is still valid; just reconnect
-        await axios.get('/api/v1/auth/me');
-        routing.current = false;
-        socket.connect();
-      } catch {
-        router.replace('/logout');
+        const { data } = await axios.get<User>('/api/v1/auth/me');
+        if (data.id !== user?.id) {
+          // Signed in as another account elsewhere, so drop this tab's cached identity
+          window.location.reload();
+          return;
+        }
+      } catch (e) {
+        if (axios.isAxiosError(e) && e.response?.status === 401) {
+          router.replace('/logout');
+          return;
+        }
+        // Other failures don't prove revocation; a later 401 still signs this tab out
       }
+      routing.current = false;
+      socket.connect();
     };
 
     socket.on('sessionRevoked', handleSessionRevoked);
     return () => {
       socket.off('sessionRevoked', handleSessionRevoked);
     };
-  }, [router]);
+  }, [router, user?.id]);
 
   // The server disconnects revoked sessions, so a later sign-in needs a new connection
   useEffect(() => {

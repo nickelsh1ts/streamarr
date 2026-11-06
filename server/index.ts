@@ -23,7 +23,7 @@ import {
 } from '@server/lib/onboarding';
 import { initializeOutboundProxy } from '@server/lib/outboundProxy';
 import restartManager from '@server/lib/restartManager';
-import { SESSION_TTL_SECONDS } from '@server/lib/sessions';
+import { SESSION_TTL_SECONDS, sessionRoom } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import { compileTrustProxy } from '@server/lib/trustedProxies';
 import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
@@ -161,6 +161,8 @@ app
       secret: settings.sessionSecret,
       resave: false,
       saveUninitialized: false,
+      // Keeps the cookie expiry in step with the store's sliding expiredAt
+      rolling: true,
       name: 'streamarr.sid',
       cookie: {
         maxAge: SESSION_TTL_SECONDS * 1000,
@@ -239,8 +241,7 @@ app
         return;
       }
       try {
-        socket.data.sid = req.sessionID;
-        socket.join(String(req.session.userId));
+        socket.join([String(req.session.userId), sessionRoom(req.sessionID)]);
       } catch {
         socket.disconnect(true);
         return;
