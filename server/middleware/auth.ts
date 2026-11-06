@@ -29,6 +29,7 @@ const expiredUserOwnPaths: RegExp[] = [
   /^\/api\/v1\/user\/(\d+)\/settings\/main$/,
   /^\/api\/v1\/user\/(\d+)\/settings\/notifications$/,
   /^\/api\/v1\/user\/(\d+)\/settings\/password$/,
+  /^\/api\/v1\/user\/(\d+)\/settings\/sessions(?:\/[^/]+)?$/,
   /^\/api\/v1\/user\/(\d+)\/settings\/seerr\/quota$/,
   /^\/api\/v1\/user\/(\d+)\/settings\/extension$/,
 ];

@@ -193,6 +193,14 @@ Streamarr ships with a copy of Cloudflare's IP ranges. Use **Check for Updates**
 Alternatively, configure your reverse proxy to restore the real client IP before it reaches Streamarr, for example nginx's [`real_ip` module](https://nginx.org/en/docs/http/ngx_http_realip_module.html), Caddy's [`trusted_proxies`](https://caddyserver.com/docs/caddyfile/options#trusted-proxies), or Traefik's [`forwardedHeaders.trustedIPs`](https://doc.traefik.io/traefik/routing/entrypoints/#forwarded-headers). Streamarr then only needs to trust the reverse proxy itself.
 {% endhint %}
 
+### Record Device IP Addresses
+
+When enabled, Streamarr records the IP address each device signs in from and shows it in the user's [Devices](../users/README.md#devices) list. Behind a reverse proxy, also enable **Proxy Support** and set [Trusted Proxies](#trusted-proxies), or every device shows the proxy's address.
+
+Turning this setting off asks for confirmation. When you save, every stored device IP address is permanently deleted and new sign-ins are not recorded.
+
+This setting is **enabled** by default.
+
 ### Outbound HTTP(S) Proxy
 
 Use this setting to route supported outbound HTTP and HTTPS requests through an authenticated proxy. Configure the proxy hostname, port, whether the connection to the proxy itself uses HTTPS, and optional credentials. The saved password is loaded into a sensitive field and stays obscured until revealed with its visibility control. Clearing the username clears the saved password.

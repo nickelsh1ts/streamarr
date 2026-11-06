@@ -20,6 +20,7 @@ import {
   plexPinStatusLimiter,
   resetPasswordLimiter,
 } from '@server/lib/rateLimiters';
+import { revokeUserSessions, startUserSession } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -276,13 +277,8 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
       }
     }
 
-    // Regenerate the session ID on sign-in to prevent session fixation, then
-    // let express-session persist the new session on response end.
     const authedUser = user;
-    await new Promise<void>((resolve, reject) =>
-      req.session.regenerate((e) => (e ? reject(e) : resolve()))
-    );
-    req.session.userId = authedUser.id;
+    await startUserSession(req, authedUser, 'plex');
 
     // Silently provision a per-user Plex JWT device (experimental, non-fatal)
     void maybeProvisionPlexJwt(authedUser.id, authToken);
@@ -398,13 +394,8 @@ authRoutes.post('/local', async (req, res, next) => {
       }
     }
 
-    // Regenerate the session ID on sign-in to prevent session fixation; let
-    // express-session persist it on response end.
     const authedUser = user;
-    await new Promise<void>((resolve, reject) =>
-      req.session.regenerate((e) => (e ? reject(e) : resolve()))
-    );
-    req.session.userId = authedUser.id;
+    await startUserSession(req, authedUser, 'local');
 
     res.status(200).json(authedUser.filter());
   } catch (e) {
@@ -583,6 +574,11 @@ authRoutes.post<{ guid: string }>(
       await user.setPassword(req.body.password);
       user.recoveryLinkExpirationDate = null;
       await userRepository.save(user);
+      await revokeUserSessions(
+        user.id,
+        { reason: 'password-reset' },
+        req.app.get('io')
+      );
       logger.info('Successfully reset password', {
         label: 'API',
         ip: req.ip,

@@ -42,6 +42,7 @@ export interface PushSubscriptionValidation {
   endpoint: string;
   p256dh: string;
   auth: string;
+  linkedToSession: boolean;
 }
 
 export interface WatchHistoryItem {

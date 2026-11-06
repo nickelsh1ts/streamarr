@@ -4,13 +4,11 @@ import { useUser } from '@app/hooks/useUser';
 import { clearAudiobookshelfToken } from '@app/utils/audiobookshelf';
 import { unsubscribeToPushNotifications } from '@app/utils/pushSubscriptionHelpers';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 const LogOutPage = () => {
   const { user, loading, revalidate } = useUser();
-  const router = useRouter();
   const intl = useIntl();
   const logoutStarted = useRef(false);
 
@@ -57,11 +55,12 @@ const LogOutPage = () => {
           revalidate(undefined, false);
         })
         .finally(() => {
-          router.replace('/signin');
+          // A full load drops the server-rendered user that SWR would otherwise fall back to
+          window.location.replace('/signin');
         });
     };
     logout();
-  }, [loading, revalidate, router, user?.id]);
+  }, [loading, revalidate, user?.id]);
 
   return (
     <LoadingEllipsis

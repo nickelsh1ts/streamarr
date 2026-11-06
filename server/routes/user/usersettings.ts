@@ -12,6 +12,7 @@ import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
   SeerrUserPermissionsResponse,
+  UserSessionResponse,
   UserSettingsGeneralResponse,
   UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
@@ -41,6 +42,11 @@ import {
   plexAuthLimiter,
   trialExtensionRequestLimiter,
 } from '@server/lib/rateLimiters';
+import {
+  listUserSessions,
+  revokeUserSessions,
+  toPublicSessionId,
+} from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import {
   getShelfmarkAPI,
@@ -60,6 +66,7 @@ import { isAuthenticated } from '@server/middleware/auth';
 import { canMakePermissionsChange } from '@server/routes/user';
 import moment from '@server/utils/momentWithLocale';
 import {
+  canManageUserCredentials,
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
@@ -1461,7 +1468,7 @@ userSettingsRoutes.get<{ id: string }, { hasPassword: boolean }>(
 userSettingsRoutes.post<
   { id: string },
   null,
-  { currentPassword?: string; newPassword: string }
+  { currentPassword?: string; newPassword: string; endOtherSessions?: boolean }
 >(
   '/password',
   passwordChangeLimiter,
@@ -1493,17 +1500,14 @@ userSettingsRoutes.post<
         });
       }
 
-      if (
-        (user.id === 1 && req.user?.id !== 1) ||
-        (user.hasPermission(Permission.ADMIN) &&
-          user.id !== req.user?.id &&
-          req.user?.id !== 1)
-      ) {
+      if (!canManageUserCredentials(req.user, user)) {
         return next({
           status: 403,
           message: "You do not have permission to modify this user's password.",
         });
       }
+
+      const endOtherSessions = req.body.endOtherSessions !== false;
 
       // If the user has the permission to manage users and they are not
       // editing themselves, we will just set the new password
@@ -1513,6 +1517,13 @@ userSettingsRoutes.post<
       ) {
         await user.setPassword(req.body.newPassword);
         await userRepository.save(user);
+        if (endOtherSessions) {
+          await revokeUserSessions(
+            user.id,
+            { reason: 'password-change', revokedByUserId: req.user.id },
+            req.app.get('io')
+          );
+        }
         logger.debug('Password overriden by user.', {
           label: 'User Settings',
           userEmail: user.email,
@@ -1536,6 +1547,17 @@ userSettingsRoutes.post<
 
       await user.setPassword(req.body.newPassword);
       await userRepository.save(user);
+      if (endOtherSessions) {
+        await revokeUserSessions(
+          user.id,
+          {
+            reason: 'password-change',
+            revokedByUserId: req.user?.id,
+            exceptSid: req.sessionID,
+          },
+          req.app.get('io')
+        );
+      }
 
       res.status(204).send();
     } catch (e) {
@@ -1543,6 +1565,130 @@ userSettingsRoutes.post<
     }
   }
 );
+
+userSettingsRoutes.get<{ id: string }, UserSessionResponse[]>(
+  '/sessions',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!canManageUserCredentials(req.user, user)) {
+        return next({
+          status: 403,
+          message: "You do not have permission to manage this user's sessions.",
+        });
+      }
+
+      res.status(200).json(await listUserSessions(user.id, req.sessionID));
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string; sessionId: string }>(
+  '/sessions/:sessionId',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!canManageUserCredentials(req.user, user)) {
+        return next({
+          status: 403,
+          message: "You do not have permission to manage this user's sessions.",
+        });
+      }
+
+      if (
+        req.sessionID &&
+        toPublicSessionId(req.sessionID) === req.params.sessionId
+      ) {
+        return next({
+          status: 400,
+          message: 'Sign out to end the current session.',
+        });
+      }
+
+      const revoked = await revokeUserSessions(
+        user.id,
+        {
+          reason: 'manual',
+          revokedByUserId: req.user?.id,
+          publicIds: [req.params.sessionId],
+        },
+        req.app.get('io')
+      );
+
+      if (!revoked) {
+        return next({ status: 404, message: 'Session not found.' });
+      }
+
+      res.status(204).send();
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.post<
+  { id: string },
+  { revoked: number },
+  { scope: 'others' | 'all' }
+>('/sessions/revoke', isOwnProfileOrAdmin(), async (req, res, next) => {
+  try {
+    const user = await getRepository(User).findOne({
+      where: { id: Number(req.params.id) },
+    });
+
+    if (!user) {
+      return next({ status: 404, message: 'User not found.' });
+    }
+
+    if (!canManageUserCredentials(req.user, user)) {
+      return next({
+        status: 403,
+        message: "You do not have permission to manage this user's sessions.",
+      });
+    }
+
+    const isOwnAccount = req.user?.id === user.id;
+
+    if (req.body.scope === 'others' && !isOwnAccount) {
+      return next({
+        status: 400,
+        message: 'Only your own account has a current session to keep.',
+      });
+    }
+
+    const revoked = await revokeUserSessions(
+      user.id,
+      {
+        reason: 'manual',
+        revokedByUserId: req.user?.id,
+        exceptSid: req.body.scope === 'others' ? req.sessionID : undefined,
+      },
+      req.app.get('io')
+    );
+
+    res.status(200).json({ revoked });
+  } catch (e) {
+    next({ status: 500, message: e.message });
+  }
+});
 
 userSettingsRoutes.post<
   { id: string },

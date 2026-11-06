@@ -30,6 +30,7 @@ import {
   MAX_PUSH_SUBSCRIPTIONS_PER_USER,
   MAX_PUSH_USER_AGENT_LENGTH,
 } from '@server/lib/pushSubscription';
+import { revokeUserSessions } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -347,6 +348,11 @@ router.post<
       });
     }
 
+    // Lets revoking this session also remove the device's subscription
+    if (req.session?.userId === req.user.id) {
+      req.session.pushEndpoint = endpoint;
+    }
+
     return res.status(204).send();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
@@ -416,6 +422,7 @@ router.get<{ userId: number; key: string }, PushSubscriptionValidation>(
         endpoint: userPushSub.endpoint,
         p256dh: userPushSub.p256dh,
         auth: userPushSub.auth,
+        linkedToSession: req.session?.pushEndpoint === userPushSub.endpoint,
       });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
@@ -866,6 +873,11 @@ router.delete<{ id: string }>(
       }
 
       await userRepository.delete(user.id);
+      await revokeUserSessions(
+        user.id,
+        { reason: 'user-deleted', revokedByUserId: req.user?.id },
+        req.app.get('io')
+      );
       res.status(200).json(user.filter());
     } catch (e) {
       logger.error('Something went wrong deleting a user', {

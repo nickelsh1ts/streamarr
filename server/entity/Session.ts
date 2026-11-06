@@ -19,6 +19,18 @@ export class Session implements ISession {
   @Column('text')
   public json = '';
 
+  @Index()
+  @Column({
+    type: 'integer',
+    nullable: true,
+    asExpression: `json_extract("json", '$.userId')`,
+    generatedType: 'VIRTUAL',
+    // TypeORM still writes generated columns unless told not to
+    insert: false,
+    update: false,
+  })
+  public userId?: number | null;
+
   // connect-typeorm filters on `destroyedAt`; the column keeps its original name
   @DeleteDateColumn({ name: 'deletedAt' })
   public destroyedAt?: Date;

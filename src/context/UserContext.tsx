@@ -2,6 +2,7 @@
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
 import { publicRoutes } from '@app/proxy';
+import { socket } from '@app/utils/webSocket';
 import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
@@ -51,6 +52,25 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
       axios.interceptors.response.eject(interceptorId);
     };
   }, [router]);
+
+  useEffect(() => {
+    const handleSessionRevoked = () => {
+      routing.current = true;
+      router.replace('/logout');
+    };
+
+    socket.on('sessionRevoked', handleSessionRevoked);
+    return () => {
+      socket.off('sessionRevoked', handleSessionRevoked);
+    };
+  }, [router]);
+
+  // The server disconnects revoked sessions, so a later sign-in needs a new connection
+  useEffect(() => {
+    if (user?.id && socket.disconnected) {
+      socket.connect();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     // Don't redirect during setup process, signin, or on public routes

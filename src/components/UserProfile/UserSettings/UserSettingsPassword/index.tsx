@@ -12,7 +12,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import axios from 'axios';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -124,6 +124,7 @@ const UserPasswordChange = () => {
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
+          endOtherSessions: true,
         }}
         validationSchema={PasswordChangeSchema}
         enableReinitialize
@@ -133,6 +134,7 @@ const UserPasswordChange = () => {
               currentPassword: values.currentPassword,
               newPassword: values.newPassword,
               confirmPassword: values.confirmPassword,
+              endOtherSessions: values.endOtherSessions,
             });
 
             Toast({
@@ -269,6 +271,42 @@ const UserPasswordChange = () => {
                           {errors.confirmPassword}
                         </div>
                       )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+                  <label htmlFor="endOtherSessions" className="col-span-1">
+                    {user?.id === currentUser?.id ? (
+                      <FormattedMessage
+                        id="userSettings.password.endOtherSessions"
+                        defaultMessage="Sign Out Other Devices"
+                      />
+                    ) : (
+                      <FormattedMessage
+                        id="userSettings.password.endAllSessions"
+                        defaultMessage="Sign Out All Devices"
+                      />
+                    )}
+                    <p className="text-neutral block text-sm font-light">
+                      {user?.id === currentUser?.id ? (
+                        <FormattedMessage
+                          id="userSettings.password.endOtherSessionsDescription"
+                          defaultMessage="Other devices will be signed out."
+                        />
+                      ) : (
+                        <FormattedMessage
+                          id="userSettings.password.endAllSessionsDescription"
+                          defaultMessage="The user will be signed out of all devices."
+                        />
+                      )}
+                    </p>
+                  </label>
+                  <div className="col-span-2">
+                    <Field
+                      type="checkbox"
+                      id="endOtherSessions"
+                      name="endOtherSessions"
+                      className="checkbox-primary checkbox"
+                    />
                   </div>
                 </div>
               </div>
