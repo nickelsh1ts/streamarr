@@ -5181,7 +5181,7 @@
     "defaultMessage": "Please enter the email address associated to your Local account."
   },
   "resetPassword.email.note": {
-    "defaultMessage": "Note that Plex users must reset their password from the {plexLogo} login window."
+    "defaultMessage": "Note that {plexLogo} users must reset their password from the {plexLogo} login window."
   },
   "resetPassword.email.sent": {
     "defaultMessage": "Check your email"
@@ -5194,6 +5194,9 @@
   },
   "resetPassword.help": {
     "defaultMessage": "Wait, I need more help"
+  },
+  "resetPassword.password.title": {
+    "defaultMessage": "Reset local password"
   },
   "resetPassword.passwordTooShort": {
     "defaultMessage": "Password is too short; should be a minimum of 8 characters"
