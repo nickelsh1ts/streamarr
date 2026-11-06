@@ -6,6 +6,7 @@ import { isDocker } from '@server/utils/isDocker';
 import { spawn } from 'child_process';
 import { existsSync, utimesSync } from 'fs';
 import type { Server } from 'http';
+import schedule from 'node-schedule';
 import path from 'path';
 import type { Server as SocketIOServer } from 'socket.io';
 import { getSettings } from './settings';
@@ -326,6 +327,8 @@ class RestartManager {
 
   private async productionRestart(): Promise<void> {
     try {
+      await schedule.gracefulShutdown();
+
       if (this.io) {
         this.io.disconnectSockets(true);
       }
