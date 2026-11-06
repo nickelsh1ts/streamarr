@@ -173,6 +173,26 @@ For details, please see the [Express documentation](http://expressjs.com/en/guid
 
 This setting is **disabled** by default.
 
+#### Trusted Proxies
+
+When Proxy Support is enabled, choose which proxies Streamarr trusts to report the client's IP address. Streamarr skips every trusted proxy in the `X-Forwarded-For` chain and records the first untrusted address as the client.
+
+| Option                         | Trusts                                          | Use when                                                                                       |
+| ------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Trust Local Networks**       | Loopback, private and link-local addresses      | Your reverse proxy or Cloudflare Tunnel runs on the same host or Docker network                |
+| **Trust Cloudflare**           | Cloudflare's published edge IP ranges           | Your DNS record is proxied through Cloudflare (orange cloud). Not needed for Cloudflare Tunnel |
+| **Additional Trusted Proxies** | IP addresses or CIDR ranges separated by commas | A proxy runs on another host, for example `203.0.113.10, 198.51.100.0/24`                      |
+
+With nothing selected, Streamarr trusts only the proxy that connects to it, which matches the behavior of earlier versions. **Trust Local Networks** is selected by default for new installs; installs that already used Proxy Support keep the earlier behavior until you change it.
+
+Forwarded host and protocol headers, used by [CSRF Protection](#enable-csrf-protection) and WebSocket origin checks, are only accepted from a trusted proxy.
+
+Streamarr ships with a copy of Cloudflare's IP ranges. Use **Check for Updates** next to **Trust Cloudflare** to compare it with Cloudflare's current list. If the ranges have changed, review the added and removed ranges and select **Accept** to use the new list. Accepted ranges and other trusted proxy changes require a restart.
+
+{% hint style="info" %}
+Alternatively, configure your reverse proxy to restore the real client IP before it reaches Streamarr, for example nginx's [`real_ip` module](https://nginx.org/en/docs/http/ngx_http_realip_module.html), Caddy's [`trusted_proxies`](https://caddyserver.com/docs/caddyfile/options#trusted-proxies), or Traefik's [`forwardedHeaders.trustedIPs`](https://doc.traefik.io/traefik/routing/entrypoints/#forwarded-headers). Streamarr then only needs to trust the reverse proxy itself.
+{% endhint %}
+
 ### Outbound HTTP(S) Proxy
 
 Use this setting to route supported outbound HTTP and HTTPS requests through an authenticated proxy. Configure the proxy hostname, port, whether the connection to the proxy itself uses HTTPS, and optional credentials. The saved password is loaded into a sensitive field and stays obscured until revealed with its visibility control. Clearing the username clears the saved password.

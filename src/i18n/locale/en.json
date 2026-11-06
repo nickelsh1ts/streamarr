@@ -227,6 +227,9 @@
   "common.about": {
     "defaultMessage": "About"
   },
+  "common.accept": {
+    "defaultMessage": "Accept"
+  },
   "common.accountDeactivated": {
     "defaultMessage": "Account Deactivated"
   },
@@ -244,6 +247,9 @@
   },
   "common.addFirstTorrent": {
     "defaultMessage": "Add your first torrent to get started."
+  },
+  "common.added": {
+    "defaultMessage": "Added"
   },
   "common.addserver": {
     "defaultMessage": "Add {arrApp} Server"
@@ -676,6 +682,9 @@
   },
   "common.removeHeader": {
     "defaultMessage": "Remove"
+  },
+  "common.removed": {
+    "defaultMessage": "Removed"
   },
   "common.removing": {
     "defaultMessage": "Removing…"
@@ -4084,6 +4093,48 @@
   },
   "networkSettings.title": {
     "defaultMessage": "Network Settings"
+  },
+  "networkSettings.trustedProxies.additional": {
+    "defaultMessage": "Additional Trusted Proxies"
+  },
+  "networkSettings.trustedProxies.additional.description": {
+    "defaultMessage": "IP addresses or CIDR ranges separated by commas. With nothing selected, only the proxy connecting to Streamarr is trusted."
+  },
+  "networkSettings.trustedProxies.cloudflare": {
+    "defaultMessage": "Trust Cloudflare"
+  },
+  "networkSettings.trustedProxies.cloudflare.description": {
+    "defaultMessage": "Cloudflare's edge IP ranges, for sites proxied through Cloudflare. Not needed for Cloudflare Tunnel."
+  },
+  "networkSettings.trustedProxies.cloudflareCheck": {
+    "defaultMessage": "Check for Updates"
+  },
+  "networkSettings.trustedProxies.cloudflareCheckError": {
+    "defaultMessage": "Unable to check Cloudflare IP ranges"
+  },
+  "networkSettings.trustedProxies.cloudflareReviewDescription": {
+    "defaultMessage": "Cloudflare's published IP ranges have changed. Accepting replaces the trusted Cloudflare ranges and requires a restart."
+  },
+  "networkSettings.trustedProxies.cloudflareReviewTitle": {
+    "defaultMessage": "Update Cloudflare IP Ranges?"
+  },
+  "networkSettings.trustedProxies.cloudflareUpToDate": {
+    "defaultMessage": "Cloudflare IP ranges are up to date"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdateError": {
+    "defaultMessage": "Unable to update Cloudflare IP ranges"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdated": {
+    "defaultMessage": "Cloudflare IP ranges updated"
+  },
+  "networkSettings.trustedProxies.localNetworks": {
+    "defaultMessage": "Trust Local Networks"
+  },
+  "networkSettings.trustedProxies.localNetworks.description": {
+    "defaultMessage": "Loopback and private network addresses, such as a reverse proxy or Cloudflare Tunnel on the same host or Docker network"
+  },
+  "networkSettings.trustedProxies.validation.additional": {
+    "defaultMessage": "Enter IP addresses or CIDR ranges separated by commas"
   },
   "networkSettings.validation.requestTimeout": {
     "defaultMessage": "You must provide a valid request timeout"

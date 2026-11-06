@@ -1,4 +1,5 @@
 import csurf from '@dr.pogodin/csurf';
+import type { TrustProxyFn } from '@server/lib/trustedProxies';
 import type { RequestHandler } from 'express';
 import type { IncomingMessage } from 'http';
 import type { TLSSocket } from 'tls';
@@ -25,14 +26,15 @@ export function matchesProxyPath(path: string, prefixes: string[]): boolean {
 
 export function isSameOrigin(
   req: IncomingMessage,
-  trustProxy: boolean
+  trustProxy: TrustProxyFn
 ): boolean {
   const origin = req.headers.origin;
   if (!origin) return false;
 
   let host = req.headers.host;
   let protocol = (req.socket as TLSSocket).encrypted ? 'https' : 'http';
-  if (trustProxy) {
+  // Forwarded headers only count when they come from a trusted proxy
+  if (trustProxy(req.socket.remoteAddress ?? '', 0)) {
     const forwardedHost = req.headers['x-forwarded-host'];
     const forwardedProtocol = req.headers['x-forwarded-proto'];
     if (typeof forwardedHost === 'string') {
@@ -61,7 +63,7 @@ export function isSameOrigin(
 
 export function createCsrfProtection(options: {
   isProxyPath: (path: string) => boolean;
-  trustProxy: boolean;
+  trustProxy: TrustProxyFn;
   secure: boolean;
 }): RequestHandler {
   const cookie = {

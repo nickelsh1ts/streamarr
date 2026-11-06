@@ -109,9 +109,18 @@ export interface OutboundProxySettings {
   bypassLocalAddresses: boolean;
 }
 
+export interface TrustedProxySettings {
+  localNetworks: boolean;
+  cloudflare: boolean;
+  // null uses the built-in list until an admin accepts a refreshed one
+  cloudflareRanges: string[] | null;
+  additional: string[];
+}
+
 export interface NetworkSettings {
   requestTimeout: number;
   trustProxy: boolean;
+  trustedProxies: TrustedProxySettings;
   csrfProtection: boolean;
   scheduledRetryAttempts: number;
   scheduledRetryInterval: number;
@@ -543,6 +552,12 @@ class Settings {
       network: {
         requestTimeout: 10000,
         trustProxy: false,
+        trustedProxies: {
+          localNetworks: true,
+          cloudflare: false,
+          cloudflareRanges: null,
+          additional: [],
+        },
         csrfProtection: false,
         scheduledRetryAttempts: 3,
         scheduledRetryInterval: 300000,

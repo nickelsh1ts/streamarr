@@ -1,5 +1,6 @@
 import dataSource from '@server/datasource';
 import type { RestartStatusResponse } from '@server/interfaces/api/settingsInterfaces';
+import { getTrustProxyValue } from '@server/lib/trustedProxies';
 import logger from '@server/logger';
 import { isDocker } from '@server/utils/isDocker';
 import { spawn } from 'child_process';
@@ -38,7 +39,7 @@ interface ProxyAffectingSettings {
     urlBase?: string;
   };
   network: {
-    trustProxy: boolean;
+    trustProxy: string;
     csrfProtection: boolean;
     outboundProxy: string;
   };
@@ -116,7 +117,7 @@ class RestartManager {
       },
       audiobookshelf: this.pickService(settings.audiobookshelf),
       network: {
-        trustProxy: settings.network.trustProxy,
+        trustProxy: this.serializeTrustProxy(),
         csrfProtection: settings.network.csrfProtection,
         outboundProxy: this.serializeOutboundProxy(),
       },
@@ -230,7 +231,7 @@ class RestartManager {
       changed.push('Audiobookshelf');
     }
 
-    if (settings.network.trustProxy !== this.snapshot.network.trustProxy) {
+    if (this.serializeTrustProxy() !== this.snapshot.network.trustProxy) {
       changed.push('Proxy Support');
     }
 
@@ -245,6 +246,10 @@ class RestartManager {
     }
 
     return { required: changed.length > 0, services: changed };
+  }
+
+  private serializeTrustProxy(): string {
+    return JSON.stringify(getTrustProxyValue(getSettings().network));
   }
 
   private serializeOutboundProxy(): string {

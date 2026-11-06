@@ -24,6 +24,7 @@ import {
 import { initializeOutboundProxy } from '@server/lib/outboundProxy';
 import restartManager from '@server/lib/restartManager';
 import { getSettings } from '@server/lib/settings';
+import { compileTrustProxy } from '@server/lib/trustedProxies';
 import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser } from '@server/middleware/auth';
@@ -113,9 +114,8 @@ app
     // Schedule enabled newsletters
     await newsletterScheduler.loadAll();
     const server = express();
-    if (settings.network.trustProxy) {
-      server.set('trust proxy', 1);
-    }
+    const trustProxy = compileTrustProxy(settings.network);
+    server.set('trust proxy', trustProxy);
     server.use(cookieParser());
 
     // Get proxy paths to skip body parsing for proxied services
@@ -148,7 +148,7 @@ app
       server.use(
         createCsrfProtection({
           isProxyPath,
-          trustProxy: settings.network.trustProxy,
+          trustProxy,
           secure: !dev,
         })
       );
@@ -174,7 +174,6 @@ app
     server.use('/api', sessionMiddleware);
     const httpServer = createServer(server);
     const csrfEnabled = settings.network.csrfProtection;
-    const trustProxy = settings.network.trustProxy;
     const allowSocketRequest = (req: IncomingMessage) =>
       !csrfEnabled ||
       req.headers.origin === undefined ||
