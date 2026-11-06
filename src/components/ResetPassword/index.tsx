@@ -57,8 +57,8 @@ const ResetPassword = ({ guid }: { guid: string }) => {
         <div className="relative mb-4 px-2 text-start">
           <h2 className="mb-2 text-2xl font-extrabold">
             <FormattedMessage
-              id="resetPassword.title"
-              defaultMessage="Identify your account"
+              id="resetPassword.password.title"
+              defaultMessage="Reset local password"
             />
           </h2>
           <p className="text-sm">
@@ -119,7 +119,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                     <Form className="mt-4">
                       <div>
                         <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
-                          <div className="input input-primary flex items-center pr-0">
+                          <div className="input input-primary flex w-full items-center pr-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
@@ -152,7 +152,7 @@ const ResetPassword = ({ guid }: { guid: string }) => {
                             )}
                         </div>
                         <div className="mt-1 mb-2 sm:col-span-2 sm:mt-0">
-                          <div className="input input-primary flex items-center pr-0">
+                          <div className="input input-primary flex w-full items-center pr-0">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"
