@@ -23,6 +23,30 @@ describe('Authentication', () => {
       cy.url().should('not.include', '/signin');
     });
 
+    const signInLocally = (redirectUrl: string) => {
+      cy.visit(`/signin?redirect_url=${encodeURIComponent(redirectUrl)}`);
+      cy.get('[data-testid="signin-local-accordion-toggle"]').click();
+      cy.env(['ADMIN_EMAIL', 'ADMIN_PASSWORD']).then(
+        ({ ADMIN_EMAIL, ADMIN_PASSWORD }) => {
+          cy.get('[data-testid="email"]').type(ADMIN_EMAIL);
+          cy.get('input[name="password"]').type(ADMIN_PASSWORD);
+        }
+      );
+      cy.get('[data-testid="local-signin-button"]').click();
+    };
+
+    it('should return to the requested page after sign-in', () => {
+      signInLocally('/profile/settings?tab=1');
+      cy.location('pathname').should('eq', '/profile/settings');
+      cy.location('search').should('eq', '?tab=1');
+    });
+
+    it('should ignore an off-site redirect after sign-in', () => {
+      signInLocally('/\t/example.com');
+      cy.location('host').should('eq', new URL(Cypress.config('baseUrl')).host);
+      cy.location('pathname').should('match', /^\/watch/);
+    });
+
     it('should reject invalid credentials', () => {
       cy.visit('/signin');
 

@@ -12,6 +12,7 @@ import { OnboardingProvider } from '@app/context/OnboardingContext';
 import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import { publicRoutes } from '@app/proxy';
+import { getSafeRedirect } from '@app/utils/safeRedirect';
 import type {
   UserSettingsGeneralResponse,
   UserSettingsNotificationsResponse,
@@ -143,7 +144,14 @@ const Layout = ({
 
     // Authenticated users on signin/home go to watch
     if (pathname.match(/(signin|\/$)/) && user && !loading) {
-      return isExpiredUser ? '/profile' : '/watch';
+      if (isExpiredUser) {
+        return '/profile';
+      }
+      return pathname.startsWith('/signin') && typeof window !== 'undefined'
+        ? getSafeRedirect(
+            new URLSearchParams(window.location.search).get('redirect_url')
+          )
+        : '/watch';
     }
 
     // Signup disabled redirect

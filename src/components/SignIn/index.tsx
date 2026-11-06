@@ -8,7 +8,6 @@ import useSettings from '@app/hooks/useSettings';
 import { useUser } from '@app/hooks/useUser';
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -16,21 +15,13 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [isProcessing, setProcessing] = useState(false);
   const [pinId, setPinId] = useState<string | undefined>(undefined);
-  const { user, revalidate } = useUser();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { revalidate } = useUser();
   const { currentSettings } = useSettings();
-
-  const redirectParam = searchParams.get('redirect_url');
-  const redirect =
-    redirectParam && redirectParam.match(/^\/(?![/\\]).*$/)
-      ? redirectParam
-      : '/watch';
 
   // Effect that is triggered when the pin session id comes back from the Plex
   // OAuth popup. The server exchanges the pin for the Plex token internally.
   // If we get a success message, we will ask swr to revalidate the user which
-  // _should_ come back with a valid user.
+  // _should_ come back with a valid user; Layout then redirects.
   useEffect(() => {
     const login = async () => {
       setProcessing(true);
@@ -40,23 +31,21 @@ const SignIn = () => {
         if (response.data?.id) {
           const { data: authenticatedUser } =
             await axios.get('/api/v1/auth/me');
-          revalidate(authenticatedUser, false)
-            .then(async () => {
-              try {
-                const response = await axios.get('/api/v1/auth/plex/token');
-                const { token } = response.data;
+          revalidate(authenticatedUser, false).then(async () => {
+            try {
+              const response = await axios.get('/api/v1/auth/plex/token');
+              const { token } = response.data;
 
-                if (token) {
-                  if (localStorage.getItem('myPlexAccessToken') !== token) {
-                    localStorage.setItem('myPlexAccessToken', token);
-                  }
+              if (token) {
+                if (localStorage.getItem('myPlexAccessToken') !== token) {
+                  localStorage.setItem('myPlexAccessToken', token);
                 }
-              } catch {
-                // Token fetch failed or user doesn't have a Plex token
-                // Do not set tokenRef.current = true here; allow retry on next render
               }
-            })
-            .then(() => router.push(redirect));
+            } catch {
+              // Token fetch failed or user doesn't have a Plex token
+              // Do not set tokenRef.current = true here; allow retry on next render
+            }
+          });
         }
       } catch (e) {
         setError(
@@ -69,15 +58,7 @@ const SignIn = () => {
     if (pinId) {
       login();
     }
-  }, [pinId, redirect, revalidate, router]);
-
-  // Effect that is triggered whenever `useUser`'s user changes. If we get a new
-  // valid user, we redirect the user to the home page as the login was successful.
-  useEffect(() => {
-    if (user) {
-      router.push(redirect);
-    }
-  }, [user, router, redirect]);
+  }, [pinId, revalidate]);
 
   return (
     <>
