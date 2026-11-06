@@ -8,7 +8,10 @@ import { qrProxy } from '@server/lib/qrcodeproxy';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
-import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
+import {
+  intersectDefaultLibraryKeys,
+  normalizeSharedLibrariesValue,
+} from '@server/utils/sharedLibraries';
 import { Router } from 'express';
 import { In, LessThanOrEqual } from 'typeorm';
 
@@ -160,7 +163,7 @@ inviteRoutes.post<
     expiryTime?: 'days' | 'weeks' | 'months';
     liveTv?: boolean;
     plexHome?: boolean;
-    sharedLibraries?: string;
+    sharedLibraries?: string | null;
     downloads?: boolean;
     status?: InviteStatus;
     usageLimit?: number;
@@ -188,12 +191,13 @@ inviteRoutes.post<
       Permission.MANAGE_INVITES,
       Permission.MANAGE_USERS,
     ]);
+    const advancedInvitePermission = req.user.hasPermission(
+      [Permission.ADVANCED_INVITES, Permission.MANAGE_INVITES],
+      { type: 'or' }
+    );
     const trialPeriodPermission =
       req.user.hasPermission(Permission.MANAGE_USERS) &&
-      req.user.hasPermission(
-        [Permission.ADVANCED_INVITES, Permission.MANAGE_INVITES],
-        { type: 'or' }
-      );
+      advancedInvitePermission;
 
     // Check if user is in trial period (bypass for MANAGE_USERS and MANAGE_INVITES)
     if (
@@ -254,6 +258,34 @@ inviteRoutes.post<
         status: 400,
         message:
           'Trial period days override must be an integer between 1 and 90.',
+      });
+    }
+
+    if (!advancedInvitePermission) {
+      // Basic invites only grant default libraries the inviter can also access
+      const libraryKeys = intersectDefaultLibraryKeys({
+        value: req.user.settings?.sharedLibraries,
+        adminDefault: settings.main.sharedLibraries,
+        enabledLibraries: settings.plex.libraries.filter((lib) => lib.enabled),
+      });
+      if (libraryKeys?.length === 0) {
+        return next({
+          status: 400,
+          message:
+            'None of your libraries are included in the default shared libraries.',
+        });
+      }
+
+      const { quotaUsage, quotaExpiryLimit, quotaExpiryTime } =
+        settings.main.defaultQuotas.invites;
+      Object.assign(req.body, {
+        usageLimit: quotaUsage,
+        expiryLimit: quotaExpiryLimit,
+        expiryTime: quotaExpiryTime,
+        downloads: settings.main.downloads,
+        liveTv: settings.main.liveTv,
+        sharedLibraries: libraryKeys?.join('|') ?? null,
+        status: undefined,
       });
     }
 

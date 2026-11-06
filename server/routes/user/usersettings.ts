@@ -1040,6 +1040,16 @@ userSettingsRoutes.post<
       });
     }
 
+    const canManagePlexAccess =
+      req.user?.id === 1 ||
+      (req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        !user.hasPermission(Permission.MANAGE_USERS));
+    if (!canManagePlexAccess) {
+      delete req.body.sharedLibraries;
+      delete req.body.allowDownloads;
+      delete req.body.allowLiveTv;
+    }
+
     // Store previous sharedLibraries value to detect changes
     const previousSharedLibraries = user.settings?.sharedLibraries;
     const previousAllowDownloads = user.settings?.allowDownloads;

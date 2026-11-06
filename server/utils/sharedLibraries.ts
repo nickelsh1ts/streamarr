@@ -92,3 +92,28 @@ export const materializeDefaultSnapshot = ({
   }
   return keys.join('|');
 };
+
+/**
+ * Default library keys that `value` also grants; null when `value` covers the whole default.
+ */
+export const intersectDefaultLibraryKeys = ({
+  value,
+  adminDefault,
+  enabledLibraries,
+}: {
+  value: SharedLibrariesValue;
+  adminDefault: string | null | undefined;
+  enabledLibraries: EnabledLibrary[];
+}): string[] | null => {
+  if (isDefaultSentinel(value) || value === 'all') {
+    return null;
+  }
+  const defaultKeys = new Set(
+    resolveSharedLibraryKeys({ value: null, adminDefault, enabledLibraries })
+  );
+  return resolveSharedLibraryKeys({
+    value,
+    adminDefault,
+    enabledLibraries,
+  }).filter((key) => defaultKeys.has(key));
+};
