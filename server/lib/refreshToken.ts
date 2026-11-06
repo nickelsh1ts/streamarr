@@ -58,7 +58,19 @@ class RefreshToken {
     }
 
     this.isRunning = true;
+    try {
+      await this.refreshUsers();
+    } catch (e) {
+      logger.error('Plex refresh token job failed.', {
+        label: 'Jobs',
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    } finally {
+      this.isRunning = false;
+    }
+  }
 
+  private async refreshUsers(): Promise<void> {
     const userRepository = getRepository(User);
 
     const users = await userRepository
@@ -121,8 +133,6 @@ class RefreshToken {
         logger.debug('Failed to refresh Plex JWTs', failureSummary);
       }
     }
-
-    this.isRunning = false;
   }
 
   private async refreshUserLegacyToken(user: User) {

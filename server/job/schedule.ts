@@ -39,7 +39,7 @@ export const startJobs = (): void => {
       });
       // Upload directories (logos, onboarding, newsletter) also live under
       // cache/images but hold irreplaceable files — never add them here.
-      ImageProxy.clearCache(['tmdb', 'tvdb', 'plex', 'avatar']);
+      return ImageProxy.clearCache(['tmdb', 'tvdb', 'plex', 'avatar']);
     }),
     running: () => ImageProxy.status().running,
     cancelFn: () => ImageProxy.cancel(),
@@ -55,7 +55,7 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Plex Refresh Token', {
         label: 'Jobs',
       });
-      refreshToken.run();
+      return refreshToken.run();
     }),
     running: () => refreshToken.status().running,
     cancelFn: () => refreshToken.cancel(),
@@ -72,7 +72,7 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Expired Invite and QR Cleanup', {
         label: 'Jobs',
       });
-      expiredInvites.run();
+      return expiredInvites.run();
     }),
     running: () => expiredInvites.status().running,
     cancelFn: () => expiredInvites.cancel(),
@@ -90,7 +90,7 @@ export const startJobs = (): void => {
         logger.info('Starting scheduled job: Newsletter Image Cleanup', {
           label: 'Jobs',
         });
-        NewsletterImageCleanup.run();
+        return NewsletterImageCleanup.run();
       }
     ),
     running: () => NewsletterImageCleanup.status().running,
@@ -119,7 +119,7 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Notification Cleanup', {
         label: 'Jobs',
       });
-      cleanUpNotifications.run();
+      return cleanUpNotifications.run();
     }),
     running: () => cleanUpNotifications.status().running,
     cancelFn: () => cleanUpNotifications.cancel(),
@@ -135,7 +135,7 @@ export const startJobs = (): void => {
       logger.info('Starting scheduled job: Account Expiry Check', {
         label: 'Jobs',
       });
-      trialExpiry.run();
+      return trialExpiry.run();
     }),
     running: () => trialExpiry.status().running,
     cancelFn: () => trialExpiry.cancel(),
@@ -148,7 +148,7 @@ export const startJobs = (): void => {
     interval: 'minutes',
     cronSchedule: jobs['plex-membership-check']?.schedule,
     job: schedule.scheduleJob(jobs['plex-membership-check']?.schedule, () => {
-      plexAccess.run();
+      return plexAccess.run();
     }),
     running: () => plexAccess.status().running,
     cancelFn: () => plexAccess.cancel(),
