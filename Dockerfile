@@ -15,6 +15,8 @@ RUN apk add --no-cache python3 make g++ \
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# pnpm patches (daisyui#4852 workaround); drop with `pnpm patch-remove`
+COPY patches ./patches
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   corepack pnpm install --frozen-lockfile --ignore-scripts
