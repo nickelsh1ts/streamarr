@@ -1,3 +1,4 @@
+import type { SessionLoginMethod } from '@server/interfaces/api/userSettingsInterfaces';
 import type { ISession } from 'connect-typeorm';
 import {
   Column,
@@ -30,6 +31,19 @@ export class Session implements ISession {
     update: false,
   })
   public userId?: number | null;
+
+  // Device details live outside `json` so session saves can never rewrite them
+  @Column('datetime', { nullable: true })
+  public createdAt?: Date | null;
+
+  @Column('varchar', { nullable: true })
+  public ip?: string | null;
+
+  @Column('varchar', { length: 512, nullable: true })
+  public userAgent?: string | null;
+
+  @Column('varchar', { nullable: true })
+  public loginMethod?: SessionLoginMethod | null;
 
   // connect-typeorm filters on `destroyedAt`; the column keeps its original name
   @DeleteDateColumn({ name: 'deletedAt' })

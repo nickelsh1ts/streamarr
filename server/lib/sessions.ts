@@ -185,16 +185,22 @@ export const startUserSession = async (
     req.session.regenerate((e) => (e ? reject(e) : resolve()))
   );
   req.session.userId = user.id;
-  req.session.meta = {
-    createdAt: new Date().toISOString(),
-    ...(getSettings().network.sessionIpTracking && req.ip
-      ? { ip: req.ip }
-      : {}),
-    userAgent: req.get('user-agent')?.slice(0, 512),
-    loginMethod,
-  };
 
   await enforceSessionCap(user.id, req.app.get('io'));
+
+  // Saved now so the row exists for the device details below
+  await new Promise<void>((resolve, reject) =>
+    req.session.save((e) => (e ? reject(e) : resolve()))
+  );
+  await getRepository(Session).update(
+    { id: req.sessionID },
+    {
+      createdAt: new Date(),
+      ip: (getSettings().network.sessionIpTracking && req.ip) || null,
+      userAgent: req.get('user-agent')?.slice(0, 512) ?? null,
+      loginMethod,
+    }
+  );
 };
 
 export const listUserSessions = async (
@@ -204,16 +210,16 @@ export const listUserSessions = async (
   const showIp = getSettings().network.sessionIpTracking;
   const sessions = await getLiveSessions(userId);
 
-  return sessions.map(({ session, data: { meta } }) => ({
+  return sessions.map(({ session }) => ({
     id: toPublicSessionId(session.id),
     current: session.id === currentSid,
-    createdAt: meta?.createdAt ? new Date(meta.createdAt) : null,
+    createdAt: session.createdAt ?? null,
     lastActiveAt: new Date(
       Number(session.expiredAt) - SESSION_TTL_SECONDS * 1000
     ),
-    ...(showIp ? { ipAddress: meta?.ip ?? null } : {}),
-    userAgent: meta?.userAgent ?? null,
-    loginMethod: meta?.loginMethod ?? null,
+    ...(showIp ? { ipAddress: session.ip ?? null } : {}),
+    userAgent: session.userAgent ?? null,
+    loginMethod: session.loginMethod ?? null,
   }));
 };
 
@@ -221,7 +227,7 @@ export const clearSessionIpAddresses = async (): Promise<void> => {
   await getRepository(Session)
     .createQueryBuilder()
     .update()
-    .set({ json: () => `json_remove("json", '$.meta.ip')` })
-    .where(`json_extract("json", '$.meta.ip') IS NOT NULL`)
+    .set({ ip: null })
+    .where('ip IS NOT NULL')
     .execute();
 };

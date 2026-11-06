@@ -6,7 +6,7 @@ export class SessionUserIndex1793911720191 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX "IDX_28c5d1d16da7908c97c9bc2f74"`);
     await queryRunner.query(
-      `CREATE TABLE "temporary_session" ("expiredAt" bigint NOT NULL, "id" varchar(255) PRIMARY KEY NOT NULL, "json" text NOT NULL, "deletedAt" datetime, "userId" integer AS (json_extract("json", '$.userId')) VIRTUAL)`
+      `CREATE TABLE "temporary_session" ("expiredAt" bigint NOT NULL, "id" varchar(255) PRIMARY KEY NOT NULL, "json" text NOT NULL, "deletedAt" datetime, "userId" integer AS (json_extract("json", '$.userId')) VIRTUAL, "createdAt" datetime, "ip" varchar, "userAgent" varchar(512), "loginMethod" varchar)`
     );
     await queryRunner.query(
       `INSERT INTO "temporary_session"("expiredAt", "id", "json", "deletedAt") SELECT "expiredAt", "id", "json", "deletedAt" FROM "session"`
