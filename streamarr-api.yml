@@ -1018,6 +1018,31 @@ components:
               type: string
               description: Name of the header used to pass the trusted username to Calibre-Web (must match Calibre-Web's configured reverse-proxy header name).
               example: X-Auth-User
+    UserSession:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Opaque session identifier
+        current:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastActiveAt:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        loginMethod:
+          type: string
+          enum: [plex, local, signup]
+          nullable: true
     NetworkSettings:
       type: object
       additionalProperties: false
@@ -1038,6 +1063,10 @@ components:
         csrfProtection:
           type: boolean
           example: false
+        sessionIpTracking:
+          type: boolean
+          description: Record client IP addresses on sign-in sessions. Turning it off clears stored addresses.
+          example: true
         scheduledRetryAttempts:
           type: integer
           minimum: 1
@@ -7154,6 +7183,9 @@ paths:
                     type: string
                   auth:
                     type: string
+                  linkedToSession:
+                    type: boolean
+                    description: Whether this subscription is linked to the current session. Revoking the session removes it unless another live session uses the same endpoint.
     delete:
       summary: Delete user push subscription by key
       description: Deletes the user push subscription with the provided key.
@@ -7800,11 +7832,95 @@ paths:
                   nullable: true
                 newPassword:
                   type: string
+                endOtherSessions:
+                  type: boolean
+                  default: true
+                  description: Sign out the user's other sessions. When an administrator changes another user's password, all of that user's sessions are signed out.
               required:
                 - newPassword
       responses:
         '204':
           description: User password updated
+  /user/{userId}/settings/sessions:
+    get:
+      summary: List a user's active sessions
+      description: Returns the user's active sign-in sessions, most recently active first. Requires `MANAGE_USERS` permission if viewing other users. `ipAddress` is omitted when session IP tracking is disabled.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Active sessions returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSession'
+  /user/{userId}/settings/sessions/{sessionId}:
+    delete:
+      summary: Sign out a single session
+      description: Signs out one of the user's sessions. The current session cannot be signed out here; use `/auth/logout`. Requires `MANAGE_USERS` permission if managing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session signed out
+        '400':
+          description: The current session cannot be signed out here
+        '404':
+          description: Session not found
+  /user/{userId}/settings/sessions/revoke:
+    post:
+      summary: Sign out multiple sessions
+      description: Signs out all of the user's sessions (`all`) or all except the current one (`others`, own account only). Requires `MANAGE_USERS` permission if managing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: string
+                  enum: [others, all]
+              required:
+                - scope
+      responses:
+        '200':
+          description: Sessions signed out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revoked:
+                    type: number
+                    example: 2
   /user/{userId}/settings/linked-accounts/plex:
     post:
       summary: Link a Plex account to the logged-in user
