@@ -48,6 +48,7 @@ import {
   getServicesHealth,
   resetServiceHealthState,
 } from '@server/lib/serviceHealth';
+import { clearSessionIpAddresses } from '@server/lib/sessions';
 import type {
   JobId,
   MainSettings,
@@ -151,7 +152,7 @@ settingsRoutes.get('/network', (_req, res) => {
 
 settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
   '/network',
-  (req, res, next) => {
+  async (req, res, next) => {
     try {
       const settings = getSettings();
       const { outboundProxy, trustedProxies, ...rest } = req.body;
@@ -207,6 +208,18 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
         Object.assign(settings.network, previous);
         throw e;
       }
+
+      // Cleared on every save while off so a failed or raced cleanup is retried
+      if (!settings.network.sessionIpTracking) {
+        await clearSessionIpAddresses();
+        if (previous.sessionIpTracking) {
+          logger.info(
+            'Session IP tracking disabled; cleared stored addresses',
+            { label: 'Settings' }
+          );
+        }
+      }
+
       res.status(200).json(settings.network);
     } catch (e) {
       logger.error('Error saving network settings:', {

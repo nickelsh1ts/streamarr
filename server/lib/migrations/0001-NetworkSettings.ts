@@ -1,7 +1,10 @@
 import type { AllSettings } from '@server/lib/settings';
 
 type SettingsMigrationInput = Omit<AllSettings, 'network'> & {
-  network?: Omit<AllSettings['network'], 'outboundProxy' | 'trustedProxies'>;
+  network?: Omit<
+    AllSettings['network'],
+    'outboundProxy' | 'trustedProxies' | 'sessionIpTracking'
+  >;
   main: AllSettings['main'] & {
     trustProxy?: boolean;
     csrfProtection?: boolean;

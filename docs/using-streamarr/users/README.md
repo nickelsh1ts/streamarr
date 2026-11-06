@@ -202,6 +202,8 @@ Users can reset their password by:
 2. Entering their email address
 3. Clicking the link in the password reset email
 
+Resetting a password signs the user out on every device.
+
 {% hint style="warning" %}
 Password reset requires:
 
@@ -218,6 +220,28 @@ Password reset requires:
 Local user passwords must meet minimum complexity requirements:
 
 - Minimum 8 characters
+
+### Changing a Password
+
+When you change your own password under **Profile → Settings → Password**, **Sign Out Other Devices** is selected by default. Your other devices must sign in again with the new password; the device you changed it from stays signed in.
+
+When an administrator sets another user's password, **Sign Out All Devices** is selected by default and signs that user out everywhere. Clear the option to keep existing devices signed in.
+
+### Devices
+
+**Profile → Settings → Devices** lists every device signed in to your account, with its browser, operating system, sign-in method, when it signed in, and when it was last active. If an administrator has enabled [Record Device IP Addresses](../settings/README.md#record-device-ip-addresses), each device also shows its IP address.
+
+- **Revoke** next to a device signs it out. The device you are using shows **Current Device** instead; use the normal sign-out to end it.
+- **Sign Out Other Devices** signs out every device except this one.
+- **Sign Out All Devices** signs out every device, including this one.
+
+Administrators with **Manage Users** can view and sign out another user's devices from **Users → (select a user) → Settings → Devices**. Only the primary admin account can manage other administrators' devices.
+
+Each user can have up to 50 signed-in devices. Signing in beyond that signs out the least recently active device.
+
+Signed-out devices that are still open return to the sign-in page right away, and any web push subscription registered from that device is removed, unless another signed-in session in the same browser still uses it. Subscriptions from before device tracking was added are only removed once every device is signed out.
+
+Deleting a user signs them out on every device.
 
 ---
 

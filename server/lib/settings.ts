@@ -122,6 +122,7 @@ export interface NetworkSettings {
   trustProxy: boolean;
   trustedProxies: TrustedProxySettings;
   csrfProtection: boolean;
+  sessionIpTracking: boolean;
   scheduledRetryAttempts: number;
   scheduledRetryInterval: number;
   outboundProxy: OutboundProxySettings;
@@ -559,6 +560,7 @@ class Settings {
           additional: [],
         },
         csrfProtection: false,
+        sessionIpTracking: true,
         scheduledRetryAttempts: 3,
         scheduledRetryInterval: 300000,
         outboundProxy: {

@@ -63,6 +63,18 @@ const UserSettings = ({ children }: { children: React.ReactNode }) => {
     },
     {
       text: intl.formatMessage({
+        id: 'userSettings.sessions.title',
+        defaultMessage: 'Devices',
+      }),
+      route: '/settings/devices',
+      regex: /\/settings\/devices/,
+      hidden:
+        currentUser?.id !== 1 &&
+        currentUser?.id !== user?.id &&
+        hasPermission(Permission.ADMIN, user?.permissions ?? 0),
+    },
+    {
+      text: intl.formatMessage({
         id: 'settings.linkedAccounts',
         defaultMessage: 'Linked Accounts',
       }),

@@ -4091,6 +4091,18 @@
   "networkSettings.scheduledRetryInterval.description": {
     "defaultMessage": "Time (in seconds) to wait between scheduled retry attempts."
   },
+  "networkSettings.sessionIpTracking.confirmMessage": {
+    "defaultMessage": "Disabling this will stop recording IP addresses. Additionally, every stored device IP address will be permanently deleted. This cannot be undone."
+  },
+  "networkSettings.sessionIpTracking.confirmTitle": {
+    "defaultMessage": "Stop Recording IP Addresses?"
+  },
+  "networkSettings.sessionIpTracking.description": {
+    "defaultMessage": "Save the IP address of each signed-in device. Behind a reverse proxy, enable Proxy Support."
+  },
+  "networkSettings.sessionIpTracking.label": {
+    "defaultMessage": "Record Device IP Addresses"
+  },
   "networkSettings.title": {
     "defaultMessage": "Network Settings"
   },
@@ -6647,6 +6659,18 @@
   "userSettings.password.currentRequired": {
     "defaultMessage": "You must provide your current password"
   },
+  "userSettings.password.endAllSessions": {
+    "defaultMessage": "Sign Out All Devices"
+  },
+  "userSettings.password.endAllSessionsDescription": {
+    "defaultMessage": "The user will be signed out of all devices."
+  },
+  "userSettings.password.endOtherSessions": {
+    "defaultMessage": "Sign Out Other Devices"
+  },
+  "userSettings.password.endOtherSessionsDescription": {
+    "defaultMessage": "Other devices will be signed out."
+  },
   "userSettings.password.newRequired": {
     "defaultMessage": "You must provide a new password"
   },
@@ -6685,6 +6709,75 @@
   },
   "userSettings.saveSuccess": {
     "defaultMessage": "User settings saved successfully!"
+  },
+  "userSettings.sessions.currentSession": {
+    "defaultMessage": "Current Device"
+  },
+  "userSettings.sessions.descriptionOther": {
+    "defaultMessage": "Devices where this user is signed in to Streamarr."
+  },
+  "userSettings.sessions.descriptionOwn": {
+    "defaultMessage": "Devices where you are signed in to Streamarr. Sign out any you don't recognize."
+  },
+  "userSettings.sessions.ipAddress": {
+    "defaultMessage": "IP Address"
+  },
+  "userSettings.sessions.lastActiveLabel": {
+    "defaultMessage": "Last Active"
+  },
+  "userSettings.sessions.methodLocal": {
+    "defaultMessage": "Email & Password"
+  },
+  "userSettings.sessions.methodPlex": {
+    "defaultMessage": "Plex"
+  },
+  "userSettings.sessions.methodSignup": {
+    "defaultMessage": "Invite Sign-Up"
+  },
+  "userSettings.sessions.none": {
+    "defaultMessage": "There are no signed-in devices."
+  },
+  "userSettings.sessions.revoke": {
+    "defaultMessage": "Revoke Device"
+  },
+  "userSettings.sessions.signInMethod": {
+    "defaultMessage": "Sign-In Method"
+  },
+  "userSettings.sessions.signOut": {
+    "defaultMessage": "Sign Out"
+  },
+  "userSettings.sessions.signOutAll": {
+    "defaultMessage": "Sign Out All Devices"
+  },
+  "userSettings.sessions.signOutAllOtherConfirm": {
+    "defaultMessage": "This user will be signed out on every device and will need to sign in again."
+  },
+  "userSettings.sessions.signOutAllOwnConfirm": {
+    "defaultMessage": "Every device, including this one, will be signed out and need to sign in again."
+  },
+  "userSettings.sessions.signOutError": {
+    "defaultMessage": "Something went wrong while signing out devices."
+  },
+  "userSettings.sessions.signOutOthers": {
+    "defaultMessage": "Sign Out Other Devices"
+  },
+  "userSettings.sessions.signOutOthersConfirm": {
+    "defaultMessage": "Every device other than this one will be signed out and need to sign in again."
+  },
+  "userSettings.sessions.signedIn": {
+    "defaultMessage": "Signed in {date}"
+  },
+  "userSettings.sessions.signedOutMany": {
+    "defaultMessage": "Devices signed out."
+  },
+  "userSettings.sessions.signedOutOne": {
+    "defaultMessage": "Device signed out."
+  },
+  "userSettings.sessions.title": {
+    "defaultMessage": "Devices"
+  },
+  "userSettings.sessions.unknownDevice": {
+    "defaultMessage": "Unknown Device"
   },
   "userSettings.title": {
     "defaultMessage": "User Settings"

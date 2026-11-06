@@ -100,6 +100,7 @@ const NetworkSettings = () => {
   const [isCheckingCloudflare, setIsCheckingCloudflare] = useState(false);
   const [cloudflareCheck, setCloudflareCheck] =
     useState<CloudflareRangeCheck | null>(null);
+  const [confirmIpTrackingOff, setConfirmIpTrackingOff] = useState(false);
   const {
     data,
     error,
@@ -450,6 +451,7 @@ const NetworkSettings = () => {
             additional: data?.trustedProxies.additional.join(', ') ?? '',
           },
           csrfProtection: data?.csrfProtection ?? false,
+          sessionIpTracking: data?.sessionIpTracking ?? true,
           scheduledRetryAttempts: data?.scheduledRetryAttempts ?? 3,
           scheduledRetryInterval: data
             ? data.scheduledRetryInterval / 1000
@@ -479,6 +481,7 @@ const NetworkSettings = () => {
                 additional: splitList(values.trustedProxies.additional),
               },
               csrfProtection: values.csrfProtection,
+              sessionIpTracking: values.sessionIpTracking,
               scheduledRetryAttempts: Number(values.scheduledRetryAttempts),
               scheduledRetryInterval:
                 Number(values.scheduledRetryInterval) * 1000,
@@ -711,6 +714,64 @@ const NetworkSettings = () => {
                 </div>
               )}
             </Modal>
+            <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
+              <label htmlFor="sessionIpTracking" className="col-span-1">
+                <span className="mr-2">
+                  <FormattedMessage
+                    id="networkSettings.sessionIpTracking.label"
+                    defaultMessage="Record Device IP Addresses"
+                  />
+                </span>
+                <p className="text-neutral block text-sm font-light">
+                  <FormattedMessage
+                    id="networkSettings.sessionIpTracking.description"
+                    defaultMessage="Save the IP address of each signed-in device. Behind a reverse proxy, enable Proxy Support."
+                  />
+                </p>
+              </label>
+              <div className="col-span-2">
+                <Field
+                  type="checkbox"
+                  id="sessionIpTracking"
+                  name="sessionIpTracking"
+                  onChange={() => {
+                    if (values.sessionIpTracking) {
+                      setFieldValue('sessionIpTracking', false);
+                      setConfirmIpTrackingOff(true);
+                    } else {
+                      setFieldValue('sessionIpTracking', true);
+                    }
+                  }}
+                  className="checkbox-primary checkbox"
+                />
+              </div>
+              <Modal
+                show={confirmIpTrackingOff}
+                title={intl.formatMessage({
+                  id: 'networkSettings.sessionIpTracking.confirmTitle',
+                  defaultMessage: 'Stop Recording IP Addresses?',
+                })}
+                onOk={() => setConfirmIpTrackingOff(false)}
+                okText={intl.formatMessage({
+                  id: 'common.disable',
+                  defaultMessage: 'Disable',
+                })}
+                okButtonType="error"
+                onCancel={() => {
+                  setFieldValue('sessionIpTracking', true);
+                  setConfirmIpTrackingOff(false);
+                }}
+                cancelText={intl.formatMessage({
+                  id: 'common.cancel',
+                  defaultMessage: 'Cancel',
+                })}
+              >
+                <FormattedMessage
+                  id="networkSettings.sessionIpTracking.confirmMessage"
+                  defaultMessage="Disabling this will stop recording IP addresses. Additionally, every stored device IP address will be permanently deleted. This cannot be undone."
+                />
+              </Modal>
+            </div>
             <div className="grid grid-cols-1 space-y-2 sm:grid-cols-3 sm:space-y-0 sm:space-x-2">
               <label htmlFor="csrfProtection" className="col-span-1">
                 <span className="mr-2">

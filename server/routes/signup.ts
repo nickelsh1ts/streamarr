@@ -11,6 +11,7 @@ import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
 import { plexSync } from '@server/lib/plexSync';
 import { plexAuthLimiter } from '@server/lib/rateLimiters';
+import { startUserSession } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import {
@@ -374,10 +375,7 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     invite.updatedBy = user;
     await inviteRepository.save(invite);
 
-    // Set session for the user (log them in after successful creation)
-    if (req.session) {
-      req.session.userId = user.id;
-    }
+    await startUserSession(req, user, 'signup');
 
     // Silently provision a per-user Plex JWT device (experimental, non-fatal)
     void maybeProvisionPlexJwt(user.id, authToken);
@@ -599,10 +597,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     invite.updatedBy = user;
     await inviteRepository.save(invite);
 
-    // Set session for the user (log them in after successful creation)
-    if (req.session) {
-      req.session.userId = user.id;
-    }
+    await startUserSession(req, user, 'signup');
 
     res.status(200).json({
       success: true,

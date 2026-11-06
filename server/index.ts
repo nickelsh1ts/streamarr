@@ -23,6 +23,7 @@ import {
 } from '@server/lib/onboarding';
 import { initializeOutboundProxy } from '@server/lib/outboundProxy';
 import restartManager from '@server/lib/restartManager';
+import { SESSION_TTL_SECONDS, sessionRoom } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import { compileTrustProxy } from '@server/lib/trustedProxies';
 import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
@@ -61,6 +62,7 @@ import YAML from 'yamljs';
 
 interface SocketRequest extends IncomingMessage {
   session?: ExpressSession & { userId?: number };
+  sessionID?: string;
 }
 
 const API_SPEC_PATH = path.join(__dirname, '../streamarr-api.yml');
@@ -159,16 +161,18 @@ app
       secret: settings.sessionSecret,
       resave: false,
       saveUninitialized: false,
+      // Keeps the cookie expiry in step with the store's sliding expiredAt
+      rolling: true,
       name: 'streamarr.sid',
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
+        maxAge: SESSION_TTL_SECONDS * 1000,
         httpOnly: true,
         sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
         secure: 'auto',
       },
       store: new TypeormStore({
         cleanupLimit: 2,
-        ttl: 60 * 60 * 24 * 30,
+        ttl: SESSION_TTL_SECONDS,
       }).connect(sessionRepository) as Store,
     });
     server.use('/api', sessionMiddleware);
@@ -237,7 +241,7 @@ app
         return;
       }
       try {
-        socket.join(String(req.session.userId));
+        socket.join([String(req.session.userId), sessionRoom(req.sessionID)]);
       } catch {
         socket.disconnect(true);
         return;
