@@ -1090,7 +1090,7 @@ settingsRoutes.get('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
   }
 });
 
-settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
+settingsRoutes.post('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
   const settings = getSettings();
   const lidarrSettings = settings.lidarr;
 
