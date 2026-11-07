@@ -14,6 +14,7 @@ import { InviteStatus } from '@server/constants/invite';
 import type Invite from '@server/entity/Invite';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import type { Library } from '@server/lib/settings';
+import { isDefaultSentinel } from '@server/utils/sharedLibraries';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -208,15 +209,11 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                       {(() => {
                         if (!Libraries) return null;
                         const allIds = Libraries.map((lib) => lib.id).sort();
-                        const selected =
-                          invite?.sharedLibraries === undefined ||
-                          invite?.sharedLibraries === null
-                            ? ''
-                            : invite?.sharedLibraries;
+                        const selected = invite?.sharedLibraries;
                         // All Libraries
                         if (
                           selected === 'all' ||
-                          (selected &&
+                          (!isDefaultSentinel(selected) &&
                             selected.split('|').sort().join('|') ===
                               allIds.join('|'))
                         ) {
@@ -228,7 +225,7 @@ const InviteCard = ({ invite, onEdit, onDelete, onShare }: InviteCardProps) => {
                           );
                         }
                         // Default (server) value
-                        if (selected === '' || selected === 'server') {
+                        if (isDefaultSentinel(selected)) {
                           // Use user settings default/server value
                           const defaultIds = (data?.globalSharedLibraries || '')
                             .split('|')

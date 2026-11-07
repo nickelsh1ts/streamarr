@@ -36,6 +36,7 @@ import {
   resetPlexHealth,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
+import { plexSync, type PlexBulkSyncSummary } from '@server/lib/plexSync';
 import {
   arrAuthLimiter,
   settingsAboutDiskSpaceLimiter,
@@ -69,6 +70,11 @@ import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getCachedImageCacheOverview } from '@server/utils/cacheOverview';
 import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
+import {
+  isDefaultSentinel,
+  normalizeSharedLibrariesValue,
+  referencesLibrary,
+} from '@server/utils/sharedLibraries';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -116,17 +122,37 @@ settingsRoutes.get('/main', (req, res, next) => {
   res.status(200).json(filteredMainSettings(req.user, settings.main));
 });
 
-settingsRoutes.post('/main', (req, res, next) => {
+settingsRoutes.post('/main', async (req, res, next) => {
   try {
     const settings = getSettings();
 
     // Filter out file objects and other non-serializable data
     const filteredBody = omit(req.body, ['customLogo', 'customLogoSmall']);
+    if (filteredBody.sharedLibraries !== undefined) {
+      // The server default has no default of its own, so empty means all
+      filteredBody.sharedLibraries =
+        normalizeSharedLibrariesValue(filteredBody.sharedLibraries) ?? 'all';
+    }
 
+    const previousDefault = settings.main.sharedLibraries;
     settings.main = merge(settings.main, filteredBody);
     settings.save();
 
-    res.status(200).json(settings.main);
+    // Respond only after default followers are synced so a save can't race the next one
+    let plexSyncSummary: PlexBulkSyncSummary | 'failed' | undefined;
+    if (settings.main.sharedLibraries !== previousDefault) {
+      try {
+        plexSyncSummary = await plexSync.reconcileUsers(isDefaultSentinel);
+      } catch (e) {
+        logger.error('Failed to sync default-library users with Plex', {
+          label: 'Settings',
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+        plexSyncSummary = 'failed';
+      }
+    }
+
+    res.status(200).json({ ...settings.main, plexSync: plexSyncSummary });
   } catch (error) {
     logger.error('Error saving main settings:', error);
     next({ status: 500, message: 'Failed to save settings' });
@@ -471,7 +497,7 @@ settingsRoutes.post('/plex/library/sync', async (_req, res, next) => {
 
 settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
   '/plex/library/:libraryId',
-  (req, res, next) => {
+  async (req, res, next) => {
     const settings = getSettings();
     const library = settings.plex.libraries.find(
       (l) => l.id === req.params.libraryId
@@ -481,8 +507,22 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
       return next({ status: 404, message: 'Library not found.' });
     }
 
-    library.enabled = req.body.enabled;
-    settings.save();
+    if (library.enabled !== req.body.enabled) {
+      library.enabled = req.body.enabled;
+      settings.save();
+      // Wait for affected shares so a restart or the next toggle can't skip them
+      try {
+        await plexSync.reconcileUsers((value) =>
+          referencesLibrary(value, library.id)
+        );
+      } catch (e) {
+        logger.error('Failed to sync Plex shares after library change', {
+          label: 'Settings',
+          libraryId: library.id,
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
+      }
+    }
     res.status(200).json(settings.plex.libraries);
   }
 );

@@ -11,9 +11,12 @@ import { ArrowDownTrayIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import {
   CheckBadgeIcon,
   CheckIcon,
+  ExclamationTriangleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
+import type { PlexBulkSyncSummary } from '@server/lib/plexSync';
 import type { MainSettings } from '@server/lib/settings';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -68,7 +71,7 @@ const UserSettings = () => {
           inviteExpiryLimit: data?.defaultQuotas.invites.quotaExpiryLimit ?? 1,
           inviteExpiryTime:
             data?.defaultQuotas.invites.quotaExpiryTime ?? 'days',
-          sharedLibraries: data?.sharedLibraries ?? '',
+          sharedLibraries: data?.sharedLibraries || 'all',
           downloads: data?.downloads,
           liveTv: data?.liveTv,
           plexHome: data?.plexHome,
@@ -79,7 +82,9 @@ const UserSettings = () => {
         enableReinitialize
         onSubmit={async (values) => {
           try {
-            await axios.post('/api/v1/settings/main', {
+            const { data: saved } = await axios.post<{
+              plexSync?: PlexBulkSyncSummary | 'failed';
+            }>('/api/v1/settings/main', {
               localLogin: values.localLogin,
               newPlexLogin: values.newPlexLogin,
               experimentalJwtAuth: values.experimentalJwtAuth,
@@ -102,6 +107,30 @@ const UserSettings = () => {
               trialPeriodOutcome: values.trialPeriodOutcome,
             });
             mutate('/api/v1/settings/public');
+
+            const plexSync = saved.plexSync;
+            if (plexSync === 'failed' || plexSync?.failed) {
+              Toast({
+                title: intl.formatMessage({
+                  id: 'userLibraries.savedPlexSyncFailed',
+                  defaultMessage: 'Settings saved, but Plex sync failed.',
+                }),
+                message:
+                  plexSync === 'failed'
+                    ? undefined
+                    : intl.formatMessage(
+                        {
+                          id: 'userLibraries.savedPlexSyncFailedMessage',
+                          defaultMessage:
+                            'Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex.',
+                        },
+                        { count: plexSync.failed }
+                      ),
+                icon: <ExclamationTriangleIcon className="size-7" />,
+                type: 'warning',
+              });
+              return;
+            }
 
             Toast({
               title: intl.formatMessage({
@@ -585,8 +614,8 @@ const UserSettings = () => {
                   />
                   <span className="text-neutral block text-sm font-light">
                     <FormattedMessage
-                      id="userSettings.defaultSharedLibrariesDescription"
-                      defaultMessage="Initial libraries shared with new users"
+                      id="userSettings.defaultSharedLibrariesFollowDescription"
+                      defaultMessage="Libraries shared with users set to Default. Changes are synced to Plex for those users."
                     />
                   </span>
                 </span>
@@ -595,6 +624,18 @@ const UserSettings = () => {
                     value={values.sharedLibraries}
                     setFieldValue={setFieldValue}
                   />
+                  {(normalizeSharedLibrariesValue(values.sharedLibraries) ??
+                    'all') !==
+                    (normalizeSharedLibrariesValue(data?.sharedLibraries) ??
+                      'all') && (
+                    <div className="text-warning mt-2 text-sm">
+                      <ExclamationTriangleIcon className="mr-1 inline h-5 w-5" />
+                      <FormattedMessage
+                        id="userSettings.defaultSharedLibrariesChangedWarning"
+                        defaultMessage="Saving will update Plex library access for every user set to Default."
+                      />
+                    </div>
+                  )}
                 </div>
                 <span id="group-label" className="block font-bold">
                   <FormattedMessage

@@ -14,6 +14,7 @@ import plexPinAuth, {
 } from '@server/lib/plexAuth';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { plexSync } from '@server/lib/plexSync';
 import {
   plexAuthLimiter,
   plexPinLimiter,
@@ -265,6 +266,15 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
           });
 
           await userRepository.save(user);
+          try {
+            await plexSync.adoptPlexAccess(user);
+          } catch (e) {
+            logger.warn('Failed to adopt existing Plex access for new user', {
+              label: 'API',
+              userId: user.id,
+              errorMessage: e instanceof Error ? e.message : String(e),
+            });
+          }
         }
       } else {
         logger.warn(

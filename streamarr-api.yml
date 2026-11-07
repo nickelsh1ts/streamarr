@@ -398,7 +398,7 @@ components:
                   enum: [days, weeks, months]
         sharedLibraries:
           type: string
-          description: Default shared library IDs (pipe-separated), 'all', or empty string
+          description: Default shared library IDs (pipe-separated) or 'all'. Users following the default are re-synced with Plex when it changes.
           example: '1|2|3'
         downloads:
           type: boolean
@@ -1900,7 +1900,8 @@ components:
           default: ''
         sharedLibraries:
           type: string
-          description: Comma-separated library IDs, or special values (all, server).
+          nullable: true
+          description: Pipe-separated library IDs, 'all', or null to follow the server default.
         trialPeriodOutcome:
           type: string
           nullable: true
@@ -6999,7 +7000,8 @@ paths:
                   type: integer
                 sharedLibraries:
                   type: string
-                  description: A pipe-delimited list of library IDs, 'all', or 'server' for the server default
+                  nullable: true
+                  description: A pipe-delimited list of library IDs, 'all', or null to follow the server default
                   example: '1|2|3'
                 allowDownloads:
                   type: boolean
@@ -7760,7 +7762,7 @@ paths:
                   currentPlexLibraries:
                     type: string
                     nullable: true
-                    description: Pipe-separated list of library IDs user has access to in Plex (empty string means all libraries, null means unable to fetch)
+                    description: Pipe-separated list of library IDs user has access to in Plex ('all' for all libraries, empty string for none, null means unable to fetch)
                     example: '1|2|3'
                   canFetchFromPlex:
                     type: boolean
@@ -9526,7 +9528,8 @@ paths:
                   description: Whether to add invited users as Plex Home members.
                 sharedLibraries:
                   type: string
-                  description: Comma-separated library IDs, or special values (all, server).
+                  nullable: true
+                  description: Pipe-separated library IDs, 'all', or null to follow the server default.
                 trialPeriodOutcome:
                   type: string
                   nullable: true

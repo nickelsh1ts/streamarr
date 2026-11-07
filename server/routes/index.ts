@@ -16,6 +16,7 @@ import {
   type LibraryItemsResponse,
   type LibraryLink,
 } from '@server/lib/plexHealthCheck';
+import { plexSync } from '@server/lib/plexSync';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { checkUser, isAuthenticated } from '@server/middleware/auth';
@@ -280,41 +281,12 @@ router.get('/libraries/items', isAuthenticated(), async (req, res) => {
   });
 
   if (!isOwner) {
-    const userSharedLibraries = req.user?.settings?.sharedLibraries;
-
-    if (userSharedLibraries === 'all') {
-      // User has access to all enabled libraries (no filtering needed)
-    } else if (
-      !userSharedLibraries ||
-      userSharedLibraries === 'server' ||
-      userSharedLibraries === ''
-    ) {
-      const defaultLibs = settings.main.sharedLibraries;
-
-      if (defaultLibs === 'all' || !defaultLibs) {
-        // Server default is "All Libraries" (no filtering needed)
-      } else {
-        const adminConfiguredLibs = defaultLibs
-          .split(/[,|]/)
-          .map((id) => id.trim())
-          .filter((id) => id !== '');
-
-        enabledLibraries = enabledLibraries.filter((lib) =>
-          adminConfiguredLibs.includes(lib.id)
-        );
-      }
-    } else if (typeof userSharedLibraries === 'string') {
-      const requestedLibs = userSharedLibraries
-        .split(/[,|]/)
-        .map((id) => id.trim())
-        .filter((id) => id !== '');
-
-      enabledLibraries = enabledLibraries.filter((lib) =>
-        requestedLibs.includes(lib.id)
-      );
-    } else {
-      return res.status(200).json(emptyResponse());
-    }
+    const allowedKeys = new Set(
+      plexSync.resolveLibraryKeys(req.user?.settings?.sharedLibraries)
+    );
+    enabledLibraries = enabledLibraries.filter((lib) =>
+      allowedKeys.has(lib.id)
+    );
   }
 
   const sortBy = req.query.sort as string;

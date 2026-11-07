@@ -1,4 +1,5 @@
 import type { Library } from '@server/lib/settings';
+import { isDefaultSentinel } from '@server/utils/sharedLibraries';
 import sortBy from 'lodash/sortBy';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -12,6 +13,12 @@ export type OptionType = {
   isFixed?: boolean;
 };
 
+// Option value for "Default Libraries"; the field itself holds null
+const DEFAULT_OPTION = 'default';
+const SPECIAL_OPTIONS = new Set(['all', DEFAULT_OPTION]);
+const toFieldValue = (option: string) =>
+  option === DEFAULT_OPTION ? null : option;
+
 const selectStyles = {
   multiValueLabel: (base: CSSObjectWithLabel, props: { data: OptionType }) => {
     return props.data?.isFixed ? { ...base, paddingRight: 6 } : base;
@@ -22,10 +29,12 @@ const selectStyles = {
 };
 
 interface LibrarySelectorProps {
-  value?: string;
-  setFieldValue: (property: string, value: string) => void;
+  /** 'all', null (follow the default), 'unchanged', or pipe-separated library ids */
+  value?: string | null;
+  setFieldValue: (property: string, value: string | null) => void;
   serverValue?: string;
-  isUserSettings?: boolean;
+  /** Offers a "Default Libraries" option that follows the server default */
+  allowDefault?: boolean;
   /** Allows an empty selection, treated as 'unchanged' for bulk editing */
   allowUnchanged?: boolean;
 }
@@ -34,7 +43,7 @@ const LibrarySelector = ({
   value,
   setFieldValue,
   serverValue,
-  isUserSettings = false,
+  allowDefault = false,
   allowUnchanged = false,
 }: LibrarySelectorProps) => {
   const { data: Libraries } = useSWR<Library[]>('/api/v1/libraries');
@@ -60,9 +69,9 @@ const LibrarySelector = ({
       value: library.id,
     })) ?? [];
 
-  if (isUserSettings) {
+  if (allowDefault) {
     options.unshift({
-      value: 'server',
+      value: DEFAULT_OPTION,
       label: serverLibraryNames
         ? intl.formatMessage(
             {
@@ -126,68 +135,43 @@ const LibrarySelector = ({
           : undefined
       }
       value={(() => {
-        // An empty selection represents "no change" in bulk editing
         if (allowUnchanged && value === 'unchanged') {
           return [];
         }
-        // If 'all' is selected, only show 'all'
-        if (
-          (isUserSettings && value === 'all') ||
-          (!isUserSettings && !value)
-        ) {
-          return [options.find((opt) => opt.value === 'all')!];
+        if (allowDefault && isDefaultSentinel(value)) {
+          return options.filter((opt) => opt.value === DEFAULT_OPTION);
         }
-        // If 'server' is selected, only show 'server'
-        if ((value === '' || value === 'server') && isUserSettings) {
-          return [options.find((opt) => opt.value === 'server')!];
+        if (value === 'all' || isDefaultSentinel(value)) {
+          return options.filter((opt) => opt.value === 'all');
         }
-        // Otherwise, show selected libraries by id
-        const selectedIds = value?.split('|') ?? [];
-        // If nothing is selected, show nothing
-        if (selectedIds.length === 0) return [];
-        return selectedIds
+        return value
+          .split('|')
           .map((id) => options.find((opt) => opt.value === id))
           .filter(
-            (opt) => opt && opt.value !== 'all' && opt.value !== 'server'
-          ) as OptionType[];
+            (opt): opt is OptionType => !!opt && !SPECIAL_OPTIONS.has(opt.value)
+          );
       })()}
-      onChange={(value, options) => {
-        // Remove other selections if 'all' or 'server' is selected
-        if (
-          options &&
-          options.action === 'select-option' &&
-          (options.option?.value === 'server' ||
-            options.option?.value === 'all')
-        ) {
-          return setFieldValue(
-            'sharedLibraries',
-            options.option?.value === 'server'
-              ? ''
-              : isUserSettings
-                ? 'all'
-                : ''
-          );
+      onChange={(selected, meta) => {
+        const picked = meta.option?.value;
+        if (meta.action === 'select-option' && SPECIAL_OPTIONS.has(picked)) {
+          return setFieldValue('sharedLibraries', toFieldValue(picked));
         }
-        // An empty selection means "no change" when bulk editing
-        if (value.length === 0) {
-          return setFieldValue(
-            'sharedLibraries',
-            allowUnchanged ? 'unchanged' : ''
-          );
+        const ids = selected
+          .map((lib) => lib.value)
+          .filter((id) => !SPECIAL_OPTIONS.has(id));
+        if (ids.length > 0) {
+          return setFieldValue('sharedLibraries', ids.join('|'));
         }
-        if (value.every((v) => v.value === 'server')) {
-          return setFieldValue('sharedLibraries', '');
-        }
-        if (value.every((v) => v.value === 'all')) {
-          return setFieldValue('sharedLibraries', isUserSettings ? 'all' : '');
-        }
-        // Otherwise, set selected libraries (removing the special options)
+        // Only a special option (or nothing) remains
         setFieldValue(
           'sharedLibraries',
-          value
-            .map((lib) => lib.value)
-            .filter((v) => v !== 'all' && v !== 'server')
-            .join('|')
+          selected[0]
+            ? toFieldValue(selected[0].value)
+            : allowUnchanged
+              ? 'unchanged'
+              : allowDefault
+                ? null
+                : 'all'
         );
       }}
     />

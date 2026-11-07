@@ -13,7 +13,7 @@ export interface UserSettingsGeneralResponse {
   globalAllowDownloads?: boolean;
   globalLiveTv?: boolean;
   globalPlexHome?: boolean;
-  sharedLibraries?: string;
+  sharedLibraries?: string | null;
   allowDownloads?: boolean;
   allowLiveTv?: boolean;
   allowPlexHome?: boolean;

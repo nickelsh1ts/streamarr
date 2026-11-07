@@ -198,11 +198,7 @@ const InviteModal = ({
           : (data?.globalAllowDownloads ?? true),
         liveTv: invite ? invite.liveTv : (data?.globalLiveTv ?? false),
         plexHome: invite ? invite.plexHome : (data?.globalPlexHome ?? false),
-        sharedLibraries: invite
-          ? invite.sharedLibraries
-          : data?.sharedLibraries && data?.sharedLibraries !== ''
-            ? data.sharedLibraries
-            : 'server',
+        sharedLibraries: invite?.sharedLibraries ?? null,
         trialPeriodOutcome:
           invite?.trialPeriodOutcome ?? data?.globalTrialPeriodOutcome,
         trialPeriodDays: invite?.trialPeriodDays ?? data?.globalTrialPeriodDays,
@@ -773,7 +769,7 @@ const InviteModal = ({
                     </label>
                     <div className="col-span-2">
                       <LibrarySelector
-                        isUserSettings
+                        allowDefault
                         serverValue={data?.globalSharedLibraries}
                         value={values.sharedLibraries}
                         setFieldValue={setFieldValue}

@@ -6,7 +6,9 @@ interface EnabledLibrary {
 }
 
 /** True for values meaning "use the server default". */
-export const isDefaultSentinel = (value: SharedLibrariesValue): boolean =>
+export const isDefaultSentinel = (
+  value: SharedLibrariesValue
+): value is null | undefined | '' | 'server' =>
   value == null || value === '' || value === 'server';
 
 const parseLibraryKeys = (value: string | string[]): string[] => {
@@ -71,24 +73,45 @@ export const normalizeSharedLibrariesValue = (
   return keys.length > 0 ? keys.join('|') : null;
 };
 
-export const materializeDefaultSnapshot = ({
-  adminDefault,
-  enabledLibraries,
-}: {
-  adminDefault: string | null | undefined;
-  enabledLibraries: EnabledLibrary[];
-}): string => {
-  if (!adminDefault || adminDefault === 'all' || adminDefault === 'server') {
-    return 'all';
+/** True when a change to library `key` may change what `value` grants. */
+export const referencesLibrary = (
+  value: SharedLibrariesValue,
+  key: string
+): boolean =>
+  isDefaultSentinel(value) ||
+  value === 'all' ||
+  parseLibraryKeys(value).includes(key);
+
+/** Library keys a Plex share grants, or 'all' for an all-libraries share. */
+export const shareLibraryKeys = (share: {
+  allLibraries: boolean;
+  sections: { key: string; shared: boolean }[];
+}): string[] | 'all' =>
+  share.allLibraries
+    ? 'all'
+    : share.sections
+        .filter((section) => section.shared)
+        .map((section) => section.key);
+
+/**
+ * The value that keeps an existing Plex share's access, or null when it
+ * matches the server default (or shares nothing) so the user follows it.
+ */
+export const sharedLibrariesFromShare = (
+  share: Parameters<typeof shareLibraryKeys>[0],
+  {
+    adminDefault,
+    enabledLibraries,
+  }: {
+    adminDefault: string | null | undefined;
+    enabledLibraries: EnabledLibrary[];
   }
-  const enabledSet = new Set(enabledLibraries.map((library) => library.id));
-  const keys = sortNumeric(
-    parseLibraryKeys(adminDefault).filter((key) => enabledSet.has(key))
-  );
-  if (keys.length === 0) {
-    throw new Error(
-      'Default shared libraries resolve to no enabled libraries — check the Plex library and shared-library settings.'
+): string | null => {
+  const keys = shareLibraryKeys(share);
+  const value = keys === 'all' ? 'all' : normalizeSharedLibrariesValue(keys);
+  const resolve = (v: string | null) =>
+    resolveSharedLibraryKeys({ value: v, adminDefault, enabledLibraries }).join(
+      '|'
     );
-  }
-  return keys.join('|');
+  return value && resolve(value) !== resolve(null) ? value : null;
 };
