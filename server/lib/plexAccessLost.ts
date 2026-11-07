@@ -12,6 +12,7 @@ import { userAcceptsNotificationType } from '@server/lib/notifications';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
 import { getAdminPlexTvCredential } from '@server/lib/plexAuth/credentials';
+import { plexSync } from '@server/lib/plexSync';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -149,7 +150,8 @@ export const handlePlexAccessLost = async (user: User): Promise<void> => {
 
 /**
  * Validates that every active Plex user still exists in the Plex server's
- * shared users list, deactivating any that have been removed out-of-band.
+ * shared users list, deactivating any that have been removed out-of-band,
+ * then retries users whose last library sync failed.
  */
 let isRunning = false;
 let cancelled = false;
@@ -164,9 +166,11 @@ export const validateActivePlexMembership = async (
   cancelled = false;
 
   try {
-    await runMembershipValidation(
-      () => cancelled || (isCancelled?.() ?? false)
-    );
+    const isStopped = () => cancelled || (isCancelled?.() ?? false);
+    await runMembershipValidation(isStopped);
+    if (!isStopped()) {
+      await plexSync.retryPendingSync();
+    }
   } finally {
     isRunning = false;
   }

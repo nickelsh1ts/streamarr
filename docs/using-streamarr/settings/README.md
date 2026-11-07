@@ -680,7 +680,7 @@ Each job row shows the job name, a type badge, the next scheduled execution time
 {% hint style="info" %}
 The **Account Expiry Check** job underpins the [Trial Period](README.md#trial-period) feature—it evaluates trial end dates and account access windows each day. See [Trial Outcome & Extension Requests](README.md#trial-outcome--extension-requests).
 
-The **Plex Membership Check** job detects users who have been removed from the Plex server outside of Streamarr. It uses a single plex.tv API call per run regardless of user count, and only acts on a definitive removal—API outages never deactivate anyone. See [Removed from Plex](../users/README.md#removed-from-plex). It also retries any users whose Plex library sync failed (for example, during a plex.tv outage while changing the default or enabled libraries), as does saving the user settings again.
+The **Plex Membership Check** job detects users who have been removed from the Plex server outside Streamarr. The membership check uses a single plex.tv API call per run regardless of user count, and only acts on a definitive removal—API outages never deactivate anyone. See [Removed from Plex](../users/README.md#removed-from-plex). The job then retries any users whose Plex library sync failed (for example, during a plex.tv outage while changing the default or enabled libraries), which makes additional plex.tv requests for those users. Saving the user settings again also retries them.
 {% endhint %}
 
 ### Job Status

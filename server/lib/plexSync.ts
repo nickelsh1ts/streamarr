@@ -272,9 +272,11 @@ class PlexSync {
         ) {
           throw e;
         }
+        this.pendingSync.add(user.id);
         throw new Error(`Plex sync error: ${message}`);
       }
     });
+    this.pendingSync.delete(user.id);
   }
 
   /** Runs share changes made outside plexSync exclusively with the user's syncs. */
@@ -414,7 +416,6 @@ class PlexSync {
             try {
               await this.syncUserLibraries(user, options, batch);
               summary.synced++;
-              this.pendingSync.delete(user.id);
             } catch (e) {
               // syncUserLibraries already logged the failure
               if (
@@ -422,7 +423,6 @@ class PlexSync {
                 !(e instanceof NoSharedLibrariesError)
               ) {
                 summary.failed++;
-                this.pendingSync.add(user.id);
                 continue;
               }
               try {
@@ -482,17 +482,18 @@ class PlexSync {
   /**
    * Applies a library settings change and reconciles the users it affects as
    * one step, so concurrent changes can't interleave with a running sync.
-   * `apply` returns which stored values are affected, or null when nothing
-   * changed. Users whose last sync failed are retried either way. Errors
-   * from `apply` propagate; sync errors return 'failed'.
+   * `apply` returns which stored values are affected, null when nothing
+   * changed, or false when the change was rejected. Users whose last sync
+   * failed are retried unless rejected. Errors from `apply` propagate; sync
+   * errors return 'failed'.
    */
   public async applyAndReconcile(
-    apply: () => ((value: string | null | undefined) => boolean) | null
+    apply: () => ((value: string | null | undefined) => boolean) | null | false
   ): Promise<PlexBulkSyncSummary | 'failed' | undefined> {
     let result: PlexBulkSyncSummary | 'failed' | undefined;
     await this.lock.dispatch('plex-reconcile', async () => {
       const affects = apply();
-      if (!affects && this.pendingSync.size === 0) {
+      if (affects === false || (!affects && this.pendingSync.size === 0)) {
         return;
       }
       // Failures are re-added by syncUsers; inactive or deleted users drop out
