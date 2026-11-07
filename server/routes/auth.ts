@@ -14,6 +14,7 @@ import plexPinAuth, {
 } from '@server/lib/plexAuth';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
+import { plexSync } from '@server/lib/plexSync';
 import {
   plexAuthLimiter,
   plexPinLimiter,
@@ -122,6 +123,7 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
     commitPlexAuth(true);
 
     // Next let's see if the user already exists
+    let adoptAccess = false;
     let user = await userRepository
       .createQueryBuilder('user')
       .where('user.plexId = :id', { id: account.id })
@@ -205,6 +207,7 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
 
       if (hasPlexAccess || (user && !user.active)) {
         if (user) {
+          adoptAccess = user.userType === UserType.LOCAL;
           if (!user.plexId) {
             logger.info(
               'Found matching Plex user; updating user with Plex data',
@@ -265,6 +268,7 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
           });
 
           await userRepository.save(user);
+          adoptAccess = true;
         }
       } else {
         logger.warn(
@@ -278,6 +282,19 @@ authRoutes.post('/plex', plexAuthLimiter, async (req, res, next) => {
           }
         );
         return next({ status: 403, message: 'Access denied.' });
+      }
+    }
+
+    // New and converted Plex users keep the access they already have in Plex
+    if (adoptAccess) {
+      try {
+        await plexSync.adoptPlexAccess(user);
+      } catch (e) {
+        logger.warn('Failed to adopt existing Plex access for user', {
+          label: 'API',
+          userId: user.id,
+          errorMessage: e instanceof Error ? e.message : String(e),
+        });
       }
     }
 

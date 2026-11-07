@@ -348,6 +348,15 @@ These defaults pre-fill the corresponding toggles when creating new invites. Use
 **Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
 {% endhint %}
 
+### Default Shared Libraries
+
+The libraries shared with users and invites set to **Default Libraries**:
+
+- **All Libraries** — Every enabled library
+- **Specific Libraries** — Only the selected libraries
+
+Users and invites set to Default follow this setting, including later changes. Saving a new default updates the Plex share of every Plex user set to Default before the save completes, and a warning is shown if any user couldn't be updated. The default must include at least one enabled library.
+
 ---
 
 ## Trial Period
@@ -426,14 +435,7 @@ Select which libraries Streamarr should have access to. These libraries will be:
 
 Use **Sync Libraries** to refresh the list from your Plex server. Libraries keep their enabled state, even if renamed in Plex. If the server can't be reached, the current list is left unchanged.
 
-### Shared Libraries (Default)
-
-Configure which libraries are shared with users by default. Options:
-
-- **All Libraries** — Share all enabled libraries
-- **Specific Libraries** — Select specific library IDs (comma-separated)
-
-Individual user settings can override this default.
+Enabling or disabling a library updates the Plex share of every user it affects. A user left with no enabled libraries is removed from the Plex server and deactivated — see [Removed from Plex](../users/README.md#removed-from-plex).
 
 ### Plex Connection Health
 

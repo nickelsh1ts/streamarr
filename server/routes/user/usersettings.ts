@@ -35,7 +35,11 @@ import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import {
+  NoSharedLibrariesError,
+  plexSync,
+  PlexUserNotFoundError,
+} from '@server/lib/plexSync';
 import {
   audiobookshelfLinkLimiter,
   passwordChangeLimiter,
@@ -70,12 +74,7 @@ import {
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
-import {
-  isDefaultSentinel,
-  materializeDefaultSnapshot,
-  normalizeSharedLibrariesValue,
-  resolveSharedLibraryKeys,
-} from '@server/utils/sharedLibraries';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import axios from 'axios';
 import type { Request, Response } from 'express';
 import { Router } from 'express';
@@ -84,6 +83,8 @@ const userSettingsRoutes = Router({ mergeParams: true });
 
 /** Matches Audiobookshelf's own refresh token lifetime (30 days). */
 const AUDIOBOOKSHELF_REFRESH_TOKEN_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+const PROVISION_INVITE_ATTEMPTS = 3;
+const PROVISION_INVITE_RETRY_MS = 2_000;
 
 /** Attempts an Audiobookshelf login, returning `null` on invalid credentials. */
 async function signInAudiobookshelf(
@@ -1057,15 +1058,18 @@ userSettingsRoutes.post<
     const previousState = user.active;
     const newSharedLibraries =
       req.body.sharedLibraries === undefined
-        ? (user.settings?.sharedLibraries ?? null)
-        : isDefaultSentinel(req.body.sharedLibraries)
-          ? materializeDefaultSnapshot({
-              adminDefault: getSettings().main.sharedLibraries,
-              enabledLibraries: getSettings().plex.libraries.filter(
-                (lib) => lib.enabled
-              ),
-            })
-          : normalizeSharedLibrariesValue(req.body.sharedLibraries);
+        ? (previousSharedLibraries ?? null)
+        : normalizeSharedLibrariesValue(req.body.sharedLibraries);
+    if (
+      newSharedLibraries !== (previousSharedLibraries ?? null) &&
+      plexSync.resolveLibraryKeys(newSharedLibraries).length === 0
+    ) {
+      return next({
+        status: 400,
+        message:
+          'The provided sharedLibraries value does not resolve to any enabled libraries.',
+      });
+    }
     const newAllowDownloads = req.body.allowDownloads ?? previousAllowDownloads;
     const forcePlexSync = req.body.forcePlexSync === true;
 
@@ -1174,6 +1178,7 @@ userSettingsRoutes.post<
       user.userType === UserType.PLEX &&
       user.active &&
       (user.settings?.allowPlexHome ?? false) !== previousAllowPlexHome;
+    let provisionInviteFailed = false;
 
     if (user.plexId && (previousState !== user.active || plexHomeChanged)) {
       const settings = getSettings();
@@ -1193,60 +1198,69 @@ userSettingsRoutes.post<
       } else {
         try {
           const plexTvApi = new PlexTvAPI(preferPlexJwt(admin) ?? '');
-          if (previousState && !plexHomeChanged) {
-            try {
-              await plexTvApi.deprovisionUser(
-                user.plexId,
-                settings.plex.machineId
-              );
-            } catch (e) {
-              logger.error('Failed to deprovision user.', {
-                label: 'User Settings',
-                userId: user.id,
-                errorMessage: e instanceof Error ? e.message : String(e),
-              });
-            }
-          } else {
-            if (plexHomeChanged) {
+          // A bulk sync must not see the user mid re-invite and deactivate them
+          await plexSync.withUserLock(user, async () => {
+            if (previousState && !plexHomeChanged) {
               try {
                 await plexTvApi.deprovisionUser(
                   user.plexId,
                   settings.plex.machineId
                 );
               } catch (e) {
-                logger.error(
-                  'Failed to deprovision user before plexHome re-invite',
-                  {
+                logger.error('Failed to deprovision user.', {
+                  label: 'User Settings',
+                  userId: user.id,
+                  errorMessage: e instanceof Error ? e.message : String(e),
+                });
+              }
+            } else {
+              if (plexHomeChanged) {
+                try {
+                  await plexTvApi.deprovisionUser(
+                    user.plexId,
+                    settings.plex.machineId
+                  );
+                } catch (e) {
+                  logger.error(
+                    'Failed to deprovision user before plexHome re-invite',
+                    {
+                      label: 'User Settings',
+                      userId: user.id,
+                      errorMessage: e instanceof Error ? e.message : String(e),
+                    }
+                  );
+                }
+              }
+
+              // Retry briefly: the user may have just been removed from Plex
+              for (let attempt = 1; ; attempt++) {
+                try {
+                  await plexSync.inviteUser(user, {
+                    allowSync: user?.settings?.allowDownloads ?? false,
+                    plexHome: user.settings?.allowPlexHome ?? false,
+                  });
+                  break;
+                } catch (e) {
+                  if (
+                    attempt < PROVISION_INVITE_ATTEMPTS &&
+                    !(e instanceof NoSharedLibrariesError)
+                  ) {
+                    await new Promise((resolve) =>
+                      setTimeout(resolve, PROVISION_INVITE_RETRY_MS)
+                    );
+                    continue;
+                  }
+                  provisionInviteFailed = true;
+                  logger.warn('Plex invite failed during provisioning', {
                     label: 'User Settings',
                     userId: user.id,
                     errorMessage: e instanceof Error ? e.message : String(e),
-                  }
-                );
+                  });
+                  break;
+                }
               }
             }
-
-            const librarySectionIds = resolveSharedLibraryKeys({
-              value: user.settings?.sharedLibraries,
-              adminDefault: getSettings().main.sharedLibraries,
-              enabledLibraries: getSettings().plex.libraries.filter(
-                (lib) => lib.enabled
-              ),
-            });
-
-            try {
-              await plexSync.inviteUser(user, {
-                libraries: librarySectionIds,
-                allowSync: user?.settings?.allowDownloads ?? false,
-                plexHome: user.settings?.allowPlexHome ?? false,
-              });
-            } catch (e) {
-              logger.warn('Plex invite failed during provisioning', {
-                label: 'User Settings',
-                userId: user.id,
-                errorMessage: e instanceof Error ? e.message : String(e),
-              });
-            }
-          }
+          });
         } catch (e) {
           logger.error(
             `Failed to ${previousState && !plexHomeChanged ? 'deprovision' : 'provision'} user`,
@@ -1304,7 +1318,7 @@ userSettingsRoutes.post<
     ) {
       try {
         // omitted values stay unchanged on Plex
-        await plexSync.syncUserLibraries(user, newSharedLibraries, {
+        await plexSync.syncUserLibraries(user, {
           allowSync: req.body.allowDownloads,
         });
         plexSyncStatus = 'synced';
@@ -1323,6 +1337,11 @@ userSettingsRoutes.post<
           error: e instanceof Error ? e.message : String(e),
         });
       }
+    }
+
+    // A sync that ran afterwards already reports the user's real access
+    if (provisionInviteFailed && plexSyncStatus === 'skipped') {
+      plexSyncStatus = 'failed';
     }
 
     res.status(200).json({
@@ -1375,16 +1394,7 @@ userSettingsRoutes.post<{ id: string }>(
       }
 
       try {
-        const librarySectionIds = resolveSharedLibraryKeys({
-          value: user.settings?.sharedLibraries ?? null,
-          adminDefault: getSettings().main.sharedLibraries,
-          enabledLibraries: getSettings().plex.libraries.filter(
-            (lib) => lib.enabled
-          ),
-        });
-
         await plexSync.inviteUser(user, {
-          libraries: librarySectionIds,
           allowSync: user.settings?.allowDownloads ?? false,
           plexHome: user.settings?.allowPlexHome ?? false,
         });
@@ -1767,24 +1777,6 @@ userSettingsRoutes.post<
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      // Honour any pre-existing explicit user setting; otherwise
-      // snapshot the current server default at link time
-      const existingSharedLibraries = user.settings?.sharedLibraries;
-      const enabledLibraries = getSettings().plex.libraries.filter(
-        (lib) => lib.enabled
-      );
-      const linkSharedLibraries = existingSharedLibraries
-        ? normalizeSharedLibrariesValue(existingSharedLibraries)
-        : materializeDefaultSnapshot({
-            adminDefault: getSettings().main.sharedLibraries,
-            enabledLibraries,
-          });
-      const librarySectionIds = resolveSharedLibraryKeys({
-        value: linkSharedLibraries,
-        adminDefault: getSettings().main.sharedLibraries,
-        enabledLibraries,
-      });
-
       // valid plex user found, link to current user
       user.userType = UserType.PLEX;
       user.plexId = account.id;
@@ -1794,15 +1786,10 @@ userSettingsRoutes.post<
       if (!user.settings) {
         user.settings = new UserSettings({
           user,
-          sharedLibraries: linkSharedLibraries,
           allowDownloads: getSettings().main.downloads ?? false,
           allowLiveTv: getSettings().main.liveTv ?? false,
         });
       } else {
-        // Only overwrite sharedLibraries if the user didn't already have an explicit value
-        if (!existingSharedLibraries) {
-          user.settings.sharedLibraries = linkSharedLibraries;
-        }
         user.settings.allowDownloads =
           user.settings.allowDownloads ?? getSettings().main.downloads ?? false;
         user.settings.allowLiveTv =
@@ -1836,15 +1823,16 @@ userSettingsRoutes.post<
       }
 
       if (alreadyOnServer) {
-        // User already has server access - update libraries to the snapshot
+        // User already has server access - keep it, then reconcile libraries
         try {
-          await plexSync.syncUserLibraries(user, linkSharedLibraries, {
-            allowSync: getSettings().main.downloads ?? false,
+          await plexSync.adoptPlexAccess(user);
+          await plexSync.syncUserLibraries(user, {
+            allowSync: user.settings.allowDownloads,
           });
           logger.debug('Plex account linked successfully', {
             label: 'User Settings',
             userEmail: user.email,
-            sharedLibraries: librarySectionIds,
+            sharedLibraries: user.settings?.sharedLibraries,
           });
         } catch (e) {
           logger.warn('Plex account link library sync failed', {
@@ -1858,8 +1846,7 @@ userSettingsRoutes.post<
         // background using the fresh auth token from this request
         try {
           await plexSync.inviteUser(user, {
-            libraries: librarySectionIds,
-            allowSync: getSettings().main.downloads ?? false,
+            allowSync: user.settings.allowDownloads,
             plexHome: user.settings?.allowPlexHome ?? false,
             userTokenOverride: authToken || user.plexToken,
           });
@@ -2397,11 +2384,7 @@ userSettingsRoutes.post<{ id: string }>(
               }));
 
         const allowedKeys = new Set(
-          resolveSharedLibraryKeys({
-            value: user.settings?.sharedLibraries,
-            adminDefault: getSettings().main.sharedLibraries,
-            enabledLibraries,
-          })
+          plexSync.resolveLibraryKeys(user.settings?.sharedLibraries)
         );
 
         librariesToPin = sharedSections.filter((lib) =>

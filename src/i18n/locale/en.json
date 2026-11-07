@@ -5057,6 +5057,9 @@
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
   },
+  "plexSettings.toggleLibraryDefaultError": {
+    "defaultMessage": "It is the last enabled library in the default shared libraries. Change the default first."
+  },
   "plexSettings.toggleLibraryError": {
     "defaultMessage": "Failed to update library."
   },
@@ -6512,8 +6515,11 @@
   "userSettings.defaultSharedLibraries": {
     "defaultMessage": "Default Shared Libraries"
   },
-  "userSettings.defaultSharedLibrariesDescription": {
-    "defaultMessage": "Initial libraries shared with new users"
+  "userSettings.defaultSharedLibrariesChangedWarning": {
+    "defaultMessage": "Saving will update Plex library access for every user set to Default."
+  },
+  "userSettings.defaultSharedLibrariesFollowDescription": {
+    "defaultMessage": "Libraries shared with users set to Default. Changes are synced to Plex for those users."
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."

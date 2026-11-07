@@ -64,7 +64,7 @@ export class UserSettings {
   public telegramSendSilently?: boolean;
 
   @Column({ type: 'text', nullable: true })
-  public sharedLibraries?: string;
+  public sharedLibraries?: string | null;
 
   @Column({ type: 'boolean', default: false })
   public allowDownloads: boolean;

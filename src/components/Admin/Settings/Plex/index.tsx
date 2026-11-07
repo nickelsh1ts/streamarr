@@ -7,6 +7,7 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast, { dismissToast } from '@app/components/Toast';
+import usePlexSyncToast from '@app/hooks/usePlexSyncToast';
 import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 import {
   ArrowPathIcon,
@@ -18,6 +19,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type { PlexDevice } from '@server/interfaces/api/plexInterfaces';
+import type { PlexBulkSyncSummary } from '@server/lib/plexSync';
 import type { PlexSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
@@ -49,6 +51,7 @@ interface SettingsPlexProps {
 
 const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const intl = useIntl();
+  const showPlexSyncToast = usePlexSyncToast();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isRefreshingPresets, setIsRefreshingPresets] = useState(false);
   const [availableServers, setAvailableServers] = useState<PlexDevice[] | null>(
@@ -189,22 +192,33 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const toggleLibrary = async (libraryId: string) => {
     setIsSyncing(true);
     try {
-      await axios.put(
-        `/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`,
-        { enabled: !activeLibraries.includes(libraryId) }
-      );
-    } catch {
+      const { data: result } = await axios.put<{
+        plexSync?: PlexBulkSyncSummary | 'failed';
+      }>(`/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`, {
+        enabled: !activeLibraries.includes(libraryId),
+      });
+      showPlexSyncToast(result.plexSync);
+    } catch (e) {
       Toast({
         title: intl.formatMessage({
           id: 'plexSettings.toggleLibraryError',
           defaultMessage: 'Failed to update library.',
         }),
+        message:
+          axios.isAxiosError(e) && e.response?.status === 400
+            ? intl.formatMessage({
+                id: 'plexSettings.toggleLibraryDefaultError',
+                defaultMessage:
+                  'It is the last enabled library in the default shared libraries. Change the default first.',
+              })
+            : undefined,
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });
     } finally {
       setIsSyncing(false);
       revalidate();
+      mutate('/api/v1/libraries/items?sort=id');
     }
   };
 

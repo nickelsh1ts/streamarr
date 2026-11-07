@@ -36,6 +36,7 @@ import {
   resetPlexHealth,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
+import { plexSync } from '@server/lib/plexSync';
 import {
   arrAuthLimiter,
   settingsAboutDiskSpaceLimiter,
@@ -69,6 +70,12 @@ import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getCachedImageCacheOverview } from '@server/utils/cacheOverview';
 import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
+import {
+  isDefaultSentinel,
+  normalizeSharedLibrariesValue,
+  referencesLibrary,
+  resolveSharedLibraryKeys,
+} from '@server/utils/sharedLibraries';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -116,17 +123,51 @@ settingsRoutes.get('/main', (req, res, next) => {
   res.status(200).json(filteredMainSettings(req.user, settings.main));
 });
 
-settingsRoutes.post('/main', (req, res, next) => {
+settingsRoutes.post('/main', async (req, res, next) => {
   try {
     const settings = getSettings();
 
     // Filter out file objects and other non-serializable data
     const filteredBody = omit(req.body, ['customLogo', 'customLogoSmall']);
+    if (filteredBody.sharedLibraries !== undefined) {
+      // The server default has no default of its own, so empty means all
+      filteredBody.sharedLibraries =
+        normalizeSharedLibrariesValue(filteredBody.sharedLibraries) ?? 'all';
+    }
 
-    settings.main = merge(settings.main, filteredBody);
-    settings.save();
+    // Respond only after default followers are synced so a save can't race the next one
+    let invalidDefault = false;
+    const plexSyncSummary = await plexSync.applyAndReconcile(() => {
+      const previousDefault = settings.main.sharedLibraries;
+      if (
+        filteredBody.sharedLibraries !== undefined &&
+        filteredBody.sharedLibraries !== previousDefault &&
+        resolveSharedLibraryKeys({
+          value: null,
+          adminDefault: filteredBody.sharedLibraries,
+          enabledLibraries: settings.plex.libraries.filter(
+            (lib) => lib.enabled
+          ),
+        }).length === 0
+      ) {
+        invalidDefault = true;
+        return null;
+      }
+      settings.main = merge(settings.main, filteredBody);
+      settings.save();
+      return settings.main.sharedLibraries !== previousDefault
+        ? isDefaultSentinel
+        : null;
+    });
+    if (invalidDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries do not include any enabled libraries.',
+      });
+    }
 
-    res.status(200).json(settings.main);
+    res.status(200).json({ ...settings.main, plexSync: plexSyncSummary });
   } catch (error) {
     logger.error('Error saving main settings:', error);
     next({ status: 500, message: 'Failed to save settings' });
@@ -471,19 +512,65 @@ settingsRoutes.post('/plex/library/sync', async (_req, res, next) => {
 
 settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
   '/plex/library/:libraryId',
-  (req, res, next) => {
+  async (req, res, next) => {
     const settings = getSettings();
-    const library = settings.plex.libraries.find(
-      (l) => l.id === req.params.libraryId
-    );
+    let found = true;
+    let emptiesDefault = false;
 
-    if (!library) {
+    // Wait for affected shares so a restart or the next toggle can't skip them
+    let plexSyncSummary: Awaited<ReturnType<typeof plexSync.applyAndReconcile>>;
+    try {
+      plexSyncSummary = await plexSync.applyAndReconcile(() => {
+        // Library discovery may have replaced the list while waiting
+        const library = settings.plex.libraries.find(
+          (l) => l.id === req.params.libraryId
+        );
+        if (!library) {
+          found = false;
+          return null;
+        }
+        if (library.enabled === req.body.enabled) {
+          return null;
+        }
+        if (
+          !req.body.enabled &&
+          resolveSharedLibraryKeys({
+            value: null,
+            adminDefault: settings.main.sharedLibraries,
+            enabledLibraries: settings.plex.libraries.filter(
+              (l) => l.enabled && l !== library
+            ),
+          }).length === 0
+        ) {
+          emptiesDefault = true;
+          return null;
+        }
+        library.enabled = req.body.enabled;
+        settings.save();
+        return (value) => referencesLibrary(value, library.id);
+      });
+    } catch (e) {
+      logger.error('Failed to update Plex library', {
+        label: 'Settings',
+        libraryId: req.params.libraryId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      return next({ status: 500, message: 'Failed to update library.' });
+    }
+    if (!found) {
       return next({ status: 404, message: 'Library not found.' });
     }
-
-    library.enabled = req.body.enabled;
-    settings.save();
-    res.status(200).json(settings.plex.libraries);
+    if (emptiesDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries must include at least one enabled library.',
+      });
+    }
+    res.status(200).json({
+      libraries: settings.plex.libraries,
+      plexSync: plexSyncSummary,
+    });
   }
 );
 

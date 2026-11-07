@@ -65,9 +65,9 @@ Override the default invite quota for this user:
 
 Override which Plex libraries this user has access to:
 
-- **Server Default** — Use the default from Settings
+- **Default Libraries** — Follow [Default Shared Libraries](../settings/README.md#default-shared-libraries), including later changes
 - **All Libraries** — Access to all enabled libraries
-- **Specific Libraries** — Select specific library IDs
+- **Specific Libraries** — Only the selected libraries
 
 If the user is a Plex Home member, library access is managed through Plex Home. Re-inviting a user as Plex Home will re-provision their access if needed. Only users who have accepted their Plex Home invite will appear as active members.
 
@@ -80,7 +80,7 @@ Pin selected libraries to the user's Plex sidebar so they appear prominently whe
 Select multiple users in the user list and click **Bulk Edit** to apply changes to all selected users at once. The bulk edit dialog has two tabs:
 
 - **Permissions** — Replace the permissions of all selected users. See [Permissions](#permissions) below.
-- **Plex Access** — Set shared library access (Server Default, All Libraries, or specific libraries), **Allow Downloads**, and **Allow Live TV Access** for all selected users. Leave the library selection empty or a toggle in its middle "No change" position to keep the users' current values; chosen fields sync with Plex automatically on save.
+- **Plex Access** — Set shared library access (Default Libraries, All Libraries, or specific libraries), **Allow Downloads**, and **Allow Live TV Access** for all selected users. Leave the library selection empty or a toggle in its middle "No change" position to keep the users' current values; chosen fields sync with Plex automatically on save.
 
 {% hint style="info" %}
 Plex access changes only sync for active Plex users. Local users have the settings saved but are not synced. Live TV access only controls the Live TV menu within Streamarr and is never synced with Plex. If a selected user can no longer be found on the Plex server, their account is deactivated automatically — see [Removed from Plex](#removed-from-plex).
@@ -185,6 +185,8 @@ Users with **Manage Users** or **Manage Invites** permissions bypass trial restr
 ## Removed from Plex
 
 If a user is removed from the Plex server's shared list outside of Streamarr (e.g. directly in the Plex app), Streamarr detects it automatically—when an admin views their profile or settings, when the user attempts to sign in, or via the [Plex Membership Check](../settings/README.md#scheduled-jobs) job—and deactivates the account. Any pending trial period is cleared, Seerr permissions are revoked, and admins with **Manage Users** permission receive a **Plex Access Removed** notification.
+
+The same happens when a library change leaves a user with no enabled libraries (for example, disabling the only library they were assigned): Streamarr removes their share from the Plex server and deactivates the account.
 
 Removed users are shown as **Deactivated** (distinct from **Expired**, which indicates a lapsed trial) in the user list and on their profile. Like expired users, they can still sign in to view their profile and settings, and may submit an access extension request.
 
