@@ -112,7 +112,7 @@ Plex Web embedding is automatically configured when you set up your Plex server 
 
 Configure which libraries users can access:
 
-- **Settings → Plex → Shared Libraries (Default)** — Default libraries for all users
+- **Settings → Users → Default Shared Libraries** — Default libraries for all users
 - **User Settings → Shared Libraries** — Per-user library overrides
 
 ---

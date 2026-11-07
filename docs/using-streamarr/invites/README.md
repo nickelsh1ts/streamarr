@@ -67,7 +67,7 @@ Expired invites are automatically marked and cannot be redeemed.
 
 Which Plex libraries the invited user will have access to:
 
-- **Server Default** — Use the default from Settings
+- **Default Libraries** — The invited user follows [Default Shared Libraries](../settings/README.md#default-shared-libraries), including later changes
 - **All Libraries** — All enabled libraries
 - **Specific Libraries** — Select individual libraries to share
 
