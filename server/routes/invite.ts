@@ -280,8 +280,8 @@ inviteRoutes.post<
         settings.main.defaultQuotas.invites;
       Object.assign(req.body, {
         usageLimit: quotaUsage,
-        expiryLimit: quotaExpiryLimit,
-        expiryTime: quotaExpiryTime,
+        expiryLimit: quotaExpiryLimit ?? 1,
+        expiryTime: quotaExpiryTime ?? 'days',
         downloads: settings.main.downloads,
         liveTv: settings.main.liveTv,
         sharedLibraries: libraryKeys?.join('|') ?? null,
