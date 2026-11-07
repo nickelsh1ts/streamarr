@@ -111,7 +111,7 @@ Streamarr uses a granular permission system. Users can have any combination of t
 | **Manage Invites**       | View and manage all invites (not just their own).                                     |
 | **View Invites**         | View all invites (read-only).                                                         |
 | **Create Invites**       | Create new invite codes.                                                              |
-| **Advanced Invites**     | Create invites with custom settings (expiry, usage limits).                           |
+| **Advanced Invites**     | Create invites with custom settings (usage limit, expiry, libraries, features).       |
 | **Streamarr**            | Basic access to the Streamarr dashboard.                                              |
 | **Vote**                 | Vote on content or events.                                                            |
 | **Request**              | Request content through Seerr integration.                                            |
@@ -125,6 +125,8 @@ Streamarr uses a granular permission system. Users can have any combination of t
 | **Manage Notifications** | Manage all notifications.                                                             |
 | **Create Notifications** | Create new notifications/announcements.                                               |
 | **View Notifications**   | View notifications.                                                                   |
+
+A user's Plex access (shared libraries, **Allow Downloads**, **Allow Live TV Access**) can only be changed by the owner, or by a user with **Manage Users** for users who don't have it. Users can't change their own.
 
 ### Default Permissions
 

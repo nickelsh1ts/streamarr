@@ -328,6 +328,7 @@ Configure the default invite quota settings for new users:
 
 - **Quota Limit** — Maximum number of invites a user can create
 - **Quota Days** — Time period (in days) for the quota to reset
+- **Uses per invite** and **Expires** — Usage limit and expiry for new invites. Invites created without **Advanced Invites** always use these.
 
 ### Default Invite Settings
 
@@ -339,7 +340,7 @@ Configure the default feature access granted when creating new invites:
 | **Allow Live TV Access**   | Show the Live TV navigation item for invited users by default                              |
 | **Allow Plex Home Access** | Add invited users to Plex Home by default (creates a managed user under your Plex account) |
 
-These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
+These defaults pre-fill the corresponding toggles when creating new invites. Users with **Advanced Invites** can override them per invite.
 
 **Plex Home Access**: When enabled, invited users are added as managed Plex Home users (not just friends). The invitee must accept the Plex Home invite to complete onboarding. If the user is already a Plex Home member, re-inviting will re-provision their access if needed.
 
