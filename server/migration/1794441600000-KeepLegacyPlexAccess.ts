@@ -62,17 +62,19 @@ export class KeepLegacyPlexAccess1794441600000 implements MigrationInterface {
           machineId,
           plexUsers
         );
-        const libraries = share && sharedLibrariesFromShare(share, options);
-        if (!libraries) {
+        if (!share) {
           continue;
         }
+        const libraries = sharedLibrariesFromShare(share, options);
         await queryRunner.query(
           user.settingsId
             ? `UPDATE "user_settings" SET "sharedLibraries" = ?, "allowDownloads" = ? WHERE "id" = ?`
             : `INSERT INTO "user_settings" ("sharedLibraries", "allowDownloads", "userId") VALUES (?, ?, ?)`,
           [libraries, share.allowSync ? 1 : 0, user.settingsId ?? user.id]
         );
-        kept.push({ email: user.email, libraries });
+        if (libraries) {
+          kept.push({ email: user.email, libraries });
+        }
       }
 
       if (kept.length > 0) {

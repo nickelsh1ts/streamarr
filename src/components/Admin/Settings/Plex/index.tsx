@@ -7,6 +7,7 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
 import Toast, { dismissToast } from '@app/components/Toast';
+import usePlexSyncToast from '@app/hooks/usePlexSyncToast';
 import { isValidHostnameOrIpAddress } from '@app/utils/networkValidation';
 import {
   ArrowPathIcon,
@@ -50,6 +51,7 @@ interface SettingsPlexProps {
 
 const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const intl = useIntl();
+  const showPlexSyncToast = usePlexSyncToast();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isRefreshingPresets, setIsRefreshingPresets] = useState(false);
   const [availableServers, setAvailableServers] = useState<PlexDevice[] | null>(
@@ -195,28 +197,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
       }>(`/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`, {
         enabled: !activeLibraries.includes(libraryId),
       });
-      const plexSync = result.plexSync;
-      if (plexSync === 'failed' || plexSync?.failed) {
-        Toast({
-          title: intl.formatMessage({
-            id: 'userLibraries.savedPlexSyncFailed',
-            defaultMessage: 'Settings saved, but Plex sync failed.',
-          }),
-          message:
-            plexSync === 'failed'
-              ? undefined
-              : intl.formatMessage(
-                  {
-                    id: 'userLibraries.savedPlexSyncFailedMessage',
-                    defaultMessage:
-                      'Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex.',
-                  },
-                  { count: plexSync.failed }
-                ),
-          type: 'warning',
-          icon: <ExclamationTriangleIcon className="size-7" />,
-        });
-      }
+      showPlexSyncToast(result.plexSync);
     } catch {
       Toast({
         title: intl.formatMessage({
@@ -229,6 +210,7 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
     } finally {
       setIsSyncing(false);
       revalidate();
+      mutate('/api/v1/libraries/items?sort=id');
     }
   };
 

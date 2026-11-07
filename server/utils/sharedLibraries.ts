@@ -109,9 +109,15 @@ export const sharedLibrariesFromShare = (
 ): string | null => {
   const keys = shareLibraryKeys(share);
   const value = keys === 'all' ? 'all' : normalizeSharedLibrariesValue(keys);
+  if (!value) {
+    return null;
+  }
   const resolve = (v: string | null) =>
     resolveSharedLibraryKeys({ value: v, adminDefault, enabledLibraries }).join(
       '|'
     );
-  return value && resolve(value) !== resolve(null) ? value : null;
+  // Compare the raw keys so access to a disabled library is kept
+  return (value === 'all' ? resolve('all') : value) !== resolve(null)
+    ? value
+    : null;
 };

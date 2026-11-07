@@ -121,25 +121,29 @@ const UserSettingsGeneral = () => {
         ? data.globalSharedLibraries || 'all'
         : data.sharedLibraries;
 
-      // Get all enabled library IDs for comparison
-      const allEnabledIds =
+      const enabledIds =
         allLibrariesData?.libraries
           ?.filter((lib) => lib.enabled)
-          ?.map((lib) => lib.id)
-          ?.sort()
-          ?.join('|') ?? '';
+          .map((lib) => lib.id)
+          .sort() ?? [];
 
-      // Normalize both values
-      const normalizeValue = (val: string): string => {
+      // Disabled libraries are never shared, so they're dropped from the stored value
+      const normalizeValue = (val: string, dropDisabled = false): string => {
         if (val === 'all') return 'all';
-        const sorted = val.split('|').sort().join('|');
+        const ids = val
+          .split('|')
+          .filter(
+            (id) =>
+              !dropDisabled || !enabledIds.length || enabledIds.includes(id)
+          )
+          .sort()
+          .join('|');
         // Treat full library list as 'all'
-        return sorted === allEnabledIds ? 'all' : sorted;
+        return ids !== '' && ids === enabledIds.join('|') ? 'all' : ids;
       };
 
-      const normalizedDb = normalizeValue(dbValue);
-      const normalizedPlex = normalizeValue(plexLibraries);
-      librariesDiffer = normalizedDb !== normalizedPlex;
+      librariesDiffer =
+        normalizeValue(dbValue, true) !== normalizeValue(plexLibraries);
     }
 
     // === Permission comparison ===

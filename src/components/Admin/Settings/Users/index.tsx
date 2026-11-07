@@ -7,6 +7,7 @@ import Tooltip from '@app/components/Common/ToolTip';
 import LibrarySelector from '@app/components/LibrarySelector';
 import QuotaSelector from '@app/components/QuotaSelector';
 import Toast from '@app/components/Toast';
+import usePlexSyncToast from '@app/hooks/usePlexSyncToast';
 import { ArrowDownTrayIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import {
   CheckBadgeIcon,
@@ -24,6 +25,7 @@ import useSWR, { mutate } from 'swr';
 
 const UserSettings = () => {
   const intl = useIntl();
+  const showPlexSyncToast = usePlexSyncToast();
   const {
     data,
     error,
@@ -107,28 +109,9 @@ const UserSettings = () => {
               trialPeriodOutcome: values.trialPeriodOutcome,
             });
             mutate('/api/v1/settings/public');
+            mutate('/api/v1/libraries/items?sort=id');
 
-            const plexSync = saved.plexSync;
-            if (plexSync === 'failed' || plexSync?.failed) {
-              Toast({
-                title: intl.formatMessage({
-                  id: 'userLibraries.savedPlexSyncFailed',
-                  defaultMessage: 'Settings saved, but Plex sync failed.',
-                }),
-                message:
-                  plexSync === 'failed'
-                    ? undefined
-                    : intl.formatMessage(
-                        {
-                          id: 'userLibraries.savedPlexSyncFailedMessage',
-                          defaultMessage:
-                            'Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex.',
-                        },
-                        { count: plexSync.failed }
-                      ),
-                icon: <ExclamationTriangleIcon className="size-7" />,
-                type: 'warning',
-              });
+            if (showPlexSyncToast(saved.plexSync)) {
               return;
             }
 

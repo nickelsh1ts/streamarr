@@ -1184,63 +1184,66 @@ userSettingsRoutes.post<
       } else {
         try {
           const plexTvApi = new PlexTvAPI(preferPlexJwt(admin) ?? '');
-          if (previousState && !plexHomeChanged) {
-            try {
-              await plexTvApi.deprovisionUser(
-                user.plexId,
-                settings.plex.machineId
-              );
-            } catch (e) {
-              logger.error('Failed to deprovision user.', {
-                label: 'User Settings',
-                userId: user.id,
-                errorMessage: e instanceof Error ? e.message : String(e),
-              });
-            }
-          } else {
-            if (plexHomeChanged) {
+          // A bulk sync must not see the user mid re-invite and deactivate them
+          await plexSync.withUserLock(user, async () => {
+            if (previousState && !plexHomeChanged) {
               try {
                 await plexTvApi.deprovisionUser(
                   user.plexId,
                   settings.plex.machineId
                 );
               } catch (e) {
-                logger.error(
-                  'Failed to deprovision user before plexHome re-invite',
-                  {
-                    label: 'User Settings',
-                    userId: user.id,
-                    errorMessage: e instanceof Error ? e.message : String(e),
-                  }
-                );
-              }
-            }
-
-            // Retry briefly: the user may have just been removed from Plex
-            for (let attempt = 1; ; attempt++) {
-              try {
-                await plexSync.inviteUser(user, {
-                  allowSync: user?.settings?.allowDownloads ?? false,
-                  plexHome: user.settings?.allowPlexHome ?? false,
-                });
-                break;
-              } catch (e) {
-                if (attempt < PROVISION_INVITE_ATTEMPTS) {
-                  await new Promise((resolve) =>
-                    setTimeout(resolve, PROVISION_INVITE_RETRY_MS)
-                  );
-                  continue;
-                }
-                provisionInviteFailed = true;
-                logger.warn('Plex invite failed during provisioning', {
+                logger.error('Failed to deprovision user.', {
                   label: 'User Settings',
                   userId: user.id,
                   errorMessage: e instanceof Error ? e.message : String(e),
                 });
-                break;
+              }
+            } else {
+              if (plexHomeChanged) {
+                try {
+                  await plexTvApi.deprovisionUser(
+                    user.plexId,
+                    settings.plex.machineId
+                  );
+                } catch (e) {
+                  logger.error(
+                    'Failed to deprovision user before plexHome re-invite',
+                    {
+                      label: 'User Settings',
+                      userId: user.id,
+                      errorMessage: e instanceof Error ? e.message : String(e),
+                    }
+                  );
+                }
+              }
+
+              // Retry briefly: the user may have just been removed from Plex
+              for (let attempt = 1; ; attempt++) {
+                try {
+                  await plexSync.inviteUser(user, {
+                    allowSync: user?.settings?.allowDownloads ?? false,
+                    plexHome: user.settings?.allowPlexHome ?? false,
+                  });
+                  break;
+                } catch (e) {
+                  if (attempt < PROVISION_INVITE_ATTEMPTS) {
+                    await new Promise((resolve) =>
+                      setTimeout(resolve, PROVISION_INVITE_RETRY_MS)
+                    );
+                    continue;
+                  }
+                  provisionInviteFailed = true;
+                  logger.warn('Plex invite failed during provisioning', {
+                    label: 'User Settings',
+                    userId: user.id,
+                    errorMessage: e instanceof Error ? e.message : String(e),
+                  });
+                  break;
+                }
               }
             }
-          }
+          });
         } catch (e) {
           logger.error(
             `Failed to ${previousState && !plexHomeChanged ? 'deprovision' : 'provision'} user`,

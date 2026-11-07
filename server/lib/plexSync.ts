@@ -221,11 +221,11 @@ class PlexSync {
           (stored ?? user.settings)?.sharedLibraries
         );
 
-        const share = await api.getUserShare(
-          this.getIdentity(user),
-          machineId,
-          batch?.users
-        );
+        const identity = this.getIdentity(user);
+        const share =
+          (await api.getUserShare(identity, machineId, batch?.users)) ??
+          // The batch list may predate a re-invite
+          (batch ? await api.getUserShare(identity, machineId) : null);
         if (!share) {
           throw new PlexUserNotFoundError();
         }
@@ -273,6 +273,14 @@ class PlexSync {
         throw new Error(`Plex sync error: ${message}`);
       }
     });
+  }
+
+  /** Runs share changes made outside plexSync exclusively with the user's syncs. */
+  public async withUserLock(
+    user: User,
+    callback: () => Promise<void>
+  ): Promise<void> {
+    await this.lock.dispatch(`plex-share-${user.id}`, callback);
   }
 
   /**
@@ -405,27 +413,38 @@ class PlexSync {
               summary.synced++;
             } catch (e) {
               // syncUserLibraries already logged the failure
-              if (e instanceof PlexUserNotFoundError) {
+              if (
+                !(e instanceof PlexUserNotFoundError) &&
+                !(e instanceof NoSharedLibrariesError)
+              ) {
+                summary.failed++;
+                continue;
+              }
+              try {
+                if (e instanceof NoSharedLibrariesError) {
+                  const machineId = this.settings.plex.machineId;
+                  const plexId =
+                    user.plexId ??
+                    (
+                      await api.getUserShare(
+                        this.getIdentity(user),
+                        machineId,
+                        batch.users
+                      )
+                    )?.accountId;
+                  if (plexId) {
+                    await api.deprovisionUser(plexId, machineId);
+                  }
+                }
                 await handlePlexAccessLost(user);
                 summary.removed++;
-              } else if (e instanceof NoSharedLibrariesError && user.plexId) {
-                try {
-                  await api.deprovisionUser(
-                    user.plexId,
-                    this.settings.plex.machineId
-                  );
-                  await handlePlexAccessLost(user);
-                  summary.removed++;
-                } catch (e) {
-                  summary.failed++;
-                  logger.error('Failed to remove Plex access for user', {
-                    label: LABEL,
-                    userId: user.id,
-                    error: extractPlexError(e),
-                  });
-                }
-              } else {
+              } catch (e) {
                 summary.failed++;
+                logger.error('Failed to remove Plex access for user', {
+                  label: LABEL,
+                  userId: user.id,
+                  error: extractPlexError(e),
+                });
               }
             }
           }

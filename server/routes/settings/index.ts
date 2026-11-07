@@ -133,8 +133,15 @@ settingsRoutes.post('/main', async (req, res, next) => {
       // The server default has no default of its own, so empty means all
       filteredBody.sharedLibraries =
         normalizeSharedLibrariesValue(filteredBody.sharedLibraries) ?? 'all';
+    }
+
+    // Respond only after default followers are synced so a save can't race the next one
+    let invalidDefault = false;
+    const plexSyncSummary = await plexSync.applyAndReconcile(() => {
+      const previousDefault = settings.main.sharedLibraries;
       if (
-        filteredBody.sharedLibraries !== settings.main.sharedLibraries &&
+        filteredBody.sharedLibraries !== undefined &&
+        filteredBody.sharedLibraries !== previousDefault &&
         resolveSharedLibraryKeys({
           value: null,
           adminDefault: filteredBody.sharedLibraries,
@@ -143,23 +150,22 @@ settingsRoutes.post('/main', async (req, res, next) => {
           ),
         }).length === 0
       ) {
-        return next({
-          status: 400,
-          message:
-            'The default shared libraries do not include any enabled libraries.',
-        });
+        invalidDefault = true;
+        return null;
       }
-    }
-
-    // Respond only after default followers are synced so a save can't race the next one
-    const plexSyncSummary = await plexSync.applyAndReconcile(() => {
-      const previousDefault = settings.main.sharedLibraries;
       settings.main = merge(settings.main, filteredBody);
       settings.save();
       return settings.main.sharedLibraries !== previousDefault
         ? isDefaultSentinel
         : null;
     });
+    if (invalidDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries do not include any enabled libraries.',
+      });
+    }
 
     res.status(200).json({ ...settings.main, plexSync: plexSyncSummary });
   } catch (error) {
@@ -508,18 +514,20 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
   '/plex/library/:libraryId',
   async (req, res, next) => {
     const settings = getSettings();
-    const library = settings.plex.libraries.find(
-      (l) => l.id === req.params.libraryId
-    );
-
-    if (!library) {
-      return next({ status: 404, message: 'Library not found.' });
-    }
+    let found = true;
 
     // Wait for affected shares so a restart or the next toggle can't skip them
     let plexSyncSummary: Awaited<ReturnType<typeof plexSync.applyAndReconcile>>;
     try {
       plexSyncSummary = await plexSync.applyAndReconcile(() => {
+        // Library discovery may have replaced the list while waiting
+        const library = settings.plex.libraries.find(
+          (l) => l.id === req.params.libraryId
+        );
+        if (!library) {
+          found = false;
+          return null;
+        }
         if (library.enabled === req.body.enabled) {
           return null;
         }
@@ -530,10 +538,13 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
     } catch (e) {
       logger.error('Failed to update Plex library', {
         label: 'Settings',
-        libraryId: library.id,
+        libraryId: req.params.libraryId,
         errorMessage: e instanceof Error ? e.message : String(e),
       });
       return next({ status: 500, message: 'Failed to update library.' });
+    }
+    if (!found) {
+      return next({ status: 404, message: 'Library not found.' });
     }
     res.status(200).json({
       libraries: settings.plex.libraries,
