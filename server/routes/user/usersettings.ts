@@ -1040,8 +1040,18 @@ userSettingsRoutes.post<
       });
     }
 
+    const canManagePlexAccess =
+      req.user?.id === 1 ||
+      (req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        !user.hasPermission(Permission.MANAGE_USERS));
+    if (!canManagePlexAccess) {
+      delete req.body.sharedLibraries;
+      delete req.body.allowDownloads;
+      delete req.body.allowLiveTv;
+    }
+
     // Store previous sharedLibraries value to detect changes
-    const previousSharedLibraries = user.settings?.sharedLibraries;
+    const previousSharedLibraries = user.settings?.sharedLibraries ?? null;
     const previousAllowDownloads = user.settings?.allowDownloads;
     const previousAllowPlexHome = user.settings?.allowPlexHome ?? false;
     const previousState = user.active;
@@ -1287,7 +1297,7 @@ userSettingsRoutes.post<
     let plexSyncStatus: 'synced' | 'removed' | 'failed' | 'skipped' = 'skipped';
 
     if (
-      req.user?.hasPermission(Permission.MANAGE_USERS) &&
+      canManagePlexAccess &&
       shouldSync &&
       user.email &&
       user.userType === UserType.PLEX
