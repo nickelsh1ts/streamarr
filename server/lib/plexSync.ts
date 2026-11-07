@@ -429,11 +429,21 @@ class PlexSync {
                   if (e instanceof PlexUserNotFoundError) {
                     restored = !!(await api.getUserShare(identity, machineId));
                   } else {
-                    const plexId =
-                      user.plexId ??
-                      (await api.getUserShare(identity, machineId))?.accountId;
-                    if (plexId) {
-                      await api.deprovisionUser(plexId, machineId);
+                    // A save in between already synced any new assignment
+                    const stored = await getRepository(UserSettings).findOne({
+                      where: { user: { id: user.id } },
+                    });
+                    restored =
+                      this.resolveLibraryKeys(stored?.sharedLibraries).length >
+                      0;
+                    if (!restored) {
+                      const plexId =
+                        user.plexId ??
+                        (await api.getUserShare(identity, machineId))
+                          ?.accountId;
+                      if (plexId) {
+                        await api.deprovisionUser(plexId, machineId);
+                      }
                     }
                   }
                   if (!restored) {
