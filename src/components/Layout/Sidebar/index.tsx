@@ -651,7 +651,7 @@ export const RequestMenu = ({
         defaultMessage: 'Requests',
       }),
       icon: <ClockIcon className="h-7 w-7" />,
-      regExp: /\/request\/requests/,
+      regExp: /\/request\/(requests|users\/\d+\/requests)/,
     },
     {
       href: '/request/issues',

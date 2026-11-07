@@ -68,16 +68,6 @@ const DynamicFrame = ({
   // Track the current iframe path to avoid unnecessary updates
   const currentIframePathRef = useRef<string>('');
 
-  // Get the initial hash from browser URL (for hash-based routing like Tdarr)
-  // During client navigation this runs before Next commits the new URL, so
-  // ignore a hash left over from the previous route (e.g. Plex's `#!`).
-  const [initialHash] = useState(() =>
-    typeof window !== 'undefined' &&
-    (!newBase || window.location.pathname.startsWith(newBase))
-      ? window.location.hash
-      : ''
-  );
-
   // Calculate the sub-path (path after the newBase)
   // Only extract subPath if pathname actually starts with newBase, otherwise use empty string
   const subPath = useMemo(() => {
@@ -90,10 +80,16 @@ const DynamicFrame = ({
     return '';
   }, [pathname, newBase]);
 
-  // Calculate iframe src - only compute once on mount
-  // Include initialHash for hash-based routing (e.g., Tdarr uses /#/libraries)
+  // Calculate iframe src once the proxy is ready - by then Next has committed
+  // the destination URL, so its hash (e.g. Tdarr's /#/libraries) is current
+  const proxyReady = proxyStatus === 'ready';
   const iframeSrc = useMemo(() => {
-    if (!domainURL || !basePath) return '';
+    if (!proxyReady || !domainURL || !basePath) return '';
+    // Ignore a hash left over from another route (e.g. Plex's `#!`)
+    const initialHash =
+      !newBase || window.location.pathname.startsWith(newBase)
+        ? window.location.hash
+        : '';
     if (!initialAuthPath) {
       return `${domainURL}${basePath}${subPath}${initialHash}`;
     }
@@ -105,7 +101,7 @@ const DynamicFrame = ({
       : '';
     return `${domainURL}${initialAuthPath}${redirect}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domainURL, basePath, initialAuthPath]);
+  }, [domainURL, basePath, initialAuthPath, proxyReady]);
 
   // Handle iframe load event
   const handleIframeLoad = useCallback(() => {
