@@ -1823,8 +1823,9 @@ userSettingsRoutes.post<
       }
 
       if (alreadyOnServer) {
-        // User already has server access - reconcile libraries
+        // User already has server access - keep it, then reconcile libraries
         try {
+          await plexSync.adoptPlexAccess(user);
           await plexSync.syncUserLibraries(user, {
             allowSync: user.settings.allowDownloads,
           });
