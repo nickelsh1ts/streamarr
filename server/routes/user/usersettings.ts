@@ -35,7 +35,11 @@ import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import {
+  NoSharedLibrariesError,
+  plexSync,
+  PlexUserNotFoundError,
+} from '@server/lib/plexSync';
 import {
   audiobookshelfLinkLimiter,
   passwordChangeLimiter,
@@ -1227,7 +1231,10 @@ userSettingsRoutes.post<
                   });
                   break;
                 } catch (e) {
-                  if (attempt < PROVISION_INVITE_ATTEMPTS) {
+                  if (
+                    attempt < PROVISION_INVITE_ATTEMPTS &&
+                    !(e instanceof NoSharedLibrariesError)
+                  ) {
                     await new Promise((resolve) =>
                       setTimeout(resolve, PROVISION_INVITE_RETRY_MS)
                     );

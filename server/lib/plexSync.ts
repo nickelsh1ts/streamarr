@@ -421,23 +421,30 @@ class PlexSync {
                 continue;
               }
               try {
-                if (e instanceof NoSharedLibrariesError) {
-                  const machineId = this.settings.plex.machineId;
-                  const plexId =
-                    user.plexId ??
-                    (
-                      await api.getUserShare(
-                        this.getIdentity(user),
-                        machineId,
-                        batch.users
-                      )
-                    )?.accountId;
-                  if (plexId) {
-                    await api.deprovisionUser(plexId, machineId);
+                const machineId = this.settings.plex.machineId;
+                const identity = this.getIdentity(user);
+                let restored = false;
+                // Decide under the user's lock so a re-invite can't interleave
+                await this.withUserLock(user, async () => {
+                  if (e instanceof PlexUserNotFoundError) {
+                    restored = !!(await api.getUserShare(identity, machineId));
+                  } else {
+                    const plexId =
+                      user.plexId ??
+                      (await api.getUserShare(identity, machineId))?.accountId;
+                    if (plexId) {
+                      await api.deprovisionUser(plexId, machineId);
+                    }
                   }
+                  if (!restored) {
+                    await handlePlexAccessLost(user);
+                  }
+                });
+                if (restored) {
+                  summary.synced++;
+                } else {
+                  summary.removed++;
                 }
-                await handlePlexAccessLost(user);
-                summary.removed++;
               } catch (e) {
                 summary.failed++;
                 logger.error('Failed to remove Plex access for user', {

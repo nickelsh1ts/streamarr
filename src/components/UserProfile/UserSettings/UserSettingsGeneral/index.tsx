@@ -85,11 +85,10 @@ const UserSettingsGeneral = () => {
       ? `/api/v1/user/${user?.id}/plex/libraries`
       : null
   );
-  const { data: allLibrariesData } = useSWR<{
-    libraries: { id: string; name: string; enabled: boolean }[];
-  }>(currentHasPermission(Permission.ADMIN) ? '/api/v1/settings/plex' : null, {
-    revalidateOnFocus: false,
-  });
+  const { data: enabledLibraries } = useSWR<{ id: string; name: string }[]>(
+    '/api/v1/libraries',
+    { revalidateOnFocus: false }
+  );
 
   // Reset the editable invite-quota toggle whenever the loaded user data changes
   const derivedInviteQuotaEnabled =
@@ -121,11 +120,7 @@ const UserSettingsGeneral = () => {
         ? data.globalSharedLibraries || 'all'
         : data.sharedLibraries;
 
-      const enabledIds =
-        allLibrariesData?.libraries
-          ?.filter((lib) => lib.enabled)
-          .map((lib) => lib.id)
-          .sort() ?? [];
+      const enabledIds = enabledLibraries?.map((lib) => lib.id).sort() ?? [];
 
       // Disabled libraries are never shared, so they're dropped from the stored value
       const normalizeValue = (val: string, dropDisabled = false): string => {
@@ -159,7 +154,7 @@ const UserSettingsGeneral = () => {
       plexLibrariesDiffer: librariesDiffer,
       plexPermissionsDiffer: permissionsDiffer,
     };
-  }, [data, plexLibrariesData, allLibrariesData]);
+  }, [data, plexLibrariesData, enabledLibraries]);
 
   const userRemovedFromPlex = plexLibrariesData?.existsInPlex === false;
 
@@ -618,14 +613,13 @@ const UserSettingsGeneral = () => {
                                           defaultMessage="All Libraries"
                                         />
                                       ) : (
-                                        allLibrariesData?.libraries &&
+                                        enabledLibraries &&
                                         plexLibrariesData.currentPlexLibraries
                                           .split('|')
                                           .map((id) => {
-                                            const lib =
-                                              allLibrariesData.libraries.find(
-                                                (l) => l.id === id
-                                              );
+                                            const lib = enabledLibraries.find(
+                                              (l) => l.id === id
+                                            );
                                             return lib?.name || id;
                                           })
                                           .join(', ')

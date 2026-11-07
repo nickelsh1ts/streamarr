@@ -198,12 +198,20 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
         enabled: !activeLibraries.includes(libraryId),
       });
       showPlexSyncToast(result.plexSync);
-    } catch {
+    } catch (e) {
       Toast({
         title: intl.formatMessage({
           id: 'plexSettings.toggleLibraryError',
           defaultMessage: 'Failed to update library.',
         }),
+        message:
+          axios.isAxiosError(e) && e.response?.status === 400
+            ? intl.formatMessage({
+                id: 'plexSettings.toggleLibraryDefaultError',
+                defaultMessage:
+                  'It is the last enabled library in the default shared libraries. Change the default first.',
+              })
+            : undefined,
         type: 'error',
         icon: <XCircleIcon className="size-7" />,
       });

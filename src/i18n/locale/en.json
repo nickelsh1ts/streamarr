@@ -5057,6 +5057,9 @@
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
   },
+  "plexSettings.toggleLibraryDefaultError": {
+    "defaultMessage": "It is the last enabled library in the default shared libraries. Change the default first."
+  },
   "plexSettings.toggleLibraryError": {
     "defaultMessage": "Failed to update library."
   },

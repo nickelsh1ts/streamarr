@@ -112,12 +112,17 @@ export const sharedLibrariesFromShare = (
   if (!value) {
     return null;
   }
-  const resolve = (v: string | null) =>
-    resolveSharedLibraryKeys({ value: v, adminDefault, enabledLibraries }).join(
-      '|'
-    );
+  if (value === 'all') {
+    // Only an all-libraries default also covers disabled libraries
+    return !adminDefault || adminDefault === 'all' || adminDefault === 'server'
+      ? null
+      : 'all';
+  }
   // Compare the raw keys so access to a disabled library is kept
-  return (value === 'all' ? resolve('all') : value) !== resolve(null)
-    ? value
-    : null;
+  const defaultKeys = resolveSharedLibraryKeys({
+    value: null,
+    adminDefault,
+    enabledLibraries,
+  }).join('|');
+  return value !== defaultKeys ? value : null;
 };

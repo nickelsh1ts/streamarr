@@ -515,6 +515,7 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
   async (req, res, next) => {
     const settings = getSettings();
     let found = true;
+    let emptiesDefault = false;
 
     // Wait for affected shares so a restart or the next toggle can't skip them
     let plexSyncSummary: Awaited<ReturnType<typeof plexSync.applyAndReconcile>>;
@@ -531,6 +532,19 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
         if (library.enabled === req.body.enabled) {
           return null;
         }
+        if (
+          !req.body.enabled &&
+          resolveSharedLibraryKeys({
+            value: null,
+            adminDefault: settings.main.sharedLibraries,
+            enabledLibraries: settings.plex.libraries.filter(
+              (l) => l.enabled && l !== library
+            ),
+          }).length === 0
+        ) {
+          emptiesDefault = true;
+          return null;
+        }
         library.enabled = req.body.enabled;
         settings.save();
         return (value) => referencesLibrary(value, library.id);
@@ -545,6 +559,13 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
     }
     if (!found) {
       return next({ status: 404, message: 'Library not found.' });
+    }
+    if (emptiesDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries must include at least one enabled library.',
+      });
     }
     res.status(200).json({
       libraries: settings.plex.libraries,
