@@ -3678,13 +3678,29 @@ paths:
                 - enabled
       responses:
         '200':
-          description: 'Plex libraries returned'
+          description: 'Plex libraries and the Plex sync result for affected users'
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PlexLibrary'
+                type: object
+                properties:
+                  libraries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlexLibrary'
+                  plexSync:
+                    description: Present when users were re-synced with Plex; 'failed' when the sync could not run
+                    oneOf:
+                      - type: string
+                        enum: [failed]
+                      - type: object
+                        properties:
+                          synced:
+                            type: integer
+                          failed:
+                            type: integer
+                          removed:
+                            type: integer
         '404':
           description: 'Library not found'
           content:

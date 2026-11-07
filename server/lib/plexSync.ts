@@ -123,8 +123,8 @@ class PlexSync {
     });
   }
 
-  private libraryKeysFor(user: User): string[] {
-    const keys = this.resolveLibraryKeys(user.settings?.sharedLibraries);
+  private libraryKeysFor(value: string | null | undefined): string[] {
+    const keys = this.resolveLibraryKeys(value);
     // An empty section list would share every library on Plex
     if (keys.length === 0) {
       throw new NoSharedLibrariesError();
@@ -213,7 +213,13 @@ class PlexSync {
       try {
         const machineId = this.settings.plex.machineId;
         const api = batch?.api ?? (await this.getAdminApi());
-        const libraryKeys = this.libraryKeysFor(user);
+        // Queued work must not replay a stale in-memory assignment
+        const stored = await getRepository(UserSettings).findOne({
+          where: { user: { id: user.id } },
+        });
+        const libraryKeys = this.libraryKeysFor(
+          (stored ?? user.settings)?.sharedLibraries
+        );
 
         const share = await api.getUserShare(
           this.getIdentity(user),
@@ -293,7 +299,7 @@ class PlexSync {
     const sectionIds = await this.mapKeysToSectionIds(
       api,
       machineId,
-      this.libraryKeysFor(user)
+      this.libraryKeysFor(user.settings?.sharedLibraries)
     );
 
     let lastError: unknown;
@@ -375,8 +381,18 @@ class PlexSync {
       return summary;
     }
 
-    const api = await this.getAdminApi();
-    const batch: PlexBatch = { api, users: await api.getUsers() };
+    let batch: PlexBatch;
+    try {
+      const api = await this.getAdminApi();
+      batch = { api, users: await api.getUsers() };
+    } catch (e) {
+      logger.error('Failed to start Plex sync', {
+        label: LABEL,
+        error: extractPlexError(e),
+      });
+      return { ...summary, failed: queue.length };
+    }
+    const { api } = batch;
 
     await Promise.all(
       Array.from(
@@ -421,28 +437,42 @@ class PlexSync {
   }
 
   /**
-   * Reconciles every user whose stored value matches `affects` — e.g. after
-   * the server default or enabled libraries change. Runs one at a time.
+   * Applies a library settings change and reconciles the users it affects as
+   * one step, so concurrent changes can't interleave with a running sync.
+   * `apply` returns which stored values are affected, or null when nothing
+   * changed. Errors from `apply` propagate; sync errors return 'failed'.
    */
-  public async reconcileUsers(
-    affects: (value: string | null | undefined) => boolean
-  ): Promise<PlexBulkSyncSummary> {
-    let summary: PlexBulkSyncSummary = { synced: 0, failed: 0, removed: 0 };
+  public async applyAndReconcile(
+    apply: () => ((value: string | null | undefined) => boolean) | null
+  ): Promise<PlexBulkSyncSummary | 'failed' | undefined> {
+    let result: PlexBulkSyncSummary | 'failed' | undefined;
     await this.lock.dispatch('plex-reconcile', async () => {
-      const users = (
-        await getRepository(User)
-          .createQueryBuilder('user')
-          .leftJoinAndSelect('user.settings', 'settings')
-          .where('user.id != 1')
-          .getMany()
-      ).filter((user) => affects(user.settings?.sharedLibraries));
-      summary = await this.syncUsers(users);
-      logger.info('Reconciled Plex shares after library settings change', {
-        label: LABEL,
-        ...summary,
-      });
+      const affects = apply();
+      if (!affects) {
+        return;
+      }
+      try {
+        const users = (
+          await getRepository(User)
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.settings', 'settings')
+            .where('user.id != 1')
+            .getMany()
+        ).filter((user) => affects(user.settings?.sharedLibraries));
+        result = await this.syncUsers(users);
+        logger.info('Reconciled Plex shares after library settings change', {
+          label: LABEL,
+          ...result,
+        });
+      } catch (e) {
+        logger.error('Failed to reconcile Plex shares', {
+          label: LABEL,
+          error: extractPlexError(e),
+        });
+        result = 'failed';
+      }
     });
-    return summary;
+    return result;
   }
 
   /**

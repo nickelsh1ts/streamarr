@@ -18,6 +18,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 import type { PlexDevice } from '@server/interfaces/api/plexInterfaces';
+import type { PlexBulkSyncSummary } from '@server/lib/plexSync';
 import type { PlexSettings } from '@server/lib/settings';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
@@ -189,10 +190,33 @@ const PlexSettings = ({ onComplete }: SettingsPlexProps) => {
   const toggleLibrary = async (libraryId: string) => {
     setIsSyncing(true);
     try {
-      await axios.put(
-        `/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`,
-        { enabled: !activeLibraries.includes(libraryId) }
-      );
+      const { data: result } = await axios.put<{
+        plexSync?: PlexBulkSyncSummary | 'failed';
+      }>(`/api/v1/settings/plex/library/${encodeURIComponent(libraryId)}`, {
+        enabled: !activeLibraries.includes(libraryId),
+      });
+      const plexSync = result.plexSync;
+      if (plexSync === 'failed' || plexSync?.failed) {
+        Toast({
+          title: intl.formatMessage({
+            id: 'userLibraries.savedPlexSyncFailed',
+            defaultMessage: 'Settings saved, but Plex sync failed.',
+          }),
+          message:
+            plexSync === 'failed'
+              ? undefined
+              : intl.formatMessage(
+                  {
+                    id: 'userLibraries.savedPlexSyncFailedMessage',
+                    defaultMessage:
+                      'Changes were saved, but {count, plural, one {# user} other {# users}} could not be synced with Plex.',
+                  },
+                  { count: plexSync.failed }
+                ),
+          type: 'warning',
+          icon: <ExclamationTriangleIcon className="size-7" />,
+        });
+      }
     } catch {
       Toast({
         title: intl.formatMessage({
