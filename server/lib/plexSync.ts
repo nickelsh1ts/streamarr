@@ -87,6 +87,8 @@ export interface PlexBulkSyncSummary {
 class PlexSync {
   private settings = getSettings();
   private lock = new AsyncLock();
+  // Users whose last library sync failed; retried by the next reconcile
+  private pendingSync = new Set<number>();
 
   private async getAdminApi(): Promise<PlexTvAPI> {
     const credential = await getAdminPlexTvCredential();
@@ -398,6 +400,7 @@ class PlexSync {
         label: LABEL,
         error: extractPlexError(e),
       });
+      queue.forEach((user) => this.pendingSync.add(user.id));
       return { ...summary, failed: queue.length };
     }
     const { api } = batch;
@@ -411,6 +414,7 @@ class PlexSync {
             try {
               await this.syncUserLibraries(user, options, batch);
               summary.synced++;
+              this.pendingSync.delete(user.id);
             } catch (e) {
               // syncUserLibraries already logged the failure
               if (
@@ -418,6 +422,7 @@ class PlexSync {
                 !(e instanceof NoSharedLibrariesError)
               ) {
                 summary.failed++;
+                this.pendingSync.add(user.id);
                 continue;
               }
               try {
@@ -455,8 +460,10 @@ class PlexSync {
                 } else {
                   summary.removed++;
                 }
+                this.pendingSync.delete(user.id);
               } catch (e) {
                 summary.failed++;
+                this.pendingSync.add(user.id);
                 logger.error('Failed to remove Plex access for user', {
                   label: LABEL,
                   userId: user.id,
@@ -476,7 +483,8 @@ class PlexSync {
    * Applies a library settings change and reconciles the users it affects as
    * one step, so concurrent changes can't interleave with a running sync.
    * `apply` returns which stored values are affected, or null when nothing
-   * changed. Errors from `apply` propagate; sync errors return 'failed'.
+   * changed. Users whose last sync failed are retried either way. Errors
+   * from `apply` propagate; sync errors return 'failed'.
    */
   public async applyAndReconcile(
     apply: () => ((value: string | null | undefined) => boolean) | null
@@ -484,9 +492,12 @@ class PlexSync {
     let result: PlexBulkSyncSummary | 'failed' | undefined;
     await this.lock.dispatch('plex-reconcile', async () => {
       const affects = apply();
-      if (!affects) {
+      if (!affects && this.pendingSync.size === 0) {
         return;
       }
+      // Failures are re-added by syncUsers; inactive or deleted users drop out
+      const pending = new Set(this.pendingSync);
+      this.pendingSync.clear();
       try {
         const users = (
           await getRepository(User)
@@ -494,13 +505,19 @@ class PlexSync {
             .leftJoinAndSelect('user.settings', 'settings')
             .where('user.id != 1')
             .getMany()
-        ).filter((user) => affects(user.settings?.sharedLibraries));
+        ).filter(
+          (user) =>
+            pending.has(user.id) || !!affects?.(user.settings?.sharedLibraries)
+        );
         result = await this.syncUsers(users);
-        logger.info('Reconciled Plex shares after library settings change', {
-          label: LABEL,
-          ...result,
-        });
+        logger.info(
+          affects
+            ? 'Reconciled Plex shares after library settings change'
+            : 'Retried pending Plex library syncs',
+          { label: LABEL, ...result }
+        );
       } catch (e) {
+        pending.forEach((id) => this.pendingSync.add(id));
         logger.error('Failed to reconcile Plex shares', {
           label: LABEL,
           error: extractPlexError(e),
@@ -509,6 +526,11 @@ class PlexSync {
       }
     });
     return result;
+  }
+
+  /** Retries users whose last library sync failed. */
+  public async retryPendingSync(): Promise<void> {
+    await this.applyAndReconcile(() => null);
   }
 
   /**

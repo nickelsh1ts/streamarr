@@ -3,6 +3,7 @@ import expiredInvites from '@server/lib/expiredInvites';
 import ImageProxy from '@server/lib/imageproxy';
 import NewsletterImageCleanup from '@server/lib/newsletters/imageCleanup';
 import { plexAccess } from '@server/lib/plexAccessLost';
+import { plexSync } from '@server/lib/plexSync';
 import refreshToken from '@server/lib/refreshToken';
 import type { JobId } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
@@ -147,9 +148,13 @@ export const startJobs = (): void => {
     type: 'process',
     interval: 'minutes',
     cronSchedule: jobs['plex-membership-check']?.schedule,
-    job: schedule.scheduleJob(jobs['plex-membership-check']?.schedule, () => {
-      return plexAccess.run();
-    }),
+    job: schedule.scheduleJob(
+      jobs['plex-membership-check']?.schedule,
+      async () => {
+        await plexAccess.run();
+        await plexSync.retryPendingSync();
+      }
+    ),
     running: () => plexAccess.status().running,
     cancelFn: () => plexAccess.cancel(),
   });
