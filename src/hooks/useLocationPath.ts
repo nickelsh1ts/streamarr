@@ -5,6 +5,7 @@ import { useSyncExternalStore } from 'react';
 
 // The Next pathname whose URL has been seen in the browser since it changed
 let committedPathname: string | null = null;
+let lastNextPathname: string | null = null;
 
 // Iframe wrappers sync the URL via replaceState, which Next's usePathname() ignores.
 const useLocationPath = () => {
@@ -12,6 +13,10 @@ const useLocationPath = () => {
   return useSyncExternalStore(
     subscribeToUrl,
     () => {
+      if (nextPathname !== lastNextPathname) {
+        lastNextPathname = nextPathname;
+        committedPathname = null;
+      }
       const locationPath = window.location.pathname;
       if (locationPath === nextPathname) {
         committedPathname = nextPathname;
