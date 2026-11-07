@@ -8,6 +8,7 @@ import {
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useClickOutside from '@app/hooks/useClickOutside';
 import useHash from '@app/hooks/useHash';
+import useLocationPath from '@app/hooks/useLocationPath';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Transition } from '@headlessui/react';
 import {
@@ -31,7 +32,6 @@ import {
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import type { JSX } from 'react';
 import { cloneElement, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -58,7 +58,7 @@ const MobileMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [menuType, setMenuType] = useState<string | null>(null);
-  const pathname = usePathname();
+  const pathname = useLocationPath();
   const hash = useHash();
   const url = pathname + (hash || '');
 
