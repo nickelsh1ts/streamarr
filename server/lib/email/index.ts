@@ -125,6 +125,7 @@ class PreparedEmail {
         },
       },
       send: true,
+      preview: false,
       // @types/email-templates still types transports against @types/nodemailer
       transport: transport as unknown as Email.NodeMailerTransportOptions,
     });
