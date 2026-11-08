@@ -25,6 +25,7 @@ import {
   disconnectSessionSockets,
   revokeUserSessions,
   startUserSession,
+  toPublicSessionId,
   withUserCredentialLock,
 } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
@@ -445,9 +446,29 @@ authRoutes.post('/local', async (req, res, next) => {
   }
 });
 
-authRoutes.post('/logout', (req, res, next) => {
+authRoutes.post('/logout', async (req, res, next) => {
   const audiobookshelfRefreshToken = req.cookies?.refresh_token;
   const { sessionID } = req;
+
+  if (req.session?.userId) {
+    try {
+      await revokeUserSessions(
+        req.session.userId,
+        {
+          reason: 'manual',
+          revokedByUserId: req.session.userId,
+          publicIds: [toPublicSessionId(sessionID)],
+        },
+        req.app.get('io')
+      );
+    } catch (e) {
+      logger.warn('Failed to clean up session push subscriptions on logout', {
+        label: 'Sessions',
+        userId: req.session.userId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
 
   req.session?.destroy((err) => {
     if (err) {

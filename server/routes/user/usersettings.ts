@@ -1920,11 +1920,12 @@ userSettingsRoutes.delete<{ id: string }>(
         });
       }
 
-      user.userType = UserType.LOCAL;
-      user.plexId = null;
-      user.plexUsername = null;
-      user.plexToken = null;
-      await userRepository.save(user);
+      await userRepository.update(user.id, {
+        userType: UserType.LOCAL,
+        plexId: null,
+        plexUsername: null,
+        plexToken: null,
+      });
 
       return res.status(204).send();
     } catch (e) {

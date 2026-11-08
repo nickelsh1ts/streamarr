@@ -21,12 +21,12 @@ const base64Url = (bytes: number[]) =>
     .replace(/\//g, '_')
     .replace(/=+$/, '');
 
-const registerPush = (endpoint: string) =>
+const registerPush = (endpoint: string, authByte = 2) =>
   cy
     .request('POST', '/api/v1/user/registerPushSubscription', {
       endpoint,
       p256dh: base64Url([4, ...Array(64).fill(1)]),
-      auth: base64Url(Array(16).fill(2)),
+      auth: base64Url(Array(16).fill(authByte)),
     })
     .its('status')
     .should('eq', 204);
@@ -165,7 +165,11 @@ describe('User Sessions', () => {
       const legacyEndpoint = `https://fcm.googleapis.com/fcm/send/legacy-${Date.now()}`;
       const currentEndpoint = `https://fcm.googleapis.com/fcm/send/current-${Date.now()}`;
       registerPush(legacyEndpoint);
-      registerPush(currentEndpoint);
+      registerPush(currentEndpoint, 3);
+      pushEndpoints().should('include', legacyEndpoint);
+      pushEndpoints().should('include', currentEndpoint);
+      linkedToSession(legacyEndpoint).should('eq', false);
+      linkedToSession(currentEndpoint).should('eq', true);
       cy.request('/api/v1/auth/me').then(({ body }) => {
         cy.request('POST', `/api/v1/user/${body.id}/settings/sessions/revoke`, {
           scope: 'all',
@@ -176,26 +180,50 @@ describe('User Sessions', () => {
         pushEndpoints().should('not.include', legacyEndpoint);
         pushEndpoints().should('include', currentEndpoint);
         cy.request('/api/v1/auth/me').its('status').should('eq', 200);
-        cy.request(
-          'DELETE',
-          `/api/v1/user/${body.id}/pushSubscription/${encodeURIComponent(currentEndpoint)}`
-        );
+        cy.getCookie('streamarr.sid').then((cookie) => {
+          cy.visit('/logout');
+          cy.location('pathname').should('eq', '/signin');
+          cy.loginAsUser();
+          pushEndpoints().should('not.include', legacyEndpoint);
+          pushEndpoints().should('not.include', currentEndpoint);
+          replaySession(cookie.value).should('eq', 401);
+        });
       });
     });
 
-    it('rejects keeping the current session with the others scope', () => {
+    it('keeps a push subscription another live session uses after logout', () => {
+      const endpoint = `https://fcm.googleapis.com/fcm/send/shared-${Date.now()}`;
+      registerPush(endpoint);
+      signInAgainInThisBrowser();
+      registerPush(endpoint);
+      cy.request('POST', '/api/v1/auth/logout').its('status').should('eq', 200);
+      cy.loginAsUser();
+      pushEndpoints().should('include', endpoint);
       cy.request('/api/v1/auth/me').then(({ body }) =>
-        cy
-          .request({
-            method: 'POST',
-            url: `/api/v1/user/${body.id}/settings/sessions/revoke`,
-            body: { scope: 'others', keepCurrentSession: true },
-            failOnStatusCode: false,
-          })
-          .its('status')
-          .should('eq', 400)
+        cy.request(
+          'DELETE',
+          `/api/v1/user/${body.id}/pushSubscription/${encodeURIComponent(endpoint)}`
+        )
       );
-      cy.request('/api/v1/auth/me').its('status').should('eq', 200);
+    });
+
+    it('rejects keeping the current session with the others scope', () => {
+      cy.getCookie('streamarr.sid').then((cookie) => {
+        signInAgainInThisBrowser();
+        cy.request('/api/v1/auth/me').then(({ body }) =>
+          cy
+            .request({
+              method: 'POST',
+              url: `/api/v1/user/${body.id}/settings/sessions/revoke`,
+              body: { scope: 'others', keepCurrentSession: true },
+              failOnStatusCode: false,
+            })
+            .its('status')
+            .should('eq', 400)
+        );
+        cy.request('/api/v1/auth/me').its('status').should('eq', 200);
+        replaySession(cookie.value).should('eq', 200);
+      });
     });
 
     it('rejects the cookie of a signed-out session', () => {
@@ -279,14 +307,19 @@ describe('User Sessions', () => {
     });
 
     it('rejects keeping another user session until logout', () => {
-      cy.request({
-        method: 'POST',
-        url: '/api/v1/user/2/settings/sessions/revoke',
-        body: { scope: 'all', keepCurrentSession: true },
-        failOnStatusCode: false,
-      })
-        .its('status')
-        .should('eq', 400);
+      cy.loginAsUser();
+      cy.getCookie('streamarr.sid').then((cookie) => {
+        cy.loginAsAdmin();
+        cy.request({
+          method: 'POST',
+          url: '/api/v1/user/2/settings/sessions/revoke',
+          body: { scope: 'all', keepCurrentSession: true },
+          failOnStatusCode: false,
+        })
+          .its('status')
+          .should('eq', 400);
+        replaySession(cookie.value).should('eq', 200);
+      });
     });
 
     it('reverts the IP tracking toggle when turning it off is cancelled', () => {
