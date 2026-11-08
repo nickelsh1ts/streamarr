@@ -1,6 +1,9 @@
 import PlexTvAPI from '@server/api/plextv';
 import logger from '@server/logger';
-import { sharedLibrariesFromShare } from '@server/utils/sharedLibraries';
+import {
+  normalizeSharedLibrariesValue,
+  shareLibraryKeys,
+} from '@server/utils/sharedLibraries';
 import fs from 'fs';
 import path from 'path';
 import type { MigrationInterface, QueryRunner } from 'typeorm';
@@ -44,12 +47,6 @@ export class KeepLegacyPlexAccess1794441600000 implements MigrationInterface {
 
       const api = new PlexTvAPI(admin.plexToken);
       const plexUsers = await api.getUsers();
-      const options = {
-        adminDefault: settings.main?.sharedLibraries,
-        enabledLibraries: (settings.plex.libraries ?? []).filter(
-          (library: { enabled: boolean }) => library.enabled
-        ),
-      };
 
       const kept: { email: string; libraries: string }[] = [];
       for (const user of users) {
@@ -65,7 +62,9 @@ export class KeepLegacyPlexAccess1794441600000 implements MigrationInterface {
         if (!share) {
           continue;
         }
-        const libraries = sharedLibrariesFromShare(share, options);
+        const libraries = normalizeSharedLibrariesValue(
+          shareLibraryKeys(share)
+        );
         await queryRunner.query(
           user.settingsId
             ? `UPDATE "user_settings" SET "sharedLibraries" = ?, "allowDownloads" = ? WHERE "id" = ?`
