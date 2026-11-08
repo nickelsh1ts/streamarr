@@ -50,6 +50,7 @@ import {
   listUserSessions,
   revokeUserSessions,
   toPublicSessionId,
+  withUserCredentialLock,
 } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import {
@@ -1497,90 +1498,93 @@ userSettingsRoutes.post<
     const userRepository = getRepository(User);
 
     try {
-      const user = await userRepository.findOne({
-        where: { id: Number(req.params.id) },
-      });
-
-      const userWithPassword = await userRepository.findOne({
-        select: {
-          id: true,
-          password: true,
-        },
-        where: { id: Number(req.params.id) },
-      });
-
-      if (!user || !userWithPassword) {
-        return next({ status: 404, message: 'User not found.' });
-      }
-
-      if (req.body.newPassword.length < 8) {
-        return next({
-          status: 400,
-          message: 'Password must be at least 8 characters.',
+      await withUserCredentialLock(Number(req.params.id), async () => {
+        const user = await userRepository.findOne({
+          where: { id: Number(req.params.id) },
         });
-      }
 
-      if (!canManageUserCredentials(req.user, user)) {
-        return next({
-          status: 403,
-          message: "You do not have permission to modify this user's password.",
+        const userWithPassword = await userRepository.findOne({
+          select: {
+            id: true,
+            password: true,
+          },
+          where: { id: Number(req.params.id) },
         });
-      }
 
-      const endOtherSessions = req.body.endOtherSessions !== false;
+        if (!user || !userWithPassword) {
+          return next({ status: 404, message: 'User not found.' });
+        }
 
-      // If the user has the permission to manage users and they are not
-      // editing themselves, we will just set the new password
-      if (
-        req.user?.hasPermission(Permission.MANAGE_USERS) &&
-        req.user?.id !== user.id
-      ) {
-        // Revoked first so a failure leaves the old password and devices unchanged
+        if (req.body.newPassword.length < 8) {
+          return next({
+            status: 400,
+            message: 'Password must be at least 8 characters.',
+          });
+        }
+
+        if (!canManageUserCredentials(req.user, user)) {
+          return next({
+            status: 403,
+            message:
+              "You do not have permission to modify this user's password.",
+          });
+        }
+
+        const endOtherSessions = req.body.endOtherSessions !== false;
+
+        // If the user has the permission to manage users and they are not
+        // editing themselves, we will just set the new password
+        if (
+          req.user?.hasPermission(Permission.MANAGE_USERS) &&
+          req.user?.id !== user.id
+        ) {
+          // Revoked first so a failure leaves the old password and devices unchanged
+          if (endOtherSessions) {
+            await revokeUserSessions(
+              user.id,
+              { reason: 'password-change', revokedByUserId: req.user.id },
+              req.app.get('io')
+            );
+          }
+          await user.setPassword(req.body.newPassword);
+          await userRepository.save(user);
+          logger.debug('Password overriden by user.', {
+            label: 'User Settings',
+            userEmail: user.email,
+            changingUser: req.user.email,
+          });
+          return res.status(204).send();
+        }
+
+        // If the user has a password, we need to check the currentPassword is correct
+        if (
+          userWithPassword.password &&
+          (!req.body.currentPassword ||
+            !(await userWithPassword.passwordMatch(req.body.currentPassword)))
+        ) {
+          logger.debug(
+            'Attempt to change password for user failed. Invalid current password provided.',
+            { label: 'User Settings', userEmail: user.email }
+          );
+          return next({ status: 403, message: 'Current password is invalid.' });
+        }
+
         if (endOtherSessions) {
           await revokeUserSessions(
             user.id,
-            { reason: 'password-change', revokedByUserId: req.user.id },
+            {
+              reason: 'password-change',
+              revokedByUserId: req.user?.id,
+              exceptSid: req.sessionID,
+            },
             req.app.get('io')
           );
         }
         await user.setPassword(req.body.newPassword);
         await userRepository.save(user);
-        logger.debug('Password overriden by user.', {
-          label: 'User Settings',
-          userEmail: user.email,
-          changingUser: req.user.email,
-        });
-        return res.status(204).send();
-      }
 
-      // If the user has a password, we need to check the currentPassword is correct
-      if (
-        userWithPassword.password &&
-        (!req.body.currentPassword ||
-          !(await userWithPassword.passwordMatch(req.body.currentPassword)))
-      ) {
-        logger.debug(
-          'Attempt to change password for user failed. Invalid current password provided.',
-          { label: 'User Settings', userEmail: user.email }
-        );
-        return next({ status: 403, message: 'Current password is invalid.' });
-      }
-
-      if (endOtherSessions) {
-        await revokeUserSessions(
-          user.id,
-          {
-            reason: 'password-change',
-            revokedByUserId: req.user?.id,
-            exceptSid: req.sessionID,
-          },
-          req.app.get('io')
-        );
-      }
-      await user.setPassword(req.body.newPassword);
-      await userRepository.save(user);
-
-      res.status(204).send();
+        res.status(204).send();
+      });
     } catch (e) {
       next({ status: 500, message: e.message });
     }
@@ -1668,7 +1672,7 @@ userSettingsRoutes.delete<{ id: string; sessionId: string }>(
 userSettingsRoutes.post<
   { id: string },
   { revoked: number },
-  { scope: 'others' | 'all' }
+  { scope: 'others' | 'all'; keepCurrentSession?: boolean }
 >('/sessions/revoke', isOwnProfileOrAdmin(), async (req, res, next) => {
   try {
     const user = await getRepository(User).findOne({
@@ -1695,12 +1699,28 @@ userSettingsRoutes.post<
       });
     }
 
+    if (
+      req.body.keepCurrentSession &&
+      (req.body.scope !== 'all' ||
+        !isOwnAccount ||
+        req.session?.userId !== user.id)
+    ) {
+      return next({
+        status: 400,
+        message: 'Only your own current session can be kept until logout.',
+      });
+    }
+
     const revoked = await revokeUserSessions(
       user.id,
       {
         reason: 'manual',
         revokedByUserId: req.user?.id,
-        exceptSid: req.body.scope === 'others' ? req.sessionID : undefined,
+        exceptSid:
+          req.body.scope === 'others' || req.body.keepCurrentSession
+            ? req.sessionID
+            : undefined,
+        removeUnlinkedPush: req.body.scope === 'all',
       },
       req.app.get('io')
     );

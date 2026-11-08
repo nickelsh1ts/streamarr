@@ -161,6 +161,43 @@ describe('User Sessions', () => {
       );
     });
 
+    it('cleans unlinked push subscriptions while keeping this session until logout', () => {
+      const legacyEndpoint = `https://fcm.googleapis.com/fcm/send/legacy-${Date.now()}`;
+      const currentEndpoint = `https://fcm.googleapis.com/fcm/send/current-${Date.now()}`;
+      registerPush(legacyEndpoint);
+      registerPush(currentEndpoint);
+      cy.request('/api/v1/auth/me').then(({ body }) => {
+        cy.request('POST', `/api/v1/user/${body.id}/settings/sessions/revoke`, {
+          scope: 'all',
+          keepCurrentSession: true,
+        })
+          .its('status')
+          .should('eq', 200);
+        pushEndpoints().should('not.include', legacyEndpoint);
+        pushEndpoints().should('include', currentEndpoint);
+        cy.request('/api/v1/auth/me').its('status').should('eq', 200);
+        cy.request(
+          'DELETE',
+          `/api/v1/user/${body.id}/pushSubscription/${encodeURIComponent(currentEndpoint)}`
+        );
+      });
+    });
+
+    it('rejects keeping the current session with the others scope', () => {
+      cy.request('/api/v1/auth/me').then(({ body }) =>
+        cy
+          .request({
+            method: 'POST',
+            url: `/api/v1/user/${body.id}/settings/sessions/revoke`,
+            body: { scope: 'others', keepCurrentSession: true },
+            failOnStatusCode: false,
+          })
+          .its('status')
+          .should('eq', 400)
+      );
+      cy.request('/api/v1/auth/me').its('status').should('eq', 200);
+    });
+
     it('rejects the cookie of a signed-out session', () => {
       cy.getCookie('streamarr.sid').then((cookie) => {
         signInAgainInThisBrowser();
@@ -212,9 +249,16 @@ describe('User Sessions', () => {
     });
 
     it('signs out everywhere straight to the sign-in page', () => {
+      cy.intercept('POST', '/api/v1/user/*/settings/sessions/revoke').as(
+        'revokeAllSessions'
+      );
       cy.visit('/profile/settings/devices');
       cy.get('[data-testid="sessions-sign-out-all"]').click();
       cy.get('[data-testid="modal-ok-button"]').click();
+      cy.wait('@revokeAllSessions').its('request.body').should('deep.equal', {
+        scope: 'all',
+        keepCurrentSession: true,
+      });
       cy.location('pathname').should('eq', '/signin');
       cy.location('search').should('not.contain', 'redirect_url');
       cy.request({ url: '/api/v1/auth/me', failOnStatusCode: false })
@@ -232,6 +276,17 @@ describe('User Sessions', () => {
       cy.visit('/admin/users/2/settings/devices');
       cy.get('[data-testid="sessions-sign-out-all"]').should('exist');
       cy.get('[data-testid="sessions-sign-out-others"]').should('not.exist');
+    });
+
+    it('rejects keeping another user session until logout', () => {
+      cy.request({
+        method: 'POST',
+        url: '/api/v1/user/2/settings/sessions/revoke',
+        body: { scope: 'all', keepCurrentSession: true },
+        failOnStatusCode: false,
+      })
+        .its('status')
+        .should('eq', 400);
     });
 
     it('reverts the IP tracking toggle when turning it off is cancelled', () => {
