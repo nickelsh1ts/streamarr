@@ -167,8 +167,10 @@ export const validateActivePlexMembership = async (
 
   try {
     const isStopped = () => cancelled || (isCancelled?.() ?? false);
-    await runMembershipValidation(isStopped);
-    await plexSync.retryPendingSync(isStopped);
+    // Retrying while plex.tv can't list users could wrongly remove them
+    if (await runMembershipValidation(isStopped)) {
+      await plexSync.retryPendingSync(isStopped);
+    }
   } finally {
     isRunning = false;
   }
@@ -193,9 +195,10 @@ export const plexAccess = {
   },
 };
 
+/** Returns false when the Plex users list couldn't be read. */
 const runMembershipValidation = async (
   isCancelled?: () => boolean
-): Promise<void> => {
+): Promise<boolean> => {
   const settings = getSettings();
   const machineId = settings.plex.machineId;
   const adminToken = await getAdminPlexTvCredential();
@@ -205,7 +208,7 @@ const runMembershipValidation = async (
       'Missing admin Plex token or machineId — Plex membership validation skipped.',
       { label: 'Jobs' }
     );
-    return;
+    return false;
   }
 
   const activeUsers = await getRepository(User)
@@ -217,7 +220,7 @@ const runMembershipValidation = async (
     .getMany();
 
   if (activeUsers.length === 0) {
-    return;
+    return true;
   }
 
   let plexUsers: Awaited<
@@ -235,7 +238,7 @@ const runMembershipValidation = async (
         errorMessage: e instanceof Error ? e.message : String(e),
       }
     );
-    return;
+    return false;
   }
 
   if (plexUsers.length === 0) {
@@ -243,7 +246,7 @@ const runMembershipValidation = async (
       'plex.tv returned no shared users — Plex membership validation skipped.',
       { label: 'Jobs' }
     );
-    return;
+    return false;
   }
 
   const sharedIds = new Set<number>();
@@ -271,7 +274,7 @@ const runMembershipValidation = async (
 
   for (const user of activeUsers) {
     if (isCancelled?.()) {
-      return;
+      return false;
     }
 
     const hasAccess =
@@ -284,4 +287,5 @@ const runMembershipValidation = async (
       await handlePlexAccessLost(user);
     }
   }
+  return true;
 };
