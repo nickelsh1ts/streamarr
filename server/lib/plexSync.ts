@@ -88,7 +88,24 @@ class PlexSync {
   private settings = getSettings();
   private lock = new AsyncLock();
   // Users whose last library sync failed; retried by the next reconcile
-  private pendingSync = new Set<number>();
+  private pendingSync = new Map<number, PlexSyncOptions>();
+
+  private syncOptionsFor(
+    userId: number,
+    options: PlexSyncOptions
+  ): PlexSyncOptions {
+    const merged = { ...this.pendingSync.get(userId) };
+    for (const key of PERMISSION_KEYS) {
+      if (options[key] !== undefined) {
+        merged[key] = options[key];
+      }
+    }
+    return merged;
+  }
+
+  private queuePendingSync(userId: number, options: PlexSyncOptions): void {
+    this.pendingSync.set(userId, this.syncOptionsFor(userId, options));
+  }
 
   private async getAdminApi(): Promise<PlexTvAPI> {
     const credential = await getAdminPlexTvCredential();
@@ -212,6 +229,8 @@ class PlexSync {
     this.assertHasIdentity(user);
 
     await this.lock.dispatch(`plex-share-${user.id}`, async () => {
+      const pending = this.pendingSync.get(user.id);
+      const permissions = this.syncOptionsFor(user.id, options);
       try {
         const machineId = this.settings.plex.machineId;
         const api = batch?.api ?? (await this.getAdminApi());
@@ -238,9 +257,13 @@ class PlexSync {
           sharedKeys.length === libraryKeys.length &&
           libraryKeys.every((key) => sharedKeys.includes(key)) &&
           PERMISSION_KEYS.every(
-            (key) => options[key] === undefined || options[key] === share[key]
+            (key) =>
+              permissions[key] === undefined || permissions[key] === share[key]
           );
         if (unchanged) {
+          if (this.pendingSync.get(user.id) === pending) {
+            this.pendingSync.delete(user.id);
+          }
           return;
         }
 
@@ -254,11 +277,14 @@ class PlexSync {
             share.sections
           ),
           permissions: {
-            allowSync: options.allowSync,
-            allowCameraUpload: options.allowCameraUpload,
-            allowChannels: options.allowChannels,
+            allowSync: permissions.allowSync,
+            allowCameraUpload: permissions.allowCameraUpload,
+            allowChannels: permissions.allowChannels,
           },
         });
+        if (this.pendingSync.get(user.id) === pending) {
+          this.pendingSync.delete(user.id);
+        }
       } catch (e) {
         const message = extractPlexError(e);
         logger.error(`Failed to sync Plex libraries for user ${user.email}`, {
@@ -272,11 +298,12 @@ class PlexSync {
         ) {
           throw e;
         }
-        this.pendingSync.add(user.id);
+        if (this.pendingSync.get(user.id) === pending) {
+          this.pendingSync.set(user.id, permissions);
+        }
         throw new Error(`Plex sync error: ${message}`);
       }
     });
-    this.pendingSync.delete(user.id);
   }
 
   /** Runs share changes made outside plexSync exclusively with the user's syncs. */
@@ -407,7 +434,7 @@ class PlexSync {
         label: LABEL,
         error: extractPlexError(e),
       });
-      queue.forEach((user) => this.pendingSync.add(user.id));
+      queue.forEach((user) => this.queuePendingSync(user.id, options));
       return { ...summary, failed: queue.length };
     }
     const { api } = batch;
@@ -459,16 +486,16 @@ class PlexSync {
                   if (!restored) {
                     await handlePlexAccessLost(user);
                   }
+                  this.pendingSync.delete(user.id);
                 });
                 if (restored) {
                   summary.synced++;
                 } else {
                   summary.removed++;
                 }
-                this.pendingSync.delete(user.id);
               } catch (e) {
                 summary.failed++;
-                this.pendingSync.add(user.id);
+                this.queuePendingSync(user.id, options);
                 logger.error('Failed to remove Plex access for user', {
                   label: LABEL,
                   userId: user.id,
@@ -481,7 +508,7 @@ class PlexSync {
       )
     );
 
-    queue.forEach((user) => this.pendingSync.add(user.id));
+    queue.forEach((user) => this.queuePendingSync(user.id, options));
     return summary;
   }
 
@@ -505,8 +532,7 @@ class PlexSync {
         return;
       }
       // Failures are re-added by syncUsers; inactive or deleted users drop out
-      const pending = new Set(this.pendingSync);
-      this.pendingSync.clear();
+      const pending = new Map(this.pendingSync);
       try {
         const users = (
           await getRepository(User)
@@ -516,8 +542,21 @@ class PlexSync {
             .getMany()
         ).filter(
           (user) =>
-            pending.has(user.id) || !!affects?.(user.settings?.sharedLibraries)
+            user.userType === UserType.PLEX &&
+            user.active &&
+            user.email &&
+            (pending.has(user.id) ||
+              !!affects?.(user.settings?.sharedLibraries))
         );
+        const userIds = new Set(users.map((user) => user.id));
+        for (const [userId, options] of pending) {
+          if (
+            !userIds.has(userId) &&
+            this.pendingSync.get(userId) === options
+          ) {
+            this.pendingSync.delete(userId);
+          }
+        }
         result = await this.syncUsers(users, {}, isCancelled);
         logger.info(
           affects
@@ -526,7 +565,6 @@ class PlexSync {
           { label: LABEL, ...result }
         );
       } catch (e) {
-        pending.forEach((id) => this.pendingSync.add(id));
         logger.error('Failed to reconcile Plex shares', {
           label: LABEL,
           error: extractPlexError(e),
