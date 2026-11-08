@@ -4825,6 +4825,13 @@ paths:
                     type: string
         '400':
           description: Lidarr not configured
+        '429':
+          description: Too many authentication requests
+          headers:
+            Retry-After:
+              description: Seconds until the rate limit resets.
+              schema:
+                type: integer
         '500':
           description: Failed to disable authentication on Lidarr
   /settings/chaptarr:
