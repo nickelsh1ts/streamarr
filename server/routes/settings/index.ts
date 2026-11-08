@@ -153,8 +153,14 @@ settingsRoutes.post('/main', async (req, res, next) => {
         invalidDefault = true;
         return false;
       }
-      settings.main = merge(settings.main, filteredBody);
-      settings.save();
+      const previousMain = settings.main;
+      settings.main = merge({}, previousMain, filteredBody);
+      try {
+        settings.save();
+      } catch (e) {
+        settings.main = previousMain;
+        throw e;
+      }
       return settings.main.sharedLibraries !== previousDefault
         ? isDefaultSentinel
         : null;
@@ -546,7 +552,12 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
           return false;
         }
         library.enabled = req.body.enabled;
-        settings.save();
+        try {
+          settings.save();
+        } catch (e) {
+          library.enabled = !req.body.enabled;
+          throw e;
+        }
         return (value) => referencesLibrary(value, library.id);
       });
     } catch (e) {

@@ -397,6 +397,10 @@ class PlexSync {
     try {
       const api = await this.getAdminApi();
       batch = { api, users: await api.getUsers() };
+      // Trusting an empty list would remove every user
+      if (!batch.users.MediaContainer?.User) {
+        throw new Error('plex.tv returned no shared users');
+      }
     } catch (e) {
       logger.error('Failed to start Plex sync', {
         label: LABEL,
