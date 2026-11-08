@@ -1,3 +1,50 @@
+## [1.18.0](https://github.com/nickelsh1ts/streamarr/compare/v1.17.5...v1.18.0) (2026-11-08)
+
+### 🔒 Security
+
+* **auth:** stop serializing user credential fields ([#880](https://github.com/nickelsh1ts/streamarr/issues/880)) ([ce09aad](https://github.com/nickelsh1ts/streamarr/commit/ce09aad82082e0ff0cd890f3717d1ee190df3b95))
+* **auth:** validate post-sign-in redirects ([#882](https://github.com/nickelsh1ts/streamarr/issues/882)) ([559f8ba](https://github.com/nickelsh1ts/streamarr/commit/559f8bad2a2465d0ab423c7299d78226c306b369))
+* **auth:** verify current password on self password change ([#877](https://github.com/nickelsh1ts/streamarr/issues/877)) ([40ce707](https://github.com/nickelsh1ts/streamarr/commit/40ce70783044ae4dc6cd34ab10cbf4f31f72beeb))
+* **csrf:** harden protection across APIs and service proxies ([#863](https://github.com/nickelsh1ts/streamarr/issues/863)) ([32a307d](https://github.com/nickelsh1ts/streamarr/commit/32a307db0d1bc1c002294b9952c442a3ee48e445))
+* **docker:** exclude build tooling from runtime ([#899](https://github.com/nickelsh1ts/streamarr/issues/899)) ([9ca9f95](https://github.com/nickelsh1ts/streamarr/commit/9ca9f9508f454af0690ad4a8701826301d0d8829))
+* **email:** harden email dependencies ([#898](https://github.com/nickelsh1ts/streamarr/issues/898)) ([f2b3c6d](https://github.com/nickelsh1ts/streamarr/commit/f2b3c6d1b45a8fb508faf62d269ad4fa5046fc63))
+* **server:** enforce plex access and invite settings permissions ([#888](https://github.com/nickelsh1ts/streamarr/issues/888)) ([abc2c61](https://github.com/nickelsh1ts/streamarr/commit/abc2c61ac1ee4f84c39b9f4894ce9119a30c5687))
+* **sessions:** complete device revocation ([#901](https://github.com/nickelsh1ts/streamarr/issues/901)) ([970b76a](https://github.com/nickelsh1ts/streamarr/commit/970b76aa12bac838bf338b82285b66e93b6f743d))
+* **settings:** rate-limit lidarr auth ([#897](https://github.com/nickelsh1ts/streamarr/issues/897)) ([014b323](https://github.com/nickelsh1ts/streamarr/commit/014b323e09ee794d0f408beb974c06b699365423))
+
+### ✨ Features
+
+* **auth:** add device management and sign out devices on password change ([#881](https://github.com/nickelsh1ts/streamarr/issues/881)) ([4589309](https://github.com/nickelsh1ts/streamarr/commit/45893093e1065a4afcf480d14dbd6c184f100aa9)), closes [#876](https://github.com/nickelsh1ts/streamarr/issues/876)
+* **network:** trust proxy presets and Cloudflare IP ranges ([#883](https://github.com/nickelsh1ts/streamarr/issues/883)) ([c952c9b](https://github.com/nickelsh1ts/streamarr/commit/c952c9baf872c4d3b8fa6700323ee283b6b2dbfa))
+* **services:** configure new-user defaults ([#870](https://github.com/nickelsh1ts/streamarr/issues/870)) ([0a5bceb](https://github.com/nickelsh1ts/streamarr/commit/0a5bceb6faf45410d86bd6fc7d616584b1f454a8))
+
+### 🐛 Bug Fixes
+
+* **auth:** align session entity with connect-typeorm soft-delete column ([#879](https://github.com/nickelsh1ts/streamarr/issues/879)) ([4de351f](https://github.com/nickelsh1ts/streamarr/commit/4de351f064e44ed5e6842d80eeb5f5ea88b03090))
+* **deps:** patch daisyUI join selectors rejected by Lightning CSS ([#878](https://github.com/nickelsh1ts/streamarr/issues/878)) ([c06ffb5](https://github.com/nickelsh1ts/streamarr/commit/c06ffb5184b9036622f520f66701bac0bbb0ca26))
+* **libraries:** make shared library defaults live ([#889](https://github.com/nickelsh1ts/streamarr/issues/889)) ([04c15c7](https://github.com/nickelsh1ts/streamarr/commit/04c15c74cdd77216f7b3ee083eb8d9528e96b717))
+* **libraries:** retry failed plex syncs ([#894](https://github.com/nickelsh1ts/streamarr/issues/894)) ([210000c](https://github.com/nickelsh1ts/streamarr/commit/210000cf88650cc5734c87c9d2d746551f3962cb))
+* **plex:** preserve explicit legacy library access ([#903](https://github.com/nickelsh1ts/streamarr/issues/903)) ([01b31fe](https://github.com/nickelsh1ts/streamarr/commit/01b31fe891b32512618dbc44ab5c8ec47e365c33))
+* **plex:** retain permissions for sync retries ([#902](https://github.com/nickelsh1ts/streamarr/issues/902)) ([afea879](https://github.com/nickelsh1ts/streamarr/commit/afea8799a0ca1734566907c914f2ebd92ecf117e))
+* **proxy:** use Undici 8 fetch for custom dispatchers ([#874](https://github.com/nickelsh1ts/streamarr/issues/874)) ([198ca28](https://github.com/nickelsh1ts/streamarr/commit/198ca286d3c915b10a2e0c5a39565d4d8285a4e0))
+* **request:** keep nav active state in sync with iframe routing ([#887](https://github.com/nickelsh1ts/streamarr/issues/887)) ([fbab64f](https://github.com/nickelsh1ts/streamarr/commit/fbab64f54204d12ab7c767dec33394c07344bf50))
+* **server:** stop scheduled jobs before restart ([#884](https://github.com/nickelsh1ts/streamarr/issues/884)) ([427090a](https://github.com/nickelsh1ts/streamarr/commit/427090a2a54ee56624698ba33c2c535a8f305ec3))
+
+### 💎 Styles
+
+* **resetPassword:** update reset input width & align page title ([#886](https://github.com/nickelsh1ts/streamarr/issues/886)) ([b779494](https://github.com/nickelsh1ts/streamarr/commit/b779494216de4ca9539980a0b73c4900bff19c1a))
+
+### 📦 Build System
+
+* **docker:** update node.js runtime to 8996bb5 ([#896](https://github.com/nickelsh1ts/streamarr/issues/896)) ([db96b29](https://github.com/nickelsh1ts/streamarr/commit/db96b29070b75754ae8ffe9aad761aff7f52794c))
+* **docker:** update node.js runtime to c6ad9e9 ([#875](https://github.com/nickelsh1ts/streamarr/issues/875)) ([1c4de44](https://github.com/nickelsh1ts/streamarr/commit/1c4de44975694aa007d0efd4f92aa915034e49e9))
+* **node:** update node.js runtime to v26 ([#871](https://github.com/nickelsh1ts/streamarr/issues/871)) ([cac2e33](https://github.com/nickelsh1ts/streamarr/commit/cac2e332023410add32f80ed271827c990a9ab17))
+
+### 🤖 CI/CD
+
+* **actions:** update github actions ([#821](https://github.com/nickelsh1ts/streamarr/issues/821)) ([29ad146](https://github.com/nickelsh1ts/streamarr/commit/29ad146e4be83d0562aa3c82340c3e6b0923b700))
+* **actions:** update github actions ([#840](https://github.com/nickelsh1ts/streamarr/issues/840)) ([65518a3](https://github.com/nickelsh1ts/streamarr/commit/65518a367b67c9fc5972a633734140cf4e60a216))
+
 ## [1.17.5](https://github.com/nickelsh1ts/streamarr/compare/v1.17.4...v1.17.5) (2026-11-01)
 
 ### 🐛 Bug Fixes
