@@ -383,7 +383,8 @@ class PlexSync {
    */
   public async syncUsers(
     users: User[],
-    options: PlexSyncOptions = {}
+    options: PlexSyncOptions = {},
+    isCancelled?: () => boolean
   ): Promise<PlexBulkSyncSummary> {
     const summary = { synced: 0, failed: 0, removed: 0 };
     const queue = users.filter(
@@ -416,7 +417,7 @@ class PlexSync {
         { length: Math.min(BULK_SYNC_CONCURRENCY, queue.length) },
         async () => {
           let user: User | undefined;
-          while ((user = queue.shift())) {
+          while (!isCancelled?.() && (user = queue.shift())) {
             try {
               await this.syncUserLibraries(user, options, batch);
               summary.synced++;
@@ -480,6 +481,7 @@ class PlexSync {
       )
     );
 
+    queue.forEach((user) => this.pendingSync.add(user.id));
     return summary;
   }
 
@@ -492,10 +494,12 @@ class PlexSync {
    * errors return 'failed'.
    */
   public async applyAndReconcile(
-    apply: () => ((value: string | null | undefined) => boolean) | null | false
+    apply: () => ((value: string | null | undefined) => boolean) | null | false,
+    isCancelled?: () => boolean
   ): Promise<PlexBulkSyncSummary | 'failed' | undefined> {
     let result: PlexBulkSyncSummary | 'failed' | undefined;
     await this.lock.dispatch('plex-reconcile', async () => {
+      if (isCancelled?.()) return;
       const affects = apply();
       if (affects === false || (!affects && this.pendingSync.size === 0)) {
         return;
@@ -514,7 +518,7 @@ class PlexSync {
           (user) =>
             pending.has(user.id) || !!affects?.(user.settings?.sharedLibraries)
         );
-        result = await this.syncUsers(users);
+        result = await this.syncUsers(users, {}, isCancelled);
         logger.info(
           affects
             ? 'Reconciled Plex shares after library settings change'
@@ -534,8 +538,8 @@ class PlexSync {
   }
 
   /** Retries users whose last library sync failed. */
-  public async retryPendingSync(): Promise<void> {
-    await this.applyAndReconcile(() => null);
+  public async retryPendingSync(isCancelled?: () => boolean): Promise<void> {
+    await this.applyAndReconcile(() => null, isCancelled);
   }
 
   /**

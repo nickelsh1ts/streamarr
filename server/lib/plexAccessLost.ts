@@ -168,9 +168,7 @@ export const validateActivePlexMembership = async (
   try {
     const isStopped = () => cancelled || (isCancelled?.() ?? false);
     await runMembershipValidation(isStopped);
-    if (!isStopped()) {
-      await plexSync.retryPendingSync();
-    }
+    await plexSync.retryPendingSync(isStopped);
   } finally {
     isRunning = false;
   }
