@@ -7,9 +7,10 @@ import logger from '@server/logger';
  * Standalone runner for the PMS JWT readiness probe.
  *
  * This is a developer-only diagnostic: it checks whether the local Plex
- * Media Server has begun accepting the server-scoped JWT that plex.tv mints,
- * which is the gate for retiring the legacy token entirely. It is NOT wired
- * into the running app; run it manually every so often to re-check:
+ * Media Server accepts the credential returned by plex.tv, distinguishing
+ * legacy tokens from JWT-format credentials. Acceptance is scoped to the
+ * tested endpoint, not full migration readiness. It is NOT wired into the
+ * running app; run it manually every so often to re-check:
  *
  *   pnpm probe:pms-jwt
  *
@@ -22,8 +23,15 @@ const run = async (): Promise<void> => {
   try {
     await getSettings().load();
     logger.info('Starting PMS JWT probe…', { label: 'Plex JWT' });
-    await probePmsJwtSupport();
-    logger.info('PMS JWT probe successfully completed.', { label: 'Plex JWT' });
+    const completed = await probePmsJwtSupport();
+    if (completed) {
+      logger.info(
+        'PMS JWT probe completed. See the credential-specific result above.',
+        { label: 'Plex JWT' }
+      );
+    } else {
+      process.exitCode = 1;
+    }
   } finally {
     await dbConnection.destroy();
   }
