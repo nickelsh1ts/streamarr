@@ -238,6 +238,9 @@ class PlexSync {
         const stored = await getRepository(UserSettings).findOne({
           where: { user: { id: user.id } },
         });
+        if (permissions.allowSync !== undefined && stored) {
+          permissions.allowSync = stored.allowDownloads ?? false;
+        }
         const libraryKeys = this.libraryKeysFor(
           (stored ?? user.settings)?.sharedLibraries
         );
@@ -298,9 +301,11 @@ class PlexSync {
         ) {
           throw e;
         }
-        if (this.pendingSync.get(user.id) === pending) {
-          this.pendingSync.set(user.id, permissions);
-        }
+        const current = this.pendingSync.get(user.id);
+        this.pendingSync.set(
+          user.id,
+          current === pending ? permissions : { ...permissions, ...current }
+        );
         throw new Error(`Plex sync error: ${message}`);
       }
     });
@@ -485,10 +490,11 @@ class PlexSync {
                   }
                   if (!restored) {
                     await handlePlexAccessLost(user);
+                    this.pendingSync.delete(user.id);
                   }
-                  this.pendingSync.delete(user.id);
                 });
                 if (restored) {
+                  await this.syncUserLibraries(user, options);
                   summary.synced++;
                 } else {
                   summary.removed++;
