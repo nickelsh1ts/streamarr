@@ -1,12 +1,16 @@
-FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS base
+FROM node:26-alpine3.24@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node
+
+FROM alpine:3.24@sha256:3f4d6b32e26703c6082839234f43769d5046b3ac7c910033911d1e71d8cd630a AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production
 
-RUN apk update && apk upgrade && apk add --no-cache libc6-compat tzdata tini && rm -rf /tmp/* \
+RUN apk update && apk upgrade && apk add --no-cache libatomic libstdc++ libc6-compat tzdata tini && rm -rf /tmp/* \
   && addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
 FROM base AS builder
+
+COPY --from=node /usr/local/ /usr/local/
 
 # Toolchain for node-gyp fallback when native prebuilds are unavailable
 RUN apk add --no-cache python3 make g++ \
@@ -36,7 +40,7 @@ RUN echo "{\"commitTag\": \"${COMMIT_TAG}\"}" > committag.json
 
 FROM builder AS prod-deps
 
-RUN npm prune --omit=dev 2>/dev/null; \
+RUN pnpm prune --prod --ignore-scripts && \
   pnpm store prune && rm -rf /root/.cache
 
 FROM base AS runner
@@ -47,6 +51,8 @@ LABEL org.opencontainers.image.source="https://github.com/nickelsh1ts/streamarr"
   org.opencontainers.image.licenses="MIT"
 
 WORKDIR /app
+
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
