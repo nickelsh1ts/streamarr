@@ -239,10 +239,6 @@ const ConfirmAccountForm = ({
           data?.inviteQuotaLimit ?? data?.globalInviteQuotaLimit ?? 1,
         inviteQuotaDays:
           data?.inviteQuotaDays ?? data?.globalInviteQuotaDays ?? 0,
-        sharedLibraries:
-          data?.sharedLibraries && data?.sharedLibraries !== ''
-            ? data.sharedLibraries
-            : 'server',
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
@@ -282,9 +278,6 @@ const ConfirmAccountForm = ({
           await axios.post(`/api/v1/user/${user.id}/settings/main`, {
             username: values.displayName,
             locale: values.locale,
-            sharedLibraries: values.sharedLibraries
-              ? values.sharedLibraries
-              : null,
           });
           // Save password settings only if newPassword is filled
           if (values.newPassword) {

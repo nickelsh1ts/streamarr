@@ -5,6 +5,7 @@ import LibraryMenu, { SingleItem } from '@app/components/Layout/LibraryMenu';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useHash from '@app/hooks/useHash';
+import useLocationPath from '@app/hooks/useLocationPath';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, useUser } from '@app/hooks/useUser';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
@@ -30,7 +31,6 @@ import type {
   UserSettingsGeneralResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -116,7 +116,7 @@ export const useBookMenuLinks = (): BookMenuLink[] => {
 };
 
 const Sidebar = () => {
-  const pathname = usePathname();
+  const pathname = useLocationPath();
   const hash = useHash();
   const currentUrl = pathname + (hash || '');
   const { hasPermission } = useUser();
@@ -393,7 +393,7 @@ interface SidebarProps {
 
 export const SidebarMenu = ({ onClick, isOpen }: SidebarProps) => {
   const { hasPermission, user } = useUser();
-  const pathname = usePathname();
+  const pathname = useLocationPath();
   const hash = useHash();
   const url = pathname + (hash || '');
   const intl = useIntl();
@@ -651,7 +651,7 @@ export const RequestMenu = ({
         defaultMessage: 'Requests',
       }),
       icon: <ClockIcon className="h-7 w-7" />,
-      regExp: /\/request\/requests/,
+      regExp: /\/request\/(requests|users\/\d+\/requests)/,
     },
     {
       href: '/request/issues',
@@ -681,7 +681,7 @@ export const RequestMenu = ({
         defaultMessage: 'Users',
       }),
       icon: <UsersIcon className="h-7 w-7" />,
-      regExp: /\/request\/users/,
+      regExp: /\/request\/users(?!\/\d+\/requests)/,
     });
   }
 

@@ -36,6 +36,11 @@ export const resetPasswordLimiter = createRateLimiter({
   max: 5, // limit each IP to 5 requests per window
 });
 
+export const passwordChangeLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // bounds current-password guessing from a hijacked session
+});
+
 export const audiobookshelfLinkLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10,

@@ -36,7 +36,8 @@ export const getPushSubscription = async () => {
 const verifySubscription = async (
   userId: number,
   subscription: PushSubscription,
-  vapidPublic: string
+  vapidPublic: string,
+  requireSessionLink = false
 ): Promise<boolean> => {
   try {
     const appServerKey = subscription.options?.applicationServerKey;
@@ -58,7 +59,8 @@ const verifySubscription = async (
       expectedServerKey === currentServerKey &&
       data.endpoint === endpoint &&
       keys?.p256dh === data.p256dh &&
-      keys.auth === data.auth
+      keys.auth === data.auth &&
+      (!requireSessionLink || data.linkedToSession)
     );
   } catch {
     return false;
@@ -139,10 +141,12 @@ export const verifyAndRegisterPushSubscription = async (
     return false;
   }
 
+  // Re-register only when unknown or not yet linked to this sign-in session
   const isValid = await verifySubscription(
     userId,
     subscription,
-    currentSettings.vapidPublic
+    currentSettings.vapidPublic,
+    true
   );
   if (isValid) {
     return true;

@@ -56,7 +56,7 @@ const ResetPassword = () => {
             </span>{' '}
             <FormattedMessage
               id="resetPassword.email.note"
-              defaultMessage="Note that Plex users must reset their password from the {plexLogo} login window."
+              defaultMessage="Note that {plexLogo} users must reset their password from the {plexLogo} login window."
               values={{
                 plexLogo: <PlexLogo className="inline-block size-9" />,
               }}
@@ -137,7 +137,7 @@ const ResetPassword = () => {
                     <Form>
                       <div>
                         <div className="mt-4 mb-2 sm:col-span-2">
-                          <div className="input input-primary mb-2 flex items-center">
+                          <div className="input input-primary mb-2 flex w-full items-center">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"

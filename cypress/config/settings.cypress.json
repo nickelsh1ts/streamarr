@@ -12,7 +12,7 @@
   "defaultQuotas": {
    "invites": {}
   },
-  "sharedLibraries": "",
+  "sharedLibraries": "all",
   "downloads": true,
   "liveTv": false,
   "plexHome": false,

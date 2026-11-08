@@ -34,11 +34,11 @@ To create a basic invite:
 2. Click **Create Invite**
 3. Click **Create** to generate the invite
 
-The invite will use default settings with:
+Invites created without **Advanced Invites** or **Manage Invites** always use the server defaults:
 
-- Single use
-- No expiration
-- Default library access
+- Usage limit and expiry from [Default Invite Quotas](../settings/README.md#default-invite-quotas) (1 day if no expiry is set)
+- Downloads and Live TV from [Default Invite Settings](../settings/README.md#default-invite-settings)
+- Only libraries that are both in the server default and in the creator's own access. If there is no overlap, the invite can't be created.
 
 ### Advanced Invite Options
 
@@ -67,7 +67,7 @@ Expired invites are automatically marked and cannot be redeemed.
 
 Which Plex libraries the invited user will have access to:
 
-- **Server Default** — Use the default from Settings
+- **Default Libraries** — The invited user follows [Default Shared Libraries](../settings/README.md#default-shared-libraries), including later changes
 - **All Libraries** — All enabled libraries
 - **Specific Libraries** — Select individual libraries to share
 

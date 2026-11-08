@@ -227,6 +227,9 @@
   "common.about": {
     "defaultMessage": "About"
   },
+  "common.accept": {
+    "defaultMessage": "Accept"
+  },
   "common.accountDeactivated": {
     "defaultMessage": "Account Deactivated"
   },
@@ -244,6 +247,9 @@
   },
   "common.addFirstTorrent": {
     "defaultMessage": "Add your first torrent to get started."
+  },
+  "common.added": {
+    "defaultMessage": "Added"
   },
   "common.addserver": {
     "defaultMessage": "Add {arrApp} Server"
@@ -676,6 +682,9 @@
   },
   "common.removeHeader": {
     "defaultMessage": "Remove"
+  },
+  "common.removed": {
+    "defaultMessage": "Removed"
   },
   "common.removing": {
     "defaultMessage": "Removing…"
@@ -1431,7 +1440,7 @@
     "defaultMessage": "Enable Image Caching"
   },
   "generalSettings.csrfProtection.description": {
-    "defaultMessage": "Set external API access to read-only (requires HTTPS)"
+    "defaultMessage": "Protect browser requests against forgery (requires HTTPS and token-aware API clients)"
   },
   "generalSettings.csrfProtection.label": {
     "defaultMessage": "Enable CSRF Protection"
@@ -4082,8 +4091,62 @@
   "networkSettings.scheduledRetryInterval.description": {
     "defaultMessage": "Time (in seconds) to wait between scheduled retry attempts."
   },
+  "networkSettings.sessionIpTracking.confirmMessage": {
+    "defaultMessage": "Disabling this will stop recording IP addresses. Additionally, every stored device IP address will be permanently deleted. This cannot be undone."
+  },
+  "networkSettings.sessionIpTracking.confirmTitle": {
+    "defaultMessage": "Stop Recording IP Addresses?"
+  },
+  "networkSettings.sessionIpTracking.description": {
+    "defaultMessage": "Save the IP address of each signed-in device. Behind a reverse proxy, enable Proxy Support."
+  },
+  "networkSettings.sessionIpTracking.label": {
+    "defaultMessage": "Record Device IP Addresses"
+  },
   "networkSettings.title": {
     "defaultMessage": "Network Settings"
+  },
+  "networkSettings.trustedProxies.additional": {
+    "defaultMessage": "Additional Trusted Proxies"
+  },
+  "networkSettings.trustedProxies.additional.description": {
+    "defaultMessage": "IP addresses or CIDR ranges separated by commas. With nothing selected, only the proxy connecting to Streamarr is trusted."
+  },
+  "networkSettings.trustedProxies.cloudflare": {
+    "defaultMessage": "Trust Cloudflare"
+  },
+  "networkSettings.trustedProxies.cloudflare.description": {
+    "defaultMessage": "Cloudflare's edge IP ranges, for sites proxied through Cloudflare. Not needed for Cloudflare Tunnel."
+  },
+  "networkSettings.trustedProxies.cloudflareCheck": {
+    "defaultMessage": "Check for Updates"
+  },
+  "networkSettings.trustedProxies.cloudflareCheckError": {
+    "defaultMessage": "Unable to check Cloudflare IP ranges"
+  },
+  "networkSettings.trustedProxies.cloudflareReviewDescription": {
+    "defaultMessage": "Cloudflare's published IP ranges have changed. Accepting replaces the trusted Cloudflare ranges and requires a restart."
+  },
+  "networkSettings.trustedProxies.cloudflareReviewTitle": {
+    "defaultMessage": "Update Cloudflare IP Ranges?"
+  },
+  "networkSettings.trustedProxies.cloudflareUpToDate": {
+    "defaultMessage": "Cloudflare IP ranges are up to date"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdateError": {
+    "defaultMessage": "Unable to update Cloudflare IP ranges"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdated": {
+    "defaultMessage": "Cloudflare IP ranges updated"
+  },
+  "networkSettings.trustedProxies.localNetworks": {
+    "defaultMessage": "Trust Local Networks"
+  },
+  "networkSettings.trustedProxies.localNetworks.description": {
+    "defaultMessage": "Loopback and private network addresses, such as a reverse proxy or Cloudflare Tunnel on the same host or Docker network"
+  },
+  "networkSettings.trustedProxies.validation.additional": {
+    "defaultMessage": "Enter IP addresses or CIDR ranges separated by commas"
   },
   "networkSettings.validation.requestTimeout": {
     "defaultMessage": "You must provide a valid request timeout"
@@ -4994,6 +5057,9 @@
   "plexSettings.title": {
     "defaultMessage": "Plex Settings"
   },
+  "plexSettings.toggleLibraryDefaultError": {
+    "defaultMessage": "It is the last enabled library in the default shared libraries. Change the default first."
+  },
   "plexSettings.toggleLibraryError": {
     "defaultMessage": "Failed to update library."
   },
@@ -5118,7 +5184,7 @@
     "defaultMessage": "Please enter the email address associated to your Local account."
   },
   "resetPassword.email.note": {
-    "defaultMessage": "Note that Plex users must reset their password from the {plexLogo} login window."
+    "defaultMessage": "Note that {plexLogo} users must reset their password from the {plexLogo} login window."
   },
   "resetPassword.email.sent": {
     "defaultMessage": "Check your email"
@@ -5131,6 +5197,9 @@
   },
   "resetPassword.help": {
     "defaultMessage": "Wait, I need more help"
+  },
+  "resetPassword.password.title": {
+    "defaultMessage": "Reset local password"
   },
   "resetPassword.passwordTooShort": {
     "defaultMessage": "Password is too short; should be a minimum of 8 characters"
@@ -5165,6 +5234,36 @@
   "serviceUnavailable.unreachableMessage": {
     "defaultMessage": "Unable to connect to {serviceName}. Service is unreachable."
   },
+  "servicesSettings.absDefaults.accessAllLibraries": {
+    "defaultMessage": "Access All Libraries"
+  },
+  "servicesSettings.absDefaults.accessAllTags": {
+    "defaultMessage": "Access All Tags"
+  },
+  "servicesSettings.absDefaults.accessExplicitContent": {
+    "defaultMessage": "Access Explicit Content"
+  },
+  "servicesSettings.absDefaults.delete": {
+    "defaultMessage": "Allow Deleting Media"
+  },
+  "servicesSettings.absDefaults.download": {
+    "defaultMessage": "Allow Downloads"
+  },
+  "servicesSettings.absDefaults.libraries": {
+    "defaultMessage": "Allowed Libraries"
+  },
+  "servicesSettings.absDefaults.optionsUnavailable": {
+    "defaultMessage": "Library and tag options are currently unavailable. Audiobookshelf may be unreachable."
+  },
+  "servicesSettings.absDefaults.tags": {
+    "defaultMessage": "Allowed Tags"
+  },
+  "servicesSettings.absDefaults.update": {
+    "defaultMessage": "Allow Metadata Updates"
+  },
+  "servicesSettings.absDefaults.upload": {
+    "defaultMessage": "Allow Uploads"
+  },
   "servicesSettings.audiobookshelf.alertDescription": {
     "defaultMessage": "Audiobookshelf must be started with its ROUTER_BASE_PATH environment variable set to the same value as the URL Base below (e.g. /audiobookshelf). Without it, Audiobookshelf serves its assets from the root and they will fail to load inside Streamarr. Restart Audiobookshelf after changing ROUTER_BASE_PATH."
   },
@@ -5179,6 +5278,9 @@
   },
   "servicesSettings.audiobookshelf.enableNewUserSignIn.description": {
     "defaultMessage": "Allow users to create an Audiobookshelf account."
+  },
+  "servicesSettings.audiobookshelf.loadError": {
+    "defaultMessage": "Unable to load Audiobookshelf settings."
   },
   "servicesSettings.audiobookshelf.title": {
     "defaultMessage": "Audiobookshelf Settings"
@@ -5255,6 +5357,9 @@
   "servicesSettings.cleanuparr.title": {
     "defaultMessage": "Cleanuparr Settings"
   },
+  "servicesSettings.defaultUserSettings": {
+    "defaultMessage": "Default User Settings"
+  },
   "servicesSettings.disableAuth": {
     "defaultMessage": "Authentication"
   },
@@ -5306,6 +5411,12 @@
   "servicesSettings.lidarr.title": {
     "defaultMessage": "Lidarr Settings"
   },
+  "servicesSettings.newUserSettings": {
+    "defaultMessage": "New User Settings"
+  },
+  "servicesSettings.newUserSettings.description": {
+    "defaultMessage": "Settings applied when a new user is created."
+  },
   "servicesSettings.nexroll.description": {
     "defaultMessage": "Optionally configure the settings for your NeXroll server."
   },
@@ -5339,8 +5450,53 @@
   "servicesSettings.shelfmark.enableNewUserSignIn.description": {
     "defaultMessage": "Allow users to create and manage their own Shelfmark accounts."
   },
+  "servicesSettings.shelfmark.loadError": {
+    "defaultMessage": "Unable to load Shelfmark settings."
+  },
   "servicesSettings.shelfmark.title": {
     "defaultMessage": "Shelfmark Settings"
+  },
+  "servicesSettings.shelfmarkDefaults.audiobook": {
+    "defaultMessage": "Audiobook"
+  },
+  "servicesSettings.shelfmarkDefaults.blocked": {
+    "defaultMessage": "Blocked"
+  },
+  "servicesSettings.shelfmarkDefaults.default": {
+    "defaultMessage": "Default"
+  },
+  "servicesSettings.shelfmarkDefaults.download": {
+    "defaultMessage": "Download"
+  },
+  "servicesSettings.shelfmarkDefaults.ebook": {
+    "defaultMessage": "Ebook"
+  },
+  "servicesSettings.shelfmarkDefaults.limitInvalid": {
+    "defaultMessage": "Enter a whole number between 1 and 1000."
+  },
+  "servicesSettings.shelfmarkDefaults.requestBook": {
+    "defaultMessage": "Request Book"
+  },
+  "servicesSettings.shelfmarkDefaults.requestRelease": {
+    "defaultMessage": "Request Release"
+  },
+  "servicesSettings.shelfmarkRequests.enabled": {
+    "defaultMessage": "Enable Requests"
+  },
+  "servicesSettings.shelfmarkRequests.envLocked": {
+    "defaultMessage": "Some request settings are managed by Shelfmark environment variables."
+  },
+  "servicesSettings.shelfmarkRequests.global": {
+    "defaultMessage": "Global Request Settings"
+  },
+  "servicesSettings.shelfmarkRequests.limit": {
+    "defaultMessage": "Max Pending Requests Per User"
+  },
+  "servicesSettings.shelfmarkRequests.notes": {
+    "defaultMessage": "Allow Notes on Requests"
+  },
+  "servicesSettings.shelfmarkRequests.unavailable": {
+    "defaultMessage": "Shelfmark is currently unavailable..."
   },
   "servicesSettings.tautulli.description": {
     "defaultMessage": "Optionally configure the settings for your Tautulli server. Streamarr proxies tautulli at /activity for users."
@@ -6359,8 +6515,11 @@
   "userSettings.defaultSharedLibraries": {
     "defaultMessage": "Default Shared Libraries"
   },
-  "userSettings.defaultSharedLibrariesDescription": {
-    "defaultMessage": "Initial libraries shared with new users"
+  "userSettings.defaultSharedLibrariesChangedWarning": {
+    "defaultMessage": "Saving will update Plex library access for every user set to Default."
+  },
+  "userSettings.defaultSharedLibrariesFollowDescription": {
+    "defaultMessage": "Libraries shared with users set to Default. Changes are synced to Plex for those users."
   },
   "userSettings.description": {
     "defaultMessage": "Configure global and default user settings."
@@ -6509,6 +6668,18 @@
   "userSettings.password.currentRequired": {
     "defaultMessage": "You must provide your current password"
   },
+  "userSettings.password.endAllSessions": {
+    "defaultMessage": "Sign Out All Devices"
+  },
+  "userSettings.password.endAllSessionsDescription": {
+    "defaultMessage": "The user will be signed out of all devices."
+  },
+  "userSettings.password.endOtherSessions": {
+    "defaultMessage": "Sign Out Other Devices"
+  },
+  "userSettings.password.endOtherSessionsDescription": {
+    "defaultMessage": "Other devices will be signed out."
+  },
   "userSettings.password.newRequired": {
     "defaultMessage": "You must provide a new password"
   },
@@ -6547,6 +6718,75 @@
   },
   "userSettings.saveSuccess": {
     "defaultMessage": "User settings saved successfully!"
+  },
+  "userSettings.sessions.currentSession": {
+    "defaultMessage": "Current Device"
+  },
+  "userSettings.sessions.descriptionOther": {
+    "defaultMessage": "Devices where this user is signed in to Streamarr."
+  },
+  "userSettings.sessions.descriptionOwn": {
+    "defaultMessage": "Devices where you are signed in to Streamarr. Sign out any you don't recognize."
+  },
+  "userSettings.sessions.ipAddress": {
+    "defaultMessage": "IP Address"
+  },
+  "userSettings.sessions.lastActiveLabel": {
+    "defaultMessage": "Last Active"
+  },
+  "userSettings.sessions.methodLocal": {
+    "defaultMessage": "Email & Password"
+  },
+  "userSettings.sessions.methodPlex": {
+    "defaultMessage": "Plex"
+  },
+  "userSettings.sessions.methodSignup": {
+    "defaultMessage": "Invite Sign-Up"
+  },
+  "userSettings.sessions.none": {
+    "defaultMessage": "There are no signed-in devices."
+  },
+  "userSettings.sessions.revoke": {
+    "defaultMessage": "Revoke Device"
+  },
+  "userSettings.sessions.signInMethod": {
+    "defaultMessage": "Sign-In Method"
+  },
+  "userSettings.sessions.signOut": {
+    "defaultMessage": "Sign Out"
+  },
+  "userSettings.sessions.signOutAll": {
+    "defaultMessage": "Sign Out All Devices"
+  },
+  "userSettings.sessions.signOutAllOtherConfirm": {
+    "defaultMessage": "This user will be signed out on every device and will need to sign in again."
+  },
+  "userSettings.sessions.signOutAllOwnConfirm": {
+    "defaultMessage": "Every device, including this one, will be signed out and need to sign in again."
+  },
+  "userSettings.sessions.signOutError": {
+    "defaultMessage": "Something went wrong while signing out devices."
+  },
+  "userSettings.sessions.signOutOthers": {
+    "defaultMessage": "Sign Out Other Devices"
+  },
+  "userSettings.sessions.signOutOthersConfirm": {
+    "defaultMessage": "Every device other than this one will be signed out and need to sign in again."
+  },
+  "userSettings.sessions.signedIn": {
+    "defaultMessage": "Signed in {date}"
+  },
+  "userSettings.sessions.signedOutMany": {
+    "defaultMessage": "Devices signed out."
+  },
+  "userSettings.sessions.signedOutOne": {
+    "defaultMessage": "Device signed out."
+  },
+  "userSettings.sessions.title": {
+    "defaultMessage": "Devices"
+  },
+  "userSettings.sessions.unknownDevice": {
+    "defaultMessage": "Unknown Device"
   },
   "userSettings.title": {
     "defaultMessage": "User Settings"

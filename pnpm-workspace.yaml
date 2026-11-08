@@ -7,5 +7,10 @@ allowBuilds:
   esbuild: false
   unrs-resolver: false
   better-sqlite3: true
+ignoredOptionalDependencies:
+  - preview-email
 overrides:
   eslint-config-next>typescript-eslint: ^8.58.2
+  email-templates>nodemailer: 10.3.1
+patchedDependencies:
+  daisyui@5.7.50: patches/daisyui@5.7.50.patch

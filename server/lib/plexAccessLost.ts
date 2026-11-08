@@ -12,6 +12,7 @@ import { userAcceptsNotificationType } from '@server/lib/notifications';
 import { sendGroupNotification } from '@server/lib/notifications/dispatch';
 import { Permission } from '@server/lib/permissions';
 import { getAdminPlexTvCredential } from '@server/lib/plexAuth/credentials';
+import { plexSync } from '@server/lib/plexSync';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 
@@ -40,7 +41,11 @@ export const handlePlexAccessLost = async (user: User): Promise<void> => {
     user.active = false;
     user.accessRevokedAt = new Date();
     user.accessRevokedReason = 'plex_removed';
-    await getRepository(User).save(user);
+    await getRepository(User).update(user.id, {
+      active: user.active,
+      accessRevokedAt: user.accessRevokedAt,
+      accessRevokedReason: user.accessRevokedReason,
+    });
 
     try {
       const settingsRepository = getRepository(UserSettings);
@@ -149,7 +154,8 @@ export const handlePlexAccessLost = async (user: User): Promise<void> => {
 
 /**
  * Validates that every active Plex user still exists in the Plex server's
- * shared users list, deactivating any that have been removed out-of-band.
+ * shared users list, deactivating any that have been removed out-of-band,
+ * then retries users whose last library sync failed.
  */
 let isRunning = false;
 let cancelled = false;
@@ -164,9 +170,11 @@ export const validateActivePlexMembership = async (
   cancelled = false;
 
   try {
-    await runMembershipValidation(
-      () => cancelled || (isCancelled?.() ?? false)
-    );
+    const isStopped = () => cancelled || (isCancelled?.() ?? false);
+    // Retrying while plex.tv can't list users could wrongly remove them
+    if (await runMembershipValidation(isStopped)) {
+      await plexSync.retryPendingSync(isStopped);
+    }
   } finally {
     isRunning = false;
   }
@@ -191,9 +199,10 @@ export const plexAccess = {
   },
 };
 
+/** Returns false when the Plex users list couldn't be read. */
 const runMembershipValidation = async (
   isCancelled?: () => boolean
-): Promise<void> => {
+): Promise<boolean> => {
   const settings = getSettings();
   const machineId = settings.plex.machineId;
   const adminToken = await getAdminPlexTvCredential();
@@ -203,7 +212,7 @@ const runMembershipValidation = async (
       'Missing admin Plex token or machineId — Plex membership validation skipped.',
       { label: 'Jobs' }
     );
-    return;
+    return false;
   }
 
   const activeUsers = await getRepository(User)
@@ -215,7 +224,7 @@ const runMembershipValidation = async (
     .getMany();
 
   if (activeUsers.length === 0) {
-    return;
+    return true;
   }
 
   let plexUsers: Awaited<
@@ -233,7 +242,7 @@ const runMembershipValidation = async (
         errorMessage: e instanceof Error ? e.message : String(e),
       }
     );
-    return;
+    return false;
   }
 
   if (plexUsers.length === 0) {
@@ -241,7 +250,7 @@ const runMembershipValidation = async (
       'plex.tv returned no shared users — Plex membership validation skipped.',
       { label: 'Jobs' }
     );
-    return;
+    return false;
   }
 
   const sharedIds = new Set<number>();
@@ -269,7 +278,7 @@ const runMembershipValidation = async (
 
   for (const user of activeUsers) {
     if (isCancelled?.()) {
-      return;
+      return false;
     }
 
     const hasAccess =
@@ -282,4 +291,5 @@ const runMembershipValidation = async (
       await handlePlexAccessLost(user);
     }
   }
+  return true;
 };

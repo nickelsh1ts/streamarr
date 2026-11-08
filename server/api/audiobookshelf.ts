@@ -14,6 +14,7 @@ export interface Permissions {
   accessAllLibraries: boolean;
   accessAllTags: boolean;
   accessExplicitContent: boolean;
+  selectedTagsNotAccessible?: boolean;
 }
 
 export interface ServerSettings {
@@ -62,7 +63,7 @@ export interface User {
   createdAt: number;
   permissions: Permissions;
   librariesAccessible: string[];
-  itemTagsAccessible: string[];
+  itemTagsSelected: string[];
 }
 
 interface UserListResponse {
@@ -90,7 +91,7 @@ export interface createUser extends Record<string, unknown> {
   lastSeen?: number;
   createdAt?: number;
   librariesAccessible?: string[];
-  itemTagsAccessible?: string[];
+  itemTagsSelected?: string[];
 }
 
 export interface Library {
@@ -325,6 +326,13 @@ class AudiobookshelfAPI extends ExternalAPI {
         `[Audiobookshelf] Failed to retrieve library by ID: ${e instanceof Error ? e.message : String(e)}`
       );
     }
+  }
+
+  public async getLibraryTags(libraryId: string): Promise<string[]> {
+    const data = await this.get<{ tags: string[] }>(
+      `/api/libraries/${encodeURIComponent(libraryId)}/filterdata`
+    );
+    return data.tags;
   }
 
   public async getLibraryItems(libraryId: string): Promise<LibraryItemResults> {

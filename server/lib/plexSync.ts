@@ -1,11 +1,16 @@
-import PlexTvAPI, { extractPlexError } from '@server/api/plextv';
+import PlexTvAPI, {
+  extractPlexError,
+  type UsersResponse,
+} from '@server/api/plextv';
+import { UserType } from '@server/constants/user';
 import { getRepository } from '@server/datasource';
-import type { User } from '@server/entity/User';
+import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
-  PlexSharePermissions,
+  PlexSharedSection,
   PlexUserIdentity,
 } from '@server/interfaces/api/plexInterfaces';
+import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import {
   getAdminPlexTvCredential,
   preferPlexJwt,
@@ -15,15 +20,29 @@ import logger from '@server/logger';
 import AsyncLock from '@server/utils/asyncLock';
 import {
   isDefaultSentinel,
-  materializeDefaultSnapshot,
   resolveSharedLibraryKeys,
+  shareLibraryKeys,
+  sharedLibrariesFromShare,
 } from '@server/utils/sharedLibraries';
 
 const LABEL = 'Plex Sync';
 const AUTO_ACCEPT_ATTEMPTS = 5;
 const AUTO_ACCEPT_DELAY_MS = 3_000;
+const BULK_SYNC_CONCURRENCY = 3;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const PERMISSION_KEYS = [
+  'allowSync',
+  'allowCameraUpload',
+  'allowChannels',
+] as const;
+
+/** Admin API and users list fetched once and reused across a batch. */
+export interface PlexBatch {
+  api: PlexTvAPI;
+  users: UsersResponse;
+}
 
 export class PlexUserNotFoundError extends Error {
   constructor() {
@@ -32,22 +51,33 @@ export class PlexUserNotFoundError extends Error {
   }
 }
 
+export class NoSharedLibrariesError extends Error {
+  constructor() {
+    super('Shared libraries resolve to no enabled libraries.');
+    this.name = 'NoSharedLibrariesError';
+  }
+}
+
 export interface PlexSyncOptions {
   /** undefined leaves the current Plex value unchanged */
   allowSync?: boolean;
   allowCameraUpload?: boolean;
   allowChannels?: boolean;
-  plexHome?: boolean;
 }
 
 export interface PlexInviteOptions {
-  libraries: string[];
   allowSync?: boolean;
   allowCameraUpload?: boolean;
   allowChannels?: boolean;
   /** Invite to the owner's Plex Home instead of a regular share */
   plexHome?: boolean;
   userTokenOverride?: string;
+}
+
+export interface PlexBulkSyncSummary {
+  synced: number;
+  failed: number;
+  removed: number;
 }
 
 /**
@@ -57,6 +87,25 @@ export interface PlexInviteOptions {
 class PlexSync {
   private settings = getSettings();
   private lock = new AsyncLock();
+  // Users whose last library sync failed; retried by the next reconcile
+  private pendingSync = new Map<number, PlexSyncOptions>();
+
+  private syncOptionsFor(
+    userId: number,
+    options: PlexSyncOptions
+  ): PlexSyncOptions {
+    const merged = { ...this.pendingSync.get(userId) };
+    for (const key of PERMISSION_KEYS) {
+      if (options[key] !== undefined) {
+        merged[key] = options[key];
+      }
+    }
+    return merged;
+  }
+
+  private queuePendingSync(userId: number, options: PlexSyncOptions): void {
+    this.pendingSync.set(userId, this.syncOptionsFor(userId, options));
+  }
 
   private async getAdminApi(): Promise<PlexTvAPI> {
     const credential = await getAdminPlexTvCredential();
@@ -84,15 +133,42 @@ class PlexSync {
     return this.settings.plex.libraries.filter((library) => library.enabled);
   }
 
+  /** Enabled library keys a stored sharedLibraries value grants right now. */
+  public resolveLibraryKeys(value: string | null | undefined): string[] {
+    return resolveSharedLibraryKeys({
+      value,
+      adminDefault: this.settings.main.sharedLibraries,
+      enabledLibraries: this.enabledLibraries(),
+    });
+  }
+
+  private libraryKeysFor(value: string | null | undefined): string[] {
+    const keys = this.resolveLibraryKeys(value);
+    // An empty section list would share every library on Plex
+    if (keys.length === 0) {
+      throw new NoSharedLibrariesError();
+    }
+    return keys;
+  }
+
+  /**
+   * Maps server-local library keys to the global section ids plex.tv needs,
+   * using already known sections (e.g. from a share) before fetching.
+   */
   private async mapKeysToSectionIds(
     api: PlexTvAPI,
     machineId: string,
-    libraryKeys: string[]
+    libraryKeys: string[],
+    knownSections: Pick<PlexSharedSection, 'key' | 'id'>[] = []
   ): Promise<number[]> {
-    const sections = await api.getServerSections(machineId);
     const idsByKey = new Map(
-      sections.map((section) => [section.key, section.id])
+      knownSections.map((section) => [section.key, section.id])
     );
+    if (libraryKeys.some((key) => !idsByKey.has(key))) {
+      for (const section of await api.getServerSections(machineId)) {
+        idsByKey.set(section.key, section.id);
+      }
+    }
     return libraryKeys.map((key) => {
       const sectionId = idsByKey.get(key);
       if (sectionId === undefined) {
@@ -104,13 +180,12 @@ class PlexSync {
 
   /**
    * Gets the user's current library access on the Plex server.
-   * The empty array means "all libraries".
    * `existsInPlex` is false when the user is definitively absent from the
    * server's shared users list (transport errors still throw).
    */
   public async getCurrentPlexLibraries(user: User): Promise<{
     existsInPlex: boolean;
-    libraries: string[];
+    libraries: string[] | 'all';
     permissions?: {
       allowSync: boolean;
       allowCameraUpload: boolean;
@@ -130,11 +205,7 @@ class PlexSync {
 
     return {
       existsInPlex: true,
-      libraries: share.allLibraries
-        ? []
-        : share.sections
-            .filter((section) => section.shared)
-            .map((section) => section.key),
+      libraries: shareLibraryKeys(share),
       permissions: {
         allowSync: share.allowSync,
         allowCameraUpload: share.allowCameraUpload,
@@ -144,86 +215,79 @@ class PlexSync {
   }
 
   /**
-   * Syncs a user's Plex library access to the given sharedLibraries value.
-   *
-   * A default sentinel (null/''/'server') is materialized to a snapshot of
-   * the current server default and written back to the user's settings
-   * before syncing. Resolution failures (no enabled
-   * libraries) throw and leave the existing share untouched.
-   * Permissions are tri-state: only explicitly provided values can trigger
-   * the share recreation that updates them.
+   * Reconciles a user's Plex share with the libraries they are granted (see
+   * libraryKeysFor), skipping the update when nothing differs. Resolution
+   * failures throw and leave the existing share untouched. Permissions are
+   * tri-state: only explicitly provided values can trigger the share
+   * recreation that updates them.
    */
   public async syncUserLibraries(
     user: User,
-    sharedLibraries: string | null,
-    options: PlexSyncOptions = {}
+    options: PlexSyncOptions = {},
+    batch?: PlexBatch
   ): Promise<void> {
     this.assertHasIdentity(user);
 
     await this.lock.dispatch(`plex-share-${user.id}`, async () => {
+      const pending = this.pendingSync.get(user.id);
+      const permissions = this.syncOptionsFor(user.id, options);
       try {
         const machineId = this.settings.plex.machineId;
-        const api = await this.getAdminApi();
-        const enabledLibraries = this.enabledLibraries();
-
-        let value: string | null = sharedLibraries;
-        if (isDefaultSentinel(value)) {
-          const snapshot = materializeDefaultSnapshot({
-            adminDefault: this.settings.main.sharedLibraries,
-            enabledLibraries,
-          });
-          value = snapshot;
-          if (user.settings && user.settings.sharedLibraries !== snapshot) {
-            user.settings.sharedLibraries = snapshot;
-            await getRepository(UserSettings).save(user.settings);
-            logger.debug('Assigned server-default libraries to user', {
-              label: LABEL,
-              userId: user.id,
-              snapshot,
-            });
-          }
-        }
-
-        const libraryKeys = resolveSharedLibraryKeys({
-          value,
-          adminDefault: this.settings.main.sharedLibraries,
-          enabledLibraries,
+        const api = batch?.api ?? (await this.getAdminApi());
+        // Queued work must not replay a stale in-memory assignment
+        const stored = await getRepository(UserSettings).findOne({
+          where: { user: { id: user.id } },
         });
-
-        if (libraryKeys.length === 0) {
-          throw new Error(
-            'Selected shared libraries resolve to no enabled libraries — refusing to sync.'
-          );
+        if (permissions.allowSync !== undefined && stored) {
+          permissions.allowSync = stored.allowDownloads ?? false;
         }
+        const libraryKeys = this.libraryKeysFor(
+          (stored ?? user.settings)?.sharedLibraries
+        );
 
-        const share = await api.getUserShare(this.getIdentity(user), machineId);
+        const identity = this.getIdentity(user);
+        const share =
+          (await api.getUserShare(identity, machineId, batch?.users)) ??
+          // The batch list may predate a re-invite
+          (batch ? await api.getUserShare(identity, machineId) : null);
         if (!share) {
           throw new PlexUserNotFoundError();
         }
 
-        const sectionIds = await this.mapKeysToSectionIds(
-          api,
-          machineId,
-          libraryKeys
-        );
-
-        const permissions: PlexSharePermissions = {};
-        if (options.allowSync !== undefined) {
-          permissions.allowSync = options.allowSync;
-        }
-        if (options.allowCameraUpload !== undefined) {
-          permissions.allowCameraUpload = options.allowCameraUpload;
-        }
-        if (options.allowChannels !== undefined) {
-          permissions.allowChannels = options.allowChannels;
+        const sharedKeys = shareLibraryKeys(share);
+        const unchanged =
+          sharedKeys !== 'all' &&
+          sharedKeys.length === libraryKeys.length &&
+          libraryKeys.every((key) => sharedKeys.includes(key)) &&
+          PERMISSION_KEYS.every(
+            (key) =>
+              permissions[key] === undefined || permissions[key] === share[key]
+          );
+        if (unchanged) {
+          if (this.pendingSync.get(user.id) === pending) {
+            this.pendingSync.delete(user.id);
+          }
+          return;
         }
 
         await api.updateUserShare({
           machineId,
           share,
-          sectionIds,
-          permissions,
+          sectionIds: await this.mapKeysToSectionIds(
+            api,
+            machineId,
+            libraryKeys,
+            share.sections
+          ),
+          permissions: {
+            allowSync: permissions.allowSync,
+            allowCameraUpload: permissions.allowCameraUpload,
+            allowChannels: permissions.allowChannels,
+          },
         });
+        if (this.pendingSync.get(user.id) === pending) {
+          this.pendingSync.delete(user.id);
+        }
       } catch (e) {
         const message = extractPlexError(e);
         logger.error(`Failed to sync Plex libraries for user ${user.email}`, {
@@ -231,12 +295,28 @@ class PlexSync {
           userId: user.id,
           error: message,
         });
-        if (e instanceof PlexUserNotFoundError) {
+        if (
+          e instanceof PlexUserNotFoundError ||
+          e instanceof NoSharedLibrariesError
+        ) {
           throw e;
         }
+        const current = this.pendingSync.get(user.id);
+        this.pendingSync.set(
+          user.id,
+          current === pending ? permissions : { ...permissions, ...current }
+        );
         throw new Error(`Plex sync error: ${message}`);
       }
     });
+  }
+
+  /** Runs share changes made outside plexSync exclusively with the user's syncs. */
+  public async withUserLock(
+    user: User,
+    callback: () => Promise<void>
+  ): Promise<void> {
+    await this.lock.dispatch(`plex-share-${user.id}`, callback);
   }
 
   /**
@@ -263,7 +343,7 @@ class PlexSync {
     const sectionIds = await this.mapKeysToSectionIds(
       api,
       machineId,
-      options.libraries
+      this.libraryKeysFor(user.settings?.sharedLibraries)
     );
 
     let lastError: unknown;
@@ -281,7 +361,28 @@ class PlexSync {
         };
 
         if (options.plexHome) {
-          await api.inviteHomeUser(payload);
+          const { existingFriend } = await api.inviteHomeUser(payload);
+          if (existingFriend) {
+            // The Home invite leaves an existing friend's share as-is
+            const share = await api.getUserShare(
+              this.getIdentity(user),
+              machineId
+            );
+            if (share) {
+              await api.updateUserShare({
+                machineId,
+                share,
+                sectionIds,
+                permissions: {
+                  allowSync: payload.allowSync,
+                  allowCameraUpload: payload.allowCameraUpload,
+                  allowChannels: payload.allowChannels,
+                },
+              });
+            } else {
+              await api.inviteUserToServer(payload);
+            }
+          }
         } else {
           await api.inviteUserToServer(payload);
         }
@@ -304,6 +405,223 @@ class PlexSync {
 
     this.scheduleAutoAccept(user, {
       userTokenOverride: options.userTokenOverride,
+    });
+  }
+
+  /**
+   * Syncs many users' shares a few at a time to avoid hammering plex.tv.
+   * Users missing from Plex, or left with no enabled libraries, lose access
+   * and are deactivated.
+   */
+  public async syncUsers(
+    users: User[],
+    options: PlexSyncOptions = {},
+    isCancelled?: () => boolean
+  ): Promise<PlexBulkSyncSummary> {
+    const summary = { synced: 0, failed: 0, removed: 0 };
+    const queue = users.filter(
+      (user) => user.userType === UserType.PLEX && user.active && user.email
+    );
+    if (queue.length === 0) {
+      return summary;
+    }
+
+    let batch: PlexBatch;
+    try {
+      const api = await this.getAdminApi();
+      batch = { api, users: await api.getUsers() };
+      // Trusting an empty list would remove every user
+      if (!batch.users.MediaContainer?.User) {
+        throw new Error('plex.tv returned no shared users');
+      }
+    } catch (e) {
+      logger.error('Failed to start Plex sync', {
+        label: LABEL,
+        error: extractPlexError(e),
+      });
+      queue.forEach((user) => this.queuePendingSync(user.id, options));
+      return { ...summary, failed: queue.length };
+    }
+    const { api } = batch;
+
+    await Promise.all(
+      Array.from(
+        { length: Math.min(BULK_SYNC_CONCURRENCY, queue.length) },
+        async () => {
+          let user: User | undefined;
+          while (!isCancelled?.() && (user = queue.shift())) {
+            try {
+              await this.syncUserLibraries(user, options, batch);
+              summary.synced++;
+            } catch (e) {
+              // syncUserLibraries already logged the failure
+              if (
+                !(e instanceof PlexUserNotFoundError) &&
+                !(e instanceof NoSharedLibrariesError)
+              ) {
+                summary.failed++;
+                continue;
+              }
+              try {
+                const machineId = this.settings.plex.machineId;
+                const identity = this.getIdentity(user);
+                let restored = false;
+                // Decide under the user's lock so a re-invite can't interleave
+                await this.withUserLock(user, async () => {
+                  if (e instanceof PlexUserNotFoundError) {
+                    restored = !!(await api.getUserShare(identity, machineId));
+                  } else {
+                    // A save in between already synced any new assignment
+                    const stored = await getRepository(UserSettings).findOne({
+                      where: { user: { id: user.id } },
+                    });
+                    restored =
+                      this.resolveLibraryKeys(stored?.sharedLibraries).length >
+                      0;
+                    if (!restored) {
+                      const plexId =
+                        user.plexId ??
+                        (await api.getUserShare(identity, machineId))
+                          ?.accountId;
+                      if (plexId) {
+                        await api.deprovisionUser(plexId, machineId);
+                      }
+                    }
+                  }
+                  if (!restored) {
+                    await handlePlexAccessLost(user);
+                    this.pendingSync.delete(user.id);
+                  }
+                });
+                if (restored) {
+                  await this.syncUserLibraries(user, options);
+                  summary.synced++;
+                } else {
+                  summary.removed++;
+                }
+              } catch (e) {
+                summary.failed++;
+                this.queuePendingSync(user.id, options);
+                logger.error('Failed to remove Plex access for user', {
+                  label: LABEL,
+                  userId: user.id,
+                  error: extractPlexError(e),
+                });
+              }
+            }
+          }
+        }
+      )
+    );
+
+    queue.forEach((user) => this.queuePendingSync(user.id, options));
+    return summary;
+  }
+
+  /**
+   * Applies a library settings change and reconciles the users it affects as
+   * one step, so concurrent changes can't interleave with a running sync.
+   * `apply` returns which stored values are affected, null when nothing
+   * changed, or false when the change was rejected. Users whose last sync
+   * failed are retried unless rejected. Errors from `apply` propagate; sync
+   * errors return 'failed'.
+   */
+  public async applyAndReconcile(
+    apply: () => ((value: string | null | undefined) => boolean) | null | false,
+    isCancelled?: () => boolean
+  ): Promise<PlexBulkSyncSummary | 'failed' | undefined> {
+    let result: PlexBulkSyncSummary | 'failed' | undefined;
+    await this.lock.dispatch('plex-reconcile', async () => {
+      if (isCancelled?.()) return;
+      const affects = apply();
+      if (affects === false || (!affects && this.pendingSync.size === 0)) {
+        return;
+      }
+      // Failures are re-added by syncUsers; inactive or deleted users drop out
+      const pending = new Map(this.pendingSync);
+      try {
+        const users = (
+          await getRepository(User)
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.settings', 'settings')
+            .where('user.id != 1')
+            .getMany()
+        ).filter(
+          (user) =>
+            user.userType === UserType.PLEX &&
+            user.active &&
+            user.email &&
+            (pending.has(user.id) ||
+              !!affects?.(user.settings?.sharedLibraries))
+        );
+        const userIds = new Set(users.map((user) => user.id));
+        for (const [userId, options] of pending) {
+          if (
+            !userIds.has(userId) &&
+            this.pendingSync.get(userId) === options
+          ) {
+            this.pendingSync.delete(userId);
+          }
+        }
+        result = await this.syncUsers(users, {}, isCancelled);
+        logger.info(
+          affects
+            ? 'Reconciled Plex shares after library settings change'
+            : 'Retried pending Plex library syncs',
+          { label: LABEL, ...result }
+        );
+      } catch (e) {
+        logger.error('Failed to reconcile Plex shares', {
+          label: LABEL,
+          error: extractPlexError(e),
+        });
+        result = 'failed';
+      }
+    });
+    return result;
+  }
+
+  /** Retries users whose last library sync failed. */
+  public async retryPendingSync(isCancelled?: () => boolean): Promise<void> {
+    await this.applyAndReconcile(() => null, isCancelled);
+  }
+
+  /**
+   * Adopts a newly created Plex user's existing share as their assigned
+   * access, so Streamarr reflects what Plex already grants. A share matching
+   * the server default leaves the user following the default.
+   */
+  public async adoptPlexAccess(user: User, batch?: PlexBatch): Promise<void> {
+    const settings =
+      user.settings ??
+      (await getRepository(UserSettings).findOne({
+        where: { user: { id: user.id } },
+      })) ??
+      new UserSettings({ user });
+    if (!isDefaultSentinel(settings.sharedLibraries)) {
+      return;
+    }
+
+    const api = batch?.api ?? (await this.getAdminApi());
+    const share = await api.getUserShare(
+      this.getIdentity(user),
+      this.settings.plex.machineId,
+      batch?.users
+    );
+    if (!share) {
+      return;
+    }
+
+    settings.sharedLibraries = sharedLibrariesFromShare(share, {
+      adminDefault: this.settings.main.sharedLibraries,
+      enabledLibraries: this.enabledLibraries(),
+    });
+    settings.allowDownloads = share.allowSync;
+    await getRepository(UserSettings).save(settings);
+    logger.debug('Adopted existing Plex access for user', {
+      label: LABEL,
+      userId: user.id,
+      sharedLibraries: settings.sharedLibraries ?? 'default',
     });
   }
 

@@ -7,6 +7,7 @@ import Alert from '@app/components/Common/Alert';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LoadingEllipsis from '@app/components/Common/LoadingEllipsis';
+import Toast from '@app/components/Toast';
 import useSettings from '@app/hooks/useSettings';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import PlexOAuth from '@app/utils/plex';
@@ -158,13 +159,13 @@ const UserSettingsAccounts = () => {
       await revalidateShelfmarkAccount();
       await revalidateUser();
     } catch (e) {
-      setError(
-        e.response?.data?.message ??
-          intl.formatMessage({
-            id: 'linkedAccounts.shelfmarkLinkFailed',
-            defaultMessage: 'Failed to link Shelfmark account',
-          })
-      );
+      const title = intl.formatMessage({
+        id: 'linkedAccounts.shelfmarkLinkFailed',
+        defaultMessage: 'Failed to link Shelfmark account',
+      });
+      const message = e.response?.data?.message ?? title;
+      setError(message);
+      Toast({ type: 'error', title, message });
     }
   };
 

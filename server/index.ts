@@ -1,4 +1,3 @@
-import csurf from '@dr.pogodin/csurf';
 import dataSource, { getRepository } from '@server/datasource';
 import { Session } from '@server/entity/Session';
 import { initI18n } from '@server/i18n';
@@ -24,11 +23,18 @@ import {
 } from '@server/lib/onboarding';
 import { initializeOutboundProxy } from '@server/lib/outboundProxy';
 import restartManager from '@server/lib/restartManager';
+import { SESSION_TTL_SECONDS, sessionRoom } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
+import { compileTrustProxy } from '@server/lib/trustedProxies';
 import { createUpgradeDispatcher } from '@server/lib/websocket/upgradeDispatcher';
 import logger from '@server/logger';
 import { checkUser } from '@server/middleware/auth';
 import clearCookies from '@server/middleware/clearcookies';
+import {
+  createCsrfProtection,
+  isSameOrigin,
+  matchesProxyPath,
+} from '@server/middleware/csrf';
 import routes from '@server/routes';
 import avatarproxy from '@server/routes/avatarproxy';
 import imageproxy from '@server/routes/imageproxy';
@@ -56,6 +62,7 @@ import YAML from 'yamljs';
 
 interface SocketRequest extends IncomingMessage {
   session?: ExpressSession & { userId?: number };
+  sessionID?: string;
 }
 
 const API_SPEC_PATH = path.join(__dirname, '../streamarr-api.yml');
@@ -109,15 +116,13 @@ app
     // Schedule enabled newsletters
     await newsletterScheduler.loadAll();
     const server = express();
-    if (settings.network.trustProxy) {
-      server.set('trust proxy', 1);
-    }
+    const trustProxy = compileTrustProxy(settings.network);
+    server.set('trust proxy', trustProxy);
     server.use(cookieParser());
 
     // Get proxy paths to skip body parsing for proxied services
     const proxyPaths = getActiveProxyPaths();
-    const isProxyPath = (path: string) =>
-      proxyPaths.some((p) => path.startsWith(p));
+    const isProxyPath = (path: string) => matchesProxyPath(path, proxyPaths);
 
     // Conditional body parsing - skip for file upload and proxy routes
     server.use((req, res, next) => {
@@ -143,23 +148,12 @@ app
     });
     if (settings.network.csrfProtection) {
       server.use(
-        csurf({
-          cookie: {
-            key: '_csrf',
-            path: '/',
-            httpOnly: true,
-            sameSite: true,
-            secure: !dev,
-          },
+        createCsrfProtection({
+          isProxyPath,
+          trustProxy,
+          secure: !dev,
         })
       );
-      server.use((req, res, next) => {
-        res.cookie('XSRF-TOKEN', req.csrfToken(), {
-          sameSite: true,
-          secure: !dev,
-        });
-        next();
-      });
     }
     // Set up sessions
     const sessionRepository = getRepository(Session);
@@ -167,28 +161,45 @@ app
       secret: settings.sessionSecret,
       resave: false,
       saveUninitialized: false,
+      // Keeps the cookie expiry in step with the store's sliding expiredAt
+      rolling: true,
       name: 'streamarr.sid',
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
+        maxAge: SESSION_TTL_SECONDS * 1000,
         httpOnly: true,
         sameSite: settings.network.csrfProtection ? 'strict' : 'lax',
         secure: 'auto',
       },
       store: new TypeormStore({
         cleanupLimit: 2,
-        ttl: 60 * 60 * 24 * 30,
+        ttl: SESSION_TTL_SECONDS,
       }).connect(sessionRepository) as Store,
     });
     server.use('/api', sessionMiddleware);
     const httpServer = createServer(server);
+    const csrfEnabled = settings.network.csrfProtection;
+    const allowSocketRequest = (req: IncomingMessage) =>
+      !csrfEnabled ||
+      req.headers.origin === undefined ||
+      isSameOrigin(req, trustProxy);
     const io = new SocketIOServer(httpServer, {
       destroyUpgrade: false,
+    });
+    io.engine.use((req, _res, next) => {
+      next(
+        allowSocketRequest(req)
+          ? undefined
+          : new Error('Invalid request origin.')
+      );
     });
     io.engine.use(sessionMiddleware);
     server.set('io', io);
     setSocketIO(io);
     restartManager.initialize(httpServer, io);
-    const upgradeDispatcher = createUpgradeDispatcher(httpServer);
+    const upgradeDispatcher = createUpgradeDispatcher(
+      httpServer,
+      allowSocketRequest
+    );
 
     // Next.js lazily attaches a catch-all `upgrade` listener (via
     // getRequestHandler) that hijacks the /socket.io/ upgrade and corrupts the
@@ -230,7 +241,7 @@ app
         return;
       }
       try {
-        socket.join(String(req.session.userId));
+        socket.join([String(req.session.userId), sessionRoom(req.sessionID)]);
       } catch {
         socket.disconnect(true);
         return;

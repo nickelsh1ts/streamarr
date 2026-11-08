@@ -2,6 +2,7 @@
 import type { User } from '@app/hooks/useUser';
 import { useUser } from '@app/hooks/useUser';
 import { publicRoutes } from '@app/proxy';
+import { socket } from '@app/utils/webSocket';
 import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
@@ -51,6 +52,41 @@ export const UserContext = ({ initialUser, children }: UserContextProps) => {
       axios.interceptors.response.eject(interceptorId);
     };
   }, [router]);
+
+  useEffect(() => {
+    const handleSessionRevoked = async () => {
+      routing.current = true;
+      try {
+        // A newer sign-in in this browser is still valid; just reconnect
+        const { data } = await axios.get<User>('/api/v1/auth/me');
+        if (data.id !== user?.id) {
+          // Signed in as another account elsewhere, so drop this tab's cached identity
+          window.location.reload();
+          return;
+        }
+      } catch (e) {
+        if (axios.isAxiosError(e) && e.response?.status === 401) {
+          router.replace('/logout');
+          return;
+        }
+        // Other failures don't prove revocation; a later 401 still signs this tab out
+      }
+      routing.current = false;
+      socket.connect();
+    };
+
+    socket.on('sessionRevoked', handleSessionRevoked);
+    return () => {
+      socket.off('sessionRevoked', handleSessionRevoked);
+    };
+  }, [router, user?.id]);
+
+  // The server disconnects revoked sessions, so a later sign-in needs a new connection
+  useEffect(() => {
+    if (user?.id && socket.disconnected) {
+      socket.connect();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     // Don't redirect during setup process, signin, or on public routes

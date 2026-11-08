@@ -398,7 +398,7 @@ components:
                   enum: [days, weeks, months]
         sharedLibraries:
           type: string
-          description: Default shared library IDs (pipe-separated), 'all', or empty string
+          description: Default shared library IDs (pipe-separated) or 'all'. Users following the default are re-synced with Plex when it changes.
           example: '1|2|3'
         downloads:
           type: boolean
@@ -939,6 +939,40 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Audiobookshelf account.
+            defaultUserSettings:
+              type: object
+              additionalProperties: false
+              properties:
+                permissions:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    download:
+                      type: boolean
+                    update:
+                      type: boolean
+                    delete:
+                      type: boolean
+                    upload:
+                      type: boolean
+                    accessAllLibraries:
+                      type: boolean
+                    accessAllTags:
+                      type: boolean
+                    accessExplicitContent:
+                      type: boolean
+                librariesAccessible:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: string
+                    minLength: 1
+                itemTagsSelected:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    type: string
+                    minLength: 1
     ShelfmarkSettings:
       allOf:
         - $ref: '#/components/schemas/ServiceSettings'
@@ -947,6 +981,28 @@ components:
             enableNewUserSignIn:
               type: boolean
               description: Allow users to provision a new Shelfmark account.
+            defaultUserSettings:
+              type: object
+              additionalProperties: false
+              properties:
+                ebookPolicy:
+                  type: string
+                  enum: [download, request_release, request_book, blocked]
+                audiobookPolicy:
+                  type: string
+                  enum: [download, request_release, request_book, blocked]
+    ShelfmarkGlobalRequestSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        requestsEnabled:
+          type: boolean
+        requestLimit:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        requestsAllowNotes:
+          type: boolean
     CalibreWebSettings:
       allOf:
         - $ref: '#/components/schemas/ServiceSettings'
@@ -962,8 +1018,34 @@ components:
               type: string
               description: Name of the header used to pass the trusted username to Calibre-Web (must match Calibre-Web's configured reverse-proxy header name).
               example: X-Auth-User
+    UserSession:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Opaque session identifier
+        current:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastActiveAt:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        loginMethod:
+          type: string
+          enum: [plex, local, signup]
+          nullable: true
     NetworkSettings:
       type: object
+      additionalProperties: false
       required:
         - requestTimeout
       properties:
@@ -976,9 +1058,15 @@ components:
         trustProxy:
           type: boolean
           example: true
+        trustedProxies:
+          $ref: '#/components/schemas/TrustedProxySettings'
         csrfProtection:
           type: boolean
           example: false
+        sessionIpTracking:
+          type: boolean
+          description: Record client IP addresses on sign-in sessions. Turning it off clears stored addresses.
+          example: true
         scheduledRetryAttempts:
           type: integer
           minimum: 1
@@ -998,8 +1086,42 @@ components:
           example: 300000
         outboundProxy:
           $ref: '#/components/schemas/OutboundProxySettings'
+    TrustedProxySettings:
+      type: object
+      additionalProperties: false
+      description: >-
+        Proxies trusted to report the client IP when trustProxy is enabled.
+        With nothing selected, only the proxy connecting to Streamarr is
+        trusted. Changes require a restart.
+      properties:
+        localNetworks:
+          type: boolean
+          description: Trust loopback, link-local and private network addresses.
+          example: true
+        cloudflare:
+          type: boolean
+          description: Trust Cloudflare's edge IP ranges.
+          example: false
+        cloudflareRanges:
+          type: array
+          nullable: true
+          readOnly: true
+          description: >-
+            Accepted Cloudflare ranges. Null uses the built-in list. Updated
+            only through /settings/network/cloudflare.
+          items:
+            type: string
+        additional:
+          type: array
+          maxItems: 100
+          description: Extra trusted proxy IP addresses or CIDR ranges.
+          items:
+            type: string
+            maxLength: 50
+          example: ['203.0.113.10', '198.51.100.0/24']
     OutboundProxySettings:
       type: object
+      additionalProperties: false
       description: >-
         Settings-driven outbound HTTP(S) proxy. Changes require a server
         restart. Covers Axios, server-side fetch, and web push; SMTP and
@@ -1778,7 +1900,8 @@ components:
           default: ''
         sharedLibraries:
           type: string
-          description: Comma-separated library IDs, or special values (all, server).
+          nullable: true
+          description: Pipe-separated library IDs, 'all', or null to follow the server default.
         trialPeriodOutcome:
           type: string
           nullable: true
@@ -3342,6 +3465,80 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /settings/network/cloudflare:
+    get:
+      summary: Check Cloudflare IP ranges
+      description: >-
+        Fetches Cloudflare's current published IP ranges and compares them
+        with the ranges Streamarr trusts. Nothing is saved.
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Current and latest Cloudflare ranges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current:
+                    type: array
+                    items:
+                      type: string
+                  latest:
+                    type: array
+                    items:
+                      type: string
+                  added:
+                    type: array
+                    items:
+                      type: string
+                  removed:
+                    type: array
+                    items:
+                      type: string
+        '502':
+          description: Cloudflare's IP list could not be fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Accept Cloudflare IP ranges
+      description: >-
+        Replaces the trusted Cloudflare ranges with the reviewed list.
+        Changes require a restart.
+      tags:
+        - settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ranges
+              properties:
+                ranges:
+                  type: array
+                  minItems: 1
+                  maxItems: 200
+                  items:
+                    type: string
+                    maxLength: 50
+      responses:
+        '200':
+          description: Ranges saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkSettings'
+        '400':
+          description: Invalid IP range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /settings/network/outbound-proxy/test:
     post:
       summary: Test outbound proxy settings
@@ -3481,13 +3678,29 @@ paths:
                 - enabled
       responses:
         '200':
-          description: 'Plex libraries returned'
+          description: 'Plex libraries and the Plex sync result for affected users'
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PlexLibrary'
+                type: object
+                properties:
+                  libraries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlexLibrary'
+                  plexSync:
+                    description: Present when users were re-synced with Plex; 'failed' when the sync could not run
+                    oneOf:
+                      - type: string
+                        enum: [failed]
+                      - type: object
+                        properties:
+                          synced:
+                            type: integer
+                          failed:
+                            type: integer
+                          removed:
+                            type: integer
         '404':
           description: 'Library not found'
           content:
@@ -3966,6 +4179,36 @@ paths:
                 $ref: '#/components/schemas/AudiobookshelfSettings'
         '400':
           description: Invalid URL Base (bad format, reserved path, or already in use)
+  /settings/audiobookshelf/options:
+    get:
+      summary: Get Audiobookshelf libraries and tags for new-user defaults
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Options from the saved Audiobookshelf connection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  libraries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string
+        '503':
+          description: Audiobookshelf is not configured
+        '502':
+          description: Failed to retrieve Audiobookshelf options
   /settings/audiobookshelf/test:
     post:
       summary: Test Audiobookshelf configuration
@@ -4032,7 +4275,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ShelfmarkSettings'
+              allOf:
+                - $ref: '#/components/schemas/ShelfmarkSettings'
+                - type: object
+                  properties:
+                    globalRequestSettings:
+                      $ref: '#/components/schemas/ShelfmarkGlobalRequestSettings'
       responses:
         '200':
           description: 'Values were successfully updated'
@@ -4041,7 +4289,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/ShelfmarkSettings'
         '400':
-          description: Invalid URL Base (bad format, reserved path, or already in use)
+          description: Invalid URL Base or default/request settings
+        '500':
+          description: Failed to save Streamarr settings; no global settings changed
+        '502':
+          description: Streamarr settings saved, but the Shelfmark global update could not be confirmed
+  /settings/shelfmark/requests:
+    get:
+      summary: Get Shelfmark global request settings
+      tags:
+        - settings
+      responses:
+        '200':
+          description: Current global values and environment-managed fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    $ref: '#/components/schemas/ShelfmarkGlobalRequestSettings'
+                  locked:
+                    type: array
+                    items:
+                      type: string
+        '503':
+          description: Shelfmark is not configured
+        '502':
+          description: Failed to read Shelfmark global request settings
   /settings/shelfmark/test:
     post:
       summary: Test Shelfmark configuration
@@ -4550,6 +4825,13 @@ paths:
                     type: string
         '400':
           description: Lidarr not configured
+        '429':
+          description: Too many authentication requests
+          headers:
+            Retry-After:
+              description: Seconds until the rate limit resets.
+              schema:
+                type: integer
         '500':
           description: Failed to disable authentication on Lidarr
   /settings/chaptarr:
@@ -6741,7 +7023,8 @@ paths:
                   type: integer
                 sharedLibraries:
                   type: string
-                  description: A pipe-delimited list of library IDs, 'all', or 'server' for the server default
+                  nullable: true
+                  description: A pipe-delimited list of library IDs, 'all', or null to follow the server default
                   example: '1|2|3'
                 allowDownloads:
                   type: boolean
@@ -6925,6 +7208,9 @@ paths:
                     type: string
                   auth:
                     type: string
+                  linkedToSession:
+                    type: boolean
+                    description: Whether this subscription is linked to the current session. Revoking the session removes it unless another live session uses the same endpoint.
     delete:
       summary: Delete user push subscription by key
       description: Deletes the user push subscription with the provided key.
@@ -7499,7 +7785,7 @@ paths:
                   currentPlexLibraries:
                     type: string
                     nullable: true
-                    description: Pipe-separated list of library IDs user has access to in Plex (empty string means all libraries, null means unable to fetch)
+                    description: Pipe-separated list of library IDs user has access to in Plex ('all' for all libraries, empty string for none, null means unable to fetch)
                     example: '1|2|3'
                   canFetchFromPlex:
                     type: boolean
@@ -7571,11 +7857,99 @@ paths:
                   nullable: true
                 newPassword:
                   type: string
+                endOtherSessions:
+                  type: boolean
+                  default: true
+                  description: Sign out the user's other sessions. When an administrator changes another user's password, all of that user's sessions are signed out.
               required:
                 - newPassword
       responses:
         '204':
           description: User password updated
+  /user/{userId}/settings/sessions:
+    get:
+      summary: List a user's active sessions
+      description: Returns the user's active sign-in sessions, most recently active first. Requires `MANAGE_USERS` permission if viewing other users. `ipAddress` is omitted when session IP tracking is disabled.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Active sessions returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSession'
+  /user/{userId}/settings/sessions/{sessionId}:
+    delete:
+      summary: Sign out a single session
+      description: Signs out one of the user's sessions. The current session cannot be signed out here; use `/auth/logout`. Requires `MANAGE_USERS` permission if managing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session signed out
+        '400':
+          description: The current session cannot be signed out here
+        '404':
+          description: Session not found
+  /user/{userId}/settings/sessions/revoke:
+    post:
+      summary: Sign out multiple sessions
+      description: Signs out all of the user's sessions (`all`) or all except the current one (`others`, own account only). Requires `MANAGE_USERS` permission if managing other users.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: string
+                  enum: [others, all]
+                keepCurrentSession:
+                  type: boolean
+                  default: false
+                  description: With scope all, keep the caller's own current session until logout while cleaning up other sessions and unlinked push subscriptions. Requires a signed-in session for the same user.
+              required:
+                - scope
+      responses:
+        '200':
+          description: Sessions signed out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revoked:
+                    type: number
+                    example: 2
   /user/{userId}/settings/linked-accounts/plex:
     post:
       summary: Link a Plex account to the logged-in user
@@ -9181,7 +9555,8 @@ paths:
                   description: Whether to add invited users as Plex Home members.
                 sharedLibraries:
                   type: string
-                  description: Comma-separated library IDs, or special values (all, server).
+                  nullable: true
+                  description: Pipe-separated library IDs, 'all', or null to follow the server default.
                 trialPeriodOutcome:
                   type: string
                   nullable: true
@@ -9604,7 +9979,7 @@ paths:
         '500':
           description: Server error
         '503':
-          description: One or more external services are unavailable
+          description: Server is restarting or one or more external services are unavailable
   /settings/newsletter/{id}/test:
     parameters:
       - name: id
@@ -9631,6 +10006,8 @@ paths:
           description: All configured content blocks are empty; nothing to send
         '500':
           description: Server error
+        '503':
+          description: Server is restarting
   /settings/newsletter/{id}/preview:
     parameters:
       - name: id

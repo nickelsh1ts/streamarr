@@ -5,7 +5,6 @@ import type { UserHookResponse } from '@app/hooks/useUser';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import validator from 'validator';
@@ -17,7 +16,6 @@ interface LocalLoginProps {
 
 const LocalLogin = ({ revalidate }: LocalLoginProps) => {
   const settings = useSettings();
-  const router = useRouter();
   const [loginError, setLoginError] = useState<string | null>(null);
   const intl = useIntl();
 
@@ -67,9 +65,7 @@ const LocalLogin = ({ revalidate }: LocalLoginProps) => {
               password: values.password,
             }
           );
-          revalidate(authenticatedUser, false).then(() =>
-            router.push('/watch')
-          );
+          revalidate(authenticatedUser, false);
         } catch (error) {
           const errorMessage =
             axios.isAxiosError(error) && error.response?.status === 401

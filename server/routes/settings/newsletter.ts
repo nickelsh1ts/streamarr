@@ -635,7 +635,12 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
         });
       }
 
-      const result = await sendNewsletter(newsletterId, 'manual');
+      const result = await newsletterScheduler.runTracked(() =>
+        sendNewsletter(newsletterId, 'manual')
+      );
+      if (result === null) {
+        return next({ status: 503, message: 'Server is restarting.' });
+      }
 
       res.status(200).json({
         newsletterId,
@@ -675,14 +680,19 @@ newsletterRoutes.post<{ id: string }, NewsletterSendResult>(
     try {
       const newsletterId = Number(req.params.id);
 
-      const testUser = await getRepository(User).findOneOrFail({
-        where: { id: req.user?.id },
-        relations: {
-          settings: true,
-        },
-      });
+      const result = await newsletterScheduler.runTracked(async () => {
+        const testUser = await getRepository(User).findOneOrFail({
+          where: { id: req.user?.id },
+          relations: {
+            settings: true,
+          },
+        });
 
-      const result = await sendNewsletter(newsletterId, 'test', { testUser });
+        return sendNewsletter(newsletterId, 'test', { testUser });
+      });
+      if (result === null) {
+        return next({ status: 503, message: 'Server is restarting.' });
+      }
 
       res.status(200).json({
         newsletterId,

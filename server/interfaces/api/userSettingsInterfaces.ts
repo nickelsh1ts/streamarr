@@ -13,7 +13,7 @@ export interface UserSettingsGeneralResponse {
   globalAllowDownloads?: boolean;
   globalLiveTv?: boolean;
   globalPlexHome?: boolean;
-  sharedLibraries?: string;
+  sharedLibraries?: string | null;
   allowDownloads?: boolean;
   allowLiveTv?: boolean;
   allowPlexHome?: boolean;
@@ -80,4 +80,16 @@ export interface UserNewsletterSubscription {
 
 export interface UserSettingsNewslettersResponse {
   newsletters: UserNewsletterSubscription[];
+}
+
+export type SessionLoginMethod = 'plex' | 'local' | 'signup';
+
+export interface UserSessionResponse {
+  id: string;
+  current: boolean;
+  createdAt: Date | null;
+  lastActiveAt: Date;
+  ipAddress?: string | null;
+  userAgent: string | null;
+  loginMethod: SessionLoginMethod | null;
 }

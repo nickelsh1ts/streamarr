@@ -11,14 +11,10 @@ import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
 import { plexSync } from '@server/lib/plexSync';
 import { plexAuthLimiter } from '@server/lib/rateLimiters';
+import { startUserSession } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
-import {
-  isDefaultSentinel,
-  materializeDefaultSnapshot,
-  normalizeSharedLibrariesValue,
-  resolveSharedLibraryKeys,
-} from '@server/utils/sharedLibraries';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import crypto from 'crypto';
 import { Router } from 'express';
 
@@ -195,20 +191,25 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
       permissions: settings.main.defaultPermissions, // Assign default permissions from admin settings
     });
 
-    const enabledLibraries = settings.plex.libraries.filter(
-      (lib) => lib.enabled
+    const sharedLibraries = normalizeSharedLibrariesValue(
+      invite.sharedLibraries
     );
-    const sharedLibrariesSnapshot = isDefaultSentinel(invite.sharedLibraries)
-      ? materializeDefaultSnapshot({
-          adminDefault: settings.main.sharedLibraries,
-          enabledLibraries,
-        })
-      : normalizeSharedLibrariesValue(invite.sharedLibraries);
+    // An empty resolution is a configuration error - fail rather than grant unintended access
+    if (plexSync.resolveLibraryKeys(sharedLibraries).length === 0) {
+      logger.error('Invite libraries resolve to no enabled libraries', {
+        label: 'SignUp',
+        inviteSharedLibraries: invite.sharedLibraries,
+        adminDefaultLibs: settings.main.sharedLibraries,
+      });
+      res.status(500).json({
+        success: false,
+        message: 'Library configuration error. Please contact administrator.',
+      });
+      return;
+    }
 
     user.settings = new UserSettings({
-      ...(sharedLibrariesSnapshot
-        ? { sharedLibraries: sharedLibrariesSnapshot }
-        : {}),
+      sharedLibraries,
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,
       allowPlexHome: invite.plexHome ?? false,
@@ -242,7 +243,7 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     });
 
     // Handle Plex server invitation immediately to avoid inconsistent state
-    if (user.settings.sharedLibraries) {
+    if (user.userType === UserType.PLEX) {
       const mainUser = await userRepository
         .createQueryBuilder('user')
         .addSelect(['user.plexToken', 'user.plexJwt', 'user.plexJwtExpiresAt'])
@@ -282,39 +283,11 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
         return;
       }
 
-      // Resolve the snapshotted selection to explicit enabled library keys
-      const librarySectionIds = resolveSharedLibraryKeys({
-        value: user.settings.sharedLibraries,
-        adminDefault: settings.main.sharedLibraries,
-        enabledLibraries,
-      });
-
-      // Safeguard: an empty resolution is a configuration error - fail
-      // rather than grant unintended access
-      if (librarySectionIds.length === 0) {
-        logger.error(
-          'Library resolution resulted in an empty set - potential misconfiguration',
-          {
-            label: 'SignUp',
-            inviteSharedLibraries: invite.sharedLibraries,
-            adminDefaultLibs: settings.main.sharedLibraries,
-          }
-        );
-        // Clean up: remove the user we just created
-        await userRepository.remove(user);
-        res.status(500).json({
-          success: false,
-          message: 'Library configuration error. Please contact administrator.',
-        });
-        return;
-      }
-
       // Invite via plexSync (email first, then username); auto-accept runs
       // in the background using the user's token
       let inviteError: Error | null = null;
       try {
         await plexSync.inviteUser(user, {
-          libraries: librarySectionIds,
           allowSync: invite.downloads ?? false,
           plexHome: invite.plexHome ?? false,
           userTokenOverride: authToken,
@@ -374,10 +347,7 @@ signupRoutes.post('/plexauth', plexAuthLimiter, async (req, res) => {
     invite.updatedBy = user;
     await inviteRepository.save(invite);
 
-    // Set session for the user (log them in after successful creation)
-    if (req.session) {
-      req.session.userId = user.id;
-    }
+    await startUserSession(req, user, 'signup');
 
     // Silently provision a per-user Plex JWT device (experimental, non-fatal)
     void maybeProvisionPlexJwt(user.id, authToken);
@@ -534,20 +504,8 @@ signupRoutes.post('/localauth', async (req, res) => {
     // Set password
     await user.setPassword(password);
 
-    const enabledLibraries = appSettings.plex.libraries.filter(
-      (lib) => lib.enabled
-    );
-    const sharedLibrariesSnapshot = isDefaultSentinel(invite.sharedLibraries)
-      ? materializeDefaultSnapshot({
-          adminDefault: appSettings.main.sharedLibraries,
-          enabledLibraries,
-        })
-      : normalizeSharedLibrariesValue(invite.sharedLibraries);
-
     user.settings = new UserSettings({
-      ...(sharedLibrariesSnapshot
-        ? { sharedLibraries: sharedLibrariesSnapshot }
-        : {}),
+      sharedLibraries: normalizeSharedLibrariesValue(invite.sharedLibraries),
       allowDownloads: invite.downloads ?? false,
       allowLiveTv: invite.liveTv ?? false,
       allowPlexHome: invite.plexHome ?? false,
@@ -599,10 +557,7 @@ signupRoutes.post('/localauth', async (req, res) => {
     invite.updatedBy = user;
     await inviteRepository.save(invite);
 
-    // Set session for the user (log them in after successful creation)
-    if (req.session) {
-      req.session.userId = user.id;
-    }
+    await startUserSession(req, user, 'signup');
 
     res.status(200).json({
       success: true,

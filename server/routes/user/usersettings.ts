@@ -12,16 +12,17 @@ import { User } from '@server/entity/User';
 import { UserSettings } from '@server/entity/UserSettings';
 import type {
   SeerrUserPermissionsResponse,
+  UserSessionResponse,
   UserSettingsGeneralResponse,
   UserSettingsNewslettersResponse,
   UserSettingsNotificationsResponse,
 } from '@server/interfaces/api/userSettingsInterfaces';
 import {
-  AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
   decryptSecret,
   encryptSecret,
   findAudiobookshelfAccount,
   getAudiobookshelfAPI,
+  getAudiobookshelfUserDefaults,
   getAudiobookshelfUsernameCandidate,
 } from '@server/lib/audiobookshelf';
 import {
@@ -34,12 +35,23 @@ import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
 import { resolvePlexAuthToken } from '@server/lib/plexAuth';
 import { preferPlexJwt } from '@server/lib/plexAuth/credentials';
 import { maybeProvisionPlexJwt } from '@server/lib/plexAuth/provision';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import {
+  NoSharedLibrariesError,
+  plexSync,
+  PlexUserNotFoundError,
+} from '@server/lib/plexSync';
 import {
   audiobookshelfLinkLimiter,
+  passwordChangeLimiter,
   plexAuthLimiter,
   trialExtensionRequestLimiter,
 } from '@server/lib/rateLimiters';
+import {
+  listUserSessions,
+  revokeUserSessions,
+  toPublicSessionId,
+  withUserCredentialLock,
+} from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import {
   getShelfmarkAPI,
@@ -48,22 +60,22 @@ import {
   linkShelfmarkAccount,
   ShelfmarkAccountCreationDisabledError,
   ShelfmarkAccountLinkRequiresManagerError,
+  ShelfmarkPersistenceError,
+  ShelfmarkProvisioningError,
   ShelfmarkUsernameConflictError,
+  ShelfmarkUserNotFoundError,
+  withShelfmarkAccountLock,
 } from '@server/lib/shelfmark';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
 import { canMakePermissionsChange } from '@server/routes/user';
 import moment from '@server/utils/momentWithLocale';
 import {
+  canManageUserCredentials,
   isOwnProfile,
   isOwnProfileOrAdmin,
 } from '@server/utils/profileMiddleware';
-import {
-  isDefaultSentinel,
-  materializeDefaultSnapshot,
-  normalizeSharedLibrariesValue,
-  resolveSharedLibraryKeys,
-} from '@server/utils/sharedLibraries';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import axios from 'axios';
 import type { Request, Response } from 'express';
 import { Router } from 'express';
@@ -72,6 +84,8 @@ const userSettingsRoutes = Router({ mergeParams: true });
 
 /** Matches Audiobookshelf's own refresh token lifetime (30 days). */
 const AUDIOBOOKSHELF_REFRESH_TOKEN_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+const PROVISION_INVITE_ATTEMPTS = 3;
+const PROVISION_INVITE_RETRY_MS = 2_000;
 
 /** Attempts an Audiobookshelf login, returning `null` on invalid credentials. */
 async function signInAudiobookshelf(
@@ -288,7 +302,7 @@ const audiobookshelfLinkHandler =
             email: user.email,
             type: 'user',
             isActive: true,
-            permissions: AUDIOBOOKSHELF_DEFAULT_PERMISSIONS,
+            ...getAudiobookshelfUserDefaults(),
           });
           targetId = created.id;
           targetUsername = created.username;
@@ -530,6 +544,15 @@ userSettingsRoutes.post<{ id: string }, { linked: boolean; username: string }>(
         username,
       });
     } catch (e) {
+      if (e instanceof ShelfmarkUserNotFoundError) {
+        return next({ status: 404, message: e.message });
+      }
+      if (e instanceof ShelfmarkPersistenceError) {
+        return next({ status: 500, message: e.message });
+      }
+      if (e instanceof ShelfmarkProvisioningError) {
+        return next({ status: 502, message: e.message });
+      }
       if (e instanceof ShelfmarkAccountCreationDisabledError) {
         return next({
           status: 403,
@@ -587,8 +610,11 @@ userSettingsRoutes.delete<{ id: string }>(
     }
 
     try {
-      user.shelfmarkUsername = null;
-      await userRepository.save(user);
+      await withShelfmarkAccountLock(user, (currentUser) =>
+        userRepository.update(currentUser.id, {
+          shelfmarkUsername: null,
+        })
+      );
       invalidateShelfmarkAccountCache(user.id);
       logger.info('Unlinked Shelfmark account', {
         label: 'Shelfmark',
@@ -1016,22 +1042,35 @@ userSettingsRoutes.post<
       });
     }
 
+    const canManagePlexAccess =
+      req.user?.id === 1 ||
+      (req.user?.hasPermission(Permission.MANAGE_USERS) &&
+        !user.hasPermission(Permission.MANAGE_USERS));
+    if (!canManagePlexAccess) {
+      delete req.body.sharedLibraries;
+      delete req.body.allowDownloads;
+      delete req.body.allowLiveTv;
+    }
+
     // Store previous sharedLibraries value to detect changes
-    const previousSharedLibraries = user.settings?.sharedLibraries;
+    const previousSharedLibraries = user.settings?.sharedLibraries ?? null;
     const previousAllowDownloads = user.settings?.allowDownloads;
     const previousAllowPlexHome = user.settings?.allowPlexHome ?? false;
     const previousState = user.active;
     const newSharedLibraries =
       req.body.sharedLibraries === undefined
-        ? (user.settings?.sharedLibraries ?? null)
-        : isDefaultSentinel(req.body.sharedLibraries)
-          ? materializeDefaultSnapshot({
-              adminDefault: getSettings().main.sharedLibraries,
-              enabledLibraries: getSettings().plex.libraries.filter(
-                (lib) => lib.enabled
-              ),
-            })
-          : normalizeSharedLibrariesValue(req.body.sharedLibraries);
+        ? (previousSharedLibraries ?? null)
+        : normalizeSharedLibrariesValue(req.body.sharedLibraries);
+    if (
+      newSharedLibraries !== (previousSharedLibraries ?? null) &&
+      plexSync.resolveLibraryKeys(newSharedLibraries).length === 0
+    ) {
+      return next({
+        status: 400,
+        message:
+          'The provided sharedLibraries value does not resolve to any enabled libraries.',
+      });
+    }
     const newAllowDownloads = req.body.allowDownloads ?? previousAllowDownloads;
     const forcePlexSync = req.body.forcePlexSync === true;
 
@@ -1140,6 +1179,7 @@ userSettingsRoutes.post<
       user.userType === UserType.PLEX &&
       user.active &&
       (user.settings?.allowPlexHome ?? false) !== previousAllowPlexHome;
+    let provisionInviteFailed = false;
 
     if (user.plexId && (previousState !== user.active || plexHomeChanged)) {
       const settings = getSettings();
@@ -1159,60 +1199,69 @@ userSettingsRoutes.post<
       } else {
         try {
           const plexTvApi = new PlexTvAPI(preferPlexJwt(admin) ?? '');
-          if (previousState && !plexHomeChanged) {
-            try {
-              await plexTvApi.deprovisionUser(
-                user.plexId,
-                settings.plex.machineId
-              );
-            } catch (e) {
-              logger.error('Failed to deprovision user.', {
-                label: 'User Settings',
-                userId: user.id,
-                errorMessage: e instanceof Error ? e.message : String(e),
-              });
-            }
-          } else {
-            if (plexHomeChanged) {
+          // A bulk sync must not see the user mid re-invite and deactivate them
+          await plexSync.withUserLock(user, async () => {
+            if (previousState && !plexHomeChanged) {
               try {
                 await plexTvApi.deprovisionUser(
                   user.plexId,
                   settings.plex.machineId
                 );
               } catch (e) {
-                logger.error(
-                  'Failed to deprovision user before plexHome re-invite',
-                  {
+                logger.error('Failed to deprovision user.', {
+                  label: 'User Settings',
+                  userId: user.id,
+                  errorMessage: e instanceof Error ? e.message : String(e),
+                });
+              }
+            } else {
+              if (plexHomeChanged) {
+                try {
+                  await plexTvApi.deprovisionUser(
+                    user.plexId,
+                    settings.plex.machineId
+                  );
+                } catch (e) {
+                  logger.error(
+                    'Failed to deprovision user before plexHome re-invite',
+                    {
+                      label: 'User Settings',
+                      userId: user.id,
+                      errorMessage: e instanceof Error ? e.message : String(e),
+                    }
+                  );
+                }
+              }
+
+              // Retry briefly: the user may have just been removed from Plex
+              for (let attempt = 1; ; attempt++) {
+                try {
+                  await plexSync.inviteUser(user, {
+                    allowSync: user?.settings?.allowDownloads ?? false,
+                    plexHome: user.settings?.allowPlexHome ?? false,
+                  });
+                  break;
+                } catch (e) {
+                  if (
+                    attempt < PROVISION_INVITE_ATTEMPTS &&
+                    !(e instanceof NoSharedLibrariesError)
+                  ) {
+                    await new Promise((resolve) =>
+                      setTimeout(resolve, PROVISION_INVITE_RETRY_MS)
+                    );
+                    continue;
+                  }
+                  provisionInviteFailed = true;
+                  logger.warn('Plex invite failed during provisioning', {
                     label: 'User Settings',
                     userId: user.id,
                     errorMessage: e instanceof Error ? e.message : String(e),
-                  }
-                );
+                  });
+                  break;
+                }
               }
             }
-
-            const librarySectionIds = resolveSharedLibraryKeys({
-              value: user.settings?.sharedLibraries,
-              adminDefault: getSettings().main.sharedLibraries,
-              enabledLibraries: getSettings().plex.libraries.filter(
-                (lib) => lib.enabled
-              ),
-            });
-
-            try {
-              await plexSync.inviteUser(user, {
-                libraries: librarySectionIds,
-                allowSync: user?.settings?.allowDownloads ?? false,
-                plexHome: user.settings?.allowPlexHome ?? false,
-              });
-            } catch (e) {
-              logger.warn('Plex invite failed during provisioning', {
-                label: 'User Settings',
-                userId: user.id,
-                errorMessage: e instanceof Error ? e.message : String(e),
-              });
-            }
-          }
+          });
         } catch (e) {
           logger.error(
             `Failed to ${previousState && !plexHomeChanged ? 'deprovision' : 'provision'} user`,
@@ -1263,14 +1312,14 @@ userSettingsRoutes.post<
     let plexSyncStatus: 'synced' | 'removed' | 'failed' | 'skipped' = 'skipped';
 
     if (
-      req.user?.hasPermission(Permission.MANAGE_USERS) &&
+      canManagePlexAccess &&
       shouldSync &&
       user.email &&
       user.userType === UserType.PLEX
     ) {
       try {
         // omitted values stay unchanged on Plex
-        await plexSync.syncUserLibraries(user, newSharedLibraries, {
+        await plexSync.syncUserLibraries(user, {
           allowSync: req.body.allowDownloads,
         });
         plexSyncStatus = 'synced';
@@ -1289,6 +1338,11 @@ userSettingsRoutes.post<
           error: e instanceof Error ? e.message : String(e),
         });
       }
+    }
+
+    // A sync that ran afterwards already reports the user's real access
+    if (provisionInviteFailed && plexSyncStatus === 'skipped') {
+      plexSyncStatus = 'failed';
     }
 
     res.status(200).json({
@@ -1341,16 +1395,7 @@ userSettingsRoutes.post<{ id: string }>(
       }
 
       try {
-        const librarySectionIds = resolveSharedLibraryKeys({
-          value: user.settings?.sharedLibraries ?? null,
-          adminDefault: getSettings().main.sharedLibraries,
-          enabledLibraries: getSettings().plex.libraries.filter(
-            (lib) => lib.enabled
-          ),
-        });
-
         await plexSync.inviteUser(user, {
-          libraries: librarySectionIds,
           allowSync: user.settings?.allowDownloads ?? false,
           plexHome: user.settings?.allowPlexHome ?? false,
         });
@@ -1444,79 +1489,243 @@ userSettingsRoutes.get<{ id: string }, { hasPassword: boolean }>(
 userSettingsRoutes.post<
   { id: string },
   null,
-  { currentPassword?: string; newPassword: string }
->('/password', isOwnProfileOrAdmin(), async (req, res, next) => {
-  const userRepository = getRepository(User);
+  { currentPassword?: string; newPassword: string; endOtherSessions?: boolean }
+>(
+  '/password',
+  passwordChangeLimiter,
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    const userRepository = getRepository(User);
 
+    try {
+      await withUserCredentialLock(Number(req.params.id), async () => {
+        const user = await userRepository.findOne({
+          where: { id: Number(req.params.id) },
+        });
+
+        const userWithPassword = await userRepository.findOne({
+          select: {
+            id: true,
+            password: true,
+          },
+          where: { id: Number(req.params.id) },
+        });
+
+        if (!user || !userWithPassword) {
+          return next({ status: 404, message: 'User not found.' });
+        }
+
+        if (req.body.newPassword.length < 8) {
+          return next({
+            status: 400,
+            message: 'Password must be at least 8 characters.',
+          });
+        }
+
+        if (!canManageUserCredentials(req.user, user)) {
+          return next({
+            status: 403,
+            message:
+              "You do not have permission to modify this user's password.",
+          });
+        }
+
+        const endOtherSessions = req.body.endOtherSessions !== false;
+
+        // If the user has the permission to manage users and they are not
+        // editing themselves, we will just set the new password
+        if (
+          req.user?.hasPermission(Permission.MANAGE_USERS) &&
+          req.user?.id !== user.id
+        ) {
+          // Revoked first so a failure leaves the old password and devices unchanged
+          if (endOtherSessions) {
+            await revokeUserSessions(
+              user.id,
+              { reason: 'password-change', revokedByUserId: req.user.id },
+              req.app.get('io')
+            );
+          }
+          await user.setPassword(req.body.newPassword);
+          await userRepository.save(user);
+          logger.debug('Password overriden by user.', {
+            label: 'User Settings',
+            userEmail: user.email,
+            changingUser: req.user.email,
+          });
+          return res.status(204).send();
+        }
+
+        // If the user has a password, we need to check the currentPassword is correct
+        if (
+          userWithPassword.password &&
+          (!req.body.currentPassword ||
+            !(await userWithPassword.passwordMatch(req.body.currentPassword)))
+        ) {
+          logger.debug(
+            'Attempt to change password for user failed. Invalid current password provided.',
+            { label: 'User Settings', userEmail: user.email }
+          );
+          return next({ status: 403, message: 'Current password is invalid.' });
+        }
+
+        if (endOtherSessions) {
+          await revokeUserSessions(
+            user.id,
+            {
+              reason: 'password-change',
+              revokedByUserId: req.user?.id,
+              exceptSid: req.sessionID,
+            },
+            req.app.get('io')
+          );
+        }
+        await user.setPassword(req.body.newPassword);
+        await userRepository.save(user);
+
+        res.status(204).send();
+      });
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.get<{ id: string }, UserSessionResponse[]>(
+  '/sessions',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!canManageUserCredentials(req.user, user)) {
+        return next({
+          status: 403,
+          message: "You do not have permission to manage this user's sessions.",
+        });
+      }
+
+      res.status(200).json(await listUserSessions(user.id, req.sessionID));
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.delete<{ id: string; sessionId: string }>(
+  '/sessions/:sessionId',
+  isOwnProfileOrAdmin(),
+  async (req, res, next) => {
+    try {
+      const user = await getRepository(User).findOne({
+        where: { id: Number(req.params.id) },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      if (!canManageUserCredentials(req.user, user)) {
+        return next({
+          status: 403,
+          message: "You do not have permission to manage this user's sessions.",
+        });
+      }
+
+      if (
+        req.sessionID &&
+        toPublicSessionId(req.sessionID) === req.params.sessionId
+      ) {
+        return next({
+          status: 400,
+          message: 'Sign out to end the current session.',
+        });
+      }
+
+      const revoked = await revokeUserSessions(
+        user.id,
+        {
+          reason: 'manual',
+          revokedByUserId: req.user?.id,
+          publicIds: [req.params.sessionId],
+        },
+        req.app.get('io')
+      );
+
+      if (!revoked) {
+        return next({ status: 404, message: 'Session not found.' });
+      }
+
+      res.status(204).send();
+    } catch (e) {
+      next({ status: 500, message: e.message });
+    }
+  }
+);
+
+userSettingsRoutes.post<
+  { id: string },
+  { revoked: number },
+  { scope: 'others' | 'all'; keepCurrentSession?: boolean }
+>('/sessions/revoke', isOwnProfileOrAdmin(), async (req, res, next) => {
   try {
-    const user = await userRepository.findOne({
+    const user = await getRepository(User).findOne({
       where: { id: Number(req.params.id) },
     });
 
-    const userWithPassword = await userRepository.findOne({
-      select: {
-        id: true,
-        password: true,
-      },
-      where: { id: Number(req.params.id) },
-    });
-
-    if (!user || !userWithPassword) {
+    if (!user) {
       return next({ status: 404, message: 'User not found.' });
     }
 
-    if (req.body.newPassword.length < 8) {
-      return next({
-        status: 400,
-        message: 'Password must be at least 8 characters.',
-      });
-    }
-
-    if (
-      (user.id === 1 && req.user?.id !== 1) ||
-      (user.hasPermission(Permission.ADMIN) &&
-        user.id !== req.user?.id &&
-        req.user?.id !== 1)
-    ) {
+    if (!canManageUserCredentials(req.user, user)) {
       return next({
         status: 403,
-        message: "You do not have permission to modify this user's password.",
+        message: "You do not have permission to manage this user's sessions.",
       });
     }
 
-    // If the user has the permission to manage users and they are not
-    // editing themselves, we will just set the new password
-    if (
-      req.user?.hasPermission(Permission.MANAGE_USERS) &&
-      req.user?.id !== user.id
-    ) {
-      await user.setPassword(req.body.newPassword);
-      await userRepository.save(user);
-      logger.debug('Password overriden by user.', {
-        label: 'User Settings',
-        userEmail: user.email,
-        changingUser: req.user.email,
+    const isOwnAccount = req.user?.id === user.id;
+
+    if (req.body.scope === 'others' && !isOwnAccount) {
+      return next({
+        status: 400,
+        message: 'Only your own account has a current session to keep.',
       });
-      return res.status(204).send();
     }
 
-    // If the user has a password, we need to check the currentPassword is correct
     if (
-      user.password &&
-      (!req.body.currentPassword ||
-        !(await userWithPassword.passwordMatch(req.body.currentPassword)))
+      req.body.keepCurrentSession &&
+      (req.body.scope !== 'all' ||
+        !isOwnAccount ||
+        req.session?.userId !== user.id)
     ) {
-      logger.debug(
-        'Attempt to change password for user failed. Invalid current password provided.',
-        { label: 'User Settings', userEmail: user.email }
-      );
-      return next({ status: 403, message: 'Current password is invalid.' });
+      return next({
+        status: 400,
+        message: 'Only your own current session can be kept until logout.',
+      });
     }
 
-    await user.setPassword(req.body.newPassword);
-    await userRepository.save(user);
+    const revoked = await revokeUserSessions(
+      user.id,
+      {
+        reason: 'manual',
+        revokedByUserId: req.user?.id,
+        exceptSid:
+          req.body.scope === 'others' || req.body.keepCurrentSession
+            ? req.sessionID
+            : undefined,
+        removeUnlinkedPush: req.body.scope === 'all',
+      },
+      req.app.get('io')
+    );
 
-    res.status(204).send();
+    res.status(200).json({ revoked });
   } catch (e) {
     next({ status: 500, message: e.message });
   }
@@ -1588,24 +1797,6 @@ userSettingsRoutes.post<
         .where('user.id = :id', { id: 1 })
         .getOne();
 
-      // Honour any pre-existing explicit user setting; otherwise
-      // snapshot the current server default at link time
-      const existingSharedLibraries = user.settings?.sharedLibraries;
-      const enabledLibraries = getSettings().plex.libraries.filter(
-        (lib) => lib.enabled
-      );
-      const linkSharedLibraries = existingSharedLibraries
-        ? normalizeSharedLibrariesValue(existingSharedLibraries)
-        : materializeDefaultSnapshot({
-            adminDefault: getSettings().main.sharedLibraries,
-            enabledLibraries,
-          });
-      const librarySectionIds = resolveSharedLibraryKeys({
-        value: linkSharedLibraries,
-        adminDefault: getSettings().main.sharedLibraries,
-        enabledLibraries,
-      });
-
       // valid plex user found, link to current user
       user.userType = UserType.PLEX;
       user.plexId = account.id;
@@ -1615,15 +1806,10 @@ userSettingsRoutes.post<
       if (!user.settings) {
         user.settings = new UserSettings({
           user,
-          sharedLibraries: linkSharedLibraries,
           allowDownloads: getSettings().main.downloads ?? false,
           allowLiveTv: getSettings().main.liveTv ?? false,
         });
       } else {
-        // Only overwrite sharedLibraries if the user didn't already have an explicit value
-        if (!existingSharedLibraries) {
-          user.settings.sharedLibraries = linkSharedLibraries;
-        }
         user.settings.allowDownloads =
           user.settings.allowDownloads ?? getSettings().main.downloads ?? false;
         user.settings.allowLiveTv =
@@ -1657,15 +1843,16 @@ userSettingsRoutes.post<
       }
 
       if (alreadyOnServer) {
-        // User already has server access - update libraries to the snapshot
+        // User already has server access - keep it, then reconcile libraries
         try {
-          await plexSync.syncUserLibraries(user, linkSharedLibraries, {
-            allowSync: getSettings().main.downloads ?? false,
+          await plexSync.adoptPlexAccess(user);
+          await plexSync.syncUserLibraries(user, {
+            allowSync: user.settings.allowDownloads,
           });
           logger.debug('Plex account linked successfully', {
             label: 'User Settings',
             userEmail: user.email,
-            sharedLibraries: librarySectionIds,
+            sharedLibraries: user.settings?.sharedLibraries,
           });
         } catch (e) {
           logger.warn('Plex account link library sync failed', {
@@ -1679,8 +1866,7 @@ userSettingsRoutes.post<
         // background using the fresh auth token from this request
         try {
           await plexSync.inviteUser(user, {
-            libraries: librarySectionIds,
-            allowSync: getSettings().main.downloads ?? false,
+            allowSync: user.settings.allowDownloads,
             plexHome: user.settings?.allowPlexHome ?? false,
             userTokenOverride: authToken || user.plexToken,
           });
@@ -1734,11 +1920,12 @@ userSettingsRoutes.delete<{ id: string }>(
         });
       }
 
-      user.userType = UserType.LOCAL;
-      user.plexId = null;
-      user.plexUsername = null;
-      user.plexToken = null;
-      await userRepository.save(user);
+      await userRepository.update(user.id, {
+        userType: UserType.LOCAL,
+        plexId: null,
+        plexUsername: null,
+        plexToken: null,
+      });
 
       return res.status(204).send();
     } catch (e) {
@@ -2218,11 +2405,7 @@ userSettingsRoutes.post<{ id: string }>(
               }));
 
         const allowedKeys = new Set(
-          resolveSharedLibraryKeys({
-            value: user.settings?.sharedLibraries,
-            adminDefault: getSettings().main.sharedLibraries,
-            enabledLibraries,
-          })
+          plexSync.resolveLibraryKeys(user.settings?.sharedLibraries)
         );
 
         librariesToPin = sharedSections.filter((lib) =>

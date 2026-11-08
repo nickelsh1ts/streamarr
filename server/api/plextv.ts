@@ -92,7 +92,7 @@ interface ServerResponse {
   };
 }
 
-interface UsersResponse {
+export interface UsersResponse {
   MediaContainer: {
     User: {
       $: {
@@ -197,6 +197,15 @@ interface PlexUserSettingsResponse {
 
 const toArray = <T>(value: T | T[] | undefined | null): T[] =>
   Array.isArray(value) ? value : value ? [value] : [];
+
+/** True when a user from getUsers() holds a share on the given server. */
+export const hasServerShare = (
+  user: UsersResponse['MediaContainer']['User'][number],
+  machineId: string
+): boolean =>
+  toArray(user.Server).some(
+    (server) => server.$.machineIdentifier === machineId
+  );
 
 /**
  * plex.tv XML endpoints return boolean attributes as either "1"/"0" or
@@ -368,8 +377,7 @@ class PlexTvAPI extends ExternalAPI {
       if (!usersRaw) {
         throw new Error("No users found in Plex account's shared list");
       }
-      const users = Array.isArray(usersRaw) ? usersRaw : [usersRaw];
-      const user = users.find((u) => parseInt(u.$.id) === userId);
+      const user = toArray(usersRaw).find((u) => parseInt(u.$.id) === userId);
       if (!user) {
         logger.warn(
           "This user does not exist on the main Plex account's shared list",
@@ -377,15 +385,7 @@ class PlexTvAPI extends ExternalAPI {
         );
         return false;
       }
-      const serversRaw = user.Server;
-      const servers = Array.isArray(serversRaw)
-        ? serversRaw
-        : serversRaw
-          ? [serversRaw]
-          : [];
-      return !!servers.find(
-        (server) => server.$.machineIdentifier === settings.plex.machineId
-      );
+      return hasServerShare(user, settings.plex.machineId);
     } catch (e) {
       logger.error(
         `Error checking user access: ${e instanceof Error ? e.message : String(e)}`
@@ -541,11 +541,14 @@ class PlexTvAPI extends ExternalAPI {
    */
   public async getUserShare(
     identity: PlexUserIdentity,
-    machineId: string
+    machineId: string,
+    /** Reuses an already fetched users list (e.g. across a batch) */
+    usersResponse?: UsersResponse
   ): Promise<PlexUserShare | null> {
     this.validateMachineId(machineId);
-    const usersResponse = await this.getUsers();
-    const users = toArray(usersResponse.MediaContainer.User);
+    const users = toArray(
+      (usersResponse ?? (await this.getUsers())).MediaContainer.User
+    );
 
     const target =
       (identity.plexId != null
@@ -645,7 +648,7 @@ class PlexTvAPI extends ExternalAPI {
     allowSync?: boolean;
     allowCameraUpload?: boolean;
     allowChannels?: boolean;
-  }): Promise<void> {
+  }): Promise<{ existingFriend: boolean }> {
     this.validateMachineId(options.machineId);
     const users = toArray((await this.getUsers()).MediaContainer.User);
     const identifierLower = options.identifier.toLowerCase();
@@ -661,7 +664,7 @@ class PlexTvAPI extends ExternalAPI {
           existing.$.username || options.identifier
         )}`
       );
-      return;
+      return { existingFriend: true };
     }
 
     await this.axios.post(
@@ -678,6 +681,7 @@ class PlexTvAPI extends ExternalAPI {
         sharing_settings: this.buildSharingSettings(options),
       }
     );
+    return { existingFriend: false };
   }
 
   /**

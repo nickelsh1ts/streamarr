@@ -2,7 +2,7 @@ import PlexAPI, {
   PlexNotFoundError,
   type PlexMetadata,
 } from '@server/api/plexapi';
-import PlexTvAPI from '@server/api/plextv';
+import PlexTvAPI, { hasServerShare } from '@server/api/plextv';
 import SeerrAPI from '@server/api/seerr';
 import TautulliAPI, { type TautulliHistoryRecord } from '@server/api/tautulli';
 import TheMovieDb from '@server/api/themoviedb';
@@ -30,6 +30,7 @@ import {
   MAX_PUSH_SUBSCRIPTIONS_PER_USER,
   MAX_PUSH_USER_AGENT_LENGTH,
 } from '@server/lib/pushSubscription';
+import { revokeUserSessions } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -40,14 +41,9 @@ import Notification from '@server/entity/Notification';
 import { UserSettings } from '@server/entity/UserSettings';
 import PreparedEmail, { getEmailLogo } from '@server/lib/email';
 import { handlePlexAccessLost } from '@server/lib/plexAccessLost';
-import { plexSync, PlexUserNotFoundError } from '@server/lib/plexSync';
+import { plexSync } from '@server/lib/plexSync';
 import { isOwnProfileOrAdmin } from '@server/utils/profileMiddleware';
-import {
-  isDefaultSentinel,
-  materializeDefaultSnapshot,
-  normalizeSharedLibrariesValue,
-  resolveSharedLibraryKeys,
-} from '@server/utils/sharedLibraries';
+import { normalizeSharedLibrariesValue } from '@server/utils/sharedLibraries';
 import crypto from 'crypto';
 import path from 'path';
 import { In } from 'typeorm';
@@ -347,6 +343,11 @@ router.post<
       });
     }
 
+    // Lets revoking this session also remove the device's subscription
+    if (req.session?.userId === req.user.id) {
+      req.session.pushEndpoint = endpoint;
+    }
+
     return res.status(204).send();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
@@ -416,6 +417,7 @@ router.get<{ userId: number; key: string }, PushSubscriptionValidation>(
         endpoint: userPushSub.endpoint,
         p256dh: userPushSub.p256dh,
         auth: userPushSub.auth,
+        linkedToSession: req.session?.pushEndpoint === userPushSub.endpoint,
       });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
@@ -623,33 +625,16 @@ router.put<
       });
     }
 
-    const settings = getSettings();
-    const enabledLibraries = settings.plex.libraries.filter(
-      (lib) => lib.enabled
-    );
-
-    let newSharedLibraries: string | null = null;
-    if (sharedLibraries !== undefined) {
-      newSharedLibraries = isDefaultSentinel(sharedLibraries)
-        ? materializeDefaultSnapshot({
-            adminDefault: settings.main.sharedLibraries,
-            enabledLibraries,
-          })
-        : normalizeSharedLibrariesValue(sharedLibraries);
-
-      if (
-        resolveSharedLibraryKeys({
-          value: newSharedLibraries,
-          adminDefault: settings.main.sharedLibraries,
-          enabledLibraries,
-        }).length === 0
-      ) {
-        return next({
-          status: 400,
-          message:
-            'The provided sharedLibraries value does not resolve to any enabled libraries.',
-        });
-      }
+    const newSharedLibraries = normalizeSharedLibrariesValue(sharedLibraries);
+    if (
+      sharedLibraries !== undefined &&
+      plexSync.resolveLibraryKeys(newSharedLibraries).length === 0
+    ) {
+      return next({
+        status: 400,
+        message:
+          'The provided sharedLibraries value does not resolve to any enabled libraries.',
+      });
     }
 
     const userRepository = getRepository(User);
@@ -725,53 +710,12 @@ router.put<
       });
     }
 
-    // Sync the new library access with Plex, a few users at a time to
-    // avoid hammering plex.tv under the single admin token
     let plexSyncSummary: UserBulkUpdateResponse['plexSync'];
     if (sharedLibraries !== undefined || allowDownloads !== undefined) {
-      const summary = { synced: 0, failed: 0, removed: 0 };
-      const queue = updatedUsers.filter(
-        (user) => user.userType === UserType.PLEX && user.active && user.email
-      );
-
-      const BULK_PLEX_SYNC_CONCURRENCY = 3;
-      await Promise.all(
-        Array.from(
-          { length: Math.min(BULK_PLEX_SYNC_CONCURRENCY, queue.length) },
-          async () => {
-            let user: User | undefined;
-            while ((user = queue.shift())) {
-              try {
-                // When libraries weren't part of this edit, re-apply the
-                // user's current value; omitted values stay unchanged on Plex
-                await plexSync.syncUserLibraries(
-                  user,
-                  sharedLibraries !== undefined
-                    ? newSharedLibraries
-                    : (user.settings?.sharedLibraries ?? null),
-                  { allowSync: allowDownloads }
-                );
-                summary.synced++;
-              } catch (e) {
-                if (e instanceof PlexUserNotFoundError) {
-                  // The user was removed from Plex out-of-band
-                  await handlePlexAccessLost(user);
-                  summary.removed++;
-                } else {
-                  summary.failed++;
-                }
-                logger.error('Failed to sync user libraries with Plex', {
-                  label: 'Plex Sync',
-                  userId: user.id,
-                  email: user.email,
-                  error: e instanceof Error ? e.message : String(e),
-                });
-              }
-            }
-          }
-        )
-      );
-      plexSyncSummary = summary;
+      // omitted permissions stay unchanged on Plex
+      plexSyncSummary = await plexSync.syncUsers(updatedUsers, {
+        allowSync: allowDownloads,
+      });
     }
 
     res.status(200).json({ users: updatedUsers, plexSync: plexSyncSummary });
@@ -866,6 +810,11 @@ router.delete<{ id: string }>(
       }
 
       await userRepository.delete(user.id);
+      await revokeUserSessions(
+        user.id,
+        { reason: 'user-deleted', revokedByUserId: req.user?.id },
+        req.app.get('io')
+      );
       res.status(200).json(user.filter());
     } catch (e) {
       logger.error('Something went wrong deleting a user', {
@@ -909,6 +858,7 @@ router.post(
 
       const plexUsersResponse = await mainPlexTv.getUsers();
       const createdUsers: User[] = [];
+      const newPlexUsers: User[] = [];
       let refreshedUsers = 0;
       let unchangedUsers = 0;
       for (const rawUser of plexUsersResponse.MediaContainer.User) {
@@ -923,6 +873,7 @@ router.post(
 
         const plexId = parseInt(account.id, 10);
         const email = account.email.toLowerCase();
+        const hasAccess = hasServerShare(rawUser, settings.plex.machineId);
         const user = await userRepository
           .createQueryBuilder('user')
           .where('user.plexId = :id', { id: account.id })
@@ -930,7 +881,7 @@ router.post(
           .getOne();
 
         if (user) {
-          if (!(await mainPlexTv.checkUserAccess(plexId))) {
+          if (!hasAccess) {
             continue;
           }
 
@@ -959,11 +910,14 @@ router.post(
 
           await userRepository.save(user);
           refreshedUsers += 1;
+          if (wasLocalUser) {
+            newPlexUsers.push(user);
+          }
           if (previousAvatar && previousAvatar !== user.avatar) {
             void ImageProxy.clearCachedImage('avatar', previousAvatar);
           }
         } else if (!syncExisting) {
-          if (await mainPlexTv.checkUserAccess(plexId)) {
+          if (hasAccess) {
             const newUser = new User({
               plexUsername: account.username,
               email,
@@ -976,8 +930,25 @@ router.post(
             await userRepository.save(newUser, {
               data: { suppressCreatedNotification: true },
             });
+            newPlexUsers.push(newUser);
             createdUsers.push(newUser);
           }
+        }
+      }
+
+      // New Plex users keep the access they already have in Plex
+      for (const user of newPlexUsers) {
+        try {
+          await plexSync.adoptPlexAccess(user, {
+            api: mainPlexTv,
+            users: plexUsersResponse,
+          });
+        } catch (e) {
+          logger.warn('Failed to adopt existing Plex access for user', {
+            label: 'API',
+            userId: user.id,
+            errorMessage: e instanceof Error ? e.message : String(e),
+          });
         }
       }
 
@@ -1389,7 +1360,7 @@ router.get('/:id/plex/libraries', isAuthenticated(), async (req, res, next) => {
 
       res.status(200).json({
         currentPlexLibraries:
-          plexData.libraries.length > 0 ? plexData.libraries.join('|') : '',
+          plexData.libraries === 'all' ? 'all' : plexData.libraries.join('|'),
         canFetchFromPlex: true,
         existsInPlex: true,
         permissions: plexData.permissions,

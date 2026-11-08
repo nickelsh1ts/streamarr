@@ -41,8 +41,9 @@ const BulkEditModal = ({
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState<BulkEditTab>('permissions');
   const [currentPermission, setCurrentPermission] = useState(0);
-  const [currentSharedLibraries, setCurrentSharedLibraries] =
-    useState('unchanged');
+  const [currentSharedLibraries, setCurrentSharedLibraries] = useState<
+    string | null
+  >('unchanged');
   const [currentAllowDownloads, setCurrentAllowDownloads] = useState<
     boolean | null
   >(null);
@@ -65,8 +66,7 @@ const BulkEditModal = ({
 
   const plexAccessPayload = {
     ...(currentSharedLibraries !== 'unchanged' && {
-      sharedLibraries:
-        currentSharedLibraries === '' ? 'server' : currentSharedLibraries,
+      sharedLibraries: currentSharedLibraries,
     }),
     ...(currentAllowDownloads !== null && {
       allowDownloads: currentAllowDownloads,
@@ -321,7 +321,7 @@ const BulkEditModal = ({
             <LibrarySelector
               value={currentSharedLibraries}
               serverValue={mainSettings?.sharedLibraries}
-              isUserSettings
+              allowDefault
               allowUnchanged
               setFieldValue={(_property, value) =>
                 setCurrentSharedLibraries(value)

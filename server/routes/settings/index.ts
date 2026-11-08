@@ -36,6 +36,7 @@ import {
   resetPlexHealth,
   revalidatePlexLibraries,
 } from '@server/lib/plexHealthCheck';
+import { plexSync } from '@server/lib/plexSync';
 import {
   arrAuthLimiter,
   settingsAboutDiskSpaceLimiter,
@@ -48,6 +49,7 @@ import {
   getServicesHealth,
   resetServiceHealthState,
 } from '@server/lib/serviceHealth';
+import { clearSessionIpAddresses } from '@server/lib/sessions';
 import type {
   JobId,
   MainSettings,
@@ -56,6 +58,11 @@ import type {
 } from '@server/lib/settings';
 import { getSettings } from '@server/lib/settings';
 import { getShelfmarkAPI } from '@server/lib/shelfmark';
+import {
+  fetchCloudflareRanges,
+  getCloudflareRanges,
+  isValidProxyAddress,
+} from '@server/lib/trustedProxies';
 import { validateBaseUrl } from '@server/lib/validation/baseUrl';
 import logger from '@server/logger';
 import { isAuthenticated } from '@server/middleware/auth';
@@ -63,6 +70,12 @@ import { appDataPath } from '@server/utils/appDataVolume';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getCachedImageCacheOverview } from '@server/utils/cacheOverview';
 import { getCachedConfigDiskSpace } from '@server/utils/diskSpace';
+import {
+  isDefaultSentinel,
+  normalizeSharedLibrariesValue,
+  referencesLibrary,
+  resolveSharedLibraryKeys,
+} from '@server/utils/sharedLibraries';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -110,17 +123,57 @@ settingsRoutes.get('/main', (req, res, next) => {
   res.status(200).json(filteredMainSettings(req.user, settings.main));
 });
 
-settingsRoutes.post('/main', (req, res, next) => {
+settingsRoutes.post('/main', async (req, res, next) => {
   try {
     const settings = getSettings();
 
     // Filter out file objects and other non-serializable data
     const filteredBody = omit(req.body, ['customLogo', 'customLogoSmall']);
+    if (filteredBody.sharedLibraries !== undefined) {
+      // The server default has no default of its own, so empty means all
+      filteredBody.sharedLibraries =
+        normalizeSharedLibrariesValue(filteredBody.sharedLibraries) ?? 'all';
+    }
 
-    settings.main = merge(settings.main, filteredBody);
-    settings.save();
+    // Respond only after default followers are synced so a save can't race the next one
+    let invalidDefault = false;
+    const plexSyncSummary = await plexSync.applyAndReconcile(() => {
+      const previousDefault = settings.main.sharedLibraries;
+      if (
+        filteredBody.sharedLibraries !== undefined &&
+        filteredBody.sharedLibraries !== previousDefault &&
+        resolveSharedLibraryKeys({
+          value: null,
+          adminDefault: filteredBody.sharedLibraries,
+          enabledLibraries: settings.plex.libraries.filter(
+            (lib) => lib.enabled
+          ),
+        }).length === 0
+      ) {
+        invalidDefault = true;
+        return false;
+      }
+      const previousMain = settings.main;
+      settings.main = merge({}, previousMain, filteredBody);
+      try {
+        settings.save();
+      } catch (e) {
+        settings.main = previousMain;
+        throw e;
+      }
+      return settings.main.sharedLibraries !== previousDefault
+        ? isDefaultSentinel
+        : null;
+    });
+    if (invalidDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries do not include any enabled libraries.',
+      });
+    }
 
-    res.status(200).json(settings.main);
+    res.status(200).json({ ...settings.main, plexSync: plexSyncSummary });
   } catch (error) {
     logger.error('Error saving main settings:', error);
     next({ status: 500, message: 'Failed to save settings' });
@@ -146,10 +199,10 @@ settingsRoutes.get('/network', (_req, res) => {
 
 settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
   '/network',
-  (req, res, next) => {
+  async (req, res, next) => {
     try {
       const settings = getSettings();
-      const { outboundProxy, ...rest } = req.body;
+      const { outboundProxy, trustedProxies, ...rest } = req.body;
       const proxyUpdate = resolveOutboundProxyUpdate(
         settings.network.outboundProxy,
         outboundProxy
@@ -159,12 +212,61 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
         return next({ status: 400, message: proxyUpdate.error });
       }
 
-      settings.network = { ...settings.network, ...rest };
+      const additional = [
+        ...new Set(
+          (
+            trustedProxies?.additional ??
+            settings.network.trustedProxies.additional
+          )
+            .map((entry) => entry.trim())
+            .filter(Boolean)
+        ),
+      ];
+      if (!additional.every(isValidProxyAddress)) {
+        return next({
+          status: 400,
+          message: 'Trusted proxies must be IP addresses or CIDR ranges',
+        });
+      }
+
+      const previous = { ...settings.network };
+      settings.network = {
+        ...settings.network,
+        ...rest,
+        trustedProxies: {
+          ...settings.network.trustedProxies,
+          localNetworks:
+            trustedProxies?.localNetworks ??
+            settings.network.trustedProxies.localNetworks,
+          cloudflare:
+            trustedProxies?.cloudflare ??
+            settings.network.trustedProxies.cloudflare,
+          additional,
+        },
+      };
       // Assigned directly: the settings merge skips undefined, which would
       // otherwise prevent clearing stored credentials.
       settings.network.outboundProxy = proxyUpdate.value;
 
-      settings.save();
+      try {
+        settings.save();
+      } catch (e) {
+        // Restored in place because the setter merges rather than replaces
+        Object.assign(settings.network, previous);
+        throw e;
+      }
+
+      // Cleared on every save while off so a failed or raced cleanup is retried
+      if (!settings.network.sessionIpTracking) {
+        await clearSessionIpAddresses();
+        if (previous.sessionIpTracking) {
+          logger.info(
+            'Session IP tracking disabled; cleared stored addresses',
+            { label: 'Settings' }
+          );
+        }
+      }
+
       res.status(200).json(settings.network);
     } catch (e) {
       logger.error('Error saving network settings:', {
@@ -173,6 +275,64 @@ settingsRoutes.post<undefined, unknown, Partial<NetworkSettings>>(
       });
       next({ status: 500, message: 'Failed to save network settings' });
     }
+  }
+);
+
+settingsRoutes.get('/network/cloudflare', async (_req, res, next) => {
+  const current = getCloudflareRanges(getSettings().network);
+
+  try {
+    const latest = await fetchCloudflareRanges();
+    res.status(200).json({
+      current,
+      latest,
+      added: latest.filter((range) => !current.includes(range)),
+      removed: current.filter((range) => !latest.includes(range)),
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    logger.warn('Failed to fetch Cloudflare IP ranges', {
+      label: 'Settings',
+      message,
+    });
+    next({ status: 502, message: 'Unable to fetch Cloudflare IP ranges' });
+  }
+});
+
+settingsRoutes.post<undefined, unknown, { ranges: string[] }>(
+  '/network/cloudflare',
+  (req, res, next) => {
+    const ranges = [...new Set(req.body.ranges.map((range) => range.trim()))];
+    if (!ranges.length || !ranges.every(isValidProxyAddress)) {
+      return next({
+        status: 400,
+        message: 'Cloudflare ranges must be IP addresses or CIDR ranges',
+      });
+    }
+
+    const settings = getSettings();
+    const { trustedProxies } = settings.network;
+    const previousRanges = trustedProxies.cloudflareRanges;
+    trustedProxies.cloudflareRanges = ranges;
+    try {
+      settings.save();
+    } catch (e) {
+      trustedProxies.cloudflareRanges = previousRanges;
+      logger.error('Failed to save Cloudflare IP ranges', {
+        label: 'Settings',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return next({
+        status: 500,
+        message: 'Failed to save Cloudflare IP ranges',
+      });
+    }
+    logger.warn('Updated trusted Cloudflare IP ranges', {
+      label: 'Settings',
+      count: ranges.length,
+    });
+
+    res.status(200).json(settings.network);
   }
 );
 
@@ -358,19 +518,70 @@ settingsRoutes.post('/plex/library/sync', async (_req, res, next) => {
 
 settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
   '/plex/library/:libraryId',
-  (req, res, next) => {
+  async (req, res, next) => {
     const settings = getSettings();
-    const library = settings.plex.libraries.find(
-      (l) => l.id === req.params.libraryId
-    );
+    let found = true;
+    let emptiesDefault = false;
 
-    if (!library) {
+    // Wait for affected shares so a restart or the next toggle can't skip them
+    let plexSyncSummary: Awaited<ReturnType<typeof plexSync.applyAndReconcile>>;
+    try {
+      plexSyncSummary = await plexSync.applyAndReconcile(() => {
+        // Library discovery may have replaced the list while waiting
+        const library = settings.plex.libraries.find(
+          (l) => l.id === req.params.libraryId
+        );
+        if (!library) {
+          found = false;
+          return false;
+        }
+        if (library.enabled === req.body.enabled) {
+          return null;
+        }
+        if (
+          !req.body.enabled &&
+          resolveSharedLibraryKeys({
+            value: null,
+            adminDefault: settings.main.sharedLibraries,
+            enabledLibraries: settings.plex.libraries.filter(
+              (l) => l.enabled && l !== library
+            ),
+          }).length === 0
+        ) {
+          emptiesDefault = true;
+          return false;
+        }
+        library.enabled = req.body.enabled;
+        try {
+          settings.save();
+        } catch (e) {
+          library.enabled = !req.body.enabled;
+          throw e;
+        }
+        return (value) => referencesLibrary(value, library.id);
+      });
+    } catch (e) {
+      logger.error('Failed to update Plex library', {
+        label: 'Settings',
+        libraryId: req.params.libraryId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+      return next({ status: 500, message: 'Failed to update library.' });
+    }
+    if (!found) {
       return next({ status: 404, message: 'Library not found.' });
     }
-
-    library.enabled = req.body.enabled;
-    settings.save();
-    res.status(200).json(settings.plex.libraries);
+    if (emptiesDefault) {
+      return next({
+        status: 400,
+        message:
+          'The default shared libraries must include at least one enabled library.',
+      });
+    }
+    res.status(200).json({
+      libraries: settings.plex.libraries,
+      plexSync: plexSyncSummary,
+    });
   }
 );
 
@@ -890,7 +1101,7 @@ settingsRoutes.get('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
   }
 });
 
-settingsRoutes.post('/lidarr/auth', async (req, res, next) => {
+settingsRoutes.post('/lidarr/auth', arrAuthLimiter, async (req, res, next) => {
   const settings = getSettings();
   const lidarrSettings = settings.lidarr;
 
@@ -1132,6 +1343,7 @@ settingsRoutes.get('/audiobookshelf', async (_req, res) => {
 
 settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
   const settings = getSettings();
+  const { defaultUserSettings } = req.body;
 
   const validation = validateBaseUrl(
     req.body.urlBase,
@@ -1142,9 +1354,57 @@ settingsRoutes.post('/audiobookshelf', async (req, res, next) => {
     return next({ status: 400, message: validation.error });
   }
 
-  Object.assign(settings.audiobookshelf, req.body);
-  settings.save();
-  res.status(200).json(settings.audiobookshelf);
+  const previous = settings.audiobookshelf;
+  try {
+    settings.audiobookshelf = {
+      ...settings.audiobookshelf,
+      enabled: req.body.enabled,
+      hostname: req.body.hostname,
+      port: req.body.port,
+      useSsl: req.body.useSsl,
+      externalUrl: req.body.externalUrl,
+      urlBase: req.body.urlBase,
+      id: req.body.id,
+      apiKey: req.body.apiKey,
+      enableNewUserSignIn: req.body.enableNewUserSignIn,
+      defaultUserSettings,
+    };
+    settings.save();
+    res.status(200).json(settings.audiobookshelf);
+  } catch {
+    Object.keys(settings.audiobookshelf).forEach(
+      (key) => delete settings.audiobookshelf[key]
+    );
+    Object.assign(settings.audiobookshelf, previous);
+    next({ status: 500, message: 'Failed to save Audiobookshelf settings.' });
+  }
+});
+
+settingsRoutes.get('/audiobookshelf/options', async (_req, res, next) => {
+  const settings = getSettings().audiobookshelf;
+  if (!settings.hostname || !settings.port || !settings.apiKey) {
+    return next({ status: 503, message: 'Audiobookshelf is not configured.' });
+  }
+  try {
+    const api = getAudiobookshelfAPI(settings);
+    const libraries = await api.getAllLibraries();
+    const libraryTags = await Promise.all(
+      libraries.map((library) => api.getLibraryTags(library.id))
+    );
+    res.json({
+      libraries: libraries.map(({ id, name }) => ({ id, name })),
+      tags: [...new Set(libraryTags.flat())].sort(),
+    });
+  } catch (e) {
+    logger.error('Failed to retrieve Audiobookshelf libraries and tags', {
+      label: 'Audiobookshelf',
+      message: e instanceof Error ? e.message : String(e),
+    });
+    return next({
+      status: 502,
+      message: 'Failed to retrieve Audiobookshelf libraries and tags.',
+    });
+  }
 });
 
 settingsRoutes.post('/audiobookshelf/test', async (req, res, next) => {
@@ -1194,6 +1454,8 @@ settingsRoutes.get('/shelfmark', async (_req, res) => {
 
 settingsRoutes.post('/shelfmark', async (req, res, next) => {
   const settings = getSettings();
+  const { defaultUserSettings } = req.body;
+  const { globalRequestSettings } = req.body;
 
   const validation = validateBaseUrl(
     req.body.urlBase,
@@ -1204,9 +1466,67 @@ settingsRoutes.post('/shelfmark', async (req, res, next) => {
     return next({ status: 400, message: validation.error });
   }
 
-  Object.assign(settings.shelfmark, req.body);
-  settings.save();
+  const previous = settings.shelfmark;
+  try {
+    settings.shelfmark = {
+      ...settings.shelfmark,
+      enabled: req.body.enabled,
+      hostname: req.body.hostname,
+      port: req.body.port,
+      useSsl: req.body.useSsl,
+      externalUrl: req.body.externalUrl,
+      urlBase: req.body.urlBase,
+      id: req.body.id,
+      enableNewUserSignIn: req.body.enableNewUserSignIn,
+    };
+    if (defaultUserSettings !== undefined) {
+      settings.shelfmark.defaultUserSettings = defaultUserSettings;
+    }
+    settings.save();
+  } catch {
+    Object.keys(settings.shelfmark).forEach(
+      (key) => delete settings.shelfmark[key]
+    );
+    Object.assign(settings.shelfmark, previous);
+    return next({
+      status: 500,
+      message:
+        'Failed to save Shelfmark settings. No global request settings were changed.',
+    });
+  }
+
+  if (globalRequestSettings && Object.keys(globalRequestSettings).length > 0) {
+    try {
+      await getShelfmarkAPI(settings.shelfmark).updateGlobalRequestSettings(
+        globalRequestSettings
+      );
+    } catch (e) {
+      logger.error('Failed to update Shelfmark global request settings', {
+        label: 'Shelfmark',
+        message: e instanceof Error ? e.message : String(e),
+      });
+      return next({
+        status: 502,
+        message: `Streamarr settings were saved, but Shelfmark global request settings could not be confirmed: ${e instanceof Error ? e.message : String(e)}`,
+      });
+    }
+  }
   res.status(200).json(settings.shelfmark);
+});
+
+settingsRoutes.get('/shelfmark/requests', async (_req, res, next) => {
+  const settings = getSettings().shelfmark;
+  if (!settings.hostname || !settings.port || !settings.urlBase) {
+    return next({ status: 503, message: 'Shelfmark is not configured.' });
+  }
+  try {
+    res.json(await getShelfmarkAPI(settings).getGlobalRequestSettings());
+  } catch {
+    next({
+      status: 502,
+      message: 'Failed to read Shelfmark global request settings.',
+    });
+  }
 });
 
 settingsRoutes.post('/shelfmark/test', async (req, res, next) => {

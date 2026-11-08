@@ -22,6 +22,8 @@ const DEFAULT_RETRY_INTERVAL_MS = 5 * 60 * 1000;
  */
 class NewsletterScheduler {
   private jobs = new Map<number, schedule.Job>();
+  private isShuttingDown = false;
+  private activeTasks = new Set<Promise<unknown>>();
 
   // Tracks in-flight retry attempts for scheduled sends whose content sources
   // were unreachable, keyed by newsletter id.
@@ -29,6 +31,32 @@ class NewsletterScheduler {
     number,
     { attempts: number; timer: NodeJS.Timeout | null }
   >();
+
+  public runTracked<T>(task: () => Promise<T>): Promise<T> | null {
+    if (this.isShuttingDown) {
+      return null;
+    }
+
+    const promise = task();
+    this.activeTasks.add(promise);
+    void promise.then(
+      () => this.activeTasks.delete(promise),
+      () => this.activeTasks.delete(promise)
+    );
+    return promise;
+  }
+
+  public async shutdown(): Promise<void> {
+    this.isShuttingDown = true;
+    for (const { timer } of this.retries.values()) {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+    this.retries.clear();
+
+    await Promise.allSettled(this.activeTasks);
+  }
 
   public async loadAll(): Promise<void> {
     try {
@@ -74,6 +102,10 @@ class NewsletterScheduler {
   }
 
   public schedule(newsletter: Newsletter): void {
+    if (this.isShuttingDown) {
+      return;
+    }
+
     this.cancel(newsletter.id);
 
     if (!newsletter.enabled) {
@@ -123,7 +155,7 @@ class NewsletterScheduler {
         }
 
         if (e instanceof NewsletterDataUnavailableError) {
-          await this.handleDataUnavailable(fresh ?? newsletter, e, run);
+          await this.handleDataUnavailable(fresh ?? newsletter, e, trackedRun);
           return;
         }
 
@@ -152,6 +184,8 @@ class NewsletterScheduler {
       }
     };
 
+    const trackedRun = () => this.runTracked(run) ?? Promise.resolve();
+
     let job: schedule.Job | null = null;
 
     if (newsletter.scheduleType === 'once') {
@@ -165,9 +199,9 @@ class NewsletterScheduler {
         return;
       }
 
-      job = schedule.scheduleJob(sendAt, run);
+      job = schedule.scheduleJob(sendAt, trackedRun);
     } else if (newsletter.cronSchedule) {
-      job = schedule.scheduleJob(newsletter.cronSchedule, run);
+      job = schedule.scheduleJob(newsletter.cronSchedule, trackedRun);
     }
 
     if (job) {
@@ -203,6 +237,11 @@ class NewsletterScheduler {
     error: NewsletterDataUnavailableError,
     run: () => Promise<void>
   ): Promise<void> {
+    if (this.isShuttingDown) {
+      this.retries.delete(newsletter.id);
+      return;
+    }
+
     const { network } = getSettings();
     const maxAttempts = Math.max(
       1,

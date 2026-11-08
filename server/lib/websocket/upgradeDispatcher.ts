@@ -22,8 +22,15 @@ export class UpgradeDispatcher {
     return url === '/socket.io' || url.startsWith('/socket.io/');
   }
 
-  public constructor(httpServer: Server) {
+  public constructor(
+    httpServer: Server,
+    allowRequest: (req: IncomingMessage) => boolean = () => true
+  ) {
     httpServer.on('upgrade', (req, socket, head) => {
+      if (!allowRequest(req)) {
+        socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');
+        return;
+      }
       const url = req.url ?? '';
       const matcher = this.matchers.find((m) => m.match(url));
 
@@ -66,6 +73,9 @@ export class UpgradeDispatcher {
   }
 }
 
-export function createUpgradeDispatcher(httpServer: Server): UpgradeDispatcher {
-  return new UpgradeDispatcher(httpServer);
+export function createUpgradeDispatcher(
+  httpServer: Server,
+  allowRequest?: (req: IncomingMessage) => boolean
+): UpgradeDispatcher {
+  return new UpgradeDispatcher(httpServer, allowRequest);
 }

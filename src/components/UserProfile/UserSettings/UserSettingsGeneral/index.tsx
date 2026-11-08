@@ -28,6 +28,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import type { UserSettingsGeneralResponse } from '@server/interfaces/api/userSettingsInterfaces';
+import { isDefaultSentinel } from '@server/utils/sharedLibraries';
 import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { useParams } from 'next/navigation';
@@ -84,11 +85,10 @@ const UserSettingsGeneral = () => {
       ? `/api/v1/user/${user?.id}/plex/libraries`
       : null
   );
-  const { data: allLibrariesData } = useSWR<{
-    libraries: { id: string; name: string; enabled: boolean }[];
-  }>(currentHasPermission(Permission.ADMIN) ? '/api/v1/settings/plex' : null, {
-    revalidateOnFocus: false,
-  });
+  const { data: enabledLibraries } = useSWR<{ id: string; name: string }[]>(
+    '/api/v1/libraries',
+    { revalidateOnFocus: false }
+  );
 
   // Reset the editable invite-quota toggle whenever the loaded user data changes
   const derivedInviteQuotaEnabled =
@@ -116,33 +116,29 @@ const UserSettingsGeneral = () => {
     const plexLibraries = plexLibrariesData.currentPlexLibraries;
     if (plexLibraries !== null) {
       // Resolve DB value - if 'server'/null/empty, use global default
-      const dbValue =
-        !data.sharedLibraries || data.sharedLibraries === 'server'
-          ? data.globalSharedLibraries || 'all'
-          : data.sharedLibraries;
+      const dbValue = isDefaultSentinel(data.sharedLibraries)
+        ? data.globalSharedLibraries || 'all'
+        : data.sharedLibraries;
 
-      // Plex empty = all libraries
-      const plexValue = plexLibraries === '' ? 'all' : plexLibraries;
+      const enabledIds = enabledLibraries?.map((lib) => lib.id).sort() ?? [];
 
-      // Get all enabled library IDs for comparison
-      const allEnabledIds =
-        allLibrariesData?.libraries
-          ?.filter((lib) => lib.enabled)
-          ?.map((lib) => lib.id)
-          ?.sort()
-          ?.join('|') ?? '';
-
-      // Normalize both values
-      const normalizeValue = (val: string): string => {
-        if (val === 'all' || val === '') return 'all';
-        const sorted = val.split('|').sort().join('|');
+      // Disabled libraries are never shared, so they're dropped from the stored value
+      const normalizeValue = (val: string, dropDisabled = false): string => {
+        if (val === 'all') return 'all';
+        const ids = val
+          .split('|')
+          .filter(
+            (id) =>
+              !dropDisabled || !enabledIds.length || enabledIds.includes(id)
+          )
+          .sort()
+          .join('|');
         // Treat full library list as 'all'
-        return sorted === allEnabledIds ? 'all' : sorted;
+        return ids !== '' && ids === enabledIds.join('|') ? 'all' : ids;
       };
 
-      const normalizedDb = normalizeValue(dbValue);
-      const normalizedPlex = normalizeValue(plexValue);
-      librariesDiffer = normalizedDb !== normalizedPlex;
+      librariesDiffer =
+        normalizeValue(dbValue, true) !== normalizeValue(plexLibraries);
     }
 
     // === Permission comparison ===
@@ -158,7 +154,7 @@ const UserSettingsGeneral = () => {
       plexLibrariesDiffer: librariesDiffer,
       plexPermissionsDiffer: permissionsDiffer,
     };
-  }, [data, plexLibrariesData, allLibrariesData]);
+  }, [data, plexLibrariesData, enabledLibraries]);
 
   const userRemovedFromPlex = plexLibrariesData?.existsInPlex === false;
 
@@ -260,12 +256,7 @@ const UserSettingsGeneral = () => {
             data?.inviteQuotaLimit ?? data?.globalInviteQuotaLimit ?? 1,
           inviteQuotaDays:
             data?.inviteQuotaDays ?? data?.globalInviteQuotaDays ?? 0,
-          sharedLibraries:
-            data?.sharedLibraries === null
-              ? 'server'
-              : data?.sharedLibraries && data?.sharedLibraries !== ''
-                ? data.sharedLibraries
-                : 'server',
+          sharedLibraries: data?.sharedLibraries ?? null,
           allowDownloads: data?.allowDownloads ?? false,
           allowLiveTv: data?.allowLiveTv ?? false,
           allowPlexHome: data?.allowPlexHome ?? false,
@@ -280,11 +271,6 @@ const UserSettingsGeneral = () => {
         }}
         enableReinitialize
         onSubmit={async (values) => {
-          const newSharedLibraries =
-            values.sharedLibraries === 'server' || values.sharedLibraries === ''
-              ? 'server'
-              : values.sharedLibraries;
-
           const isPlexUser = user?.userType === UserType.PLEX;
           const canManageUsers = currentHasPermission(Permission.MANAGE_USERS);
 
@@ -315,7 +301,7 @@ const UserSettingsGeneral = () => {
               inviteQuotaDays: inviteQuotaEnabled
                 ? values.inviteQuotaDays
                 : null,
-              sharedLibraries: newSharedLibraries,
+              sharedLibraries: values.sharedLibraries,
               allowDownloads: values.allowDownloads,
               allowLiveTv: values.allowLiveTv,
               forcePlexSync: shouldForceSync,
@@ -607,7 +593,7 @@ const UserSettingsGeneral = () => {
                               <LibrarySelector
                                 value={values.sharedLibraries}
                                 serverValue={data.globalSharedLibraries}
-                                isUserSettings
+                                allowDefault
                                 setFieldValue={setFieldValue}
                               />
                               {plexLibrariesDiffer &&
@@ -621,23 +607,19 @@ const UserSettingsGeneral = () => {
                                     />
                                     <span className="mx-1 font-bold">
                                       {plexLibrariesData.currentPlexLibraries ===
-                                      '' ? (
+                                      'all' ? (
                                         <FormattedMessage
                                           id="settings.allLibraries"
                                           defaultMessage="All Libraries"
                                         />
                                       ) : (
-                                        plexLibrariesData.currentPlexLibraries &&
-                                        plexLibrariesData.currentPlexLibraries !==
-                                          '' &&
-                                        allLibrariesData?.libraries &&
+                                        enabledLibraries &&
                                         plexLibrariesData.currentPlexLibraries
                                           .split('|')
                                           .map((id) => {
-                                            const lib =
-                                              allLibrariesData.libraries.find(
-                                                (l) => l.id === id
-                                              );
+                                            const lib = enabledLibraries.find(
+                                              (l) => l.id === id
+                                            );
                                             return lib?.name || id;
                                           })
                                           .join(', ')

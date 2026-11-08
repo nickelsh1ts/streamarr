@@ -173,6 +173,34 @@ For details, please see the [Express documentation](http://expressjs.com/en/guid
 
 This setting is **disabled** by default.
 
+#### Trusted Proxies
+
+When Proxy Support is enabled, choose which proxies Streamarr trusts to report the client's IP address. Streamarr skips every trusted proxy in the `X-Forwarded-For` chain and records the first untrusted address as the client.
+
+| Option                         | Trusts                                          | Use when                                                                                       |
+| ------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Trust Local Networks**       | Loopback, private and link-local addresses      | Your reverse proxy or Cloudflare Tunnel runs on the same host or Docker network                |
+| **Trust Cloudflare**           | Cloudflare's published edge IP ranges           | Your DNS record is proxied through Cloudflare (orange cloud). Not needed for Cloudflare Tunnel |
+| **Additional Trusted Proxies** | IP addresses or CIDR ranges separated by commas | A proxy runs on another host, for example `203.0.113.10, 198.51.100.0/24`                      |
+
+With nothing selected, Streamarr trusts only the proxy that connects to it, which matches the behavior of earlier versions. **Trust Local Networks** is selected by default for new installs; installs that already used Proxy Support keep the earlier behavior until you change it.
+
+Forwarded host and protocol headers, used by [CSRF Protection](#enable-csrf-protection) and WebSocket origin checks, are only accepted from a trusted proxy.
+
+Streamarr ships with a copy of Cloudflare's IP ranges. Use **Check for Updates** next to **Trust Cloudflare** to compare it with Cloudflare's current list. If the ranges have changed, review the added and removed ranges and select **Accept** to use the new list. Accepted ranges and other trusted proxy changes require a restart.
+
+{% hint style="info" %}
+Alternatively, configure your reverse proxy to restore the real client IP before it reaches Streamarr, for example nginx's [`real_ip` module](https://nginx.org/en/docs/http/ngx_http_realip_module.html), Caddy's [`trusted_proxies`](https://caddyserver.com/docs/caddyfile/options#trusted-proxies), or Traefik's [`forwardedHeaders.trustedIPs`](https://doc.traefik.io/traefik/routing/entrypoints/#forwarded-headers). Streamarr then only needs to trust the reverse proxy itself.
+{% endhint %}
+
+### Record Device IP Addresses
+
+When enabled, Streamarr records the IP address each device signs in from and shows it in the user's [Devices](../users/README.md#devices) list. Behind a reverse proxy, also enable **Proxy Support** and set [Trusted Proxies](#trusted-proxies), or every device shows the proxy's address.
+
+Turning this setting off asks for confirmation. When you save, every stored device IP address is permanently deleted and new sign-ins are not recorded.
+
+This setting is **enabled** by default.
+
 ### Outbound HTTP(S) Proxy
 
 Use this setting to route supported outbound HTTP and HTTPS requests through an authenticated proxy. Configure the proxy hostname, port, whether the connection to the proxy itself uses HTTPS, and optional credentials. The saved password is loaded into a sensitive field and stays obscured until revealed with its visibility control. Clearing the username clears the saved password.
@@ -189,12 +217,20 @@ Use **Test** to send one HTTPS request to a fixed public endpoint through the cu
 **This is an advanced setting.** We do not recommend enabling it unless you understand the implications of doing so.
 {% endhint %}
 
-CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When this setting is enabled, all external API access that alters Streamarr application data is blocked (external API access becomes read-only).
+CSRF stands for [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery). When enabled, requests that change Streamarr data must include a valid CSRF token and its matching cookie. Streamarr's browser interface handles these automatically.
 
-If you do not use Streamarr integrations with third-party applications to modify data, you can enable this setting for additional security.
+This setting does **not** make API keys read-only. External API clients can still modify data, but must first make a GET request to a Streamarr API endpoint, retain the returned cookies, and send the `XSRF-TOKEN` cookie value in the `X-XSRF-TOKEN` header alongside their API key. Clients that only send an API key cannot make state-changing requests while this setting is enabled.
+
+Production uses a Secure, HttpOnly, host-only `__Host-streamarr.csrf` secret cookie with `Path=/`. Browsers prohibit parent-domain and non-root-path variants of this cookie. Development HTTP uses an unprefixed cookie and does not provide these production cookie protections. Reload browser pages and repeat the API bootstrap request after an upgrade to obtain current CSRF cookies.
+
+Embedded service requests use a same-origin check instead of rewriting their forms or uploads. State-changing browser requests must have an `Origin` matching Streamarr's public origin. Clients without an `Origin` header must provide the CSRF cookies and the `X-XSRF-TOKEN` header instead; upstream body and query CSRF fields are not interpreted as Streamarr tokens. Service permissions and each service's own authentication and CSRF checks still apply.
+
+WebSocket and Socket.IO requests with an `Origin` header must also match Streamarr's origin. Non-browser clients without an `Origin` header retain the existing session and permission requirements.
 
 {% hint style="warning" %}
 **HTTPS is required** when CSRF protection is enabled. You will no longer be able to access Streamarr over HTTP.
+
+When HTTPS terminates at a reverse proxy, enable **Proxy Support** and configure that proxy to replace forwarded host and protocol headers with the public host and scheme. Do not expose a trusted-proxy configuration directly to untrusted clients.
 
 If you enable this setting and find yourself unable to access Streamarr, you can disable it by editing `settings.json` in your config directory.
 {% endhint %}
@@ -292,6 +328,7 @@ Configure the default invite quota settings for new users:
 
 - **Quota Limit** — Maximum number of invites a user can create
 - **Quota Days** — Time period (in days) for the quota to reset
+- **Uses per invite** and **Expires** — Usage limit and expiry for new invites. Invites created without **Advanced Invites** always use these.
 
 ### Default Invite Settings
 
@@ -303,13 +340,22 @@ Configure the default feature access granted when creating new invites:
 | **Allow Live TV Access**   | Show the Live TV navigation item for invited users by default                              |
 | **Allow Plex Home Access** | Add invited users to Plex Home by default (creates a managed user under your Plex account) |
 
-These defaults pre-fill the corresponding toggles when creating new invites. Individual invites can always override these defaults.
+These defaults pre-fill the corresponding toggles when creating new invites. Users with **Advanced Invites** can override them per invite.
 
 **Plex Home Access**: When enabled, invited users are added as managed Plex Home users (not just friends). The invitee must accept the Plex Home invite to complete onboarding. If the user is already a Plex Home member, re-inviting will re-provision their access if needed.
 
 {% hint style="info" %}
 **Live TV Access** controls per-user nav visibility in Streamarr. It does not send any permission to Plex — modern Plex Live TV (DVR/OTA) is available to all Plex server members when configured with Plex Pass. This toggle simply controls whether the Live TV shortcut appears in a user's Streamarr navigation.
 {% endhint %}
+
+### Default Shared Libraries
+
+The libraries shared with users and invites set to **Default Libraries**:
+
+- **All Libraries** — Every enabled library
+- **Specific Libraries** — Only the selected libraries
+
+Users and invites set to Default follow this setting, including later changes. Saving a new default updates the Plex share of every Plex user set to Default before the save completes, and a warning is shown if any user couldn't be updated. The default must include at least one enabled library.
 
 ---
 
@@ -389,14 +435,7 @@ Select which libraries Streamarr should have access to. These libraries will be:
 
 Use **Sync Libraries** to refresh the list from your Plex server. Libraries keep their enabled state, even if renamed in Plex. If the server can't be reached, the current list is left unchanged.
 
-### Shared Libraries (Default)
-
-Configure which libraries are shared with users by default. Options:
-
-- **All Libraries** — Share all enabled libraries
-- **Specific Libraries** — Select specific library IDs (comma-separated)
-
-Individual user settings can override this default.
+Enabling or disabling a library updates the Plex share of every user it affects. A user left with no enabled libraries is removed from the Plex server and deactivated — see [Removed from Plex](../users/README.md#removed-from-plex).
 
 ### Plex Connection Health
 
@@ -641,7 +680,7 @@ Each job row shows the job name, a type badge, the next scheduled execution time
 {% hint style="info" %}
 The **Account Expiry Check** job underpins the [Trial Period](README.md#trial-period) feature—it evaluates trial end dates and account access windows each day. See [Trial Outcome & Extension Requests](README.md#trial-outcome--extension-requests).
 
-The **Plex Membership Check** job detects users who have been removed from the Plex server outside of Streamarr. It uses a single plex.tv API call per run regardless of user count, and only acts on a definitive removal—API outages never deactivate anyone. See [Removed from Plex](../users/README.md#removed-from-plex).
+The **Plex Membership Check** job detects users who have been removed from the Plex server outside Streamarr. The membership check uses a single plex.tv API call per run regardless of user count, and only acts on a definitive removal—API outages never deactivate anyone. See [Removed from Plex](../users/README.md#removed-from-plex). The job then retries any users whose Plex library sync failed (for example, during a plex.tv outage while changing the default or enabled libraries), which makes additional plex.tv requests for those users. Saving the user settings again also retries them.
 {% endhint %}
 
 ### Job Status

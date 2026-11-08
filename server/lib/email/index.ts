@@ -125,11 +125,13 @@ class PreparedEmail {
         },
       },
       send: true,
-      transport: transport,
+      preview: false,
+      // @types/email-templates still types transports against @types/nodemailer
+      transport: transport as unknown as Email.NodeMailerTransportOptions,
     });
   }
 
-  send(options) {
+  send(options: Email.EmailOptions) {
     return this.email.send(options);
   }
 

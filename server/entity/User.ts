@@ -43,9 +43,11 @@ export class User {
     return users.map((u) => u.filter(showFiltered));
   }
 
-  static readonly filteredFields: string[] = [
-    'email',
-    'plexId',
+  static readonly filteredFields: string[] = ['email', 'plexId'];
+
+  static readonly secretFields: string[] = [
+    'password',
+    'resetPasswordGuid',
     'plexToken',
     'audiobookshelfPassword',
     'plexJwt',
@@ -217,7 +219,11 @@ export class User {
     const filtered: Partial<User> = Object.assign(
       {},
       ...(Object.keys(this) as (keyof User)[])
-        .filter((k) => showFiltered || !User.filteredFields.includes(k))
+        .filter(
+          (k) =>
+            !User.secretFields.includes(k) &&
+            (showFiltered || !User.filteredFields.includes(k))
+        )
         .map((k) => ({ [k]: this[k] }))
     );
 
