@@ -151,10 +151,16 @@ settingsRoutes.post('/main', async (req, res, next) => {
         }).length === 0
       ) {
         invalidDefault = true;
-        return null;
+        return false;
       }
-      settings.main = merge(settings.main, filteredBody);
-      settings.save();
+      const previousMain = settings.main;
+      settings.main = merge({}, previousMain, filteredBody);
+      try {
+        settings.save();
+      } catch (e) {
+        settings.main = previousMain;
+        throw e;
+      }
       return settings.main.sharedLibraries !== previousDefault
         ? isDefaultSentinel
         : null;
@@ -527,7 +533,7 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
         );
         if (!library) {
           found = false;
-          return null;
+          return false;
         }
         if (library.enabled === req.body.enabled) {
           return null;
@@ -543,10 +549,15 @@ settingsRoutes.put<{ libraryId: string }, unknown, { enabled: boolean }>(
           }).length === 0
         ) {
           emptiesDefault = true;
-          return null;
+          return false;
         }
         library.enabled = req.body.enabled;
-        settings.save();
+        try {
+          settings.save();
+        } catch (e) {
+          library.enabled = !req.body.enabled;
+          throw e;
+        }
         return (value) => referencesLibrary(value, library.id);
       });
     } catch (e) {
