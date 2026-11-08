@@ -7933,6 +7933,10 @@ paths:
                 scope:
                   type: string
                   enum: [others, all]
+                keepCurrentSession:
+                  type: boolean
+                  default: false
+                  description: With scope all, keep the caller's own current session until logout while cleaning up other sessions and unlinked push subscriptions. Requires a signed-in session for the same user.
               required:
                 - scope
       responses:

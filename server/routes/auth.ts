@@ -25,6 +25,8 @@ import {
   disconnectSessionSockets,
   revokeUserSessions,
   startUserSession,
+  toPublicSessionId,
+  withUserCredentialLock,
 } from '@server/lib/sessions';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
@@ -415,10 +417,21 @@ authRoutes.post('/local', async (req, res, next) => {
       }
     }
 
-    const authedUser = user;
-    await startUserSession(req, authedUser, 'local');
+    await withUserCredentialLock(user.id, async () => {
+      const currentCredentials = await userRepository.findOne({
+        select: { id: true, password: true },
+        where: { id: user.id },
+      });
+      if (
+        !currentCredentials ||
+        currentCredentials.password !== user.password
+      ) {
+        return next({ status: 401, message: 'Invalid email or password.' });
+      }
 
-    res.status(200).json(authedUser.filter());
+      await startUserSession(req, user, 'local');
+      res.status(200).json(user.filter());
+    });
   } catch (e) {
     logger.error(
       'Something went wrong authenticating with Streamarr password',
@@ -433,9 +446,29 @@ authRoutes.post('/local', async (req, res, next) => {
   }
 });
 
-authRoutes.post('/logout', (req, res, next) => {
+authRoutes.post('/logout', async (req, res, next) => {
   const audiobookshelfRefreshToken = req.cookies?.refresh_token;
   const { sessionID } = req;
+
+  if (req.session?.userId) {
+    try {
+      await revokeUserSessions(
+        req.session.userId,
+        {
+          reason: 'manual',
+          revokedByUserId: req.session.userId,
+          publicIds: [toPublicSessionId(sessionID)],
+        },
+        req.app.get('io')
+      );
+    } catch (e) {
+      logger.warn('Failed to clean up session push subscriptions on logout', {
+        label: 'Sessions',
+        userId: req.session.userId,
+        errorMessage: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
 
   req.session?.destroy((err) => {
     if (err) {
@@ -563,11 +596,11 @@ authRoutes.post<{ guid: string }>(
         });
       }
 
-      const user = await userRepository.findOne({
+      const resettingUser = await userRepository.findOne({
         where: { resetPasswordGuid: req.params.guid },
       });
 
-      if (!user) {
+      if (!resettingUser) {
         logger.warn(
           'Failed password reset attempt using invalid recovery link',
           {
@@ -579,39 +612,48 @@ authRoutes.post<{ guid: string }>(
         return next({ status: 404, message: 'Invalid password reset link.' });
       }
 
-      if (
-        !user.recoveryLinkExpirationDate ||
-        user.recoveryLinkExpirationDate <= new Date()
-      ) {
-        logger.warn(
-          'Failed password reset attempt using expired recovery link',
-          {
-            label: 'API',
-            ip: req.ip,
-            guid: req.params.guid,
-            email: user.email,
-          }
+      await withUserCredentialLock(resettingUser.id, async () => {
+        const user = await userRepository.findOne({
+          where: { resetPasswordGuid: req.params.guid },
+        });
+        if (!user) {
+          return next({ status: 404, message: 'Invalid password reset link.' });
+        }
+
+        if (
+          !user.recoveryLinkExpirationDate ||
+          user.recoveryLinkExpirationDate <= new Date()
+        ) {
+          logger.warn(
+            'Failed password reset attempt using expired recovery link',
+            {
+              label: 'API',
+              ip: req.ip,
+              guid: req.params.guid,
+              email: user.email,
+            }
+          );
+          return next({ status: 400, message: 'Invalid password reset link.' });
+        }
+
+        // Revoked first so a failure leaves the link usable for a retry
+        await revokeUserSessions(
+          user.id,
+          { reason: 'password-reset' },
+          req.app.get('io')
         );
-        return next({ status: 400, message: 'Invalid password reset link.' });
-      }
+        await user.setPassword(req.body.password);
+        user.recoveryLinkExpirationDate = null;
+        await userRepository.save(user);
+        logger.info('Successfully reset password', {
+          label: 'API',
+          ip: req.ip,
+          guid: req.params.guid,
+          email: user.email,
+        });
 
-      // Revoked first so a failure leaves the link usable for a retry
-      await revokeUserSessions(
-        user.id,
-        { reason: 'password-reset' },
-        req.app.get('io')
-      );
-      await user.setPassword(req.body.password);
-      user.recoveryLinkExpirationDate = null;
-      await userRepository.save(user);
-      logger.info('Successfully reset password', {
-        label: 'API',
-        ip: req.ip,
-        guid: req.params.guid,
-        email: user.email,
+        res.status(200).json({ status: 'ok' });
       });
-
-      res.status(200).json({ status: 'ok' });
     } catch (e) {
       logger.error('Failed to process password reset', {
         label: 'API',

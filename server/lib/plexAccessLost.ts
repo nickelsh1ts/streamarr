@@ -41,7 +41,11 @@ export const handlePlexAccessLost = async (user: User): Promise<void> => {
     user.active = false;
     user.accessRevokedAt = new Date();
     user.accessRevokedReason = 'plex_removed';
-    await getRepository(User).save(user);
+    await getRepository(User).update(user.id, {
+      active: user.active,
+      accessRevokedAt: user.accessRevokedAt,
+      accessRevokedReason: user.accessRevokedReason,
+    });
 
     try {
       const settingsRepository = getRepository(UserSettings);

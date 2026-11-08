@@ -9,6 +9,7 @@ import type {
 } from '@server/interfaces/api/userSettingsInterfaces';
 import { getSettings } from '@server/lib/settings';
 import logger from '@server/logger';
+import AsyncLock from '@server/utils/asyncLock';
 import { createHash } from 'crypto';
 import type { Request } from 'express';
 import type { SessionData } from 'express-session';
@@ -16,6 +17,19 @@ import type { Server as SocketIOServer } from 'socket.io';
 import { In, MoreThan } from 'typeorm';
 
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
+
+const credentialLock = new AsyncLock();
+
+export const withUserCredentialLock = async <Result>(
+  userId: number,
+  callback: () => Promise<Result>
+): Promise<Result> => {
+  let result: Result;
+  await credentialLock.dispatch(userId, async () => {
+    result = await callback();
+  });
+  return result;
+};
 
 export const toPublicSessionId = (sid: string): string =>
   createHash('sha256').update(sid).digest('hex').slice(0, 32);
@@ -82,7 +96,7 @@ const softDeleteSessions = async (
   io?: SocketIOServer,
   { removeUnlinkedPush = false } = {}
 ): Promise<number> => {
-  if (!sessions.length) {
+  if (!sessions.length && !removeUnlinkedPush) {
     return 0;
   }
 
@@ -91,7 +105,9 @@ const softDeleteSessions = async (
     .map((session) => parseSessionData(session.json).pushEndpoint)
     .filter((endpoint): endpoint is string => !!endpoint);
 
-  await getRepository(Session).softDelete({ id: In(sids) });
+  if (sids.length) {
+    await getRepository(Session).softDelete({ id: In(sids) });
+  }
   try {
     // Revoked devices can't unsubscribe themselves, so stop pushing to them here
     if (pushEndpoints.length || removeUnlinkedPush) {
@@ -134,11 +150,13 @@ export const revokeUserSessions = async (
     revokedByUserId,
     exceptSid,
     publicIds,
+    removeUnlinkedPush = !publicIds && !exceptSid,
   }: {
     reason: SessionRevokeReason;
     revokedByUserId?: number;
     exceptSid?: string;
     publicIds?: string[];
+    removeUnlinkedPush?: boolean;
   },
   io?: SocketIOServer
 ): Promise<number> => {
@@ -155,7 +173,7 @@ export const revokeUserSessions = async (
         (!publicIds || publicIds.includes(toPublicSessionId(id)))
     ),
     io,
-    { removeUnlinkedPush: !publicIds && !exceptSid }
+    { removeUnlinkedPush }
   );
 
   if (revoked) {

@@ -74,7 +74,8 @@ const UserSettingsSessions = () => {
     try {
       // This session is ended by /logout so its cleanup runs and no request 401s first
       await axios.post(`/api/v1/user/${user?.id}/settings/sessions/revoke`, {
-        scope: signOutHere ? 'others' : pendingScope,
+        scope: pendingScope,
+        ...(signOutHere ? { keepCurrentSession: true } : {}),
       });
 
       if (signOutHere) {
