@@ -393,8 +393,8 @@ importers:
         specifier: ^13.15.35
         version: 13.15.35
       web-push:
-        specifier: ^3.6.7
-        version: 3.6.7(supports-color@5.5.0)
+        specifier: ^4.0.0
+        version: 4.0.0(supports-color@5.5.0)
       winston:
         specifier: ^3.19.0
         version: 3.19.0
@@ -5148,8 +5148,8 @@ packages:
     resolution: {integrity: sha512-G5akfn7eKbpDN+8nPS/cb57YeA1jLTVxjpCj7tmm3QKPdyDy7T+qSC40e9ptydSWvkwjSXw1VbkpyEm39ukeAg==}
     engines: {node: '>=0.10'}
 
-  http_ece@1.2.0:
-    resolution: {integrity: sha512-JrF8SSLVmcvc5NducxgyOrKXe3EsyHMgBFgSaIUGmArKe+rwr0uphRkRXvwiom3I+fpIfoItveHrfudL8/rxuA==}
+  http_ece@1.2.1:
+    resolution: {integrity: sha512-+tzLoMYgXvicu60sVFoswTiu6BiQ6EX3DORRJQ3W2dNpNWCyZ3tcmRFZZ3jgVyw8ziWUCeUARKCkYDY6JgFx+w==}
     engines: {node: '>=16'}
 
   https-proxy-agent@5.0.1:
@@ -8310,8 +8310,8 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  web-push@3.6.7:
-    resolution: {integrity: sha512-OpiIUe8cuGjrj3mMBFWY+e4MMIkW3SVT+7vEIjvD9kejGUypv8GPDf84JdPWskK8zMRIJ6xYGm+Kxr8YkPyA0A==}
+  web-push@4.0.0:
+    resolution: {integrity: sha512-iKzGK/q3k+kjoPK+fkbs8ymYvEqu5RJNAypEskW+UAYsC44upqb0f+T8QSYW4naowl9bzjlHRe8CI0NFCBzZeQ==}
     engines: {node: '>= 16'}
     hasBin: true
 
@@ -13673,7 +13673,7 @@ snapshots:
       jsprim: 2.0.2
       sshpk: 1.18.0
 
-  http_ece@1.2.0: {}
+  http_ece@1.2.1: {}
 
   https-proxy-agent@5.0.1(supports-color@5.5.0):
     dependencies:
@@ -17204,14 +17204,14 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  web-push@3.6.7(supports-color@5.5.0):
+  web-push@4.0.0(supports-color@5.5.0):
     dependencies:
       asn1.js: 5.4.1
-      http_ece: 1.2.0
-      https-proxy-agent: 7.0.6(supports-color@5.5.0)
+      http_ece: 1.2.1
+      https-proxy-agent: 9.1.0(supports-color@5.5.0)
       jws: 4.0.1
-      minimist: 1.2.8
     transitivePeerDependencies:
+      - kerberos
       - supports-color
 
   web-resource-inliner@6.0.1:
