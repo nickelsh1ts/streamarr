@@ -15,7 +15,9 @@
     "github>nickelsh1ts/streamarr//.github/renovate/pnpm.json5",
     "github>nickelsh1ts/streamarr//.github/renovate/semanticCommits.json5",
   ],
-  dependencyDashboardTitle: "Renovate Dashboard 🤖",
+  dependencyDashboard: {
+    title: "Renovate Dashboard 🤖",
+  },
   suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
   labels: ["dependencies"],
   schedule: ["before 8am on friday"],
