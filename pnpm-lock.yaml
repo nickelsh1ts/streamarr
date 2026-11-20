@@ -250,7 +250,7 @@ importers:
         version: 5.6.2(@types/json-schema@7.0.15)(express@5.3.0(supports-color@5.5.0))
       express-rate-limit:
         specifier: ^8.3.2
-        version: 8.7.3(express@5.3.0(supports-color@5.5.0))(supports-color@5.5.0)
+        version: 8.7.4(express@5.3.0(supports-color@5.5.0))(supports-color@5.5.0)
       express-session:
         specifier: ^1.19.0
         version: 1.19.0(supports-color@5.5.0)
@@ -4656,8 +4656,8 @@ packages:
     peerDependencies:
       express: '*'
 
-  express-rate-limit@8.7.3:
-    resolution: {integrity: sha512-zPLqDI2f0gV2WmGnacLf9XSSqn4VldRyP5LCzOwx0BKH40mO6+2PCFkoSsRO2jePx87/Kf6NUF6P2QOTKXHbQA==}
+  express-rate-limit@8.7.4:
+    resolution: {integrity: sha512-LKBXzX700wz3zAGNNmVnjRI5mEbYkLv7UbMI4+9Xa+JPcg2UZh6AgY/2CZh9RrJjFM5ttC/N1lD+KzyFoZITCw==}
     engines: {node: '>= 16'}
     peerDependencies:
       express: '>= 4.11'
@@ -13060,7 +13060,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/json-schema'
 
-  express-rate-limit@8.7.3(express@5.3.0(supports-color@5.5.0))(supports-color@5.5.0):
+  express-rate-limit@8.7.4(express@5.3.0(supports-color@5.5.0))(supports-color@5.5.0):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       express: 5.3.0(supports-color@5.5.0)
