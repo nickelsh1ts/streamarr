@@ -4874,9 +4874,6 @@
   "userSettings.defaultSharedLibraries": {
     "defaultMessage": "Bibliotecas compartidas predeterminadas"
   },
-  "userSettings.defaultSharedLibrariesDescription": {
-    "defaultMessage": "Bibliotecas iniciales compartidas con nuevos usuarios"
-  },
   "userSettings.description": {
     "defaultMessage": "Configurar ajustes globales y predeterminados de usuario."
   },
@@ -6448,5 +6445,62 @@
   },
   "plexImport.resultUnchanged": {
     "defaultMessage": "{count, plural, one {# usuario existente de Plex ya está} other {# usuarios existentes de Plex ya están}} actualizados."
+  },
+  "common.accept": {
+    "defaultMessage": "Aceptar"
+  },
+  "common.added": {
+    "defaultMessage": "Añadido"
+  },
+  "common.removed": {
+    "defaultMessage": "Removido"
+  },
+  "networkSettings.trustedProxies.additional": {
+    "defaultMessage": "Proxies adicionales de confianza"
+  },
+  "networkSettings.trustedProxies.additional.description": {
+    "defaultMessage": "Direcciones IP o rangos CIDR separados por comas. Si no se selecciona nada, solo se confía en el proxy que se conecta a Streamarr."
+  },
+  "networkSettings.trustedProxies.cloudflare": {
+    "defaultMessage": "Confiar en Cloudflare"
+  },
+  "networkSettings.trustedProxies.cloudflare.description": {
+    "defaultMessage": "Rangos de IP perimetrales de Cloudflare, para sitios proxy a través de Cloudflare. No es necesario para Cloudflare Tunnel."
+  },
+  "networkSettings.trustedProxies.cloudflareCheck": {
+    "defaultMessage": "Buscar actualizaciones"
+  },
+  "networkSettings.trustedProxies.cloudflareCheckError": {
+    "defaultMessage": "No se pueden verificar los rangos de IP de Cloudflare"
+  },
+  "networkSettings.trustedProxies.cloudflareReviewDescription": {
+    "defaultMessage": "Los rangos de IP publicados de Cloudflare han cambiado. Aceptar reemplaza los rangos de Cloudflare confiables y requiere un reinicio."
+  },
+  "networkSettings.trustedProxies.cloudflareReviewTitle": {
+    "defaultMessage": "¿Actualizar los rangos de IP de Cloudflare?"
+  },
+  "networkSettings.trustedProxies.cloudflareUpToDate": {
+    "defaultMessage": "Los rangos de IP de Cloudflare están actualizados"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdateError": {
+    "defaultMessage": "No se pueden actualizar los rangos de IP de Cloudflare"
+  },
+  "networkSettings.trustedProxies.cloudflareUpdated": {
+    "defaultMessage": "Rangos de IP de Cloudflare actualizados"
+  },
+  "networkSettings.trustedProxies.localNetworks": {
+    "defaultMessage": "Confiar en las redes locales"
+  },
+  "networkSettings.trustedProxies.localNetworks.description": {
+    "defaultMessage": "Direcciones de bucle invertido y de redes privadas, como un proxy inverso o Cloudflare Tunnel en el mismo host o red de Docker"
+  },
+  "networkSettings.trustedProxies.validation.additional": {
+    "defaultMessage": "Introduce direcciones IP o rangos CIDR separados por comas"
+  },
+  "notifications.discord.threadIdInvalid": {
+    "defaultMessage": "Introduce un ID de hilo de Discord válido"
+  },
+  "plexImport.syncComplete": {
+    "defaultMessage": "Sincronización de Plex completa"
   }
 }
