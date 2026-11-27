@@ -169,7 +169,7 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "0.8.1",
     "semantic-release": "^25.0.3",
-    "stylelint": "^17.7.0",
+    "stylelint": "^18.0.0",
     "tailwindcss": "4.3.5",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
